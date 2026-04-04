@@ -339,6 +339,27 @@ export const sprintUpdates: SprintUpdate[] = [
   },
 ];
 
+export const setupPaths = [
+  {
+    id: "cli",
+    label: "Codex CLI",
+    audience: "macOS / Linux",
+    summary: "Nejrychlejší cesta pro lidi, kteří chtějí pracovat přímo v repu a terminálu.",
+  },
+  {
+    id: "app",
+    label: "Codex App",
+    audience: "Windows / macOS",
+    summary: "Bezpečný fallback pro účastníky, kteří nechtějí řešit CLI hned ráno.",
+  },
+  {
+    id: "web",
+    label: "Web fallback",
+    audience: "když se setup sekne",
+    summary: "Použijte, když vás blokuje instalace nebo autentizace.",
+  },
+];
+
 export function getTeamName(teamId: string) {
   return teams.find((team) => team.id === teamId)?.name ?? teamId;
 }

@@ -11,3 +11,10 @@ Nejrychlejší fungující varianta:
    - co použít v příštím intermezzu
 
 Automatizace může přijít později. Pro workshop je důležitější spolehlivost než elegance.
+
+## Doporučený flow
+
+1. Vytvoř nový markdown soubor v `capture/notes/`
+2. Použij `capture/templates/observation.md`
+3. Vyplň tým, pozorování, princip a jednu větu pro intermezzo
+4. `monitoring/intermezzo-brief.sh` si vytáhne nejnovější poznámku jako vstup

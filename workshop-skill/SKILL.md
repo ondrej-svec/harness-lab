@@ -21,6 +21,7 @@ Guide the participant through Codex or OpenCode setup in Czech. Prefer the faste
 - Codex CLI on macOS/Linux
 - Codex App on Windows or macOS
 - web fallback if local install is blocked
+Use the content from `workshop-skill/setup.md`.
 
 ### `/workshop brief`
 
@@ -58,14 +59,37 @@ Generate a starter `AGENTS.md` for the participant's current project using the 4
 - context
 - constraints
 - done when
+Use `workshop-skill/template-agents.md` as the default scaffold.
+
+### `/workshop recap`
+
+Return a short post-workshop reinforcement prompt in Czech.
+Use the content from `workshop-skill/recap.md`.
 
 ### `/workshop reference`
 
 Return the workshop reference card from `workshop-skill/reference.md`.
 
+### `/workshop analyze`
+
+Review the team's repo against the handoff criteria in `workshop-skill/analyze-checklist.md`.
+Return:
+- what helps continuation
+- what is missing
+- one concrete next improvement
+
 ## Fallback Content
 
 If the API is not reachable, use the local content in this folder and the markdown files under `content/`.
+
+Relevant local files:
+- `workshop-skill/setup.md`
+- `workshop-skill/reference.md`
+- `workshop-skill/recap.md`
+- `workshop-skill/template-agents.md`
+- `workshop-skill/analyze-checklist.md`
+- `content/project-briefs/*.md`
+- `content/challenge-cards/deck.md`
 
 ## Style
 

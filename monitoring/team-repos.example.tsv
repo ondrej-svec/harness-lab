@@ -1,0 +1,5 @@
+# team_id	team_name	repo_path	repo_url
+t1	Tým 1	/path/to/local/team-1-repo	https://github.com/example/team-1
+t2	Tým 2	/path/to/local/team-2-repo	https://github.com/example/team-2
+t3	Tým 3	/path/to/local/team-3-repo	https://github.com/example/team-3
+t4	Tým 4	/path/to/local/team-4-repo	https://github.com/example/team-4

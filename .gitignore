@@ -2,3 +2,6 @@
 
 dashboard/.next/
 dashboard/node_modules/
+
+monitoring/latest-monitoring.md
+monitoring/team-repos.tsv
