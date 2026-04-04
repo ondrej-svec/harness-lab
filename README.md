@@ -34,3 +34,10 @@ Týmy s dobrým kontextem zůstaly na správné cestě. Týmy bez kontextu... za
 - `workshop-skill/` — skill instalovatelný do Codex/OpenCode
 - `monitoring/` — skripty pro sledování týmových repozitářů
 - `materials/` — tiskové materiály (karty, referenční listy)
+
+## Aktuální stav
+
+- `dashboard/` obsahuje první Next.js App Router shell s mobilním layoutem a seedovanými API route endpoints
+- `content/` obsahuje první projektové briefy, challenge deck, talk outline a facilitační guide v češtině
+- `workshop-skill/` obsahuje participant-facing skill kostru a referenční kartu
+- `monitoring/` a `capture/` mají popsané MVP fallbacky pro facilitátora
