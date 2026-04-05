@@ -2,6 +2,7 @@
 
 dashboard/.next/
 dashboard/node_modules/
+dashboard/data/workshop-state.json
 
 monitoring/latest-monitoring.md
 monitoring/team-repos.tsv

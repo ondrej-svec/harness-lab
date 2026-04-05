@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { completeChallenge } from "@/lib/challenge-store";
+import { completeChallenge } from "@/lib/workshop-store";
 
 export async function POST(
   request: NextRequest,
@@ -18,6 +18,17 @@ export async function POST(
     );
   }
 
-  const result = completeChallenge(id, body.teamId);
-  return NextResponse.json(result, { status: result.ok ? 200 : 404 });
+  const state = await completeChallenge(id, body.teamId);
+  const challenge = state.challenges.find((item) => item.id === id);
+
+  if (!challenge) {
+    return NextResponse.json({ ok: false, error: "Challenge nebyla nalezena." }, { status: 404 });
+  }
+
+  return NextResponse.json({
+    ok: true,
+    persisted: true,
+    challengeId: id,
+    completedBy: challenge.completedBy,
+  });
 }

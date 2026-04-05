@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { briefs } from "@/lib/workshop-data";
+import { getWorkshopState } from "@/lib/workshop-store";
 
 export async function GET() {
+  const state = await getWorkshopState();
   return NextResponse.json({
-    items: briefs,
+    items: state.briefs,
   });
 }

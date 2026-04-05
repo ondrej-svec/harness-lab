@@ -1,15 +1,7 @@
-import {
-  agenda,
-  briefs,
-  challenges,
-  getTeamName,
-  monitoring,
-  sprintUpdates,
-  teams,
-  ticker,
-  rotation,
-  workshopMeta,
-} from "@/lib/workshop-data";
+import { getTeamName } from "@/lib/workshop-data";
+import { getWorkshopState } from "@/lib/workshop-store";
+
+export const dynamic = "force-dynamic";
 
 const toneClassName = {
   info: "border-white/15 bg-white/5 text-stone-100",
@@ -17,7 +9,10 @@ const toneClassName = {
   highlight: "border-cyan-300/40 bg-cyan-300/10 text-cyan-100",
 } as const;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const state = await getWorkshopState();
+  const { agenda, briefs, challenges, monitoring, rotation, sprintUpdates, teams, ticker, workshopMeta } = state;
+
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(251,191,36,0.18),_transparent_28%),linear-gradient(180deg,#171717_0%,#0c0a09_100%)] text-stone-50">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
@@ -58,6 +53,12 @@ export default function HomePage() {
                 ))}
               </div>
               <p className="mt-4 text-xs leading-5 text-stone-500">{workshopMeta.adminHint}</p>
+              <a
+                className="mt-4 inline-flex text-sm font-medium text-cyan-100 underline decoration-cyan-400/40 underline-offset-4"
+                href="/admin"
+              >
+                Otevřít admin panel
+              </a>
             </div>
           </div>
         </section>
@@ -94,7 +95,7 @@ export default function HomePage() {
                 <div key={update.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-100">
-                      {getTeamName(update.teamId)}
+                      {getTeamName(update.teamId, teams)}
                     </p>
                     <p className="text-xs text-stone-500">{update.at}</p>
                   </div>
@@ -136,7 +137,7 @@ export default function HomePage() {
               {monitoring.map((item) => (
                 <div key={item.teamId} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-semibold text-white">{getTeamName(item.teamId)}</p>
+                    <p className="font-semibold text-white">{getTeamName(item.teamId, teams)}</p>
                     <p className="text-xs uppercase tracking-[0.18em] text-stone-500">
                       {item.agentsFile ? "AGENTS.md ano" : "AGENTS.md chybí"}
                     </p>
