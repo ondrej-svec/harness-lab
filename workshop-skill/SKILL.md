@@ -66,6 +66,14 @@ Use `workshop-skill/template-agents.md` as the default scaffold.
 Return a short post-workshop reinforcement prompt in Czech.
 Use the content from `workshop-skill/recap.md`.
 
+### `/workshop closing`
+
+Prepare Ondrej's closing synthesis by using:
+- sprint checkpoints from the dashboard
+- monitoring summary
+- W³ commitments or closing notes
+Use `workshop-skill/closing-skill.md`.
+
 ### `/workshop reference`
 
 Return the workshop reference card from `workshop-skill/reference.md`.
@@ -88,6 +96,8 @@ Relevant local files:
 - `workshop-skill/recap.md`
 - `workshop-skill/template-agents.md`
 - `workshop-skill/analyze-checklist.md`
+- `workshop-skill/closing-skill.md`
+- `workshop-skill/follow-up-package.md`
 - `content/project-briefs/*.md`
 - `content/challenge-cards/deck.md`
 

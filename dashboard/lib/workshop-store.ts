@@ -1,6 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { seedWorkshopState, type MonitoringSnapshot, type SprintUpdate, type Team, type WorkshopState } from "@/lib/workshop-data";
+import {
+  createWorkshopStateFromTemplate,
+  seedWorkshopState,
+  type MonitoringSnapshot,
+  type SprintUpdate,
+  type Team,
+  type WorkshopState,
+} from "@/lib/workshop-data";
 
 const dataDir = path.join(process.cwd(), "data");
 const statePath = path.join(dataDir, "workshop-state.json");
@@ -99,4 +106,11 @@ export async function replaceMonitoring(items: MonitoringSnapshot[]) {
     ...state,
     monitoring: items,
   }));
+}
+
+export async function resetWorkshopState(templateId: string) {
+  const next = createWorkshopStateFromTemplate(templateId);
+  await mkdir(dataDir, { recursive: true });
+  await writeFile(statePath, JSON.stringify(next, null, 2));
+  return next;
 }

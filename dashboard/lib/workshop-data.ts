@@ -91,6 +91,7 @@ export type WorkshopMeta = {
 };
 
 export type WorkshopState = {
+  workshopId: string;
   workshopMeta: WorkshopMeta;
   agenda: AgendaItem[];
   teams: Team[];
@@ -103,12 +104,29 @@ export type WorkshopState = {
   setupPaths: SetupPath[];
 };
 
+export type WorkshopTemplate = {
+  id: string;
+  label: string;
+  city: "Brno" | "Praha";
+  dateLabel: string;
+  room: string;
+  scenario: "17-participants" | "20-participants";
+};
+
+export const workshopTemplates: WorkshopTemplate[] = [
+  { id: "brno-2026-04-21", label: "Brno 21. 4.", city: "Brno", dateLabel: "21. dubna 2026", room: "Dakar, Okružní 5", scenario: "20-participants" },
+  { id: "brno-2026-04-23", label: "Brno 23. 4.", city: "Brno", dateLabel: "23. dubna 2026", room: "Dakar, Okružní 5", scenario: "20-participants" },
+  { id: "praha-2026-04-24", label: "Praha 24. 4.", city: "Praha", dateLabel: "24. dubna 2026", room: "Saturn 103, Sokolovská 695/115b", scenario: "17-participants" },
+  { id: "praha-2026-04-29", label: "Praha 29. 4.", city: "Praha", dateLabel: "29. dubna 2026", room: "Jupiter 104, Sokolovská 695/115b", scenario: "17-participants" },
+];
+
 export const seedWorkshopState: WorkshopState = {
+  workshopId: "brno-2026-04-21",
   workshopMeta: {
     title: "Harness Lab",
     subtitle: "Tichá pošta pro AI coding agenty",
-    city: "Seyfor",
-    dateRange: "21.–29. dubna 2026",
+    city: "Brno",
+    dateRange: "21. dubna 2026 • Dakar, Okružní 5",
     currentPhaseLabel: "Build Phase 1",
     adminHint: "Dashboard teď běží nad lokálním JSON storem. Později lze vyměnit za Vercel Postgres nebo KV bez změny UI.",
   },
@@ -384,4 +402,37 @@ export const seedWorkshopState: WorkshopState = {
 
 export function getTeamName(teamId: string, teams: Team[]) {
   return teams.find((team) => team.id === teamId)?.name ?? teamId;
+}
+
+export function createWorkshopStateFromTemplate(templateId: string): WorkshopState {
+  const template = workshopTemplates.find((item) => item.id === templateId) ?? workshopTemplates[0];
+  return {
+    ...seedWorkshopState,
+    workshopId: template.id,
+    workshopMeta: {
+      ...seedWorkshopState.workshopMeta,
+      city: template.city,
+      dateRange: `${template.dateLabel} • ${template.room}`,
+    },
+    rotation: {
+      ...seedWorkshopState.rotation,
+      revealed: false,
+      scenario: template.scenario,
+    },
+    teams: [],
+    monitoring: [],
+    sprintUpdates: [],
+    challenges: seedWorkshopState.challenges.map((challenge) => ({ ...challenge, completedBy: [] })),
+    agenda: seedWorkshopState.agenda.map((item, index) => ({
+      ...item,
+      status: index === 0 ? "current" : "upcoming",
+    })),
+    ticker: [
+      {
+        id: "tick-reset",
+        label: `Workshop ${template.label} je připravený. Zaregistrujte týmy a spusťte první checkpoint.`,
+        tone: "info",
+      },
+    ],
+  };
 }

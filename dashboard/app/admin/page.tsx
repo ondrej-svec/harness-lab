@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { addSprintUpdate, completeChallenge, getWorkshopState, setCurrentAgendaItem, setRotationReveal, updateCheckpoint, upsertTeam } from "@/lib/workshop-store";
+import { workshopTemplates } from "@/lib/workshop-data";
+import { addSprintUpdate, completeChallenge, getWorkshopState, resetWorkshopState, setCurrentAgendaItem, setRotationReveal, updateCheckpoint, upsertTeam } from "@/lib/workshop-store";
 
 export const dynamic = "force-dynamic";
 
@@ -78,6 +79,15 @@ async function registerTeamAction(formData: FormData) {
   redirect("/admin");
 }
 
+async function resetWorkshopAction(formData: FormData) {
+  "use server";
+  const templateId = String(formData.get("templateId") ?? "");
+  if (templateId) {
+    await resetWorkshopState(templateId);
+  }
+  redirect("/admin");
+}
+
 export default async function AdminPage() {
   const state = await getWorkshopState();
 
@@ -90,7 +100,23 @@ export default async function AdminPage() {
           <p className="mt-2 max-w-3xl text-sm leading-6 text-stone-400">
             Lokální operační panel pro Ondřeje. Tohle je MVP, které zapisuje do JSON store a umožňuje posouvat den bez seed-only hacků.
           </p>
+          <p className="mt-2 text-sm text-cyan-100">Aktivní instance: {state.workshopId}</p>
         </header>
+
+        <AdminCard title="Nový workshop / reset instance">
+          <form action={resetWorkshopAction} className="flex flex-col gap-3 sm:flex-row">
+            <select name="templateId" className="w-full rounded-xl border border-white/10 bg-stone-900 px-3 py-2">
+              {workshopTemplates.map((template) => (
+                <option key={template.id} value={template.id}>
+                  {template.label} • {template.room}
+                </option>
+              ))}
+            </select>
+            <button className="rounded-xl bg-rose-300 px-4 py-2 font-semibold text-stone-950" type="submit">
+              Resetovat data
+            </button>
+          </form>
+        </AdminCard>
 
         <section className="grid gap-4 lg:grid-cols-2">
           <AdminCard title="Posunout agendu">
