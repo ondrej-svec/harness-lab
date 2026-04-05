@@ -4,15 +4,20 @@
 
 Prosba na vytvoření sdíleného Teams kanálu `show-your-failures`.
 
-## Proč
+## Proč to má smysl
 
-- normalizuje iteraci a chybné výstupy
-- vytváří společný humor a menší stud
-- dává facilitatorovi rychlé ukázky do intermezz
+- normalizuje iteraci, slepé uličky i chybné výstupy
+- snižuje ostych z nehotových nebo nepovedených pokusů
+- vytváří společný humor a lehčí atmosféru napříč týmy
+- dává facilitátorovi rychlé ukázky do intermezz
 - kanál může zůstat živý i po workshopu jako reinforcement prostor
 
 ## Co tam patří
 
 - nejhorší nebo nejvtipnější agent output dne
-- krátký popis, co jste z toho upravili
-- případně sprint checkpoint věta, pokud dashboard feed zlobí
+- krátký popis, co jste změnili nebo co jste se z toho naučili
+- případně sprint checkpoint věta, když dashboard feed zrovna zlobí
+
+## Jednoduché pravidlo
+
+Nesdílíme proto, abychom někoho shodili. Sdílíme proto, aby bylo vidět, že dobrá práce s agentem vzniká přes iteraci, ne na první pokus.

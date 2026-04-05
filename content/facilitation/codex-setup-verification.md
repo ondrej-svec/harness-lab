@@ -4,38 +4,41 @@
 
 Do 10:30 musí mít každý účastník jednu funkční cestu:
 
-- Codex CLI
-- Codex App
+- `Codex CLI`
+- `Codex App`
 - nebo web fallback
+
+Cíl není perfektní instalace. Cíl je dostat každého co nejdřív do práce s agentem.
 
 ## Rychlý start
 
 ### macOS / Linux
 
-1. Otevři terminál
-2. Přihlas se do Codex prostředí podle firemního flow
-3. Ověř, že umíš otevřít repozitář a poslat první prompt
+1. Otevřete terminál.
+2. Přihlaste se do Codex prostředí podle firemního flow.
+3. Otevřete repozitář.
+4. Pošlete první prompt.
 
 ### Windows / macOS
 
-1. Otevři Codex App
-2. Přihlas se
-3. Otevři workshop repozitář nebo týmový projekt
-4. Pošli první prompt
+1. Otevřete `Codex App`.
+2. Přihlaste se.
+3. Otevřete workshop repo nebo týmový projekt.
+4. Pošlete první prompt.
 
 ### Web fallback
 
-Použij, když tě blokuje instalace, firemní politika nebo autentizace.
+Použijte ho ve chvíli, kdy vás blokuje instalace, firemní politika nebo autentizace. Nečekejte na ideální setup, když už můžete pracovat.
 
 ## Troubleshooting checklist
 
-- Nejde login: přejdi na App/Web fallback a pokračuj
-- Nejde CLI instalace: nenech se blokovat déle než 7 minut
-- Nejde otevřít repo: spáruj se s někým od stolu a vrátíš se k tomu později
-- Nejsi si jistý, co dělat: použij `/workshop setup`
+- Nejde login → přejděte na `App` nebo web fallback a pokračujte.
+- Nejde CLI instalace → nenechte se blokovat déle než 7 minut.
+- Nejde otevřít repo → spárujte se s někým od stolu a vraťte se k tomu později.
+- Nevíte, co je další krok → použijte `/workshop setup`.
 
 ## Facilitátorské rozhodnutí
 
-- 7 minut blokace: fallback nebo pairing
-- 10 minut chaosu: facilitátor dává konkrétní další krok
-- Cíl není perfektní setup. Cíl je dostat každého do práce s agentem co nejdřív.
+- 7 minut blokace → fallback nebo pairing.
+- 10 minut chaosu → facilitátor dává jeden konkrétní další krok.
+- Jakmile má člověk jednu funkční cestu, setup je pro tuto chvíli dost dobrý.
