@@ -24,4 +24,4 @@ Týmy mají data, ale chybí jim přehledná vizualizace, která podporuje rychl
 
 ## První krok pro agenta
 
-Navrhni dashboard, který zvládne handoff. Nejprve popiš datový model, komponenty a kritéria hotovo, teprve potom stav UI.
+Navrhni dashboard, který zvládne handoff. Nejdřív popiš datový model, komponenty a kritéria hotovo, teprve potom stav UI.

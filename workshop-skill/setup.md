@@ -11,7 +11,7 @@
 1. Ověřte, že máte přístup ke Codex účtu.
 2. Nainstalujte CLI podle interního setup flow vaší organizace.
 3. Přihlaste se.
-4. Ověřte, že umíte otevřít repozitář a spustit základní příkaz.
+4. Ověřte, že umíte otevřít repozitář a poslat první smysluplný prompt.
 
 ## Codex App
 

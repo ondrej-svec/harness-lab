@@ -6,7 +6,7 @@ Na konci dne vytvoř krátké shrnutí workshopu, které je:
 
 - konkrétní
 - systémové, ne osobní
-- trochu meta: ukazuje, že agent umí shrnout práci agentů a lidí dohromady
+- lehce meta: ukazuje, že agent umí shrnout práci agentů i lidí dohromady
 
 ## Vstupy
 

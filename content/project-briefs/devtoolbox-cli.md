@@ -12,7 +12,7 @@ Vývojáři opakovaně řeší malé pomocné úlohy ručně: čistí logy, pře
 
 ## Architektonické poznámky
 
-- Jazyk je volný, ale CLI musí být snadno objevitelné a spustitelné.
+- Jazyk je volný, ale CLI musí být snadno objevitelné a snadno spustitelné.
 - `AGENTS.md` má obsahovat build/test flow a pravidla pro styl výstupů.
 - Runbook pro další tým je stejně důležitý jako samotné funkce.
 
@@ -24,4 +24,4 @@ Vývojáři opakovaně řeší malé pomocné úlohy ručně: čistí logy, pře
 
 ## První krok pro agenta
 
-Nejprve navrhni minimální architekturu, která přežije handoff. Začni `AGENTS.md`, potom plánem, až pak implementací.
+Nejdřív navrhni minimální architekturu, která přežije handoff. Začni `AGENTS.md`, pokračuj planem a teprve potom implementací.

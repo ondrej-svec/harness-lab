@@ -3,7 +3,7 @@
 ## Formát
 
 - velikost: A6 nebo čtvrtina A4
-- oboustranně není potřeba
+- oboustranný tisk není potřeba
 - velký nadpis, 1 krátký popis, 1 ikonický štítek kategorie
 
 ## Barevné rozlišení
@@ -25,4 +25,4 @@
 
 ## Tisková poznámka
 
-Pokud se nestihne tisk, dashboard + `/workshop challenges` jsou primární kanál. Tisk je bonus, ne závislost workshopu.
+Pokud se tisk nestihne, primární kanál je dashboard a `/workshop challenges`. Tisk je bonus, ne závislost workshopu.

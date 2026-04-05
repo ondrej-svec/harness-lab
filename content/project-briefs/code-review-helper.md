@@ -12,7 +12,7 @@ Code review bývá nekonzistentní. Některé změny projdou bez checklistu, bez
 
 ## Architektonické poznámky
 
-- Může jít o CLI, web nebo skript. Hlavní je tok diff → checklist.
+- Může jít o CLI, web nebo skript. Důležitý je tok diff → checklist.
 - Musí být jasně popsáno, jaké vstupy nástroj očekává.
 - Přidejte seed diff nebo `examples/`, aby šlo workflow lokálně ověřit.
 

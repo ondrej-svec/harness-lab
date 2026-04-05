@@ -12,7 +12,7 @@
 - Existuje `AGENTS.md`?
 - Jsou v repu build/test příkazy?
 - Je jasné, co už funguje a co je jen rozpracované?
-- Je v repu plán nebo runbook, ze kterého další tým pozná záměr?
+- Je v repu plan nebo runbook, ze kterého další tým pochopí záměr?
 
 ## Doporučené slash commands
 

@@ -2,7 +2,7 @@
 
 ## Problém
 
-Denní standupy v chatu bývají dlouhé, nekonzistentní a bez jasného výstupu. Tým pak těžko dohledává blokery nebo návaznosti mezi lidmi.
+Denní standupy v chatu bývají dlouhé, nekonzistentní a bez jasného výstupu. Tým pak těžko dohledává blokery a návaznosti mezi lidmi.
 
 ## User stories
 
@@ -12,7 +12,7 @@ Denní standupy v chatu bývají dlouhé, nekonzistentní a bez jasného výstup
 
 ## Architektonické poznámky
 
-- Upřednostněte jasný datový model před komplikovanou integrací.
+- Upřednostněte jasný datový model před složitou integrací.
 - Mock data jsou v pořádku, pokud workflow působí realisticky.
 - Prompty, runbooky a rozhodnutí musí být v repu.
 

@@ -2,7 +2,7 @@
 
 ## Problém
 
-Dokumentace rychle zastarává, protože nikdo nechce ručně popisovat strukturu projektu po každé změně.
+Dokumentace rychle zastarává, protože nikdo nechce po každé změně ručně popisovat strukturu projektu.
 
 ## User stories
 
@@ -24,4 +24,4 @@ Dokumentace rychle zastarává, protože nikdo nechce ručně popisovat struktur
 
 ## První krok pro agenta
 
-Nejprve popiš, jaké signály budeš z projektu číst a jak budeš oddělovat fakta od heuristik.
+Nejdřív popiš, jaké signály budeš z projektu číst a jak budeš oddělovat fakta od heuristik.

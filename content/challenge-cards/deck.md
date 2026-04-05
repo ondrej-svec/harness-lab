@@ -8,7 +8,7 @@
 
 ## Workflow
 
-- `Použijte /plan před kódováním` — napište, z jakého plánu tým vycházel.
+- `Použijte /plan před kódováním` — napište, z jakého planu tým vycházel.
 - `Rozdělte práci do více vláken` — dvě nezávislé větve práce, jeden integrátor.
 - `Delegujte úkol a vraťte se ke kontrole za 10 minut` — nezačínejte mikromanagementem.
 
@@ -26,6 +26,6 @@
 
 ## Facilitační pravidlo
 
-- Před obědem má každý tým splnit alespoň jednu kartu z `Context Engineering`.
-- Po rotaci má každý tým splnit alespoň jednu kartu z `Workflow`.
+- Před obědem má každý tým splnit aspoň jednu kartu z `Context Engineering`.
+- Po rotaci má každý tým splnit aspoň jednu kartu z `Workflow`.
 - Ostatní karty jsou dobrovolné, ale doporučené jako stretch cíle.
