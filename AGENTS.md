@@ -32,6 +32,7 @@ The workshop uses a signature exercise called "The Silent Post": teams build pro
 - Technical terms (AGENTS.md, skills, slash commands): English
 - Code and configuration: English
 - This file and dev-facing docs: English
+- Participant-facing copy should follow `content/style-guide.md` and `content/style-examples.md`
 
 ## Build & Test
 

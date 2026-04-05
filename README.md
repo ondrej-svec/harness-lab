@@ -1,22 +1,22 @@
 # Harness Lab 🔧
 
-**Celodenní workshop pro vývojáře** zaměřený na harness engineering — umění řídit AI agenty efektivně.
+**Celodenní workshop pro vývojáře** o harness engineeringu, tedy o tom, jak kolem AI agentů postavit funkční pracovní systém.
 
 ## Co je Harness Lab?
 
-Workshop, kde se vývojáři naučí:
-- **Inženýrství kontextu** — vytvářet AGENTS.md, skills a runbooky, které agentům dávají jasný směr
-- **Strukturované workflow** — brainstorm → plán → implementace → review
-- **Řízení AI agentů** — přistupovat k agentům jako team lead přistupuje k týmu
+Workshop, ve kterém si vývojáři prakticky vyzkouší:
+- **Práci s kontextem** — jak psát `AGENTS.md`, skills a runbooky, které agentovi opravdu pomáhají
+- **Strukturovaný workflow** — `brainstorm` → `plan` → implementace → `review`
+- **Řízení agentů** — jak vést agenty podobně, jako team lead vede tým
 
 ## Signaturní cvičení: Tichá pošta
 
-1. **Dopoledne** — týmy si vyberou projekt a stavějí ho s AI agenty. Vše musí být zdokumentované tak, aby cizí lidé mohli pokračovat.
-2. **Po obědě** — kompletní rotace týmů. Nový tým zdědí pouze to, co je v repozitáři.
-3. **Odpoledne** — nový tým pokračuje pouze s napsaným kontextem + AI agenty.
-4. **Odhalení** — původní tým uvidí, co se stalo s jejich projektem.
+1. **Dopoledne** — tým si vybere projekt a začne ho stavět s AI agenty. Vše důležité musí být v repozitáři, ne jen v hlavách lidí.
+2. **Po obědě** — přijde plná rotace týmů. Nový tým zdědí jen to, co je napsané v repu.
+3. **Odpoledne** — nový tým pokračuje bez ústního handoffu, jen s dostupným kontextem a agenty.
+4. **Reveal** — původní tým uvidí, co jejich projekt po předání unesl a kde se rozpadl.
 
-Týmy s dobrým kontextem zůstaly na správné cestě. Týmy bez kontextu... zažily tichou poštu.
+Týmy s dobrým kontextem drží směr. Týmy bez kontextu zažijí tichou poštu v přímém přenosu.
 
 ## Termíny
 
@@ -37,7 +37,12 @@ Týmy s dobrým kontextem zůstaly na správné cestě. Týmy bez kontextu... za
 
 ## Aktuální stav
 
-- `dashboard/` obsahuje první Next.js App Router shell s mobilním layoutem a seedovanými API route endpoints
-- `content/` obsahuje první projektové briefy, challenge deck, talk outline a facilitační guide v češtině
-- `workshop-skill/` obsahuje participant-facing skill kostru a referenční kartu
-- `monitoring/` a `capture/` mají popsané MVP fallbacky pro facilitátora
+- `dashboard/` už obsahuje funkční workshop shell, admin panel a lokální state pro jednu workshopovou instanci
+- `content/` obsahuje první sadu briefů, challenge deck, talk scripts a facilitační podklady v češtině
+- `workshop-skill/` obsahuje participant-facing skill kostru, setup flow, recap i template pro `AGENTS.md`
+- `monitoring/` a `capture/` pokrývají manuální MVP pro facilitátora
+
+## Content Style
+
+- Hlas a jazyková pravidla pro participant-facing texty jsou v `content/style-guide.md`
+- Praktické příklady formulací jsou v `content/style-examples.md`

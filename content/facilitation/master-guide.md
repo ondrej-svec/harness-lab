@@ -7,12 +7,18 @@
 
 ## Build Phase 1
 
-- Viditelný milestone board:
-  - do 10:50 existuje repo
-  - do 11:15 existuje `AGENTS.md`
-  - do 11:30 existuje plán
-  - do 12:00 existuje první reviewed output
-- Stance facilitátora: nejdřív coach, pak mentor, učitel až jako poslední možnost.
+Viditelný milestone board:
+
+1. do 10:50 existuje repo
+2. do 11:15 existuje `AGENTS.md`
+3. do 11:30 existuje plan
+4. do 12:00 existuje první reviewed output
+
+Role facilitátora:
+
+- nejdřív coach
+- pak mentor
+- učitel až jako poslední možnost
 
 ## Intermezza
 
@@ -26,7 +32,7 @@ Každé intermezzo má tři kroky:
 
 - Bez ústního handoffu.
 - Prvních 10 minut nový tým jen čte repo a mapuje situaci.
-- Frustrace není chyba workshopu. Je to signál kvality kontextu.
+- Frustrace není chyba workshopu. Je to signál kvality kontextu v repozitáři.
 
 ## Reveal a reflexe
 
