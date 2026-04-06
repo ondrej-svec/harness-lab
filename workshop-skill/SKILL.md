@@ -100,6 +100,38 @@ Treat this as facilitator-facing. Do not proactively surface it to participants 
 
 Return the workshop reference card from `workshop-skill/reference.md`.
 
+### `/workshop facilitator login`
+
+Authenticate as a facilitator via Neon Auth email/password.
+Call the dashboard API to get a session token. Store it for subsequent commands.
+This is a facilitator-only command — do not surface to participants.
+
+### `/workshop facilitator status`
+
+Show the current instance state, agenda phase, facilitator list, and team count.
+Requires active facilitator session.
+
+### `/workshop facilitator grant <email> <role>`
+
+Grant a Neon Auth user access to the current workshop instance.
+Roles: owner, operator, observer. Requires `owner` role.
+
+### `/workshop facilitator revoke <email>`
+
+Revoke a facilitator's access to the current instance. Requires `owner` role.
+
+### `/workshop facilitator create-instance`
+
+Create a new workshop instance from a template. Requires facilitator session.
+
+### `/workshop facilitator prepare`
+
+Set the current instance to `prepared` state. Verify event code is ready.
+
+### `/workshop facilitator archive`
+
+Archive the current workshop instance with optional notes.
+
 ### `/workshop analyze`
 
 Review the team's repo against the handoff criteria in `workshop-skill/analyze-checklist.md`.
@@ -125,6 +157,7 @@ Relevant local files:
 - `workshop-skill/analyze-checklist.md`
 - `workshop-skill/closing-skill.md`
 - `workshop-skill/follow-up-package.md`
+- `workshop-skill/facilitator.md`
 - `content/project-briefs/*.md`
 - `content/challenge-cards/deck.md`
 - `docs/workshop-event-context-contract.md`

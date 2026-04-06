@@ -2,14 +2,12 @@ import type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
 import { getNeonAuthAsync } from "./auth/server";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getFacilitatorIdentityRepository } from "./facilitator-identity-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
-import { hashSecret } from "./participant-event-access-repository";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
 
 /**
- * File-mode facilitator auth: Basic Auth header → identity lookup → grant check.
+ * File-mode facilitator auth: Basic Auth header → password compare → grant check.
  * Used when HARNESS_STORAGE_MODE=file (local dev).
  */
 class BasicFacilitatorAuthService implements FacilitatorAuthService {
@@ -19,90 +17,22 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
   }) {
     const { authorizationHeader, instanceId } = options;
     const credentials = decodeBasicAuthHeader(authorizationHeader);
-    const username = credentials?.username ?? null;
-    const passwordHash = credentials ? hashSecret(credentials.password) : null;
 
-    if (!username || !passwordHash) {
-      emitRuntimeAlert({
-        category: "facilitator_auth_failure",
-        severity: "warning",
-        instanceId,
-        metadata: { reason: "missing_credentials" },
-      });
-      await getAuditLogRepository().append({
-        id: `audit-${Date.now()}`,
-        instanceId,
-        actorKind: "facilitator",
-        action: "facilitator_auth",
-        result: "failure",
-        createdAt: new Date().toISOString(),
-        metadata: { reason: "missing_credentials" },
-      });
+    if (!credentials) {
       return false;
     }
 
-    const identity = await getFacilitatorIdentityRepository().findByUsername(username);
-    if (!identity || identity.status !== "active" || !identity.passwordHash) {
-      emitRuntimeAlert({
-        category: "facilitator_auth_failure",
-        severity: "warning",
-        instanceId,
-        metadata: { reason: "unknown_identity", username },
-      });
-      await getAuditLogRepository().append({
-        id: `audit-${Date.now()}`,
-        instanceId,
-        actorKind: "facilitator",
-        action: "facilitator_auth",
-        result: "failure",
-        createdAt: new Date().toISOString(),
-        metadata: { reason: "unknown_identity", username },
-      });
+    // File mode: accept sample credentials (facilitator/secret)
+    const expectedPassword = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
+    const expectedUsername = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
+
+    if (credentials.username !== expectedUsername || credentials.password !== expectedPassword) {
       return false;
     }
 
-    if (identity.passwordHash !== passwordHash) {
-      emitRuntimeAlert({
-        category: "facilitator_auth_failure",
-        severity: "warning",
-        instanceId,
-        metadata: { reason: "invalid_password", username },
-      });
-      await getAuditLogRepository().append({
-        id: `audit-${Date.now()}`,
-        instanceId,
-        actorKind: "facilitator",
-        action: "facilitator_auth",
-        result: "failure",
-        createdAt: new Date().toISOString(),
-        metadata: { reason: "invalid_password", username },
-      });
-      return false;
-    }
-
-    const grant = await getInstanceGrantRepository().getActiveGrant(instanceId, identity.id);
-    const hasGrant = Boolean(grant);
-
-    if (!hasGrant) {
-      emitRuntimeAlert({
-        category: "facilitator_auth_failure",
-        severity: "warning",
-        instanceId,
-        metadata: { reason: "missing_grant", username },
-      });
-    }
-
-    await getAuditLogRepository().append({
-      id: `audit-${Date.now()}`,
-      instanceId,
-      actorKind: "facilitator",
-      action: "facilitator_auth",
-      result: hasGrant ? "success" : "failure",
-      createdAt: new Date().toISOString(),
-      metadata: { username, role: grant?.role ?? null },
-    });
-
-    return hasGrant;
+    // File mode grants are auto-seeded, so this always passes
+    void instanceId;
+    return true;
   }
 
   async hasValidSession() {
@@ -112,15 +42,14 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
 }
 
 /**
- * Neon Auth facilitator auth: session cookie → identity lookup via authSubject → grant check.
- * Used when HARNESS_STORAGE_MODE=neon and Neon Auth is configured.
+ * Neon Auth facilitator auth: session → neon_user_id → grant check (one hop).
+ * Auto-bootstraps the first user as owner on a fresh instance.
  */
 class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials(
     _: { authorizationHeader: string | null; instanceId: string },
   ) {
     void _;
-    // In Neon Auth mode, we don't support Basic Auth headers — use session-based auth
     return false;
   }
 
@@ -148,27 +77,28 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
       return false;
     }
 
-    const identity = await getFacilitatorIdentityRepository().findBySubject(userId);
-    if (!identity || identity.status !== "active") {
-      emitRuntimeAlert({
-        category: "facilitator_auth_failure",
-        severity: "warning",
-        instanceId,
-        metadata: { reason: "unknown_subject", userId },
-      });
-      await getAuditLogRepository().append({
-        id: `audit-${Date.now()}`,
-        instanceId,
-        actorKind: "facilitator",
-        action: "facilitator_auth",
-        result: "failure",
-        createdAt: new Date().toISOString(),
-        metadata: { reason: "unknown_subject", userId },
-      });
-      return false;
+    const repo = getInstanceGrantRepository();
+
+    // One-hop: session.user.id → instance_grants.neon_user_id
+    let grant = await repo.getActiveGrantByNeonUserId(instanceId, userId);
+
+    // Auto-bootstrap: first user on a fresh instance becomes owner
+    if (!grant) {
+      const grantCount = await repo.countActiveGrants(instanceId);
+      if (grantCount === 0) {
+        grant = await repo.createGrant(instanceId, userId, "owner");
+        await getAuditLogRepository().append({
+          id: `audit-${Date.now()}`,
+          instanceId,
+          actorKind: "facilitator",
+          action: "facilitator_auto_bootstrap",
+          result: "success",
+          createdAt: new Date().toISOString(),
+          metadata: { neonUserId: userId, role: "owner" },
+        });
+      }
     }
 
-    const grant = await getInstanceGrantRepository().getActiveGrant(instanceId, identity.id);
     const hasGrant = Boolean(grant);
 
     if (!hasGrant) {
@@ -176,7 +106,7 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
         category: "facilitator_auth_failure",
         severity: "warning",
         instanceId,
-        metadata: { reason: "missing_grant", username: identity.username },
+        metadata: { reason: "missing_grant", neonUserId: userId },
       });
     }
 
@@ -187,7 +117,7 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
       action: "facilitator_auth",
       result: hasGrant ? "success" : "failure",
       createdAt: new Date().toISOString(),
-      metadata: { username: identity.username, role: grant?.role ?? null },
+      metadata: { neonUserId: userId, role: grant?.role ?? null },
     });
 
     return hasGrant;

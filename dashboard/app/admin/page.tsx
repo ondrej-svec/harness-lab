@@ -1,6 +1,12 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { getNeonAuthAsync } from "@/lib/auth/server";
+import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
+import { getFacilitatorSession } from "@/lib/facilitator-session";
+import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
+import { getRuntimeStorageMode } from "@/lib/runtime-storage";
+import { getNeonSql } from "@/lib/neon-db";
+import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../components/theme-switcher";
 import { workshopTemplates } from "@/lib/workshop-data";
@@ -139,6 +145,68 @@ async function archiveWorkshopAction(formData: FormData) {
   redirect(withLang("/admin", lang));
 }
 
+async function addFacilitatorAction(formData: FormData) {
+  "use server";
+  await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+  const email = String(formData.get("email") ?? "").trim();
+  const role = String(formData.get("role") ?? "operator") as "owner" | "operator" | "observer";
+
+  if (email && ["owner", "operator", "observer"].includes(role)) {
+    const facilitator = await getFacilitatorSession();
+    if (facilitator?.grant.role === "owner") {
+      const instanceId = getCurrentWorkshopInstanceId();
+      const sql = getNeonSql();
+      const users = (await sql.query(
+        `SELECT id::text, name, email FROM neon_auth."user" WHERE email = $1 LIMIT 1`,
+        [email],
+      )) as { id: string; name: string; email: string }[];
+
+      if (users.length > 0) {
+        const repo = getInstanceGrantRepository();
+        const existing = await repo.getActiveGrantByNeonUserId(instanceId, users[0].id);
+        if (!existing) {
+          await repo.createGrant(instanceId, users[0].id, role);
+          await getAuditLogRepository().append({
+            id: `audit-${Date.now()}`,
+            instanceId,
+            actorKind: "facilitator",
+            action: "facilitator_grant_created",
+            result: "success",
+            createdAt: new Date().toISOString(),
+            metadata: { grantedToEmail: email, role },
+          });
+        }
+      }
+    }
+  }
+  redirect(withLang("/admin", lang));
+}
+
+async function revokeFacilitatorAction(formData: FormData) {
+  "use server";
+  await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+  const grantId = String(formData.get("grantId") ?? "");
+
+  if (grantId) {
+    const facilitator = await getFacilitatorSession();
+    if (facilitator?.grant.role === "owner" && grantId !== facilitator.grant.id) {
+      await getInstanceGrantRepository().revokeGrant(grantId);
+      await getAuditLogRepository().append({
+        id: `audit-${Date.now()}`,
+        instanceId: getCurrentWorkshopInstanceId(),
+        actorKind: "facilitator",
+        action: "facilitator_grant_revoked",
+        result: "success",
+        createdAt: new Date().toISOString(),
+        metadata: { revokedGrantId: grantId },
+      });
+    }
+  }
+  redirect(withLang("/admin", lang));
+}
+
 export default async function AdminPage({
   searchParams,
 }: {
@@ -148,8 +216,15 @@ export default async function AdminPage({
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
   const copy = adminCopy[lang];
-  const [state, latestArchive] = await Promise.all([getWorkshopState(), getLatestWorkshopArchive()]);
+  const isNeonMode = getRuntimeStorageMode() === "neon";
+  const [state, latestArchive, facilitatorGrants, currentFacilitator] = await Promise.all([
+    getWorkshopState(),
+    getLatestWorkshopArchive(),
+    isNeonMode ? getInstanceGrantRepository().listActiveGrants(getCurrentWorkshopInstanceId()) : Promise.resolve([]),
+    isNeonMode ? getFacilitatorSession() : Promise.resolve(null),
+  ]);
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
+  const isOwner = currentFacilitator?.grant.role === "owner";
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] px-4 py-8 text-[var(--text-primary)] sm:px-6">
@@ -391,6 +466,76 @@ export default async function AdminPage({
                 </form>
               </AdminCard>
             </div>
+          </AdminGroup>
+        </section>
+
+        <section>
+          <AdminGroup
+            eyebrow={copy.facilitatorsEyebrow}
+            title={copy.facilitatorsTitle}
+            description={copy.facilitatorsDescription}
+          >
+            {!isNeonMode ? (
+              <AdminCard title="" tone="default">
+                <p className="text-sm text-[var(--text-muted)]">{copy.fileModeFacilitators}</p>
+              </AdminCard>
+            ) : (
+              <div className="space-y-4">
+                {facilitatorGrants.length === 0 ? (
+                  <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>
+                ) : (
+                  <div className="divide-y divide-[var(--border)] border-y border-[var(--border)]">
+                    {facilitatorGrants.map((grant) => (
+                      <div key={grant.id} className="flex items-center justify-between gap-4 py-3">
+                        <div>
+                          <p className="text-sm font-medium text-[var(--text-primary)]">
+                            {grant.userName ?? grant.userEmail ?? grant.neonUserId}
+                          </p>
+                          <p className="text-xs text-[var(--text-muted)]">
+                            {grant.userEmail ? `${grant.userEmail} · ` : ""}{grant.role}
+                          </p>
+                        </div>
+                        {isOwner && grant.id !== currentFacilitator?.grant.id ? (
+                          <form action={revokeFacilitatorAction}>
+                            <input name="lang" type="hidden" value={lang} />
+                            <input name="grantId" type="hidden" value={grant.id} />
+                            <button
+                              type="submit"
+                              className="text-xs text-[var(--danger)] transition hover:text-[var(--text-primary)]"
+                            >
+                              {copy.revokeButton}
+                            </button>
+                          </form>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {isOwner ? (
+                  <AdminCard title={copy.addFacilitatorTitle} tone="default">
+                    <form action={addFacilitatorAction} className="flex flex-wrap items-end gap-3">
+                      <input name="lang" type="hidden" value={lang} />
+                      <input
+                        name="email"
+                        type="email"
+                        required
+                        placeholder={copy.facilitatorEmailPlaceholder}
+                        className={inputClassName}
+                      />
+                      <select name="role" className={inputClassName}>
+                        <option value="operator">operator</option>
+                        <option value="owner">owner</option>
+                        <option value="observer">observer</option>
+                      </select>
+                      <button className={primaryButtonClassName} type="submit">
+                        {copy.addFacilitatorButton}
+                      </button>
+                    </form>
+                  </AdminCard>
+                ) : null}
+              </div>
+            )}
           </AdminGroup>
         </section>
       </div>

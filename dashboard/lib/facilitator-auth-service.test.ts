@@ -1,42 +1,65 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "./audit-log-repository";
-import {
-  setFacilitatorIdentityRepositoryForTests,
-  type FacilitatorIdentityRepository,
-} from "./facilitator-identity-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
-import { setInstanceGrantRepositoryForTests, type InstanceGrantRepository } from "./instance-grant-repository";
-import { hashSecret } from "./participant-event-access-repository";
-import type { AuditLogRecord, FacilitatorIdentityRecord, InstanceGrantRecord } from "./runtime-contracts";
-
-function encodeBasicAuth(value: string) {
-  return `Basic ${Buffer.from(value).toString("base64")}`;
-}
-
-class MemoryFacilitatorIdentityRepository implements FacilitatorIdentityRepository {
-  constructor(private readonly identities: FacilitatorIdentityRecord[]) {}
-
-  async findByUsername(username: string) {
-    return this.identities.find((item) => item.username === username) ?? null;
-  }
-
-  async findBySubject(subject: string) {
-    return this.identities.find((item) => item.authSubject === subject) ?? null;
-  }
-}
+import { setInstanceGrantRepositoryForTests } from "./instance-grant-repository";
+import type {
+  AuditLogRecord,
+  FacilitatorGrantInfo,
+  InstanceGrantRecord,
+  InstanceGrantRepository,
+} from "./runtime-contracts";
 
 class MemoryInstanceGrantRepository implements InstanceGrantRepository {
-  constructor(private readonly grants: InstanceGrantRecord[]) {}
+  constructor(private grants: InstanceGrantRecord[]) {}
 
-  async getActiveGrant(instanceId: string, facilitatorIdentityId: string) {
+  async getActiveGrantByNeonUserId(instanceId: string, neonUserId: string) {
     return (
       this.grants.find(
         (item) =>
           item.instanceId === instanceId &&
-          item.facilitatorIdentityId === facilitatorIdentityId &&
+          item.neonUserId === neonUserId &&
           item.revokedAt === null,
       ) ?? null
     );
+  }
+
+  async listActiveGrants(instanceId: string): Promise<FacilitatorGrantInfo[]> {
+    return this.grants
+      .filter((item) => item.instanceId === instanceId && !item.revokedAt)
+      .map((item) => ({
+        id: item.id,
+        instanceId: item.instanceId,
+        neonUserId: item.neonUserId ?? "",
+        role: item.role,
+        grantedAt: item.grantedAt,
+        revokedAt: item.revokedAt,
+        userName: null,
+        userEmail: null,
+      }));
+  }
+
+  async countActiveGrants(instanceId: string) {
+    return this.grants.filter((item) => item.instanceId === instanceId && !item.revokedAt).length;
+  }
+
+  async createGrant(instanceId: string, neonUserId: string, role: InstanceGrantRecord["role"]) {
+    const grant: InstanceGrantRecord = {
+      id: `grant-${Date.now()}`,
+      instanceId,
+      neonUserId,
+      role,
+      grantedAt: new Date().toISOString(),
+      revokedAt: null,
+    };
+    this.grants.push(grant);
+    return grant;
+  }
+
+  async revokeGrant(grantId: string) {
+    const grant = this.grants.find((g) => g.id === grantId);
+    if (grant) {
+      grant.revokedAt = new Date().toISOString();
+    }
   }
 }
 
@@ -47,26 +70,16 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async deleteOlderThan() {}
 }
 
-describe("facilitator-auth-service", () => {
-  const identity: FacilitatorIdentityRecord = {
-    id: "facilitator-sample",
-    username: "facilitator",
-    displayName: "Sample Facilitator",
-    email: "facilitator@example.com",
-    passwordHash: hashSecret("secret"),
-    authSubject: null,
-    status: "active",
-  };
-
+describe("facilitator-auth-service (file mode)", () => {
   beforeEach(() => {
-    setFacilitatorIdentityRepositoryForTests(new MemoryFacilitatorIdentityRepository([identity]));
     setInstanceGrantRepositoryForTests(
       new MemoryInstanceGrantRepository([
         {
           id: "grant-sample",
           instanceId: "sample-studio-a",
-          facilitatorIdentityId: identity.id,
+          neonUserId: "file-mode-sample",
           role: "owner",
+          grantedAt: new Date().toISOString(),
           revokedAt: null,
         },
       ]),
@@ -75,46 +88,11 @@ describe("facilitator-auth-service", () => {
   });
 
   afterEach(() => {
-    setFacilitatorIdentityRepositoryForTests(null);
     setInstanceGrantRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
   });
 
-  it("delegates credential checks through the current facilitator auth service seam", async () => {
-    await expect(
-      getFacilitatorAuthService().hasValidRequestCredentials({
-        authorizationHeader: encodeBasicAuth("facilitator:secret"),
-        instanceId: "sample-studio-a",
-      }),
-    ).resolves.toBe(true);
-
-    await expect(
-      getFacilitatorAuthService().hasValidRequestCredentials({
-        authorizationHeader: encodeBasicAuth("facilitator:wrong"),
-        instanceId: "sample-studio-a",
-      }),
-    ).resolves.toBe(false);
-  });
-
-  it("rejects valid credentials without an active grant for the instance", async () => {
-    await expect(
-      getFacilitatorAuthService().hasValidRequestCredentials({
-        authorizationHeader: encodeBasicAuth("facilitator:secret"),
-        instanceId: "sample-lab-c",
-      }),
-    ).resolves.toBe(false);
-  });
-
-  it("rejects missing credentials instead of accepting forwarded state", async () => {
-    await expect(
-      getFacilitatorAuthService().hasValidRequestCredentials({
-        authorizationHeader: null,
-        instanceId: "sample-studio-a",
-      }),
-    ).resolves.toBe(false);
-  });
-
-  it("returns false for session-based auth in file mode (Basic Auth fallback)", async () => {
+  it("returns false for session-based auth in file mode", async () => {
     await expect(
       getFacilitatorAuthService().hasValidSession({
         instanceId: "sample-studio-a",

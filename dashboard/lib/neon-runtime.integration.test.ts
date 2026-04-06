@@ -3,7 +3,6 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
-import { getFacilitatorIdentityRepository } from "./facilitator-identity-repository";
 import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
@@ -152,16 +151,22 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     });
   });
 
-  it("bootstraps a seed facilitator grant without failing the foreign-key constraint", async () => {
-    const identity = await getFacilitatorIdentityRepository().findByUsername("facilitator");
-    expect(identity).not.toBeNull();
-
-    const grant = await getInstanceGrantRepository().getActiveGrant(instanceId, identity!.id);
+  it("can create and query grants by neon_user_id", async () => {
+    const testUserId = `test-user-${Date.now()}`;
+    const repo = getInstanceGrantRepository();
+    const grant = await repo.createGrant(instanceId, testUserId, "operator");
     expect(grant).toMatchObject({
       instanceId,
-      facilitatorIdentityId: identity!.id,
-      role: "owner",
+      neonUserId: testUserId,
+      role: "operator",
       revokedAt: null,
     });
+
+    const found = await repo.getActiveGrantByNeonUserId(instanceId, testUserId);
+    expect(found).toMatchObject({ neonUserId: testUserId });
+
+    await repo.revokeGrant(grant.id);
+    const revoked = await repo.getActiveGrantByNeonUserId(instanceId, testUserId);
+    expect(revoked).toBeNull();
   });
 });

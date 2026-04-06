@@ -38,22 +38,24 @@ export type AuditLogRecord = {
   metadata?: Record<string, string | number | boolean | null>;
 };
 
-export type FacilitatorIdentityRecord = {
-  id: string;
-  username: string;
-  displayName: string;
-  email: string;
-  passwordHash: string | null;
-  authSubject: string | null;
-  status: "active" | "disabled";
-};
-
 export type InstanceGrantRecord = {
   id: string;
   instanceId: WorkshopInstanceId;
-  facilitatorIdentityId: string;
+  neonUserId: string;
   role: "owner" | "operator" | "observer";
+  grantedAt: string;
   revokedAt: string | null;
+};
+
+export type FacilitatorGrantInfo = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  neonUserId: string;
+  role: "owner" | "operator" | "observer";
+  grantedAt: string;
+  revokedAt: string | null;
+  userName: string | null;
+  userEmail: string | null;
 };
 
 export type CheckpointRecord = SprintUpdate;
@@ -162,11 +164,10 @@ export interface FacilitatorAuthService {
   }): Promise<boolean>;
 }
 
-export interface FacilitatorIdentityRepository {
-  findByUsername(username: string): Promise<FacilitatorIdentityRecord | null>;
-  findBySubject(subject: string): Promise<FacilitatorIdentityRecord | null>;
-}
-
 export interface InstanceGrantRepository {
-  getActiveGrant(instanceId: WorkshopInstanceId, facilitatorIdentityId: string): Promise<InstanceGrantRecord | null>;
+  getActiveGrantByNeonUserId(instanceId: WorkshopInstanceId, neonUserId: string): Promise<InstanceGrantRecord | null>;
+  listActiveGrants(instanceId: WorkshopInstanceId): Promise<FacilitatorGrantInfo[]>;
+  countActiveGrants(instanceId: WorkshopInstanceId): Promise<number>;
+  createGrant(instanceId: WorkshopInstanceId, neonUserId: string, role: InstanceGrantRecord["role"]): Promise<InstanceGrantRecord>;
+  revokeGrant(grantId: string): Promise<void>;
 }
