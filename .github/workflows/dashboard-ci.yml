@@ -121,7 +121,8 @@ jobs:
       - sast-semgrep
       - dependency-review
     steps:
-      - name: Fail if any required job failed
+      - name: Assess aggregate CI result
+        id: assess
         env:
           VERIFY_RESULT: ${{ needs.verify-dashboard.result }}
           E2E_RESULT: ${{ needs.e2e-dashboard.result }}
@@ -135,33 +136,51 @@ jobs:
           echo "sast-semgrep: ${SAST_SEMGREP_RESULT}"
           echo "dependency-review: ${DEPENDENCY_REVIEW_RESULT}"
 
+          STATE="success"
+          DESCRIPTION="Ready for Vercel promotion"
+
           if [ "${VERIFY_RESULT}" != "success" ]; then
-            echo "verify-dashboard did not succeed"
-            exit 1
+            STATE="failure"
+            DESCRIPTION="verify-dashboard failed"
           fi
 
-          if [ "${E2E_RESULT}" != "success" ]; then
-            echo "e2e-dashboard did not succeed"
-            exit 1
+          if [ "${STATE}" = "success" ] && [ "${E2E_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="e2e-dashboard failed"
           fi
 
-          if [ "${SECRET_SCAN_RESULT}" != "success" ]; then
-            echo "secret-scan did not succeed"
-            exit 1
+          if [ "${STATE}" = "success" ] && [ "${SECRET_SCAN_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="secret-scan failed"
           fi
 
-          if [ "${SAST_SEMGREP_RESULT}" != "success" ]; then
-            echo "sast-semgrep did not succeed"
-            exit 1
+          if [ "${STATE}" = "success" ] && [ "${SAST_SEMGREP_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="sast-semgrep failed"
           fi
 
-          if [ "${DEPENDENCY_REVIEW_RESULT}" != "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "skipped" ]; then
-            echo "dependency-review did not succeed"
-            exit 1
+          if [ "${STATE}" = "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "skipped" ]; then
+            STATE="failure"
+            DESCRIPTION="dependency-review failed"
           fi
 
-      - name: notify vercel
+          echo "state=${STATE}" >> "$GITHUB_OUTPUT"
+          echo "description=${DESCRIPTION}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Vercel promotion status
         if: always()
-        uses: vercel/repository-dispatch/actions/status@v1
+        uses: actions/github-script@v7
         with:
-          name: Vercel - harness-lab-dashboard: deploy-ready
+          script: |
+            await github.rest.repos.createCommitStatus({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              sha: context.sha,
+              state: '${{ steps.assess.outputs.state }}',
+              context: 'Vercel - harness-lab-dashboard: deploy-ready',
+              description: '${{ steps.assess.outputs.description }}',
+            });
+
+      - name: Fail if aggregate CI failed
+        if: steps.assess.outputs.state != 'success'
+        run: exit 1
