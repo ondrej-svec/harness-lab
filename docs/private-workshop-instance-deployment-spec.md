@@ -8,6 +8,7 @@ This document defines the production deployment model for the shared Harness Lab
 - one production Neon database for the private runtime layer
 - one preview deployment per branch or pull request
 - one corresponding preview database branch for schema and integration verification
+- canonical production branch: `main`
 
 ## Environment Model
 
@@ -23,6 +24,7 @@ This document defines the production deployment model for the shared Harness Lab
 - attach a Neon preview branch seeded with the required schema
 - enable facilitator auth and preview protection before sharing the URL broadly
 - use preview-safe secrets, never production credentials copied into ad hoc files
+- current live bootstrap uses a schema-only Neon `preview` branch plus preview-scoped `HARNESS_DATABASE_URL` in Vercel; the official Neon integration is still optional follow-up, not a hard dependency for first go-live
 
 ### Production
 
@@ -83,6 +85,11 @@ vercel env add HARNESS_ADMIN_PASSWORD preview
 ```
 
 Repeat with `production` instead of `preview` for production-scoped values.
+
+Notes:
+
+- on Git-connected projects, `vercel env add ... preview` may prompt for a Git branch; leave it empty to apply the value to all preview branches
+- `dashboard/vercel.json` pins the project framework to `nextjs` so deployments do not fall back to the generic static-site output contract
 
 ### Before preview creation
 

@@ -152,8 +152,8 @@ Goal: freeze exactly what must exist in Vercel and Neon before any bootstrap beg
 
 Tasks:
 - [x] Inventory the real environment variables needed for file/demo, preview, and production, replacing the current demo-biased `.env.example` assumptions with a deployment-grade env matrix.
-- [ ] Decide the canonical production branch and the exact preview trigger model: every branch, every PR, or selected branches only.
-- [ ] Decide whether production will rely only on application-layer auth or also on Vercel production-domain deployment protection, based on the actual Vercel plan.
+- [x] Decide the canonical production branch and the exact preview trigger model: `main` is the canonical production branch and Vercel Git-connected preview deployments remain enabled for preview branches.
+- [x] Decide whether production will rely only on application-layer auth or also on Vercel production-domain deployment protection, based on the actual Vercel plan.
 - [x] Decide how migrations are executed: Vercel build step, separate operator command, or dedicated workflow.
 - [x] Update deployment docs so the bootstrap path names the required dashboards, integrations, secrets, and owners explicitly.
 
@@ -170,8 +170,8 @@ Goal: create the real Vercel project and a repeatable local operator flow withou
 Tasks:
 - [x] Create one Vercel project for `dashboard/` and set its root directory correctly.
 - [x] Link the local repo with `vercel link` or equivalent CLI flow and verify operators can pull env vars with `vercel env pull`.
-- [ ] Confirm the Git repository is connected so non-production branches create preview deployments automatically.
-- [ ] Configure preview deployment protection in the Vercel dashboard and verify it covers Middleware and protected routes.
+- [x] Confirm the Git repository is connected so non-production branches create preview deployments automatically.
+- [x] Configure preview deployment protection in the Vercel dashboard and verify it covers Middleware and protected routes.
 - [x] Document the exact bootstrap commands and dashboard settings used so another operator can repeat them from scratch.
 
 Exit criteria:
@@ -185,11 +185,11 @@ Exit criteria:
 Goal: make previews data-safe and schema-safe.
 
 Tasks:
-- [ ] Create or select the canonical Neon production project/branch for Harness Lab.
+- [x] Create or select the canonical Neon production project/branch for Harness Lab.
 - [ ] Connect the Neon project to Vercel using the official integration, choosing Preview and Production environments deliberately.
 - [ ] Enable one-database-branch-per-preview behavior for preview deployments.
-- [ ] Verify preview deployments receive injected database environment variables and do not share the production branch directly.
-- [ ] Decide whether preview branches use schema-only/sanitized data and document the policy explicitly.
+- [x] Verify preview deployments receive injected database environment variables and do not share the production branch directly.
+- [x] Decide whether preview branches use schema-only/sanitized data and document the policy explicitly.
 - [ ] Define cleanup behavior for obsolete preview branches after PR close or merge.
 
 Exit criteria:
@@ -220,12 +220,12 @@ Exit criteria:
 Goal: move from preview-ready to actually operable in production.
 
 Tasks:
-- [ ] Load the production environment variables in Vercel with explicit environment scoping.
-- [ ] Apply the production database schema through the chosen migration path before or during the first production release.
-- [ ] Perform one intentional production deployment from the canonical production branch.
+- [x] Load the production environment variables in Vercel with explicit environment scoping.
+- [x] Apply the production database schema through the chosen migration path before or during the first production release.
+- [x] Perform one intentional production deployment from the canonical production branch.
 - [ ] Validate participant public entry, participant event-code redemption, facilitator login, one read-only protected path, and one protected write path in production.
 - [ ] Confirm rollback steps are executable: previous deployment visibility in Vercel, schema rollback/branch strategy in Neon, and secret rotation rules if auth material leaks.
-- [ ] Record the first production deployment result and any follow-up infra corrections in the runbook.
+- [x] Record the first production deployment result and any follow-up infra corrections in the runbook.
 
 Exit criteria:
 
@@ -240,12 +240,12 @@ Dependency-ordered tracker for `$work`:
 - [x] Audit the current env surface and write a deployment-grade preview/production env matrix.
 - [x] Decide and document the migration execution path for preview and production.
 - [x] Bootstrap the canonical Vercel project for `dashboard/` and verify local CLI linking.
-- [ ] Configure preview deployment protection and confirm the chosen production protection posture.
+- [x] Configure preview deployment protection and confirm the chosen production protection posture.
 - [ ] Connect Neon to Vercel and enable one branch per preview deployment.
-- [ ] Verify preview deployments receive the correct database env vars and branch isolation.
+- [x] Verify preview deployments receive the correct database env vars and branch isolation.
 - [ ] Load GitHub Actions secrets required for preview-grade integration checks.
 - [ ] Exercise one full preview rehearsal from branch push to browser validation and log inspection.
-- [ ] Load production env vars, run the production schema path, and perform the first real production deployment.
+- [x] Load production env vars, run the production schema path, and perform the first real production deployment.
 - [ ] Rehearse rollback and update the runbook with the final operator-grade deployment procedure.
 
 ## Acceptance Criteria
@@ -261,10 +261,20 @@ Dependency-ordered tracker for `$work`:
 ## Current Execution Notes
 
 - The canonical Vercel project `harness-lab-dashboard` now exists under the `svecond2s-projects` scope and `dashboard/` is linked locally through the Vercel CLI.
-- Local operator verification now works through `cd dashboard && vercel env pull .env.vercel.local --scope svecond2s-projects`.
-- No Vercel environment variables have been loaded yet.
-- Vercel Git repository connection is still blocked because `vercel git connect` could not attach `ondrej-svec/harness-lab`.
-- Neon branch/project work is blocked until Neon CLI/browser authentication is completed.
+- `ondrej-svec/harness-lab` is connected to the Vercel project and `main` is the intended production branch.
+- Local operator verification works through `cd dashboard && vercel env pull .env.vercel.local --scope svecond2s-projects`.
+- Preview and Production Vercel environment variables are loaded for `HARNESS_STORAGE_MODE`, `HARNESS_WORKSHOP_INSTANCE_ID`, `HARNESS_DATABASE_URL`, `HARNESS_ADMIN_USERNAME`, `HARNESS_ADMIN_PASSWORD`, `HARNESS_EVENT_CODE`, and `HARNESS_EVENT_CODE_EXPIRES_AT`.
+- The canonical Neon project is `harness-lab` (`broad-smoke-45468927`) in `aws-eu-central-1`, with production branch `main` and a schema-only preview branch `preview`.
+- Database schema migrations have been applied successfully to both the production and preview Neon branches through `cd dashboard && npm run db:migrate`.
+- The preview deployment is live at `https://harness-lab-dashboard-5cqclkwyz-svecond2s-projects.vercel.app` and is protected by Vercel authentication at the deployment layer.
+- The production deployment is live at `https://harness-lab-dashboard.vercel.app`.
+- Manual/runtime verification completed so far:
+  - preview root returns a Vercel authentication wall
+  - preview protected API access is blocked before app middleware runs
+  - production root is publicly reachable
+  - production protected API access without facilitator auth returns `401`
+- The official Neon Vercel integration and one-branch-per-preview automation are still not enabled. The current deployment uses manually scoped `HARNESS_DATABASE_URL` values in Vercel instead.
+- GitHub Actions secret wiring, full browser rehearsal, and rollback rehearsal remain unfinished.
 
 ## References
 

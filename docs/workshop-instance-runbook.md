@@ -8,6 +8,16 @@ This runbook is operational guidance. Architecture decisions and security gates 
 - [`private-workshop-instance-auth-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
 - [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
 
+## Current Deployment Baseline
+
+- canonical Vercel project: `svecond2s-projects/harness-lab-dashboard`
+- production URL: `https://harness-lab-dashboard.vercel.app`
+- production branch: `main`
+- preview deployments are protected by Vercel authentication before app routes execute
+- production facilitator protection remains application-layer auth on protected routes
+- Neon runtime project: `harness-lab` in `aws-eu-central-1`
+- current Neon branch model: production `main`, preview `preview`
+
 ## Instance Configuration Model
 
 Default company-scale model:
