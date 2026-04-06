@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   getConfiguredEventCode,
@@ -64,19 +65,9 @@ export default async function HomePage({
   const participantNotes = ticker.slice(0, 3);
 
   return (
-    <main className="min-h-screen bg-[#f5f1e8] text-stone-900">
-      <div className="mx-auto flex min-h-screen w-full max-w-[65ch] flex-col px-6 py-10">
-        <header className="border-b border-stone-900/10 pb-10">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Harness Lab</p>
-          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-stone-950 sm:text-5xl">
-            Kontext, workflow a handoff pro praci s AI agenty.
-          </h1>
-          <p className="mt-6 max-w-[58ch] text-base leading-8 text-stone-700">
-            Veřejná homepage nemá předstírat, že jste uvnitř konkrétní workshop instance. Má jen vysvětlit, co je
-            Harness Lab, proč existuje, a nabídnout vstup do room-specific contextu až ve chvíli, kdy ho opravdu
-            potřebujete.
-          </p>
-        </header>
+    <main className="min-h-screen bg-white text-black">
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-6 sm:px-8 sm:py-8">
+        <SiteHeader />
 
         {participantSession ? (
           <ParticipantView
@@ -95,6 +86,36 @@ export default async function HomePage({
   );
 }
 
+function SiteHeader() {
+  return (
+    <header className="border-b border-black/10 pb-5">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <Link className="text-sm font-medium lowercase tracking-[0.12em] text-black" href="/">
+          harness lab
+        </Link>
+
+        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm lowercase text-black/65">
+          <a className="transition hover:text-black" href="#overview">
+            overview
+          </a>
+          <a className="transition hover:text-black" href="#principles">
+            principles
+          </a>
+          <a className="transition hover:text-black" href="#details">
+            details
+          </a>
+          <a className="transition hover:text-black" href="#access">
+            participant access
+          </a>
+          <a className="transition hover:text-black" href="/admin">
+            facilitator login
+          </a>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
 function PublicView({
   configuredEventCode,
   eventAccessError,
@@ -104,78 +125,147 @@ function PublicView({
 }) {
   return (
     <>
-      <section className="border-b border-stone-900/10 py-10">
-        <div className="space-y-6 text-base leading-8 text-stone-700">
-          <p>
-            Harness Lab je celodenní workshop o harness engineeringu. Neučí jen promptování, ale hlavně to, jak
-            navrhovat repozitářový kontext, pravidla, ověřování a handoff tak, aby s AI agenty šlo pracovat bezpečně a
-            bez improvizace.
+      <section
+        className="grid gap-12 border-b border-black/10 py-12 lg:min-h-[72vh] lg:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.8fr)] lg:items-end lg:gap-16"
+        id="overview"
+      >
+        <div className="max-w-3xl">
+          <p className="text-sm lowercase text-black/45">workshop operating system for teams using ai agents</p>
+          <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.06em] text-black sm:text-6xl lg:text-8xl">
+            harness
+            <br />
+            lab
+          </h1>
+          <p className="mt-8 max-w-2xl text-lg leading-8 text-black/72 sm:text-xl">
+            Celodenní workshop o kontextu, workflow a handoffu pro práci s AI coding agenty.
           </p>
-          <p>
-            To důležité má přežít v repu. `AGENTS.md`, plán, malé ověřitelné kroky, testy a čitelné operace jsou
-            cennější než efektní, ale nepřenositelný výstup.
+          <p className="mt-4 max-w-2xl text-base leading-8 text-black/62">
+            Ne dashboard. Ne demo místnost. Veřejná vrstva má vysvětlit, proč Harness Lab existuje, co učí, a teprve
+            potom otevřít vstup do room contextu pro lidi, kteří už sedí uvnitř workshopu.
           </p>
         </div>
-      </section>
 
-      <section className="border-b border-stone-900/10 py-10">
-        <div className="space-y-3">
-          <SimpleRule
-            title="Repo before improvisation"
-            body="Nejdřív dostaňte záměr, omezení a další bezpečný krok do repa."
-          />
-          <SimpleRule
-            title="Verify small"
-            body="Každý významný posun co nejdřív uzamkněte důkazem, ne dojmem."
-          />
-          <SimpleRule
-            title="Write for handoff"
-            body="Další tým má bez ústního vysvětlování poznat, co funguje a co je risk."
-          />
-        </div>
-      </section>
-
-      <section className="py-10">
-        <div className="border border-stone-900/10 bg-white/50 p-6">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Participant access</p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-stone-950">Vstup do room contextu</h2>
-          <p className="mt-4 text-sm leading-7 text-stone-600">
-            Pokud jste fyzicky v místnosti, facilitátor sdílí event code. Bez něj tato stránka zůstává jen jako
-            veřejná vstupní vrstva k Harness Labu.
+        <aside id="access" className="border border-black bg-black p-6 text-white sm:p-8">
+          <p className="text-[11px] lowercase tracking-[0.22em] text-white/60">participant access</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">enter room context</h2>
+          <p className="mt-4 text-sm leading-7 text-white/72">
+            Pokud jste fyzicky v místnosti, facilitátor sdílí event code. Bez něj tato stránka zůstává veřejným
+            přehledem Harness Labu.
           </p>
 
-          <form action={redeemEventCodeAction} className="mt-6 space-y-4">
-            <label className="block text-[11px] uppercase tracking-[0.24em] text-stone-500" htmlFor="event-code">
-              Event code
+          <form action={redeemEventCodeAction} className="mt-8 space-y-4">
+            <label className="block text-[11px] lowercase tracking-[0.18em] text-white/60" htmlFor="event-code">
+              event code
             </label>
             <input
-              className="w-full border border-stone-900/15 bg-transparent px-4 py-3 text-base text-stone-950 outline-none placeholder:text-stone-400"
+              className="w-full border border-white/20 bg-transparent px-4 py-3 text-base text-white outline-none placeholder:text-white/35"
               defaultValue={configuredEventCode?.isSample ? configuredEventCode.sampleCode : ""}
               id="event-code"
               name="eventCode"
               placeholder="shared by facilitator"
             />
             <button
-              className="w-full border border-stone-950 bg-stone-950 px-4 py-3 text-sm font-medium text-stone-50 transition hover:bg-stone-800"
+              className="w-full border border-white bg-white px-4 py-3 text-sm font-medium lowercase text-black transition hover:bg-transparent hover:text-white"
               type="submit"
             >
-              Enter room context
+              open participant view
             </button>
           </form>
 
+          <div className="mt-6 flex flex-wrap items-center gap-4 text-sm lowercase">
+            <a className="text-white/78 transition hover:text-white" href="/admin">
+              facilitator login
+            </a>
+            <span className="text-white/28">/</span>
+            <a className="text-white/78 transition hover:text-white" href="#details">
+              public details
+            </a>
+          </div>
+
           {configuredEventCode?.isSample ? (
-            <p className="mt-4 text-xs leading-5 text-stone-500">
+            <p className="mt-6 text-xs leading-6 text-white/58">
               Lokální demo běží se sample kódem, proto je pole předvyplněné. V preview a produkci to tak být nemá.
             </p>
           ) : null}
 
           {eventAccessError ? (
-            <p className="mt-4 border border-red-900/15 bg-red-50 px-4 py-3 text-sm leading-6 text-red-800">
+            <p className="mt-6 border border-white/20 bg-white/8 px-4 py-3 text-sm leading-6 text-white">
               {formatEventAccessError(eventAccessError)}
             </p>
           ) : null}
+        </aside>
+      </section>
+
+      <section className="border-b border-black/10 py-12" id="principles">
+        <div className="grid gap-10 lg:grid-cols-[0.48fr_1fr] lg:gap-16">
+          <div>
+            <SectionLabel>principles</SectionLabel>
+            <h2 className="mt-4 max-w-sm text-3xl font-semibold tracking-[-0.04em] text-black sm:text-4xl">
+              minimal rules that make teams actually continue.
+            </h2>
+          </div>
+          <div className="space-y-6">
+            <SimpleRule
+              title="repo before improvisation"
+              body="Důležitý záměr, omezení a další krok patří nejdřív do repa, ne do vzduchu."
+            />
+            <SimpleRule
+              title="verify small"
+              body="Každý významný posun co nejdřív uzamkněte důkazem. Menší jistota je lepší než velká improvizace."
+            />
+            <SimpleRule
+              title="write for handoff"
+              body="Další tým má bez ústního vysvětlování poznat, co funguje, co je křehké a co je bezpečný další krok."
+            />
+          </div>
         </div>
       </section>
+
+      <section className="border-b border-black/10 py-12" id="details">
+        <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
+          <div>
+            <SectionLabel>what it is</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-black/68">
+              Harness Lab je praktický workshop o práci s AI agenty v reálném repozitáři. Důraz je na tom, co po
+              týmu zůstane: kontext, pravidla, plán, testy a handoff.
+            </p>
+          </div>
+          <div>
+            <SectionLabel>for participants</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-black/68">
+              Účastníci dostanou room-specific kontext až po event code. Veřejná stránka zůstává záměrně čistá a
+              neobsahuje live stav workshop instance.
+            </p>
+          </div>
+          <div>
+            <SectionLabel>public boundary</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-black/68">
+              Skutečná data o termínu, místnosti, rosters a facilitaci patří do privátní runtime vrstvy. Public repo
+              a public homepage zůstávají bezpečné a přenositelné.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <footer className="flex flex-col gap-6 py-8 text-sm text-black/58 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="lowercase">harness lab</p>
+          <p className="mt-2 max-w-md leading-7">
+            public front door for a workshop about context engineering, repository clarity and handoff for ai agents.
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 lowercase">
+          <a className="transition hover:text-black" href="#overview">
+            top
+          </a>
+          <a className="transition hover:text-black" href="#access">
+            participant access
+          </a>
+          <a className="transition hover:text-black" href="/admin">
+            facilitator login
+          </a>
+        </div>
+      </footer>
     </>
   );
 }
@@ -276,7 +366,7 @@ function ParticipantView({
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">{children}</p>;
+  return <p className="text-[11px] lowercase tracking-[0.22em] text-black/45">{children}</p>;
 }
 
 function SimpleRule({
@@ -287,9 +377,9 @@ function SimpleRule({
   body: string;
 }) {
   return (
-    <div className="grid gap-2 sm:grid-cols-[180px_1fr] sm:gap-6">
-      <p className="text-sm font-medium text-stone-950">{title}</p>
-      <p className="text-sm leading-6 text-stone-600">{body}</p>
+    <div className="grid gap-3 border-t border-black/10 pt-5 sm:grid-cols-[220px_1fr] sm:gap-8">
+      <p className="text-sm font-medium lowercase text-black">{title}</p>
+      <p className="text-sm leading-7 text-black/64">{body}</p>
     </div>
   );
 }

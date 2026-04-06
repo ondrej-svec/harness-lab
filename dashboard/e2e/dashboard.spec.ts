@@ -17,10 +17,11 @@ test.describe("participant dashboard", () => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Kontext, workflow a handoff pro praci s AI agenty." })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Vstup do room contextu" })).toBeVisible();
-    await expect(page.getByText("Repo before improvisation")).toBeVisible();
-    await expect(page.getByText("Harness Lab je celodenní workshop o harness engineeringu.")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
+    await expect(page.getByText("repo before improvisation")).toBeVisible();
+    await expect(page.getByText("Celodenní workshop o kontextu, workflow a handoffu pro práci s AI coding agenty.")).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "facilitator login" })).toBeVisible();
 
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
@@ -30,9 +31,9 @@ test.describe("participant dashboard", () => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Vstup do room contextu" })).toBeVisible();
-    await page.getByLabel("Event code").fill("lantern8-context4-handoff2");
-    await page.getByRole("button", { name: "Enter room context" }).click();
+    await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
+    await page.getByLabel("event code").fill("lantern8-context4-handoff2");
+    await page.getByRole("button", { name: "open participant view" }).click();
 
     await expect
       .poll(async () => {
