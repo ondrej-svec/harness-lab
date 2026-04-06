@@ -87,6 +87,16 @@ Lokálně dnes běží nad file-based store. Produkčně je připravený k přes
 Deployment-grade env scoping a promotion rules jsou popsané v:
 - [private-workshop-instance-env-matrix.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
 - [private-workshop-instance-deployment-spec.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
+- [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
+
+Deploy flow běží přes nativní Git integraci ve Vercelu:
+- PR → preview deploy
+- push do `main` → production deploy
+
+GitHub Actions CI je sloučené do jednoho workflow `Dashboard CI` a Vercel má čekat na check `Dashboard CI / deploy-ready`.
+Workflow zahrnuje build/test/e2e i security gate (`gitleaks` + `Semgrep`).
+
+Kritické je, aby měl Vercel project nastavený root directory na `dashboard`. Detaily jsou v [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md).
 
 ## Workshop Skill
 

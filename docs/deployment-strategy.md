@@ -57,11 +57,44 @@ Participant event access additions:
 Recommended:
 
 1. create one Vercel project for `dashboard/`
-2. set the root directory to `dashboard`
+2. set the root directory to `dashboard` if you use Vercel's native Git integration
 3. configure environment variables for admin protection
 4. configure participant event access secrets and expiry
 5. connect production storage outside the repo
 6. treat each real workshop as a private instance record, not a separate deployment
+
+## Git-Driven Deployments
+
+This project is configured to use Vercel's native Git integration against the linked GitHub repository:
+
+- pull requests create preview deployments
+- pushes to `main` create production deployments
+
+Current production-safe setup:
+
+1. one Vercel project linked to `ondrej-svec/harness-lab`
+2. Vercel project root directory set to `dashboard`
+3. production branch set to `main`
+4. runtime secrets stored in Vercel project environment variables
+
+Verification on 2026-04-06:
+
+- project: `harness-lab-dashboard`
+- owner scope: `svecond2s-projects`
+- root directory: `dashboard`
+- production redeploy completed successfully after the root-directory fix
+
+Recommended deployment check wiring in Vercel:
+
+- require `Dashboard CI / deploy-ready` before production promotion
+- let `Dashboard CI / deploy-ready` aggregate build, test, e2e, secret scan, Semgrep SAST, and optional PR dependency review
+- enable repository variable `ENABLE_DEPENDENCY_REVIEW=true` only if the repository plan supports GitHub dependency review for private repos
+
+Why this setup exists:
+
+- it removes the current root-directory mismatch that breaks repo-root builds
+- it keeps preview and production deploys on the default Vercel Git path
+- it avoids maintaining a second deploy system in GitHub Actions
 
 ## Why One Project
 

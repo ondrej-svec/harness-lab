@@ -31,6 +31,10 @@ export default defineConfig({
   webServer: {
     command: "npm run start -- --hostname 127.0.0.1 --port 3100",
     url: `http://127.0.0.1:${port}`,
+    gracefulShutdown: {
+      signal: "SIGTERM",
+      timeout: 5_000,
+    },
     reuseExistingServer: false,
     env: {
       HARNESS_ADMIN_USERNAME: "facilitator",

@@ -10,12 +10,19 @@ on:
       - "dashboard/**"
       - ".github/workflows/dashboard-ci.yml"
 
+concurrency:
+  group: dashboard-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify-dashboard:
+    name: verify-dashboard
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: dashboard
+    permissions:
+      contents: read
     env:
       HARNESS_TEST_DATABASE_URL: ${{ secrets.HARNESS_TEST_DATABASE_URL }}
     steps:
@@ -35,9 +42,117 @@ jobs:
 
       - run: npm run build
 
+      - if: env.HARNESS_TEST_DATABASE_URL != ''
+        run: npm test -- neon-runtime.integration.test.ts
+
+  e2e-dashboard:
+    name: e2e-dashboard
+    runs-on: ubuntu-latest
+    needs:
+      - verify-dashboard
+    defaults:
+      run:
+        working-directory: dashboard
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - run: npm ci
+
       - run: npx playwright install --with-deps chromium
 
       - run: npm run test:e2e
 
-      - if: env.HARNESS_TEST_DATABASE_URL != ''
-        run: npm test -- neon-runtime.integration.test.ts
+  secret-scan:
+    name: secret-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  sast-semgrep:
+    name: sast-semgrep
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: semgrep scan --config auto --error dashboard/app dashboard/lib dashboard/scripts
+
+  dependency-review:
+    name: dependency-review
+    if: github.event_name == 'pull_request' && (!github.event.repository.private || vars.ENABLE_DEPENDENCY_REVIEW == 'true')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+
+  deploy-ready:
+    name: deploy-ready
+    if: always()
+    runs-on: ubuntu-latest
+    needs:
+      - verify-dashboard
+      - e2e-dashboard
+      - secret-scan
+      - sast-semgrep
+      - dependency-review
+    steps:
+      - name: Fail if any required job failed
+        env:
+          VERIFY_RESULT: ${{ needs.verify-dashboard.result }}
+          E2E_RESULT: ${{ needs.e2e-dashboard.result }}
+          SECRET_SCAN_RESULT: ${{ needs.secret-scan.result }}
+          SAST_SEMGREP_RESULT: ${{ needs.sast-semgrep.result }}
+          DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+        run: |
+          echo "verify-dashboard: ${VERIFY_RESULT}"
+          echo "e2e-dashboard: ${E2E_RESULT}"
+          echo "secret-scan: ${SECRET_SCAN_RESULT}"
+          echo "sast-semgrep: ${SAST_SEMGREP_RESULT}"
+          echo "dependency-review: ${DEPENDENCY_REVIEW_RESULT}"
+
+          if [ "${VERIFY_RESULT}" != "success" ]; then
+            echo "verify-dashboard did not succeed"
+            exit 1
+          fi
+
+          if [ "${E2E_RESULT}" != "success" ]; then
+            echo "e2e-dashboard did not succeed"
+            exit 1
+          fi
+
+          if [ "${SECRET_SCAN_RESULT}" != "success" ]; then
+            echo "secret-scan did not succeed"
+            exit 1
+          fi
+
+          if [ "${SAST_SEMGREP_RESULT}" != "success" ]; then
+            echo "sast-semgrep did not succeed"
+            exit 1
+          fi
+
+          if [ "${DEPENDENCY_REVIEW_RESULT}" != "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "skipped" ]; then
+            echo "dependency-review did not succeed"
+            exit 1
+          fi
