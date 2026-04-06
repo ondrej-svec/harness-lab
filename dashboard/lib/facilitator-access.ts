@@ -2,24 +2,21 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
+import { getRuntimeStorageMode } from "./runtime-storage";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
 
 function unauthorizedResponse() {
-  return new Response("Authentication required", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Harness Lab Admin"',
-    },
-  });
+  return new Response("Authentication required", { status: 401 });
 }
 
-export async function isAuthorizedFacilitatorRequest(authorizationHeader: string | null) {
-  return getFacilitatorAuthService().hasValidRequestCredentials({
-    authorizationHeader,
-    instanceId: getCurrentWorkshopInstanceId(),
-  });
+function isNeonAuthMode() {
+  return getRuntimeStorageMode() === "neon" && Boolean(process.env.NEON_AUTH_BASE_URL);
 }
 
+/**
+ * Guard for API routes: returns an error response if unauthorized, null if authorized.
+ * Uses the Request object directly (no next/headers dependency).
+ */
 export async function requireFacilitatorRequest(request: Request) {
   if (request.method !== "GET") {
     if (
@@ -34,22 +31,51 @@ export async function requireFacilitatorRequest(request: Request) {
     }
   }
 
-  if (await isAuthorizedFacilitatorRequest(request.headers.get("authorization"))) {
-    return null;
+  const instanceId = getCurrentWorkshopInstanceId();
+  const service = getFacilitatorAuthService();
+
+  if (isNeonAuthMode()) {
+    // Neon Auth: session-based check (reads cookies from request context)
+    const authorized = await service.hasValidSession({ instanceId });
+    return authorized ? null : unauthorizedResponse();
   }
 
-  return unauthorizedResponse();
+  // File mode: Basic Auth from request header
+  const authorized = await service.hasValidRequestCredentials({
+    authorizationHeader: request.headers.get("authorization"),
+    instanceId,
+  });
+  return authorized ? null : unauthorizedResponse();
 }
 
+/**
+ * Guard for admin page access (Server Components): redirects to sign-in if unauthorized.
+ * Uses next/headers for Server Component context.
+ */
 export async function requireFacilitatorPageAccess() {
+  const instanceId = getCurrentWorkshopInstanceId();
+  const service = getFacilitatorAuthService();
+
+  if (isNeonAuthMode()) {
+    const authorized = await service.hasValidSession({ instanceId });
+    if (!authorized) {
+      redirect("/admin/sign-in");
+    }
+    return;
+  }
+
+  // File mode: Basic Auth from forwarded header
   const headerStore = await headers();
   const authorizationHeader = headerStore.get("x-harness-authorization") ?? headerStore.get("authorization");
-
-  if (!(await isAuthorizedFacilitatorRequest(authorizationHeader))) {
-    redirect("/");
+  const authorized = await service.hasValidRequestCredentials({ authorizationHeader, instanceId });
+  if (!authorized) {
+    redirect("/admin/sign-in");
   }
 }
 
+/**
+ * Guard for admin server actions: checks origin trust + auth.
+ */
 export async function requireFacilitatorActionAccess() {
   if (!(await requireTrustedActionOrigin())) {
     redirect("/");

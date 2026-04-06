@@ -50,23 +50,3 @@ export function decodeBasicAuthHeader(header: string | null) {
     return null;
   }
 }
-
-export function hasValidAdminCredentials(options: {
-  authorizationHeader: string | null;
-  configuredPassword?: string;
-  configuredUsername?: string;
-}) {
-  const { authorizationHeader, configuredPassword, configuredUsername = "facilitator" } = options;
-
-  if (!configuredPassword) {
-    return true;
-  }
-
-  const credentials = decodeBasicAuthHeader(authorizationHeader);
-
-  if (!credentials) {
-    return false;
-  }
-
-  return credentials.username === configuredUsername && credentials.password === configuredPassword;
-}

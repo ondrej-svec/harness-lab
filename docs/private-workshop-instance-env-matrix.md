@@ -19,19 +19,21 @@ It intentionally names variables and purpose only. It must never contain live va
 | `HARNESS_WORKSHOP_INSTANCE_ID` | required sample or disposable instance id | required preview-safe instance id | required production-safe instance id | Default workshop instance context |
 | `HARNESS_DATABASE_URL` | optional for local Neon testing | required | required | Neon connection string for runtime repositories |
 | `HARNESS_TEST_DATABASE_URL` | optional | optional in Vercel, required in GitHub Actions secrets for preview-grade integration tests | not required in Vercel runtime | Separate preview-grade test database used by CI |
-| `HARNESS_ADMIN_USERNAME` | optional demo seed | required if staying on custom facilitator Basic Auth | required if staying on custom facilitator Basic Auth | Facilitator username for the current auth seam |
-| `HARNESS_ADMIN_PASSWORD` | optional demo seed | required if staying on custom facilitator Basic Auth | required if staying on custom facilitator Basic Auth | Facilitator password for the current auth seam |
+| `NEON_AUTH_BASE_URL` | not required (file mode uses Basic Auth fallback) | required | required | Neon Auth endpoint for facilitator identity |
+| `NEON_AUTH_COOKIE_SECRET` | not required (file mode uses Basic Auth fallback) | required | required | 32+ char secret for Neon Auth session cookie signing |
 | `HARNESS_EVENT_CODE` | optional demo seed | optional bootstrap-only fallback, prefer DB-managed event access | optional bootstrap-only fallback, prefer DB-managed event access | Demo/bootstrap participant event code |
 | `HARNESS_EVENT_CODE_EXPIRES_AT` | optional | optional bootstrap-only fallback | optional bootstrap-only fallback | Demo/bootstrap event-code expiry |
 
 ## Current Auth Note
 
-The current production seam is still the custom facilitator Basic Auth path backed by runtime identity and grant checks. Until that changes, Preview and Production both need:
+Facilitator auth uses Neon Auth (managed Better Auth) in production and preview. Preview and Production both need:
 
-- `HARNESS_ADMIN_USERNAME`
-- `HARNESS_ADMIN_PASSWORD`
+- `NEON_AUTH_BASE_URL` (from Neon Console → Branch → Auth → Configuration)
+- `NEON_AUTH_COOKIE_SECRET` (generate with `openssl rand -base64 32`)
 
 Those values must differ between Preview and Production.
+
+In local file mode (`HARNESS_STORAGE_MODE=file`), the legacy Basic Auth fallback remains available and does not require Neon Auth credentials.
 
 ## Preview Rules
 

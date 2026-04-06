@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { PATCH, POST } from "./route";
+import { PATCH, POST } from "@/app/api/admin/teams/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import { setFacilitatorAuthServiceForTests, type FacilitatorAuthService } from "@/lib/facilitator-auth-service";
 import { setTeamRepositoryForTests, type TeamRepository } from "@/lib/team-repository";

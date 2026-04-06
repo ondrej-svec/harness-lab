@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
+import { getNeonAuthAsync } from "@/lib/auth/server";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../components/theme-switcher";
 import { workshopTemplates } from "@/lib/workshop-data";
@@ -17,6 +18,16 @@ import {
 } from "@/lib/workshop-store";
 
 export const dynamic = "force-dynamic";
+
+async function signOutAction(formData: FormData) {
+  "use server";
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+  const auth = await getNeonAuthAsync();
+  if (auth) {
+    await auth.signOut();
+  }
+  redirect(withLang("/admin/sign-in", lang));
+}
 
 async function setAgendaAction(formData: FormData) {
   "use server";
@@ -154,6 +165,16 @@ export default async function AdminPage({
               <AdminLanguageSwitcher lang={lang} />
               <span className="text-[var(--text-muted)]">/</span>
               <ThemeSwitcher />
+              <span className="text-[var(--text-muted)]">/</span>
+              <form action={signOutAction}>
+                <input name="lang" type="hidden" value={lang} />
+                <button
+                  type="submit"
+                  className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
+                >
+                  {copy.signOutButton}
+                </button>
+              </form>
             </div>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-4">

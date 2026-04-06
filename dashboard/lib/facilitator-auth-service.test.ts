@@ -44,6 +44,7 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     void record;
   }
+  async deleteOlderThan() {}
 }
 
 describe("facilitator-auth-service", () => {
@@ -108,6 +109,14 @@ describe("facilitator-auth-service", () => {
     await expect(
       getFacilitatorAuthService().hasValidRequestCredentials({
         authorizationHeader: null,
+        instanceId: "sample-studio-a",
+      }),
+    ).resolves.toBe(false);
+  });
+
+  it("returns false for session-based auth in file mode (Basic Auth fallback)", async () => {
+    await expect(
+      getFacilitatorAuthService().hasValidSession({
         instanceId: "sample-studio-a",
       }),
     ).resolves.toBe(false);

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createHash } from "node:crypto";
-import { POST } from "./route";
+import { POST } from "@/app/api/event-access/redeem/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "@/lib/redeem-attempt-repository";
 import {

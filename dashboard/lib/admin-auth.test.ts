@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decodeBasicAuthHeader, hasValidAdminCredentials, isProtectedPath } from "./admin-auth";
+import { decodeBasicAuthHeader, isProtectedPath } from "./admin-auth";
 
 function encodeBasicAuth(value: string) {
   return `Basic ${Buffer.from(value).toString("base64")}`;
@@ -9,6 +9,7 @@ describe("admin-auth", () => {
   it("protects admin routes, monitoring, challenge completions, and non-GET write APIs", () => {
     expect(isProtectedPath("/admin", "GET")).toBe(true);
     expect(isProtectedPath("/admin/settings", "GET")).toBe(true);
+    expect(isProtectedPath("/admin/sign-in", "GET")).toBe(true);
     expect(isProtectedPath("/api/admin/teams", "POST")).toBe(true);
     expect(isProtectedPath("/api/monitoring", "GET")).toBe(true);
     expect(isProtectedPath("/api/challenges/agents-md/complete", "POST")).toBe(true);
@@ -25,7 +26,7 @@ describe("admin-auth", () => {
     expect(isProtectedPath("/api/challenges", "GET")).toBe(false);
   });
 
-  it("decodes a valid basic auth header", () => {
+  it("decodes a valid basic auth header (file-mode fallback)", () => {
     expect(decodeBasicAuthHeader(encodeBasicAuth("facilitator:secret"))).toEqual({
       username: "facilitator",
       password: "secret",
@@ -37,36 +38,5 @@ describe("admin-auth", () => {
     expect(decodeBasicAuthHeader("Bearer token")).toBeNull();
     expect(decodeBasicAuthHeader("Basic !!!not-base64!!!")).toBeNull();
     expect(decodeBasicAuthHeader(encodeBasicAuth("missing-separator"))).toBeNull();
-  });
-
-  it("accepts requests when admin auth is disabled", () => {
-    expect(
-      hasValidAdminCredentials({
-        authorizationHeader: null,
-      }),
-    ).toBe(true);
-  });
-
-  it("validates configured credentials", () => {
-    expect(
-      hasValidAdminCredentials({
-        authorizationHeader: encodeBasicAuth("facilitator:secret"),
-        configuredPassword: "secret",
-      }),
-    ).toBe(true);
-
-    expect(
-      hasValidAdminCredentials({
-        authorizationHeader: encodeBasicAuth("someone:secret"),
-        configuredPassword: "secret",
-      }),
-    ).toBe(false);
-
-    expect(
-      hasValidAdminCredentials({
-        authorizationHeader: encodeBasicAuth("facilitator:wrong"),
-        configuredPassword: "secret",
-      }),
-    ).toBe(false);
   });
 });

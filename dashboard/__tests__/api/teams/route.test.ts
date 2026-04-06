@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GET } from "./route";
+import { GET } from "@/app/api/teams/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import {
   participantSessionCookieName,

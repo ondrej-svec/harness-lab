@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GET, POST } from "./route";
+import { GET, POST } from "@/app/api/workshop/archive/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import { setCheckpointRepositoryForTests, type CheckpointRepository } from "@/lib/checkpoint-repository";
 import { setEventAccessRepositoryForTests, type EventAccessRepository } from "@/lib/event-access-repository";

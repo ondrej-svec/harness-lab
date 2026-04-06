@@ -151,6 +151,15 @@ export interface FacilitatorAuthService {
     authorizationHeader: string | null;
     instanceId: WorkshopInstanceId;
   }): Promise<boolean>;
+
+  /**
+   * Validate the current Neon Auth session and check instance grants.
+   * Returns true if the session is valid and the facilitator has an active grant.
+   * Implementations that don't support session-based auth should return false.
+   */
+  hasValidSession(options: {
+    instanceId: WorkshopInstanceId;
+  }): Promise<boolean>;
 }
 
 export interface FacilitatorIdentityRepository {

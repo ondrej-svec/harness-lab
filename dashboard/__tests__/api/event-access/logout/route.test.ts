@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { GET } from "./route";
+import { POST } from "@/app/api/event-access/logout/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import { participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
-import { setEventAccessRepositoryForTests, type EventAccessRepository } from "@/lib/event-access-repository";
+import { getEventAccessRepository, setEventAccessRepositoryForTests, type EventAccessRepository } from "@/lib/event-access-repository";
 import {
   hashSecret,
   setParticipantEventAccessRepositoryForTests,
@@ -63,7 +63,7 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   }
 }
 
-describe("GET /api/event-context/core", () => {
+describe("POST /api/event-access/logout", () => {
   beforeEach(() => {
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository());
     setParticipantEventAccessRepositoryForTests(
@@ -89,37 +89,26 @@ describe("GET /api/event-context/core", () => {
     vi.useRealTimers();
   });
 
-  it("rejects protected reads without a participant session", async () => {
-    const response = await GET(new Request("http://localhost/api/event-context/core"));
-
-    expect(response.status).toBe(401);
-    await expect(response.json()).resolves.toMatchObject({
-      ok: false,
-      error: "participant event access required",
-      loginCommand: "/workshop login",
-    });
-  });
-
-  it("returns the participant core bundle with a valid session cookie", async () => {
+  it("revokes the session and expires the cookie", async () => {
     const result = await redeemEventCode("lantern8-context4-handoff2");
     expect(result.ok).toBe(true);
     if (!result.ok) {
       return;
     }
 
-    const response = await GET(
-      new Request("http://localhost/api/event-context/core", {
+    const response = await POST(
+      new Request("http://localhost/api/event-access/logout", {
+        method: "POST",
         headers: {
           cookie: `${participantSessionCookieName}=${encodeURIComponent(result.session.token)}`,
+          origin: "http://localhost",
         },
       }),
     );
 
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({
-      event: {
-        title: "Harness Lab",
-      },
-    });
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toBe("http://localhost/");
+    expect(response.headers.get("set-cookie")).toContain(`${participantSessionCookieName}=`);
+    await expect(getEventAccessRepository().listSessions(result.session.instanceId)).resolves.toEqual([]);
   });
 });

@@ -1,11 +1,17 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
+import { getNeonAuthAsync } from "./auth/server";
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getFacilitatorIdentityRepository } from "./facilitator-identity-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { hashSecret } from "./participant-event-access-repository";
+import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
 
+/**
+ * File-mode facilitator auth: Basic Auth header → identity lookup → grant check.
+ * Used when HARNESS_STORAGE_MODE=file (local dev).
+ */
 class BasicFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials(options: {
     authorizationHeader: string | null;
@@ -98,10 +104,106 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
 
     return hasGrant;
   }
+
+  async hasValidSession() {
+    // Basic auth mode does not support session-based auth
+    return false;
+  }
+}
+
+/**
+ * Neon Auth facilitator auth: session cookie → identity lookup via authSubject → grant check.
+ * Used when HARNESS_STORAGE_MODE=neon and Neon Auth is configured.
+ */
+class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
+  async hasValidRequestCredentials(
+    _: { authorizationHeader: string | null; instanceId: string },
+  ) {
+    void _;
+    // In Neon Auth mode, we don't support Basic Auth headers — use session-based auth
+    return false;
+  }
+
+  async hasValidSession(options: { instanceId: string }) {
+    const { instanceId } = options;
+    const auth = await getNeonAuthAsync();
+
+    if (!auth) {
+      return false;
+    }
+
+    const { data: session } = await auth.getSession();
+    const userId = session?.user?.id ?? null;
+
+    if (!userId) {
+      await getAuditLogRepository().append({
+        id: `audit-${Date.now()}`,
+        instanceId,
+        actorKind: "facilitator",
+        action: "facilitator_auth",
+        result: "failure",
+        createdAt: new Date().toISOString(),
+        metadata: { reason: "no_session" },
+      });
+      return false;
+    }
+
+    const identity = await getFacilitatorIdentityRepository().findBySubject(userId);
+    if (!identity || identity.status !== "active") {
+      emitRuntimeAlert({
+        category: "facilitator_auth_failure",
+        severity: "warning",
+        instanceId,
+        metadata: { reason: "unknown_subject", userId },
+      });
+      await getAuditLogRepository().append({
+        id: `audit-${Date.now()}`,
+        instanceId,
+        actorKind: "facilitator",
+        action: "facilitator_auth",
+        result: "failure",
+        createdAt: new Date().toISOString(),
+        metadata: { reason: "unknown_subject", userId },
+      });
+      return false;
+    }
+
+    const grant = await getInstanceGrantRepository().getActiveGrant(instanceId, identity.id);
+    const hasGrant = Boolean(grant);
+
+    if (!hasGrant) {
+      emitRuntimeAlert({
+        category: "facilitator_auth_failure",
+        severity: "warning",
+        instanceId,
+        metadata: { reason: "missing_grant", username: identity.username },
+      });
+    }
+
+    await getAuditLogRepository().append({
+      id: `audit-${Date.now()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "facilitator_auth",
+      result: hasGrant ? "success" : "failure",
+      createdAt: new Date().toISOString(),
+      metadata: { username: identity.username, role: grant?.role ?? null },
+    });
+
+    return hasGrant;
+  }
 }
 
 export function getFacilitatorAuthService(): FacilitatorAuthService {
-  return overrideService ?? new BasicFacilitatorAuthService();
+  if (overrideService) {
+    return overrideService;
+  }
+
+  if (getRuntimeStorageMode() === "neon" && process.env.NEON_AUTH_BASE_URL) {
+    return new NeonAuthFacilitatorAuthService();
+  }
+
+  return new BasicFacilitatorAuthService();
 }
 
 let overrideService: FacilitatorAuthService | null = null;
