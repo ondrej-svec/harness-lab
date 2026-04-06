@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import { resolveUiLanguage } from "@/lib/ui-language";
+import { ThemeProvider } from "./components/theme-provider";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -20,9 +21,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const lang = resolveUiLanguage(headerStore.get("x-harness-ui-lang") ?? undefined);
 
   return (
-    <html lang={lang} className={spaceGrotesk.variable}>
+    <html lang={lang} className={spaceGrotesk.variable} suppressHydrationWarning>
       <body style={{ fontFamily: "var(--font-space-grotesk), 'Avenir Next', 'Segoe UI', sans-serif" }}>
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

@@ -11,6 +11,7 @@ import {
 } from "@/lib/event-access";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
+import { ThemeSwitcher } from "./components/theme-switcher";
 
 export const dynamic = "force-dynamic";
 
@@ -143,7 +144,11 @@ function SiteHeader({
             {copy.navFacilitatorLogin}
           </a>
         </nav>
-        <LanguageSwitcher lang={lang} />
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher lang={lang} />
+          <span className="text-[var(--text-muted)]">/</span>
+          <ThemeSwitcher />
+        </div>
         </div>
       </div>
     </header>

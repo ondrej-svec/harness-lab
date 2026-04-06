@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
+import { ThemeSwitcher } from "../components/theme-switcher";
 import { workshopTemplates } from "@/lib/workshop-data";
 import {
   addSprintUpdate,
@@ -149,7 +150,11 @@ export default async function AdminPage({
               <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{copy.pageTitle}</h1>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">{copy.pageBody}</p>
             </div>
-            <AdminLanguageSwitcher lang={lang} />
+            <div className="flex items-center gap-3">
+              <AdminLanguageSwitcher lang={lang} />
+              <span className="text-[var(--text-muted)]">/</span>
+              <ThemeSwitcher />
+            </div>
           </div>
           <div className="mt-5 grid gap-3 md:grid-cols-4">
             <StatusPill label={copy.activeInstance} value={state.workshopId} />
