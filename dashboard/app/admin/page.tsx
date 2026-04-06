@@ -124,12 +124,12 @@ export default async function AdminPage() {
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
 
   return (
-    <main className="min-h-screen bg-[#f5f1e8] px-4 py-8 text-stone-900 sm:px-6">
+    <main className="min-h-screen bg-[var(--surface-admin)] px-4 py-8 text-[var(--text-primary)] sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <header className="border border-stone-900/10 bg-white/60 p-6">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Facilitator desk</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-stone-950">Řízení workshopu</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">
+        <header className="border border-[var(--border)] bg-[var(--surface-elevated)] p-6">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">Facilitator desk</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">Řízení workshopu</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
             Chráněný operační panel pro facilitátora. Drží odděleně participant orientaci a live zásahy do workshop
             instance, aby veřejná plocha zůstala čistá a mobile-first.
           </p>
@@ -140,7 +140,7 @@ export default async function AdminPage() {
             <StatusPill label="Týmy" value={`${state.teams.length}`} />
           </div>
           {latestArchive ? (
-            <p className="mt-4 text-xs leading-5 text-stone-500">
+            <p className="mt-4 text-xs leading-5 text-[var(--text-muted)]">
               Poslední archiv: {latestArchive.createdAt} • retention do {latestArchive.retentionUntil ?? "nenastaveno"}.
             </p>
           ) : null}
@@ -177,7 +177,7 @@ export default async function AdminPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs leading-5 text-stone-400">
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">
                     Přepíše lokální workshop state seedovanou ukázkovou instancí.
                   </p>
                   <button className={dangerButtonClassName} type="submit">
@@ -194,7 +194,7 @@ export default async function AdminPage() {
                     placeholder="Volitelné poznámky k archivaci"
                     className={inputClassName}
                   />
-                  <p className="text-xs leading-5 text-stone-400">
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">
                     Uloží snapshot runtime stavu před closeoutem nebo před ručním resetem.
                   </p>
                   <button className={primaryButtonClassName} type="submit">
@@ -215,7 +215,7 @@ export default async function AdminPage() {
                 <form action={toggleRotationAction} className="space-y-3">
                   <div className="flex flex-wrap gap-3">
                     <button
-                      className="rounded-xl border border-stone-950 bg-stone-950 px-4 py-2 font-semibold text-stone-50"
+                      className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-2 font-semibold text-[var(--accent-text)]"
                       type="submit"
                       name="revealed"
                       value="true"
@@ -223,7 +223,7 @@ export default async function AdminPage() {
                       Odemknout
                     </button>
                     <button
-                      className="rounded-xl border border-white/15 px-4 py-2 font-semibold"
+                      className="border border-[var(--border-strong)] px-4 py-2 font-semibold text-[var(--text-secondary)]"
                       type="submit"
                       name="revealed"
                       value="false"
@@ -231,7 +231,7 @@ export default async function AdminPage() {
                       Znovu skrýt
                     </button>
                   </div>
-                  <p className="text-xs leading-5 text-stone-400">
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">
                     Stav na participant ploše: {state.rotation.revealed ? "předání je odemčeno" : "předání je skryté"}.
                   </p>
                 </form>
@@ -240,11 +240,11 @@ export default async function AdminPage() {
               <AdminCard title="Aktivní rozpis rotace" tone="default">
                 <div className="space-y-3">
                   {state.rotation.slots.map((slot) => (
-                    <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-2xl border border-white/10 bg-black/20 p-3">
-                      <p className="font-semibold text-white">
+                    <div key={`${slot.fromTeam}-${slot.toTeam}`} className="border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
+                      <p className="font-semibold text-[var(--text-primary)]">
                         {slot.fromTeam} → {slot.toTeam}
                       </p>
-                      <p className="mt-1 text-sm leading-6 text-stone-400">{slot.note}</p>
+                      <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
                     </div>
                   ))}
                 </div>
@@ -362,10 +362,10 @@ function AdminGroup({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border border-stone-900/10 bg-white/60 p-5 sm:p-6">
-      <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-stone-500">{eyebrow}</p>
-      <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-stone-950">{title}</h2>
-      <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">{description}</p>
+    <section className="border border-[var(--border)] bg-[var(--surface-elevated)] p-5 sm:p-6">
+      <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[var(--text-muted)]">{eyebrow}</p>
+      <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">{title}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
       <div className="mt-5">{children}</div>
     </section>
   );
@@ -382,14 +382,14 @@ function AdminCard({
 }) {
   const toneClassName =
     tone === "danger"
-      ? "border-red-900/15 bg-red-50"
+      ? "border-[var(--danger-border)] bg-[var(--danger-surface)]"
       : tone === "highlight"
-        ? "border-stone-900/15 bg-stone-100"
-        : "border-stone-900/10 bg-white";
+        ? "border-[var(--highlight-border)] bg-[var(--highlight-surface)]"
+        : "border-[var(--border)] bg-[var(--surface)]";
 
   return (
     <section className={`border p-5 ${toneClassName}`}>
-      <h3 className="text-lg font-medium text-stone-950">{title}</h3>
+      <h3 className="text-lg font-medium text-[var(--text-primary)]">{title}</h3>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -397,17 +397,18 @@ function AdminCard({
 
 function StatusPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-stone-900/10 bg-white px-4 py-3">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-stone-500">{label}</p>
-      <p className="mt-2 text-sm font-medium text-stone-950">{value}</p>
+    <div className="border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-2 text-sm font-medium text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
 
 const inputClassName =
-  "w-full border border-stone-900/15 bg-[#fbf8f1] px-3 py-2 text-stone-900 placeholder:text-stone-400";
+  "w-full border border-[var(--border-strong)] bg-[var(--input-bg)] px-3 py-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]";
 
 const primaryButtonClassName =
-  "rounded-xl border border-stone-950 bg-stone-950 px-4 py-2 font-semibold text-stone-50";
+  "border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-2 font-semibold text-[var(--accent-text)]";
 
-const dangerButtonClassName = "rounded-xl border border-red-900/20 bg-red-600 px-4 py-2 font-semibold text-white";
+const dangerButtonClassName =
+  "border border-[var(--danger)] bg-[var(--danger)] px-4 py-2 font-semibold text-white";

@@ -44,9 +44,14 @@ test.describe("participant dashboard", () => {
 
     await page.reload();
 
-    await expect(page.getByRole("heading", { name: "Room context unlocked." })).toBeVisible();
+    await expect(page.getByText("participant room")).toBeVisible();
     await expect(page.getByText("Leave room context")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
+
+    // Verify context-aware nav — room links visible, public anchors gone
+    await expect(page.getByRole("navigation").getByRole("link", { name: "room" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "teams" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "notes" })).toBeVisible();
   });
 });
 
