@@ -18,13 +18,12 @@ test.describe("participant dashboard", () => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "Harness Lab" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Build Phase 1" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Dnešní workflow" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Event access" })).toBeVisible();
-    await expect(page.getByText("1. Agent exploration")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Projektový brief právě teď" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Challenge focus" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Předávací okno" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kontext k workshopu bez řídicího šumu." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vstup do room contextu" })).toBeVisible();
+    await expect(page.getByText("Repo before improvisation")).toBeVisible();
+    await expect(page.getByText("Build Phase 1")).toBeVisible();
+    await expect(page.getByText("Rotace týmů")).toBeVisible();
+    await expect(page.getByText("Public notes")).toBeVisible();
 
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
@@ -34,9 +33,9 @@ test.describe("participant dashboard", () => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
 
-    await expect(page.getByText("Ještě bez private event session")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vstup do room contextu" })).toBeVisible();
     await page.getByLabel("Event code").fill("lantern8-context4-handoff2");
-    await page.getByRole("button", { name: "Odemknout private context" }).click();
+    await page.getByRole("button", { name: "Enter room context" }).click();
 
     await expect
       .poll(async () => {
@@ -47,7 +46,8 @@ test.describe("participant dashboard", () => {
 
     await page.reload();
 
-    await expect(page.getByText("Live mode je aktivní")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Room context unlocked." })).toBeVisible();
+    await expect(page.getByText("Leave room context")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
   });
 });
@@ -71,9 +71,7 @@ test.describe("facilitator admin", () => {
       page.waitForURL("**/admin"),
       page.getByRole("button", { name: "Odemknout" }).click(),
     ]);
-    await page.goto("/");
-
-    await expect(page.getByText("Předání je odemčeno")).toBeVisible();
+    await expect(page.locator("div").filter({ hasText: /^Rotaceodemčeno$/ }).first()).toBeVisible();
 
     await page.goto("/admin");
     await Promise.all([

@@ -124,12 +124,12 @@ export default async function AdminPage() {
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
 
   return (
-    <main className="min-h-screen bg-[linear-gradient(180deg,#0c0a09_0%,#111827_100%)] px-4 py-6 text-stone-50 sm:px-6">
+    <main className="min-h-screen bg-[#f5f1e8] px-4 py-8 text-stone-900 sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
-        <header className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-xl shadow-black/20">
-          <p className="text-xs uppercase tracking-[0.2em] text-stone-500">Admin</p>
-          <h1 className="mt-2 text-3xl font-black tracking-tight">Řízení workshopu</h1>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-stone-400">
+        <header className="border border-stone-900/10 bg-white/60 p-6">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Facilitator desk</p>
+          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-stone-950">Řízení workshopu</h1>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">
             Chráněný operační panel pro facilitátora. Drží odděleně participant orientaci a live zásahy do workshop
             instance, aby veřejná plocha zůstala čistá a mobile-first.
           </p>
@@ -140,7 +140,7 @@ export default async function AdminPage() {
             <StatusPill label="Týmy" value={`${state.teams.length}`} />
           </div>
           {latestArchive ? (
-            <p className="mt-4 text-xs leading-5 text-stone-400">
+            <p className="mt-4 text-xs leading-5 text-stone-500">
               Poslední archiv: {latestArchive.createdAt} • retention do {latestArchive.retentionUntil ?? "nenastaveno"}.
             </p>
           ) : null}
@@ -215,7 +215,7 @@ export default async function AdminPage() {
                 <form action={toggleRotationAction} className="space-y-3">
                   <div className="flex flex-wrap gap-3">
                     <button
-                      className="rounded-xl bg-cyan-300 px-4 py-2 font-semibold text-stone-950"
+                      className="rounded-xl border border-stone-950 bg-stone-950 px-4 py-2 font-semibold text-stone-50"
                       type="submit"
                       name="revealed"
                       value="true"
@@ -337,7 +337,7 @@ export default async function AdminPage() {
                       </option>
                     ))}
                   </select>
-                  <button className="rounded-xl bg-cyan-300 px-4 py-2 font-semibold text-stone-950" type="submit">
+                  <button className={primaryButtonClassName} type="submit">
                     Zapsat completion
                   </button>
                 </form>
@@ -362,10 +362,10 @@ function AdminGroup({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-xl shadow-black/20 sm:p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.22em] text-stone-500">{eyebrow}</p>
-      <h2 className="mt-2 text-2xl font-bold text-white">{title}</h2>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-stone-400">{description}</p>
+    <section className="border border-stone-900/10 bg-white/60 p-5 sm:p-6">
+      <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-stone-500">{eyebrow}</p>
+      <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-stone-950">{title}</h2>
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-stone-600">{description}</p>
       <div className="mt-5">{children}</div>
     </section>
   );
@@ -382,14 +382,14 @@ function AdminCard({
 }) {
   const toneClassName =
     tone === "danger"
-      ? "border-rose-300/30 bg-rose-300/10"
+      ? "border-red-900/15 bg-red-50"
       : tone === "highlight"
-        ? "border-cyan-300/30 bg-cyan-300/10"
-        : "border-white/10 bg-black/20";
+        ? "border-stone-900/15 bg-stone-100"
+        : "border-stone-900/10 bg-white";
 
   return (
-    <section className={`rounded-[1.5rem] border p-5 ${toneClassName}`}>
-      <h3 className="text-lg font-semibold text-white">{title}</h3>
+    <section className={`border p-5 ${toneClassName}`}>
+      <h3 className="text-lg font-medium text-stone-950">{title}</h3>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -397,16 +397,17 @@ function AdminCard({
 
 function StatusPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3">
-      <p className="text-xs uppercase tracking-[0.18em] text-stone-500">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-white">{value}</p>
+    <div className="border border-stone-900/10 bg-white px-4 py-3">
+      <p className="text-[11px] uppercase tracking-[0.22em] text-stone-500">{label}</p>
+      <p className="mt-2 text-sm font-medium text-stone-950">{value}</p>
     </div>
   );
 }
 
 const inputClassName =
-  "w-full rounded-xl border border-white/10 bg-stone-900 px-3 py-2 text-stone-50 placeholder:text-stone-500";
+  "w-full border border-stone-900/15 bg-[#fbf8f1] px-3 py-2 text-stone-900 placeholder:text-stone-400";
 
-const primaryButtonClassName = "rounded-xl bg-amber-300 px-4 py-2 font-semibold text-stone-950";
+const primaryButtonClassName =
+  "rounded-xl border border-stone-950 bg-stone-950 px-4 py-2 font-semibold text-stone-50";
 
-const dangerButtonClassName = "rounded-xl bg-rose-300 px-4 py-2 font-semibold text-stone-950";
+const dangerButtonClassName = "rounded-xl border border-red-900/20 bg-red-600 px-4 py-2 font-semibold text-white";
