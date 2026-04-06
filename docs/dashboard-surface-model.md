@@ -16,12 +16,14 @@ Public responsibilities:
 - challenge cards
 - workshop reference links
 - team-facing status that is safe to expose in-room
+- links to the participant learner kit artifacts the team should use next
 
 Design rules:
 - mobile-first
 - readable on projection
 - phase-aware before feature-rich
 - no facilitator-only controls
+- should reinforce the same participant resources as `workshop-skill/` and facilitation guidance
 
 ## Facilitator Surface
 

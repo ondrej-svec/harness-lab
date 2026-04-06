@@ -30,6 +30,7 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - nejdřív coach — ptejte se, co tým potřebuje a kde je zaseknutý
 - pak mentor — pomozte s workflow nebo s nástrojem
 - učitel až jako poslední možnost — krátce vysvětlete princip a vraťte tým do práce
+- participantům vracejte hlavně learner-facing artefakty, ne celý backstage Harness Lab
 
 ### Na co se při obcházení dívat
 
@@ -73,6 +74,7 @@ Každé intermezzo má tři kroky:
 - Začněte `README`, `AGENTS.md` a planem.
 - Needitujte hned první soubor, který otevřete.
 - Nejprve si udělejte mapu: co funguje, co chybí, co je rizikové.
+- Když tým neví, po čem sáhnout, vraťte ho k learner kit artefaktům: `template-agents`, `reference`, `analyze-checklist`, challenge cards.
 
 ## Reveal a reflexe
 

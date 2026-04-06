@@ -13,6 +13,10 @@ Pošli účastníkům:
 4. Výzvu týdne:
    - „Přidejte `AGENTS.md` do jednoho reálného projektu.“
    - „Přesuňte jedno trvalé pravidlo z promptu do repa.“
+5. Odkaz na learner kit:
+   - [`docs/learner-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+   - [`docs/learner-reference-gallery.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-reference-gallery.md)
+   - [`materials/participant-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/materials/participant-resource-kit.md)
 
 ## 1 týden po workshopu
 

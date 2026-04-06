@@ -2,6 +2,23 @@
 
 Harness Lab is a workshop about disciplined work with AI agents. Contributions should reinforce that lesson.
 
+## Resource Audience Rule
+
+Every new artifact should declare, at least mentally, which layer it belongs to:
+
+- `internal harness` — maintainer/facilitator operating guidance
+- `learner resource kit` — participant-facing, copyable teaching artifacts
+- `external reference gallery` — curated links to official docs or strong public examples
+
+If an artifact mixes backstage operations with participant teaching:
+- keep the backstage part in the internal harness
+- create a smaller participant-safe subset for the learner kit
+
+See:
+- [resource-packaging-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
+- [internal-harness.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md)
+- [learner-resource-kit.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+
 ## Working Rule
 
 Do not ship new agent-facing behavior without executable verification.
@@ -46,3 +63,4 @@ npm run build
 - [dashboard-surface-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
 - [dashboard-testing-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
 - [harness-doctrine.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
+- [resource-packaging-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
