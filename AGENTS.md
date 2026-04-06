@@ -67,6 +67,17 @@ npm run build
 - When architecture or trust boundaries change, write or update the relevant ADR/note alongside the implementation.
 - Improve the harness when issues repeat: strengthen context, rules, tests, or review routines instead of only fixing the immediate output.
 
+Authoritative architecture references for the private workshop-instance model:
+
+- `docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`
+- `docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`
+- `docs/private-workshop-instance-data-classification.md`
+- `docs/private-workshop-instance-schema.md`
+- `docs/private-workshop-instance-auth-model.md`
+- `docs/private-workshop-instance-deployment-spec.md`
+- `docs/private-workshop-instance-security-gates.md`
+- `docs/public-launch-history-cleanup-plan.md`
+
 ## Key Constraints
 
 - Dashboard must work on mobile (participants scan QR code)
@@ -79,3 +90,4 @@ npm run build
 - Public template repo stays public-safe and runnable with sample/demo data only.
 - Participant-private workshop context belongs in the private workshop-instance layer and must not leak through public routes or files.
 - Facilitator routes and mutations must stay on a separate auth path from participant event access.
+- Any new artifact that is not safe to reveal before the event belongs in the private runtime layer or a separate private ops workspace, not in tracked repo files.

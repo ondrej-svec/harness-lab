@@ -63,7 +63,7 @@ export default async function HomePage({
   const params = await searchParams;
   const participantSession = await getParticipantSessionFromCookieStore();
   const participantTeams = participantSession ? await getParticipantTeamLookup() : null;
-  const configuredEventCode = getConfiguredEventCode();
+  const configuredEventCode = await getConfiguredEventCode();
   const { agenda, briefs, challenges, rotation, setupPaths, ticker, workshopMeta } = state;
   const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
   const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
@@ -188,7 +188,7 @@ export default async function HomePage({
                   </label>
                   <input
                     className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-stone-50 placeholder:text-stone-500"
-                    defaultValue={configuredEventCode.isSample ? configuredEventCode.code : ""}
+                    defaultValue={configuredEventCode?.isSample ? configuredEventCode.sampleCode : ""}
                     id="event-code"
                     name="eventCode"
                     placeholder="lantern8-context4-handoff2"

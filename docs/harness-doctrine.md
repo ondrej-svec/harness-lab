@@ -38,3 +38,8 @@ When the same issue happens repeatedly, do not only fix the output. Improve the 
 - write the decision down if it changes architecture
 
 That is the loop Harness Lab is trying to teach.
+
+For the current private workshop-instance architecture, the required sensors and release gates are defined in:
+
+- [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
+- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)

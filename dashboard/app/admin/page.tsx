@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { workshopTemplates } from "@/lib/workshop-data";
 import {
   addSprintUpdate,
@@ -15,6 +16,7 @@ export const dynamic = "force-dynamic";
 
 async function setAgendaAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const agendaId = String(formData.get("agendaId") ?? "");
   if (agendaId) {
     await setCurrentAgendaItem(agendaId);
@@ -24,12 +26,14 @@ async function setAgendaAction(formData: FormData) {
 
 async function toggleRotationAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   await setRotationReveal(formData.get("revealed") === "true");
   redirect("/admin");
 }
 
 async function saveCheckpointAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const checkpoint = String(formData.get("checkpoint") ?? "");
   if (teamId && checkpoint) {
@@ -40,6 +44,7 @@ async function saveCheckpointAction(formData: FormData) {
 
 async function addCheckpointFeedAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const text = String(formData.get("text") ?? "");
   const at = String(formData.get("at") ?? "");
@@ -56,6 +61,7 @@ async function addCheckpointFeedAction(formData: FormData) {
 
 async function completeChallengeAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const challengeId = String(formData.get("challengeId") ?? "");
   if (teamId && challengeId) {
@@ -66,6 +72,7 @@ async function completeChallengeAction(formData: FormData) {
 
 async function registerTeamAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const id = String(formData.get("id") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const city = String(formData.get("city") ?? "Studio A").trim();
@@ -93,6 +100,7 @@ async function registerTeamAction(formData: FormData) {
 
 async function resetWorkshopAction(formData: FormData) {
   "use server";
+  await requireFacilitatorPageAccess();
   const templateId = String(formData.get("templateId") ?? "");
   if (templateId) {
     await resetWorkshopState(templateId);

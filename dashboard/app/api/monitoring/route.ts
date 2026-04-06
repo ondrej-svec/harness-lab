@@ -1,16 +1,28 @@
 import { NextResponse } from "next/server";
+import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 import type { MonitoringSnapshot } from "@/lib/workshop-data";
 import { getWorkshopState, replaceMonitoring } from "@/lib/workshop-store";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const denied = await requireFacilitatorRequest(request);
+  if (denied) {
+    return denied;
+  }
+
   const state = await getWorkshopState();
   return NextResponse.json({
     items: state.monitoring,
-    storageMode: "file",
+    storageMode: getRuntimeStorageMode(),
   });
 }
 
 export async function POST(request: Request) {
+  const denied = await requireFacilitatorRequest(request);
+  if (denied) {
+    return denied;
+  }
+
   const body = (await request.json()) as { items?: MonitoringSnapshot[] };
   if (!body.items) {
     return NextResponse.json({ ok: false, error: "items are required" }, { status: 400 });

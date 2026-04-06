@@ -1,5 +1,13 @@
 # Workshop Instance Runbook
 
+This runbook is operational guidance. Architecture decisions and security gates now live in:
+
+- [`2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- [`2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
+- [`private-workshop-instance-auth-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
+- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
+
 ## Instance Configuration Model
 
 Default company-scale model:
@@ -7,6 +15,7 @@ Default company-scale model:
 - one dashboard codebase
 - one deployment
 - many private workshop instances
+- one private runtime layer as the source of truth for live event state
 
 For four hackathons under one company, configure each event as a separate private instance record with:
 
@@ -34,12 +43,14 @@ For four hackathons under one company, configure each event as a separate privat
 ### 2. Prepare
 
 - verify dashboard deployment
+- verify the target instance is in `prepared` state with correct template binding
 - verify admin protection
 - issue or rotate the shared participant event code
 - verify the participant event code expiry window
 - verify workshop skill files
 - verify the chosen instance starts in a clean state
 - verify participant access path and QR code
+- verify preview or production checks required by [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md) for any recent architecture-sensitive change
 
 ### 3. Run
 
@@ -58,7 +69,7 @@ During the workshop, facilitator uses the control plane to:
 After a workshop:
 - archive or export the live instance state
 - revoke active participant sessions
-- reset the next workshop from a template or a new instance record
+- reset the next workshop from a template or a new instance record instead of reusing the archived one in place
 - confirm no live team data remains in the active public-facing view
 
 ### 5. Archive
@@ -66,6 +77,7 @@ After a workshop:
 - store the final workshop-state snapshot in private storage
 - export any closing notes or retrospective inputs
 - keep public repo improvements separate from private event records
+- apply retention and cleanup rules from [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
 
 ## Rule
 
@@ -83,3 +95,4 @@ Default model:
 - participant sessions are short-lived and can be renewed by re-entering the same event code
 - the participant dashboard stays public until private context is requested
 - `workshop-skill` should prefer `/workshop login` as the explicit auth path
+- facilitator identity is global, but authorization remains per instance grant

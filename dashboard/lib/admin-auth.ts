@@ -1,9 +1,9 @@
 export const protectedWritePaths = new Set([
   "/api/agenda",
+  "/api/admin/teams",
   "/api/checkpoints",
   "/api/monitoring",
   "/api/rotation",
-  "/api/teams",
   "/api/workshop",
 ]);
 

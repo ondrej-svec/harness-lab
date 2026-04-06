@@ -8,59 +8,93 @@ import {
   redeemEventCode,
   revokeParticipantSession,
 } from "./event-access";
+import { setAuditLogRepositoryForTests, type AuditLogRepository } from "./audit-log-repository";
 import {
   setEventAccessRepositoryForTests,
   type EventAccessRepository,
-  type ParticipantSessionRecord,
 } from "./event-access-repository";
+import {
+  hashSecret,
+  setParticipantEventAccessRepositoryForTests,
+  type ParticipantEventAccessRepository,
+} from "./participant-event-access-repository";
+import type { AuditLogRecord, ParticipantEventAccessRecord, ParticipantSessionRecord } from "./runtime-contracts";
 
 class MemoryEventAccessRepository implements EventAccessRepository {
   constructor(private sessions: ParticipantSessionRecord[] = []) {}
 
-  async getSessions() {
+  async getSessions(instanceId: string) {
+    void instanceId;
     return structuredClone(this.sessions);
   }
 
-  async saveSessions(sessions: ParticipantSessionRecord[]) {
+  async saveSessions(_instanceId: string, sessions: ParticipantSessionRecord[]) {
     this.sessions = structuredClone(sessions);
   }
 }
 
+class MemoryParticipantEventAccessRepository implements ParticipantEventAccessRepository {
+  constructor(private access: ParticipantEventAccessRecord | null) {}
+
+  async getActiveAccess() {
+    return this.access ? structuredClone(this.access) : null;
+  }
+
+  async saveAccess(_instanceId: string, access: ParticipantEventAccessRecord) {
+    this.access = structuredClone(access);
+  }
+}
+
+class MemoryAuditLogRepository implements AuditLogRepository {
+  records: AuditLogRecord[] = [];
+
+  async append(record: AuditLogRecord) {
+    this.records.push(structuredClone(record));
+  }
+}
+
 describe("event-access", () => {
-  const originalEventCode = process.env.HARNESS_EVENT_CODE;
-  const originalEventExpiry = process.env.HARNESS_EVENT_CODE_EXPIRES_AT;
+  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
   let repository: MemoryEventAccessRepository;
+  let accessRepository: MemoryParticipantEventAccessRepository;
 
   beforeEach(() => {
-    process.env.HARNESS_EVENT_CODE = "lantern8-context4-handoff2";
-    process.env.HARNESS_EVENT_CODE_EXPIRES_AT = "2026-04-20T12:00:00.000Z";
+    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
     repository = new MemoryEventAccessRepository();
+    accessRepository = new MemoryParticipantEventAccessRepository({
+      id: "pea-sample-studio-a",
+      instanceId: "sample-studio-a",
+      version: 1,
+      codeHash: hashSecret("lantern8-context4-handoff2"),
+      expiresAt: "2026-04-20T12:00:00.000Z",
+      revokedAt: null,
+      sampleCode: "lantern8-context4-handoff2",
+    });
     setEventAccessRepositoryForTests(repository);
+    setParticipantEventAccessRepositoryForTests(accessRepository);
+    setAuditLogRepositoryForTests(new MemoryAuditLogRepository());
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-04-06T12:00:00.000Z"));
   });
 
   afterEach(() => {
-    if (originalEventCode === undefined) {
-      delete process.env.HARNESS_EVENT_CODE;
+    if (originalInstanceId === undefined) {
+      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
     } else {
-      process.env.HARNESS_EVENT_CODE = originalEventCode;
-    }
-
-    if (originalEventExpiry === undefined) {
-      delete process.env.HARNESS_EVENT_CODE_EXPIRES_AT;
-    } else {
-      process.env.HARNESS_EVENT_CODE_EXPIRES_AT = originalEventExpiry;
+      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
     }
 
     setEventAccessRepositoryForTests(null);
+    setParticipantEventAccessRepositoryForTests(null);
+    setAuditLogRepositoryForTests(null);
     vi.useRealTimers();
   });
 
-  it("exposes a configured event code without leaking whether it is production or sample to callers", () => {
-    expect(getConfiguredEventCode()).toMatchObject({
-      code: "lantern8-context4-handoff2",
+  it("exposes a configured event access preview without leaking the stored code hash", async () => {
+    await expect(getConfiguredEventCode()).resolves.toMatchObject({
+      sampleCode: "lantern8-context4-handoff2",
       expiresAt: "2026-04-20T12:00:00.000Z",
+      isSample: true,
     });
   });
 
@@ -70,9 +104,11 @@ describe("event-access", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.session.token).toBeTruthy();
+      expect(result.session.instanceId).toBe("sample-studio-a");
       expect(result.session.expiresAt).toBe("2026-04-07T00:00:00.000Z");
       expect(await getParticipantSession(result.session.token)).toMatchObject({
-        token: result.session.token,
+        instanceId: "sample-studio-a",
+        expiresAt: "2026-04-07T00:00:00.000Z",
       });
     }
   });
@@ -80,7 +116,15 @@ describe("event-access", () => {
   it("rejects invalid or expired event codes", async () => {
     expect(await redeemEventCode("wrong-code")).toEqual({ ok: false, reason: "invalid_code" });
 
-    process.env.HARNESS_EVENT_CODE_EXPIRES_AT = "2026-04-01T12:00:00.000Z";
+    await accessRepository.saveAccess("sample-studio-a", {
+      id: "pea-sample-studio-a",
+      instanceId: "sample-studio-a",
+      version: 2,
+      codeHash: hashSecret("lantern8-context4-handoff2"),
+      expiresAt: "2026-04-01T12:00:00.000Z",
+      revokedAt: null,
+      sampleCode: "lantern8-context4-handoff2",
+    });
     expect(await redeemEventCode("lantern8-context4-handoff2")).toEqual({
       ok: false,
       reason: "expired_code",
@@ -95,6 +139,18 @@ describe("event-access", () => {
       await revokeParticipantSession(result.session.token);
       expect(await getParticipantSession(result.session.token)).toBeNull();
     }
+  });
+
+  it("rejects sessions from a different workshop instance", async () => {
+    const result = await redeemEventCode("lantern8-context4-handoff2");
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+
+    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
+
+    await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
   });
 
   it("builds the participant core bundle and protected team lookup shapes", async () => {
@@ -112,5 +168,21 @@ describe("event-access", () => {
 
   it("exports the participant session cookie name for route handlers", () => {
     expect(participantSessionCookieName).toBe("harness_event_session");
+  });
+
+  it("prunes expired sessions during validation", async () => {
+    await repository.saveSessions("sample-studio-a", [
+      {
+        tokenHash: "deadbeef",
+        instanceId: "sample-studio-a",
+        createdAt: "2026-04-05T12:00:00.000Z",
+        lastValidatedAt: "2026-04-05T12:00:00.000Z",
+        expiresAt: "2026-04-06T11:59:59.000Z",
+        absoluteExpiresAt: "2026-04-06T12:30:00.000Z",
+      },
+    ]);
+
+    await expect(getParticipantSession("expired-token")).resolves.toBeNull();
+    await expect(repository.getSessions("sample-studio-a")).resolves.toEqual([]);
   });
 });

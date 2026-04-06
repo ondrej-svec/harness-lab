@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { completeChallenge } from "@/lib/workshop-store";
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const denied = await requireFacilitatorRequest(request);
+  if (denied) {
+    return denied;
+  }
+
   const { id } = await params;
   const body = (await request.json().catch(() => ({}))) as { teamId?: string };
 

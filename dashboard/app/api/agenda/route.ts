@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getWorkshopState, setCurrentAgendaItem } from "@/lib/workshop-store";
 
 export async function GET() {
@@ -13,6 +14,11 @@ export async function GET() {
 }
 
 export async function PATCH(request: Request) {
+  const denied = await requireFacilitatorRequest(request);
+  if (denied) {
+    return denied;
+  }
+
   const body = (await request.json()) as { currentId?: string };
   if (!body.currentId) {
     return NextResponse.json({ ok: false, error: "currentId is required" }, { status: 400 });

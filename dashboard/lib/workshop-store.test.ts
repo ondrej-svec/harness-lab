@@ -14,11 +14,12 @@ import {
 class MemoryWorkshopStateRepository implements WorkshopStateRepository {
   constructor(private state: WorkshopState) {}
 
-  async getState() {
+  async getState(instanceId: string) {
+    void instanceId;
     return structuredClone(this.state);
   }
 
-  async saveState(state: WorkshopState) {
+  async saveState(_instanceId: string, state: WorkshopState) {
     this.state = structuredClone(state);
   }
 }
@@ -45,7 +46,7 @@ describe("workshop-store", () => {
 
   it("updates facilitator-controlled team and checkpoint state", async () => {
     await updateCheckpoint("t1", "Checkpoint po facilitaci");
-    let state = await repository.getState();
+    let state = await repository.getState("sample-studio-a");
     expect(state.teams.find((team) => team.id === "t1")?.checkpoint).toBe("Checkpoint po facilitaci");
 
     await upsertTeam({
@@ -58,7 +59,7 @@ describe("workshop-store", () => {
       checkpoint: "Nový tým zaregistrován",
     });
 
-    state = await repository.getState();
+    state = await repository.getState("sample-studio-a");
     expect(state.teams.find((team) => team.id === "t9")?.name).toBe("Tým 9");
   });
 

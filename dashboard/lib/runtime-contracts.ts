@@ -1,0 +1,105 @@
+import type { MonitoringSnapshot, WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
+
+export type WorkshopInstanceId = string;
+
+export type ParticipantSessionRecord = {
+  tokenHash: string;
+  instanceId: WorkshopInstanceId;
+  createdAt: string;
+  expiresAt: string;
+  lastValidatedAt: string;
+  absoluteExpiresAt: string;
+};
+
+export type ParticipantSession = {
+  instanceId: WorkshopInstanceId;
+  expiresAt: string;
+  lastValidatedAt: string;
+  absoluteExpiresAt: string;
+};
+
+export type ParticipantEventAccessRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  version: number;
+  codeHash: string;
+  expiresAt: string;
+  revokedAt: string | null;
+  sampleCode?: string | null;
+};
+
+export type AuditLogRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId | null;
+  actorKind: "participant" | "facilitator" | "system";
+  action: string;
+  result: "success" | "failure";
+  createdAt: string;
+  metadata?: Record<string, string | number | boolean | null>;
+};
+
+export type FacilitatorIdentityRecord = {
+  id: string;
+  username: string;
+  displayName: string;
+  email: string;
+  passwordHash: string | null;
+  authSubject: string | null;
+  status: "active" | "disabled";
+};
+
+export type InstanceGrantRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  facilitatorIdentityId: string;
+  role: "owner" | "operator" | "observer";
+  revokedAt: string | null;
+};
+
+export interface WorkshopInstanceRepository {
+  getDefaultInstanceId(): Promise<WorkshopInstanceId>;
+  getInstance(instanceId: WorkshopInstanceId): Promise<WorkshopInstanceRecord | null>;
+  listInstances(): Promise<WorkshopInstanceRecord[]>;
+}
+
+export interface RuntimeWorkshopStateRepository {
+  getState(instanceId: WorkshopInstanceId): Promise<WorkshopState>;
+  saveState(instanceId: WorkshopInstanceId, state: WorkshopState): Promise<void>;
+}
+
+export interface ParticipantSessionRepository {
+  getSessions(instanceId: WorkshopInstanceId): Promise<ParticipantSessionRecord[]>;
+  saveSessions(instanceId: WorkshopInstanceId, sessions: ParticipantSessionRecord[]): Promise<void>;
+}
+
+export interface ParticipantEventAccessRepository {
+  getActiveAccess(instanceId: WorkshopInstanceId): Promise<ParticipantEventAccessRecord | null>;
+  saveAccess(instanceId: WorkshopInstanceId, access: ParticipantEventAccessRecord): Promise<void>;
+}
+
+export interface MonitoringSnapshotRepository {
+  getSnapshots(instanceId: WorkshopInstanceId): Promise<MonitoringSnapshot[]>;
+  replaceSnapshots(instanceId: WorkshopInstanceId, snapshots: MonitoringSnapshot[]): Promise<void>;
+}
+
+export interface AuditLogRepository {
+  append(record: AuditLogRecord): Promise<void>;
+}
+
+export interface FacilitatorAuthService {
+  hasValidRequestCredentials(options: {
+    authorizationHeader: string | null;
+    instanceId: WorkshopInstanceId;
+    forwardedUsername?: string | null;
+    forwardedPasswordHash?: string | null;
+  }): Promise<boolean>;
+}
+
+export interface FacilitatorIdentityRepository {
+  findByUsername(username: string): Promise<FacilitatorIdentityRecord | null>;
+  findBySubject(subject: string): Promise<FacilitatorIdentityRecord | null>;
+}
+
+export interface InstanceGrantRepository {
+  getActiveGrant(instanceId: WorkshopInstanceId, facilitatorIdentityId: string): Promise<InstanceGrantRecord | null>;
+}

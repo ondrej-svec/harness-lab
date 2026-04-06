@@ -5,10 +5,11 @@ import {
   type Team,
   type WorkshopState,
 } from "./workshop-data";
+import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 
 export async function getWorkshopState(): Promise<WorkshopState> {
-  return getWorkshopStateRepository().getState();
+  return getWorkshopStateRepository().getState(getCurrentWorkshopInstanceId());
 }
 
 export async function updateWorkshopState(
@@ -16,7 +17,7 @@ export async function updateWorkshopState(
 ): Promise<WorkshopState> {
   const current = await getWorkshopState();
   const next = updater(current);
-  await getWorkshopStateRepository().saveState(next);
+  await getWorkshopStateRepository().saveState(getCurrentWorkshopInstanceId(), next);
   return next;
 }
 
@@ -94,6 +95,6 @@ export async function replaceMonitoring(items: MonitoringSnapshot[]) {
 
 export async function resetWorkshopState(templateId: string) {
   const next = createWorkshopStateFromTemplate(templateId);
-  await getWorkshopStateRepository().saveState(next);
+  await getWorkshopStateRepository().saveState(getCurrentWorkshopInstanceId(), next);
   return next;
 }

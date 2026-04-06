@@ -9,6 +9,7 @@ describe("admin-auth", () => {
   it("protects admin routes, monitoring, challenge completions, and non-GET write APIs", () => {
     expect(isProtectedPath("/admin", "GET")).toBe(true);
     expect(isProtectedPath("/admin/settings", "GET")).toBe(true);
+    expect(isProtectedPath("/api/admin/teams", "POST")).toBe(true);
     expect(isProtectedPath("/api/monitoring", "GET")).toBe(true);
     expect(isProtectedPath("/api/challenges/agents-md/complete", "POST")).toBe(true);
     expect(isProtectedPath("/api/agenda", "PATCH")).toBe(true);
@@ -19,6 +20,7 @@ describe("admin-auth", () => {
     expect(isProtectedPath("/", "GET")).toBe(false);
     expect(isProtectedPath("/api/agenda", "GET")).toBe(false);
     expect(isProtectedPath("/api/teams", "GET")).toBe(false);
+    expect(isProtectedPath("/api/event-context/core", "GET")).toBe(false);
     expect(isProtectedPath("/api/challenges", "GET")).toBe(false);
   });
 

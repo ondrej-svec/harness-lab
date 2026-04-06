@@ -4,6 +4,9 @@ dashboard/.next/
 dashboard/node_modules/
 dashboard/data/workshop-state.json
 dashboard/data/participant-sessions.json
+dashboard/data/*/
+dashboard/data/audit-log.json
+dashboard/data/facilitator-identities.json
 dashboard/test-results/
 
 monitoring/latest-monitoring.md
