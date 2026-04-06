@@ -105,7 +105,7 @@ export default async function SignInPage({
                   type="password"
                   required
                   autoComplete="current-password"
-                  aria-label="password"
+
                 />
               </div>
 
