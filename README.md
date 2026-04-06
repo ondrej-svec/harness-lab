@@ -93,7 +93,7 @@ Deploy flow běží přes nativní Git integraci ve Vercelu:
 - PR → preview deploy
 - push do `main` → production deploy
 
-GitHub Actions CI je sloučené do jednoho workflow `Dashboard CI` a Vercel má čekat na check `Dashboard CI / deploy-ready`.
+GitHub Actions CI je sloučené do jednoho workflow `Dashboard CI` a Vercel má čekat na check `Vercel - harness-lab-dashboard: deploy-ready`.
 Workflow zahrnuje build/test/e2e i security gate (`gitleaks` + `Semgrep`).
 
 Kritické je, aby měl Vercel project nastavený root directory na `dashboard`. Detaily jsou v [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md).

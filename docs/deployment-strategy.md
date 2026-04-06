@@ -86,8 +86,8 @@ Verification on 2026-04-06:
 
 Recommended deployment check wiring in Vercel:
 
-- require `Dashboard CI / deploy-ready` before production promotion
-- let `Dashboard CI / deploy-ready` aggregate build, test, e2e, secret scan, Semgrep SAST, and optional PR dependency review
+- require `Vercel - harness-lab-dashboard: deploy-ready` before production promotion
+- let the `deploy-ready` job report that explicit Vercel check after aggregating build, test, e2e, secret scan, Semgrep SAST, and optional PR dependency review
 - enable repository variable `ENABLE_DEPENDENCY_REVIEW=true` only if the repository plan supports GitHub dependency review for private repos
 
 Why this setup exists:

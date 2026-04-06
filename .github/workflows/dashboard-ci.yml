@@ -111,6 +111,9 @@ jobs:
     name: deploy-ready
     if: always()
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write
     needs:
       - verify-dashboard
       - e2e-dashboard
@@ -156,3 +159,9 @@ jobs:
             echo "dependency-review did not succeed"
             exit 1
           fi
+
+      - name: notify vercel
+        if: always()
+        uses: vercel/repository-dispatch/actions/status@v1
+        with:
+          name: Vercel - harness-lab-dashboard: deploy-ready
