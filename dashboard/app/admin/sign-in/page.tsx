@@ -70,7 +70,7 @@ export default async function SignInPage({
               Neon Auth is not configured.
             </p>
           ) : (
-            <form action={signInAction} className="mt-8 space-y-5">
+            <form action={signInAction} method="post" autoComplete="on" className="mt-8 space-y-5">
               <input name="lang" type="hidden" value={lang} />
 
               <div>
@@ -105,6 +105,7 @@ export default async function SignInPage({
                   type="password"
                   required
                   autoComplete="current-password"
+                  aria-label="password"
                 />
               </div>
 
