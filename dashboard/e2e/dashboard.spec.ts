@@ -74,10 +74,10 @@ test.describe("participant dashboard", () => {
 });
 
 test.describe("facilitator admin", () => {
+  // File-mode auth: send Basic Auth header directly since there's no 401 challenge.
   test.use({
-    httpCredentials: {
-      username: "facilitator",
-      password: "secret",
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
     },
   });
 

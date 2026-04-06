@@ -38,6 +38,14 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-harness-ui-lang", resolvedLanguage);
 
+  // Forward Authorization header for file-mode Basic Auth fallback
+  if (!isNeonAuthEnabled()) {
+    const authorization = request.headers.get("authorization");
+    if (authorization) {
+      requestHeaders.set("x-harness-authorization", authorization);
+    }
+  }
+
   const response = NextResponse.next({
     request: {
       headers: requestHeaders,
