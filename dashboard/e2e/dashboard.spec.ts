@@ -17,13 +17,10 @@ test.describe("participant dashboard", () => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
 
-    await expect(page.getByRole("heading", { name: "Harness Lab" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Kontext k workshopu bez řídicího šumu." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Kontext, workflow a handoff pro praci s AI agenty." })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Vstup do room contextu" })).toBeVisible();
     await expect(page.getByText("Repo before improvisation")).toBeVisible();
-    await expect(page.getByText("Build Phase 1")).toBeVisible();
-    await expect(page.getByText("Rotace týmů")).toBeVisible();
-    await expect(page.getByText("Public notes")).toBeVisible();
+    await expect(page.getByText("Harness Lab je celodenní workshop o harness engineeringu.")).toBeVisible();
 
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);

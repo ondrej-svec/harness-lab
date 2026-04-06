@@ -58,32 +58,24 @@ export default async function HomePage({
   const participantSession = await getParticipantSessionFromCookieStore();
   const participantTeams = participantSession ? await getParticipantTeamLookup() : null;
   const configuredEventCode = await getConfiguredEventCode();
-  const { agenda, rotation, ticker, workshopMeta } = state;
+  const { agenda, rotation, ticker } = state;
   const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
   const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
-  const publicNotes = ticker.slice(0, 3);
+  const participantNotes = ticker.slice(0, 3);
 
   return (
     <main className="min-h-screen bg-[#f5f1e8] text-stone-900">
-      <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-8 sm:px-8 sm:py-10">
-        <header className="border-b border-stone-900/10 pb-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">
-                {workshopMeta.city} / {workshopMeta.dateRange}
-              </p>
-              <h1 className="mt-4 text-4xl font-semibold tracking-[-0.04em] text-stone-950 sm:text-5xl">
-                Harness Lab
-              </h1>
-              <p className="mt-4 max-w-xl text-base leading-7 text-stone-700">
-                Klidná veřejná vstupní stránka pro účastníky. Vysvětluje, co je Harness Lab, a teprve potom nabízí
-                vstup do room-specific contextu.
-              </p>
-            </div>
-            <p className="max-w-xs text-sm leading-6 text-stone-500">
-              Live facilitace a zásahy do workshop instance zůstávají odděleně v chráněném facilitátorském rozhraní.
-            </p>
-          </div>
+      <div className="mx-auto flex min-h-screen w-full max-w-[65ch] flex-col px-6 py-10">
+        <header className="border-b border-stone-900/10 pb-10">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Harness Lab</p>
+          <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-stone-950 sm:text-5xl">
+            Kontext, workflow a handoff pro praci s AI agenty.
+          </h1>
+          <p className="mt-6 max-w-[58ch] text-base leading-8 text-stone-700">
+            Veřejná homepage nemá předstírat, že jste uvnitř konkrétní workshop instance. Má jen vysvětlit, co je
+            Harness Lab, proč existuje, a nabídnout vstup do room-specific contextu až ve chvíli, kdy ho opravdu
+            potřebujete.
+          </p>
         </header>
 
         {participantSession ? (
@@ -92,17 +84,11 @@ export default async function HomePage({
             nextAgendaItem={nextAgendaItem}
             participantSession={participantSession}
             participantTeams={participantTeams}
-            publicNotes={publicNotes}
+            publicNotes={participantNotes}
             rotationRevealed={rotation.revealed}
           />
         ) : (
-          <PublicView
-            configuredEventCode={configuredEventCode}
-            currentAgendaItem={currentAgendaItem}
-            nextAgendaItem={nextAgendaItem}
-            publicNotes={publicNotes}
-            eventAccessError={params?.eventAccess}
-          />
+          <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} />
         )}
       </div>
     </main>
@@ -111,61 +97,51 @@ export default async function HomePage({
 
 function PublicView({
   configuredEventCode,
-  currentAgendaItem,
-  nextAgendaItem,
-  publicNotes,
   eventAccessError,
 }: {
   configuredEventCode: Awaited<ReturnType<typeof getConfiguredEventCode>>;
-  currentAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
-  nextAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
-  publicNotes: Awaited<ReturnType<typeof getWorkshopState>>["ticker"];
   eventAccessError?: string;
 }) {
   return (
     <>
-      <section className="grid gap-10 border-b border-stone-900/10 py-10 lg:grid-cols-[1.45fr_0.95fr]">
-        <div className="space-y-8">
-          <div>
-            <p className="text-sm text-stone-500">Veřejná vrstva</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-[-0.03em] text-stone-950 sm:text-3xl">
-              Kontext k workshopu bez řídicího šumu.
-            </h2>
-          </div>
-
-          <div className="space-y-5 text-base leading-7 text-stone-700">
-            <p>
-              Harness Lab není live control room na veřejné homepage. Je to pracovní den o tom, jak navrhovat kontext,
-              instrukce a workflow pro AI coding agenty tak, aby výsledek přežil v repu i po handoffu.
-            </p>
-            <p>
-              Účastníci tu mají najít orientaci. Soukromá data, facilitátorské zásahy a operační stav mají zůstat mimo
-              tuto výchozí stránku.
-            </p>
-          </div>
-
-          <div className="space-y-3 border-t border-stone-900/10 pt-6">
-            <SimpleRule
-              title="Repo before improvisation"
-              body="Nejdřív dostaňte záměr, omezení a další krok do repa. Teprve potom přidávejte složitost."
-            />
-            <SimpleRule
-              title="Verify small"
-              body="Jeden malý ověřitelný krok je cennější než velká plocha bez důkazu, že opravdu funguje."
-            />
-            <SimpleRule
-              title="Write for handoff"
-              body="Další tým má z repa poznat, co je hotové, co je křehké a co je bezpečné udělat dál."
-            />
-          </div>
+      <section className="border-b border-stone-900/10 py-10">
+        <div className="space-y-6 text-base leading-8 text-stone-700">
+          <p>
+            Harness Lab je celodenní workshop o harness engineeringu. Neučí jen promptování, ale hlavně to, jak
+            navrhovat repozitářový kontext, pravidla, ověřování a handoff tak, aby s AI agenty šlo pracovat bezpečně a
+            bez improvizace.
+          </p>
+          <p>
+            To důležité má přežít v repu. `AGENTS.md`, plán, malé ověřitelné kroky, testy a čitelné operace jsou
+            cennější než efektní, ale nepřenositelný výstup.
+          </p>
         </div>
+      </section>
 
-        <aside className="border border-stone-900/10 bg-white/60 p-6">
+      <section className="border-b border-stone-900/10 py-10">
+        <div className="space-y-3">
+          <SimpleRule
+            title="Repo before improvisation"
+            body="Nejdřív dostaňte záměr, omezení a další bezpečný krok do repa."
+          />
+          <SimpleRule
+            title="Verify small"
+            body="Každý významný posun co nejdřív uzamkněte důkazem, ne dojmem."
+          />
+          <SimpleRule
+            title="Write for handoff"
+            body="Další tým má bez ústního vysvětlování poznat, co funguje a co je risk."
+          />
+        </div>
+      </section>
+
+      <section className="py-10">
+        <div className="border border-stone-900/10 bg-white/50 p-6">
           <p className="text-[11px] uppercase tracking-[0.28em] text-stone-500">Participant access</p>
-          <h3 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-stone-950">Vstup do room contextu</h3>
-          <p className="mt-4 text-sm leading-6 text-stone-600">
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.03em] text-stone-950">Vstup do room contextu</h2>
+          <p className="mt-4 text-sm leading-7 text-stone-600">
             Pokud jste fyzicky v místnosti, facilitátor sdílí event code. Bez něj tato stránka zůstává jen jako
-            orientační vstup.
+            veřejná vstupní vrstva k Harness Labu.
           </p>
 
           <form action={redeemEventCodeAction} className="mt-6 space-y-4">
@@ -198,31 +174,6 @@ function PublicView({
               {formatEventAccessError(eventAccessError)}
             </p>
           ) : null}
-        </aside>
-      </section>
-
-      <section className="grid gap-10 py-10 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <SectionLabel>Today</SectionLabel>
-          <div className="mt-4 space-y-4">
-            <TimelineRow label="Now" value={currentAgendaItem?.title ?? "Workshop running"} detail={currentAgendaItem?.description} />
-            <TimelineRow
-              label="Next"
-              value={nextAgendaItem?.title ?? "Wrap-up and reflection"}
-              detail={nextAgendaItem ? `${nextAgendaItem.time} · ${nextAgendaItem.description}` : "The next visible milestone appears when the day shifts."}
-            />
-          </div>
-        </div>
-
-        <div>
-          <SectionLabel>Public notes</SectionLabel>
-          <div className="mt-4 divide-y divide-stone-900/10 border-y border-stone-900/10">
-            {publicNotes.map((item) => (
-              <div key={item.id} className="py-4 text-sm leading-6 text-stone-700">
-                {item.label}
-              </div>
-            ))}
-          </div>
         </div>
       </section>
     </>
@@ -339,24 +290,6 @@ function SimpleRule({
     <div className="grid gap-2 sm:grid-cols-[180px_1fr] sm:gap-6">
       <p className="text-sm font-medium text-stone-950">{title}</p>
       <p className="text-sm leading-6 text-stone-600">{body}</p>
-    </div>
-  );
-}
-
-function TimelineRow({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail?: string;
-}) {
-  return (
-    <div className="border-b border-stone-900/10 pb-4 last:border-b-0">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-stone-500">{label}</p>
-      <p className="mt-2 text-lg font-medium text-stone-950">{value}</p>
-      {detail ? <p className="mt-2 text-sm leading-6 text-stone-600">{detail}</p> : null}
     </div>
   );
 }
