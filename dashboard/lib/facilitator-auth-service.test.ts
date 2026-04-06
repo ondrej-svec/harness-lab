@@ -103,4 +103,13 @@ describe("facilitator-auth-service", () => {
       }),
     ).resolves.toBe(false);
   });
+
+  it("rejects missing credentials instead of accepting forwarded state", async () => {
+    await expect(
+      getFacilitatorAuthService().hasValidRequestCredentials({
+        authorizationHeader: null,
+        instanceId: "sample-studio-a",
+      }),
+    ).resolves.toBe(false);
+  });
 });

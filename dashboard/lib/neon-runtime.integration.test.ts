@@ -2,6 +2,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { getEventAccessRepository } from "./event-access-repository";
+import { getFacilitatorIdentityRepository } from "./facilitator-identity-repository";
+import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getNeonSql } from "./neon-db";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
 import type { ParticipantSessionRecord } from "./runtime-contracts";
@@ -23,12 +25,14 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     const sql = getNeonSql();
 
     await sql.query(schema);
+    await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
   });
 
   afterAll(async () => {
     const sql = getNeonSql();
+    await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
 
@@ -68,5 +72,18 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     await repository.saveSessions(instanceId, [session]);
 
     await expect(repository.getSessions(instanceId)).resolves.toEqual([session]);
+  });
+
+  it("bootstraps a seed facilitator grant without failing the foreign-key constraint", async () => {
+    const identity = await getFacilitatorIdentityRepository().findByUsername("facilitator");
+    expect(identity).not.toBeNull();
+
+    const grant = await getInstanceGrantRepository().getActiveGrant(instanceId, identity!.id);
+    expect(grant).toMatchObject({
+      instanceId,
+      facilitatorIdentityId: identity!.id,
+      role: "owner",
+      revokedAt: null,
+    });
   });
 });

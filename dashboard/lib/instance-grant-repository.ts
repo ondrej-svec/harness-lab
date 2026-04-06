@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
+import { seedWorkshopState } from "./workshop-data";
 import type { InstanceGrantRecord, InstanceGrantRepository } from "./runtime-contracts";
 
 type StoredInstanceGrants = {
@@ -48,8 +49,23 @@ class FileInstanceGrantRepository implements InstanceGrantRepository {
 }
 
 class NeonInstanceGrantRepository implements InstanceGrantRepository {
+  private async ensureInstance(instanceId: string) {
+    const sql = getNeonSql();
+    const state = { ...seedWorkshopState, workshopId: instanceId };
+
+    await sql.query(
+      `
+        INSERT INTO workshop_instances (id, template_id, workshop_meta, workshop_state)
+        VALUES ($1, $2, $3::jsonb, $4::jsonb)
+        ON CONFLICT (id) DO NOTHING
+      `,
+      [instanceId, seedWorkshopState.workshopId, JSON.stringify(state.workshopMeta), JSON.stringify(state)],
+    );
+  }
+
   private async ensureSeedGrant(instanceId: string) {
     const sql = getNeonSql();
+    await this.ensureInstance(instanceId);
     await sql.query(
       `
         INSERT INTO instance_grants (id, instance_id, facilitator_identity_id, role, revoked_at)

@@ -90,8 +90,6 @@ export interface FacilitatorAuthService {
   hasValidRequestCredentials(options: {
     authorizationHeader: string | null;
     instanceId: WorkshopInstanceId;
-    forwardedUsername?: string | null;
-    forwardedPasswordHash?: string | null;
   }): Promise<boolean>;
 }
 

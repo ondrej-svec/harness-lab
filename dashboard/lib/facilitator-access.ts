@@ -1,4 +1,4 @@
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
@@ -13,12 +13,9 @@ function unauthorizedResponse() {
 }
 
 export async function isAuthorizedFacilitatorRequest(authorizationHeader: string | null) {
-  const cookieStore = await cookies();
   return getFacilitatorAuthService().hasValidRequestCredentials({
     authorizationHeader,
     instanceId: getCurrentWorkshopInstanceId(),
-    forwardedUsername: cookieStore.get("harness_facilitator_username")?.value ?? null,
-    forwardedPasswordHash: cookieStore.get("harness_facilitator_password_hash")?.value ?? null,
   });
 }
 

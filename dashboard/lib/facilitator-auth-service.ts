@@ -9,13 +9,11 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials(options: {
     authorizationHeader: string | null;
     instanceId: string;
-    forwardedUsername?: string | null;
-    forwardedPasswordHash?: string | null;
   }) {
-    const { authorizationHeader, instanceId, forwardedPasswordHash, forwardedUsername } = options;
+    const { authorizationHeader, instanceId } = options;
     const credentials = decodeBasicAuthHeader(authorizationHeader);
-    const username = credentials?.username ?? forwardedUsername ?? null;
-    const passwordHash = credentials ? hashSecret(credentials.password) : forwardedPasswordHash ?? null;
+    const username = credentials?.username ?? null;
+    const passwordHash = credentials ? hashSecret(credentials.password) : null;
 
     if (!username || !passwordHash) {
       await getAuditLogRepository().append({
