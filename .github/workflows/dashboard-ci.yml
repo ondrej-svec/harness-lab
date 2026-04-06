@@ -45,6 +45,9 @@ jobs:
       - if: env.HARNESS_TEST_DATABASE_URL != ''
         run: npm test -- neon-runtime.integration.test.ts
 
+      - if: env.HARNESS_TEST_DATABASE_URL != ''
+        run: npm test -- neon-auth.integration.test.ts
+
   e2e-dashboard:
     name: e2e-dashboard
     runs-on: ubuntu-latest

@@ -73,7 +73,43 @@ test.describe("participant dashboard", () => {
   });
 });
 
-test.describe("facilitator admin", () => {
+test.describe("facilitator sign-in", () => {
+  test("redirects unauthenticated /admin to /admin/sign-in in neon mode", async ({ page }) => {
+    // In file mode (e2e default), middleware doesn't redirect — requireFacilitatorPageAccess does.
+    // Without auth headers, the server action redirects to /admin/sign-in.
+    await page.goto("/admin");
+
+    // Should show sign-in page (either via redirect or direct render after server-side check)
+    await expect(page.getByRole("heading", { name: "přihlášení facilitátora" })).toBeVisible();
+    await expect(page.getByLabel("e-mail")).toBeVisible();
+    await expect(page.getByLabel("heslo")).toBeVisible();
+    await expect(page.getByRole("button", { name: "přihlásit se" })).toBeVisible();
+  });
+
+  test("sign-in page renders correctly in english", async ({ page }) => {
+    await page.goto("/admin/sign-in?lang=en");
+
+    await expect(page.getByRole("heading", { name: "facilitator sign-in" })).toBeVisible();
+    await expect(page.getByLabel("email")).toBeVisible();
+    await expect(page.getByLabel("password")).toBeVisible();
+    await expect(page.getByRole("button", { name: "sign in" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /back to overview/ })).toBeVisible();
+  });
+
+  test("sign-in page shows error state", async ({ page }) => {
+    await page.goto("/admin/sign-in?error=invalid");
+
+    await expect(page.getByText("Neplatné přihlašovací údaje.")).toBeVisible();
+  });
+
+  test("sign-in page shows unavailable state when Neon Auth is not configured", async ({ page }) => {
+    await page.goto("/admin/sign-in?error=unavailable");
+
+    await expect(page.getByText("Neon Auth is not configured.")).toBeVisible();
+  });
+});
+
+test.describe("facilitator admin (file mode)", () => {
   // File-mode auth: send Basic Auth header directly since there's no 401 challenge.
   test.use({
     extraHTTPHeaders: {
@@ -101,5 +137,31 @@ test.describe("facilitator admin", () => {
     ]);
 
     await expect(page.getByText("Poslední archiv:")).toBeVisible();
+  });
+
+  test("shows facilitators section with file-mode fallback message", async ({ page }) => {
+    await page.goto("/admin");
+
+    await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
+    await expect(page.getByText("Správa facilitátorů vyžaduje neon mód.")).toBeVisible();
+  });
+
+  test("facilitators API returns list with auth", async ({ request }) => {
+    const response = await request.get("/api/admin/facilitators");
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.ok).toBe(true);
+    expect(Array.isArray(body.grants)).toBe(true);
+  });
+});
+
+test.describe("facilitator API (unauthenticated)", () => {
+  test("facilitators API returns 401 without auth", async ({ playwright }) => {
+    const context = await playwright.request.newContext({
+      baseURL: "http://127.0.0.1:3100",
+    });
+    const response = await context.get("/api/admin/facilitators");
+    expect(response.status()).toBe(401);
+    await context.dispose();
   });
 });
