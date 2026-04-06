@@ -55,7 +55,6 @@ export const publicCopy = {
     footerBody: "Veřejná vstupní vrstva workshopu o kontextovém inženýrství, práci s repozitářem a spolupráci s ai agenty.",
     footerTop: "nahoru",
     footerParticipantAccess: "vstup pro účastníky",
-    footerRepo: "repo",
     participantEyebrow: "vrstva pro účastníky",
     participantTitleFallback: "workshop běží",
     participantBodyRevealed:
@@ -121,7 +120,6 @@ export const publicCopy = {
     footerBody: "Public front door for a workshop about context engineering, repository clarity, and collaboration with ai agents.",
     footerTop: "top",
     footerParticipantAccess: "participant access",
-    footerRepo: "repo",
     participantEyebrow: "participant room",
     participantTitleFallback: "workshop running",
     participantBodyRevealed:

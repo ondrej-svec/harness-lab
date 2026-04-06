@@ -20,7 +20,11 @@ test.describe("participant dashboard", () => {
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
     await expect(page.getByText("repo před improvizací")).toBeVisible();
-    await expect(page.getByText("Celodenní workshop o kontextu, workflow a handoffu pro práci s AI coding agenty.")).toBeVisible();
+    await expect(page.getByText(/Celodenní workshop o kontextu, workflow a spolupráci s AI coding agenty/i)).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "repo" })).toHaveAttribute(
+      "href",
+      "https://github.com/ondrej-svec/harness-lab",
+    );
     await expect(page.getByRole("navigation").getByRole("link", { name: "vstup pro facilitátora" })).toBeVisible();
 
     expect(pageErrors).toEqual([]);
