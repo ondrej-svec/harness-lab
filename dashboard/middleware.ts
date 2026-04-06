@@ -2,10 +2,14 @@ import { NextResponse, type NextRequest } from "next/server";
 import { resolveUiLanguage, uiLanguageCookieName } from "@/lib/ui-language";
 
 /**
- * Neon Auth session cookie name.
- * When present, the facilitator has an active session (validated server-side).
+ * Neon Auth session cookie names.
+ * Better Auth uses __Secure- prefix on HTTPS (production) and plain names on HTTP (dev).
  */
-const NEON_AUTH_SESSION_COOKIE = "session_token";
+const NEON_AUTH_SESSION_COOKIES = [
+  "__Secure-neon-auth.session_token",  // HTTPS (Vercel production/preview)
+  "neon-auth.session_token",            // HTTP fallback (local dev)
+  "session_token",                      // Legacy/plain name
+];
 
 /**
  * Check if Neon Auth is configured (middleware runs in Edge, so we check env directly).
@@ -23,7 +27,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/sign-in")) {
     if (isNeonAuthEnabled()) {
       // Neon Auth mode: redirect to sign-in if no session cookie
-      const hasSession = request.cookies.has(NEON_AUTH_SESSION_COOKIE);
+      const hasSession = NEON_AUTH_SESSION_COOKIES.some((name) => request.cookies.has(name));
       if (!hasSession) {
         const signInUrl = new URL("/admin/sign-in", request.url);
         if (resolvedLanguage !== "cs") {

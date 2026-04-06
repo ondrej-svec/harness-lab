@@ -19,9 +19,10 @@ async function signInAction(formData: FormData) {
     return;
   }
 
-  const { error } = await auth.signIn.email({ email, password });
+  const result = await auth.signIn.email({ email, password });
 
-  if (error) {
+  if (result.error) {
+    console.error("[facilitator-sign-in] error:", JSON.stringify(result.error));
     redirect(withLang("/admin/sign-in?error=invalid", lang));
     return;
   }
