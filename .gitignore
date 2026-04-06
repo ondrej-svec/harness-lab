@@ -1,5 +1,9 @@
 .DS_Store
 
+.env
+.env.local
+.env.*.local
+
 dashboard/.next/
 dashboard/node_modules/
 dashboard/.vercel/
