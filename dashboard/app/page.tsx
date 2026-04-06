@@ -10,16 +10,18 @@ import {
   revokeParticipantSession,
 } from "@/lib/event-access";
 import { getWorkshopState } from "@/lib/workshop-store";
+import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
 
 async function redeemEventCodeAction(formData: FormData) {
   "use server";
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
 
   const result = await redeemEventCode(String(formData.get("eventCode") ?? ""));
 
   if (!result.ok) {
-    redirect(`/?eventAccess=${result.reason}`);
+    redirect(withLang(`/?eventAccess=${result.reason}`, lang));
   }
 
   const cookieStore = await cookies();
@@ -30,11 +32,12 @@ async function redeemEventCodeAction(formData: FormData) {
     expires: new Date(result.session.expiresAt),
   });
 
-  redirect("/");
+  redirect(withLang("/", lang));
 }
 
-async function logoutEventCodeAction() {
+async function logoutEventCodeAction(formData: FormData) {
   "use server";
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
 
   const cookieStore = await cookies();
   const token = cookieStore.get(participantSessionCookieName)?.value;
@@ -46,16 +49,18 @@ async function logoutEventCodeAction() {
     expires: new Date(0),
   });
 
-  redirect("/");
+  redirect(withLang("/", lang));
 }
 
 export default async function HomePage({
   searchParams,
 }: {
-  searchParams?: Promise<{ eventAccess?: string }>;
+  searchParams?: Promise<{ eventAccess?: string; lang?: string }>;
 }) {
   const state = await getWorkshopState();
   const params = await searchParams;
+  const lang = resolveUiLanguage(params?.lang);
+  const copy = publicCopy[lang];
   const participantSession = await getParticipantSessionFromCookieStore();
   const participantTeams = participantSession ? await getParticipantTeamLookup() : null;
   const configuredEventCode = await getConfiguredEventCode();
@@ -67,10 +72,12 @@ export default async function HomePage({
   return (
     <main className="min-h-screen bg-[var(--surface)] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-6 sm:px-8 sm:py-8">
-        <SiteHeader isParticipant={!!participantSession} />
+        <SiteHeader isParticipant={!!participantSession} lang={lang} copy={copy} />
 
         {participantSession ? (
           <ParticipantView
+            copy={copy}
+            lang={lang}
             currentAgendaItem={currentAgendaItem}
             nextAgendaItem={nextAgendaItem}
             participantSession={participantSession}
@@ -79,54 +86,65 @@ export default async function HomePage({
             rotationRevealed={rotation.revealed}
           />
         ) : (
-          <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} />
+          <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
         )}
       </div>
     </main>
   );
 }
 
-function SiteHeader({ isParticipant }: { isParticipant: boolean }) {
+function SiteHeader({
+  isParticipant,
+  lang,
+  copy,
+}: {
+  isParticipant: boolean;
+  lang: UiLanguage;
+  copy: (typeof publicCopy)[UiLanguage];
+}) {
   return (
     <header className="border-b border-[var(--border)] pb-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <Link className="text-sm font-medium lowercase tracking-[0.12em] text-[var(--text-primary)]" href="/">
-          harness lab
+        <Link className="text-sm font-medium lowercase tracking-[0.12em] text-[var(--text-primary)]" href={withLang("/", lang)}>
+          {copy.brand}
         </Link>
 
+        <div className="flex flex-col gap-3 lg:items-end">
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm lowercase text-[var(--text-secondary)]">
           {isParticipant ? (
             <>
               <a className="transition hover:text-[var(--text-primary)]" href="#room">
-                room
+                {copy.navRoom}
               </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#teams">
-                teams
+                {copy.navTeams}
               </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#notes">
-                notes
+                {copy.navNotes}
               </a>
             </>
           ) : (
             <>
               <a className="transition hover:text-[var(--text-primary)]" href="#overview">
-                overview
+                {copy.navOverview}
               </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#principles">
-                principles
+                {copy.navPrinciples}
               </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#details">
-                details
+                {copy.navDetails}
               </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#access">
-                participant access
+                {copy.navParticipantAccess}
               </a>
             </>
           )}
-          <a className="transition hover:text-[var(--text-primary)]" href="/admin">
-            facilitator login
+          <a className="transition hover:text-[var(--text-primary)]" href={withLang("/admin", lang)}>
+            {copy.navFacilitatorLogin}
           </a>
         </nav>
+        <LanguageSwitcher lang={lang} />
+        </div>
       </div>
     </header>
   );
@@ -135,9 +153,13 @@ function SiteHeader({ isParticipant }: { isParticipant: boolean }) {
 function PublicView({
   configuredEventCode,
   eventAccessError,
+  copy,
+  lang,
 }: {
   configuredEventCode: Awaited<ReturnType<typeof getConfiguredEventCode>>;
   eventAccessError?: string;
+  copy: (typeof publicCopy)[UiLanguage];
+  lang: UiLanguage;
 }) {
   return (
     <>
@@ -146,66 +168,63 @@ function PublicView({
         id="overview"
       >
         <div className="max-w-3xl">
-          <p className="text-sm lowercase text-[var(--text-muted)]">workshop operating system for teams using ai agents</p>
+          <p className="text-sm lowercase text-[var(--text-muted)]">{copy.heroEyebrow}</p>
           <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.94] tracking-[-0.06em] text-[var(--text-primary)] sm:text-6xl lg:text-8xl">
-            harness
-            <br />
-            lab
+            {copy.brand.split(" ").map((part, index) => (
+              <span key={part}>
+                {index > 0 ? <br /> : null}
+                {part}
+              </span>
+            ))}
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">
-            Celodenní workshop o kontextu, workflow a handoffu pro práci s AI coding agenty.
+            {copy.heroLead}
           </p>
-          <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text-muted)]">
-            Praktický den s reálným repem: kontext, plán, testy, handoff. Co po týmu zůstane, rozhoduje.
-          </p>
+          <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text-muted)]">{copy.heroBody}</p>
         </div>
 
         <aside id="access" className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] p-6 text-[var(--accent-text)] sm:p-8">
-          <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--accent-muted)]">participant access</p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">enter room context</h2>
-          <p className="mt-4 text-sm leading-7 text-[var(--accent-secondary)]">
-            Pokud jste fyzicky v místnosti, facilitátor sdílí event code. Bez něj tato stránka zůstává veřejným
-            přehledem Harness Labu.
-          </p>
+          <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--accent-muted)]">{copy.accessEyebrow}</p>
+          <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">{copy.accessTitle}</h2>
+          <p className="mt-4 text-sm leading-7 text-[var(--accent-secondary)]">{copy.accessBody}</p>
 
           <form action={redeemEventCodeAction} className="mt-8 space-y-4">
+            <input name="lang" type="hidden" value={lang} />
             <label className="block text-[11px] lowercase tracking-[0.18em] text-[var(--accent-muted)]" htmlFor="event-code">
-              event code
+              {copy.eventCodeLabel}
             </label>
             <input
               className="w-full border border-[var(--accent-border)] bg-transparent px-4 py-3 text-base text-[var(--accent-text)] outline-none placeholder:text-[var(--accent-muted)]"
               defaultValue={configuredEventCode?.isSample ? configuredEventCode.sampleCode : ""}
               id="event-code"
               name="eventCode"
-              placeholder="shared by facilitator"
+              placeholder={copy.eventCodePlaceholder}
             />
             <button
               className="w-full border border-[var(--accent-text)] bg-[var(--accent-text)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-surface)] transition hover:bg-transparent hover:text-[var(--accent-text)]"
               type="submit"
             >
-              open participant view
+              {copy.eventCodeSubmit}
             </button>
           </form>
 
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm lowercase">
-            <a className="text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href="/admin">
-              facilitator login
+            <a className="text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href={withLang("/admin", lang)}>
+              {copy.facilitatorLogin}
             </a>
             <span className="text-[var(--accent-muted)]">/</span>
             <a className="text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href="#details">
-              public details
+              {copy.publicDetails}
             </a>
           </div>
 
           {configuredEventCode?.isSample ? (
-            <p className="mt-6 text-xs leading-6 text-[var(--accent-muted)]">
-              Lokální demo běží se sample kódem, proto je pole předvyplněné. V preview a produkci to tak být nemá.
-            </p>
+            <p className="mt-6 text-xs leading-6 text-[var(--accent-muted)]">{copy.sampleHint}</p>
           ) : null}
 
           {eventAccessError ? (
             <p className="mt-6 border border-[var(--accent-border)] bg-[var(--accent-text)]/8 px-4 py-3 text-sm leading-6 text-[var(--accent-text)]">
-              {formatEventAccessError(eventAccessError)}
+              {formatEventAccessError(eventAccessError, copy)}
             </p>
           ) : null}
         </aside>
@@ -214,24 +233,15 @@ function PublicView({
       <section className="border-b border-[var(--border)] py-12" id="principles">
         <div className="grid gap-10 lg:grid-cols-[0.48fr_1fr] lg:gap-16">
           <div>
-            <SectionLabel>principles</SectionLabel>
+            <SectionLabel>{copy.principlesEyebrow}</SectionLabel>
             <h2 className="mt-4 max-w-sm text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-4xl">
-              minimal rules that make teams actually continue.
+              {copy.principlesTitle}
             </h2>
           </div>
           <div className="space-y-6">
-            <SimpleRule
-              title="repo before improvisation"
-              body="Důležitý záměr, omezení a další krok patří nejdřív do repa, ne do vzduchu."
-            />
-            <SimpleRule
-              title="verify small"
-              body="Každý významný posun co nejdřív uzamkněte důkazem. Menší jistota je lepší než velká improvizace."
-            />
-            <SimpleRule
-              title="write for handoff"
-              body="Další tým má bez ústního vysvětlování poznat, co funguje, co je křehké a co je bezpečný další krok."
-            />
+            <SimpleRule title={copy.principleOneTitle} body={copy.principleOneBody} />
+            <SimpleRule title={copy.principleTwoTitle} body={copy.principleTwoBody} />
+            <SimpleRule title={copy.principleThreeTitle} body={copy.principleThreeBody} />
           </div>
         </div>
       </section>
@@ -239,45 +249,34 @@ function PublicView({
       <section className="border-b border-[var(--border)] py-12" id="details">
         <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
           <div>
-            <SectionLabel>what it is</SectionLabel>
-            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">
-              Harness Lab je praktický workshop o práci s AI agenty v reálném repozitáři. Důraz je na tom, co po
-              týmu zůstane: kontext, pravidla, plán, testy a handoff.
-            </p>
+            <SectionLabel>{copy.detailsWhat}</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsWhatBody}</p>
           </div>
           <div>
-            <SectionLabel>for participants</SectionLabel>
-            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">
-              Účastníci dostanou room-specific kontext až po event code. Veřejná stránka zůstává záměrně čistá a
-              neobsahuje live stav workshop instance.
-            </p>
+            <SectionLabel>{copy.detailsParticipants}</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsParticipantsBody}</p>
           </div>
           <div>
-            <SectionLabel>public boundary</SectionLabel>
-            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">
-              Skutečná data o termínu, místnosti, rosters a facilitaci patří do privátní runtime vrstvy. Public repo
-              a public homepage zůstávají bezpečné a přenositelné.
-            </p>
+            <SectionLabel>{copy.detailsBoundary}</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsBoundaryBody}</p>
           </div>
         </div>
       </section>
 
       <footer className="flex flex-col gap-6 py-8 text-sm text-[var(--text-muted)] sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="lowercase">harness lab</p>
-          <p className="mt-2 max-w-md leading-7">
-            public front door for a workshop about context engineering, repository clarity and handoff for ai agents.
-          </p>
+          <p className="lowercase">{copy.brand}</p>
+          <p className="mt-2 max-w-md leading-7">{copy.footerBody}</p>
         </div>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2 lowercase">
           <a className="transition hover:text-[var(--text-primary)]" href="#overview">
-            top
+            {copy.footerTop}
           </a>
           <a className="transition hover:text-[var(--text-primary)]" href="#access">
-            participant access
+            {copy.footerParticipantAccess}
           </a>
-          <a className="transition hover:text-[var(--text-primary)]" href="/admin">
-            facilitator login
+          <a className="transition hover:text-[var(--text-primary)]" href={withLang("/admin", lang)}>
+            {copy.facilitatorLogin}
           </a>
         </div>
       </footer>
@@ -286,6 +285,8 @@ function PublicView({
 }
 
 function ParticipantView({
+  copy,
+  lang,
   currentAgendaItem,
   nextAgendaItem,
   participantSession,
@@ -293,6 +294,8 @@ function ParticipantView({
   publicNotes,
   rotationRevealed,
 }: {
+  copy: (typeof publicCopy)[UiLanguage];
+  lang: UiLanguage;
   currentAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
   nextAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
   participantSession: NonNullable<Awaited<ReturnType<typeof getParticipantSessionFromCookieStore>>>;
@@ -304,34 +307,33 @@ function ParticipantView({
     <>
       <section className="grid gap-8 border-b border-[var(--border)] py-10 lg:grid-cols-[1.2fr_0.8fr]" id="room">
         <div>
-          <SectionLabel>Participant room</SectionLabel>
+          <SectionLabel>{copy.participantEyebrow}</SectionLabel>
           <h2 className="mt-3 text-3xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">
-            {currentAgendaItem?.title ?? "Workshop running"}
+            {currentAgendaItem?.title ?? copy.participantTitleFallback}
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">
             {rotationRevealed
-              ? "Continuation shift je odemčený. Čtěte nejdřív repo a handoff předchozího týmu, pak teprve měňte kód."
-              : "Soustřeďte se na kontext, plán a první reviewable output. Continuation shift se odemkne později."}
+              ? copy.participantBodyRevealed
+              : copy.participantBodyHidden}
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <MetricCard label="Current phase" value={currentAgendaItem?.title ?? "Workshop running"} />
-            <MetricCard label="Next" value={nextAgendaItem?.title ?? "Reflection"} />
-            <MetricCard label="Session until" value={formatDateTime(participantSession.expiresAt)} />
+            <MetricCard label={copy.metricCurrentPhase} value={currentAgendaItem?.title ?? copy.participantTitleFallback} />
+            <MetricCard label={copy.metricNext} value={nextAgendaItem?.title ?? copy.metricReflection} />
+            <MetricCard label={copy.metricSessionUntil} value={formatDateTime(participantSession.expiresAt, lang)} />
           </div>
         </div>
 
         <aside className="border border-[var(--border)] bg-[var(--surface-elevated)] p-6">
-          <SectionLabel>Session</SectionLabel>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-            Přihlášení platí pro room-specific data. Facilitátor zůstává odděleně na <code className="text-[var(--text-muted)]">/admin</code>.
-          </p>
+          <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
+          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
           <form action={logoutEventCodeAction} className="mt-6">
+            <input name="lang" type="hidden" value={lang} />
             <button
               className="border border-[var(--border-strong)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
               type="submit"
             >
-              Leave room context
+              {copy.leaveRoomContext}
             </button>
           </form>
         </aside>
@@ -339,7 +341,7 @@ function ParticipantView({
 
       <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div id="teams">
-          <SectionLabel>Your room data</SectionLabel>
+          <SectionLabel>{copy.roomData}</SectionLabel>
           {participantTeams ? (
             <div className="mt-4 space-y-4">
               {participantTeams.items.map((team) => (
@@ -358,13 +360,13 @@ function ParticipantView({
             </div>
           ) : (
             <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
-              Pro tuto session zatím nejsou dostupná žádná room-specific data.
+              {copy.noRoomData}
             </p>
           )}
         </div>
 
         <div id="notes">
-          <SectionLabel>Shared room notes</SectionLabel>
+          <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
           <div className="mt-4 divide-y divide-[var(--border)] border-y border-[var(--border)]">
             {publicNotes.map((item) => (
               <div key={item.id} className="py-4 text-sm leading-6 text-[var(--text-secondary)]">
@@ -412,20 +414,34 @@ function MetricCard({
   );
 }
 
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("cs-CZ", {
+function formatDateTime(value: string, lang: UiLanguage) {
+  return new Intl.DateTimeFormat(lang === "en" ? "en-US" : "cs-CZ", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
 }
 
-function formatEventAccessError(value: string) {
+function formatEventAccessError(value: string, copy: (typeof publicCopy)[UiLanguage]) {
   switch (value) {
     case "invalid_code":
-      return "Event code nesedí. Použijte kód sdílený facilitátorem pro tuto místnost.";
+      return copy.invalidCode;
     case "expired_code":
-      return "Tento event code už expiroval. Facilitátor musí vydat nový nebo ho obnovit.";
+      return copy.expiredCode;
     default:
-      return "Private room context se nepodařilo odemknout.";
+      return copy.unknownCodeError;
   }
+}
+
+function LanguageSwitcher({ lang }: { lang: UiLanguage }) {
+  return (
+    <div className="flex items-center gap-2 text-xs lowercase text-[var(--text-muted)]">
+      <Link className={lang === "cs" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/", "cs")}>
+        cz
+      </Link>
+      <span>/</span>
+      <Link className={lang === "en" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/", "en")}>
+        en
+      </Link>
+    </div>
+  );
 }

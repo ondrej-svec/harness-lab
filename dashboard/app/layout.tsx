@@ -1,5 +1,7 @@
+import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
+import { resolveUiLanguage } from "@/lib/ui-language";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -13,9 +15,12 @@ export const metadata: Metadata = {
   description: "Mobilní dashboard pro workshop Harness Lab.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const headerStore = await headers();
+  const lang = resolveUiLanguage(headerStore.get("x-harness-ui-lang") ?? undefined);
+
   return (
-    <html lang="cs" className={spaceGrotesk.variable}>
+    <html lang={lang} className={spaceGrotesk.variable}>
       <body style={{ fontFamily: "var(--font-space-grotesk), 'Avenir Next', 'Segoe UI', sans-serif" }}>
         {children}
       </body>

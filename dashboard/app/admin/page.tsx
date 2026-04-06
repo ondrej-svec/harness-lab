@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
+import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { workshopTemplates } from "@/lib/workshop-data";
 import {
   addSprintUpdate,
@@ -19,34 +20,38 @@ export const dynamic = "force-dynamic";
 async function setAgendaAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const agendaId = String(formData.get("agendaId") ?? "");
   if (agendaId) {
     await setCurrentAgendaItem(agendaId);
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function toggleRotationAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   await setRotationReveal(formData.get("revealed") === "true");
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function saveCheckpointAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const teamId = String(formData.get("teamId") ?? "");
   const checkpoint = String(formData.get("checkpoint") ?? "");
   if (teamId && checkpoint) {
     await updateCheckpoint(teamId, checkpoint);
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function addCheckpointFeedAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const teamId = String(formData.get("teamId") ?? "");
   const text = String(formData.get("text") ?? "");
   const at = String(formData.get("at") ?? "");
@@ -58,23 +63,25 @@ async function addCheckpointFeedAction(formData: FormData) {
       at,
     });
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function completeChallengeAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const teamId = String(formData.get("teamId") ?? "");
   const challengeId = String(formData.get("challengeId") ?? "");
   if (teamId && challengeId) {
     await completeChallenge(challengeId, teamId);
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function registerTeamAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const id = String(formData.get("id") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const city = String(formData.get("city") ?? "Studio A").trim();
@@ -97,29 +104,38 @@ async function registerTeamAction(formData: FormData) {
         .filter(Boolean),
     });
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function resetWorkshopAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const templateId = String(formData.get("templateId") ?? "");
   if (templateId) {
     await resetWorkshopState(templateId);
   }
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
 async function archiveWorkshopAction(formData: FormData) {
   "use server";
   await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const notes = String(formData.get("notes") ?? "").trim();
   await createWorkshopArchive({ reason: "manual", notes: notes || null });
-  redirect("/admin");
+  redirect(withLang("/admin", lang));
 }
 
-export default async function AdminPage() {
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ lang?: string }>;
+}) {
   await requireFacilitatorPageAccess();
+  const params = await searchParams;
+  const lang = resolveUiLanguage(params?.lang);
+  const copy = adminCopy[lang];
   const [state, latestArchive] = await Promise.all([getWorkshopState(), getLatestWorkshopArchive()]);
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
 
@@ -127,34 +143,37 @@ export default async function AdminPage() {
     <main className="min-h-screen bg-[var(--surface-admin)] px-4 py-8 text-[var(--text-primary)] sm:px-6">
       <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <header className="border border-[var(--border)] bg-[var(--surface-elevated)] p-6">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">Facilitator desk</p>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">Řízení workshopu</h1>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">
-            Chráněný operační panel pro facilitátora. Drží odděleně participant orientaci a live zásahy do workshop
-            instance, aby veřejná plocha zůstala čistá a mobile-first.
-          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{copy.deskEyebrow}</p>
+              <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{copy.pageTitle}</h1>
+              <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">{copy.pageBody}</p>
+            </div>
+            <AdminLanguageSwitcher lang={lang} />
+          </div>
           <div className="mt-5 grid gap-3 md:grid-cols-4">
-            <StatusPill label="Aktivní instance" value={state.workshopId} />
-            <StatusPill label="Aktuální fáze" value={currentAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel} />
-            <StatusPill label="Rotace" value={state.rotation.revealed ? "odemčeno" : "skryto"} />
-            <StatusPill label="Týmy" value={`${state.teams.length}`} />
+            <StatusPill label={copy.activeInstance} value={state.workshopId} />
+            <StatusPill label={copy.currentPhase} value={currentAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel} />
+            <StatusPill label={copy.rotation} value={state.rotation.revealed ? copy.rotationUnlocked : copy.rotationHidden} />
+            <StatusPill label={copy.teams} value={`${state.teams.length}`} />
           </div>
           {latestArchive ? (
             <p className="mt-4 text-xs leading-5 text-[var(--text-muted)]">
-              Poslední archiv: {latestArchive.createdAt} • retention do {latestArchive.retentionUntil ?? "nenastaveno"}.
+              {copy.latestArchivePrefix} {latestArchive.createdAt} • {copy.retentionUntil} {latestArchive.retentionUntil ?? copy.retentionUnset}.
             </p>
           ) : null}
         </header>
 
         <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
           <AdminGroup
-            title="Workshop state"
-            eyebrow="Rychlé zásahy do průběhu dne"
-            description="Použijte na změnu fáze a reset instance. Reset je high-impact operace."
+            title={copy.workshopStateTitle}
+            eyebrow={copy.workshopStateEyebrow}
+            description={copy.workshopStateDescription}
           >
             <div className="grid gap-4 lg:grid-cols-2">
-              <AdminCard title="Posunout agendu" tone="default">
+              <AdminCard title={copy.moveAgendaTitle} tone="default">
                 <form action={setAgendaAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <select name="agendaId" className={inputClassName}>
                     {state.agenda.map((item) => (
                       <option key={item.id} value={item.id}>
@@ -163,13 +182,14 @@ export default async function AdminPage() {
                     ))}
                   </select>
                   <button className={primaryButtonClassName} type="submit">
-                    Nastavit current fázi
+                    {copy.setCurrentPhase}
                   </button>
                 </form>
               </AdminCard>
 
-              <AdminCard title="Reset workshop instance" tone="danger">
+              <AdminCard title={copy.resetInstanceTitle} tone="danger">
                 <form action={resetWorkshopAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <select name="templateId" className={inputClassName}>
                     {workshopTemplates.map((template) => (
                       <option key={template.id} value={template.id}>
@@ -177,28 +197,25 @@ export default async function AdminPage() {
                       </option>
                     ))}
                   </select>
-                  <p className="text-xs leading-5 text-[var(--text-muted)]">
-                    Přepíše lokální workshop state seedovanou ukázkovou instancí.
-                  </p>
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
                   <button className={dangerButtonClassName} type="submit">
-                    Resetovat data
+                    {copy.resetButton}
                   </button>
                 </form>
               </AdminCard>
 
-              <AdminCard title="Archivovat aktuální instance" tone="default">
+              <AdminCard title={copy.archiveTitle} tone="default">
                 <form action={archiveWorkshopAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <textarea
                     name="notes"
                     rows={3}
-                    placeholder="Volitelné poznámky k archivaci"
+                    placeholder={copy.archivePlaceholder}
                     className={inputClassName}
                   />
-                  <p className="text-xs leading-5 text-[var(--text-muted)]">
-                    Uloží snapshot runtime stavu před closeoutem nebo před ručním resetem.
-                  </p>
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
                   <button className={primaryButtonClassName} type="submit">
-                    Vytvořit archiv
+                    {copy.archiveButton}
                   </button>
                 </form>
               </AdminCard>
@@ -206,13 +223,14 @@ export default async function AdminPage() {
           </AdminGroup>
 
           <AdminGroup
-            title="Continuation controls"
-            eyebrow="Odemknutí handoff momentu"
-            description="Jasně oddělené high-impact ovládání pro reveal/hide continuation shift."
+            title={copy.continuationTitle}
+            eyebrow={copy.continuationEyebrow}
+            description={copy.continuationDescription}
           >
             <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-              <AdminCard title="Reveal rotace" tone="highlight">
+              <AdminCard title={copy.revealTitle} tone="highlight">
                 <form action={toggleRotationAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <div className="flex flex-wrap gap-3">
                     <button
                       className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-2 font-semibold text-[var(--accent-text)]"
@@ -220,7 +238,7 @@ export default async function AdminPage() {
                       name="revealed"
                       value="true"
                     >
-                      Odemknout
+                      {copy.unlockButton}
                     </button>
                     <button
                       className="border border-[var(--border-strong)] px-4 py-2 font-semibold text-[var(--text-secondary)]"
@@ -228,16 +246,16 @@ export default async function AdminPage() {
                       name="revealed"
                       value="false"
                     >
-                      Znovu skrýt
+                      {copy.hideAgainButton}
                     </button>
                   </div>
                   <p className="text-xs leading-5 text-[var(--text-muted)]">
-                    Stav na participant ploše: {state.rotation.revealed ? "předání je odemčeno" : "předání je skryté"}.
+                    {copy.participantStatePrefix} {state.rotation.revealed ? copy.participantStateUnlocked : copy.participantStateHidden}.
                   </p>
                 </form>
               </AdminCard>
 
-              <AdminCard title="Aktivní rozpis rotace" tone="default">
+              <AdminCard title={copy.activeRotationTitle} tone="default">
                 <div className="space-y-3">
                   {state.rotation.slots.map((slot) => (
                     <div key={`${slot.fromTeam}-${slot.toTeam}`} className="border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
@@ -255,15 +273,16 @@ export default async function AdminPage() {
 
         <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
           <AdminGroup
-            title="Team operations"
-            eyebrow="Repo a checkpoint management"
-            description="Formuláře pro registraci týmů a údržbu jejich aktuálního checkpointu."
+            title={copy.teamOpsTitle}
+            eyebrow={copy.teamOpsEyebrow}
+            description={copy.teamOpsDescription}
           >
             <div className="grid gap-4 lg:grid-cols-2">
-              <AdminCard title="Registrovat nebo upravit tým" tone="default">
+              <AdminCard title={copy.registerTeamTitle} tone="default">
                 <form action={registerTeamAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <input name="id" placeholder="t5" className={inputClassName} />
-                  <input name="name" placeholder="Tým 5" className={inputClassName} />
+                  <input name="name" placeholder={copy.teamNamePlaceholder} className={inputClassName} />
                   <input name="city" placeholder="Studio A" className={inputClassName} />
                   <input name="repoUrl" placeholder="https://github.com/..." className={inputClassName} />
                   <input name="projectBriefId" placeholder="standup-bot" className={inputClassName} />
@@ -271,17 +290,18 @@ export default async function AdminPage() {
                   <textarea
                     name="checkpoint"
                     rows={3}
-                    placeholder="Aktuální stav týmu"
+                    placeholder={copy.teamCheckpointPlaceholder}
                     className={inputClassName}
                   />
                   <button className={primaryButtonClassName} type="submit">
-                    Uložit tým
+                    {copy.saveTeamButton}
                   </button>
                 </form>
               </AdminCard>
 
-              <AdminCard title="Upravit checkpoint týmu" tone="default">
+              <AdminCard title={copy.editCheckpointTitle} tone="default">
                 <form action={saveCheckpointAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <select name="teamId" className={inputClassName}>
                     {state.teams.map((team) => (
                       <option key={team.id} value={team.id}>
@@ -291,7 +311,7 @@ export default async function AdminPage() {
                   </select>
                   <textarea name="checkpoint" rows={5} className={inputClassName} />
                   <button className={primaryButtonClassName} type="submit">
-                    Uložit checkpoint
+                    {copy.saveCheckpointButton}
                   </button>
                 </form>
               </AdminCard>
@@ -299,13 +319,14 @@ export default async function AdminPage() {
           </AdminGroup>
 
           <AdminGroup
-            title="Signal capture"
-            eyebrow="Intermezzo a progress evidence"
-            description="Krátké zápisy do feedu a challenge completion, které se pak promítají do workshop rytmu."
+            title={copy.signalTitle}
+            eyebrow={copy.signalEyebrow}
+            description={copy.signalDescription}
           >
             <div className="grid gap-4 lg:grid-cols-2">
-              <AdminCard title="Sprint checkpoint feed" tone="default">
+              <AdminCard title={copy.sprintFeedTitle} tone="default">
                 <form action={addCheckpointFeedAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <select name="teamId" className={inputClassName}>
                     {state.teams.map((team) => (
                       <option key={team.id} value={team.id}>
@@ -316,13 +337,14 @@ export default async function AdminPage() {
                   <input name="at" defaultValue="11:15" className={inputClassName} />
                   <textarea name="text" rows={4} className={inputClassName} />
                   <button className={primaryButtonClassName} type="submit">
-                    Přidat update
+                    {copy.addUpdateButton}
                   </button>
                 </form>
               </AdminCard>
 
-              <AdminCard title="Označit challenge jako splněnou" tone="default">
+              <AdminCard title={copy.completeChallengeTitle} tone="default">
                 <form action={completeChallengeAction} className="space-y-3">
+                  <input name="lang" type="hidden" value={lang} />
                   <select name="teamId" className={inputClassName}>
                     {state.teams.map((team) => (
                       <option key={team.id} value={team.id}>
@@ -338,7 +360,7 @@ export default async function AdminPage() {
                     ))}
                   </select>
                   <button className={primaryButtonClassName} type="submit">
-                    Zapsat completion
+                    {copy.recordCompletionButton}
                   </button>
                 </form>
               </AdminCard>
@@ -412,3 +434,17 @@ const primaryButtonClassName =
 
 const dangerButtonClassName =
   "border border-[var(--danger)] bg-[var(--danger)] px-4 py-2 font-semibold text-white";
+
+function AdminLanguageSwitcher({ lang }: { lang: UiLanguage }) {
+  return (
+    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+      <a className={lang === "cs" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/admin", "cs")}>
+        CZ
+      </a>
+      <span>/</span>
+      <a className={lang === "en" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/admin", "en")}>
+        EN
+      </a>
+    </div>
+  );
+}

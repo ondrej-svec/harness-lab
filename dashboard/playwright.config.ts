@@ -29,9 +29,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
+    command: "npm run start -- --hostname 127.0.0.1 --port 3100",
     url: `http://127.0.0.1:${port}`,
-    reuseExistingServer: true,
+    reuseExistingServer: false,
     env: {
       HARNESS_ADMIN_USERNAME: "facilitator",
       HARNESS_ADMIN_PASSWORD: "secret",

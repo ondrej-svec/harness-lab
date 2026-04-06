@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { resolveUiLanguage, uiLanguageCookieName } from "@/lib/ui-language";
 
 function decodeBasicAuth(header: string | null) {
   if (!header?.startsWith("Basic ")) {
@@ -22,6 +23,10 @@ function decodeBasicAuth(header: string | null) {
 }
 
 export async function middleware(request: NextRequest) {
+  const urlLanguage = request.nextUrl.searchParams.get("lang") ?? undefined;
+  const cookieLanguage = request.cookies.get(uiLanguageCookieName)?.value;
+  const resolvedLanguage = resolveUiLanguage(urlLanguage ?? cookieLanguage);
+
   if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!decodeBasicAuth(request.headers.get("authorization"))) {
       return new NextResponse("Authentication required", {
@@ -39,12 +44,21 @@ export async function middleware(request: NextRequest) {
   if (authorization) {
     requestHeaders.set("x-harness-authorization", authorization);
   }
+  requestHeaders.set("x-harness-ui-lang", resolvedLanguage);
 
   const response = NextResponse.next({
     request: {
       headers: requestHeaders,
     },
   });
+
+  if (urlLanguage) {
+    response.cookies.set(uiLanguageCookieName, resolvedLanguage, {
+      httpOnly: false,
+      sameSite: "lax",
+      path: "/",
+    });
+  }
 
   return response;
 }
