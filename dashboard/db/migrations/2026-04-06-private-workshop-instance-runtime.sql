@@ -29,6 +29,17 @@ CREATE TABLE IF NOT EXISTS participant_sessions (
 CREATE INDEX IF NOT EXISTS participant_sessions_instance_id_idx ON participant_sessions(instance_id);
 CREATE INDEX IF NOT EXISTS participant_sessions_expires_at_idx ON participant_sessions(expires_at);
 
+CREATE TABLE IF NOT EXISTS participant_redeem_attempts (
+  id TEXT PRIMARY KEY,
+  instance_id TEXT NOT NULL REFERENCES workshop_instances(id) ON DELETE CASCADE,
+  fingerprint TEXT NOT NULL,
+  result TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS participant_redeem_attempts_instance_fingerprint_idx
+  ON participant_redeem_attempts(instance_id, fingerprint, created_at);
+
 CREATE TABLE IF NOT EXISTS facilitator_identities (
   id TEXT PRIMARY KEY,
   username TEXT NOT NULL UNIQUE,
@@ -70,6 +81,9 @@ CREATE TABLE IF NOT EXISTS instance_archives (
   instance_id TEXT NOT NULL REFERENCES workshop_instances(id) ON DELETE CASCADE,
   archive_status TEXT NOT NULL,
   storage_uri TEXT,
+  retention_until TIMESTAMPTZ,
+  notes TEXT,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

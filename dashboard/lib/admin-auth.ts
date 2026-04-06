@@ -5,6 +5,7 @@ export const protectedWritePaths = new Set([
   "/api/monitoring",
   "/api/rotation",
   "/api/workshop",
+  "/api/workshop/archive",
 ]);
 
 export function isProtectedPath(pathname: string, method: string) {

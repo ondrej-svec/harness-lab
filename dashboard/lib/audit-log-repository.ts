@@ -31,6 +31,27 @@ class FileAuditLogRepository implements AuditLogRepository {
     await writeFile(tempPath, JSON.stringify({ items: [...parsed.items, record] }, null, 2));
     await rename(tempPath, this.logPath);
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    await this.ensureFile();
+    const raw = await readFile(this.logPath, "utf8");
+    const parsed = JSON.parse(raw) as StoredAuditLog;
+    const olderThanMs = Date.parse(olderThan);
+    const tempPath = `${this.logPath}.${randomUUID()}.tmp`;
+    await writeFile(
+      tempPath,
+      JSON.stringify(
+        {
+          items: parsed.items.filter(
+            (item) => item.instanceId !== instanceId || Date.parse(item.createdAt) >= olderThanMs,
+          ),
+        },
+        null,
+        2,
+      ),
+    );
+    await rename(tempPath, this.logPath);
+  }
 }
 
 class NeonAuditLogRepository implements AuditLogRepository {
@@ -50,6 +71,18 @@ class NeonAuditLogRepository implements AuditLogRepository {
         JSON.stringify(record.metadata ?? null),
         record.createdAt,
       ],
+    );
+  }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    const sql = getNeonSql();
+    await sql.query(
+      `
+        DELETE FROM audit_log
+        WHERE instance_id = $1
+          AND created_at < $2::timestamptz
+      `,
+      [instanceId, olderThan],
     );
   }
 }

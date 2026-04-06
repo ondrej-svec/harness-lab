@@ -66,6 +66,7 @@ Rules:
 
 - deploy to preview
 - verify schema or runtime changes against the Neon preview branch
+- require the `Private Runtime Preview Gate` workflow to pass for DB/auth-sensitive pull requests
 - run the required automated test layers
 - perform exploratory browser inspection on critical participant and facilitator flows
 - inspect logs for auth, database, and runtime errors

@@ -1,4 +1,4 @@
-import type { MonitoringSnapshot, WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
+import type { MonitoringSnapshot, SprintUpdate, WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 
 export type WorkshopInstanceId = string;
 
@@ -56,6 +56,36 @@ export type InstanceGrantRecord = {
   revokedAt: string | null;
 };
 
+export type CheckpointRecord = SprintUpdate;
+
+export type RedeemAttemptRecord = {
+  instanceId: WorkshopInstanceId;
+  fingerprint: string;
+  result: "success" | "failure";
+  createdAt: string;
+};
+
+export type WorkshopArchivePayload = {
+  archivedAt: string;
+  reason: "manual" | "reset";
+  workshopState: WorkshopState;
+  checkpoints: CheckpointRecord[];
+  monitoringSnapshots: MonitoringSnapshot[];
+  participantEventAccessVersion: number | null;
+  participantSessions: ParticipantSessionRecord[];
+};
+
+export type InstanceArchiveRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  archiveStatus: "ready" | "expired";
+  storageUri: string | null;
+  createdAt: string;
+  retentionUntil: string | null;
+  notes: string | null;
+  payload: WorkshopArchivePayload;
+};
+
 export interface WorkshopInstanceRepository {
   getDefaultInstanceId(): Promise<WorkshopInstanceId>;
   getInstance(instanceId: WorkshopInstanceId): Promise<WorkshopInstanceRecord | null>;
@@ -68,8 +98,11 @@ export interface RuntimeWorkshopStateRepository {
 }
 
 export interface ParticipantSessionRepository {
-  getSessions(instanceId: WorkshopInstanceId): Promise<ParticipantSessionRecord[]>;
-  saveSessions(instanceId: WorkshopInstanceId, sessions: ParticipantSessionRecord[]): Promise<void>;
+  listSessions(instanceId: WorkshopInstanceId): Promise<ParticipantSessionRecord[]>;
+  findSession(instanceId: WorkshopInstanceId, tokenHash: string): Promise<ParticipantSessionRecord | null>;
+  upsertSession(instanceId: WorkshopInstanceId, session: ParticipantSessionRecord): Promise<void>;
+  deleteSession(instanceId: WorkshopInstanceId, tokenHash: string): Promise<void>;
+  deleteExpiredSessions(instanceId: WorkshopInstanceId, now: string): Promise<void>;
 }
 
 export interface ParticipantEventAccessRepository {
@@ -77,13 +110,33 @@ export interface ParticipantEventAccessRepository {
   saveAccess(instanceId: WorkshopInstanceId, access: ParticipantEventAccessRecord): Promise<void>;
 }
 
+export interface CheckpointRepository {
+  listCheckpoints(instanceId: WorkshopInstanceId): Promise<CheckpointRecord[]>;
+  appendCheckpoint(instanceId: WorkshopInstanceId, checkpoint: CheckpointRecord): Promise<void>;
+  replaceCheckpoints(instanceId: WorkshopInstanceId, checkpoints: CheckpointRecord[]): Promise<void>;
+}
+
 export interface MonitoringSnapshotRepository {
   getSnapshots(instanceId: WorkshopInstanceId): Promise<MonitoringSnapshot[]>;
   replaceSnapshots(instanceId: WorkshopInstanceId, snapshots: MonitoringSnapshot[]): Promise<void>;
+  deleteOlderThan(instanceId: WorkshopInstanceId, olderThan: string): Promise<void>;
+}
+
+export interface RedeemAttemptRepository {
+  countRecentFailures(instanceId: WorkshopInstanceId, fingerprint: string, since: string): Promise<number>;
+  appendAttempt(attempt: RedeemAttemptRecord): Promise<void>;
+  deleteOlderThan(instanceId: WorkshopInstanceId, olderThan: string): Promise<void>;
 }
 
 export interface AuditLogRepository {
   append(record: AuditLogRecord): Promise<void>;
+  deleteOlderThan(instanceId: WorkshopInstanceId, olderThan: string): Promise<void>;
+}
+
+export interface InstanceArchiveRepository {
+  createArchive(record: InstanceArchiveRecord): Promise<void>;
+  getLatestArchive(instanceId: WorkshopInstanceId): Promise<InstanceArchiveRecord | null>;
+  deleteExpiredArchives(now: string): Promise<void>;
 }
 
 export interface FacilitatorAuthService {

@@ -67,7 +67,7 @@ During the workshop, facilitator uses the control plane to:
 ### 4. Reset
 
 After a workshop:
-- archive or export the live instance state
+- archive the live instance state from the protected admin surface or `POST /api/workshop/archive`
 - revoke active participant sessions
 - reset the next workshop from a template or a new instance record instead of reusing the archived one in place
 - confirm no live team data remains in the active public-facing view
@@ -75,9 +75,11 @@ After a workshop:
 ### 5. Archive
 
 - store the final workshop-state snapshot in private storage
+- note that reset now creates an automatic pre-reset archive before clearing runtime state
 - export any closing notes or retrospective inputs
 - keep public repo improvements separate from private event records
 - apply retention and cleanup rules from [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
+- review structured `HARNESS_RUNTIME_ALERT` log lines for auth failures, redeem throttling, and archive events
 
 ## Rule
 

@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
-import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
+import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { workshopTemplates } from "@/lib/workshop-data";
 import {
   addSprintUpdate,
+  createWorkshopArchive,
   completeChallenge,
   getWorkshopState,
+  getLatestWorkshopArchive,
   resetWorkshopState,
   setCurrentAgendaItem,
   setRotationReveal,
@@ -16,7 +18,7 @@ export const dynamic = "force-dynamic";
 
 async function setAgendaAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const agendaId = String(formData.get("agendaId") ?? "");
   if (agendaId) {
     await setCurrentAgendaItem(agendaId);
@@ -26,14 +28,14 @@ async function setAgendaAction(formData: FormData) {
 
 async function toggleRotationAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   await setRotationReveal(formData.get("revealed") === "true");
   redirect("/admin");
 }
 
 async function saveCheckpointAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const checkpoint = String(formData.get("checkpoint") ?? "");
   if (teamId && checkpoint) {
@@ -44,7 +46,7 @@ async function saveCheckpointAction(formData: FormData) {
 
 async function addCheckpointFeedAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const text = String(formData.get("text") ?? "");
   const at = String(formData.get("at") ?? "");
@@ -61,7 +63,7 @@ async function addCheckpointFeedAction(formData: FormData) {
 
 async function completeChallengeAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const teamId = String(formData.get("teamId") ?? "");
   const challengeId = String(formData.get("challengeId") ?? "");
   if (teamId && challengeId) {
@@ -72,7 +74,7 @@ async function completeChallengeAction(formData: FormData) {
 
 async function registerTeamAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const id = String(formData.get("id") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const city = String(formData.get("city") ?? "Studio A").trim();
@@ -100,7 +102,7 @@ async function registerTeamAction(formData: FormData) {
 
 async function resetWorkshopAction(formData: FormData) {
   "use server";
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorActionAccess();
   const templateId = String(formData.get("templateId") ?? "");
   if (templateId) {
     await resetWorkshopState(templateId);
@@ -108,8 +110,17 @@ async function resetWorkshopAction(formData: FormData) {
   redirect("/admin");
 }
 
+async function archiveWorkshopAction(formData: FormData) {
+  "use server";
+  await requireFacilitatorActionAccess();
+  const notes = String(formData.get("notes") ?? "").trim();
+  await createWorkshopArchive({ reason: "manual", notes: notes || null });
+  redirect("/admin");
+}
+
 export default async function AdminPage() {
-  const state = await getWorkshopState();
+  await requireFacilitatorPageAccess();
+  const [state, latestArchive] = await Promise.all([getWorkshopState(), getLatestWorkshopArchive()]);
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
 
   return (
@@ -128,6 +139,11 @@ export default async function AdminPage() {
             <StatusPill label="Rotace" value={state.rotation.revealed ? "odemčeno" : "skryto"} />
             <StatusPill label="Týmy" value={`${state.teams.length}`} />
           </div>
+          {latestArchive ? (
+            <p className="mt-4 text-xs leading-5 text-stone-400">
+              Poslední archiv: {latestArchive.createdAt} • retention do {latestArchive.retentionUntil ?? "nenastaveno"}.
+            </p>
+          ) : null}
         </header>
 
         <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
@@ -166,6 +182,23 @@ export default async function AdminPage() {
                   </p>
                   <button className={dangerButtonClassName} type="submit">
                     Resetovat data
+                  </button>
+                </form>
+              </AdminCard>
+
+              <AdminCard title="Archivovat aktuální instance" tone="default">
+                <form action={archiveWorkshopAction} className="space-y-3">
+                  <textarea
+                    name="notes"
+                    rows={3}
+                    placeholder="Volitelné poznámky k archivaci"
+                    className={inputClassName}
+                  />
+                  <p className="text-xs leading-5 text-stone-400">
+                    Uloží snapshot runtime stavu před closeoutem nebo před ručním resetem.
+                  </p>
+                  <button className={primaryButtonClassName} type="submit">
+                    Vytvořit archiv
                   </button>
                 </form>
               </AdminCard>

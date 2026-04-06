@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { getAuditLogRepository } from "./audit-log-repository";
 import {
   createWorkshopStateFromTemplate,
   type MonitoringSnapshot,
@@ -5,20 +7,59 @@ import {
   type Team,
   type WorkshopState,
 } from "./workshop-data";
+import { getCheckpointRepository } from "./checkpoint-repository";
+import { getEventAccessRepository } from "./event-access-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
+import { getInstanceArchiveRepository } from "./instance-archive-repository";
+import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
+import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
+import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
+import { emitRuntimeAlert } from "./runtime-alert";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 
+async function getBaseWorkshopState(instanceId = getCurrentWorkshopInstanceId()) {
+  return getWorkshopStateRepository().getState(instanceId);
+}
+
+const monitoringRetentionDays = 14;
+const auditRetentionDays = 30;
+const redeemAttemptRetentionDays = 7;
+const archiveRetentionDays = 30;
+
+function subtractDays(date: Date, days: number) {
+  return new Date(date.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+function addDays(date: Date, days: number) {
+  return new Date(date.getTime() + days * 24 * 60 * 60 * 1000).toISOString();
+}
+
 export async function getWorkshopState(): Promise<WorkshopState> {
-  return getWorkshopStateRepository().getState(getCurrentWorkshopInstanceId());
+  const instanceId = getCurrentWorkshopInstanceId();
+  const [state, monitoring, sprintUpdates] = await Promise.all([
+    getBaseWorkshopState(instanceId),
+    getMonitoringSnapshotRepository().getSnapshots(instanceId),
+    getCheckpointRepository().listCheckpoints(instanceId),
+  ]);
+
+  return {
+    ...state,
+    monitoring: monitoring.length > 0 ? monitoring : state.monitoring,
+    sprintUpdates: sprintUpdates.length > 0 ? sprintUpdates : state.sprintUpdates,
+  };
 }
 
 export async function updateWorkshopState(
   updater: (state: WorkshopState) => WorkshopState,
 ): Promise<WorkshopState> {
-  const current = await getWorkshopState();
+  const current = await getBaseWorkshopState();
   const next = updater(current);
-  await getWorkshopStateRepository().saveState(getCurrentWorkshopInstanceId(), next);
-  return next;
+  await getWorkshopStateRepository().saveState(getCurrentWorkshopInstanceId(), {
+    ...next,
+    monitoring: current.monitoring,
+    sprintUpdates: current.sprintUpdates,
+  });
+  return getWorkshopState();
 }
 
 export async function setCurrentAgendaItem(itemId: string) {
@@ -80,21 +121,131 @@ export async function setRotationReveal(revealed: boolean) {
 }
 
 export async function addSprintUpdate(update: SprintUpdate) {
-  return updateWorkshopState((state) => ({
+  const instanceId = getCurrentWorkshopInstanceId();
+  const repository = getCheckpointRepository();
+  await repository.appendCheckpoint(instanceId, update);
+  const checkpoints = await repository.listCheckpoints(instanceId);
+
+  // Keep the workshop-state projection aligned during the migration window.
+  const state = await getBaseWorkshopState(instanceId);
+  await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
-    sprintUpdates: [update, ...state.sprintUpdates].slice(0, 12),
-  }));
+    sprintUpdates: checkpoints,
+  });
+
+  return getWorkshopState();
 }
 
 export async function replaceMonitoring(items: MonitoringSnapshot[]) {
-  return updateWorkshopState((state) => ({
+  const instanceId = getCurrentWorkshopInstanceId();
+  const repository = getMonitoringSnapshotRepository();
+  await repository.replaceSnapshots(instanceId, items);
+
+  // Keep the workshop-state projection aligned during the migration window.
+  const state = await getBaseWorkshopState(instanceId);
+  await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
     monitoring: items,
-  }));
+  });
+
+  return getWorkshopState();
+}
+
+export async function getLatestWorkshopArchive() {
+  const instanceId = getCurrentWorkshopInstanceId();
+  return getInstanceArchiveRepository().getLatestArchive(instanceId);
+}
+
+export async function createWorkshopArchive(options?: {
+  reason?: "manual" | "reset";
+  notes?: string | null;
+}) {
+  const instanceId = getCurrentWorkshopInstanceId();
+  const reason = options?.reason ?? "manual";
+  const archivedAt = new Date();
+  const [workshopState, checkpoints, monitoringSnapshots, participantEventAccess, participantSessions] = await Promise.all([
+    getWorkshopState(),
+    getCheckpointRepository().listCheckpoints(instanceId),
+    getMonitoringSnapshotRepository().getSnapshots(instanceId),
+    getParticipantEventAccessRepository().getActiveAccess(instanceId),
+    getEventAccessRepository().listSessions(instanceId),
+  ]);
+
+  const archiveRecord = {
+    id: `archive-${randomUUID()}`,
+    instanceId,
+    archiveStatus: "ready" as const,
+    storageUri: null,
+    createdAt: archivedAt.toISOString(),
+    retentionUntil: addDays(archivedAt, archiveRetentionDays),
+    notes: options?.notes ?? null,
+    payload: {
+      archivedAt: archivedAt.toISOString(),
+      reason,
+      workshopState,
+      checkpoints,
+      monitoringSnapshots,
+      participantEventAccessVersion: participantEventAccess?.version ?? null,
+      participantSessions,
+    },
+  };
+
+  await getInstanceArchiveRepository().createArchive(archiveRecord);
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId,
+    actorKind: "facilitator",
+    action: "instance_archive_created",
+    result: "success",
+    createdAt: archivedAt.toISOString(),
+    metadata: {
+      reason,
+      archiveId: archiveRecord.id,
+      participantSessionCount: participantSessions.length,
+      checkpointCount: checkpoints.length,
+      monitoringSnapshotCount: monitoringSnapshots.length,
+    },
+  });
+  emitRuntimeAlert({
+    category: "instance_archive_created",
+    severity: "info",
+    instanceId,
+    metadata: {
+      reason,
+      archiveId: archiveRecord.id,
+    },
+  });
+
+  return archiveRecord;
+}
+
+export async function applyRuntimeRetentionPolicy() {
+  const instanceId = getCurrentWorkshopInstanceId();
+  const now = new Date();
+  await Promise.all([
+    getEventAccessRepository().deleteExpiredSessions(instanceId, now.toISOString()),
+    getMonitoringSnapshotRepository().deleteOlderThan(instanceId, subtractDays(now, monitoringRetentionDays)),
+    getAuditLogRepository().deleteOlderThan(instanceId, subtractDays(now, auditRetentionDays)),
+    getRedeemAttemptRepository().deleteOlderThan(instanceId, subtractDays(now, redeemAttemptRetentionDays)),
+    getInstanceArchiveRepository().deleteExpiredArchives(now.toISOString()),
+  ]);
 }
 
 export async function resetWorkshopState(templateId: string) {
+  const instanceId = getCurrentWorkshopInstanceId();
+  await createWorkshopArchive({
+    reason: "reset",
+    notes: `Automatic pre-reset archive for template ${templateId}`,
+  });
+
+  const sessionRepository = getEventAccessRepository();
+  const sessions = await sessionRepository.listSessions(instanceId);
+  await Promise.all(sessions.map((session) => sessionRepository.deleteSession(instanceId, session.tokenHash)));
+
   const next = createWorkshopStateFromTemplate(templateId);
-  await getWorkshopStateRepository().saveState(getCurrentWorkshopInstanceId(), next);
-  return next;
+  await getWorkshopStateRepository().saveState(instanceId, next);
+  await getCheckpointRepository().replaceCheckpoints(instanceId, []);
+  await getMonitoringSnapshotRepository().replaceSnapshots(instanceId, []);
+  await applyRuntimeRetentionPolicy();
+  return getWorkshopState();
 }

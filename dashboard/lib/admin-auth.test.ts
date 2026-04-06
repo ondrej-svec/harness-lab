@@ -14,6 +14,7 @@ describe("admin-auth", () => {
     expect(isProtectedPath("/api/challenges/agents-md/complete", "POST")).toBe(true);
     expect(isProtectedPath("/api/agenda", "PATCH")).toBe(true);
     expect(isProtectedPath("/api/workshop", "POST")).toBe(true);
+    expect(isProtectedPath("/api/workshop/archive", "POST")).toBe(true);
   });
 
   it("keeps participant-safe reads unprotected", () => {

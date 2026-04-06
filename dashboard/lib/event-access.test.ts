@@ -23,13 +23,35 @@ import type { AuditLogRecord, ParticipantEventAccessRecord, ParticipantSessionRe
 class MemoryEventAccessRepository implements EventAccessRepository {
   constructor(private sessions: ParticipantSessionRecord[] = []) {}
 
-  async getSessions(instanceId: string) {
-    void instanceId;
-    return structuredClone(this.sessions);
+  async listSessions(instanceId: string) {
+    return structuredClone(this.sessions.filter((session) => session.instanceId === instanceId));
   }
 
-  async saveSessions(_instanceId: string, sessions: ParticipantSessionRecord[]) {
-    this.sessions = structuredClone(sessions);
+  async findSession(instanceId: string, tokenHash: string) {
+    return structuredClone(
+      this.sessions.find((session) => session.instanceId === instanceId && session.tokenHash === tokenHash) ?? null,
+    );
+  }
+
+  async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
+    this.sessions = this.sessions.some((item) => item.tokenHash === session.tokenHash)
+      ? this.sessions.map((item) =>
+          item.instanceId === instanceId && item.tokenHash === session.tokenHash ? structuredClone(session) : item,
+        )
+      : [...this.sessions, structuredClone({ ...session, instanceId })];
+  }
+
+  async deleteSession(instanceId: string, tokenHash: string) {
+    this.sessions = this.sessions.filter((item) => !(item.instanceId === instanceId && item.tokenHash === tokenHash));
+  }
+
+  async deleteExpiredSessions(instanceId: string, now: string) {
+    const nowMs = Date.parse(now);
+    this.sessions = this.sessions.filter(
+      (session) =>
+        session.instanceId !== instanceId ||
+        (Date.parse(session.expiresAt) > nowMs && Date.parse(session.absoluteExpiresAt) > nowMs),
+    );
   }
 }
 
@@ -171,18 +193,16 @@ describe("event-access", () => {
   });
 
   it("prunes expired sessions during validation", async () => {
-    await repository.saveSessions("sample-studio-a", [
-      {
-        tokenHash: "deadbeef",
-        instanceId: "sample-studio-a",
-        createdAt: "2026-04-05T12:00:00.000Z",
-        lastValidatedAt: "2026-04-05T12:00:00.000Z",
-        expiresAt: "2026-04-06T11:59:59.000Z",
-        absoluteExpiresAt: "2026-04-06T12:30:00.000Z",
-      },
-    ]);
+    await repository.upsertSession("sample-studio-a", {
+      tokenHash: "deadbeef",
+      instanceId: "sample-studio-a",
+      createdAt: "2026-04-05T12:00:00.000Z",
+      lastValidatedAt: "2026-04-05T12:00:00.000Z",
+      expiresAt: "2026-04-06T11:59:59.000Z",
+      absoluteExpiresAt: "2026-04-06T12:30:00.000Z",
+    });
 
     await expect(getParticipantSession("expired-token")).resolves.toBeNull();
-    await expect(repository.getSessions("sample-studio-a")).resolves.toEqual([]);
+    await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
   });
 });

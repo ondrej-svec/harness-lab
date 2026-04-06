@@ -1,17 +1,20 @@
-name: Dashboard CI
+name: Private Runtime Preview Gate
 
 on:
-  push:
-    paths:
-      - "dashboard/**"
-      - ".github/workflows/dashboard-ci.yml"
   pull_request:
     paths:
-      - "dashboard/**"
-      - ".github/workflows/dashboard-ci.yml"
+      - "dashboard/app/admin/**"
+      - "dashboard/app/api/admin/**"
+      - "dashboard/app/api/checkpoints/**"
+      - "dashboard/app/api/event-access/**"
+      - "dashboard/app/api/monitoring/**"
+      - "dashboard/app/api/workshop/**"
+      - "dashboard/db/**"
+      - "dashboard/lib/**"
+      - ".github/workflows/private-runtime-preview-gate.yml"
 
 jobs:
-  verify-dashboard:
+  verify-private-runtime:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -29,7 +32,10 @@ jobs:
 
       - run: npm ci
 
-      - run: npm test
+      - name: Require preview-grade Neon test database
+        run: test -n "$HARNESS_TEST_DATABASE_URL"
+
+      - run: npm test -- neon-runtime.integration.test.ts
 
       - run: npm run lint
 
@@ -38,6 +44,3 @@ jobs:
       - run: npx playwright install --with-deps chromium
 
       - run: npm run test:e2e
-
-      - if: env.HARNESS_TEST_DATABASE_URL != ''
-        run: npm test -- neon-runtime.integration.test.ts

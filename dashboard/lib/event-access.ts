@@ -89,8 +89,7 @@ export async function redeemEventCode(submittedCode: string) {
   }
 
   const repository = getEventAccessRepository();
-  const sessions = await repository.getSessions(instanceId);
-  const freshSessions = pruneExpiredSessions(sessions);
+  await repository.deleteExpiredSessions(instanceId, new Date().toISOString());
   const token = randomUUID();
 
   const nextSession: ParticipantSessionRecord = {
@@ -102,7 +101,7 @@ export async function redeemEventCode(submittedCode: string) {
     absoluteExpiresAt: getParticipantSessionAbsoluteExpiryDate().toISOString(),
   };
 
-  await repository.saveSessions(instanceId, [...freshSessions, nextSession]);
+  await repository.upsertSession(instanceId, nextSession);
   await auditLogRepository.append({
     id: `audit-${randomUUID()}`,
     instanceId,
@@ -131,13 +130,9 @@ export async function getParticipantSession(token: string | undefined | null): P
 
   const instanceId = getCurrentWorkshopInstanceId();
   const repository = getEventAccessRepository();
-  const sessions = await repository.getSessions(instanceId);
-  const freshSessions = pruneExpiredSessions(sessions).filter((item) => item.instanceId === instanceId);
-  const session = freshSessions.find((item) => safeCompare(item.tokenHash, hashSecret(token))) ?? null;
-
-  if (freshSessions.length !== sessions.length) {
-    await repository.saveSessions(instanceId, freshSessions);
-  }
+  await repository.deleteExpiredSessions(instanceId, new Date().toISOString());
+  const tokenHash = hashSecret(token);
+  const session = await repository.findSession(instanceId, tokenHash);
 
   if (!session) {
     return null;
@@ -148,10 +143,7 @@ export async function getParticipantSession(token: string | undefined | null): P
     lastValidatedAt: new Date().toISOString(),
   };
 
-  await repository.saveSessions(
-    instanceId,
-    freshSessions.map((item) => (item.tokenHash === refreshedSession.tokenHash ? refreshedSession : item)),
-  );
+  await repository.upsertSession(instanceId, refreshedSession);
 
   return {
     instanceId,
@@ -174,11 +166,7 @@ export async function revokeParticipantSession(token: string | undefined | null)
   const instanceId = getCurrentWorkshopInstanceId();
   const tokenHash = hashSecret(token);
   const repository = getEventAccessRepository();
-  const sessions = await repository.getSessions(instanceId);
-  await repository.saveSessions(
-    instanceId,
-    sessions.filter((item) => !safeCompare(item.tokenHash, tokenHash)),
-  );
+  await repository.deleteSession(instanceId, tokenHash);
   await getAuditLogRepository().append({
     id: `audit-${randomUUID()}`,
     instanceId,
@@ -251,13 +239,6 @@ export async function getParticipantTeamLookup(): Promise<ParticipantTeamLookup>
       checkpoint: team.checkpoint,
     })),
   };
-}
-
-function pruneExpiredSessions(sessions: ParticipantSessionRecord[]) {
-  return sessions.filter(
-    (session) =>
-      Date.parse(session.expiresAt) > Date.now() && Date.parse(session.absoluteExpiresAt) > Date.now(),
-  );
 }
 
 function readCookieValue(request: Request, cookieName: string) {

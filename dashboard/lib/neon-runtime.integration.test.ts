@@ -1,9 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
 import { getFacilitatorIdentityRepository } from "./facilitator-identity-repository";
+import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
+import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
 import { getNeonSql } from "./neon-db";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
 import type { ParticipantSessionRecord } from "./runtime-contracts";
@@ -25,14 +28,20 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     const sql = getNeonSql();
 
     await sql.query(schema);
+    await sql.query("DELETE FROM checkpoints WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM instance_archives WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM monitoring_snapshots WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
   });
 
   afterAll(async () => {
     const sql = getNeonSql();
+    await sql.query("DELETE FROM checkpoints WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM instance_archives WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM monitoring_snapshots WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
 
@@ -69,9 +78,64 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
       absoluteExpiresAt: "2026-04-06T14:00:00.000Z",
     };
 
-    await repository.saveSessions(instanceId, [session]);
+    await repository.upsertSession(instanceId, session);
 
-    await expect(repository.getSessions(instanceId)).resolves.toEqual([session]);
+    await expect(repository.listSessions(instanceId)).resolves.toEqual([session]);
+  });
+
+  it("round-trips dedicated checkpoint and monitoring repositories in Neon mode", async () => {
+    const checkpointRepository = getCheckpointRepository();
+    const monitoringRepository = getMonitoringSnapshotRepository();
+
+    await checkpointRepository.appendCheckpoint(instanceId, {
+      id: "u-neon",
+      teamId: "t2",
+      text: "Checkpoint přes Neon repository",
+      at: "14:02",
+    });
+    await monitoringRepository.replaceSnapshots(instanceId, [
+      {
+        teamId: "t2",
+        agentsFile: true,
+        skillsCount: 2,
+        commitsLast30Min: 6,
+        testsVisible: 1,
+      },
+    ]);
+
+    await expect(checkpointRepository.listCheckpoints(instanceId)).resolves.toMatchObject([{ id: "u-neon" }]);
+    await expect(monitoringRepository.getSnapshots(instanceId)).resolves.toMatchObject([{ teamId: "t2" }]);
+  });
+
+  it("round-trips archive payloads in Neon mode", async () => {
+    const repository = getInstanceArchiveRepository();
+
+    await repository.createArchive({
+      id: "archive-neon",
+      instanceId,
+      archiveStatus: "ready",
+      storageUri: null,
+      createdAt: "2026-04-06T12:00:00.000Z",
+      retentionUntil: "2026-05-06T12:00:00.000Z",
+      notes: "Neon archive test",
+      payload: {
+        archivedAt: "2026-04-06T12:00:00.000Z",
+        reason: "manual",
+        workshopState: await getWorkshopStateRepository().getState(instanceId),
+        checkpoints: [],
+        monitoringSnapshots: [],
+        participantEventAccessVersion: 1,
+        participantSessions: [],
+      },
+    });
+
+    await expect(repository.getLatestArchive(instanceId)).resolves.toMatchObject({
+      id: "archive-neon",
+      notes: "Neon archive test",
+      payload: {
+        participantEventAccessVersion: 1,
+      },
+    });
   });
 
   it("bootstraps a seed facilitator grant without failing the foreign-key constraint", async () => {

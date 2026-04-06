@@ -43,6 +43,11 @@ Cover at minimum:
 - one protected facilitator mutation
 - one archive or reset flow when implemented
 
+Current repo gate:
+
+- `Dashboard CI` runs unit, lint, build, and Playwright regression
+- `Private Runtime Preview Gate` runs on DB/auth-sensitive pull requests and requires a preview-grade Neon test database secret for runtime adapter verification
+
 ## Required Static and Supply-Chain Checks
 
 - linting for the dashboard and supporting code

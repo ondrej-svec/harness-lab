@@ -23,11 +23,7 @@ function decodeBasicAuth(header: string | null) {
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    const credentials = decodeBasicAuth(request.headers.get("authorization"));
-    const expectedUsername = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
-    const expectedPassword = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
-
-    if (!credentials || credentials.username !== expectedUsername || credentials.password !== expectedPassword) {
+    if (!decodeBasicAuth(request.headers.get("authorization"))) {
       return new NextResponse("Authentication required", {
         status: 401,
         headers: {

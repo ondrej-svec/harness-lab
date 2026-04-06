@@ -74,5 +74,13 @@ test.describe("facilitator admin", () => {
     await page.goto("/");
 
     await expect(page.getByText("Předání je odemčeno")).toBeVisible();
+
+    await page.goto("/admin");
+    await Promise.all([
+      page.waitForURL("**/admin"),
+      page.getByRole("button", { name: "Vytvořit archiv" }).click(),
+    ]);
+
+    await expect(page.getByText("Poslední archiv:")).toBeVisible();
   });
 });
