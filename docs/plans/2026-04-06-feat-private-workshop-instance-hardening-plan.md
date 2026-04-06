@@ -255,7 +255,7 @@ Dependency-ordered tracker for `$work`:
 
 ## Deferred Debt
 
-- Team registry and several facilitator mutations still persist through the composed `workshop_state` projection. This is an explicit deferral, not an unknown risk, and should be the starting point for the next concurrency-hardening slice if team-level write contention becomes real.
+None left from this hardening slice. Team registration and facilitator checkpoint writes now use dedicated runtime repositories, and the remaining `workshop_state` usage in this area is an intentional read projection rather than an unfixed write path.
 
 ## References
 

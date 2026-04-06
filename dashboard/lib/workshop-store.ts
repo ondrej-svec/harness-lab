@@ -15,6 +15,7 @@ import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repositor
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
 import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
 import { emitRuntimeAlert } from "./runtime-alert";
+import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 
 async function getBaseWorkshopState(instanceId = getCurrentWorkshopInstanceId()) {
@@ -36,14 +37,16 @@ function addDays(date: Date, days: number) {
 
 export async function getWorkshopState(): Promise<WorkshopState> {
   const instanceId = getCurrentWorkshopInstanceId();
-  const [state, monitoring, sprintUpdates] = await Promise.all([
+  const [state, teams, monitoring, sprintUpdates] = await Promise.all([
     getBaseWorkshopState(instanceId),
+    getTeamRepository().listTeams(instanceId),
     getMonitoringSnapshotRepository().getSnapshots(instanceId),
     getCheckpointRepository().listCheckpoints(instanceId),
   ]);
 
   return {
     ...state,
+    teams: teams.length > 0 ? teams : state.teams,
     monitoring: monitoring.length > 0 ? monitoring : state.monitoring,
     sprintUpdates: sprintUpdates.length > 0 ? sprintUpdates : state.sprintUpdates,
   };
@@ -85,21 +88,37 @@ export async function setCurrentAgendaItem(itemId: string) {
 }
 
 export async function upsertTeam(input: Team) {
-  return updateWorkshopState((state) => {
-    const existingIndex = state.teams.findIndex((team) => team.id === input.id);
-    const teams =
-      existingIndex >= 0
-        ? state.teams.map((team) => (team.id === input.id ? input : team))
-        : [...state.teams, input];
-    return { ...state, teams };
+  const instanceId = getCurrentWorkshopInstanceId();
+  const repository = getTeamRepository();
+  await repository.upsertTeam(instanceId, input);
+  const teams = await repository.listTeams(instanceId);
+
+  // Keep the workshop-state projection aligned during the migration window.
+  const state = await getBaseWorkshopState(instanceId);
+  await getWorkshopStateRepository().saveState(instanceId, {
+    ...state,
+    teams,
   });
+
+  return getWorkshopState();
 }
 
 export async function updateCheckpoint(teamId: string, checkpoint: string) {
-  return updateWorkshopState((state) => ({
+  const instanceId = getCurrentWorkshopInstanceId();
+  const repository = getTeamRepository();
+  const teams = await repository.listTeams(instanceId);
+  const baselineTeams = teams.length > 0 ? teams : (await getBaseWorkshopState(instanceId)).teams;
+  const nextTeams = baselineTeams.map((team) => (team.id === teamId ? { ...team, checkpoint } : team));
+  await repository.replaceTeams(instanceId, nextTeams);
+
+  // Keep the workshop-state projection aligned during the migration window.
+  const state = await getBaseWorkshopState(instanceId);
+  await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
-    teams: state.teams.map((team) => (team.id === teamId ? { ...team, checkpoint } : team)),
-  }));
+    teams: nextTeams,
+  });
+
+  return getWorkshopState();
 }
 
 export async function completeChallenge(challengeId: string, teamId: string) {
@@ -244,6 +263,7 @@ export async function resetWorkshopState(templateId: string) {
 
   const next = createWorkshopStateFromTemplate(templateId);
   await getWorkshopStateRepository().saveState(instanceId, next);
+  await getTeamRepository().replaceTeams(instanceId, []);
   await getCheckpointRepository().replaceCheckpoints(instanceId, []);
   await getMonitoringSnapshotRepository().replaceSnapshots(instanceId, []);
   await applyRuntimeRetentionPolicy();

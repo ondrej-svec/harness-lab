@@ -9,6 +9,7 @@ import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
 import { getNeonSql } from "./neon-db";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
+import { getTeamRepository } from "./team-repository";
 import type { ParticipantSessionRecord } from "./runtime-contracts";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 
@@ -33,6 +34,7 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM monitoring_snapshots WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM teams WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
   });
 
@@ -43,6 +45,7 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM monitoring_snapshots WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [instanceId]);
+    await sql.query("DELETE FROM teams WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM workshop_instances WHERE id = $1", [instanceId]);
 
     if (originalStorageMode === undefined) {
@@ -86,6 +89,7 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
   it("round-trips dedicated checkpoint and monitoring repositories in Neon mode", async () => {
     const checkpointRepository = getCheckpointRepository();
     const monitoringRepository = getMonitoringSnapshotRepository();
+    const teamRepository = getTeamRepository();
 
     await checkpointRepository.appendCheckpoint(instanceId, {
       id: "u-neon",
@@ -102,9 +106,19 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
         testsVisible: 1,
       },
     ]);
+    await teamRepository.upsertTeam(instanceId, {
+      id: "t-neon",
+      name: "Tým Neon",
+      city: "Studio Neon",
+      members: ["Anna", "David"],
+      repoUrl: "https://github.com/example/neon-team",
+      projectBriefId: "standup-bot",
+      checkpoint: "Team repository přes Neon",
+    });
 
     await expect(checkpointRepository.listCheckpoints(instanceId)).resolves.toMatchObject([{ id: "u-neon" }]);
     await expect(monitoringRepository.getSnapshots(instanceId)).resolves.toMatchObject([{ teamId: "t2" }]);
+    await expect(teamRepository.listTeams(instanceId)).resolves.toMatchObject([{ id: "t-neon" }]);
   });
 
   it("round-trips archive payloads in Neon mode", async () => {

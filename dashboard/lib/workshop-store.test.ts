@@ -12,6 +12,7 @@ import {
   type ParticipantEventAccessRepository,
 } from "./participant-event-access-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "./redeem-attempt-repository";
+import { setTeamRepositoryForTests, type TeamRepository } from "./team-repository";
 import { seedWorkshopState, type WorkshopState } from "./workshop-data";
 import type { AuditLogRecord, InstanceArchiveRecord, ParticipantEventAccessRecord, ParticipantSessionRecord, RedeemAttemptRecord } from "./runtime-contracts";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "./workshop-state-repository";
@@ -56,6 +57,27 @@ class MemoryCheckpointRepository implements CheckpointRepository {
 
   async replaceCheckpoints(_instanceId: string, checkpoints: WorkshopState["sprintUpdates"]) {
     this.items = structuredClone(checkpoints);
+  }
+}
+
+class MemoryTeamRepository implements TeamRepository {
+  constructor(private items: WorkshopState["teams"] = []) {}
+
+  async listTeams(instanceId: string) {
+    void instanceId;
+    return structuredClone(this.items);
+  }
+
+  async upsertTeam(instanceId: string, team: WorkshopState["teams"][number]) {
+    void instanceId;
+    this.items = this.items.some((item) => item.id === team.id)
+      ? this.items.map((item) => (item.id === team.id ? structuredClone(team) : item))
+      : [...this.items, structuredClone(team)];
+  }
+
+  async replaceTeams(instanceId: string, teams: WorkshopState["teams"]) {
+    void instanceId;
+    this.items = structuredClone(teams);
   }
 }
 
@@ -189,6 +211,7 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 describe("workshop-store", () => {
   let repository: MemoryWorkshopStateRepository;
   let checkpointRepository: MemoryCheckpointRepository;
+  let teamRepository: MemoryTeamRepository;
   let monitoringRepository: MemoryMonitoringSnapshotRepository;
   let eventAccessRepository: MemoryEventAccessRepository;
   let participantEventAccessRepository: MemoryParticipantEventAccessRepository;
@@ -199,6 +222,7 @@ describe("workshop-store", () => {
   beforeEach(() => {
     repository = new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState));
     checkpointRepository = new MemoryCheckpointRepository();
+    teamRepository = new MemoryTeamRepository();
     monitoringRepository = new MemoryMonitoringSnapshotRepository();
     eventAccessRepository = new MemoryEventAccessRepository([
       {
@@ -231,6 +255,7 @@ describe("workshop-store", () => {
     auditLogRepository = new MemoryAuditLogRepository();
     setWorkshopStateRepositoryForTests(repository);
     setCheckpointRepositoryForTests(checkpointRepository);
+    setTeamRepositoryForTests(teamRepository);
     setMonitoringSnapshotRepositoryForTests(monitoringRepository);
     setEventAccessRepositoryForTests(eventAccessRepository);
     setParticipantEventAccessRepositoryForTests(participantEventAccessRepository);
@@ -242,6 +267,7 @@ describe("workshop-store", () => {
   afterEach(() => {
     setWorkshopStateRepositoryForTests(null);
     setCheckpointRepositoryForTests(null);
+    setTeamRepositoryForTests(null);
     setMonitoringSnapshotRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);
     setParticipantEventAccessRepositoryForTests(null);
@@ -260,7 +286,7 @@ describe("workshop-store", () => {
 
   it("updates facilitator-controlled team and checkpoint state", async () => {
     await updateCheckpoint("t1", "Checkpoint po facilitaci");
-    let state = await repository.getState("sample-studio-a");
+    let state = await getWorkshopState();
     expect(state.teams.find((team) => team.id === "t1")?.checkpoint).toBe("Checkpoint po facilitaci");
 
     await upsertTeam({
@@ -273,8 +299,14 @@ describe("workshop-store", () => {
       checkpoint: "Nový tým zaregistrován",
     });
 
-    state = await repository.getState("sample-studio-a");
+    state = await getWorkshopState();
     expect(state.teams.find((team) => team.id === "t9")?.name).toBe("Tým 9");
+    await expect(teamRepository.listTeams("sample-studio-a")).resolves.toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "t1", checkpoint: "Checkpoint po facilitaci" }),
+        expect.objectContaining({ id: "t9", name: "Tým 9" }),
+      ]),
+    );
   });
 
   it("records challenge completion, sprint updates, and rotation reveal", async () => {
@@ -301,6 +333,8 @@ describe("workshop-store", () => {
     expect(state.teams).toEqual([]);
     expect(state.monitoring).toEqual([]);
     expect(state.sprintUpdates).toEqual([]);
+    expect(state.teams).toEqual([]);
+    await expect(teamRepository.listTeams("sample-studio-a")).resolves.toEqual([]);
     await expect(checkpointRepository.listCheckpoints("sample-studio-a")).resolves.toEqual([]);
     await expect(monitoringRepository.getSnapshots("sample-studio-a")).resolves.toEqual([]);
     await expect(eventAccessRepository.listSessions("sample-studio-a")).resolves.toEqual([]);
@@ -314,6 +348,17 @@ describe("workshop-store", () => {
   });
 
   it("projects normalized checkpoint and monitoring data into the workshop-shaped read model", async () => {
+    await teamRepository.replaceTeams("sample-studio-a", [
+      {
+        id: "t4",
+        name: "Tým 4 runtime",
+        city: "Lab D",
+        members: ["Daniel", "Hana"],
+        repoUrl: "https://github.com/example/runtime-team",
+        projectBriefId: "metrics-dashboard",
+        checkpoint: "Runtime team repository",
+      },
+    ]);
     await checkpointRepository.replaceCheckpoints("sample-studio-a", [
       {
         id: "u-projected",
@@ -333,6 +378,7 @@ describe("workshop-store", () => {
     ]);
 
     const state = await getWorkshopState();
+    expect(state.teams).toMatchObject([{ id: "t4", name: "Tým 4 runtime" }]);
     expect(state.sprintUpdates).toMatchObject([{ id: "u-projected" }]);
     expect(state.monitoring).toMatchObject([{ teamId: "t4", skillsCount: 3 }]);
   });

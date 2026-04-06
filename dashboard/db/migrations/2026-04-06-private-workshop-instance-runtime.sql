@@ -76,6 +76,16 @@ CREATE TABLE IF NOT EXISTS checkpoints (
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+CREATE TABLE IF NOT EXISTS teams (
+  id TEXT PRIMARY KEY,
+  instance_id TEXT NOT NULL REFERENCES workshop_instances(id) ON DELETE CASCADE,
+  payload JSONB NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS teams_instance_id_idx ON teams(instance_id);
+
 CREATE TABLE IF NOT EXISTS instance_archives (
   id TEXT PRIMARY KEY,
   instance_id TEXT NOT NULL REFERENCES workshop_instances(id) ON DELETE CASCADE,

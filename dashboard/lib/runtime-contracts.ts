@@ -1,4 +1,4 @@
-import type { MonitoringSnapshot, SprintUpdate, WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
+import type { MonitoringSnapshot, SprintUpdate, Team, WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 
 export type WorkshopInstanceId = string;
 
@@ -57,6 +57,7 @@ export type InstanceGrantRecord = {
 };
 
 export type CheckpointRecord = SprintUpdate;
+export type TeamRecord = Team;
 
 export type RedeemAttemptRecord = {
   instanceId: WorkshopInstanceId;
@@ -114,6 +115,12 @@ export interface CheckpointRepository {
   listCheckpoints(instanceId: WorkshopInstanceId): Promise<CheckpointRecord[]>;
   appendCheckpoint(instanceId: WorkshopInstanceId, checkpoint: CheckpointRecord): Promise<void>;
   replaceCheckpoints(instanceId: WorkshopInstanceId, checkpoints: CheckpointRecord[]): Promise<void>;
+}
+
+export interface TeamRepository {
+  listTeams(instanceId: WorkshopInstanceId): Promise<TeamRecord[]>;
+  upsertTeam(instanceId: WorkshopInstanceId, team: TeamRecord): Promise<void>;
+  replaceTeams(instanceId: WorkshopInstanceId, teams: TeamRecord[]): Promise<void>;
 }
 
 export interface MonitoringSnapshotRepository {
