@@ -3,6 +3,8 @@
 dashboard/.next/
 dashboard/node_modules/
 dashboard/data/workshop-state.json
+dashboard/data/participant-sessions.json
+dashboard/test-results/
 
 monitoring/latest-monitoring.md
 monitoring/team-repos.tsv

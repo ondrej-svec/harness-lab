@@ -4,9 +4,9 @@
 
 Harness Lab is a full-day experiential developer workshop ("Developer Hackathon") teaching **harness engineering** — the discipline of engineering context, instructions, and workflows for AI coding agents.
 
-The workshop uses a signature exercise called "The Silent Post": teams build projects with AI agents in the morning, then rotate completely after lunch. New teams continue using only what's in the repo. The quality of context engineering (AGENTS.md, skills, runbooks) determines whether the project survives the handoff.
+The workshop is designed around build phases, a mid-day continuation shift, and strong emphasis on what survives in the repository itself. The quality of context engineering (`AGENTS.md`, skills, runbooks) determines whether another team can continue without friction.
 
-**4 workshops**: 2× Brno (Apr 21, 23), 2× Prague (Apr 24, 29). ~20 devs each, mixed AI experience levels.
+This repository is the public-safe template version of the workshop. Real workshop dates, venues, and live operational state should live in the private workshop-instance layer, not here.
 
 ## Repository Structure
 
@@ -39,8 +39,10 @@ The workshop uses a signature exercise called "The Silent Post": teams build pro
 ```bash
 # Dashboard
 cd dashboard && npm install && npm run dev
-
-# No tests yet — this is content + a simple Next.js app
+npm run test
+npm run test:e2e
+npm run lint
+npm run build
 ```
 
 ## Code Conventions
@@ -51,9 +53,29 @@ cd dashboard && npm install && npm run dev
 - Content files in Markdown
 - Keep it simple — this is a workshop support tool, not a product
 
+## Working Doctrine
+
+- Harness Lab must embody the same harness-engineering discipline it teaches.
+- Put context before generation: important constraints, architecture boundaries, and operating rules should exist in repo-native guidance before high-autonomy implementation.
+- Treat tests and executable checks as the default trust boundary once an agent is doing meaningful implementation work.
+- Prefer the smallest useful failing test, tracer bullet, or executable check before implementation when behavior or trust boundaries change.
+- For UI work, use the layered workflow:
+  1. exploratory browser inspection in an isolated local environment
+  2. repeatable Playwright regression for critical flows
+  3. human review before considering the change complete
+- Do not treat unrestricted browser autonomy in a normal authenticated browser as the default workflow.
+- When architecture or trust boundaries change, write or update the relevant ADR/note alongside the implementation.
+- Improve the harness when issues repeat: strengthen context, rules, tests, or review routines instead of only fixing the immediate output.
+
 ## Key Constraints
 
 - Dashboard must work on mobile (participants scan QR code)
 - Workshop skill must be installable in both Codex and OpenCode
 - All facilitation content must be in Czech
 - No pre-work required from participants — everything works from zero on the day
+
+## Trust Boundaries
+
+- Public template repo stays public-safe and runnable with sample/demo data only.
+- Participant-private workshop context belongs in the private workshop-instance layer and must not leak through public routes or files.
+- Facilitator routes and mutations must stay on a separate auth path from participant event access.

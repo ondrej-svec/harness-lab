@@ -36,6 +36,16 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - Má tým jednu společnou představu o cíli?
 - Přibývá kontext v repu, nebo zůstává jen v chatu a v hlavách?
 - Ověřují si výstupy, nebo jen generují další text?
+- Mají test, tracer bullet nebo jiné explicitní ověření, které drží agenta v mezích?
+
+### Facilitační pointa k testům
+
+- S coding agentem nestačí říct „tohle si pak projdeme“.
+- Jakmile agent dostává větší autonomii, tým musí zvýšit kvalitu ověřování.
+- Test-first přístup není dogma pro čistotu. Je to praktický způsob, jak převést záměr do formy, kterou agent umí opakovaně trefovat.
+- Když tým žádné ověření nemá, facilitátor má tlačit na nejmenší možný test nebo tracer bullet, ne na další generování funkcí.
+- U UI práce připomínejte pattern: rychlá agent exploration v izolovaném prostředí, potom browser test, potom lidské review.
+- Pokud tým mluví o tom, že „agent to prostě nakliká v mém browseru“, vraťte debatu k sandboxu, nízkému riziku a explicitní kontrole.
 
 ## Intermezza
 
@@ -50,6 +60,7 @@ Každé intermezzo má tři kroky:
 - zviditelnit učení napříč týmy
 - udělat z průběhu dne sérii krátkých checkpointů
 - připomenout, že workflow je stejně důležité jako samotný output
+- vracet týmy k tomu, že bez ověření jen akcelerují nejistotu
 
 ## Rotace
 

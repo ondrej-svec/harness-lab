@@ -16,7 +16,11 @@ Všichni dostanou stejný malý úkol a napíšou k němu system prompt. Pak ho 
 
 - Kontext je páka, ne kosmetika.
 - `AGENTS.md`, skills a runbooky jsou týmová infrastruktura.
-- Rotace po obědě prověří, jestli váš kontext funguje i bez vás.
+- Testy jsou hranice důvěry. Když agent pracuje samostatněji, musíte mnohem líp ověřovat, že udělal právě to, co jste chtěli.
+- U UI práce je výchozí pattern: agent exploration, potom repeatable browser test, potom lidské review.
+- „Nech model jezdit v mém běžném přihlášeném browseru“ není default. Bezpečnější je izolované lokální prostředí a jasné mantinely.
+- RED → GREEN není s agenty pomalejší. Naopak často zlevňuje korekce, protože agent dostane přesnější mantinely.
+- Odpolední continuation prověří, jestli váš kontext funguje i bez vás.
 
 ## Závěr
 

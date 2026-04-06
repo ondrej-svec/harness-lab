@@ -6,6 +6,11 @@ Participant-facing skill for the Harness Lab workshop. All participant-facing co
 
 This skill is the primary workshop interface for participants in Codex or OpenCode. It should prefer live dashboard API data when available and fall back to the local bundled content when the API is unavailable.
 
+Core mental model:
+- dashboard participant surface = orientace během dne
+- dashboard facilitator surface = řízení workshop instance
+- workshop skill = AI interface ke stejnému workshop systému
+
 ## Commands
 
 ### `/workshop`
@@ -14,6 +19,20 @@ Show:
 - current agenda phase
 - what the team should be doing right now
 - next hard milestone before the next facilitation checkpoint
+- if the dashboard is unavailable, infer the likely phase from local workshop materials and say clearly that this is fallback mode
+- if private event access is not active, clearly say which answers are fallback/public-only versus live event context
+
+### `/workshop login`
+
+Ask for the shared event code and redeem it into a short-lived participant session.
+After success:
+- confirm live mode is active
+- say when the participant may need to log in again
+- keep facilitator-only data unavailable
+
+### `/workshop logout`
+
+Clear the current participant session and return to fallback/public-only mode.
 
 ### `/workshop setup`
 
@@ -35,7 +54,7 @@ Show the assigned project brief. Include:
 
 Show available challenge cards, clearly marking:
 - semi-mandatory before lunch
-- semi-mandatory after rotation
+- semi-mandatory after the continuation shift
 - optional stretch cards
 
 ### `/workshop team`
@@ -50,7 +69,9 @@ Show:
 
 Give phase-aware coaching. Examples:
 - during Build Phase 1: remind the team to get `AGENTS.md`, a plan, and a reviewed output in place
-- after rotation: tell the team to read before editing and to preserve evidence of what they changed
+- during the continuation shift: tell the team to read before editing and to preserve evidence of what they changed
+- when the team is letting the agent work with more autonomy: push them toward tests, tracer bullets, or another executable check
+- for UI work: recommend `agent exploration -> Playwright regression -> human review` as the safe default workflow
 
 ### `/workshop template`
 
@@ -73,6 +94,7 @@ Prepare Ondrej's closing synthesis by using:
 - monitoring summary
 - W³ commitments or closing notes
 Use `workshop-skill/closing-skill.md`.
+Treat this as facilitator-facing. Do not proactively surface it to participants during normal workshop help.
 
 ### `/workshop reference`
 
@@ -90,6 +112,11 @@ Return:
 
 If the API is not reachable, use the local content in this folder and the markdown files under `content/`.
 
+When falling back:
+- say explicitly that live workshop data is unavailable
+- avoid inventing team state, checkpoint state, or facilitator-only information
+- prefer reference guidance, setup help, templates, and local briefs over pretending to know the current live state
+
 Relevant local files:
 - `workshop-skill/setup.md`
 - `workshop-skill/reference.md`
@@ -100,6 +127,7 @@ Relevant local files:
 - `workshop-skill/follow-up-package.md`
 - `content/project-briefs/*.md`
 - `content/challenge-cards/deck.md`
+- `docs/workshop-event-context-contract.md`
 
 ## Style
 
@@ -107,3 +135,5 @@ Relevant local files:
 - Use Czech for explanations.
 - Keep slash commands, file names, and code terms in English.
 - Prefer actionable next steps over theory during build phases.
+- Treat tests and executable checks as the default trust boundary once the agent is doing meaningful implementation work.
+- Do not present unrestricted browser autonomy in a normal authenticated browser as the default recommendation.

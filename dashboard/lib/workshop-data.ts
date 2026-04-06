@@ -9,7 +9,7 @@ export type AgendaItem = {
 export type Team = {
   id: string;
   name: string;
-  city: "Brno" | "Praha";
+  city: string;
   members: string[];
   repoUrl: string;
   projectBriefId: string;
@@ -107,28 +107,49 @@ export type WorkshopState = {
 export type WorkshopTemplate = {
   id: string;
   label: string;
-  city: "Brno" | "Praha";
+  city: string;
   dateLabel: string;
   room: string;
   scenario: "17-participants" | "20-participants";
 };
 
+export type WorkshopInstanceRecord = {
+  id: string;
+  templateId: string;
+  workshopMeta: WorkshopMeta;
+};
+
 export const workshopTemplates: WorkshopTemplate[] = [
-  { id: "brno-2026-04-21", label: "Brno 21. 4.", city: "Brno", dateLabel: "21. dubna 2026", room: "Dakar, Okružní 5", scenario: "20-participants" },
-  { id: "brno-2026-04-23", label: "Brno 23. 4.", city: "Brno", dateLabel: "23. dubna 2026", room: "Dakar, Okružní 5", scenario: "20-participants" },
-  { id: "praha-2026-04-24", label: "Praha 24. 4.", city: "Praha", dateLabel: "24. dubna 2026", room: "Saturn 103, Sokolovská 695/115b", scenario: "17-participants" },
-  { id: "praha-2026-04-29", label: "Praha 29. 4.", city: "Praha", dateLabel: "29. dubna 2026", room: "Jupiter 104, Sokolovská 695/115b", scenario: "17-participants" },
+  { id: "sample-studio-a", label: "Ukázková instance A", city: "Studio A", dateLabel: "Ukázkový workshop den", room: "Demo room", scenario: "20-participants" },
+  { id: "sample-studio-b", label: "Ukázková instance B", city: "Studio B", dateLabel: "Ukázkový workshop den", room: "Breakout room", scenario: "20-participants" },
+  { id: "sample-lab-c", label: "Ukázková instance C", city: "Lab C", dateLabel: "Ukázkový workshop den", room: "Project room", scenario: "17-participants" },
+  { id: "sample-lab-d", label: "Ukázková instance D", city: "Lab D", dateLabel: "Ukázkový workshop den", room: "Review room", scenario: "17-participants" },
 ];
 
-export const seedWorkshopState: WorkshopState = {
-  workshopId: "brno-2026-04-21",
+export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplates.map((template) => ({
+  id: template.id,
+  templateId: template.id,
   workshopMeta: {
     title: "Harness Lab",
-    subtitle: "Tichá pošta pro AI coding agenty",
-    city: "Brno",
-    dateRange: "21. dubna 2026 • Dakar, Okružní 5",
+    subtitle: "Workshop operating system pro práci s AI agenty",
+    city: template.city,
+    dateRange: `${template.dateLabel} • ${template.room}`,
     currentPhaseLabel: "Build Phase 1",
-    adminHint: "Dashboard teď běží nad lokálním JSON storem. Později lze vyměnit za Vercel Postgres nebo KV bez změny UI.",
+    adminHint:
+      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
+  },
+}));
+
+export const seedWorkshopState: WorkshopState = {
+  workshopId: "sample-studio-a",
+  workshopMeta: sampleWorkshopInstances[0]?.workshopMeta ?? {
+    title: "Harness Lab",
+    subtitle: "Workshop operating system pro práci s AI agenty",
+    city: "Ukázková instance",
+    dateRange: "Sample workshop day • Demo room",
+    currentPhaseLabel: "Build Phase 1",
+    adminHint:
+      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
   },
   agenda: [
     {
@@ -171,7 +192,7 @@ export const seedWorkshopState: WorkshopState = {
     {
       id: "t1",
       name: "Tým 1",
-      city: "Brno",
+      city: "Studio A",
       members: ["Anna", "David", "Eva", "Marek", "Tomáš"],
       repoUrl: "https://github.com/example/standup-bot",
       projectBriefId: "standup-bot",
@@ -180,7 +201,7 @@ export const seedWorkshopState: WorkshopState = {
     {
       id: "t2",
       name: "Tým 2",
-      city: "Brno",
+      city: "Studio B",
       members: ["Jana", "Karel", "Lucie", "Petr", "Veronika"],
       repoUrl: "https://github.com/example/devtoolbox-cli",
       projectBriefId: "devtoolbox-cli",
@@ -189,7 +210,7 @@ export const seedWorkshopState: WorkshopState = {
     {
       id: "t3",
       name: "Tým 3",
-      city: "Praha",
+      city: "Lab C",
       members: ["Adam", "Barbora", "Filip", "Lenka"],
       repoUrl: "https://github.com/example/code-review-helper",
       projectBriefId: "code-review-helper",
@@ -198,7 +219,7 @@ export const seedWorkshopState: WorkshopState = {
     {
       id: "t4",
       name: "Tým 4",
-      city: "Praha",
+      city: "Lab D",
       members: ["Daniel", "Hana", "Jakub", "Zuzana"],
       repoUrl: "https://github.com/example/metrics-dashboard",
       projectBriefId: "metrics-dashboard",
@@ -404,16 +425,13 @@ export function getTeamName(teamId: string, teams: Team[]) {
   return teams.find((team) => team.id === teamId)?.name ?? teamId;
 }
 
-export function createWorkshopStateFromTemplate(templateId: string): WorkshopState {
-  const template = workshopTemplates.find((item) => item.id === templateId) ?? workshopTemplates[0];
+export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord): WorkshopState {
+  const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
+
   return {
     ...seedWorkshopState,
-    workshopId: template.id,
-    workshopMeta: {
-      ...seedWorkshopState.workshopMeta,
-      city: template.city,
-      dateRange: `${template.dateLabel} • ${template.room}`,
-    },
+    workshopId: instance.id,
+    workshopMeta: instance.workshopMeta,
     rotation: {
       ...seedWorkshopState.rotation,
       revealed: false,
@@ -430,9 +448,14 @@ export function createWorkshopStateFromTemplate(templateId: string): WorkshopSta
     ticker: [
       {
         id: "tick-reset",
-        label: `Workshop ${template.label} je připravený. Zaregistrujte týmy a spusťte první checkpoint.`,
+        label: `Instance ${template.label} je připravená. Zaregistrujte týmy a spusťte první checkpoint.`,
         tone: "info",
       },
     ],
   };
+}
+
+export function createWorkshopStateFromTemplate(templateId: string): WorkshopState {
+  const instance = sampleWorkshopInstances.find((item) => item.templateId === templateId) ?? sampleWorkshopInstances[0];
+  return createWorkshopStateFromInstance(instance);
 }

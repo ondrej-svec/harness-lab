@@ -1,30 +1,14 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import path from "node:path";
 import {
   createWorkshopStateFromTemplate,
-  seedWorkshopState,
   type MonitoringSnapshot,
   type SprintUpdate,
   type Team,
   type WorkshopState,
-} from "@/lib/workshop-data";
-
-const dataDir = path.join(process.cwd(), "data");
-const statePath = path.join(dataDir, "workshop-state.json");
-
-async function ensureStateFile() {
-  await mkdir(dataDir, { recursive: true });
-  try {
-    await readFile(statePath, "utf8");
-  } catch {
-    await writeFile(statePath, JSON.stringify(seedWorkshopState, null, 2));
-  }
-}
+} from "./workshop-data";
+import { getWorkshopStateRepository } from "./workshop-state-repository";
 
 export async function getWorkshopState(): Promise<WorkshopState> {
-  await ensureStateFile();
-  const raw = await readFile(statePath, "utf8");
-  return JSON.parse(raw) as WorkshopState;
+  return getWorkshopStateRepository().getState();
 }
 
 export async function updateWorkshopState(
@@ -32,7 +16,7 @@ export async function updateWorkshopState(
 ): Promise<WorkshopState> {
   const current = await getWorkshopState();
   const next = updater(current);
-  await writeFile(statePath, JSON.stringify(next, null, 2));
+  await getWorkshopStateRepository().saveState(next);
   return next;
 }
 
@@ -110,7 +94,6 @@ export async function replaceMonitoring(items: MonitoringSnapshot[]) {
 
 export async function resetWorkshopState(templateId: string) {
   const next = createWorkshopStateFromTemplate(templateId);
-  await mkdir(dataDir, { recursive: true });
-  await writeFile(statePath, JSON.stringify(next, null, 2));
+  await getWorkshopStateRepository().saveState(next);
   return next;
 }

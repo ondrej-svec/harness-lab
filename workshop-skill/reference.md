@@ -18,9 +18,24 @@
 ## Doporučené commands
 
 - `/plan` před větší implementací
+- `/test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
 - `/review` po větším kusu práce
 - `/workshop status` pro orientaci během dne
 - `/workshop template` když repu chybí základní kontext
+
+## Testy jako hranice důvěry
+
+- Čím víc práce dělá agent samostatně, tím méně stačí „já jsem to rychle projel očima“.
+- Když necháte agenta psát bez testů, často jen urychlíte vznik neověřené složitosti.
+- RED test, tracer bullet nebo jednoduché e2e ověření je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
+
+## Bezpečný UI workflow
+
+- Výchozí pattern je: `agent exploration -> Playwright regression -> human review`.
+- Nechte agenta rychle projít UI, screenshoty a konzoli v izolovaném lokálním prostředí.
+- Jakmile najdete důležitý flow, převeďte ho do opakovatelného browser testu.
+- Nakonec změnu projděte člověkem. Testy chrání proti regresi, ale neřeší automaticky smysl a trade-offy.
+- „Nech model řídit můj běžný přihlášený browser“ není výchozí doporučení. To patří jen do sandboxovaného a záměrně omezeného prostředí.
 
 ## Rychlá připomínka
 
