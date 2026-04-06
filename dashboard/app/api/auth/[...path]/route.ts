@@ -1,4 +1,4 @@
-import { getNeonAuthAsync } from "@/lib/auth/server";
+import { auth } from "@/lib/auth/server";
 import { NextResponse } from "next/server";
 
 function notConfiguredResponse() {
@@ -8,18 +8,10 @@ function notConfiguredResponse() {
   );
 }
 
-export async function GET(request: Request, context: { params: Promise<{ path: string[] }> }) {
-  const auth = await getNeonAuthAsync();
-  if (!auth) return notConfiguredResponse();
+export const GET = auth
+  ? auth.handler().GET
+  : () => notConfiguredResponse();
 
-  const { GET: handler } = auth.handler();
-  return handler(request, context);
-}
-
-export async function POST(request: Request, context: { params: Promise<{ path: string[] }> }) {
-  const auth = await getNeonAuthAsync();
-  if (!auth) return notConfiguredResponse();
-
-  const { POST: handler } = auth.handler();
-  return handler(request, context);
-}
+export const POST = auth
+  ? auth.handler().POST
+  : () => notConfiguredResponse();

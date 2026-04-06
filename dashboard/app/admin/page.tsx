@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
-import { getNeonAuthAsync } from "@/lib/auth/server";
+import { auth } from "@/lib/auth/server";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
@@ -28,7 +28,6 @@ export const dynamic = "force-dynamic";
 async function signOutAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-  const auth = await getNeonAuthAsync();
   if (auth) {
     await auth.signOut();
   }

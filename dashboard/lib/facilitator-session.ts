@@ -1,4 +1,4 @@
-import { getNeonAuthAsync } from "./auth/server";
+import { auth } from "./auth/server";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getRuntimeStorageMode } from "./runtime-storage";
@@ -18,7 +18,6 @@ export async function getFacilitatorSession(): Promise<FacilitatorSession | null
     return null;
   }
 
-  const auth = await getNeonAuthAsync();
   if (!auth) return null;
 
   const { data: session } = await auth.getSession();

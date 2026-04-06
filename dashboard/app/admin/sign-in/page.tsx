@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getNeonAuthAsync } from "@/lib/auth/server";
+import { auth } from "@/lib/auth/server";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "@/app/components/theme-switcher";
 
@@ -13,18 +13,21 @@ async function signInAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  const auth = await getNeonAuthAsync();
   if (!auth) {
     redirect(withLang("/admin/sign-in?error=unavailable", lang));
-    return;
   }
 
-  const result = await auth.signIn.email({ email, password });
+  const { error } = await auth.signIn.email({ email, password });
 
-  if (result.error) {
-    console.error("[facilitator-sign-in] error:", JSON.stringify(result.error));
-    redirect(withLang("/admin/sign-in?error=invalid", lang));
-    return;
+  if (error) {
+    console.error("[facilitator-sign-in] error:", JSON.stringify(error));
+    redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "invalid")}`, lang));
+  }
+
+  // Verify session was created (matches official Neon Auth pattern)
+  const { data: session } = await auth.getSession();
+  if (!session?.user) {
+    redirect(withLang("/admin/sign-in?error=session_not_created", lang));
   }
 
   redirect(withLang("/admin", lang));
@@ -38,8 +41,15 @@ export default async function SignInPage({
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
   const copy = adminCopy[lang];
-  const hasError = params?.error === "invalid";
-  const isUnavailable = params?.error === "unavailable";
+  const errorParam = params?.error;
+
+  // If already authenticated, redirect to admin
+  if (auth) {
+    const { data: session } = await auth.getSession();
+    if (session?.user) {
+      redirect(withLang("/admin", lang));
+    }
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--surface)] px-6">
@@ -65,7 +75,7 @@ export default async function SignInPage({
             {copy.signInBody}
           </p>
 
-          {isUnavailable ? (
+          {errorParam === "unavailable" ? (
             <p className="mt-6 border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
               Neon Auth is not configured.
             </p>
@@ -105,13 +115,12 @@ export default async function SignInPage({
                   type="password"
                   required
                   autoComplete="current-password"
-
                 />
               </div>
 
-              {hasError ? (
+              {errorParam && errorParam !== "unavailable" ? (
                 <p className="border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
-                  {copy.signInError}
+                  {errorParam === "invalid" ? copy.signInError : decodeURIComponent(errorParam)}
                 </p>
               ) : null}
 

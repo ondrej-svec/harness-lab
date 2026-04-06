@@ -1,6 +1,6 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
-import { getNeonAuthAsync } from "./auth/server";
+import { auth as neonAuth } from "./auth/server";
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getRuntimeStorageMode } from "./runtime-storage";
@@ -55,13 +55,11 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
 
   async hasValidSession(options: { instanceId: string }) {
     const { instanceId } = options;
-    const auth = await getNeonAuthAsync();
-
-    if (!auth) {
+    if (!neonAuth) {
       return false;
     }
 
-    const { data: session } = await auth.getSession();
+    const { data: session } = await neonAuth.getSession();
     const userId = session?.user?.id ?? null;
 
     if (!userId) {
