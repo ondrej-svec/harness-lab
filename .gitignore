@@ -2,6 +2,8 @@
 
 dashboard/.next/
 dashboard/node_modules/
+dashboard/.vercel/
+dashboard/.env.vercel.local
 dashboard/data/workshop-state.json
 dashboard/data/participant-sessions.json
 dashboard/data/*/

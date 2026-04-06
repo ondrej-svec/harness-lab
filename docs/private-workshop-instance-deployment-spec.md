@@ -47,6 +47,10 @@ Rules:
 - environment values must be documented by name and purpose, not by copying live values into repo docs
 - secret rotation procedures must exist for any credential that can unlock protected routes or private state
 
+Operator matrix:
+
+- [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
+
 ## Neon Preview Branch Use
 
 - each preview deployment gets a corresponding Neon preview branch when production adapters or schema behavior are touched
@@ -56,11 +60,36 @@ Rules:
 
 ## Promotion Flow
 
+## Bootstrap Commands
+
+Initial operator bootstrap from the repository checkout:
+
+```bash
+cd dashboard
+vercel project add harness-lab-dashboard --scope <vercel-scope>
+vercel link --yes --project harness-lab-dashboard --scope <vercel-scope>
+npm run db:migrate
+```
+
+After the project exists:
+
+```bash
+cd dashboard
+vercel env add HARNESS_STORAGE_MODE preview
+vercel env add HARNESS_DATABASE_URL preview
+vercel env add HARNESS_WORKSHOP_INSTANCE_ID preview
+vercel env add HARNESS_ADMIN_USERNAME preview
+vercel env add HARNESS_ADMIN_PASSWORD preview
+```
+
+Repeat with `production` instead of `preview` for production-scoped values.
+
 ### Before preview creation
 
 - required docs and ADRs for the change are merged or included in the branch
 - relevant automated tests pass locally or in CI
 - no real workshop data is present in tracked files
+- preview migrations are applied through `cd dashboard && npm run db:migrate` against the preview-grade database path
 
 ### Preview validation
 
@@ -76,6 +105,7 @@ Rules:
 All of these must be true:
 
 - automated checks are green
+- the production schema path has been applied through the documented migration command
 - required human review completed for security-sensitive changes
 - browser inspection completed on the preview
 - rollback plan is confirmed

@@ -45,6 +45,7 @@ For four hackathons under one company, configure each event as a separate privat
 - verify dashboard deployment
 - verify the target instance is in `prepared` state with correct template binding
 - verify admin protection
+- verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
 - issue or rotate the shared participant event code
 - verify the participant event code expiry window
 - verify workshop skill files
@@ -71,6 +72,7 @@ After a workshop:
 - revoke active participant sessions
 - reset the next workshop from a template or a new instance record instead of reusing the archived one in place
 - confirm no live team data remains in the active public-facing view
+- if schema changes are pending, apply them through `cd dashboard && npm run db:migrate` against the intended database before validation or promotion
 
 ### 5. Archive
 

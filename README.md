@@ -62,6 +62,20 @@ Reálný běh workshopu patří do **private workshop instance layer**:
 
 Pravidla jsou popsaná v [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md).
 
+## Resource Layers
+
+Repo záměrně balí tři různé vrstvy:
+
+- **internal harness** — backstage materiály pro maintainery a facilitátory, kteří provozují a rozvíjejí Harness Lab
+- **learner resource kit** — participant-facing sada příkladů a artefaktů, které si účastníci mohou odnést do vlastních projektů
+- **external reference gallery** — krátký seznam oficiálních dokumentací a kvalitních veřejných repozitářů pro pokračování po workshopu
+
+Vstupní body:
+- [internal-harness.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md)
+- [learner-resource-kit.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+- [learner-reference-gallery.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-reference-gallery.md)
+- [resource-packaging-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
+
 ## Dashboard Model
 
 Dashboard má dvě role:
@@ -69,6 +83,10 @@ Dashboard má dvě role:
 - **facilitator surface** — chráněný admin a operační řízení workshop instance
 
 Lokálně dnes běží nad file-based store. Produkčně je připravený k přesunu na Vercel + privátní storage.
+
+Deployment-grade env scoping a promotion rules jsou popsané v:
+- [private-workshop-instance-env-matrix.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
+- [private-workshop-instance-deployment-spec.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
 
 ## Workshop Skill
 
