@@ -1,6 +1,6 @@
 {
   "name": "@harness-lab/cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Participant-facing Harness Lab CLI for facilitator auth and workshop operations",
   "license": "UNLICENSED",
   "type": "module",
@@ -31,7 +31,7 @@
     "README.md"
   ],
   "bin": {
-    "harness": "./bin/harness.js"
+    "harness": "bin/harness.js"
   },
   "scripts": {
     "test": "node --test"
