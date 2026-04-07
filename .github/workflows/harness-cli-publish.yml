@@ -15,6 +15,9 @@ concurrency:
   group: harness-cli-publish-${{ github.event_name }}-${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
   cancel-in-progress: false
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   verify-cli-package:
     name: verify-cli-package
@@ -33,7 +36,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - id: package_meta
         name: Read package version
@@ -120,7 +123,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: "https://registry.npmjs.org"
 
       - name: Publish package to npm
