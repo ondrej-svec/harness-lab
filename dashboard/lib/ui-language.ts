@@ -22,11 +22,13 @@ export const publicCopy = {
     navTeams: "týmy",
     navNotes: "poznámky",
     navFacilitatorLogin: "vstup pro facilitátora",
-    heroEyebrow: "workshop operating system pro týmy, které pracují s ai agenty",
-    heroLead: "Celodenní workshop o kontextu, workflow a spolupráci s AI coding agenty v reálném repozitáři.",
-    heroBody: "Praktický den s reálným repem: kontext, plán, testy a reviewable output. Rozhoduje to, co je v repu čitelné, ověřitelné a použitelné dál.",
+    heroEyebrow: "workshop pro týmy, které pracují s ai coding agenty",
+    heroLead: "Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru.",
+    heroBody:
+      "Nejde o demo promptů ani o jednorázové hacky. Jde o kontext, rozhodnutí, ověřování a způsob práce, na který může navázat další člověk i další agent.",
     blueprintLink: "otevřít workshop blueprint",
-    blueprintHint: "Veřejná kanonická definice workshopu: jak funguje den, co se upravuje kde a jak se blueprint importuje do live instance.",
+    blueprintHint:
+      "Veřejný blueprint workshopu: jak je postavený den, co patří do repa a co až do živé workshop instance.",
     accessEyebrow: "vstup pro účastníky",
     accessTitle: "vstup do kontextu místnosti",
     accessBody:
@@ -38,27 +40,29 @@ export const publicCopy = {
     publicDetails: "veřejné detaily",
     sampleHint: "Lokální demo běží se sample kódem, proto je pole předvyplněné. V preview a produkci to tak být nemá.",
     principlesEyebrow: "principy",
-    principlesTitle: "minimum pravidel, díky kterým je práce s agentem čitelná a udržitelná.",
-    principleOneTitle: "repo před improvizací",
-    principleOneBody: "Důležitý záměr, omezení a další krok patří nejdřív do repa, ne do vzduchu.",
-    principleTwoTitle: "ověřujte po malých krocích",
-    principleTwoBody: "Každý významný posun co nejdřív uzamkněte důkazem. Menší jistota je lepší než velká improvizace.",
-    principleThreeTitle: "pište tak, aby se dalo pokračovat",
+    principlesTitle: "tři pravidla, díky kterým je práce s agenty čitelná, ověřitelná a udržitelná.",
+    principleOneTitle: "nejdřív vyjasnit, pak generovat",
+    principleOneBody:
+      "Agent bez záměru a omezení nezačne tvořit, ale improvizovat. Dřív než pustíte další krok, ujasněte si, co má vzniknout a podle čeho poznáte, že to dává smysl.",
+    principleTwoTitle: "ověřujte dřív, než jdete dál",
+    principleTwoBody:
+      "Každý důležitý posun co nejdřív opřete o důkaz. Menší ověřený krok je cennější než rychlý postup, který se později rozpadne.",
+    principleThreeTitle: "pracujte tak, aby se dalo navázat",
     principleThreeBody:
-      "Z repa má být jasné, co funguje, co je křehké a co je bezpečný další krok i bez dodatečného vysvětlování.",
+      "Další člověk ani další agent nemá hádat, co se stalo. Z práce má být jasné, co platí, co je křehké a jaký je bezpečný další krok.",
     detailsWhat: "co to je",
     detailsWhatBody:
-      "Harness Lab je praktický workshop o práci s AI agenty v reálném repozitáři. Důraz je na kontext, pravidla, plán, testy a průběžně ověřitelný postup práce.",
+      "Harness Lab je praktický workshop o tom, jak používat AI coding agenty při skutečné týmové práci na softwaru. Důraz je na způsob práce, který zůstává srozumitelný, ověřitelný a použitelný i po dalším předání.",
     detailsParticipants: "pro účastníky",
     detailsParticipantsBody:
-      "Účastníci dostanou kontext konkrétní místnosti až po zadání event code. Veřejná stránka zůstává záměrně čistá a neobsahuje živý stav workshop instance.",
-    detailsBoundary: "veřejná hranice",
+      "Účastníci dostanou kontext své místnosti až po zadání event code. Veřejná stránka zůstává záměrně obecná a neukazuje živý stav konkrétní workshop instance.",
+    detailsBoundary: "co zůstává neveřejné",
     detailsBoundaryBody:
-      "Skutečná data o termínu, místnosti, rosters a facilitaci patří do privátní runtime vrstvy. Public repo a public homepage zůstávají bezpečné a přenositelné.",
-    detailsBlueprint: "workshop blueprint",
+      "Konkrétní termín, místnost, složení týmů i facilitace patří do privátní workshop instance. Veřejný dashboard a public repo zůstávají bezpečné a přenositelné.",
+    detailsBlueprint: "blueprint workshopu",
     detailsBlueprintBody:
-      "Reusable workshop method má nově vlastní blueprint vrstvu v repu. Dashboard řídí live instanci, ale kanonický design dne, control surfaces a edit boundaries zůstávají v blueprintu.",
-    footerBody: "Veřejná vstupní vrstva workshopu o kontextovém inženýrství, práci s repozitářem a spolupráci s ai agenty.",
+      "Workshopová metoda má v repu vlastní blueprint. Dashboard řídí běžící workshop, ale kanonický popis dne, pravidel a hranic editace zůstává tady.",
+    footerBody: "Veřejný přehled workshopu o týmové práci s AI coding agenty.",
     footerTop: "nahoru",
     footerParticipantAccess: "vstup pro účastníky",
     footerBlueprint: "blueprint",
@@ -94,11 +98,13 @@ export const publicCopy = {
     navTeams: "teams",
     navNotes: "notes",
     navFacilitatorLogin: "facilitator login",
-    heroEyebrow: "workshop operating system for teams using ai agents",
-    heroLead: "A full-day workshop on context, workflow, and collaboration with AI coding agents inside a real repository.",
-    heroBody: "A practical day built around a real repo: context, plan, tests, and reviewable output. What matters is what stays readable, verifiable, and usable in the repo.",
+    heroEyebrow: "workshop for teams working with ai coding agents",
+    heroLead: "A full-day workshop on how teams work with AI coding agents on real software.",
+    heroBody:
+      "This is not prompt theatre or one-off hacking. It is about context, decisions, verification, and a way of working that another person or another agent can continue.",
     blueprintLink: "open workshop blueprint",
-    blueprintHint: "The public canonical definition of the workshop: how the day runs, what gets edited where, and how the blueprint imports into a live instance.",
+    blueprintHint:
+      "The public workshop blueprint: how the day is structured, what belongs in the repo, and what only exists in the live workshop instance.",
     accessEyebrow: "participant access",
     accessTitle: "enter room context",
     accessBody:
@@ -110,27 +116,29 @@ export const publicCopy = {
     publicDetails: "public details",
     sampleHint: "Local demo mode uses a sample code, so the field is prefilled. This should not happen in preview or production.",
     principlesEyebrow: "principles",
-    principlesTitle: "the minimum rules that keep agent-driven work readable and durable.",
-    principleOneTitle: "repo before improvisation",
-    principleOneBody: "Intent, constraints, and the next safe step should land in the repo first, not in the air.",
-    principleTwoTitle: "verify in small steps",
-    principleTwoBody: "Lock meaningful progress with evidence early. Smaller certainty beats larger improvisation.",
-    principleThreeTitle: "write so the work can continue",
+    principlesTitle: "three rules that keep work with agents legible, verifiable, and maintainable.",
+    principleOneTitle: "clarify first, then generate",
+    principleOneBody:
+      "An agent without clear intent and constraints does not create; it improvises. Before you ask for the next step, make clear what should happen and how you will recognize a good result.",
+    principleTwoTitle: "verify before you move on",
+    principleTwoBody:
+      "Anchor each meaningful step in evidence as early as possible. A smaller verified step is worth more than a faster path that falls apart later.",
+    principleThreeTitle: "work so others can continue",
     principleThreeBody:
-      "The repo should make clear what works, what is fragile, and what the next safe step is without extra explanation.",
+      "The next person or the next agent should not have to guess what happened. The work should make clear what holds, what is fragile, and what the next safe step is.",
     detailsWhat: "what it is",
     detailsWhatBody:
-      "Harness Lab is a practical workshop about using AI agents inside a real repository. The focus is context, rules, plans, tests, and a workflow that stays reviewable as the work evolves.",
+      "Harness Lab is a practical workshop about using AI coding agents in real team software work. The focus is on a way of working that stays understandable, verifiable, and usable through handoffs.",
     detailsParticipants: "for participants",
     detailsParticipantsBody:
-      "Participants get room-specific context only after the event code. The public page stays intentionally clean and avoids exposing live workshop runtime state.",
-    detailsBoundary: "public boundary",
+      "Participants get room-specific context only after the event code. The public page stays intentionally general and does not expose the live state of a specific workshop instance.",
+    detailsBoundary: "what stays private",
     detailsBoundaryBody:
-      "Real dates, rooms, rosters, and facilitation data belong in the private runtime layer. The public repo and homepage stay safe and portable.",
+      "Real dates, rooms, team assignments, and facilitation data belong in the private workshop instance. The public repo and homepage stay safe and portable.",
     detailsBlueprint: "workshop blueprint",
     detailsBlueprintBody:
-      "The reusable workshop method now has its own blueprint layer in the repo. The dashboard operates the live instance, while the canonical day design, control surfaces, and edit boundaries stay in the blueprint.",
-    footerBody: "Public front door for a workshop about context engineering, repository clarity, and collaboration with ai agents.",
+      "The workshop method has its own blueprint in the repo. The dashboard operates the live workshop, while the canonical day design, rules, and edit boundaries stay there.",
+    footerBody: "Public overview of a workshop about team work with AI coding agents.",
     footerTop: "top",
     footerParticipantAccess: "participant access",
     footerBlueprint: "blueprint",

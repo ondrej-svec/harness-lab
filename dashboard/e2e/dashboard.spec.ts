@@ -19,8 +19,8 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.locator("#overview").getByText("repo před improvizací")).toBeVisible();
-    await expect(page.getByText(/Celodenní workshop o kontextu, workflow a spolupráci s AI coding agenty/i)).toBeVisible();
+    await expect(page.locator("#overview").getByText("nejdřív vyjasnit, pak generovat")).toBeVisible();
+    await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "repo" })).toHaveAttribute(
       "href",
       "https://github.com/ondrej-svec/harness-lab",
@@ -37,7 +37,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
-    await expect(page.locator("#overview").getByText("repo before improvisation")).toBeVisible();
+    await expect(page.locator("#overview").getByText("clarify first, then generate")).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "facilitator login" })).toBeVisible();
 
     await page.getByRole("link", { name: "harness lab" }).click();
