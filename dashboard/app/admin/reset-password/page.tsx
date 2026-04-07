@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 
@@ -114,12 +115,11 @@ export default async function ResetPasswordPage({
               </p>
             ) : null}
 
-            <button
+            <AdminSubmitButton
               className="w-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-text)] transition hover:bg-transparent hover:text-[var(--accent-surface)]"
-              type="submit"
             >
               {copy.passwordResetButtonConfirm}
-            </button>
+            </AdminSubmitButton>
           </form>
         )}
 

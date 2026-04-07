@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "@/app/components/theme-switcher";
@@ -170,12 +171,11 @@ export default async function SignInPage({
                   </p>
                 ) : null}
 
-                <button
+                <AdminSubmitButton
                   className="w-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-text)] transition hover:bg-transparent hover:text-[var(--accent-surface)]"
-                  type="submit"
                 >
                   {copy.signInButton}
-                </button>
+                </AdminSubmitButton>
               </form>
             )}
           </div>
@@ -214,12 +214,11 @@ export default async function SignInPage({
                 />
               </div>
 
-              <button
+              <AdminSubmitButton
                 className="w-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium lowercase text-[var(--text-primary)] transition hover:bg-[var(--surface)]"
-                type="submit"
               >
                 {copy.passwordResetButton}
-              </button>
+              </AdminSubmitButton>
             </form>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 
 const getSession = vi.fn();
 const redirect = vi.fn();
@@ -57,8 +58,11 @@ describe("admin device page", () => {
     const view = await AdminDevicePage({
       searchParams: Promise.resolve({ user_code: "abcd-efgh", approved: "ABCD-EFGH" }),
     });
+    const html = renderToStaticMarkup(view);
 
-    expect(view).toBeTruthy();
+    expect(html).toContain("Device code approved");
+    expect(html).toContain("approve another code");
+    expect(html).not.toContain("approve cli login");
   });
 
   it("redirects when approve is submitted without a code", async () => {

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
@@ -204,9 +205,9 @@ export default async function AdminWorkspacePage({
                 <span>/</span>
                 <form action={signOutAction}>
                   <input name="lang" type="hidden" value={lang} />
-                  <button type="submit" className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+                  <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
                     {copy.signOutButton}
-                  </button>
+                  </AdminSubmitButton>
                 </form>
               </div>
             </div>
@@ -257,9 +258,9 @@ export default async function AdminWorkspacePage({
                   </select>
                 </div>
                 <div className="flex gap-3">
-                  <button className={adminPrimaryButtonClassName} type="submit">
+                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {copy.workspaceSearchButton}
-                  </button>
+                  </AdminSubmitButton>
                   <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
                     {copy.workspaceResetFilters}
                   </Link>
@@ -354,9 +355,9 @@ export default async function AdminWorkspacePage({
                         className={adminInputClassName}
                       />
 
-                      <button className={`${adminPrimaryButtonClassName} w-full sm:w-auto`} type="submit">
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full sm:w-auto`}>
                         {copy.createInstanceButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
                   </div>
                 </div>
@@ -416,9 +417,9 @@ export default async function AdminWorkspacePage({
                             <input name="lang" type="hidden" value={lang} />
                             <input name="targetInstanceId" type="hidden" value={instance.id} />
                             <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">archive-safe</span>
-                            <button className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]" type="submit">
+                            <AdminSubmitButton className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]">
                               {copy.removeInstanceButton}
-                            </button>
+                            </AdminSubmitButton>
                           </form>
                         </div>
                       </article>

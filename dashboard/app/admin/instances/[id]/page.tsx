@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { auth } from "@/lib/auth/server";
 import {
@@ -440,12 +441,9 @@ export default async function AdminPage({
                   <span>/</span>
                   <form action={signOutAction}>
                     <input name="lang" type="hidden" value={lang} />
-                    <button
-                      type="submit"
-                      className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
-                    >
+                    <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
                       {copy.signOutButton}
-                    </button>
+                    </AdminSubmitButton>
                   </form>
                 </div>
 
@@ -660,9 +658,9 @@ export default async function AdminPage({
                         </option>
                       ))}
                     </select>
-                    <button className={`${adminPrimaryButtonClassName} w-full`} type="submit">
+                    <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
                       {copy.setCurrentPhase}
-                    </button>
+                    </AdminSubmitButton>
                   </form>
                 </ControlCard>
 
@@ -670,12 +668,12 @@ export default async function AdminPage({
                   <form action={toggleRotationAction} className="space-y-4">
                     <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                     <div className="grid grid-cols-2 gap-3">
-                      <button className={`${adminPrimaryButtonClassName} w-full`} type="submit" name="revealed" value="true">
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
                         {copy.unlockButton}
-                      </button>
-                      <button className={`${adminSecondaryButtonClassName} w-full`} type="submit" name="revealed" value="false">
+                      </AdminSubmitButton>
+                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
                         {copy.hideAgainButton}
-                      </button>
+                      </AdminSubmitButton>
                     </div>
                     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
                       {copy.participantStatePrefix} {overviewState.participantState}.
@@ -705,9 +703,9 @@ export default async function AdminPage({
                         className={adminInputClassName}
                       />
                       <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
-                      <button className={`${adminSecondaryButtonClassName} w-full`} type="submit">
+                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
                         {copy.archiveButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
 
                     <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
@@ -720,9 +718,9 @@ export default async function AdminPage({
                         ))}
                       </select>
                       <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
-                      <button className={`${adminDangerButtonClassName} w-full`} type="submit">
+                      <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
                         {copy.resetButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
 
                     <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
@@ -801,9 +799,9 @@ export default async function AdminPage({
                       <input name="title" defaultValue={selectedAgendaItem.title} className={adminInputClassName} />
                       <input name="time" defaultValue={selectedAgendaItem.time} className={adminInputClassName} />
                       <textarea name="description" rows={4} defaultValue={selectedAgendaItem.description} className={adminInputClassName} />
-                      <button className={adminPrimaryButtonClassName} type="submit">
+                      <AdminSubmitButton className={adminPrimaryButtonClassName}>
                         {copy.saveAgendaItemButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -811,34 +809,34 @@ export default async function AdminPage({
                         <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                         <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
                         <input name="direction" type="hidden" value="up" />
-                        <button className={`${adminSecondaryButtonClassName} w-full`} type="submit">
+                        <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
                           {copy.moveUpButton}
-                        </button>
+                        </AdminSubmitButton>
                       </form>
                       <form action={moveAgendaItemAction}>
                         <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                         <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
                         <input name="direction" type="hidden" value="down" />
-                        <button className={`${adminSecondaryButtonClassName} w-full`} type="submit">
+                        <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
                           {copy.moveDownButton}
-                        </button>
+                        </AdminSubmitButton>
                       </form>
                     </div>
 
                     <form action={setAgendaAction} className="space-y-3">
                       <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                       <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                      <button className={`${adminSecondaryButtonClassName} w-full`} type="submit">
+                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
                         {copy.setCurrentPhase}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
 
                     <form action={removeAgendaItemAction}>
                       <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                       <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                      <button className={`${adminDangerButtonClassName} w-full`} type="submit">
+                      <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
                         {copy.removeAgendaItemButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
                   </div>
                 ) : null}
@@ -857,9 +855,9 @@ export default async function AdminPage({
                       </option>
                     ))}
                   </select>
-                  <button className={adminPrimaryButtonClassName} type="submit">
+                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {copy.addAgendaItemButton}
-                  </button>
+                  </AdminSubmitButton>
                 </form>
               </AdminPanel>
 
@@ -930,9 +928,9 @@ export default async function AdminPage({
                     defaultValue={selectedTeam?.checkpoint ?? ""}
                     className={adminInputClassName}
                   />
-                  <button className={adminPrimaryButtonClassName} type="submit">
+                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
-                  </button>
+                  </AdminSubmitButton>
                 </form>
               </div>
             </AdminPanel>
@@ -991,9 +989,9 @@ export default async function AdminPage({
                 </select>
                 <input name="at" defaultValue="11:15" className={adminInputClassName} />
                 <textarea name="text" rows={4} className={adminInputClassName} />
-                <button className={adminPrimaryButtonClassName} type="submit">
+                <AdminSubmitButton className={adminPrimaryButtonClassName}>
                   {copy.addUpdateButton}
-                </button>
+                </AdminSubmitButton>
               </form>
             </AdminPanel>
 
@@ -1014,9 +1012,9 @@ export default async function AdminPage({
                     </option>
                   ))}
                 </select>
-                <button className={adminPrimaryButtonClassName} type="submit">
+                <AdminSubmitButton className={adminPrimaryButtonClassName}>
                   {copy.recordCompletionButton}
-                </button>
+                </AdminSubmitButton>
               </form>
             </AdminPanel>
           </div>
@@ -1049,9 +1047,9 @@ export default async function AdminPage({
                           <form action={revokeFacilitatorAction}>
                             <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                             <input name="grantId" type="hidden" value={grant.id} />
-                            <button type="submit" className="text-sm lowercase text-[var(--danger)] transition hover:text-[var(--text-primary)]">
+                            <AdminSubmitButton className="text-sm lowercase text-[var(--danger)] transition hover:text-[var(--text-primary)]">
                               {copy.revokeButton}
-                            </button>
+                            </AdminSubmitButton>
                           </form>
                         ) : null}
                       </div>
@@ -1076,9 +1074,9 @@ export default async function AdminPage({
                         <option value="owner">owner</option>
                         <option value="observer">observer</option>
                       </select>
-                      <button className={adminPrimaryButtonClassName} type="submit">
+                      <AdminSubmitButton className={adminPrimaryButtonClassName}>
                         {copy.addFacilitatorButton}
-                      </button>
+                      </AdminSubmitButton>
                     </form>
                   </div>
                 ) : null}
@@ -1140,9 +1138,9 @@ export default async function AdminPage({
                     </p>
                   ) : null}
 
-                  <button className={adminPrimaryButtonClassName} type="submit">
+                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {copy.changePasswordButton}
-                  </button>
+                  </AdminSubmitButton>
                 </form>
               )}
             </AdminPanel>
