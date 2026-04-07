@@ -93,6 +93,7 @@ test.describe("facilitator sign-in", () => {
     await expect(page.getByLabel("email")).toBeVisible();
     await expect(page.getByLabel("password")).toBeVisible();
     await expect(page.getByRole("button", { name: "sign in" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "send reset link" })).toBeVisible();
     await expect(page.getByRole("link", { name: /back to overview/ })).toBeVisible();
   });
 
@@ -122,6 +123,8 @@ test.describe("facilitator admin (file mode)", () => {
 
     await expect(page.getByRole("heading", { name: "řízení workshopu" })).toBeVisible();
     await expect(page.getByText("aktivní instance")).toBeVisible();
+    await expect(page.getByRole("link", { name: "agenda" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "účet" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "ovládání continuation shiftu" })).toBeVisible();
 
     await Promise.all([
@@ -140,10 +143,18 @@ test.describe("facilitator admin (file mode)", () => {
   });
 
   test("shows facilitators section with file-mode fallback message", async ({ page }) => {
-    await page.goto("/admin");
+    await page.goto("/admin?section=access");
 
     await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
     await expect(page.getByText("Správa facilitátorů vyžaduje neon mód.")).toBeVisible();
+  });
+
+  test("shows agenda source information on the agenda section", async ({ page }) => {
+    await page.goto("/admin?section=agenda");
+
+    await expect(page.getByRole("heading", { name: "agenda a fáze" })).toBeVisible();
+    await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();
+    await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {

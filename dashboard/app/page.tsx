@@ -15,6 +15,7 @@ import { ThemeSwitcher } from "./components/theme-switcher";
 
 export const dynamic = "force-dynamic";
 const publicRepoUrl = "https://github.com/ondrej-svec/harness-lab";
+const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
 
 async function redeemEventCodeAction(formData: FormData) {
   "use server";
@@ -136,6 +137,14 @@ function SiteHeader({
               <a className="transition hover:text-[var(--text-primary)]" href="#details">
                 {copy.navDetails}
               </a>
+              <a
+                className="transition hover:text-[var(--text-primary)]"
+                href={blueprintRepoUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {copy.navBlueprint}
+              </a>
               <a className="transition hover:text-[var(--text-primary)]" href="#access">
                 {copy.navParticipantAccess}
               </a>
@@ -196,6 +205,17 @@ function PublicView({
             {copy.heroLead}
           </p>
           <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text-muted)]">{copy.heroBody}</p>
+          <div className="mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]">
+            <a
+              className="border border-[var(--border)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+              href={blueprintRepoUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {copy.blueprintLink}
+            </a>
+            <p className="max-w-xl leading-6 text-[var(--text-muted)]">{copy.blueprintHint}</p>
+          </div>
         </div>
 
         <aside id="access" className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] p-6 text-[var(--accent-text)] sm:p-8">
@@ -262,7 +282,7 @@ function PublicView({
       </section>
 
       <section className="border-b border-[var(--border)] py-12" id="details">
-        <div className="grid gap-10 lg:grid-cols-3 lg:gap-12">
+        <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-4 lg:gap-12">
           <div>
             <SectionLabel>{copy.detailsWhat}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsWhatBody}</p>
@@ -274,6 +294,10 @@ function PublicView({
           <div>
             <SectionLabel>{copy.detailsBoundary}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsBoundaryBody}</p>
+          </div>
+          <div>
+            <SectionLabel>{copy.detailsBlueprint}</SectionLabel>
+            <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsBlueprintBody}</p>
           </div>
         </div>
       </section>
@@ -289,6 +313,14 @@ function PublicView({
           </a>
           <a className="transition hover:text-[var(--text-primary)]" href="#access">
             {copy.footerParticipantAccess}
+          </a>
+          <a
+            className="transition hover:text-[var(--text-primary)]"
+            href={blueprintRepoUrl}
+            rel="noreferrer"
+            target="_blank"
+          >
+            {copy.footerBlueprint}
           </a>
           <a
             aria-label={copy.navRepo}

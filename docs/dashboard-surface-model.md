@@ -44,6 +44,57 @@ Design rules:
 - optimized for speed and safety, not public polish
 - writes go through explicit admin actions
 
+## Facilitator Auth Model
+
+- production and preview facilitator identity uses Neon Auth
+- facilitator authorization stays local to Harness Lab through `instance_grants`
+- `/admin/sign-in` is the facilitator login page
+- file mode keeps a Basic Auth fallback only for local/demo development
+- password changes should stay inside the Neon Auth flow rather than custom password storage in this repo
+
+## Agenda Source Of Truth
+
+There are now two explicit layers:
+
+- public blueprint layer
+  - canonical reusable agenda structure lives in [`workshop-blueprint/agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
+  - supporting human-readable workshop method docs live in [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint)
+- runtime instance layer
+  - instance create/reset imports blueprint-owned fields into the active workshop instance
+  - facilitator actions move only the current phase and other runtime-local state
+  - file mode persists that runtime copy in `dashboard/data/<instance>/workshop-state.json`
+  - neon mode persists that runtime copy in `workshop_instances.workshop_state`
+
+Important consequence:
+
+- facilitator UI changes runtime state, not the canonical blueprint
+- full agenda authoring remains a repo/blueprint concern unless we deliberately add a blueprint editor and publish-back workflow
+- dashboard copy should describe reset as blueprint import, not as an opaque seed reset
+
+## Workshop Context Sources
+
+Use different sources for different kinds of truth:
+
+- static public workshop materials
+  - `content/` markdown
+  - `workshop-skill/`
+  - public repo docs
+- live workshop runtime state
+  - dashboard runtime repositories behind `getWorkshopState()`
+  - participant event-context APIs
+  - facilitator admin APIs for protected mutations
+
+The rule is:
+
+- if the information changes during the workshop day, prefer runtime APIs/state
+- if the information is public-safe reference material or baseline framing, prefer repo-native content
+- if the dashboard/runtime is unavailable, skills may fall back to repo materials but must say clearly that they are in fallback mode
+
+The blueprint/runtime split is defined more fully in:
+
+- [`blueprint-import-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
+- [`runtime-learning-publish-back.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
+
 ## Data Boundary
 
 Public template repo:
@@ -59,6 +110,8 @@ Private workshop instance layer:
 
 - `/` acts as the participant surface
 - `/admin` acts as the facilitator surface
-- `HARNESS_ADMIN_PASSWORD` can protect admin and write APIs
+- Neon Auth protects facilitator sign-in in neon mode
+- file mode retains the Basic Auth fallback for local/demo work
 - file storage remains the local development adapter
 - `dashboard/lib/workshop-state-repository.ts` is the seam for moving to a hosted private store later
+- facilitator skills should use the `harness` CLI for privileged local auth/session handling rather than inventing a parallel secret store

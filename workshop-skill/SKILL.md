@@ -10,6 +10,28 @@ Core mental model:
 - dashboard participant surface = orientace během dne
 - dashboard facilitator surface = řízení workshop instance
 - workshop skill = AI interface ke stejnému workshop systému
+- workshop blueprint = veřejná kanonická definice workshop method
+
+## Sources Of Truth
+
+Use runtime dashboard data for anything that changes during the workshop day:
+- current agenda phase
+- continuation reveal state
+- live team registry
+- checkpoints and sprint updates
+- facilitator-only status when the command explicitly requires facilitator access
+
+Use repo-native content for stable public guidance:
+- `content/` workshop materials
+- `workshop-skill/` reference docs
+- `workshop-blueprint/` for the reusable workshop method
+- challenge cards, project briefs, and public-safe framing
+
+Rule:
+- runtime APIs first for live workshop state
+- repo docs first for durable workshop guidance
+- if runtime is unavailable, fall back to repo material and say explicitly that the answer is fallback rather than live state
+- runtime edits do not imply blueprint edits; reusable changes belong back in the repo deliberately
 
 ## Commands
 
@@ -102,8 +124,8 @@ Return the workshop reference card from `workshop-skill/reference.md`.
 
 ### `/workshop facilitator login`
 
-Authenticate as a facilitator via Neon Auth email/password.
-Call the dashboard API to get a session token. Store it for subsequent commands.
+Authenticate as a facilitator through the `harness` CLI privileged path.
+The skill should ask the facilitator to complete CLI login/bootstrap if needed, then use the CLI-backed session for subsequent commands.
 This is a facilitator-only command — do not surface to participants.
 
 ### `/workshop facilitator status`
@@ -160,7 +182,9 @@ Relevant local files:
 - `workshop-skill/facilitator.md`
 - `content/project-briefs/*.md`
 - `content/challenge-cards/deck.md`
+- `workshop-blueprint/*`
 - `docs/workshop-event-context-contract.md`
+- `docs/harness-cli-foundation.md`
 
 ## Style
 

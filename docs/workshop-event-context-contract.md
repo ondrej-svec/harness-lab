@@ -33,6 +33,7 @@ Available:
 - admin surface
 - write operations
 - facilitator-only views and monitoring
+- facilitator skill commands via the CLI-backed auth path
 
 ## Authenticated Core Bundle
 
@@ -109,6 +110,7 @@ Current admin/facilitator write routes remain under existing admin protection an
 - dashboard participant sessions are stored in a server-issued HTTP-only cookie
 - skill-side session persistence should stay minimal and prefer renewable short-lived tokens over long-lived bearer state
 - the event code must not be reused as the live bearer credential after redemption
+- facilitator skill auth/session handling should live in the `harness` CLI, not in arbitrary skill state
 
 ## Logging Expectations
 

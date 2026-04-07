@@ -206,24 +206,67 @@ async function revokeFacilitatorAction(formData: FormData) {
   redirect(withLang("/admin", lang));
 }
 
+async function changePasswordAction(formData: FormData) {
+  "use server";
+  await requireFacilitatorActionAccess();
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+  const currentPassword = String(formData.get("currentPassword") ?? "");
+  const newPassword = String(formData.get("newPassword") ?? "");
+  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const revokeOtherSessions = formData.get("revokeOtherSessions") === "on";
+
+  if (!auth) {
+    redirect(withLang("/admin?section=account&error=unavailable", lang));
+  }
+
+  if (newPassword !== confirmPassword) {
+    redirect(withLang("/admin?section=account&error=password_mismatch", lang));
+  }
+
+  const { error } = await auth.changePassword({
+    currentPassword,
+    newPassword,
+    revokeOtherSessions,
+  });
+
+  if (error) {
+    redirect(withLang(`/admin?section=account&error=${encodeURIComponent(error.message || "password_change_failed")}`, lang));
+  }
+
+  redirect(withLang("/admin?section=account&password=changed", lang));
+}
+
+const adminSections = ["overview", "agenda", "teams", "signals", "access", "account"] as const;
+type AdminSection = (typeof adminSections)[number];
+
+function resolveAdminSection(value: string | undefined): AdminSection {
+  return adminSections.find((section) => section === value) ?? "overview";
+}
+
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ lang?: string }>;
+  searchParams?: Promise<{ lang?: string; section?: string; error?: string; password?: string }>;
 }) {
   await requireFacilitatorPageAccess();
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
   const copy = adminCopy[lang];
+  const activeSection = resolveAdminSection(params?.section);
+  const errorParam = params?.error;
+  const passwordParam = params?.password;
   const isNeonMode = getRuntimeStorageMode() === "neon";
-  const [state, latestArchive, facilitatorGrants, currentFacilitator] = await Promise.all([
+  const [state, latestArchive, facilitatorGrants, currentFacilitator, authSession] = await Promise.all([
     getWorkshopState(),
     getLatestWorkshopArchive(),
     isNeonMode ? getInstanceGrantRepository().listActiveGrants(getCurrentWorkshopInstanceId()) : Promise.resolve([]),
     isNeonMode ? getFacilitatorSession() : Promise.resolve(null),
+    isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
   ]);
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
   const isOwner = currentFacilitator?.grant.role === "owner";
+  const signedInEmail = authSession?.data?.user?.email ?? null;
+  const signedInName = authSession?.data?.user?.name ?? null;
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] px-4 py-8 text-[var(--text-primary)] sm:px-6">
@@ -251,12 +294,28 @@ export default async function AdminPage({
               </form>
             </div>
           </div>
+          <div className="mt-5 flex flex-col gap-4 border-t border-[var(--border)] pt-5">
+            <div className="flex flex-wrap gap-2">
+              <AdminSectionLink lang={lang} section="overview" activeSection={activeSection} label={copy.navOverview} />
+              <AdminSectionLink lang={lang} section="agenda" activeSection={activeSection} label={copy.navAgenda} />
+              <AdminSectionLink lang={lang} section="teams" activeSection={activeSection} label={copy.navTeams} />
+              <AdminSectionLink lang={lang} section="signals" activeSection={activeSection} label={copy.navSignals} />
+              <AdminSectionLink lang={lang} section="access" activeSection={activeSection} label={copy.navAccess} />
+              <AdminSectionLink lang={lang} section="account" activeSection={activeSection} label={copy.navAccount} />
+            </div>
+            <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.sectionHint}</p>
+          </div>
           <div className="mt-5 grid gap-3 md:grid-cols-4">
             <StatusPill label={copy.activeInstance} value={state.workshopId} />
             <StatusPill label={copy.currentPhase} value={currentAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel} />
             <StatusPill label={copy.rotation} value={state.rotation.revealed ? copy.rotationUnlocked : copy.rotationHidden} />
             <StatusPill label={copy.teams} value={`${state.teams.length}`} />
           </div>
+          {signedInEmail ? (
+            <p className="mt-4 text-xs leading-5 text-[var(--text-muted)]">
+              {copy.signedInAs}: {signedInName ?? signedInEmail} {currentFacilitator ? `• ${currentFacilitator.grant.role}` : ""}
+            </p>
+          ) : null}
           {latestArchive ? (
             <p className="mt-4 text-xs leading-5 text-[var(--text-muted)]">
               {copy.latestArchivePrefix} {latestArchive.createdAt} • {copy.retentionUntil} {latestArchive.retentionUntil ?? copy.retentionUnset}.
@@ -264,120 +323,199 @@ export default async function AdminPage({
           ) : null}
         </header>
 
-        <section className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
-          <AdminGroup
-            title={copy.workshopStateTitle}
-            eyebrow={copy.workshopStateEyebrow}
-            description={copy.workshopStateDescription}
-          >
-            <div className="grid gap-4 lg:grid-cols-2">
-              <AdminCard title={copy.moveAgendaTitle} tone="default">
-                <form action={setAgendaAction} className="space-y-3">
-                  <input name="lang" type="hidden" value={lang} />
-                  <select name="agendaId" className={inputClassName}>
-                    {state.agenda.map((item) => (
-                      <option key={item.id} value={item.id}>
-                        {item.time} • {item.title}
-                      </option>
-                    ))}
-                  </select>
-                  <button className={primaryButtonClassName} type="submit">
-                    {copy.setCurrentPhase}
-                  </button>
-                </form>
-              </AdminCard>
-
-              <AdminCard title={copy.resetInstanceTitle} tone="danger">
-                <form action={resetWorkshopAction} className="space-y-3">
-                  <input name="lang" type="hidden" value={lang} />
-                  <select name="templateId" className={inputClassName}>
-                    {workshopTemplates.map((template) => (
-                      <option key={template.id} value={template.id}>
-                        {template.label} • {template.room}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
-                  <button className={dangerButtonClassName} type="submit">
-                    {copy.resetButton}
-                  </button>
-                </form>
-              </AdminCard>
-
-              <AdminCard title={copy.archiveTitle} tone="default">
-                <form action={archiveWorkshopAction} className="space-y-3">
-                  <input name="lang" type="hidden" value={lang} />
-                  <textarea
-                    name="notes"
-                    rows={3}
-                    placeholder={copy.archivePlaceholder}
-                    className={inputClassName}
-                  />
-                  <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
-                  <button className={primaryButtonClassName} type="submit">
-                    {copy.archiveButton}
-                  </button>
-                </form>
-              </AdminCard>
-            </div>
-          </AdminGroup>
-
-          <AdminGroup
-            title={copy.continuationTitle}
-            eyebrow={copy.continuationEyebrow}
-            description={copy.continuationDescription}
-          >
-            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-              <AdminCard title={copy.revealTitle} tone="highlight">
-                <form action={toggleRotationAction} className="space-y-3">
-                  <input name="lang" type="hidden" value={lang} />
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-2 font-semibold text-[var(--accent-text)]"
-                      type="submit"
-                      name="revealed"
-                      value="true"
-                    >
-                      {copy.unlockButton}
+        {activeSection === "overview" ? (
+          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+            <AdminGroup
+              title={copy.overviewTitle}
+              eyebrow={copy.workshopStateEyebrow}
+              description={copy.overviewDescription}
+            >
+              <div className="grid gap-4 lg:grid-cols-2">
+                <AdminCard title={copy.moveAgendaTitle} tone="default">
+                  <form action={setAgendaAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <select name="agendaId" className={inputClassName}>
+                      {state.agenda.map((item) => (
+                        <option key={item.id} value={item.id}>
+                          {item.time} • {item.title}
+                        </option>
+                      ))}
+                    </select>
+                    <button className={primaryButtonClassName} type="submit">
+                      {copy.setCurrentPhase}
                     </button>
-                    <button
-                      className="border border-[var(--border-strong)] px-4 py-2 font-semibold text-[var(--text-secondary)]"
-                      type="submit"
-                      name="revealed"
-                      value="false"
-                    >
-                      {copy.hideAgainButton}
+                  </form>
+                </AdminCard>
+
+                <AdminCard title={copy.archiveTitle} tone="default">
+                  <form action={archiveWorkshopAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <textarea
+                      name="notes"
+                      rows={3}
+                      placeholder={copy.archivePlaceholder}
+                      className={inputClassName}
+                    />
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
+                    <button className={primaryButtonClassName} type="submit">
+                      {copy.archiveButton}
                     </button>
+                  </form>
+                </AdminCard>
+
+                <AdminCard title={copy.resetInstanceTitle} tone="danger">
+                  <form action={resetWorkshopAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <select name="templateId" className={inputClassName}>
+                      {workshopTemplates.map((template) => (
+                        <option key={template.id} value={template.id}>
+                          {template.label} • {template.room}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
+                    <button className={dangerButtonClassName} type="submit">
+                      {copy.resetButton}
+                    </button>
+                  </form>
+                </AdminCard>
+              </div>
+            </AdminGroup>
+
+            <AdminGroup
+              title={copy.continuationTitle}
+              eyebrow={copy.continuationEyebrow}
+              description={copy.continuationDescription}
+            >
+              <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                <AdminCard title={copy.revealTitle} tone="highlight">
+                  <form action={toggleRotationAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        className="border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-2 font-semibold text-[var(--accent-text)]"
+                        type="submit"
+                        name="revealed"
+                        value="true"
+                      >
+                        {copy.unlockButton}
+                      </button>
+                      <button
+                        className="border border-[var(--border-strong)] px-4 py-2 font-semibold text-[var(--text-secondary)]"
+                        type="submit"
+                        name="revealed"
+                        value="false"
+                      >
+                        {copy.hideAgainButton}
+                      </button>
+                    </div>
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">
+                      {copy.participantStatePrefix} {state.rotation.revealed ? copy.participantStateUnlocked : copy.participantStateHidden}.
+                    </p>
+                  </form>
+                </AdminCard>
+
+                <AdminCard title={copy.activeRotationTitle} tone="default">
+                  <div className="space-y-3">
+                    {state.rotation.slots.map((slot) => (
+                      <div key={`${slot.fromTeam}-${slot.toTeam}`} className="border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
+                        <p className="font-semibold text-[var(--text-primary)]">
+                          {slot.fromTeam} → {slot.toTeam}
+                        </p>
+                        <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
+                      </div>
+                    ))}
                   </div>
-                  <p className="text-xs leading-5 text-[var(--text-muted)]">
-                    {copy.participantStatePrefix} {state.rotation.revealed ? copy.participantStateUnlocked : copy.participantStateHidden}.
-                  </p>
-                </form>
-              </AdminCard>
+                </AdminCard>
+              </div>
+            </AdminGroup>
+          </div>
+        ) : null}
 
-              <AdminCard title={copy.activeRotationTitle} tone="default">
+        {activeSection === "agenda" ? (
+          <AdminGroup
+            title={copy.agendaSectionTitle}
+            eyebrow={copy.workshopStateEyebrow}
+            description={copy.agendaSectionDescription}
+          >
+            <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+              <AdminCard title={copy.agendaTimelineTitle} tone="default">
                 <div className="space-y-3">
-                  {state.rotation.slots.map((slot) => (
-                    <div key={`${slot.fromTeam}-${slot.toTeam}`} className="border border-[var(--border)] bg-[var(--surface-elevated)] p-3">
-                      <p className="font-semibold text-[var(--text-primary)]">
-                        {slot.fromTeam} → {slot.toTeam}
-                      </p>
-                      <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
+                  {state.agenda.map((item) => (
+                    <div key={item.id} className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <p className="font-semibold text-[var(--text-primary)]">
+                          {item.time} • {item.title}
+                        </p>
+                        <span className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                          {item.status === "done"
+                            ? copy.agendaStatusDone
+                            : item.status === "current"
+                              ? copy.agendaStatusCurrent
+                              : copy.agendaStatusUpcoming}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p>
                     </div>
                   ))}
                 </div>
               </AdminCard>
+
+              <div className="grid gap-4">
+                <AdminCard title={copy.agendaCurrentTitle} tone="default">
+                  <div className="space-y-4">
+                    <div className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.currentPhase}</p>
+                      <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                        {currentAgendaItem?.time} • {currentAgendaItem?.title}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                        {currentAgendaItem?.description}
+                      </p>
+                    </div>
+
+                    <form action={setAgendaAction} className="space-y-3">
+                      <input name="lang" type="hidden" value={lang} />
+                      <select name="agendaId" className={inputClassName}>
+                        {state.agenda.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.time} • {item.title}
+                          </option>
+                        ))}
+                      </select>
+                      <button className={primaryButtonClassName} type="submit">
+                        {copy.setCurrentPhase}
+                      </button>
+                    </form>
+                  </div>
+                </AdminCard>
+
+                <AdminCard title={copy.agendaSourceTitle} tone="default">
+                  <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaSourceBody}</p>
+                  <div className="mt-4 space-y-3 text-sm leading-6 text-[var(--text-secondary)]">
+                    <p>
+                      Repo seed: <code>dashboard/lib/workshop-data.ts</code>
+                    </p>
+                    <p>
+                      File-mode runtime copy: <code>dashboard/data/&lt;instance&gt;/workshop-state.json</code>
+                    </p>
+                    <p>
+                      Neon-mode runtime copy: <code>workshop_instances.workshop_state</code>
+                    </p>
+                  </div>
+                </AdminCard>
+              </div>
             </div>
           </AdminGroup>
-        </section>
+        ) : null}
 
-        <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        {activeSection === "teams" ? (
           <AdminGroup
             title={copy.teamOpsTitle}
             eyebrow={copy.teamOpsEyebrow}
             description={copy.teamOpsDescription}
           >
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
               <AdminCard title={copy.registerTeamTitle} tone="default">
                 <form action={registerTeamAction} className="space-y-3">
                   <input name="lang" type="hidden" value={lang} />
@@ -399,25 +537,44 @@ export default async function AdminPage({
                 </form>
               </AdminCard>
 
-              <AdminCard title={copy.editCheckpointTitle} tone="default">
-                <form action={saveCheckpointAction} className="space-y-3">
-                  <input name="lang" type="hidden" value={lang} />
-                  <select name="teamId" className={inputClassName}>
+              <div className="grid gap-4">
+                <AdminCard title={copy.editCheckpointTitle} tone="default">
+                  <form action={saveCheckpointAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <select name="teamId" className={inputClassName}>
+                      {state.teams.map((team) => (
+                        <option key={team.id} value={team.id}>
+                          {team.name}
+                        </option>
+                      ))}
+                    </select>
+                    <textarea name="checkpoint" rows={5} className={inputClassName} />
+                    <button className={primaryButtonClassName} type="submit">
+                      {copy.saveCheckpointButton}
+                    </button>
+                  </form>
+                </AdminCard>
+
+                <AdminCard title={copy.navTeams} tone="default">
+                  <div className="space-y-3">
                     {state.teams.map((team) => (
-                      <option key={team.id} value={team.id}>
-                        {team.name}
-                      </option>
+                      <div key={team.id} className="border border-[var(--border)] bg-[var(--surface)] p-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="font-semibold text-[var(--text-primary)]">{team.name}</p>
+                          <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
+                        </div>
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.repoUrl}</p>
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                      </div>
                     ))}
-                  </select>
-                  <textarea name="checkpoint" rows={5} className={inputClassName} />
-                  <button className={primaryButtonClassName} type="submit">
-                    {copy.saveCheckpointButton}
-                  </button>
-                </form>
-              </AdminCard>
+                  </div>
+                </AdminCard>
+              </div>
             </div>
           </AdminGroup>
+        ) : null}
 
+        {activeSection === "signals" ? (
           <AdminGroup
             title={copy.signalTitle}
             eyebrow={copy.signalEyebrow}
@@ -466,9 +623,9 @@ export default async function AdminPage({
               </AdminCard>
             </div>
           </AdminGroup>
-        </section>
+        ) : null}
 
-        <section>
+        {activeSection === "access" ? (
           <AdminGroup
             eyebrow={copy.facilitatorsEyebrow}
             title={copy.facilitatorsTitle}
@@ -536,7 +693,81 @@ export default async function AdminPage({
               </div>
             )}
           </AdminGroup>
-        </section>
+        ) : null}
+
+        {activeSection === "account" ? (
+          <AdminGroup
+            eyebrow={copy.accountEyebrow}
+            title={copy.accountTitle}
+            description={copy.accountDescription}
+          >
+            {!isNeonMode || !auth ? (
+              <AdminCard title="" tone="default">
+                <p className="text-sm text-[var(--text-muted)]">{copy.accountFileMode}</p>
+              </AdminCard>
+            ) : (
+              <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+                <AdminCard title={copy.accountTitle} tone="default">
+                  <div className="space-y-3 text-sm leading-6 text-[var(--text-secondary)]">
+                    <p>
+                      <span className="font-medium text-[var(--text-primary)]">{copy.signInEmailLabel}:</span> {signedInEmail ?? "unknown"}
+                    </p>
+                    <p>
+                      <span className="font-medium text-[var(--text-primary)]">role:</span> {currentFacilitator?.grant.role ?? "unknown"}
+                    </p>
+                    <p>
+                      <span className="font-medium text-[var(--text-primary)]">{copy.activeInstance}:</span> {state.workshopId}
+                    </p>
+                  </div>
+                </AdminCard>
+
+                <AdminCard title={copy.passwordCardTitle} tone="default">
+                  <form action={changePasswordAction} className="space-y-4">
+                    <input name="lang" type="hidden" value={lang} />
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]" htmlFor="current-password">
+                        {copy.currentPasswordLabel}
+                      </label>
+                      <input id="current-password" name="currentPassword" type="password" required className={`${inputClassName} mt-2`} />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]" htmlFor="new-password">
+                        {copy.newPasswordLabel}
+                      </label>
+                      <input id="new-password" name="newPassword" type="password" required className={`${inputClassName} mt-2`} />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]" htmlFor="confirm-password">
+                        {copy.confirmPasswordLabel}
+                      </label>
+                      <input id="confirm-password" name="confirmPassword" type="password" required className={`${inputClassName} mt-2`} />
+                    </div>
+                    <label className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
+                      <input name="revokeOtherSessions" type="checkbox" defaultChecked />
+                      <span>{copy.revokeSessionsLabel}</span>
+                    </label>
+
+                    {passwordParam === "changed" ? (
+                      <p className="border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
+                        {copy.passwordChanged}
+                      </p>
+                    ) : null}
+
+                    {errorParam ? (
+                      <p className="border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                        {errorParam === "password_mismatch" ? copy.passwordMismatch : decodeURIComponent(errorParam)}
+                      </p>
+                    ) : null}
+
+                    <button className={primaryButtonClassName} type="submit">
+                      {copy.changePasswordButton}
+                    </button>
+                  </form>
+                </AdminCard>
+              </div>
+            )}
+          </AdminGroup>
+        ) : null}
       </div>
     </main>
   );
@@ -604,6 +835,34 @@ const primaryButtonClassName =
 
 const dangerButtonClassName =
   "border border-[var(--danger)] bg-[var(--danger)] px-4 py-2 font-semibold text-white";
+
+function AdminSectionLink({
+  lang,
+  section,
+  activeSection,
+  label,
+}: {
+  lang: UiLanguage;
+  section: AdminSection;
+  activeSection: AdminSection;
+  label: string;
+}) {
+  const href = withLang(section === "overview" ? "/admin" : `/admin?section=${section}`, lang);
+  const active = section === activeSection;
+
+  return (
+    <a
+      href={href}
+      className={`border px-3 py-2 text-sm font-medium lowercase transition ${
+        active
+          ? "border-[var(--accent-surface)] bg-[var(--accent-surface)] text-[var(--accent-text)]"
+          : "border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+      }`}
+    >
+      {label}
+    </a>
+  );
+}
 
 function AdminLanguageSwitcher({ lang }: { lang: UiLanguage }) {
   return (

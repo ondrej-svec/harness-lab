@@ -38,9 +38,26 @@ Workshop je postavený jako praktické build prostředí:
 
 Smyslem není napsat co nejvíc kódu. Smyslem je vybudovat repo, ve kterém se dá bezpečně pokračovat.
 
+## Workshop Blueprint
+
+Kanonická veřejná definice workshopu teď žije v [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint).
+
+Začněte tady, pokud chcete rychle pochopit:
+- jak je postavený den workshopu
+- co facilitátor řídí v live instanci
+- co používají účastníci
+- co se upravuje v public repu a co jen v privátní runtime vrstvě
+
+Doporučené vstupy:
+- [workshop-blueprint/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md)
+- [workshop-blueprint/day-structure.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
+- [workshop-blueprint/control-surfaces.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
+- [workshop-blueprint/edit-boundaries.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
+
 ## Co je v repozitáři
 
 - `dashboard/` — live workshop dashboard a základ budoucího facilitator control plane
+- `harness-cli/` — malý facilitátorský CLI klient nad sdílenými runtime API pro lokální/dev provoz
 - `content/` — projektové briefy, challenge karty, talks a facilitační obsah
 - `workshop-skill/` — participant-facing skill pro Codex / OpenCode
 - `monitoring/` — monitorovací MVP a pomocné skripty pro facilitátora
@@ -62,6 +79,11 @@ Reálný běh workshopu patří do **private workshop instance layer**:
 
 Pravidla jsou popsaná v [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md).
 
+Pravidlo pro práci:
+- reusable workshop method upravujte v blueprintu a souvisejících repo docs
+- live workshop provozujte v dashboardu nebo facilitátorském skill/CLI control path
+- runtime změny se samy nepromítají zpět do blueprintu
+
 ## Resource Layers
 
 Repo záměrně balí tři různé vrstvy:
@@ -81,6 +103,11 @@ Vstupní body:
 Dashboard má dvě role:
 - **participant surface** — orientace během dne, briefy, challenge flow, reference
 - **facilitator surface** — chráněný admin a operační řízení workshop instance
+
+Blueprint import a boundary model jsou popsané v:
+- [blueprint-import-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
+- [dashboard-surface-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
+- [runtime-learning-publish-back.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
 
 Lokálně dnes běží nad file-based store. Produkčně je připravený k přesunu na Vercel + privátní storage.
 
@@ -107,6 +134,8 @@ Kritické je, aby měl Vercel project nastavený root directory na `dashboard`. 
 - připomíná fázi dne a další bezpečný krok
 
 Výchozí doporučení je distribuovat skill z repa, ne přes npm balíček.
+
+Facilitátorská privileged path má nově směřovat přes malý `harness` CLI broker, ne přes ukládání raw auth/session stavu přímo ve skillu. Základ modelu je v [harness-cli-foundation.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) a aktuální implementace je v [harness-cli/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md).
 
 ## Lokální spuštění
 

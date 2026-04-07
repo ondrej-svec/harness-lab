@@ -42,18 +42,19 @@ For four hackathons under one company, configure each event as a separate privat
 ### 1. Create
 
 - create a private workshop instance record
-- choose the public template it starts from
+- choose the public blueprint reference it imports from
 - attach real metadata outside the public repo:
   - date
   - venue
   - room
   - participant roster if needed
   - facilitator notes
+- record which blueprint id/version or repo commit the instance imported
 
 ### 2. Prepare
 
 - verify dashboard deployment
-- verify the target instance is in `prepared` state with correct template binding
+- verify the target instance is in `prepared` state with the correct blueprint binding
 - verify admin protection
 - verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
 - issue or rotate the shared participant event code
@@ -80,7 +81,7 @@ During the workshop, facilitator uses the control plane to:
 After a workshop:
 - archive the live instance state from the protected admin surface or `POST /api/workshop/archive`
 - revoke active participant sessions
-- reset the next workshop from a template or a new instance record instead of reusing the archived one in place
+- reset the next workshop by re-importing the selected blueprint into a clean runtime instance instead of reusing the archived one in place
 - confirm no live team data remains in the active public-facing view
 - if schema changes are pending, apply them through `cd dashboard && npm run db:migrate` against the intended database before validation or promotion
 
@@ -110,3 +111,4 @@ Default model:
 - the participant dashboard stays public until private context is requested
 - `workshop-skill` should prefer `/workshop login` as the explicit auth path
 - facilitator identity is global, but authorization remains per instance grant
+- facilitator skill privileged commands should route through the `harness` CLI for local auth/session handling
