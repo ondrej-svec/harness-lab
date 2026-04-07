@@ -48,6 +48,7 @@ The integration suite will bootstrap the schema into that database and clean up 
 
 ## Deployment Notes
 
+- `dashboard/vercel.json` runs `npm run db:migrate` before `npm run build`, so preview and production deployments fail closed if the target Neon branch cannot accept the pending schema.
 - Preview migrations should be applied against the Neon preview branch before preview validation.
 - Production migrations should be applied through the same command path before or during the first production release, according to the current deployment runbook.
 - Do not point the migration runner at a production branch from a preview deployment.

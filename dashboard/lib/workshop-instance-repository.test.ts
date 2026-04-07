@@ -89,4 +89,66 @@ describe("workshop-instance-repository", () => {
     await expect(repository.getDefaultInstanceId()).resolves.toBe("custom");
     await expect(repository.listInstances()).resolves.toEqual([{ id: "custom" }]);
   });
+
+  it("falls back to the legacy Neon schema when lifecycle columns are missing", async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce([
+        {
+          id: "legacy-a",
+          template_id: "sample-studio-a",
+          status: "prepared",
+          blueprint_id: null,
+          blueprint_version: null,
+          imported_at: null,
+          removed_at: null,
+          workshop_meta: sampleWorkshopInstances[0].workshopMeta,
+        },
+      ])
+      .mockResolvedValueOnce([{ id: "legacy-a" }]);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonWorkshopInstanceRepository } = await import("./workshop-instance-repository");
+    const repository = new NeonWorkshopInstanceRepository();
+
+    await expect(repository.listInstances()).resolves.toEqual([
+      expect.objectContaining({
+        id: "legacy-a",
+        blueprintId: sampleWorkshopInstances[0].blueprintId,
+        blueprintVersion: sampleWorkshopInstances[0].blueprintVersion,
+      }),
+    ]);
+    await expect(repository.getDefaultInstanceId()).resolves.toBe("legacy-a");
+    expect(query.mock.calls[1]?.[0]).not.toContain("removed_at IS NULL");
+    expect(query.mock.calls[1]?.[0]).toContain("NULL::text AS blueprint_id");
+    expect(query.mock.calls[2]?.[0]).toContain("WHERE status <> 'removed'");
+  });
+
+  it("omits new lifecycle columns when writing to the legacy Neon schema", async () => {
+    const query = vi.fn().mockResolvedValueOnce([]).mockResolvedValue(undefined);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonWorkshopInstanceRepository } = await import("./workshop-instance-repository");
+    const repository = new NeonWorkshopInstanceRepository();
+
+    await repository.createInstance(sampleWorkshopInstances[0]);
+    expect(query.mock.calls[1]?.[0]).not.toContain("blueprint_id");
+    expect(query.mock.calls[1]?.[0]).not.toContain("imported_at");
+
+    await repository.removeInstance(sampleWorkshopInstances[0].id, "2026-04-07T12:00:00.000Z");
+    expect(query.mock.calls[2]?.[0]).not.toContain("removed_at = $2::timestamptz");
+  });
 });

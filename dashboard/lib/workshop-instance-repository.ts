@@ -91,16 +91,38 @@ export class FileWorkshopInstanceRepository implements WorkshopInstanceRepositor
 }
 
 export class NeonWorkshopInstanceRepository implements WorkshopInstanceRepository {
+  private columnSupportPromise: Promise<WorkshopInstanceColumnSupport> | null = null;
+
+  private async getColumnSupport() {
+    if (!this.columnSupportPromise) {
+      this.columnSupportPromise = loadWorkshopInstanceColumnSupport();
+    }
+
+    return this.columnSupportPromise;
+  }
+
   async getDefaultInstanceId() {
-    const rows = await this.listInstances();
+    const sql = getNeonSql();
+    const columnSupport = await this.getColumnSupport();
+    const rows = (await sql.query(
+      `
+        SELECT id
+        FROM workshop_instances
+        ${buildActiveInstanceFilter(columnSupport, false)}
+        ORDER BY id ASC
+        LIMIT 1
+      `,
+    )) as Array<{ id: string }>;
+
     return rows[0]?.id ?? sampleWorkshopInstances[0]?.id ?? "sample-studio-a";
   }
 
   async getInstance(instanceId: string) {
     const sql = getNeonSql();
+    const columnSupport = await this.getColumnSupport();
     const rows = (await sql.query(
       `
-        SELECT id, template_id, status, blueprint_id, blueprint_version, imported_at, removed_at, workshop_meta
+        SELECT ${buildInstanceSelectList(columnSupport)}
         FROM workshop_instances
         WHERE id = $1
         LIMIT 1
@@ -114,11 +136,12 @@ export class NeonWorkshopInstanceRepository implements WorkshopInstanceRepositor
   async listInstances(options?: { includeRemoved?: boolean }) {
     const sql = getNeonSql();
     const includeRemoved = options?.includeRemoved ?? false;
+    const columnSupport = await this.getColumnSupport();
     const rows = (await sql.query(
       `
-        SELECT id, template_id, status, blueprint_id, blueprint_version, imported_at, removed_at, workshop_meta
+        SELECT ${buildInstanceSelectList(columnSupport)}
         FROM workshop_instances
-        ${includeRemoved ? "" : "WHERE removed_at IS NULL AND status <> 'removed'"}
+        ${buildActiveInstanceFilter(columnSupport, includeRemoved)}
         ORDER BY id ASC
       `,
     )) as InstanceRow[];
@@ -128,70 +151,28 @@ export class NeonWorkshopInstanceRepository implements WorkshopInstanceRepositor
 
   async createInstance(instance: WorkshopInstanceRecord) {
     const sql = getNeonSql();
-    await sql.query(
-      `
-        INSERT INTO workshop_instances (
-          id, template_id, workshop_meta, workshop_state, status, blueprint_id, blueprint_version, imported_at, removed_at, created_at, updated_at
-        )
-        VALUES ($1, $2, $3::jsonb, $4::jsonb, $5, $6, $7, $8::timestamptz, $9::timestamptz, NOW(), NOW())
-        ON CONFLICT (id) DO NOTHING
-      `,
-      [
-        instance.id,
-        instance.templateId,
-        JSON.stringify(instance.workshopMeta),
-        JSON.stringify({}),
-        instance.status,
-        instance.blueprintId,
-        instance.blueprintVersion,
-        instance.importedAt,
-        instance.removedAt,
-      ],
-    );
+    const columnSupport = await this.getColumnSupport();
+    const { text, values } = buildCreateInstanceQuery(instance, columnSupport);
+
+    await sql.query(text, values);
     return instance;
   }
 
   async updateInstance(instanceId: string, instance: WorkshopInstanceRecord) {
     const sql = getNeonSql();
-    await sql.query(
-      `
-        UPDATE workshop_instances
-        SET template_id = $2,
-            workshop_meta = $3::jsonb,
-            status = $4,
-            blueprint_id = $5,
-            blueprint_version = $6,
-            imported_at = $7::timestamptz,
-            removed_at = $8::timestamptz,
-            updated_at = NOW()
-        WHERE id = $1
-      `,
-      [
-        instanceId,
-        instance.templateId,
-        JSON.stringify(instance.workshopMeta),
-        instance.status,
-        instance.blueprintId,
-        instance.blueprintVersion,
-        instance.importedAt,
-        instance.removedAt,
-      ],
-    );
+    const columnSupport = await this.getColumnSupport();
+    const { text, values } = buildUpdateInstanceQuery(instanceId, instance, columnSupport);
+
+    await sql.query(text, values);
     return instance;
   }
 
   async removeInstance(instanceId: string, removedAt: string) {
     const sql = getNeonSql();
-    await sql.query(
-      `
-        UPDATE workshop_instances
-        SET status = 'removed',
-            removed_at = $2::timestamptz,
-            updated_at = NOW()
-        WHERE id = $1
-      `,
-      [instanceId, removedAt],
-    );
+    const columnSupport = await this.getColumnSupport();
+    const { text, values } = buildRemoveInstanceQuery(instanceId, removedAt, columnSupport);
+
+    await sql.query(text, values);
   }
 }
 
@@ -217,6 +198,180 @@ function mapInstanceRow(row: InstanceRow) {
     removedAt: row.removed_at,
     workshopMeta: row.workshop_meta,
   });
+}
+
+type WorkshopInstanceColumnSupport = {
+  blueprintId: boolean;
+  blueprintVersion: boolean;
+  importedAt: boolean;
+  removedAt: boolean;
+};
+
+async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColumnSupport> {
+  const sql = getNeonSql();
+  const rows = (await sql.query(
+    `
+      SELECT column_name
+      FROM information_schema.columns
+      WHERE table_schema = current_schema()
+        AND table_name = 'workshop_instances'
+        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at')
+    `,
+  )) as Array<{ column_name: string }>;
+  const columns = new Set(rows.map((row) => row.column_name));
+
+  return {
+    blueprintId: columns.has("blueprint_id"),
+    blueprintVersion: columns.has("blueprint_version"),
+    importedAt: columns.has("imported_at"),
+    removedAt: columns.has("removed_at"),
+  };
+}
+
+function buildInstanceSelectList(columnSupport: WorkshopInstanceColumnSupport) {
+  return [
+    "id",
+    "template_id",
+    "status",
+    columnSupport.blueprintId ? "blueprint_id" : "NULL::text AS blueprint_id",
+    columnSupport.blueprintVersion ? "blueprint_version" : "NULL::integer AS blueprint_version",
+    columnSupport.importedAt ? "imported_at" : "NULL::timestamptz AS imported_at",
+    columnSupport.removedAt ? "removed_at" : "NULL::timestamptz AS removed_at",
+    "workshop_meta",
+  ].join(", ");
+}
+
+function buildActiveInstanceFilter(columnSupport: WorkshopInstanceColumnSupport, includeRemoved: boolean) {
+  if (includeRemoved) {
+    return "";
+  }
+
+  return columnSupport.removedAt ? "WHERE removed_at IS NULL AND status <> 'removed'" : "WHERE status <> 'removed'";
+}
+
+function buildCreateInstanceQuery(instance: WorkshopInstanceRecord, columnSupport: WorkshopInstanceColumnSupport) {
+  const columns = ["id", "template_id", "workshop_meta", "workshop_state", "status"];
+  const placeholders = ["$1", "$2", "$3::jsonb", "$4::jsonb", "$5"];
+  const values: Array<string | number | null> = [
+    instance.id,
+    instance.templateId,
+    JSON.stringify(instance.workshopMeta),
+    JSON.stringify({}),
+    instance.status,
+  ];
+  let nextIndex = 6;
+
+  if (columnSupport.blueprintId) {
+    columns.push("blueprint_id");
+    placeholders.push(`$${nextIndex}`);
+    values.push(instance.blueprintId);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.blueprintVersion) {
+    columns.push("blueprint_version");
+    placeholders.push(`$${nextIndex}`);
+    values.push(instance.blueprintVersion);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.importedAt) {
+    columns.push("imported_at");
+    placeholders.push(`$${nextIndex}::timestamptz`);
+    values.push(instance.importedAt);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.removedAt) {
+    columns.push("removed_at");
+    placeholders.push(`$${nextIndex}::timestamptz`);
+    values.push(instance.removedAt);
+  }
+
+  return {
+    text: `
+      INSERT INTO workshop_instances (
+        ${columns.join(", ")}, created_at, updated_at
+      )
+      VALUES (${placeholders.join(", ")}, NOW(), NOW())
+      ON CONFLICT (id) DO NOTHING
+    `,
+    values,
+  };
+}
+
+function buildUpdateInstanceQuery(
+  instanceId: string,
+  instance: WorkshopInstanceRecord,
+  columnSupport: WorkshopInstanceColumnSupport,
+) {
+  const values: Array<string | number | null> = [
+    instanceId,
+    instance.templateId,
+    JSON.stringify(instance.workshopMeta),
+    instance.status,
+  ];
+  const assignments = ["template_id = $2", "workshop_meta = $3::jsonb", "status = $4"];
+  let nextIndex = 5;
+
+  if (columnSupport.blueprintId) {
+    assignments.push(`blueprint_id = $${nextIndex}`);
+    values.push(instance.blueprintId);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.blueprintVersion) {
+    assignments.push(`blueprint_version = $${nextIndex}`);
+    values.push(instance.blueprintVersion);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.importedAt) {
+    assignments.push(`imported_at = $${nextIndex}::timestamptz`);
+    values.push(instance.importedAt);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.removedAt) {
+    assignments.push(`removed_at = $${nextIndex}::timestamptz`);
+    values.push(instance.removedAt);
+  }
+
+  assignments.push("updated_at = NOW()");
+
+  return {
+    text: `
+      UPDATE workshop_instances
+      SET ${assignments.join(",\n          ")}
+      WHERE id = $1
+    `,
+    values,
+  };
+}
+
+function buildRemoveInstanceQuery(
+  instanceId: string,
+  removedAt: string,
+  columnSupport: WorkshopInstanceColumnSupport,
+) {
+  const assignments = ["status = 'removed'"];
+  const values: Array<string | null> = [instanceId];
+
+  if (columnSupport.removedAt) {
+    assignments.push("removed_at = $2::timestamptz");
+    values.push(removedAt);
+  }
+
+  assignments.push("updated_at = NOW()");
+
+  return {
+    text: `
+      UPDATE workshop_instances
+      SET ${assignments.join(",\n          ")}
+      WHERE id = $1
+    `,
+    values,
+  };
 }
 
 export function getWorkshopInstanceRepository(): WorkshopInstanceRepository {
