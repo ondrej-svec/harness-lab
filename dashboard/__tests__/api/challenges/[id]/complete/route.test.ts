@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { seedWorkshopState } from "@/lib/workshop-data";
 
@@ -25,7 +26,7 @@ describe("challenge completion route", () => {
     requireFacilitatorRequest.mockResolvedValue(new Response("Authentication required", { status: 401 }));
 
     const response = await POST(
-      new Request("http://localhost/api/challenges/c1/complete", { method: "POST" }) as any,
+      new NextRequest("http://localhost/api/challenges/c1/complete", { method: "POST" }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
@@ -37,10 +38,10 @@ describe("challenge completion route", () => {
     const { POST } = await routeModulePromise;
 
     const response = await POST(
-      new Request("http://localhost/api/challenges/c1/complete", {
+      new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
         body: JSON.stringify({}),
-      }) as any,
+      }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
@@ -59,10 +60,10 @@ describe("challenge completion route", () => {
     });
 
     const response = await POST(
-      new Request("http://localhost/api/challenges/c1/complete", {
+      new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
         body: JSON.stringify({ teamId: "t1" }),
-      }) as any,
+      }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
@@ -82,10 +83,10 @@ describe("challenge completion route", () => {
     });
 
     const response = await POST(
-      new Request("http://localhost/api/challenges/c1/complete", {
+      new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
         body: JSON.stringify({ teamId: "t2" }),
-      }) as any,
+      }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
