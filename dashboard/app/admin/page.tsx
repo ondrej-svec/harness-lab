@@ -257,7 +257,7 @@ export default async function AdminWorkspacePage({
                     return (
                       <article
                         key={instance.id}
-                        className="relative flex h-full flex-col overflow-hidden rounded-[30px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,255,0.82))] p-4 shadow-[var(--shadow-soft)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(28,25,23,0.82))] sm:p-5"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-[30px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,255,0.82))] p-4 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_28px_56px_rgba(28,25,23,0.12)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(28,25,23,0.82))] dark:hover:shadow-[0_28px_56px_rgba(0,0,0,0.32)] sm:p-5"
                       >
                         <div className="absolute inset-x-0 top-0 h-16 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.05),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_62%)]" />
                         <div className="relative flex items-start justify-between gap-4">
@@ -272,14 +272,13 @@ export default async function AdminWorkspacePage({
                             <p className="text-sm leading-6 text-[var(--text-secondary)]">{locationLines[0] ?? instance.workshopMeta.city}</p>
                             <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{instance.id}</p>
                           </div>
-                          <Link className={adminSecondaryButtonClassName} href={controlRoomHref}>
+                          <Link className={`${adminSecondaryButtonClassName} shrink-0`} href={controlRoomHref}>
                             {copy.workspaceOpenInstance}
                           </Link>
                         </div>
 
                         <div className="mt-5 rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] p-4 dark:bg-[rgba(28,25,23,0.62)]">
-                          <WorkspaceMetaRow label={copy.workspaceWhereLabel} value={locationLines.join(" / ") || instance.workshopMeta.city} />
-                          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                          <div className="grid gap-3 sm:grid-cols-2">
                             <WorkspaceMetricTile
                               label={copy.workspaceOwnerLabel}
                               value={instance.workshopMeta.facilitatorLabel ?? "n/a"}
@@ -300,7 +299,7 @@ export default async function AdminWorkspacePage({
                         <div className="mt-auto pt-5">
                           <form
                             action={removeInstanceAction}
-                            className="flex items-end justify-between gap-4 rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] p-4 dark:bg-[rgba(28,25,23,0.56)]"
+                            className="flex items-end justify-between gap-4 rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] p-4 transition duration-200 group-hover:bg-[rgba(255,255,255,0.74)] dark:bg-[rgba(28,25,23,0.56)] dark:group-hover:bg-[rgba(28,25,23,0.72)]"
                           >
                             <input name="lang" type="hidden" value={lang} />
                             <input name="targetInstanceId" type="hidden" value={instance.id} />
@@ -406,18 +405,9 @@ export default async function AdminWorkspacePage({
 
 function WorkspacePulseStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4">
+    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4 transition duration-200 hover:bg-[rgba(255,255,255,0.12)]">
       <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--accent-muted)]">{label}</p>
       <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[var(--accent-text)]">{value}</p>
-    </div>
-  );
-}
-
-function WorkspaceMetaRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.42)] px-4 py-4 dark:bg-[rgba(41,37,36,0.42)]">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-1 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
@@ -432,7 +422,7 @@ function WorkspaceMetricTile({
   prominent?: boolean;
 }) {
   return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] px-4 py-4 dark:bg-[rgba(28,25,23,0.56)]">
+    <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[rgba(255,255,255,0.78)] dark:bg-[rgba(28,25,23,0.56)] dark:hover:bg-[rgba(28,25,23,0.74)]">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
       <p className={`mt-2 ${prominent ? "text-xl tracking-[-0.04em]" : "text-sm"} font-semibold text-[var(--text-primary)]`}>
         {value}

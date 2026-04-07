@@ -1163,7 +1163,7 @@ function AdminActionStateFields({
 
 function ControlRoomHeroMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4">
+    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4 transition duration-200 hover:bg-[rgba(255,255,255,0.12)]">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--accent-muted)]">{label}</p>
       <p className="mt-2 text-[13px] leading-5 text-[var(--accent-text)] sm:text-sm sm:leading-6">{value}</p>
     </div>
@@ -1172,7 +1172,7 @@ function ControlRoomHeroMetric({ label, value }: { label: string; value: string 
 
 function ControlRoomSnapshot({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] px-4 py-4 dark:bg-[rgba(28,25,23,0.64)]">
+    <div className="rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[rgba(255,255,255,0.82)] dark:bg-[rgba(28,25,23,0.64)] dark:hover:bg-[rgba(28,25,23,0.78)]">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-2 text-[15px] font-semibold leading-5 text-[var(--text-primary)]">{value}</p>
     </div>
@@ -1208,7 +1208,7 @@ function TimelineRow({
         : "border-[var(--border)] bg-transparent";
 
   return (
-    <div className={`rounded-[22px] border px-4 py-4 ${rowClassName}`}>
+    <div className={`rounded-[22px] border px-4 py-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] ${rowClassName}`}>
       <div className="flex gap-4">
         <div className="flex flex-col items-center">
           <span className={`mt-1 h-3 w-3 rounded-full ${markerClassName}`} />
@@ -1252,13 +1252,13 @@ function AdminSectionLink({
   return (
     <Link
       href={href}
-      className={`rounded-full border px-4 py-2 text-sm font-medium lowercase transition ${
+      className={`rounded-full border px-4 py-2 text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
         dark
           ? active
-            ? "border-[var(--accent-border)] bg-[rgba(255,255,255,0.12)] text-[var(--accent-text)]"
+            ? "border-[var(--accent-border)] bg-[rgba(255,255,255,0.12)] text-[var(--accent-text)] shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
             : "border-transparent text-[var(--accent-secondary)] hover:border-[var(--accent-border)] hover:bg-[rgba(255,255,255,0.08)] hover:text-[var(--accent-text)]"
           : active
-            ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)]"
+            ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)] shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
             : "border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
       }`}
     >
