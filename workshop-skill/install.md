@@ -31,6 +31,8 @@ harness skill install
    - `/workshop brief`
    - `/workshop reference`
 
+Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že má v agentovi začít přes `/workshop reference` nebo `/workshop setup`.
+
 ## Poznámka
 
 `harness skill install` vytvoří projektový bundle v `.agents/skills/harness-lab-workshop`, aby skill našly Codex i OpenCode ve stejném repu.

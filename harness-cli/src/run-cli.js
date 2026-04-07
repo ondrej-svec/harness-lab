@@ -86,6 +86,11 @@ async function handleSkillInstall(io, deps, flags) {
     const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), { force: flags.force === true });
     writeLine(io.stdout, `Installed Harness Lab workshop skill to ${result.installPath}`);
     writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
+    writeLine(io.stdout, "Next steps:");
+    writeLine(io.stdout, "  1. Open Codex or OpenCode in this repo.");
+    writeLine(io.stdout, "  2. Run `/workshop reference` for the command overview.");
+    writeLine(io.stdout, "  3. Run `/workshop setup` if your environment is not ready yet.");
+    writeLine(io.stdout, "  4. Run `/workshop` to get the current phase or fallback guidance.");
     return 0;
   } catch (error) {
     if (error instanceof SkillInstallError) {

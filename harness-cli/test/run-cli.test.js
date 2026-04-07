@@ -433,6 +433,10 @@ test("skill install creates a project-local .agents skill bundle", async () => {
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
   assert.match(io.getStdout(), /\.agents\/skills/);
+  await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
+  assert.match(io.getStdout(), /\/workshop reference/);
+  assert.match(io.getStdout(), /\/workshop setup/);
+  assert.match(io.getStdout(), /\/workshop/);
 });
 
 test("device auth can drive workshop status with the brokered facilitator session", async () => {

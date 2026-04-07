@@ -18,7 +18,7 @@ import {
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../components/theme-switcher";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
-import { workshopTemplates } from "@/lib/workshop-data";
+import { workshopTemplates, type WorkshopTemplate } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { createWorkshopInstance, getWorkshopState, removeWorkshopInstance } from "@/lib/workshop-store";
 import {
@@ -115,6 +115,11 @@ function resolveWorkspaceNextStep(copy: (typeof adminCopy)["cs" | "en"], status:
     return copy.workspaceNextStepPrepared;
   }
   return copy.workspaceNextStepCreated;
+}
+
+function buildTemplateOptionLabel(template: WorkshopTemplate, lang: "cs" | "en") {
+  const audience = template.scenario === "20-participants" ? (lang === "cs" ? "20 lidí" : "20 participants") : lang === "cs" ? "17 lidí" : "17 participants";
+  return `${template.city} • ${template.room} • ${audience}`;
 }
 
 export default async function AdminWorkspacePage({
@@ -300,10 +305,11 @@ export default async function AdminWorkspacePage({
                           <select id="template-id" name="templateId" className={`${adminInputClassName} mt-2`} defaultValue={workshopTemplates[0]?.id}>
                             {workshopTemplates.map((template) => (
                               <option key={template.id} value={template.id}>
-                                {template.label}
+                                {buildTemplateOptionLabel(template, lang)}
                               </option>
                             ))}
                           </select>
+                          <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{copy.instanceSelectHint}</p>
                         </div>
 
                         <div className="xl:col-span-2">

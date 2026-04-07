@@ -66,6 +66,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
   await fs.cp(path.join(repoRoot, "workshop-skill"), path.join(installPath, "workshop-skill"), { recursive: true });
   await fs.cp(path.join(repoRoot, "content"), path.join(installPath, "content"), { recursive: true });
   await fs.cp(path.join(repoRoot, "workshop-blueprint"), path.join(installPath, "workshop-blueprint"), { recursive: true });
+  await fs.rm(path.join(installPath, "workshop-skill", "SKILL.md"), { force: true });
   await fs.mkdir(path.join(installPath, "docs"), { recursive: true });
   await fs.copyFile(path.join(repoRoot, "workshop-skill", "SKILL.md"), path.join(installPath, "SKILL.md"));
   await fs.copyFile(
