@@ -15,9 +15,6 @@ concurrency:
   group: harness-cli-publish-${{ github.event_name }}-${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
   cancel-in-progress: false
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
-
 jobs:
   verify-cli-package:
     name: verify-cli-package
@@ -32,9 +29,9 @@ jobs:
       release_tag: ${{ steps.release_meta.outputs.release_tag }}
       tarball_name: ${{ steps.pack.outputs.tarball_name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
 
@@ -90,7 +87,7 @@ jobs:
           ../tmp/harness-cli-release-smoke/node_modules/.bin/harness --help
 
       - name: Upload packed tarball
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: harness-cli-tarball
           path: harness-cli/${{ steps.pack.outputs.tarball_name }}
@@ -119,9 +116,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
