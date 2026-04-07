@@ -79,6 +79,18 @@ Recommended entry points:
 - `materials/` - print and operational materials
 - `docs/` - architecture notes, decisions, plans, and internal workshop system documentation
 
+## Install Harness CLI
+
+The facilitator CLI is published on npm as `@harness-lab/cli`.
+
+```bash
+npm install -g @harness-lab/cli
+harness --help
+```
+
+For command usage and local development install paths, see
+[harness-cli/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md).
+
 ## Language
 
 The language split in this repo is intentional:
