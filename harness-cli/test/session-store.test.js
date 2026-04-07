@@ -24,8 +24,8 @@ test.afterEach(() => {
   setSessionStoreDepsForTests(null);
 });
 
-test("uses file storage when explicitly requested", async () => {
-  const env = await createEnv({ HARNESS_SESSION_STORAGE: "file" });
+test("uses file storage by default", async () => {
+  const env = await createEnv();
   const session = { authType: "basic", dashboardUrl: "http://localhost:3000", loggedInAt: "2026-04-07T10:00:00.000Z" };
 
   await writeSession(env, session);
@@ -33,8 +33,8 @@ test("uses file storage when explicitly requested", async () => {
   assert.equal(getSessionStorageMode(env), "file");
 });
 
-test("uses keychain storage by default on darwin", async () => {
-  const env = await createEnv();
+test("uses explicit keychain storage on darwin", async () => {
+  const env = await createEnv({ HARNESS_SESSION_STORAGE: "keychain" });
   const commands = [];
 
   setSessionStoreDepsForTests({
@@ -60,8 +60,8 @@ test("uses keychain storage by default on darwin", async () => {
   assert.equal(commands[2]?.[1][0], "delete-generic-password");
 });
 
-test("uses Windows Credential Manager by default on win32", async () => {
-  const env = await createEnv();
+test("uses explicit Windows Credential Manager storage on win32", async () => {
+  const env = await createEnv({ HARNESS_SESSION_STORAGE: "credential-manager" });
   const commands = [];
 
   setSessionStoreDepsForTests({
@@ -84,8 +84,8 @@ test("uses Windows Credential Manager by default on win32", async () => {
   assert.equal(commands[0]?.[0], "powershell");
 });
 
-test("uses Linux Secret Service by default on linux", async () => {
-  const env = await createEnv();
+test("uses explicit Linux Secret Service storage on linux", async () => {
+  const env = await createEnv({ HARNESS_SESSION_STORAGE: "secret-service" });
   const commands = [];
 
   setSessionStoreDepsForTests({

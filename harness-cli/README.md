@@ -16,8 +16,8 @@ Current implementation posture:
 - targets the existing shared dashboard facilitator APIs
 - defaults to a browser/device approval flow backed by dashboard-side facilitator broker sessions
 - keeps `--auth basic` and `--auth neon` as explicit local-dev/bootstrap fallback modes
-- stores session material in macOS Keychain, Windows Credential Manager, or Linux Secret Service by default
-- only uses file storage under `HARNESS_CLI_HOME` or `~/.harness` when `HARNESS_SESSION_STORAGE=file` is set explicitly
+- stores session material in a local file under `HARNESS_CLI_HOME` or `~/.harness` by default
+- supports macOS Keychain, Windows Credential Manager, and Linux Secret Service as explicit `HARNESS_SESSION_STORAGE` overrides
 - supports brokered facilitator commands over the same workshop APIs used by the dashboard
 
 ## Usage
@@ -96,7 +96,7 @@ Environment variables:
 - `HARNESS_FACILITATOR_EMAIL`
 - `HARNESS_FACILITATOR_PASSWORD`
 - `HARNESS_CLI_HOME`
-- `HARNESS_SESSION_STORAGE` (`keychain`, `credential-manager`, `secret-service`, or `file`)
+- `HARNESS_SESSION_STORAGE` (`file`, `keychain`, `credential-manager`, or `secret-service`)
 
 ## Release Gate
 

@@ -40,8 +40,8 @@ Semver posture:
 All of the following must be true before public npm publication:
 
 - device/browser auth is the default documented login path
-- native secure storage is the default on macOS, Windows, and Linux
-- `HARNESS_SESSION_STORAGE=file` is only an explicit fallback, not an implicit default
+- file-based local session storage is the documented default CLI posture
+- optional OS-native storage overrides remain documented for facilitators who want them
 - dashboard-side device auth routes, approval flow, audit logging, and bearer-session validation are covered by tests
 - CLI integration tests cover login, status, logout, and at least one facilitator workshop command
 - cross-platform CI runs the CLI auth/storage test matrix on macOS, Windows, and Linux
@@ -76,7 +76,7 @@ Before the first public release:
 
 ## Rollback Posture
 
-If the brokered device flow or secure storage backends regress:
+If the brokered device flow or local session storage behavior regress:
 
 - stop new npm publication immediately
 - deprecate the bad version with `npm deprecate @harness-lab/cli@<version> "<message>"`

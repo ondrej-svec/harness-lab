@@ -239,23 +239,7 @@ export function getSessionStorageMode(env) {
   if (requested === "file" || requested === "keychain" || requested === "credential-manager" || requested === "secret-service") {
     return requested;
   }
-
-  if (getDeps().platform === "darwin") {
-    return "keychain";
-  }
-
-  if (getDeps().platform === "win32") {
-    return "credential-manager";
-  }
-
-  if (getDeps().platform === "linux") {
-    return "secret-service";
-  }
-
-  throw new SessionStoreError(
-    "Harness CLI does not know a secure session store for this platform. Set HARNESS_SESSION_STORAGE=file only if you need an explicit insecure fallback.",
-    { code: "unsupported_platform" },
-  );
+  return "file";
 }
 
 function getStorageHint(storage) {

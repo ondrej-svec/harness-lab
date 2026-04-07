@@ -14,7 +14,7 @@ Pokud není aktivní facilitátorská session, řekni facilitátorovi, aby spust
 harness auth login
 ```
 
-CLI provede browser/device auth flow, uloží session do secure local storage a zpřístupní ji pro další privileged příkazy.
+CLI provede browser/device auth flow, uloží session do lokálního file storage a zpřístupní ji pro další privileged příkazy.
 
 Aktuální praktický path v repu:
 
@@ -32,7 +32,8 @@ harness auth login --auth neon --dashboard-url https://harness-lab-dashboard.ver
 ```
 
 Poznámka:
-- CLI dnes defaultně používá browser/device auth a ukládá session do OS secure storage
+- CLI dnes defaultně používá browser/device auth a ukládá session do lokálního file storage
+- Pokud facilitátor chce OS-native storage, může použít `HARNESS_SESSION_STORAGE=keychain`, `credential-manager` nebo `secret-service`
 - `--auth basic` a `--auth neon` zůstávají jen jako explicitní fallback pro lokální dev/bootstrap
 
 ### `/workshop facilitator logout`
