@@ -19,6 +19,7 @@ import {
 } from "@/lib/participant-event-access-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "@/lib/redeem-attempt-repository";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
+import { setWorkshopInstanceRepositoryForTests } from "@/lib/workshop-instance-repository";
 import type {
   AuditLogRecord,
   CheckpointRecord,
@@ -26,7 +27,9 @@ import type {
   ParticipantEventAccessRecord,
   ParticipantSessionRecord,
   RedeemAttemptRecord,
+  WorkshopInstanceRepository,
 } from "@/lib/runtime-contracts";
+import { sampleWorkshopInstances } from "@/lib/workshop-data";
 
 class MemoryWorkshopStateRepository implements WorkshopStateRepository {
   constructor(private state: WorkshopState) {}
@@ -145,6 +148,39 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   }
 }
 
+class MemoryWorkshopInstanceRepository implements WorkshopInstanceRepository {
+  constructor(private items = structuredClone(sampleWorkshopInstances)) {}
+
+  async getDefaultInstanceId() {
+    return this.items.find((item) => !item.removedAt && item.status !== "removed")?.id ?? this.items[0]?.id ?? "sample-studio-a";
+  }
+
+  async getInstance(instanceId: string) {
+    return structuredClone(this.items.find((item) => item.id === instanceId) ?? null);
+  }
+
+  async listInstances(options?: { includeRemoved?: boolean }) {
+    const items = options?.includeRemoved ? this.items : this.items.filter((item) => !item.removedAt && item.status !== "removed");
+    return structuredClone(items);
+  }
+
+  async createInstance(instance: typeof sampleWorkshopInstances[number]) {
+    this.items.push(structuredClone(instance));
+    return instance;
+  }
+
+  async updateInstance(instanceId: string, instance: typeof sampleWorkshopInstances[number]) {
+    this.items = this.items.map((item) => (item.id === instanceId ? structuredClone(instance) : item));
+    return instance;
+  }
+
+  async removeInstance(instanceId: string, removedAt: string) {
+    this.items = this.items.map((item) =>
+      item.id === instanceId ? { ...item, status: "removed", removedAt } : item,
+    );
+  }
+}
+
 class AllowFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials() {
     return true;
@@ -161,6 +197,7 @@ describe("workshop route", () => {
     setInstanceArchiveRepositoryForTests(new MemoryArchiveRepository());
     setRedeemAttemptRepositoryForTests(new MemoryRedeemAttemptRepository());
     setAuditLogRepositoryForTests(new MemoryAuditLogRepository());
+    setWorkshopInstanceRepositoryForTests(new MemoryWorkshopInstanceRepository());
     setFacilitatorAuthServiceForTests(new AllowFacilitatorAuthService());
   });
 
@@ -173,6 +210,7 @@ describe("workshop route", () => {
     setInstanceArchiveRepositoryForTests(null);
     setRedeemAttemptRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
+    setWorkshopInstanceRepositoryForTests(null);
     setFacilitatorAuthServiceForTests(null);
   });
 
@@ -187,7 +225,7 @@ describe("workshop route", () => {
     });
   });
 
-  it("resets a workshop by re-importing the selected blueprint-backed template", async () => {
+  it("resets a workshop runtime while preserving its instance metadata", async () => {
     const response = await POST(
       new Request("http://localhost/api/workshop", {
         method: "POST",
@@ -203,7 +241,10 @@ describe("workshop route", () => {
     await expect(response.json()).resolves.toMatchObject({
       ok: true,
       workshopId: "sample-studio-a",
-      workshopMeta: { city: "Lab D" },
+      workshopMeta: {
+        city: "Studio A",
+        currentPhaseLabel: "Úvod a naladění",
+      },
     });
 
     const current = await GET();
