@@ -144,8 +144,26 @@ jobs:
 
       - name: Scan git history for secrets
         shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          PUSH_BEFORE_SHA: ${{ github.event.before }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          /tmp/gitleaks git --exit-code 1 .
+          ZERO_SHA="0000000000000000000000000000000000000000"
+
+          if [ "${EVENT_NAME}" = "pull_request" ] && [ -n "${PR_BASE_SHA}" ] && [ -n "${PR_HEAD_SHA}" ]; then
+            LOG_OPTS="${PR_BASE_SHA}..${PR_HEAD_SHA}"
+          elif [ -n "${PUSH_BEFORE_SHA}" ] && [ "${PUSH_BEFORE_SHA}" != "${ZERO_SHA}" ]; then
+            LOG_OPTS="${PUSH_BEFORE_SHA}..${GITHUB_SHA}"
+          elif git rev-parse "${GITHUB_SHA}^" >/dev/null 2>&1; then
+            LOG_OPTS="$(git rev-parse "${GITHUB_SHA}^")..${GITHUB_SHA}"
+          else
+            LOG_OPTS="${GITHUB_SHA}"
+          fi
+
+          /tmp/gitleaks git --exit-code 1 --log-opts="${LOG_OPTS}" .
 
   sast-semgrep:
     name: sast-semgrep
