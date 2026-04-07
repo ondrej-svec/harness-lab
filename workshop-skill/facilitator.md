@@ -95,6 +95,15 @@ Content-Type: application/json
 { "action": "create", "templateId": "..." }
 ```
 
+Nebo explicitně přes instanční route:
+
+```http
+POST {DASHBOARD_URL}/api/workshop/instances
+Content-Type: application/json
+
+{ "id": "client-hackathon-2026-05", "templateId": "...", "city": "...", "dateRange": "..." }
+```
+
 ### `/workshop facilitator prepare`
 
 Zavolej:
@@ -106,6 +115,51 @@ Content-Type: application/json
 ```
 
 Nastaví instanci do stavu `prepared`, ověří event code.
+
+### `/workshop facilitator remove-instance <instance-id>`
+
+Bezpečné odebrání z aktivního seznamu:
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
+Content-Type: application/json
+
+{ "action": "remove" }
+```
+
+### `/workshop facilitator agenda`
+
+Lokální editace agendy pro konkrétní instanci používá instanční route:
+
+```http
+GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+DELETE {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+```
+
+Příklady:
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+Content-Type: application/json
+
+{ "action": "update", "itemId": "build-1", "title": "...", "time": "...", "description": "..." }
+```
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+Content-Type: application/json
+
+{ "action": "move", "itemId": "build-1", "direction": "up" }
+```
+
+```http
+POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
+Content-Type: application/json
+
+{ "title": "...", "time": "...", "description": "...", "afterItemId": "build-1" }
+```
 
 ### `/workshop facilitator archive`
 

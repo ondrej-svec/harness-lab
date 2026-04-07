@@ -10,6 +10,7 @@ dashboard/.vercel/
 dashboard/.env.vercel.local
 dashboard/data/workshop-state.json
 dashboard/data/participant-sessions.json
+dashboard/data/instances.json
 dashboard/data/*/
 dashboard/data/audit-log.json
 dashboard/data/facilitator-identities.json

@@ -23,9 +23,10 @@ export class FileWorkshopStateRepository implements WorkshopStateRepository {
     try {
       await readFile(statePath, "utf8");
     } catch {
+      const instance = await getWorkshopInstanceRepository().getInstance(instanceId);
       await writeFile(
         statePath,
-        JSON.stringify({ ...seedWorkshopState, workshopId: instanceId }, null, 2),
+        JSON.stringify(instance ? createWorkshopStateFromInstance(instance) : { ...seedWorkshopState, workshopId: instanceId }, null, 2),
       );
     }
   }

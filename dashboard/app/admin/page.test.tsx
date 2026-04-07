@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
 import { adminCopy } from "@/lib/ui-language";
 import { sampleWorkshopInstances, seedWorkshopState } from "@/lib/workshop-data";
 
@@ -65,15 +66,20 @@ vi.mock("@/lib/workshop-instance-repository", () => ({
 }));
 
 vi.mock("@/lib/workshop-store", () => ({
+  addAgendaItem: vi.fn(),
   addSprintUpdate: vi.fn(),
+  createWorkshopInstance: vi.fn(),
   completeChallenge: vi.fn(),
   createWorkshopArchive: vi.fn(),
   getLatestWorkshopArchive,
   getWorkshopState,
+  moveAgendaItem: vi.fn(),
+  removeAgendaItem: vi.fn(),
+  removeWorkshopInstance: vi.fn(),
   resetWorkshopState: vi.fn(),
   setCurrentAgendaItem: vi.fn(),
   setRotationReveal: vi.fn(),
-  updateCheckpoint: vi.fn(),
+  updateAgendaItem: vi.fn(),
   upsertTeam: vi.fn(),
 }));
 
@@ -214,6 +220,39 @@ describe("AdminPage", () => {
     expect(view).toBeTruthy();
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-b");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-b");
+  });
+
+  it("renders instance-management controls and the selected agenda item editor", async () => {
+    const { default: AdminPage } = await adminPageModulePromise;
+
+    const view = await AdminPage({
+      searchParams: Promise.resolve({ lang: "en", section: "agenda", instance: "sample-studio-a", agendaItem: "talk" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.createInstanceTitle);
+    expect(html).toContain(adminCopy.en.removeInstanceTitle);
+    expect(html).toContain(adminCopy.en.agendaEditTitle);
+    expect(html).toContain('name="agendaId"');
+    expect(html).toContain('value="talk"');
+    expect(html).toContain('value="Context is King"');
+  });
+
+  it("renders team-first editing with the selected team prefilled", async () => {
+    const { default: AdminPage } = await adminPageModulePromise;
+
+    const view = await AdminPage({
+      searchParams: Promise.resolve({ lang: "en", section: "teams", instance: "sample-studio-a", team: "t3" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.editTeamTitle);
+    expect(html).toContain(adminCopy.en.createAnotherTeamLabel);
+    expect(html).toContain('name="id"');
+    expect(html).toContain('value="t3"');
+    expect(html).toContain('value="Tým 3"');
+    expect(html).toContain("https://github.com/example/code-review-helper");
+    expect(html).toContain("Adam, Barbora, Filip, Lenka");
   });
 
   it("falls back to the default instance when the query instance is unknown", async () => {

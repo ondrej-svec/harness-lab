@@ -43,6 +43,7 @@ Design rules:
 - protected at runtime
 - optimized for speed and safety, not public polish
 - writes go through explicit admin actions
+- instance lifecycle belongs in the dashboard too: create, switch, reset, and safe remove should be visible product operations rather than script-only paths
 
 ## Facilitator Auth Model
 
@@ -61,6 +62,7 @@ There are now two explicit layers:
   - supporting human-readable workshop method docs live in [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint)
 - runtime instance layer
   - instance create/reset imports blueprint-owned fields into the active workshop instance
+  - imported agenda becomes a runtime copy that facilitators may edit locally for that instance
   - facilitator actions move only the current phase and other runtime-local state
   - file mode persists that runtime copy in `dashboard/data/<instance>/workshop-state.json`
   - neon mode persists that runtime copy in `workshop_instances.workshop_state`
@@ -68,7 +70,7 @@ There are now two explicit layers:
 Important consequence:
 
 - facilitator UI changes runtime state, not the canonical blueprint
-- full agenda authoring remains a repo/blueprint concern unless we deliberately add a blueprint editor and publish-back workflow
+- reusable blueprint edits still belong in the repo, but instance-local agenda wording/order/time changes may be authored in runtime
 - dashboard copy should describe reset as blueprint import, not as an opaque seed reset
 
 ## Workshop Context Sources

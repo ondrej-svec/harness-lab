@@ -15,16 +15,24 @@ export function buildAdminHref(options: {
   lang: UiLanguage;
   section?: AdminSection;
   instanceId?: string;
+  teamId?: string | null;
+  agendaItemId?: string | null;
   error?: string | null;
   password?: string | null;
 }) {
-  const { lang, section, instanceId, error, password } = options;
+  const { lang, section, instanceId, teamId, agendaItemId, error, password } = options;
   const params = new URLSearchParams();
   if (section && section !== "overview") {
     params.set("section", section);
   }
   if (instanceId) {
     params.set("instance", instanceId);
+  }
+  if (teamId) {
+    params.set("team", teamId);
+  }
+  if (agendaItemId) {
+    params.set("agendaItem", agendaItemId);
   }
   if (error) {
     params.set("error", error);

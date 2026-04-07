@@ -23,21 +23,35 @@ import { ThemeSwitcher } from "../components/theme-switcher";
 import { workshopTemplates } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
+  addAgendaItem,
   addSprintUpdate,
+  createWorkshopInstance,
   createWorkshopArchive,
   completeChallenge,
   getWorkshopState,
   getLatestWorkshopArchive,
+  moveAgendaItem,
+  removeAgendaItem,
+  removeWorkshopInstance,
   resetWorkshopState,
   setCurrentAgendaItem,
   setRotationReveal,
-  updateCheckpoint,
+  updateAgendaItem,
   upsertTeam,
 } from "@/lib/workshop-store";
 
 export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
+
+function deriveNextTeamId(existingIds: string[]) {
+  const numericIds = existingIds
+    .map((id) => id.match(/^t(\d+)$/)?.[1])
+    .filter(Boolean)
+    .map((value) => Number(value));
+  const nextNumber = numericIds.length > 0 ? Math.max(...numericIds) + 1 : 1;
+  return `t${nextNumber}`;
+}
 
 async function signOutAction(formData: FormData) {
   "use server";
@@ -67,6 +81,63 @@ async function setAgendaAction(formData: FormData) {
   if (agendaId) {
     await setCurrentAgendaItem(agendaId, instanceId);
   }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+async function saveAgendaDetailsAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const time = String(formData.get("time") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+
+  if (agendaId && title && time && description) {
+    await updateAgendaItem(agendaId, { title, time, description }, instanceId);
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+async function addAgendaItemAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const title = String(formData.get("title") ?? "").trim();
+  const time = String(formData.get("time") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const afterItemId = String(formData.get("afterItemId") ?? "").trim();
+
+  if (title && time && description) {
+    const state = await addAgendaItem({ title, time, description, afterItemId: afterItemId || null }, instanceId);
+    const createdItem = state.agenda.find((item) => item.kind === "custom" && item.title === title && item.time === time);
+    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: createdItem?.id ?? null }));
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+async function moveAgendaItemAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const direction = String(formData.get("direction") ?? "") as "up" | "down";
+  if (agendaId && (direction === "up" || direction === "down")) {
+    await moveAgendaItem(agendaId, direction, instanceId);
+  }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+async function removeAgendaItemAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaId = String(formData.get("agendaId") ?? "");
+  if (agendaId) {
+    await removeAgendaItem(agendaId, instanceId);
+  }
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
@@ -75,18 +146,6 @@ async function toggleRotationAction(formData: FormData) {
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
   await setRotationReveal(formData.get("revealed") === "true", instanceId);
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function saveCheckpointAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const teamId = String(formData.get("teamId") ?? "");
-  const checkpoint = String(formData.get("checkpoint") ?? "");
-  if (teamId && checkpoint) {
-    await updateCheckpoint(teamId, checkpoint, instanceId);
-  }
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
@@ -127,7 +186,8 @@ async function registerTeamAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
-  const id = String(formData.get("id") ?? "").trim();
+  const state = await getWorkshopState(instanceId);
+  const id = String(formData.get("id") ?? "").trim() || deriveNextTeamId(state.teams.map((team) => team.id));
   const name = String(formData.get("name") ?? "").trim();
   const city = String(formData.get("city") ?? "Studio A").trim();
   const repoUrl = String(formData.get("repoUrl") ?? "").trim();
@@ -152,6 +212,37 @@ async function registerTeamAction(formData: FormData) {
       instanceId,
     );
   }
+  redirect(buildAdminHref({ lang, section, instanceId, teamId: id || null }));
+}
+
+async function createInstanceAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const id = String(formData.get("newInstanceId") ?? "").trim();
+  const templateId = String(formData.get("templateId") ?? "").trim();
+  const city = String(formData.get("city") ?? "").trim();
+  const dateRange = String(formData.get("dateRange") ?? "").trim();
+  if (id && templateId) {
+    await createWorkshopInstance({ id, templateId, city, dateRange });
+    redirect(buildAdminHref({ lang, section, instanceId: id }));
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+async function removeInstanceAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const targetInstanceId = String(formData.get("targetInstanceId") ?? "").trim();
+  if (targetInstanceId) {
+    await removeWorkshopInstance(targetInstanceId);
+    const remainingInstances = await getWorkshopInstanceRepository().listInstances();
+    const fallbackInstanceId = remainingInstances.find((instance) => instance.id !== targetInstanceId)?.id ?? undefined;
+    redirect(buildAdminHref({ lang, section, instanceId: fallbackInstanceId }));
+  }
+
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
@@ -269,7 +360,15 @@ async function changePasswordAction(formData: FormData) {
 export default async function AdminPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ lang?: string; section?: string; error?: string; password?: string; instance?: string }>;
+  searchParams?: Promise<{
+    lang?: string;
+    section?: string;
+    error?: string;
+    password?: string;
+    instance?: string;
+    team?: string;
+    agendaItem?: string;
+  }>;
 }) {
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
@@ -300,7 +399,11 @@ export default async function AdminPage({
     availableInstances,
     activeInstanceId,
   );
+  const selectedAgendaItem =
+    state.agenda.find((item) => item.id === params?.agendaItem) ?? currentAgendaItem ?? state.agenda[0] ?? null;
+  const selectedTeam = state.teams.find((team) => team.id === params?.team) ?? state.teams[0] ?? null;
   const isOwner = currentFacilitator?.grant.role === "owner";
+  const canRemoveInstance = !isNeonMode || isOwner;
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
   const summaryStats = buildAdminSummaryStats({ copy, state, selectedInstance, currentAgendaItem });
@@ -380,6 +483,46 @@ export default async function AdminPage({
                       {copy.switchInstanceButton}
                     </button>
                   </form>
+
+                  <div className="grid gap-3 md:grid-cols-2">
+                    <form action={createInstanceAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{copy.createInstanceTitle}</p>
+                      <select name="templateId" className={inputClassName} defaultValue={selectedInstance?.templateId ?? workshopTemplates[0]?.id}>
+                        {workshopTemplates.map((template) => (
+                          <option key={template.id} value={template.id}>
+                            {template.label}
+                          </option>
+                        ))}
+                      </select>
+                      <input name="newInstanceId" placeholder={copy.newInstanceIdPlaceholder} className={inputClassName} />
+                      <input
+                        name="city"
+                        placeholder={copy.instanceCityPlaceholder}
+                        className={inputClassName}
+                        defaultValue={selectedInstance?.workshopMeta.city ?? ""}
+                      />
+                      <input
+                        name="dateRange"
+                        placeholder={copy.instanceDateRangePlaceholder}
+                        className={inputClassName}
+                        defaultValue={selectedInstance?.workshopMeta.dateRange ?? ""}
+                      />
+                      <button className={`${secondaryButtonClassName} w-full`} type="submit">
+                        {copy.createInstanceButton}
+                      </button>
+                    </form>
+
+                    <form action={removeInstanceAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <input name="targetInstanceId" type="hidden" value={activeInstanceId} />
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{copy.removeInstanceTitle}</p>
+                      <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.removeInstanceHint}</p>
+                      <button className={`${dangerButtonClassName} w-full disabled:cursor-not-allowed disabled:opacity-50`} type="submit" disabled={!canRemoveInstance || availableInstances.length <= 1}>
+                        {copy.removeInstanceButton}
+                      </button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </div>
@@ -592,7 +735,29 @@ export default async function AdminPage({
             >
               <div className="space-y-3">
                 {state.agenda.map((item) => (
-                  <TimelineRow key={item.id} item={item} copy={copy} detailed />
+                  <div
+                    key={item.id}
+                    className={`rounded-[20px] border p-4 ${
+                      selectedAgendaItem?.id === item.id
+                        ? "border-[var(--text-primary)] bg-[var(--surface)]"
+                        : "border-[var(--border)] bg-[var(--surface-soft)]"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <TimelineRow item={item} copy={copy} detailed />
+                      <Link
+                        href={buildAdminHref({
+                          lang,
+                          section: activeSection,
+                          instanceId: activeInstanceId,
+                          agendaItemId: item.id,
+                        })}
+                        className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                      >
+                        {copy.editActionLabel}
+                      </Link>
+                    </div>
+                  </div>
                 ))}
               </div>
             </AdminPanel>
@@ -607,21 +772,78 @@ export default async function AdminPage({
                     </p>
                     <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{currentAgendaItem?.description}</p>
                   </div>
-
-                  <form action={setAgendaAction} className="space-y-3">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <select name="agendaId" defaultValue={currentAgendaItem?.id} className={inputClassName}>
-                      {state.agenda.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.time} • {item.title}
-                        </option>
-                      ))}
-                    </select>
-                    <button className={primaryButtonClassName} type="submit">
-                      {copy.setCurrentPhase}
-                    </button>
-                  </form>
                 </div>
+              </AdminPanel>
+
+              <AdminPanel eyebrow={copy.agendaEditEyebrow} title={copy.agendaEditTitle} description={copy.agendaEditDescription}>
+                {selectedAgendaItem ? (
+                  <div className="space-y-4">
+                    <form action={saveAgendaDetailsAction} className="space-y-3">
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                      <input name="title" defaultValue={selectedAgendaItem.title} className={inputClassName} />
+                      <input name="time" defaultValue={selectedAgendaItem.time} className={inputClassName} />
+                      <textarea name="description" rows={4} defaultValue={selectedAgendaItem.description} className={inputClassName} />
+                      <button className={primaryButtonClassName} type="submit">
+                        {copy.saveAgendaItemButton}
+                      </button>
+                    </form>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <form action={moveAgendaItemAction}>
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                        <input name="direction" type="hidden" value="up" />
+                        <button className={`${secondaryButtonClassName} w-full`} type="submit">
+                          {copy.moveUpButton}
+                        </button>
+                      </form>
+                      <form action={moveAgendaItemAction}>
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                        <input name="direction" type="hidden" value="down" />
+                        <button className={`${secondaryButtonClassName} w-full`} type="submit">
+                          {copy.moveDownButton}
+                        </button>
+                      </form>
+                    </div>
+
+                    <form action={setAgendaAction} className="space-y-3">
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                      <button className={`${secondaryButtonClassName} w-full`} type="submit">
+                        {copy.setCurrentPhase}
+                      </button>
+                    </form>
+
+                    <form action={removeAgendaItemAction}>
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                      <button className={`${dangerButtonClassName} w-full`} type="submit">
+                        {copy.removeAgendaItemButton}
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
+              </AdminPanel>
+
+              <AdminPanel eyebrow={copy.agendaEditEyebrow} title={copy.addAgendaItemTitle} description={copy.addAgendaItemDescription}>
+                <form action={addAgendaItemAction} className="space-y-3">
+                  <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                  <input name="title" placeholder={copy.addAgendaItemTitle} className={inputClassName} />
+                  <input name="time" placeholder="16:10" className={inputClassName} />
+                  <textarea name="description" rows={4} placeholder={copy.teamCheckpointPlaceholder} className={inputClassName} />
+                  <select name="afterItemId" defaultValue={selectedAgendaItem?.id ?? ""} className={inputClassName}>
+                    {state.agenda.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.time} • {item.title}
+                      </option>
+                    ))}
+                  </select>
+                  <button className={primaryButtonClassName} type="submit">
+                    {copy.addAgendaItemButton}
+                  </button>
+                </form>
               </AdminPanel>
 
               <AdminPanel eyebrow={copy.agendaSourceTitle} title={copy.agendaSourceTitle} description={copy.agendaSourceBody}>
@@ -643,55 +865,98 @@ export default async function AdminPage({
 
         {activeSection === "teams" ? (
           <div className="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-            <AdminPanel eyebrow={copy.teamOpsEyebrow} title={copy.registerTeamTitle} description={copy.teamOpsDescription}>
-              <form action={registerTeamAction} className="grid gap-3">
-                <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                <input name="id" placeholder="t5" className={inputClassName} />
-                <input name="name" placeholder={copy.teamNamePlaceholder} className={inputClassName} />
-                <input name="city" placeholder="Studio A" className={inputClassName} />
-                <input name="repoUrl" placeholder="https://github.com/..." className={inputClassName} />
-                <input name="projectBriefId" placeholder="standup-bot" className={inputClassName} />
-                <input name="members" placeholder="Anna, David, Eva" className={inputClassName} />
-                <textarea name="checkpoint" rows={4} placeholder={copy.teamCheckpointPlaceholder} className={inputClassName} />
-                <button className={primaryButtonClassName} type="submit">
-                  {copy.saveTeamButton}
-                </button>
-              </form>
-            </AdminPanel>
+            <AdminPanel
+              eyebrow={copy.teamOpsEyebrow}
+              title={selectedTeam ? copy.editTeamTitle : copy.registerTeamTitle}
+              description={selectedTeam ? copy.editTeamDescription : copy.teamOpsDescription}
+            >
+              <div className="space-y-4">
+                {selectedTeam ? (
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-[var(--text-primary)]">{selectedTeam.name}</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{selectedTeam.id}</p>
+                      </div>
+                      <Link
+                        href={buildAdminHref({ lang, section: activeSection, instanceId: activeInstanceId })}
+                        className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                      >
+                        {copy.createAnotherTeamLabel}
+                      </Link>
+                    </div>
+                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{selectedTeam.repoUrl}</p>
+                  </div>
+                ) : null}
 
-            <div className="space-y-6">
-              <AdminPanel eyebrow={copy.teamOpsEyebrow} title={copy.editCheckpointTitle} description={copy.teamOpsDescription}>
-                <form action={saveCheckpointAction} className="space-y-3">
-                  <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                  <select name="teamId" className={inputClassName}>
-                    {state.teams.map((team) => (
-                      <option key={team.id} value={team.id}>
-                        {team.name}
-                      </option>
-                    ))}
-                  </select>
-                  <textarea name="checkpoint" rows={5} className={inputClassName} />
+                <form action={registerTeamAction} className="grid gap-3">
+                  <AdminActionStateFields
+                    lang={lang}
+                    section={activeSection}
+                    instanceId={activeInstanceId}
+                  />
+                  <input name="id" type="hidden" value={selectedTeam?.id ?? ""} />
+                  <input name="name" placeholder={copy.teamNamePlaceholder} defaultValue={selectedTeam?.name ?? ""} className={inputClassName} />
+                  <input name="city" placeholder="Studio A" defaultValue={selectedTeam?.city ?? ""} className={inputClassName} />
+                  <input name="repoUrl" placeholder="https://github.com/..." defaultValue={selectedTeam?.repoUrl ?? ""} className={inputClassName} />
+                  <input name="projectBriefId" placeholder="standup-bot" defaultValue={selectedTeam?.projectBriefId ?? ""} className={inputClassName} />
+                  <input
+                    name="members"
+                    placeholder="Anna, David, Eva"
+                    defaultValue={selectedTeam?.members.join(", ") ?? ""}
+                    className={inputClassName}
+                  />
+                  <textarea
+                    name="checkpoint"
+                    rows={5}
+                    placeholder={copy.teamCheckpointPlaceholder}
+                    defaultValue={selectedTeam?.checkpoint ?? ""}
+                    className={inputClassName}
+                  />
                   <button className={primaryButtonClassName} type="submit">
-                    {copy.saveCheckpointButton}
+                    {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
                   </button>
                 </form>
-              </AdminPanel>
+              </div>
+            </AdminPanel>
 
-              <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
-                <div className="space-y-3">
-                  {state.teams.map((team) => (
-                    <div key={team.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                      <div className="flex flex-wrap items-center justify-between gap-3">
+            <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
+              <div className="space-y-3">
+                {state.teams.map((team) => (
+                  <div
+                    key={team.id}
+                    className={`rounded-[20px] border p-4 ${
+                      selectedTeam?.id === team.id
+                        ? "border-[var(--text-primary)] bg-[var(--surface)]"
+                        : "border-[var(--border)] bg-[var(--surface-soft)]"
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
                         <p className="font-semibold text-[var(--text-primary)]">{team.name}</p>
-                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
+                        <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{team.repoUrl}</p>
                       </div>
-                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.repoUrl}</p>
-                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                      <div className="text-right">
+                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
+                        <Link
+                          href={buildAdminHref({
+                            lang,
+                            section: activeSection,
+                            instanceId: activeInstanceId,
+                            teamId: team.id,
+                          })}
+                          className="mt-2 inline-flex text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                        >
+                          {copy.editActionLabel}
+                        </Link>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </AdminPanel>
-            </div>
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                    <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{team.members.join(", ")}</p>
+                  </div>
+                ))}
+              </div>
+            </AdminPanel>
           </div>
         ) : null}
 

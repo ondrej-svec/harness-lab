@@ -202,13 +202,13 @@ describe("workshop route", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       ok: true,
-      workshopId: "sample-lab-d",
+      workshopId: "sample-studio-a",
       workshopMeta: { city: "Lab D" },
     });
 
     const current = await GET();
     await expect(current.json()).resolves.toMatchObject({
-      workshopId: "sample-lab-d",
+      workshopId: "sample-studio-a",
       workshopMeta: { currentPhaseLabel: "Úvod a naladění" },
     });
   });

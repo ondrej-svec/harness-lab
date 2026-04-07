@@ -12,13 +12,13 @@ const NEON_AUTH_SESSION_COOKIES = [
 ];
 
 /**
- * Check if Neon Auth is configured (middleware runs in Edge, so we check env directly).
+ * Check if Neon Auth is configured (proxy runs before the app, so we check env directly).
  */
 function isNeonAuthEnabled() {
   return Boolean(process.env.NEON_AUTH_BASE_URL && process.env.NEON_AUTH_COOKIE_SECRET);
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const urlLanguage = request.nextUrl.searchParams.get("lang") ?? undefined;
   const cookieLanguage = request.cookies.get(uiLanguageCookieName)?.value;
   const resolvedLanguage = resolveUiLanguage(urlLanguage ?? cookieLanguage);
@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(signInUrl);
       }
     }
-    // File-mode: no middleware gate — requireFacilitatorPageAccess handles auth server-side
+    // File-mode: no proxy gate — requireFacilitatorPageAccess handles auth server-side
   }
 
   const requestHeaders = new Headers(request.headers);

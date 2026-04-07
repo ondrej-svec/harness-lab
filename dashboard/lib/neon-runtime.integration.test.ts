@@ -10,6 +10,8 @@ import { getNeonSql } from "./neon-db";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
 import { getTeamRepository } from "./team-repository";
 import type { ParticipantSessionRecord } from "./runtime-contracts";
+import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
+import { createWorkshopInstance, removeWorkshopInstance } from "./workshop-store";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 
 const hasNeonTestDatabase = Boolean(process.env.HARNESS_TEST_DATABASE_URL);
@@ -24,10 +26,18 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     process.env.HARNESS_DATABASE_URL = process.env.HARNESS_TEST_DATABASE_URL;
 
     const schemaPath = path.join(process.cwd(), "db/migrations/2026-04-06-private-workshop-instance-runtime.sql");
-    const schema = await readFile(schemaPath, "utf8");
+    const lifecycleMigrationPath = path.join(
+      process.cwd(),
+      "db/migrations/2026-04-07-instance-lifecycle-and-agenda-authoring.sql",
+    );
+    const [schema, lifecycleMigration] = await Promise.all([
+      readFile(schemaPath, "utf8"),
+      readFile(lifecycleMigrationPath, "utf8"),
+    ]);
     const sql = getNeonSql();
 
     await sql.query(schema);
+    await sql.query(lifecycleMigration);
     await sql.query("DELETE FROM checkpoints WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM instance_archives WHERE instance_id = $1", [instanceId]);
     await sql.query("DELETE FROM instance_grants WHERE instance_id = $1", [instanceId]);
@@ -168,5 +178,54 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     await repo.revokeGrant(grant.id);
     const revoked = await repo.getActiveGrantByNeonUserId(instanceId, testUserId);
     expect(revoked).toBeNull();
+  });
+
+  it("creates and tombstones workshop instances in Neon mode", async () => {
+    const dynamicInstanceId = `integration-instance-${Date.now()}`;
+    const sql = getNeonSql();
+
+    try {
+      const created = await createWorkshopInstance({
+        id: dynamicInstanceId,
+        templateId: "sample-lab-d",
+        city: "Integration Room",
+        dateRange: "2026-04-07 • Integration Room",
+      });
+
+      expect(created).toMatchObject({
+        id: dynamicInstanceId,
+        templateId: "sample-lab-d",
+        removedAt: null,
+        workshopMeta: { city: "Integration Room" },
+      });
+      await expect(getWorkshopStateRepository().getState(dynamicInstanceId)).resolves.toMatchObject({
+        workshopId: dynamicInstanceId,
+        workshopMeta: { city: "Integration Room" },
+      });
+      await expect(getWorkshopInstanceRepository().listInstances()).resolves.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: dynamicInstanceId })]),
+      );
+
+      await removeWorkshopInstance(dynamicInstanceId);
+
+      await expect(getWorkshopInstanceRepository().getInstance(dynamicInstanceId)).resolves.toMatchObject({
+        id: dynamicInstanceId,
+        status: "removed",
+        removedAt: expect.any(String),
+      });
+      await expect(getWorkshopInstanceRepository().listInstances()).resolves.not.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: dynamicInstanceId })]),
+      );
+      await expect(getWorkshopInstanceRepository().listInstances({ includeRemoved: true })).resolves.toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: dynamicInstanceId, status: "removed" })]),
+      );
+    } finally {
+      await sql.query("DELETE FROM instance_archives WHERE instance_id = $1", [dynamicInstanceId]);
+      await sql.query("DELETE FROM checkpoints WHERE instance_id = $1", [dynamicInstanceId]);
+      await sql.query("DELETE FROM monitoring_snapshots WHERE instance_id = $1", [dynamicInstanceId]);
+      await sql.query("DELETE FROM participant_sessions WHERE instance_id = $1", [dynamicInstanceId]);
+      await sql.query("DELETE FROM teams WHERE instance_id = $1", [dynamicInstanceId]);
+      await sql.query("DELETE FROM workshop_instances WHERE id = $1", [dynamicInstanceId]);
+    }
   });
 });

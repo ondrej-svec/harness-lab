@@ -22,6 +22,10 @@ export function isProtectedPath(pathname: string, method: string) {
     return true;
   }
 
+  if (pathname.startsWith("/api/workshop/instances")) {
+    return true;
+  }
+
   if (protectedWritePaths.has(pathname) && method !== "GET") {
     return true;
   }

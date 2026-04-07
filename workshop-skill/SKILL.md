@@ -146,9 +146,17 @@ Revoke a facilitator's access to the current instance. Requires `owner` role.
 
 Create a new workshop instance from a template. Requires facilitator session.
 
+### `/workshop facilitator remove-instance`
+
+Remove a workshop instance from the active list without deleting its archive history. Requires facilitator session.
+
 ### `/workshop facilitator prepare`
 
 Set the current instance to `prepared` state. Verify event code is ready.
+
+### `/workshop facilitator agenda`
+
+Inspect and edit the local agenda copy for one workshop instance. Requires facilitator session.
 
 ### `/workshop facilitator archive`
 

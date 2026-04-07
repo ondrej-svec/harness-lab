@@ -5,7 +5,7 @@ import { createNeonAuth } from "@neondatabase/auth/next/server";
  *
  * Created at module level (singleton) as required by the Neon Auth SDK.
  * The SDK needs a stable instance for cookie/session management to work
- * correctly across server actions, API routes, and middleware.
+ * correctly across server actions, API routes, and proxy.
  *
  * When NEON_AUTH_BASE_URL is not set (file-mode local dev), auth is null
  * and the system falls back to Basic Auth.

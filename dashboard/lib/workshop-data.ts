@@ -5,6 +5,9 @@ export type AgendaItem = {
   title: string;
   time: string;
   description: string;
+  order: number;
+  sourceBlueprintPhaseId: string | null;
+  kind: "blueprint" | "custom";
   status: "done" | "current" | "upcoming";
 };
 
@@ -115,9 +118,16 @@ export type WorkshopTemplate = {
   scenario: "17-participants" | "20-participants";
 };
 
+export type WorkshopInstanceStatus = "created" | "prepared" | "running" | "archived" | "removed";
+
 export type WorkshopInstanceRecord = {
   id: string;
   templateId: string;
+  status: WorkshopInstanceStatus;
+  blueprintId: string;
+  blueprintVersion: number;
+  importedAt: string;
+  removedAt: string | null;
   workshopMeta: WorkshopMeta;
 };
 
@@ -133,8 +143,23 @@ function createAgendaFromBlueprint(currentPhaseId?: string): AgendaItem[] {
     title: phase.label,
     time: phase.startTime,
     description: phase.goal,
+    order: phase.order,
+    sourceBlueprintPhaseId: phase.id,
+    kind: "blueprint" as const,
     status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
   }));
+}
+
+function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMeta {
+  return {
+    title: blueprintAgenda.title,
+    subtitle: blueprintAgenda.subtitle,
+    city: template.city,
+    dateRange: `${template.dateLabel} • ${template.room}`,
+    currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
+    adminHint:
+      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
+  };
 }
 
 export const workshopTemplates: WorkshopTemplate[] = [
@@ -144,32 +169,19 @@ export const workshopTemplates: WorkshopTemplate[] = [
   { id: "sample-lab-d", label: "Ukázková instance D", city: "Lab D", dateLabel: "Ukázkový workshop den", room: "Review room", scenario: "17-participants" },
 ];
 
-export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplates.map((template) => ({
-  id: template.id,
-  templateId: template.id,
-  workshopMeta: {
-    title: blueprintAgenda.title,
-    subtitle: blueprintAgenda.subtitle,
-    city: template.city,
-    dateRange: `${template.dateLabel} • ${template.room}`,
-    currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
-    adminHint:
-      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
-  },
-}));
+export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplates.map((template) =>
+  createWorkshopInstanceRecord({
+    id: template.id,
+    templateId: template.id,
+    importedAt: "2026-04-07T09:00:00.000Z",
+    workshopMeta: createWorkshopMetaFromTemplate(template),
+  }),
+);
 
 export const seedWorkshopState: WorkshopState = {
   workshopId: "sample-studio-a",
   workshopMeta: {
-    ...(sampleWorkshopInstances[0]?.workshopMeta ?? {
-      title: blueprintAgenda.title,
-      subtitle: blueprintAgenda.subtitle,
-      city: "Ukázková instance",
-      dateRange: "Sample workshop day • Demo room",
-      currentPhaseLabel: "Build Phase 1",
-      adminHint:
-        "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
-    }),
+    ...(sampleWorkshopInstances[0]?.workshopMeta ?? createWorkshopMetaFromTemplate(workshopTemplates[0])),
     currentPhaseLabel: "Build Phase 1",
   },
   agenda: createAgendaFromBlueprint(),
@@ -410,6 +422,30 @@ export function getTeamName(teamId: string, teams: Team[]) {
   return teams.find((team) => team.id === teamId)?.name ?? teamId;
 }
 
+export function createWorkshopInstanceRecord(input: {
+  id: string;
+  templateId: string;
+  workshopMeta?: WorkshopMeta;
+  status?: WorkshopInstanceStatus;
+  blueprintId?: string;
+  blueprintVersion?: number;
+  importedAt?: string;
+  removedAt?: string | null;
+}): WorkshopInstanceRecord {
+  const template = workshopTemplates.find((item) => item.id === input.templateId) ?? workshopTemplates[0];
+
+  return {
+    id: input.id,
+    templateId: template.id,
+    status: input.status ?? "prepared",
+    blueprintId: input.blueprintId ?? blueprintAgenda.blueprintId,
+    blueprintVersion: input.blueprintVersion ?? blueprintAgenda.version,
+    importedAt: input.importedAt ?? new Date().toISOString(),
+    removedAt: input.removedAt ?? null,
+    workshopMeta: input.workshopMeta ?? createWorkshopMetaFromTemplate(template),
+  };
+}
+
 export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
 
@@ -437,7 +473,13 @@ export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord
   };
 }
 
-export function createWorkshopStateFromTemplate(templateId: string): WorkshopState {
-  const instance = sampleWorkshopInstances.find((item) => item.templateId === templateId) ?? sampleWorkshopInstances[0];
-  return createWorkshopStateFromInstance(instance);
+export function createWorkshopStateFromTemplate(templateId: string, instanceId?: string): WorkshopState {
+  const template = workshopTemplates.find((item) => item.id === templateId) ?? workshopTemplates[0];
+  return createWorkshopStateFromInstance(
+    createWorkshopInstanceRecord({
+      id: instanceId ?? template.id,
+      templateId: template.id,
+      workshopMeta: createWorkshopMetaFromTemplate(template),
+    }),
+  );
 }

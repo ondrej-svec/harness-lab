@@ -1,98 +1,125 @@
 # Harness Lab
 
-**Praktický workshop pro vývojáře**, kteří chtějí stavět s AI agenty tak, aby práce přežila další iteraci, dalšího člověka i další kontextové okno.
+Public template repo for a full-day developer workshop on disciplined teamwork with AI coding agents.
 
-## Co je Harness Lab?
+## What Harness Lab Is
 
-Harness Lab učí, jak kolem AI agentů postavit funkční pracovní systém přímo v repozitáři.
+Harness Lab teaches **harness engineering**: how to engineer context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into one-off output.
 
-Účastníci si během dne prakticky vyzkouší:
-- **Práci s kontextem**: jak psát `AGENTS.md`, skills a runbooky, které zrychlují další práci místo chaosu
-- **Strukturovaný workflow**: `brainstorm` → `plan` → implementace → `review`
-- **Řízení agentů**: jak zadávat práci, dělit ji a kontrolovat výstupy podobně jako u lidského týmu
-- **Dlouhodobost řešení**: jak dostat pravidla, rozhodnutí a provozní know-how z hlavy do repa
+During the workshop, teams practice:
 
-## Non-Negotiables
+- writing better repo-native context such as `AGENTS.md`, skills, and runbooks
+- using a structured workflow: `brainstorm` -> `plan` -> implementation -> `review`
+- delegating, checking, and redirecting agent work like a real technical team
+- turning decisions, constraints, and operating knowledge into artifacts another person or agent can continue
 
-Při práci s coding agenty bereme jako základ:
-- **testy před implementací**, když je změna dost důležitá na to, aby stála za automatizaci
-- **tracer bullet a e2e ověření** tam, kde nestačí číst jednotlivé soubory
-- **kombinaci repeatable browser testů a agent-driven UI kontroly** u důležitých UI flow
-- **review a explicitní kritéria hotovo** místo slepé důvěry v agent output
+This is not prompt theatre or disposable agent output. The goal is to build software work that stays legible, verifiable, and maintainable through continuation.
 
-Výchozí UI pattern v tomto repu je:
-1. agent exploration v izolovaném lokálním prostředí
-2. Playwright regression pro kritický flow
-3. human review před potvrzením změny
+## Working Principles
 
-Repo záměrně neučí „prostě nech model ovládat tvůj běžný přihlášený browser“ jako default. Širší browser autonomy patří jen do sandboxovaného a vědomě omezeného prostředí.
+Harness Lab treats verification as the trust boundary once an agent is doing meaningful work.
 
-Když člověk kóduje sám, část důvěry stojí na tom, že přesně ví, co napsal. Když necháte větší část práce na agentovi, musíte tuto důvěru nahradit systémem ověřování. Testy nejsou overhead. Jsou to koleje, které drží agenta v mezích zadání.
+Default expectations in this repo:
 
-## Jak workshop funguje
+- tests before implementation when the behavior change is important enough to automate
+- tracer bullets and end-to-end checks where reading files is not enough
+- repeatable browser checks plus agent-driven UI inspection for important UI flows
+- review and explicit done criteria instead of blind trust in generated output
 
-Workshop je postavený jako praktické build prostředí:
-- týmy dostanou brief a začnou stavět s AI agenty
-- během dne pracují s dashboardem, workshop skillem a vlastním repem
-- kvalita kontextu, workflow a dokumentace přímo ovlivňuje, jak snadno lze v práci pokračovat
+The default UI workflow in this repo is:
 
-Smyslem není napsat co nejvíc kódu. Smyslem je vybudovat repo, ve kterém se dá bezpečně pokračovat.
+1. agent exploration in an isolated local environment
+2. Playwright regression for the critical flow
+3. human review before the change is considered complete
+
+Harness Lab does not teach unrestricted browser autonomy in a normal authenticated browser as the default mode of work.
+
+## How the Workshop Works
+
+The workshop is built as a practical build environment:
+
+- teams receive a brief and start building with AI coding agents
+- they work through the day using the dashboard, the workshop skill, and their own repo
+- the quality of context, workflow, and repo-native guidance directly determines whether another team can continue smoothly
+
+The point is not to produce the most code. The point is to create a repo and operating model that can survive a handoff.
 
 ## Workshop Blueprint
 
-Kanonická veřejná definice workshopu teď žije v [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint).
+The canonical public definition of the workshop lives in [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint).
 
-Začněte tady, pokud chcete rychle pochopit:
-- jak je postavený den workshopu
-- co facilitátor řídí v live instanci
-- co používají účastníci
-- co se upravuje v public repu a co jen v privátní runtime vrstvě
+Start there if you want the fastest overview of:
 
-Doporučené vstupy:
+- how the workshop day is structured
+- what the facilitator controls in a live instance
+- what participants use during the workshop
+- what should be edited in the public repo versus the private runtime layer
+
+Recommended entry points:
+
 - [workshop-blueprint/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md)
 - [workshop-blueprint/day-structure.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
 - [workshop-blueprint/control-surfaces.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
 - [workshop-blueprint/edit-boundaries.md](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
 
-## Co je v repozitáři
+## Repository Structure
 
-- `dashboard/` — live workshop dashboard a základ budoucího facilitator control plane
-- `harness-cli/` — malý facilitátorský CLI klient nad sdílenými runtime API pro lokální/dev provoz
-- `content/` — projektové briefy, challenge karty, talks a facilitační obsah
-- `workshop-skill/` — participant-facing skill pro Codex / OpenCode
-- `monitoring/` — monitorovací MVP a pomocné skripty pro facilitátora
-- `capture/` — šablony a podklady pro rychlý záznam pozorování
-- `materials/` — tiskové a provozní materiály
-- `docs/` — rozhodnutí a interní architektura workshop systému
+- `dashboard/` - live workshop dashboard and the foundation of the facilitator control plane
+- `harness-cli/` - small facilitator CLI client over the shared runtime APIs for local and dev operation
+- `content/` - project briefs, challenge cards, talks, and facilitation content
+- `workshop-skill/` - participant-facing skill for Codex and OpenCode
+- `monitoring/` - facilitator monitoring MVP and helper scripts
+- `capture/` - templates and support material for quick observation capture
+- `materials/` - print and operational materials
+- `docs/` - architecture notes, decisions, plans, and internal workshop system documentation
+
+## Language
+
+The language split in this repo is intentional:
+
+- dev-facing repo surfaces such as `README.md`, `AGENTS.md`, architecture notes, and technical docs are in English
+- participant-facing workshop content is in Czech
+- code and configuration stay in English
+- technical terms such as skills, commands, and harness vocabulary remain in English where that improves clarity
+
+Style guidance for participant-facing copy lives in:
+
+- [content/style-guide.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md)
+- [content/style-examples.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md)
 
 ## Public vs Private
 
-Repo je navržený jako **public template repo**:
-- obsahuje veřejně sdílitelný workshop framework
-- používá jen ukázková data pro dashboard
-- neobsahuje reálné termíny, místa ani live operační stav
+This repository is designed as a **public template repo**:
 
-Reálný běh workshopu patří do **private workshop instance layer**:
+- it contains the reusable public workshop framework
+- it runs with sample or demo data only
+- it does not contain real workshop dates, rooms, live operational state, or participant-private context
+
+The actual workshop run belongs in the **private workshop-instance layer**:
+
 - workshop instance metadata
-- facilitátorský provoz
-- checkpointy, monitoring a registry týmových rep
+- facilitator operations
+- checkpoints, monitoring, and team repo registry
+- any sensitive or event-specific data
 
-Pravidla jsou popsaná v [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md).
+The boundary model is documented in [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md).
 
-Pravidlo pro práci:
-- reusable workshop method upravujte v blueprintu a souvisejících repo docs
-- live workshop provozujte v dashboardu nebo facilitátorském skill/CLI control path
-- runtime změny se samy nepromítají zpět do blueprintu
+Working rule:
+
+- update reusable workshop method in the blueprint and supporting public docs
+- operate live workshop state through the dashboard or facilitator skill/CLI path
+- do not let runtime changes silently become the new canonical blueprint
 
 ## Resource Layers
 
-Repo záměrně balí tři různé vrstvy:
+The repo intentionally packages three different resource layers:
 
-- **internal harness** — backstage materiály pro maintainery a facilitátory, kteří provozují a rozvíjejí Harness Lab
-- **learner resource kit** — participant-facing sada příkladů a artefaktů, které si účastníci mohou odnést do vlastních projektů
-- **external reference gallery** — krátký seznam oficiálních dokumentací a kvalitních veřejných repozitářů pro pokračování po workshopu
+- **internal harness** - backstage material for maintainers and facilitators operating Harness Lab
+- **learner resource kit** - participant-facing examples and artifacts people can take into their own projects
+- **external reference gallery** - curated documentation and public repos for continued learning after the workshop
 
-Vstupní body:
+Entry points:
+
 - [internal-harness.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md)
 - [learner-resource-kit.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
 - [learner-reference-gallery.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-reference-gallery.md)
@@ -100,44 +127,49 @@ Vstupní body:
 
 ## Dashboard Model
 
-Dashboard má dvě role:
-- **participant surface** — orientace během dne, briefy, challenge flow, reference
-- **facilitator surface** — chráněný admin a operační řízení workshop instance
+The dashboard has two roles:
 
-Blueprint import a boundary model jsou popsané v:
+- **participant surface** - orientation during the day, briefs, challenge flow, and references
+- **facilitator surface** - protected admin and operational control of the workshop instance
+
+The import model and boundary model are described in:
+
 - [blueprint-import-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
 - [dashboard-surface-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
 - [runtime-learning-publish-back.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
 
-Lokálně dnes běží nad file-based store. Produkčně je připravený k přesunu na Vercel + privátní storage.
+The local stack currently runs on a file-based store. The production direction is Vercel plus private storage.
 
-Deployment-grade env scoping a promotion rules jsou popsané v:
+Deployment-grade environment scoping and promotion rules are documented in:
+
 - [private-workshop-instance-env-matrix.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
 - [private-workshop-instance-deployment-spec.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
 - [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
 
-Deploy flow běží přes nativní Git integraci ve Vercelu:
-- PR → preview deploy
-- push do `main` → production deploy
+Deploy flow:
 
-GitHub Actions CI je sloučené do jednoho workflow `Dashboard CI` a Vercel má čekat na check `Vercel - harness-lab-dashboard: deploy-ready`.
-Workflow zahrnuje build/test/e2e i security gate (`gitleaks` + `Semgrep`).
+- pull request -> preview deploy
+- push to `main` -> production deploy
 
-Kritické je, aby měl Vercel project nastavený root directory na `dashboard`. Detaily jsou v [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md).
+GitHub Actions CI is consolidated into the `Dashboard CI` workflow, and Vercel should wait for the `Vercel - harness-lab-dashboard: deploy-ready` check.
 
 ## Workshop Skill
 
-`workshop-skill/` je zamýšlený jako hlavní participant interface:
-- pomáhá se setupem
-- vrací briefy a reference
-- generuje základní `AGENTS.md`
-- připomíná fázi dne a další bezpečný krok
+`workshop-skill/` is the primary participant interface:
 
-Výchozí doporučení je distribuovat skill z repa, ne přes npm balíček.
+- it helps with setup
+- returns briefs and references
+- generates a baseline `AGENTS.md`
+- reminds participants of the current phase and the next safe move
 
-Facilitátorská privileged path má nově směřovat přes malý `harness` CLI broker, ne přes ukládání raw auth/session stavu přímo ve skillu. Základ modelu je v [harness-cli-foundation.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) a aktuální implementace je v [harness-cli/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md).
+The default recommendation is to distribute the skill directly from the repo, not via npm.
 
-## Lokální spuštění
+The facilitator privileged path now routes through the small `harness` CLI broker rather than storing raw auth or session state directly in the skill. The current model is described in:
+
+- [harness-cli-foundation.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
+- [harness-cli/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md)
+
+## Local Development
 
 ```bash
 cd dashboard
@@ -147,10 +179,6 @@ npm run test
 npm run test:e2e
 ```
 
-Volitelné:
-- nastav `HARNESS_ADMIN_PASSWORD`, pokud chceš lokálně chránit `/admin`
+Optional:
 
-## Content Style
-
-- Hlas a pravidla participant-facing textů jsou v [style-guide.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md)
-- Praktické příklady formulací jsou v [style-examples.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md)
+- set `HARNESS_ADMIN_PASSWORD` if you want `/admin` protected in local mode

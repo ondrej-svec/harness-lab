@@ -128,7 +128,10 @@ export type InstanceArchiveRecord = {
 export interface WorkshopInstanceRepository {
   getDefaultInstanceId(): Promise<WorkshopInstanceId>;
   getInstance(instanceId: WorkshopInstanceId): Promise<WorkshopInstanceRecord | null>;
-  listInstances(): Promise<WorkshopInstanceRecord[]>;
+  listInstances(options?: { includeRemoved?: boolean }): Promise<WorkshopInstanceRecord[]>;
+  createInstance(instance: WorkshopInstanceRecord): Promise<WorkshopInstanceRecord>;
+  updateInstance(instanceId: WorkshopInstanceId, instance: WorkshopInstanceRecord): Promise<WorkshopInstanceRecord>;
+  removeInstance(instanceId: WorkshopInstanceId, removedAt: string): Promise<void>;
 }
 
 export interface RuntimeWorkshopStateRepository {

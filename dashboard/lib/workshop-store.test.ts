@@ -14,19 +14,27 @@ import {
 } from "./participant-event-access-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "./redeem-attempt-repository";
 import { setTeamRepositoryForTests, type TeamRepository } from "./team-repository";
-import { seedWorkshopState, type WorkshopState } from "./workshop-data";
-import type { AuditLogRecord, InstanceArchiveRecord, ParticipantEventAccessRecord, ParticipantSessionRecord, RedeemAttemptRecord } from "./runtime-contracts";
+import { sampleWorkshopInstances, seedWorkshopState, type WorkshopState } from "./workshop-data";
+import type { AuditLogRecord, InstanceArchiveRecord, ParticipantEventAccessRecord, ParticipantSessionRecord, RedeemAttemptRecord, WorkshopInstanceRepository } from "./runtime-contracts";
+import { setWorkshopInstanceRepositoryForTests } from "./workshop-instance-repository";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "./workshop-state-repository";
 import {
+  addAgendaItem,
   addSprintUpdate,
   applyRuntimeRetentionPolicy,
+  createWorkshopInstance,
   createWorkshopArchive,
   completeChallenge,
   getWorkshopState,
+  getWorkshopInstances,
   getLatestWorkshopArchive,
+  moveAgendaItem,
+  removeAgendaItem,
+  removeWorkshopInstance,
   resetWorkshopState,
   setCurrentAgendaItem,
   setRotationReveal,
+  updateAgendaItem,
   updateCheckpoint,
   upsertTeam,
 } from "./workshop-store";
@@ -209,6 +217,39 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   }
 }
 
+class MemoryWorkshopInstanceRepository implements WorkshopInstanceRepository {
+  constructor(private items = structuredClone(sampleWorkshopInstances)) {}
+
+  async getDefaultInstanceId() {
+    return this.items.find((item) => !item.removedAt && item.status !== "removed")?.id ?? this.items[0]?.id ?? "sample-studio-a";
+  }
+
+  async getInstance(instanceId: string) {
+    return structuredClone(this.items.find((item) => item.id === instanceId) ?? null);
+  }
+
+  async listInstances(options?: { includeRemoved?: boolean }) {
+    const items = options?.includeRemoved ? this.items : this.items.filter((item) => !item.removedAt && item.status !== "removed");
+    return structuredClone(items);
+  }
+
+  async createInstance(instance: typeof sampleWorkshopInstances[number]) {
+    this.items.push(structuredClone(instance));
+    return instance;
+  }
+
+  async updateInstance(instanceId: string, instance: typeof sampleWorkshopInstances[number]) {
+    this.items = this.items.map((item) => (item.id === instanceId ? structuredClone(instance) : item));
+    return instance;
+  }
+
+  async removeInstance(instanceId: string, removedAt: string) {
+    this.items = this.items.map((item) =>
+      item.id === instanceId ? { ...item, status: "removed", removedAt } : item,
+    );
+  }
+}
+
 describe("workshop-store", () => {
   let repository: MemoryWorkshopStateRepository;
   let checkpointRepository: MemoryCheckpointRepository;
@@ -219,6 +260,7 @@ describe("workshop-store", () => {
   let archiveRepository: MemoryArchiveRepository;
   let redeemAttemptRepository: MemoryRedeemAttemptRepository;
   let auditLogRepository: MemoryAuditLogRepository;
+  let instanceRepository: MemoryWorkshopInstanceRepository;
 
   beforeEach(() => {
     repository = new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState));
@@ -245,6 +287,7 @@ describe("workshop-store", () => {
       sampleCode: "lantern8-context4-handoff2",
     });
     archiveRepository = new MemoryArchiveRepository();
+    instanceRepository = new MemoryWorkshopInstanceRepository();
     redeemAttemptRepository = new MemoryRedeemAttemptRepository([
       {
         instanceId: "sample-studio-a",
@@ -263,6 +306,7 @@ describe("workshop-store", () => {
     setInstanceArchiveRepositoryForTests(archiveRepository);
     setRedeemAttemptRepositoryForTests(redeemAttemptRepository);
     setAuditLogRepositoryForTests(auditLogRepository);
+    setWorkshopInstanceRepositoryForTests(instanceRepository);
   });
 
   afterEach(() => {
@@ -275,6 +319,7 @@ describe("workshop-store", () => {
     setInstanceArchiveRepositoryForTests(null);
     setRedeemAttemptRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
+    setWorkshopInstanceRepositoryForTests(null);
   });
 
   it("moves the agenda and updates the phase label", async () => {
@@ -283,6 +328,39 @@ describe("workshop-store", () => {
     expect(state.workshopMeta.currentPhaseLabel).toBe("Rotace týmů");
     expect(state.agenda.find((item) => item.id === "rotation")?.status).toBe("current");
     expect(state.agenda.find((item) => item.id === "opening")?.status).toBe("done");
+  });
+
+  it("supports local agenda editing, insertion, reordering, and removal", async () => {
+    let state = await updateAgendaItem("talk", {
+      title: "Context demo",
+      time: "09:45",
+      description: "Lokální úprava pro tuto instanci.",
+    });
+    expect(state.agenda.find((item) => item.id === "talk")).toMatchObject({
+      title: "Context demo",
+      time: "09:45",
+    });
+
+    state = await addAgendaItem({
+      title: "Coffee break",
+      time: "11:20",
+      description: "Lokální blok navíc.",
+      afterItemId: "build-1",
+    });
+    const customItem = state.agenda.find((item) => item.title === "Coffee break");
+    expect(customItem).toMatchObject({
+      kind: "custom",
+      sourceBlueprintPhaseId: null,
+    });
+
+    state = await moveAgendaItem(customItem!.id, "up");
+    expect(state.agenda.find((item) => item.id === customItem!.id)?.order).toBeLessThan(
+      state.agenda.find((item) => item.id === "rotation")!.order,
+    );
+
+    state = await removeAgendaItem(customItem!.id);
+    expect(state.agenda.find((item) => item.id === customItem!.id)).toBeUndefined();
+    expect(state.agenda.filter((item) => item.status === "current")).toHaveLength(1);
   });
 
   it("updates facilitator-controlled team and checkpoint state", async () => {
@@ -329,7 +407,7 @@ describe("workshop-store", () => {
   it("resets state from a sample template", async () => {
     const state = await resetWorkshopState("sample-lab-d");
 
-    expect(state.workshopId).toBe("sample-lab-d");
+    expect(state.workshopId).toBe("sample-studio-a");
     expect(state.workshopMeta.city).toBe("Lab D");
     expect(state.agenda.map((item) => item.id)).toEqual(blueprintAgenda.phases.map((phase) => phase.id));
     expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
@@ -348,6 +426,63 @@ describe("workshop-store", () => {
         participantSessions: [{ tokenHash: "live-token" }],
       },
     });
+  });
+
+  it("creates and soft-removes workshop instances", async () => {
+    const created = await createWorkshopInstance({
+      id: "client-hackathon-2026-05",
+      templateId: "sample-lab-d",
+      city: "Client HQ",
+      dateRange: "12. května 2026 • Main room",
+    });
+
+    expect(created).toMatchObject({
+      id: "client-hackathon-2026-05",
+      templateId: "sample-lab-d",
+      workshopMeta: { city: "Client HQ" },
+    });
+    await expect(getWorkshopInstances()).resolves.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "client-hackathon-2026-05" })]),
+    );
+    await expect(getWorkshopState("client-hackathon-2026-05")).resolves.toMatchObject({
+      workshopId: "client-hackathon-2026-05",
+      workshopMeta: { city: "Client HQ" },
+    });
+
+    await removeWorkshopInstance("client-hackathon-2026-05");
+    await expect(getWorkshopInstances()).resolves.not.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "client-hackathon-2026-05" })]),
+    );
+    await expect(instanceRepository.listInstances({ includeRemoved: true })).resolves.toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: "client-hackathon-2026-05", status: "removed" })]),
+    );
+  });
+
+  it("does not overwrite an existing instance when create is called with a duplicate id", async () => {
+    await teamRepository.replaceTeams("sample-studio-a", [
+      {
+        id: "t-existing",
+        name: "Existing team",
+        city: "Studio A",
+        members: ["Anna"],
+        repoUrl: "https://github.com/example/existing-team",
+        projectBriefId: "standup-bot",
+        checkpoint: "Keep me intact.",
+      },
+    ]);
+
+    const created = await createWorkshopInstance({
+      id: "sample-studio-a",
+      templateId: "sample-lab-d",
+      city: "Should not overwrite",
+    });
+
+    expect(created).toMatchObject({
+      id: "sample-studio-a",
+      templateId: sampleWorkshopInstances[0]?.templateId,
+      workshopMeta: sampleWorkshopInstances[0]?.workshopMeta,
+    });
+    await expect(teamRepository.listTeams("sample-studio-a")).resolves.toMatchObject([{ id: "t-existing" }]);
   });
 
   it("projects normalized checkpoint and monitoring data into the workshop-shaped read model", async () => {

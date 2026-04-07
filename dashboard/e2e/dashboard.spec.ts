@@ -91,7 +91,7 @@ test.describe("participant dashboard", () => {
 
 test.describe("facilitator sign-in", () => {
   test("redirects unauthenticated /admin to /admin/sign-in in neon mode", async ({ page }) => {
-    // In file mode (e2e default), middleware doesn't redirect — requireFacilitatorPageAccess does.
+    // In file mode (e2e default), proxy doesn't redirect — requireFacilitatorPageAccess does.
     // Without auth headers, the server action redirects to /admin/sign-in.
     await page.goto("/admin");
 

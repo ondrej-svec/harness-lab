@@ -68,6 +68,7 @@ For four hackathons under one company, configure each event as a separate privat
 
 During the workshop, facilitator uses the control plane to:
 - move agenda phase
+- locally edit agenda wording, timing, or one-off instance-only items
 - register teams and repos
 - capture sprint updates
 - update checkpoints
@@ -82,6 +83,7 @@ After a workshop:
 - archive the live instance state from the protected admin surface or `POST /api/workshop/archive`
 - revoke active participant sessions
 - reset the next workshop by re-importing the selected blueprint into a clean runtime instance instead of reusing the archived one in place
+- remove stale instances from the active control list only through the safe remove flow, not raw database deletion
 - confirm no live team data remains in the active public-facing view
 - if schema changes are pending, apply them through `cd dashboard && npm run db:migrate` against the intended database before validation or promotion
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import blueprintAgenda from "./workshop-blueprint-agenda.json";
 import {
+  createWorkshopInstanceRecord,
   createWorkshopStateFromInstance,
   createWorkshopStateFromTemplate,
   getTeamName,
@@ -42,7 +43,7 @@ describe("workshop-data", () => {
   });
 
   it("can create workshop state from an instance record", () => {
-    const state = createWorkshopStateFromInstance({
+    const state = createWorkshopStateFromInstance(createWorkshopInstanceRecord({
       id: "client-workshop-001",
       templateId: "sample-studio-b",
       workshopMeta: {
@@ -53,13 +54,18 @@ describe("workshop-data", () => {
         currentPhaseLabel: "Opening",
         adminHint: "Privátní data běží mimo public repo.",
       },
-    });
+    }));
 
     expect(state.workshopId).toBe("client-workshop-001");
     expect(state.workshopMeta.city).toBe("Client HQ");
     expect(state.rotation.scenario).toBe("20-participants");
     expect(state.agenda[0]?.status).toBe("current");
     expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
+    expect(state.agenda[0]).toMatchObject({
+      order: 1,
+      sourceBlueprintPhaseId: blueprintAgenda.phases[0]?.id,
+      kind: "blueprint",
+    });
   });
 
   it("returns the team name when present and the id otherwise", () => {

@@ -18,7 +18,7 @@ function isNeonAuthMode() {
  * Guard for API routes: returns an error response if unauthorized, null if authorized.
  * Uses the Request object directly (no next/headers dependency).
  */
-export async function requireFacilitatorRequest(request: Request) {
+export async function requireFacilitatorRequest(request: Request, instanceId = getCurrentWorkshopInstanceId()) {
   if (request.method !== "GET") {
     if (
       !isTrustedOrigin({
@@ -32,7 +32,6 @@ export async function requireFacilitatorRequest(request: Request) {
     }
   }
 
-  const instanceId = getCurrentWorkshopInstanceId();
   const service = getFacilitatorAuthService();
 
   if (isNeonAuthMode()) {
