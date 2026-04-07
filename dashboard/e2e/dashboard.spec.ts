@@ -81,8 +81,8 @@ test.describe("facilitator sign-in", () => {
 
     // Should show sign-in page (either via redirect or direct render after server-side check)
     await expect(page.getByRole("heading", { name: "přihlášení facilitátora" })).toBeVisible();
-    await expect(page.getByLabel("e-mail")).toBeVisible();
-    await expect(page.getByLabel("heslo")).toBeVisible();
+    await expect(page.locator("#sign-in-email")).toBeVisible();
+    await expect(page.locator("#sign-in-password")).toBeVisible();
     await expect(page.getByRole("button", { name: "přihlásit se" })).toBeVisible();
   });
 
@@ -90,8 +90,8 @@ test.describe("facilitator sign-in", () => {
     await page.goto("/admin/sign-in?lang=en");
 
     await expect(page.getByRole("heading", { name: "facilitator sign-in" })).toBeVisible();
-    await expect(page.getByLabel("email")).toBeVisible();
-    await expect(page.getByLabel("password")).toBeVisible();
+    await expect(page.locator("#sign-in-email")).toBeVisible();
+    await expect(page.locator("#sign-in-password")).toBeVisible();
     await expect(page.getByRole("button", { name: "sign in" })).toBeVisible();
     await expect(page.getByRole("button", { name: "send reset link" })).toBeVisible();
     await expect(page.getByRole("link", { name: /back to overview/ })).toBeVisible();
