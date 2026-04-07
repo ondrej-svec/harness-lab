@@ -3,28 +3,28 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth/server";
 import { approveDeviceAuthorizationForCurrentSession, denyDeviceAuthorization } from "@/lib/facilitator-cli-auth-repository";
 
-async function approveAction(formData: FormData) {
+export async function approveAction(formData: FormData) {
   "use server";
 
   const userCode = String(formData.get("userCode") ?? "").trim().toUpperCase();
   if (!userCode) {
-    redirect("/admin/device?error=missing_code");
+    return redirect("/admin/device?error=missing_code");
   }
 
   const result = await approveDeviceAuthorizationForCurrentSession(userCode);
-  redirect(result.ok ? `/admin/device?approved=${encodeURIComponent(userCode)}` : `/admin/device?error=${result.error}`);
+  return redirect(result.ok ? `/admin/device?approved=${encodeURIComponent(userCode)}` : `/admin/device?error=${result.error}`);
 }
 
-async function denyAction(formData: FormData) {
+export async function denyAction(formData: FormData) {
   "use server";
 
   const userCode = String(formData.get("userCode") ?? "").trim().toUpperCase();
   if (!userCode) {
-    redirect("/admin/device?error=missing_code");
+    return redirect("/admin/device?error=missing_code");
   }
 
   const result = await denyDeviceAuthorization(userCode);
-  redirect(result.ok ? `/admin/device?denied=${encodeURIComponent(userCode)}` : `/admin/device?error=${result.error}`);
+  return redirect(result.ok ? `/admin/device?denied=${encodeURIComponent(userCode)}` : `/admin/device?error=${result.error}`);
 }
 
 export default async function AdminDevicePage({

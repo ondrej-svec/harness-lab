@@ -168,4 +168,10 @@ describe("teams route", () => {
       items: [{ id: "t-runtime", name: "Tým runtime" }],
     });
   });
+
+  it("rejects reads without a participant session", async () => {
+    const response = await GET(new Request("http://localhost/api/teams"));
+
+    expect(response.status).toBe(401);
+  });
 });

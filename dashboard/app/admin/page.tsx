@@ -2,6 +2,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { auth } from "@/lib/auth/server";
+import {
+  buildAdminHref,
+  buildAdminOverviewState,
+  buildAdminSessionState,
+  buildAdminSummaryStats,
+  deriveAdminPageState,
+  readActionState,
+  resolveActiveInstanceId,
+  resolveAdminSection,
+  type AdminSection,
+} from "@/lib/admin-page-view-model";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
@@ -27,63 +38,6 @@ import {
 export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
-const adminSections = ["overview", "agenda", "teams", "signals", "access", "account"] as const;
-type AdminSection = (typeof adminSections)[number];
-
-export function resolveAdminSection(value: string | undefined): AdminSection {
-  return adminSections.find((section) => section === value) ?? "overview";
-}
-
-export function buildAdminHref({
-  lang,
-  section,
-  instanceId,
-  error,
-  password,
-}: {
-  lang: UiLanguage;
-  section?: AdminSection;
-  instanceId?: string;
-  error?: string | null;
-  password?: string | null;
-}) {
-  const params = new URLSearchParams();
-  if (section && section !== "overview") {
-    params.set("section", section);
-  }
-  if (instanceId) {
-    params.set("instance", instanceId);
-  }
-  if (error) {
-    params.set("error", error);
-  }
-  if (password) {
-    params.set("password", password);
-  }
-
-  const query = params.toString();
-  return withLang(query ? `/admin?${query}` : "/admin", lang);
-}
-
-export function readActionState(formData: FormData) {
-  return {
-    lang: resolveUiLanguage(String(formData.get("lang") ?? "")),
-    section: resolveAdminSection(String(formData.get("section") ?? "")),
-    instanceId: String(formData.get("instanceId") ?? "").trim(),
-  };
-}
-
-export function deriveAdminPageState(
-  state: Awaited<ReturnType<typeof getWorkshopState>>,
-  availableInstances: Awaited<ReturnType<ReturnType<typeof getWorkshopInstanceRepository>["listInstances"]>>,
-  activeInstanceId: string,
-) {
-  return {
-    currentAgendaItem: state.agenda.find((item) => item.status === "current") ?? state.agenda[0],
-    nextAgendaItem: state.agenda.find((item) => item.status === "upcoming") ?? null,
-    selectedInstance: availableInstances.find((instance) => instance.id === activeInstanceId) ?? null,
-  };
-}
 
 async function signOutAction(formData: FormData) {
   "use server";
@@ -328,8 +282,7 @@ export default async function AdminPage({
     instanceRepo.listInstances(),
     instanceRepo.getDefaultInstanceId(),
   ]);
-  const activeInstanceId =
-    availableInstances.find((instance) => instance.id === params?.instance)?.id ?? defaultInstanceId;
+  const activeInstanceId = resolveActiveInstanceId(availableInstances, params?.instance, defaultInstanceId);
 
   await requireFacilitatorPageAccess(activeInstanceId);
 
@@ -350,6 +303,22 @@ export default async function AdminPage({
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
+  const summaryStats = buildAdminSummaryStats({ copy, state, selectedInstance, currentAgendaItem });
+  const overviewState = buildAdminOverviewState({
+    copy,
+    lang,
+    state,
+    activeInstanceId,
+    currentAgendaItem,
+    nextAgendaItem,
+  });
+  const sessionState = buildAdminSessionState({
+    copy,
+    signedInEmail,
+    signedInName,
+    currentRole: currentFacilitator?.grant.role ?? null,
+    latestArchive,
+  });
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.58),transparent_38%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
@@ -462,28 +431,14 @@ export default async function AdminPage({
           </div>
 
           <div className="grid gap-px border-t border-[var(--border)] bg-[var(--border)] md:grid-cols-4">
-            <SummaryStat label={copy.activeInstance} value={selectedInstance?.workshopMeta.city ?? state.workshopId} hint={state.workshopId} />
-            <SummaryStat label={copy.currentPhase} value={currentAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel} hint={currentAgendaItem?.time} />
-            <SummaryStat
-              label={copy.rotation}
-              value={state.rotation.revealed ? copy.rotationUnlocked : copy.rotationHidden}
-              hint={state.rotation.scenario}
-            />
-            <SummaryStat label={copy.teams} value={`${state.teams.length}`} hint={selectedInstance?.workshopMeta.dateRange ?? ""} />
+            {summaryStats.map((stat) => (
+              <SummaryStat key={stat.label} label={stat.label} value={stat.value} hint={stat.hint} />
+            ))}
           </div>
 
           <div className="flex flex-col gap-2 border-t border-[var(--border)] px-6 py-4 text-xs leading-5 text-[var(--text-muted)] sm:px-7">
-            {signedInEmail ? (
-              <p>
-                {copy.signedInAs}: {signedInName ?? signedInEmail}
-                {currentFacilitator ? ` • ${currentFacilitator.grant.role}` : ""}
-              </p>
-            ) : null}
-            {latestArchive ? (
-              <p>
-                {copy.latestArchivePrefix} {latestArchive.createdAt} • {copy.retentionUntil} {latestArchive.retentionUntil ?? copy.retentionUnset}.
-              </p>
-            ) : null}
+            {sessionState.signedInLine ? <p>{sessionState.signedInLine}</p> : null}
+            {sessionState.archiveLine ? <p>{sessionState.archiveLine}</p> : null}
           </div>
         </header>
 
@@ -494,9 +449,9 @@ export default async function AdminPage({
             description={copy.overviewDescription}
           >
             <div className="grid gap-4 rounded-[22px] border border-[var(--border)] bg-[var(--surface-soft)] p-4 sm:grid-cols-3">
-              <KeyValueRow label={lang === "cs" ? "id instance" : "instance id"} value={state.workshopId} compact />
-              <KeyValueRow label={copy.currentPhase} value={state.workshopMeta.currentPhaseLabel} compact />
-              <KeyValueRow label={copy.rotation} value={state.rotation.scenario} compact />
+              {overviewState.compactRows.map((row) => (
+                <KeyValueRow key={row.label} label={row.label} value={row.value} compact />
+              ))}
             </div>
 
             <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1.3fr)_minmax(22rem,0.78fr)]">
@@ -505,24 +460,22 @@ export default async function AdminPage({
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.liveNow}</p>
-                      <h3 className="mt-2 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
-                        {currentAgendaItem?.time} • {currentAgendaItem?.title}
-                      </h3>
+                      <h3 className="mt-2 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">{overviewState.liveNowTitle}</h3>
                     </div>
-                    {nextAgendaItem ? (
+                    {overviewState.nextUpLabel ? (
                       <div className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-secondary)]">
-                        {copy.nextUp}: {nextAgendaItem.time} • {nextAgendaItem.title}
+                        {overviewState.nextUpLabel}
                       </div>
                     ) : null}
                   </div>
-                  <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--text-secondary)]">{currentAgendaItem?.description}</p>
+                  <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--text-secondary)]">{overviewState.liveNowDescription}</p>
                 </div>
 
                 <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5 sm:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
                     <Link
-                      href={buildAdminHref({ lang, section: "agenda", instanceId: activeInstanceId })}
+                      href={overviewState.agendaLink}
                       className="text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
                     >
                       {copy.navAgenda}
@@ -541,9 +494,9 @@ export default async function AdminPage({
                   <form action={setAgendaAction} className="space-y-3">
                     <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                     <select name="agendaId" defaultValue={currentAgendaItem?.id} className={inputClassName}>
-                      {state.agenda.map((item) => (
+                      {overviewState.phaseOptions.map((item) => (
                         <option key={item.id} value={item.id}>
-                          {item.time} • {item.title}
+                          {item.label}
                         </option>
                       ))}
                     </select>
@@ -565,8 +518,7 @@ export default async function AdminPage({
                       </button>
                     </div>
                     <p className="text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.participantStatePrefix}{" "}
-                      {state.rotation.revealed ? copy.participantStateUnlocked : copy.participantStateHidden}.
+                      {copy.participantStatePrefix} {overviewState.participantState}.
                     </p>
                   </form>
 

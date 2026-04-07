@@ -14,6 +14,8 @@ Fast checks around pure logic:
 Current examples:
 - [`workshop-data.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.test.ts)
 - [`admin-auth.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.test.ts)
+- [`public-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/public-page-view-model.ts)
+- [`admin-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-page-view-model.ts)
 
 ### 2. Tracer-bullet integration tests
 
@@ -42,6 +44,15 @@ These do not need to be broad. They should cover the highest-risk room-day paths
 Current entry point:
 - `cd dashboard && npm run test:e2e`
 
+### 4. Thin page and action tests
+
+Use direct tests for server actions and small App Router pages when they contain meaningful branch logic but do not justify a browser flow:
+- sign-in and password-reset redirects
+- facilitator device approval actions
+- small route edge cases and status codes
+
+This sits between pure helper tests and Playwright. The goal is to verify page-local decision logic without snapshotting whole trees.
+
 During exploratory review, also check:
 - browser console errors
 - unhandled page errors
@@ -67,10 +78,16 @@ Preferred workflow:
 
 This is not ceremony. It is how we keep agent-generated code aligned with intent.
 
+## Coverage Boundaries
+
+- Include `app/**/*.ts`, `app/**/*.tsx`, and `lib/**/*.ts` because those files hold real product behavior.
+- Exclude generated files, test-only mocks, and contracts-only files where line coverage is not meaningful.
+- In the current dashboard setup, [`runtime-contracts.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-contracts.ts) is excluded because it is a type contract module with no executable runtime behavior.
+
 ## Current Gaps
 
-- no tracer-bullet tests for route handlers yet
-- browser-level coverage exists for one participant flow and one authenticated admin flow, but it is still intentionally thin
-- no automated verification for store mutation flows beyond pure template shaping
+- the two large page shells in [`app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx) and [`app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) are still under-covered because most remaining lines are render composition
+- browser-level coverage exists for the key participant and facilitator flows, but it remains intentionally thin
+- several repository adapters still need either focused tests or an explicit decision about whether they are part of the trusted coverage boundary
 
 Those are the next coverage priorities.

@@ -28,7 +28,7 @@ vi.mock("@/lib/workshop-store", () => ({
   getWorkshopState,
 }));
 
-const pageModulePromise = import("./page");
+const publicPageViewModelPromise = import("@/lib/public-page-view-model");
 
 describe("public page helpers", () => {
   beforeEach(() => {
@@ -36,7 +36,7 @@ describe("public page helpers", () => {
   });
 
   it("derives the current and next agenda items with only the first three public notes", async () => {
-    const { deriveHomePageState } = await pageModulePromise;
+    const { deriveHomePageState } = await publicPageViewModelPromise;
     const state = structuredClone(seedWorkshopState);
     state.agenda = [
       { ...state.agenda[0], status: "done" },
@@ -59,7 +59,7 @@ describe("public page helpers", () => {
   });
 
   it("falls back to the first agenda item when none is marked current", async () => {
-    const { deriveHomePageState } = await pageModulePromise;
+    const { deriveHomePageState } = await publicPageViewModelPromise;
     const state = structuredClone(seedWorkshopState);
     state.agenda = state.agenda.map((item, index) => ({
       ...item,
@@ -70,7 +70,7 @@ describe("public page helpers", () => {
   });
 
   it("maps known event access errors and falls back for unknown ones", async () => {
-    const { formatEventAccessError } = await pageModulePromise;
+    const { formatEventAccessError } = await publicPageViewModelPromise;
 
     expect(formatEventAccessError("invalid_code", publicCopy.en)).toBe(publicCopy.en.invalidCode);
     expect(formatEventAccessError("expired_code", publicCopy.en)).toBe(publicCopy.en.expiredCode);
@@ -78,12 +78,64 @@ describe("public page helpers", () => {
   });
 
   it("formats participant session expiry in the requested locale", async () => {
-    const { formatDateTime } = await pageModulePromise;
+    const { formatDateTime } = await publicPageViewModelPromise;
     const value = "2026-04-06T10:30:00.000Z";
 
     expect(formatDateTime(value, "en")).toContain("2026");
     expect(formatDateTime(value, "cs")).toContain("2026");
     expect(formatDateTime(value, "en")).not.toEqual(formatDateTime(value, "cs"));
+  });
+
+  it("builds participant and public header navigation from state", async () => {
+    const {
+      buildParticipantPanelState,
+      buildParticipantTeamCards,
+      buildPublicAccessPanelState,
+      buildPublicFooterLinks,
+      buildSharedRoomNotes,
+      buildSiteHeaderNavLinks,
+      getBlueprintRepoUrl,
+      getPublicRepoUrl,
+    } = await publicPageViewModelPromise;
+
+    expect(buildSiteHeaderNavLinks({ isParticipant: true, lang: "en", copy: publicCopy.en }).map((item) => item.label)).toEqual([
+      publicCopy.en.navRoom,
+      publicCopy.en.navTeams,
+      publicCopy.en.navNotes,
+      publicCopy.en.navFacilitatorLogin,
+    ]);
+    expect(buildPublicFooterLinks("cs", publicCopy.cs).map((item) => item.label)).toContain(publicCopy.cs.footerBlueprint);
+    expect(getBlueprintRepoUrl()).toContain("workshop-blueprint");
+    expect(getPublicRepoUrl()).toContain("harness-lab");
+    expect(
+      buildPublicAccessPanelState({
+        configuredEventCode: null,
+        eventAccessError: undefined,
+        copy: publicCopy.en,
+      }),
+    ).toEqual({
+      eventCodeDefaultValue: "",
+      showSampleHint: false,
+      errorMessage: null,
+    });
+
+    expect(
+      buildParticipantPanelState({
+        copy: publicCopy.en,
+        lang: "en",
+        currentAgendaItem: seedWorkshopState.agenda[0],
+        nextAgendaItem: seedWorkshopState.agenda[1],
+        participantSession: {
+          token: "session-token",
+          instanceId: "sample-studio-a",
+          expiresAt: "2026-04-06T16:30:00.000Z",
+          lastValidatedAt: "2026-04-06T10:30:00.000Z",
+        },
+        rotationRevealed: false,
+      }).body,
+    ).toBe(publicCopy.en.participantBodyHidden);
+    expect(buildParticipantTeamCards(null)).toEqual([]);
+    expect(buildSharedRoomNotes(seedWorkshopState.ticker)).toEqual(seedWorkshopState.ticker.map((item) => item.label));
   });
 });
 
@@ -101,7 +153,7 @@ describe("HomePage", () => {
   });
 
   it("returns the public overview when no participant session exists", async () => {
-    const { default: HomePage } = await pageModulePromise;
+    const { default: HomePage } = await import("./page");
     getParticipantSessionFromCookieStore.mockResolvedValue(null);
 
     const view = await HomePage({
@@ -114,7 +166,7 @@ describe("HomePage", () => {
   });
 
   it("returns the participant room view when a participant session exists", async () => {
-    const { default: HomePage } = await pageModulePromise;
+    const { default: HomePage } = await import("./page");
     getParticipantSessionFromCookieStore.mockResolvedValue({
       token: "session-token",
       expiresAt: "2026-04-06T16:30:00.000Z",

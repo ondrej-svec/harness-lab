@@ -117,6 +117,28 @@ describe("admin teams route", () => {
     ]);
   });
 
+  it("rejects incomplete team registrations", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/admin/teams", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          id: "t9",
+          name: "Tým 9",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "id, name, repoUrl and projectBriefId are required",
+    });
+  });
+
   it("updates team checkpoints through the dedicated team repository", async () => {
     const response = await PATCH(
       new Request("http://localhost/api/admin/teams", {
@@ -136,5 +158,26 @@ describe("admin teams route", () => {
     await expect(teamRepository.listTeams("sample-studio-a")).resolves.toMatchObject([
       { id: "t1", checkpoint: "Checkpoint po facilitaci" },
     ]);
+  });
+
+  it("rejects incomplete checkpoint updates", async () => {
+    const response = await PATCH(
+      new Request("http://localhost/api/admin/teams", {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          teamId: "t1",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "teamId and checkpoint are required",
+    });
   });
 });

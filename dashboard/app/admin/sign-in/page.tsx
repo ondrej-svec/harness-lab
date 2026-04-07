@@ -7,7 +7,7 @@ import { ThemeSwitcher } from "@/app/components/theme-switcher";
 
 export const dynamic = "force-dynamic";
 
-async function getRequestOrigin() {
+export async function getRequestOrigin() {
   const headerStore = await headers();
   const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
   const proto = headerStore.get("x-forwarded-proto") ?? (host?.includes("localhost") ? "http" : "https");
@@ -19,7 +19,7 @@ async function getRequestOrigin() {
   return `${proto}://${host}`;
 }
 
-async function signInAction(formData: FormData) {
+export async function signInAction(formData: FormData) {
   "use server";
 
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
@@ -27,33 +27,33 @@ async function signInAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
 
   if (!auth) {
-    redirect(withLang("/admin/sign-in?error=unavailable", lang));
+    return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
   const { error } = await auth.signIn.email({ email, password });
 
   if (error) {
     console.error("[facilitator-sign-in] error:", JSON.stringify(error));
-    redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "invalid")}`, lang));
+    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "invalid")}`, lang));
   }
 
   // Verify session was created (matches official Neon Auth pattern)
   const { data: session } = await auth.getSession();
   if (!session?.user) {
-    redirect(withLang("/admin/sign-in?error=session_not_created", lang));
+    return redirect(withLang("/admin/sign-in?error=session_not_created", lang));
   }
 
-  redirect(withLang("/admin", lang));
+  return redirect(withLang("/admin", lang));
 }
 
-async function requestPasswordResetAction(formData: FormData) {
+export async function requestPasswordResetAction(formData: FormData) {
   "use server";
 
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const email = String(formData.get("email") ?? "").trim();
 
   if (!auth) {
-    redirect(withLang("/admin/sign-in?error=unavailable", lang));
+    return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
   const origin = await getRequestOrigin();
@@ -65,10 +65,10 @@ async function requestPasswordResetAction(formData: FormData) {
 
   if (error) {
     console.error("[facilitator-password-reset] error:", JSON.stringify(error));
-    redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "reset_failed")}`, lang));
+    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "reset_failed")}`, lang));
   }
 
-  redirect(withLang("/admin/sign-in?reset=requested", lang));
+  return redirect(withLang("/admin/sign-in?reset=requested", lang));
 }
 
 export default async function SignInPage({
@@ -86,7 +86,7 @@ export default async function SignInPage({
   if (auth) {
     const { data: session } = await auth.getSession();
     if (session?.user) {
-      redirect(withLang("/admin", lang));
+      return redirect(withLang("/admin", lang));
     }
   }
 

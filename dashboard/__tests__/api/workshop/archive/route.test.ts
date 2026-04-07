@@ -287,4 +287,37 @@ describe("workshop archive route", () => {
       archive: { id: "archive-existing", notes: "Existing archive" },
     });
   });
+
+  it("returns a null archive summary when nothing has been archived yet", async () => {
+    const response = await GET(
+      new Request("http://localhost/api/workshop/archive", {
+        headers: {
+          authorization: "Basic dummy",
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({ archive: null });
+  });
+
+  it("accepts invalid json bodies and archives with null notes", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/workshop/archive", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+          authorization: "Basic dummy",
+        },
+        body: "{",
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      archive: { reason: "manual", notes: null },
+    });
+  });
 });

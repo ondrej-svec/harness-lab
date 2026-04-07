@@ -3,26 +3,29 @@
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
-const options = [
+export const themeOptions = [
   { value: "system", label: "auto" },
   { value: "light", label: "☀" },
   { value: "dark", label: "☾" },
 ] as const;
 
-export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
+export function renderThemeSwitcherContent({
+  mounted,
+  theme,
+  setTheme,
+}: {
+  mounted: boolean;
+  theme?: string;
+  setTheme: (value: (typeof themeOptions)[number]["value"]) => void;
+}) {
   if (!mounted) {
-    // Avoid hydration mismatch — render placeholder with same dimensions
+    // Avoid hydration mismatch and keep the same visual footprint on the server.
     return <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]" aria-hidden>auto</div>;
   }
 
   return (
     <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
-      {options.map((opt) => (
+      {themeOptions.map((opt) => (
         <button
           key={opt.value}
           onClick={() => setTheme(opt.value)}
@@ -36,4 +39,13 @@ export function ThemeSwitcher() {
       ))}
     </div>
   );
+}
+
+export function ThemeSwitcher() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  return renderThemeSwitcherContent({ mounted, theme, setTheme });
 }

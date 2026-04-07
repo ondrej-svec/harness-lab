@@ -9,26 +9,21 @@ import {
   redeemEventCode,
   revokeParticipantSession,
 } from "@/lib/event-access";
+import {
+  buildParticipantPanelState,
+  buildParticipantTeamCards,
+  buildPublicAccessPanelState,
+  buildPublicFooterLinks,
+  buildSharedRoomNotes,
+  buildSiteHeaderNavLinks,
+  deriveHomePageState,
+  getBlueprintRepoUrl,
+} from "@/lib/public-page-view-model";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "./components/theme-switcher";
 
 export const dynamic = "force-dynamic";
-const publicRepoUrl = "https://github.com/ondrej-svec/harness-lab";
-const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
-
-export function deriveHomePageState(state: Awaited<ReturnType<typeof getWorkshopState>>) {
-  const { agenda, rotation, ticker } = state;
-  const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
-  const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
-
-  return {
-    currentAgendaItem,
-    nextAgendaItem,
-    participantNotes: ticker.slice(0, 3),
-    rotationRevealed: rotation.revealed,
-  };
-}
 
 async function redeemEventCodeAction(formData: FormData) {
   "use server";
@@ -115,6 +110,7 @@ function SiteHeader({
   lang: UiLanguage;
   copy: (typeof publicCopy)[UiLanguage];
 }) {
+  const navLinks = buildSiteHeaderNavLinks({ isParticipant, lang, copy });
   return (
     <header className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur sm:px-6">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -124,53 +120,17 @@ function SiteHeader({
 
         <div className="flex flex-col gap-3 lg:items-end">
         <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm lowercase text-[var(--text-secondary)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {isParticipant ? (
-            <>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#room">
-                {copy.navRoom}
-              </a>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#teams">
-                {copy.navTeams}
-              </a>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#notes">
-                {copy.navNotes}
-              </a>
-            </>
-          ) : (
-            <>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#overview">
-                {copy.navOverview}
-              </a>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#principles">
-                {copy.navPrinciples}
-              </a>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#details">
-                {copy.navDetails}
-              </a>
-              <a
-                className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-                href={blueprintRepoUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {copy.navBlueprint}
-              </a>
-              <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href="#access">
-                {copy.navParticipantAccess}
-              </a>
-              <a
-                className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-                href={publicRepoUrl}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {copy.navRepo}
-              </a>
-            </>
-          )}
-          <a className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]" href={withLang("/admin", lang)}>
-            {copy.navFacilitatorLogin}
-          </a>
+          {navLinks.map((link) => (
+            <a
+              key={`${link.href}-${link.label}`}
+              className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
+              href={link.href}
+              rel={link.external ? "noreferrer" : undefined}
+              target={link.external ? "_blank" : undefined}
+            >
+              {link.label}
+            </a>
+          ))}
         </nav>
         <div className="flex items-center gap-3">
           <LanguageSwitcher lang={lang} />
@@ -194,6 +154,9 @@ function PublicView({
   copy: (typeof publicCopy)[UiLanguage];
   lang: UiLanguage;
 }) {
+  const accessPanel = buildPublicAccessPanelState({ configuredEventCode, eventAccessError, copy });
+  const footerLinks = buildPublicFooterLinks(lang, copy);
+  const blueprintRepoUrl = getBlueprintRepoUrl();
   return (
     <>
       <section
@@ -244,7 +207,7 @@ function PublicView({
             </label>
             <input
               className="w-full rounded-[16px] border border-[var(--accent-border)] bg-transparent px-4 py-3 text-base text-[var(--accent-text)] outline-none placeholder:text-[var(--accent-muted)]"
-              defaultValue={configuredEventCode?.isSample ? configuredEventCode.sampleCode : ""}
+              defaultValue={accessPanel.eventCodeDefaultValue}
               id="event-code"
               name="eventCode"
               placeholder={copy.eventCodePlaceholder}
@@ -267,13 +230,13 @@ function PublicView({
             </a>
           </div>
 
-          {configuredEventCode?.isSample ? (
+          {accessPanel.showSampleHint ? (
             <p className="mt-6 text-xs leading-6 text-[var(--accent-muted)]">{copy.sampleHint}</p>
           ) : null}
 
-          {eventAccessError ? (
+          {accessPanel.errorMessage ? (
             <p className="mt-6 border border-[var(--accent-border)] bg-[var(--accent-text)]/8 px-4 py-3 text-sm leading-6 text-[var(--accent-text)]">
-              {formatEventAccessError(eventAccessError, copy)}
+              {accessPanel.errorMessage}
             </p>
           ) : null}
         </aside>
@@ -328,20 +291,17 @@ function PublicView({
           <a className="transition hover:text-[var(--text-primary)]" href="#access">
             {copy.footerParticipantAccess}
           </a>
-          <a
-            className="transition hover:text-[var(--text-primary)]"
-            href={blueprintRepoUrl}
-            rel="noreferrer"
-            target="_blank"
-          >
-            {copy.footerBlueprint}
-          </a>
-          <a className="transition hover:text-[var(--text-primary)]" href={publicRepoUrl} rel="noreferrer" target="_blank">
-            {copy.navRepo}
-          </a>
-          <a className="transition hover:text-[var(--text-primary)]" href={withLang("/admin", lang)}>
-            {copy.facilitatorLogin}
-          </a>
+          {footerLinks.map((link) => (
+            <a
+              key={`${link.href}-${link.label}`}
+              className="transition hover:text-[var(--text-primary)]"
+              href={link.href}
+              rel={link.external ? "noreferrer" : undefined}
+              target={link.external ? "_blank" : undefined}
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
       </footer>
     </>
@@ -367,38 +327,42 @@ function ParticipantView({
   publicNotes: Awaited<ReturnType<typeof getWorkshopState>>["ticker"];
   rotationRevealed: boolean;
 }) {
+  const participantPanel = buildParticipantPanelState({
+    copy,
+    lang,
+    currentAgendaItem,
+    nextAgendaItem,
+    participantSession,
+    rotationRevealed,
+  });
+  const teamCards = buildParticipantTeamCards(participantTeams);
+  const sharedNotes = buildSharedRoomNotes(publicNotes);
   return (
     <>
       <section className="grid gap-8 border-b border-[var(--border)] py-10 lg:grid-cols-[1.12fr_0.88fr]" id="room">
         <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7">
           <SectionLabel>{copy.participantEyebrow}</SectionLabel>
           <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-            {currentAgendaItem?.title ?? copy.participantTitleFallback}
+            {participantPanel.title}
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">
-            {rotationRevealed
-              ? copy.participantBodyRevealed
-              : copy.participantBodyHidden}
+            {participantPanel.body}
           </p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            <MetricCard label={copy.metricCurrentPhase} value={currentAgendaItem?.title ?? copy.participantTitleFallback} />
-            <MetricCard label={copy.metricNext} value={nextAgendaItem?.title ?? copy.metricReflection} />
-            <MetricCard label={copy.metricSessionUntil} value={formatDateTime(participantSession.expiresAt, lang)} />
+            {participantPanel.metrics.map((metric) => (
+              <MetricCard key={metric.label} label={metric.label} value={metric.value} />
+            ))}
           </div>
 
           <div className="mt-6 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.metricCurrentPhase}</p>
-            <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
-              {currentAgendaItem?.time} • {currentAgendaItem?.title ?? copy.participantTitleFallback}
-            </p>
-            {currentAgendaItem?.description ? (
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{currentAgendaItem.description}</p>
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
+            <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
+            {participantPanel.currentPhaseDescription ? (
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{participantPanel.currentPhaseDescription}</p>
             ) : null}
-            {nextAgendaItem ? (
-              <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">
-                {copy.metricNext}: {nextAgendaItem.time} • {nextAgendaItem.title}
-              </p>
+            {participantPanel.nextPhaseLabel ? (
+              <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
             ) : null}
           </div>
         </div>
@@ -407,9 +371,9 @@ function ParticipantView({
           <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
           <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
           <div className="mt-6 space-y-3">
-            {publicNotes.map((item) => (
-              <div key={item.id} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {item.label}
+            {sharedNotes.map((note) => (
+              <div key={note} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                {note}
               </div>
             ))}
           </div>
@@ -428,9 +392,9 @@ function ParticipantView({
       <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div id="teams">
           <SectionLabel>{copy.roomData}</SectionLabel>
-          {participantTeams ? (
+          {teamCards.length > 0 ? (
             <div className="mt-4 grid gap-4">
-              {participantTeams.items.map((team) => (
+              {teamCards.map((team) => (
                 <article key={team.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur">
                   <div className="flex items-baseline justify-between gap-4">
                     <div>
@@ -456,9 +420,9 @@ function ParticipantView({
         <div id="notes">
           <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
           <div className="mt-4 grid gap-4">
-            {publicNotes.map((item) => (
-              <div key={item.id} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur">
-                {item.label}
+            {sharedNotes.map((note) => (
+              <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur">
+                {note}
               </div>
             ))}
           </div>
@@ -515,24 +479,6 @@ function MetricCard({
       <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
-}
-
-export function formatDateTime(value: string, lang: UiLanguage) {
-  return new Intl.DateTimeFormat(lang === "en" ? "en-US" : "cs-CZ", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(value));
-}
-
-export function formatEventAccessError(value: string, copy: (typeof publicCopy)[UiLanguage]) {
-  switch (value) {
-    case "invalid_code":
-      return copy.invalidCode;
-    case "expired_code":
-      return copy.expiredCode;
-    default:
-      return copy.unknownCodeError;
-  }
 }
 
 function LanguageSwitcher({ lang }: { lang: UiLanguage }) {

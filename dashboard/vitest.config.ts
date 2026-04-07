@@ -14,12 +14,13 @@ export default defineConfig({
     exclude: ["e2e/**", "node_modules/**"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "html"],
+      reporter: ["text", "html", "json-summary"],
       reportsDirectory: "./coverage",
       include: ["app/**/*.ts", "app/**/*.tsx", "lib/**/*.ts"],
       exclude: [
         "e2e/**",
         "lib/auth/__mocks__/**",
+        "lib/runtime-contracts.ts",
         "next-env.d.ts",
       ],
     },

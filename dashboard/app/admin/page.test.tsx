@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { adminCopy } from "@/lib/ui-language";
 import { sampleWorkshopInstances, seedWorkshopState } from "@/lib/workshop-data";
 
 const requireFacilitatorActionAccess = vi.fn();
@@ -76,6 +77,7 @@ vi.mock("@/lib/workshop-store", () => ({
   upsertTeam: vi.fn(),
 }));
 
+const adminPageViewModelPromise = import("@/lib/admin-page-view-model");
 const adminPageModulePromise = import("./page");
 
 describe("admin page helpers", () => {
@@ -84,7 +86,7 @@ describe("admin page helpers", () => {
   });
 
   it("accepts only known admin sections", async () => {
-    const { resolveAdminSection } = await adminPageModulePromise;
+    const { resolveAdminSection } = await adminPageViewModelPromise;
 
     expect(resolveAdminSection("teams")).toBe("teams");
     expect(resolveAdminSection("unknown")).toBe("overview");
@@ -92,7 +94,7 @@ describe("admin page helpers", () => {
   });
 
   it("builds instance-scoped admin links and preserves errors", async () => {
-    const { buildAdminHref } = await adminPageModulePromise;
+    const { buildAdminHref } = await adminPageViewModelPromise;
 
     expect(buildAdminHref({ lang: "cs" })).toBe("/admin");
     expect(
@@ -106,7 +108,7 @@ describe("admin page helpers", () => {
   });
 
   it("reads trimmed action state from form data", async () => {
-    const { readActionState } = await adminPageModulePromise;
+    const { readActionState } = await adminPageViewModelPromise;
     const formData = new FormData();
     formData.set("lang", "en");
     formData.set("section", "access");
@@ -120,13 +122,67 @@ describe("admin page helpers", () => {
   });
 
   it("derives the overview state for the selected instance", async () => {
-    const { deriveAdminPageState } = await adminPageModulePromise;
+    const { deriveAdminPageState, buildAdminSummaryStats, buildAdminOverviewState, buildAdminSessionState, resolveActiveInstanceId } =
+      await adminPageViewModelPromise;
     const state = structuredClone(seedWorkshopState);
 
     expect(deriveAdminPageState(state, sampleWorkshopInstances, "sample-studio-b")).toMatchObject({
       currentAgendaItem: state.agenda.find((item) => item.status === "current"),
       nextAgendaItem: state.agenda.find((item) => item.status === "upcoming"),
       selectedInstance: sampleWorkshopInstances[1],
+    });
+    expect(resolveActiveInstanceId(sampleWorkshopInstances, "missing", "sample-studio-a")).toBe("sample-studio-a");
+    expect(
+      buildAdminSummaryStats({
+        copy: adminCopy.cs,
+        state,
+        selectedInstance: sampleWorkshopInstances[0],
+        currentAgendaItem: state.agenda[0],
+      }),
+    ).toHaveLength(4);
+    expect(
+      buildAdminOverviewState({
+        copy: adminCopy.en,
+        lang: "en",
+        state,
+        activeInstanceId: "sample-studio-a",
+        currentAgendaItem: state.agenda[0],
+        nextAgendaItem: state.agenda[1],
+      }).nextUpLabel,
+    ).toContain(state.agenda[1].title);
+    expect(
+      buildAdminOverviewState({
+        copy: adminCopy.en,
+        lang: "cs",
+        state,
+        activeInstanceId: "sample-studio-a",
+        currentAgendaItem: undefined,
+        nextAgendaItem: null,
+      }),
+    ).toMatchObject({
+      nextUpLabel: null,
+      participantState: adminCopy.en.participantStateHidden,
+    });
+    expect(
+      buildAdminSessionState({
+        copy: adminCopy.en,
+        signedInEmail: "facilitator@example.com",
+        signedInName: "Facilitator",
+        currentRole: "owner",
+        latestArchive: { createdAt: "2026-04-06T12:00:00.000Z", retentionUntil: null },
+      }).signedInLine,
+    ).toContain("Facilitator");
+    expect(
+      buildAdminSessionState({
+        copy: adminCopy.cs,
+        signedInEmail: null,
+        signedInName: null,
+        currentRole: null,
+        latestArchive: null,
+      }),
+    ).toEqual({
+      signedInLine: null,
+      archiveLine: null,
     });
   });
 });

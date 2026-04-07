@@ -212,4 +212,23 @@ describe("workshop route", () => {
       workshopMeta: { currentPhaseLabel: "Úvod a naladění" },
     });
   });
+
+  it("rejects reset requests without a template id", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/workshop", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({}),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "templateId is required",
+    });
+  });
 });

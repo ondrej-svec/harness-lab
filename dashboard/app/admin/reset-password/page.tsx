@@ -5,7 +5,7 @@ import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
 
-async function resetPasswordAction(formData: FormData) {
+export async function resetPasswordAction(formData: FormData) {
   "use server";
 
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
@@ -14,15 +14,15 @@ async function resetPasswordAction(formData: FormData) {
   const confirmPassword = String(formData.get("confirmPassword") ?? "");
 
   if (!auth) {
-    redirect(withLang("/admin/sign-in?error=unavailable", lang));
+    return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
   if (!token) {
-    redirect(withLang("/admin/reset-password?error=missing_token", lang));
+    return redirect(withLang("/admin/reset-password?error=missing_token", lang));
   }
 
   if (newPassword !== confirmPassword) {
-    redirect(withLang("/admin/reset-password?error=password_mismatch", lang));
+    return redirect(withLang("/admin/reset-password?error=password_mismatch", lang));
   }
 
   const { error } = await auth.resetPassword({
@@ -31,10 +31,10 @@ async function resetPasswordAction(formData: FormData) {
   });
 
   if (error) {
-    redirect(withLang(`/admin/reset-password?error=${encodeURIComponent(error.message || "reset_failed")}`, lang));
+    return redirect(withLang(`/admin/reset-password?error=${encodeURIComponent(error.message || "reset_failed")}`, lang));
   }
 
-  redirect(withLang("/admin/sign-in?reset=done", lang));
+  return redirect(withLang("/admin/sign-in?reset=done", lang));
 }
 
 export default async function ResetPasswordPage({
