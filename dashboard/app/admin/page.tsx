@@ -102,6 +102,19 @@ function resolveStatusTone(status: string): "neutral" | "live" | "archived" {
   return "neutral";
 }
 
+function resolveWorkspaceNextStep(copy: (typeof adminCopy)["cs" | "en"], status: string) {
+  if (status === "running") {
+    return copy.workspaceNextStepRunning;
+  }
+  if (status === "archived") {
+    return copy.workspaceNextStepArchived;
+  }
+  if (status === "prepared") {
+    return copy.workspaceNextStepPrepared;
+  }
+  return copy.workspaceNextStepCreated;
+}
+
 export default async function AdminWorkspacePage({
   searchParams,
 }: {
@@ -254,6 +267,7 @@ export default async function AdminWorkspacePage({
                     const state = workshopStateMap.get(instance.id);
                     const locationLines = getWorkshopLocationLines(instance);
                     const controlRoomHref = buildAdminInstanceHref({ lang, instanceId: instance.id });
+                    const participantSignal = state?.rotation.revealed ? copy.workspaceSignalRevealed : copy.workspaceSignalHidden;
                     return (
                       <article
                         key={instance.id}
@@ -278,12 +292,16 @@ export default async function AdminWorkspacePage({
                         </div>
 
                         <div className="mt-5 rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] p-4 dark:bg-[rgba(28,25,23,0.62)]">
+                          <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.5)] px-4 py-3 dark:bg-[rgba(28,25,23,0.5)]">
+                            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.workspaceNextStepLabel}</p>
+                            <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{resolveWorkspaceNextStep(copy, instance.status)}</p>
+                          </div>
                           <div className="grid gap-3 sm:grid-cols-2">
                             <WorkspaceMetricTile
                               label={copy.workspaceOwnerLabel}
                               value={instance.workshopMeta.facilitatorLabel ?? "n/a"}
                             />
-                            <WorkspaceMetricTile label={copy.workspaceWhereLabel} value={locationLines.join(" / ") || instance.workshopMeta.city} />
+                            <WorkspaceMetricTile label={copy.workspaceSignalLabel} value={participantSignal} />
                           </div>
                         </div>
 
@@ -316,6 +334,14 @@ export default async function AdminWorkspacePage({
                   <div className="rounded-[24px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-soft)] p-6 lg:col-span-2">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.workspaceEmptyTitle}</h3>
                     <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceEmptyBody}</p>
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
+                        {copy.workspaceResetFilters}
+                      </Link>
+                      <a className={adminPrimaryButtonClassName} href="#create-instance">
+                        {copy.createInstanceTitle}
+                      </a>
+                    </div>
                   </div>
                 )}
               </div>
@@ -324,9 +350,19 @@ export default async function AdminWorkspacePage({
 
           <div className="space-y-6 xl:sticky xl:top-6 xl:self-start">
             <AdminPanel eyebrow={copy.createInstanceTitle} title={copy.createInstanceTitle} description={copy.workspaceCreateDescription}>
+              <div id="create-instance" />
               <div className="rounded-[26px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-5 text-[var(--accent-text)] shadow-[0_18px_36px_rgba(12,10,9,0.16)]">
                 <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.createInstanceTitle}</p>
                 <p className="mt-3 text-sm leading-6 text-[var(--accent-secondary)]">{copy.workspaceCreateDescription}</p>
+              </div>
+
+              <div className="rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.58)] p-4 dark:bg-[rgba(28,25,23,0.58)]">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.workspaceCreateStepsTitle}</p>
+                <div className="mt-4 space-y-3">
+                  <CreateStep index="01" body={copy.workspaceCreateStepOne} />
+                  <CreateStep index="02" body={copy.workspaceCreateStepTwo} />
+                  <CreateStep index="03" body={copy.workspaceCreateStepThree} />
+                </div>
               </div>
 
               <form action={createInstanceAction} className="mt-5 space-y-4">
@@ -427,6 +463,17 @@ function WorkspaceMetricTile({
       <p className={`mt-2 ${prominent ? "text-xl tracking-[-0.04em]" : "text-sm"} font-semibold text-[var(--text-primary)]`}>
         {value}
       </p>
+    </div>
+  );
+}
+
+function CreateStep({ index, body }: { index: string; body: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[11px] font-semibold tracking-[0.12em] text-[var(--text-muted)] dark:bg-[rgba(28,25,23,0.82)]">
+        {index}
+      </span>
+      <p className="pt-1 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
     </div>
   );
 }

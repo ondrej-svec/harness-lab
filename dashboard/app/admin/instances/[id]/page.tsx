@@ -605,11 +605,16 @@ export default async function AdminPage({
                       </h3>
                       <p className="mt-4 max-w-2xl text-[15px] leading-6 text-[var(--accent-secondary)]">{overviewState.liveNowDescription}</p>
                     </div>
-                    {overviewState.nextUpLabel ? (
+                    <div className="space-y-3">
+                      {overviewState.nextUpLabel ? (
+                        <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-3 text-sm leading-6 text-[var(--accent-secondary)]">
+                          {overviewState.nextUpLabel}
+                        </div>
+                      ) : null}
                       <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-3 text-sm leading-6 text-[var(--accent-secondary)]">
-                        {overviewState.nextUpLabel}
+                        {copy.workspaceSignalLabel}: {overviewState.participantState}
                       </div>
-                    ) : null}
+                    </div>
                   </div>
                 </div>
 
