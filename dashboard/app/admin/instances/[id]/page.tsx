@@ -404,7 +404,7 @@ export default async function AdminPage({
       <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
         <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
           <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
-          <div className="relative grid gap-6 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.42fr)_minmax(22rem,0.88fr)]">
+          <div className="relative grid gap-5 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.28fr)_minmax(21rem,0.82fr)]">
             <div className="max-w-3xl">
                 <Link
                   href={buildAdminWorkspaceHref({ lang })}
@@ -449,21 +449,29 @@ export default async function AdminPage({
                   </form>
                 </div>
 
-                <section className={`${adminHeroPanelClassName} w-full p-5`}>
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.overviewTitle}</p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <section className={`${adminHeroPanelClassName} w-full p-4`}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">
+                      {copy.liveNow}
+                    </span>
+                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
+                      {state.workshopMeta.currentPhaseLabel}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.overviewTitle}</p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     <ControlRoomHeroMetric label={copy.workspaceWhenLabel} value={selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange} />
                     <ControlRoomHeroMetric
                       label={copy.workspaceWhereLabel}
                       value={(selectedInstance ? getWorkshopLocationLines(selectedInstance).join(" / ") : "") || state.workshopMeta.city}
                     />
                     <ControlRoomHeroMetric label={copy.workspaceOwnerLabel} value={selectedInstance?.workshopMeta.facilitatorLabel ?? "n/a"} />
-                    <ControlRoomHeroMetric label={copy.workspacePhaseLabel} value={state.workshopMeta.currentPhaseLabel} />
+                    <ControlRoomHeroMetric label={copy.workspaceSignalLabel} value={overviewState.participantState} />
                   </div>
                 </section>
               </div>
 
-            <nav className="flex flex-wrap gap-x-3 gap-y-3 border-t border-[var(--border)] pt-4 xl:hidden">
+            <nav className="grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-4 sm:flex sm:flex-wrap sm:gap-x-3 sm:gap-y-3 xl:hidden">
               <AdminSectionLink
                 lang={lang}
                 section="live"
@@ -509,7 +517,7 @@ export default async function AdminPage({
             </nav>
           </div>
 
-          <div className="grid gap-px border-t border-[var(--border)] bg-[var(--border)] md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px border-t border-[var(--border)] bg-[var(--border)] md:grid-cols-4">
             {summaryStats.map((stat) => (
               <SummaryStat key={stat.label} label={stat.label} value={stat.value} hint={stat.hint} />
             ))}
@@ -588,7 +596,7 @@ export default async function AdminPage({
           >
             <div className="grid gap-5 xl:grid-cols-[minmax(0,1.34fr)_minmax(21rem,0.8fr)]">
               <section className="space-y-4">
-                <div className={`${adminHeroPanelClassName} p-6 sm:p-7`}>
+                <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
                       {copy.liveNow}
@@ -597,20 +605,20 @@ export default async function AdminPage({
                       {state.workshopMeta.currentPhaseLabel}
                     </span>
                   </div>
-                  <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
+                  <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
                     <div className="max-w-3xl">
-                      <h3 className="text-3xl font-semibold tracking-[-0.05em] text-[var(--hero-text)]">
+                      <h3 className="text-[1.8rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-3xl">
                         {overviewState.liveNowTitle}
                       </h3>
-                      <p className="mt-4 max-w-2xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
+                      <p className="mt-3 max-w-2xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
                     </div>
-                    <div className="space-y-3">
+                    <div className="grid w-full gap-3 sm:w-auto">
                       {overviewState.nextUpLabel ? (
-                        <div className="rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
+                        <div className="rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
                           {overviewState.nextUpLabel}
                         </div>
                       ) : null}
-                      <div className="rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
+                      <div className="rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
                         {copy.workspaceSignalLabel}: {overviewState.participantState}
                       </div>
                     </div>
@@ -1256,7 +1264,7 @@ function AdminSectionLink({
   return (
     <Link
       href={href}
-      className={`rounded-full border px-4 py-2 text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
+      className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-center text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
         dark
           ? active
             ? "border-[var(--hero-border)] bg-[var(--hero-tile-hover)] text-[var(--hero-text)] shadow-[var(--hero-shadow-soft)]"
