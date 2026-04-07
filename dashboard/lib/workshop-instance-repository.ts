@@ -2,7 +2,7 @@ import type { WorkshopInstanceRepository } from "./runtime-contracts";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { sampleWorkshopInstances } from "./workshop-data";
 
-class SampleWorkshopInstanceRepository implements WorkshopInstanceRepository {
+export class SampleWorkshopInstanceRepository implements WorkshopInstanceRepository {
   async getDefaultInstanceId() {
     return getCurrentWorkshopInstanceId();
   }

@@ -9,7 +9,7 @@ type StoredCheckpoints = {
   items: CheckpointRecord[];
 };
 
-class FileCheckpointRepository implements CheckpointRepository {
+export class FileCheckpointRepository implements CheckpointRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getCheckpointsPath(instanceId: string) {
@@ -47,7 +47,7 @@ class FileCheckpointRepository implements CheckpointRepository {
   }
 }
 
-class NeonCheckpointRepository implements CheckpointRepository {
+export class NeonCheckpointRepository implements CheckpointRepository {
   async listCheckpoints(instanceId: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(

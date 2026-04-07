@@ -11,7 +11,7 @@ type StoredParticipantSessions = {
 
 export type EventAccessRepository = ParticipantSessionRepository;
 
-class FileEventAccessRepository implements EventAccessRepository {
+export class FileEventAccessRepository implements EventAccessRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getSessionsPath(instanceId: string) {
@@ -79,7 +79,7 @@ class FileEventAccessRepository implements EventAccessRepository {
   }
 }
 
-class NeonEventAccessRepository implements EventAccessRepository {
+export class NeonEventAccessRepository implements EventAccessRepository {
   async listSessions(instanceId: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(

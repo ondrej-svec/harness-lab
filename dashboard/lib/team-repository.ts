@@ -9,7 +9,7 @@ type StoredTeams = {
   items: TeamRecord[];
 };
 
-class FileTeamRepository implements TeamRepository {
+export class FileTeamRepository implements TeamRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getTeamsPath(instanceId: string) {
@@ -50,7 +50,7 @@ class FileTeamRepository implements TeamRepository {
   }
 }
 
-class NeonTeamRepository implements TeamRepository {
+export class NeonTeamRepository implements TeamRepository {
   async listTeams(instanceId: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(

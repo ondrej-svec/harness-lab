@@ -99,4 +99,35 @@ describe("facilitator-auth-service (file mode)", () => {
       }),
     ).resolves.toBe(false);
   });
+
+  it("accepts the expected basic-auth credentials in file mode", async () => {
+    process.env.HARNESS_ADMIN_USERNAME = "facilitator";
+    process.env.HARNESS_ADMIN_PASSWORD = "secret";
+
+    await expect(
+      getFacilitatorAuthService().hasValidRequestCredentials({
+        instanceId: "sample-studio-a",
+        authorizationHeader: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+      }),
+    ).resolves.toBe(true);
+  });
+
+  it("rejects missing or invalid basic-auth credentials in file mode", async () => {
+    process.env.HARNESS_ADMIN_USERNAME = "facilitator";
+    process.env.HARNESS_ADMIN_PASSWORD = "secret";
+
+    await expect(
+      getFacilitatorAuthService().hasValidRequestCredentials({
+        instanceId: "sample-studio-a",
+        authorizationHeader: null,
+      }),
+    ).resolves.toBe(false);
+
+    await expect(
+      getFacilitatorAuthService().hasValidRequestCredentials({
+        instanceId: "sample-studio-a",
+        authorizationHeader: `Basic ${Buffer.from("facilitator:wrong").toString("base64")}`,
+      }),
+    ).resolves.toBe(false);
+  });
 });

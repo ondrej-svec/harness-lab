@@ -32,7 +32,7 @@ type StoredParticipantEventAccess = {
   access: ParticipantEventAccessRecord;
 };
 
-class FileParticipantEventAccessRepository implements ParticipantEventAccessRepository {
+export class FileParticipantEventAccessRepository implements ParticipantEventAccessRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getAccessPath(instanceId: string) {
@@ -79,7 +79,7 @@ class FileParticipantEventAccessRepository implements ParticipantEventAccessRepo
   }
 }
 
-class NeonParticipantEventAccessRepository implements ParticipantEventAccessRepository {
+export class NeonParticipantEventAccessRepository implements ParticipantEventAccessRepository {
   private async ensureSeedAccess(instanceId: string) {
     const sql = getNeonSql();
     const existing = (await sql.query(

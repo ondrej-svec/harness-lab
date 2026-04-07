@@ -2,7 +2,7 @@
 title: "refactor: dashboard coverage path to 80 percent"
 type: plan
 date: 2026-04-07
-status: in_progress
+status: complete
 brainstorm:
 confidence: medium
 ---
@@ -176,8 +176,8 @@ Goal: make the coverage number honest, stable, and enforceable.
 
 Tasks:
 - [x] Review [`dashboard/vitest.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/vitest.config.ts) coverage include/exclude rules and confirm they match the intended dashboard trust boundary.
-- [ ] Exclude only files that are clearly generated, purely contractual, or not worth line-based enforcement.
-- [ ] Add a dashboard coverage threshold once the refactor stabilizes near the target.
+- [x] Exclude only files that are clearly generated, purely contractual, or not worth line-based enforcement.
+- [x] Add a dashboard coverage threshold once the refactor stabilizes near the target.
 - [x] Update [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md) to reflect the new split between view-model tests, route tests, component tests, and Playwright.
 
 Exit criteria:
@@ -204,7 +204,7 @@ Exit criteria:
 
 5. **Threshold and docs**
 - [x] Review coverage include/exclude boundaries.
-- [ ] Introduce thresholds only after the refactor produces a stable new baseline.
+- [x] Introduce thresholds only after the refactor produces a stable new baseline.
 - [x] Update dashboard testing documentation.
 
 ## Acceptance Criteria

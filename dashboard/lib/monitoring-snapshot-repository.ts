@@ -9,7 +9,7 @@ type StoredMonitoringSnapshots = {
   items: Awaited<ReturnType<MonitoringSnapshotRepository["getSnapshots"]>>;
 };
 
-class FileMonitoringSnapshotRepository implements MonitoringSnapshotRepository {
+export class FileMonitoringSnapshotRepository implements MonitoringSnapshotRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getMonitoringPath(instanceId: string) {
@@ -47,7 +47,7 @@ class FileMonitoringSnapshotRepository implements MonitoringSnapshotRepository {
   }
 }
 
-class NeonMonitoringSnapshotRepository implements MonitoringSnapshotRepository {
+export class NeonMonitoringSnapshotRepository implements MonitoringSnapshotRepository {
   async getSnapshots(instanceId: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(

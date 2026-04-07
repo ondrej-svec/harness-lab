@@ -21,7 +21,7 @@ function getSampleGrant(instanceId: string): InstanceGrantRecord {
   };
 }
 
-class FileInstanceGrantRepository implements InstanceGrantRepository {
+export class FileInstanceGrantRepository implements InstanceGrantRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getGrantPath(instanceId: string) {
@@ -93,7 +93,7 @@ class FileInstanceGrantRepository implements InstanceGrantRepository {
   }
 }
 
-class NeonInstanceGrantRepository implements InstanceGrantRepository {
+export class NeonInstanceGrantRepository implements InstanceGrantRepository {
   private async ensureInstance(instanceId: string) {
     const sql = getNeonSql();
     const state = { ...seedWorkshopState, workshopId: instanceId };

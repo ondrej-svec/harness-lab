@@ -9,7 +9,7 @@ type StoredRedeemAttempts = {
   items: RedeemAttemptRecord[];
 };
 
-class FileRedeemAttemptRepository implements RedeemAttemptRepository {
+export class FileRedeemAttemptRepository implements RedeemAttemptRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getAttemptsPath(instanceId: string) {
@@ -67,7 +67,7 @@ class FileRedeemAttemptRepository implements RedeemAttemptRepository {
   }
 }
 
-class NeonRedeemAttemptRepository implements RedeemAttemptRepository {
+export class NeonRedeemAttemptRepository implements RedeemAttemptRepository {
   async countRecentFailures(instanceId: string, fingerprint: string, since: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(

@@ -129,4 +129,27 @@ describe("POST /api/event-access/redeem", () => {
     expect(response.status).toBe(429);
     await expect(response.json()).resolves.toMatchObject({ ok: false, error: "rate_limited" });
   });
+
+  it("redirects form submissions when the event code is invalid", async () => {
+    const repository = new MemoryRedeemAttemptRepository();
+    setRedeemAttemptRepositoryForTests(repository);
+
+    const formData = new FormData();
+    formData.set("eventCode", "wrong-code");
+
+    const response = await POST(
+      new Request("http://localhost/api/event-access/redeem", {
+        method: "POST",
+        headers: {
+          origin: "http://localhost",
+          "user-agent": "vitest",
+        },
+        body: formData,
+      }),
+    );
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toContain("/?eventAccess=invalid_code");
+    expect(repository.attempts[0]).toMatchObject({ result: "failure" });
+  });
 });

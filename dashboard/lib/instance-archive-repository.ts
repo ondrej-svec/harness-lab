@@ -9,7 +9,7 @@ type StoredArchives = {
   items: InstanceArchiveRecord[];
 };
 
-class FileInstanceArchiveRepository implements InstanceArchiveRepository {
+export class FileInstanceArchiveRepository implements InstanceArchiveRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getArchivePath(instanceId: string) {
@@ -70,7 +70,7 @@ class FileInstanceArchiveRepository implements InstanceArchiveRepository {
   }
 }
 
-class NeonInstanceArchiveRepository implements InstanceArchiveRepository {
+export class NeonInstanceArchiveRepository implements InstanceArchiveRepository {
   async createArchive(record: InstanceArchiveRecord) {
     const sql = getNeonSql();
     await sql.query(

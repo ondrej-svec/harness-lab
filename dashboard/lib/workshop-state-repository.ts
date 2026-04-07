@@ -9,7 +9,7 @@ import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 
 export type WorkshopStateRepository = RuntimeWorkshopStateRepository;
 
-class FileWorkshopStateRepository implements WorkshopStateRepository {
+export class FileWorkshopStateRepository implements WorkshopStateRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getStatePath(instanceId: string) {
@@ -47,7 +47,7 @@ class FileWorkshopStateRepository implements WorkshopStateRepository {
   }
 }
 
-class NeonWorkshopStateRepository implements WorkshopStateRepository {
+export class NeonWorkshopStateRepository implements WorkshopStateRepository {
   private async ensureInstance(instanceId: string) {
     const sql = getNeonSql();
     const existing = (await sql.query("SELECT id FROM workshop_instances WHERE id = $1 LIMIT 1", [

@@ -9,7 +9,7 @@ type StoredAuditLog = {
   items: AuditLogRecord[];
 };
 
-class FileAuditLogRepository implements AuditLogRepository {
+export class FileAuditLogRepository implements AuditLogRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
   private readonly logPath = process.env.HARNESS_AUDIT_LOG_PATH ?? path.join(this.dataDir, "audit-log.json");
 
@@ -54,7 +54,7 @@ class FileAuditLogRepository implements AuditLogRepository {
   }
 }
 
-class NeonAuditLogRepository implements AuditLogRepository {
+export class NeonAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     const sql = getNeonSql();
     await sql.query(

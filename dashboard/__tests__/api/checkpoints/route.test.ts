@@ -203,4 +203,26 @@ describe("checkpoints route", () => {
     expect(response.status).toBe(200);
     await expect(checkpointRepository.listCheckpoints("sample-studio-a")).resolves.toSatisfy((items) => items[0]?.id === "u-new");
   });
+
+  it("rejects incomplete checkpoint writes", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/checkpoints", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          id: "u-new",
+          teamId: "t3",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "id, teamId, text and at are required",
+    });
+  });
 });

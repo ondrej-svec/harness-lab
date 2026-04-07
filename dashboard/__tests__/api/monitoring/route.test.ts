@@ -101,4 +101,23 @@ describe("monitoring route", () => {
     expect(response.status).toBe(200);
     await expect(repository.getSnapshots("sample-studio-a")).resolves.toMatchObject([{ teamId: "t4" }]);
   });
+
+  it("rejects monitoring writes without items", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/monitoring", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({}),
+      }),
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "items are required",
+    });
+  });
 });
