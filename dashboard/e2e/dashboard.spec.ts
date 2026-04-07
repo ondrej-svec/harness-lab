@@ -171,6 +171,9 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin");
     await expect(page).toHaveScreenshot("facilitator-overview-desktop.png", {
       fullPage: true,
+      // Full-page admin surfaces pick up small cross-platform font/layout drift between
+      // macOS-authored baselines and Ubuntu CI. Keep this scoped to facilitator visuals.
+      maxDiffPixelRatio: 0.08,
     });
   });
 
@@ -180,6 +183,7 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page).toHaveScreenshot("facilitator-control-room-mobile.png", {
       fullPage: true,
       mask: [page.getByText("Poslední archiv:")],
+      maxDiffPixelRatio: 0.08,
     });
   });
 
