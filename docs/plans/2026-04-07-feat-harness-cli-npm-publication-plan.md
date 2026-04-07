@@ -2,7 +2,7 @@
 title: "feat: harness cli npm publication and release automation"
 type: plan
 date: 2026-04-07
-status: in_progress
+status: complete
 confidence: medium
 ---
 
@@ -280,7 +280,7 @@ Exit criteria:
 - [x] Add a dedicated npm publish workflow gated by CLI verification.
 - [x] Update CLI and repo docs so npm is the default participant-facing install path.
 - [x] Define rollback/deprecation steps for a bad release.
-- [ ] Dry-run the first release process before public publication.
+- [x] Dry-run the first release process before public publication.
 
 ## Acceptance Criteria
 
