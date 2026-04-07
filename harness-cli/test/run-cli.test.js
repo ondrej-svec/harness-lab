@@ -360,6 +360,20 @@ test("device auth logout revokes the remote session before clearing local state"
   assert.equal(await readSession(env), null);
 });
 
+test("help exits successfully", async () => {
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["--help"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called for help");
+    },
+  });
+
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /Usage:/);
+});
+
 test("device auth can drive workshop status with the brokered facilitator session", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";

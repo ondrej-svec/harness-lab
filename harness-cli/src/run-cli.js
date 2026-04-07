@@ -479,9 +479,14 @@ export async function runCli(argv, io, deps = {}) {
   const { positionals, flags } = parseArgs(argv);
   const [scope, action, subaction] = positionals;
 
-  if (!scope || flags.help === true) {
+  if (flags.help === true) {
     printUsage(io);
-    return scope ? 0 : 1;
+    return 0;
+  }
+
+  if (!scope) {
+    printUsage(io);
+    return 1;
   }
 
   if (scope === "auth" && action === "login") {
