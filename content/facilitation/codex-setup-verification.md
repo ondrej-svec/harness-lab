@@ -35,7 +35,7 @@ Použijte ho ve chvíli, kdy vás blokuje instalace, firemní politika nebo aute
 - Nejde login → přejděte na `App` nebo web fallback a pokračujte.
 - Nejde CLI instalace → nenechte se blokovat déle než 7 minut.
 - Nejde otevřít repo → spárujte se s někým od stolu a vraťte se k tomu později.
-- Nevíte, co je další krok → použijte `/workshop setup`.
+- Nevíte, co je další krok → v Codexu použijte `$workshop setup`, v OpenCode `/workshop setup`.
 
 ## Facilitátorské rozhodnutí
 

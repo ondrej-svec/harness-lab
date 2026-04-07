@@ -31,7 +31,7 @@ Do 10:30 potřebujete jednu funkční cestu do Codexu. Ne perfektní setup. Funk
 - Neztrácejte 20 minut sólo debugováním setupu.
 - Po 7 minutách blokace přepněte na App, web fallback nebo pairing.
 - Když nefunguje autentizace, pokračujte s někým od stolu a vraťte se k vlastnímu setupu později.
-- Když si nejste jistí dalším krokem, použijte `/workshop setup` nebo si zavolejte facilitátora.
+- Když si nejste jistí dalším krokem, použijte v Codexu `$workshop setup`, v OpenCode `/workshop setup`, nebo si zavolejte facilitátora.
 
 ## Hotovo když
 

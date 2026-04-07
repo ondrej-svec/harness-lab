@@ -17,11 +17,12 @@
 
 ## Doporučené commands
 
-- `/plan` před větší implementací
-- `/test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
-- `/review` po větším kusu práce
-- `/workshop status` pro orientaci během dne
-- `/workshop template` když repu chybí základní kontext
+- V Codexu používejte `$skill-name`. V OpenCode používejte `/skill-name`.
+- `Codex: $plan` / `OpenCode: /plan` před větší implementací
+- `Codex: $test-writer` / `OpenCode: /test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
+- `Codex: $review` / `OpenCode: /review` po větším kusu práce
+- `Codex: $workshop status` / `OpenCode: /workshop status` pro orientaci během dne
+- `Codex: $workshop template` / `OpenCode: /workshop template` když repu chybí základní kontext
 
 ## Testy jako hranice důvěry
 

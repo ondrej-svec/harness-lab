@@ -1,9 +1,10 @@
 ---
 name: workshop
 description: >
-  Participant-facing skill for the Harness Lab workshop. Supports `/workshop`
-  commands, setup, briefs, challenges, recap, and facilitator actions using live
-  dashboard data when available and local fallback content otherwise.
+  Participant-facing skill for the Harness Lab workshop. Supports the
+  `workshop` skill interface for setup, briefs, challenges, recap, and
+  facilitator actions using live dashboard data when available and local
+  fallback content otherwise.
 allowed-tools:
   - Read
   - Grep
@@ -52,7 +53,12 @@ Rule:
 
 ## Commands
 
-### `/workshop`
+Syntax:
+- in Codex, invoke this skill as `$workshop ...`
+- in OpenCode, invoke this skill as `/workshop ...`
+- the command names below are runtime-neutral descriptions of the same interface
+
+### `workshop`
 
 Show:
 - current agenda phase
@@ -61,7 +67,7 @@ Show:
 - if the dashboard is unavailable, infer the likely phase from local workshop materials and say clearly that this is fallback mode
 - if private event access is not active, clearly say which answers are fallback/public-only versus live event context
 
-### `/workshop login`
+### `workshop login`
 
 Ask for the shared event code and redeem it into a short-lived participant session.
 After success:
@@ -69,11 +75,11 @@ After success:
 - say when the participant may need to log in again
 - keep facilitator-only data unavailable
 
-### `/workshop logout`
+### `workshop logout`
 
 Clear the current participant session and return to fallback/public-only mode.
 
-### `/workshop setup`
+### `workshop setup`
 
 Guide the participant through Codex or OpenCode setup in Czech. Prefer the fastest viable path:
 - Codex CLI on macOS/Linux
@@ -81,7 +87,7 @@ Guide the participant through Codex or OpenCode setup in Czech. Prefer the faste
 - web fallback if local install is blocked
 Use the content from `workshop-skill/setup.md`.
 
-### `/workshop brief`
+### `workshop brief`
 
 Show the assigned project brief. Include:
 - problem statement
@@ -89,14 +95,14 @@ Show the assigned project brief. Include:
 - architecture considerations
 - first recommended prompt for the AI agent
 
-### `/workshop challenges`
+### `workshop challenges`
 
 Show available challenge cards, clearly marking:
 - semi-mandatory before lunch
 - semi-mandatory after the continuation shift
 - optional stretch cards
 
-### `/workshop team`
+### `workshop team`
 
 Show:
 - team name
@@ -104,7 +110,7 @@ Show:
 - repo URL
 - current sprint checkpoint
 
-### `/workshop help`
+### `workshop help`
 
 Give phase-aware coaching. Examples:
 - during Build Phase 1: remind the team to get `AGENTS.md`, a plan, and a reviewed output in place
@@ -112,7 +118,7 @@ Give phase-aware coaching. Examples:
 - when the team is letting the agent work with more autonomy: push them toward tests, tracer bullets, or another executable check
 - for UI work: recommend `agent exploration -> Playwright regression -> human review` as the safe default workflow
 
-### `/workshop template`
+### `workshop template`
 
 Generate a starter `AGENTS.md` for the participant's current project using the 4-element structure:
 - goal
@@ -121,12 +127,12 @@ Generate a starter `AGENTS.md` for the participant's current project using the 4
 - done when
 Use `workshop-skill/template-agents.md` as the default scaffold.
 
-### `/workshop recap`
+### `workshop recap`
 
 Return a short post-workshop reinforcement prompt in Czech.
 Use the content from `workshop-skill/recap.md`.
 
-### `/workshop closing`
+### `workshop closing`
 
 Prepare Ondrej's closing synthesis by using:
 - sprint checkpoints from the dashboard
@@ -135,51 +141,51 @@ Prepare Ondrej's closing synthesis by using:
 Use `workshop-skill/closing-skill.md`.
 Treat this as facilitator-facing. Do not proactively surface it to participants during normal workshop help.
 
-### `/workshop reference`
+### `workshop reference`
 
 Return the workshop reference card from `workshop-skill/reference.md`.
 
-### `/workshop facilitator login`
+### `workshop facilitator login`
 
 Authenticate as a facilitator through the `harness` CLI privileged path.
 The skill should ask the facilitator to complete CLI login/bootstrap if needed, then use the CLI-backed session for subsequent commands.
 This is a facilitator-only command — do not surface to participants.
 
-### `/workshop facilitator status`
+### `workshop facilitator status`
 
 Show the current instance state, agenda phase, facilitator list, and team count.
 Requires active facilitator session.
 
-### `/workshop facilitator grant <email> <role>`
+### `workshop facilitator grant <email> <role>`
 
 Grant a Neon Auth user access to the current workshop instance.
 Roles: owner, operator, observer. Requires `owner` role.
 
-### `/workshop facilitator revoke <email>`
+### `workshop facilitator revoke <email>`
 
 Revoke a facilitator's access to the current instance. Requires `owner` role.
 
-### `/workshop facilitator create-instance`
+### `workshop facilitator create-instance`
 
 Create a new workshop instance from a template. Requires facilitator session.
 
-### `/workshop facilitator remove-instance`
+### `workshop facilitator remove-instance`
 
 Remove a workshop instance from the active list without deleting its archive history. Requires facilitator session.
 
-### `/workshop facilitator prepare`
+### `workshop facilitator prepare`
 
 Set the current instance to `prepared` state. Verify event code is ready.
 
-### `/workshop facilitator agenda`
+### `workshop facilitator agenda`
 
 Inspect and edit the local agenda copy for one workshop instance. Requires facilitator session.
 
-### `/workshop facilitator archive`
+### `workshop facilitator archive`
 
 Archive the current workshop instance with optional notes.
 
-### `/workshop analyze`
+### `workshop analyze`
 
 Review the team's repo against the handoff criteria in `workshop-skill/analyze-checklist.md`.
 Return:
@@ -215,7 +221,7 @@ Relevant local files:
 
 - Be concise and directive.
 - Use Czech for explanations.
-- Keep slash commands, file names, and code terms in English.
+- Keep command names, file names, and code terms in English.
 - Prefer actionable next steps over theory during build phases.
 - Treat tests and executable checks as the default trust boundary once the agent is doing meaningful implementation work.
 - Do not present unrestricted browser autonomy in a normal authenticated browser as the default recommendation.
