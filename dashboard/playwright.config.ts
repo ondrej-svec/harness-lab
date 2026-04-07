@@ -18,6 +18,16 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   reporter: "list",
+  snapshotPathTemplate: "{testDir}/{testFilePath}-snapshots/{arg}{ext}",
+  expect: {
+    toHaveScreenshot: {
+      animations: "disabled",
+      caret: "hide",
+      scale: "css",
+      maxDiffPixelRatio: 0.02,
+      threshold: 0.2,
+    },
+  },
   use: {
     baseURL: `http://127.0.0.1:${port}`,
     trace: "on-first-retry",
