@@ -44,7 +44,7 @@ describe("device auth route edges", () => {
     authMock = null;
     const { POST } = await import("@/app/api/auth/device/start/route");
 
-    const response = await POST();
+    const response = await POST(new Request("http://localhost/api/auth/device/start", { method: "POST" }));
 
     expect(response.status).toBe(503);
     await expect(response.json()).resolves.toEqual({ error: "device_auth_unavailable" });

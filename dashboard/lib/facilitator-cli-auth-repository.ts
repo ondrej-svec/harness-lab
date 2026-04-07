@@ -46,13 +46,13 @@ function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function getVerificationUri() {
-  const baseUrl = process.env.NEON_AUTH_BASE_URL ?? process.env.HARNESS_PUBLIC_BASE_URL ?? "http://localhost:3000";
+function getVerificationUri(baseUrlOverride?: string) {
+  const baseUrl = baseUrlOverride ?? process.env.HARNESS_PUBLIC_BASE_URL ?? process.env.NEON_AUTH_BASE_URL ?? "http://localhost:3000";
   return `${baseUrl.replace(/\/$/, "")}/admin/device`;
 }
 
-function buildVerificationUriComplete(userCode: string) {
-  return `${getVerificationUri()}?user_code=${encodeURIComponent(userCode)}`;
+function buildVerificationUriComplete(userCode: string, baseUrlOverride?: string) {
+  return `${getVerificationUri(baseUrlOverride)}?user_code=${encodeURIComponent(userCode)}`;
 }
 
 function formatUserCode(raw: Buffer) {
@@ -314,13 +314,13 @@ export function getFacilitatorCliAuthRepository(): FacilitatorCliAuthRepository 
   return getRuntimeStorageMode() === "neon" ? new NeonFacilitatorCliAuthRepository() : new FileFacilitatorCliAuthRepository();
 }
 
-export async function startDeviceAuthorization() {
+export async function startDeviceAuthorization(baseUrlOverride?: string) {
   const instanceId = getCurrentWorkshopInstanceId();
   const deviceCode = getDeps().randomBytes(24).toString("base64url");
   const userCode = formatUserCode(getDeps().randomBytes(8));
   const createdAt = nowIso();
   const expiresAt = new Date(getDeps().now().getTime() + defaultDeviceLifetimeMs).toISOString();
-  const verificationUri = getVerificationUri();
+  const verificationUri = getVerificationUri(baseUrlOverride);
 
   await getFacilitatorCliAuthRepository().createDeviceAuthorization({
     id: `device-${getDeps().randomUuid()}`,
@@ -350,7 +350,7 @@ export async function startDeviceAuthorization() {
     deviceCode,
     userCode,
     verificationUri,
-    verificationUriComplete: buildVerificationUriComplete(userCode),
+    verificationUriComplete: buildVerificationUriComplete(userCode, baseUrlOverride),
     expiresAt,
     intervalSeconds: defaultDeviceIntervalSeconds,
   };

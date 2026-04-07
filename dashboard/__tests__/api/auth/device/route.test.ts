@@ -144,11 +144,12 @@ describe("device auth routes", () => {
   });
 
   it("completes device auth approval, polling, session status, and logout", async () => {
-    const startResponse = await startDeviceAuth();
+    const startResponse = await startDeviceAuth(new Request("http://localhost/api/auth/device/start", { method: "POST" }));
     expect(startResponse.status).toBe(200);
     const started = await startResponse.json();
     expect(started.userCode).toMatch(/^[A-Z0-9]{4}-[A-Z0-9]{4}$/);
-    expect(started.verificationUri).toContain("/admin/device");
+    expect(started.verificationUri).toBe("http://localhost/admin/device");
+    expect(started.verificationUriComplete).toBe(`http://localhost/admin/device?user_code=${encodeURIComponent(started.userCode)}`);
 
     const pendingResponse = await pollDeviceAuth(
       new Request("http://localhost/api/auth/device/poll", {
@@ -199,7 +200,7 @@ describe("device auth routes", () => {
   });
 
   it("surfaces denied device authorization", async () => {
-    const started = await (await startDeviceAuth()).json();
+    const started = await (await startDeviceAuth(new Request("http://localhost/api/auth/device/start", { method: "POST" }))).json();
 
     const denyResponse = await denyDeviceAuth(
       new Request("http://localhost/api/auth/device/deny", {
