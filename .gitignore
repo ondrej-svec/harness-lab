@@ -20,3 +20,5 @@ dashboard/tsconfig.tsbuildinfo
 
 monitoring/latest-monitoring.md
 monitoring/team-repos.tsv
+
+harness-cli/*.tgz

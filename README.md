@@ -1,27 +1,33 @@
 # Harness Lab
 
-Public template repo for a full-day developer workshop on disciplined teamwork with AI coding agents.
+Public template repo for a full-day workshop on how teams work with AI coding agents on real software.
+
+Harness Lab is not about prompt theatre or one-off hacks. It is about context, decisions, verification, and a way of working that another person or another agent can continue.
 
 ## What Harness Lab Is
 
-Harness Lab teaches **harness engineering**: how to engineer context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into one-off output.
+Harness Lab teaches **harness engineering**: the discipline of engineering context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into disposable output.
 
 During the workshop, teams practice:
 
-- writing better repo-native context such as `AGENTS.md`, skills, and runbooks
-- using a structured workflow: `brainstorm` -> `plan` -> implementation -> `review`
+- writing clearer repo-native context such as `AGENTS.md`, skills, and runbooks
+- working through a structured flow: `brainstorm` -> `plan` -> implementation -> `review`
 - delegating, checking, and redirecting agent work like a real technical team
 - turning decisions, constraints, and operating knowledge into artifacts another person or agent can continue
 
-This is not prompt theatre or disposable agent output. The goal is to build software work that stays legible, verifiable, and maintainable through continuation.
+The goal is not to produce the most code. The goal is to build software work that stays legible, verifiable, and maintainable through continuation.
 
 ## Working Principles
 
-Harness Lab treats verification as the trust boundary once an agent is doing meaningful work.
+Harness Lab uses three core rules:
+
+1. **Clarify first, then generate.** An agent without intent and constraints does not create; it improvises.
+2. **Verify before you move on.** Once an agent is doing meaningful work, verification becomes the trust boundary.
+3. **Work so others can continue.** The next person or the next agent should not have to guess what happened.
 
 Default expectations in this repo:
 
-- tests before implementation when the behavior change is important enough to automate
+- tests before implementation when the change is important enough to automate
 - tracer bullets and end-to-end checks where reading files is not enough
 - repeatable browser checks plus agent-driven UI inspection for important UI flows
 - review and explicit done criteria instead of blind trust in generated output
@@ -89,7 +95,7 @@ Style guidance for participant-facing copy lives in:
 
 ## Public vs Private
 
-This repository is designed as a **public template repo**:
+This repository is a **public template repo**:
 
 - it contains the reusable public workshop framework
 - it runs with sample or demo data only
@@ -112,7 +118,7 @@ Working rule:
 
 ## Resource Layers
 
-The repo intentionally packages three different resource layers:
+The repo packages three different resource layers:
 
 - **internal harness** - backstage material for maintainers and facilitators operating Harness Lab
 - **learner resource kit** - participant-facing examples and artifacts people can take into their own projects
