@@ -424,9 +424,6 @@ export default async function AdminPage({
                   {selectedInstance ? getWorkshopDisplayTitle(selectedInstance) : copy.pageTitle}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.controlRoomBody}</p>
-                <div className="mt-6 rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] p-4 text-sm leading-6 text-[var(--text-secondary)] dark:bg-[rgba(28,25,23,0.56)]">
-                  <p>{copy.sectionHint}</p>
-                </div>
               </div>
 
               <div className="flex w-full max-w-xl flex-col gap-4 xl:items-end">

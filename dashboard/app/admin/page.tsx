@@ -25,7 +25,6 @@ import {
   AdminPanel,
   FieldLabel,
   StatusPill,
-  adminDangerButtonClassName,
   adminInputClassName,
   adminPrimaryButtonClassName,
   adminSecondaryButtonClassName,
@@ -181,8 +180,13 @@ export default async function AdminWorkspacePage({
                 {copy.workspaceTitle}
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceBody}</p>
-              <div className="mt-6 rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.58)] p-4 text-sm leading-6 text-[var(--text-secondary)] dark:bg-[rgba(28,25,23,0.58)]">
-                <p>{copy.sectionHint}</p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a className={adminPrimaryButtonClassName} href="#create-instance">
+                  {copy.createInstanceTitle}
+                </a>
+                <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-secondary)]">
+                  {`${workspaceStats.prepared} ${copy.workspaceStatsPrepared} • ${workspaceStats.running} ${copy.workspaceStatsRunning}`}
+                </span>
               </div>
             </div>
 
@@ -204,16 +208,16 @@ export default async function AdminWorkspacePage({
                 </form>
               </div>
 
-              <section className="rounded-[30px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-5 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)]">
+              <section className="rounded-[28px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.92))] p-5 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)]">
                 <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.workspaceSummaryTitle}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <WorkspacePulseStat label={copy.workspaceStatsAll} value={`${workspaceStats.all}`} />
                   <WorkspacePulseStat label={copy.workspaceStatsPrepared} value={`${workspaceStats.prepared}`} />
                   <WorkspacePulseStat label={copy.workspaceStatsRunning} value={`${workspaceStats.running}`} />
                   <WorkspacePulseStat label={copy.workspaceStatsArchived} value={`${workspaceStats.archived}`} />
                 </div>
 
-                <div className="mt-5 space-y-2 border-t border-[var(--accent-border)] pt-4 text-xs leading-5 text-[var(--accent-secondary)]">
+                <div className="mt-4 space-y-2 border-t border-[var(--accent-border)] pt-4 text-xs leading-5 text-[var(--accent-secondary)]">
                   {signedInEmail ? (
                     <p>{`${copy.signedInAs}: ${signedInName ?? signedInEmail}${currentFacilitator?.grant.role ? ` • ${currentFacilitator.grant.role}` : ""}`}</p>
                   ) : null}
@@ -224,11 +228,11 @@ export default async function AdminWorkspacePage({
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.9fr)_minmax(22rem,0.88fr)]">
-          <div className="space-y-6">
-            <AdminPanel eyebrow={copy.workspaceSummaryTitle} title={copy.pageTitle} description={copy.pageBody}>
+        <AdminPanel eyebrow={copy.workspaceSummaryTitle} title={copy.pageTitle} description={copy.pageBody}>
+          <div className="space-y-5">
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
               <form
-                className="grid gap-3 rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,255,255,0.58))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.84),rgba(41,37,36,0.68))]"
+                className="grid gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(255,255,255,0.68))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.84),rgba(41,37,36,0.74))]"
                 method="get"
               >
                 <div>
@@ -261,9 +265,98 @@ export default async function AdminWorkspacePage({
                 </div>
               </form>
 
-              <div className="mt-6 grid gap-5 xl:grid-cols-2">
-                {filteredInstances.length > 0 ? (
-                  filteredInstances.map((instance) => {
+              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(255,255,255,0.7))] p-4 dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.84),rgba(41,37,36,0.74))] xl:w-[23rem]">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.createInstanceTitle}</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceCreateDescription}</p>
+                  </div>
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xl leading-none text-[var(--text-secondary)] transition group-open:rotate-45 dark:bg-[var(--surface-soft)]">
+                    +
+                  </span>
+                </summary>
+
+                <div id="create-instance" className="mt-4 space-y-4 border-t border-[var(--border)] pt-4">
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.workspaceCreateStepsTitle}</p>
+                    <div className="mt-3 space-y-2">
+                      <CreateStep index="01" body={copy.workspaceCreateStepOne} />
+                      <CreateStep index="02" body={copy.workspaceCreateStepTwo} />
+                      <CreateStep index="03" body={copy.workspaceCreateStepThree} />
+                    </div>
+                  </div>
+
+                  <form action={createInstanceAction} className="space-y-3">
+                    <input name="lang" type="hidden" value={lang} />
+                    <input name="accessInstanceId" type="hidden" value={workspaceAccessInstanceId} />
+
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                      <div>
+                        <FieldLabel htmlFor="template-id">{copy.instanceSelectLabel}</FieldLabel>
+                        <select id="template-id" name="templateId" className={`${adminInputClassName} mt-2`} defaultValue={workshopTemplates[0]?.id}>
+                          {workshopTemplates.map((template) => (
+                            <option key={template.id} value={template.id}>
+                              {template.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <FieldLabel htmlFor="event-title">{copy.createInstanceEventTitleLabel}</FieldLabel>
+                        <input id="event-title" name="eventTitle" placeholder={copy.createInstanceEventTitlePlaceholder} className={`${adminInputClassName} mt-2`} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <FieldLabel htmlFor="instance-id">{copy.instanceIdLabel}</FieldLabel>
+                      <input id="instance-id" name="newInstanceId" placeholder={copy.newInstanceIdPlaceholder} className={`${adminInputClassName} mt-2`} />
+                    </div>
+
+                    <div>
+                      <FieldLabel htmlFor="instance-date">{copy.workspaceWhenLabel}</FieldLabel>
+                      <input id="instance-date" name="dateRange" placeholder={copy.instanceDateRangePlaceholder} className={`${adminInputClassName} mt-2`} />
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <FieldLabel htmlFor="instance-venue">{copy.workspaceWhereLabel}</FieldLabel>
+                        <input id="instance-venue" name="venueName" placeholder={copy.instanceVenuePlaceholder} className={`${adminInputClassName} mt-2`} />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="instance-room">{copy.instanceRoomLabel}</FieldLabel>
+                        <input id="instance-room" name="roomName" placeholder={copy.instanceRoomPlaceholder} className={`${adminInputClassName} mt-2`} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <FieldLabel htmlFor="instance-address">{copy.workspaceWhereLabel}</FieldLabel>
+                      <input id="instance-address" name="addressLine" placeholder={copy.instanceAddressPlaceholder} className={`${adminInputClassName} mt-2`} />
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <input name="city" placeholder={copy.instanceCityPlaceholder} className={adminInputClassName} />
+                      <input name="facilitatorLabel" placeholder={copy.instanceOwnerPlaceholder} className={adminInputClassName} />
+                    </div>
+
+                    <textarea
+                      name="locationDetails"
+                      rows={3}
+                      placeholder={copy.instanceLocationDetailsPlaceholder}
+                      className={adminInputClassName}
+                    />
+
+                    <button className={`${adminPrimaryButtonClassName} w-full`} type="submit">
+                      {copy.createInstanceButton}
+                    </button>
+                  </form>
+                </div>
+              </details>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {filteredInstances.length > 0 ? (
+                filteredInstances.map((instance) => {
                     const state = workshopStateMap.get(instance.id);
                     const locationLines = getWorkshopLocationLines(instance);
                     const controlRoomHref = buildAdminInstanceHref({ lang, instanceId: instance.id });
@@ -271,169 +364,77 @@ export default async function AdminWorkspacePage({
                     return (
                       <article
                         key={instance.id}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-[30px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,255,255,0.82))] p-4 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_28px_56px_rgba(28,25,23,0.12)] dark:bg-[linear-gradient(180deg,rgba(28,25,23,0.96),rgba(28,25,23,0.82))] dark:hover:shadow-[0_28px_56px_rgba(0,0,0,0.32)] sm:p-5"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(255,255,255,0.82))] p-4 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_24px_40px_rgba(28,25,23,0.1)] dark:bg-[linear-gradient(180deg,rgba(28,26,24,0.94),rgba(28,26,24,0.84))] dark:hover:shadow-[0_24px_40px_rgba(0,0,0,0.28)]"
                       >
-                        <div className="absolute inset-x-0 top-0 h-16 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.05),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_62%)]" />
-                        <div className="relative flex items-start justify-between gap-4">
+                        <div className="absolute inset-x-0 top-0 h-14 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.05),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_62%)]" />
+                        <div className="relative flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <StatusPill label={buildWorkspaceStatusLabel(copy, instance.status)} tone={resolveStatusTone(instance.status)} />
                             </div>
-                            <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                            <h3 className="mt-3 text-[1.45rem] font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
                               {getWorkshopDisplayTitle(instance)}
                             </h3>
-                            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{instance.workshopMeta.dateRange}</p>
-                            <p className="text-sm leading-6 text-[var(--text-secondary)]">{locationLines[0] ?? instance.workshopMeta.city}</p>
-                            <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{instance.id}</p>
+                            <div className="mt-2 space-y-1 text-[13px] leading-5 text-[var(--text-secondary)]">
+                              <p>{instance.workshopMeta.dateRange}</p>
+                              <p>{locationLines[0] ?? instance.workshopMeta.city}</p>
+                              {locationLines[1] ? <p className="text-[13px] text-[var(--text-muted)]">{locationLines[1]}</p> : null}
+                            </div>
+                            <p className="mt-3 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{instance.id}</p>
                           </div>
-                          <Link className={`${adminSecondaryButtonClassName} shrink-0`} href={controlRoomHref}>
+                          <Link className={`${adminSecondaryButtonClassName} shrink-0 px-3 py-2 text-xs`} href={controlRoomHref}>
                             {copy.workspaceOpenInstance}
                           </Link>
                         </div>
 
-                        <div className="mt-5 rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] p-4 dark:bg-[rgba(28,25,23,0.62)]">
-                          <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.5)] px-4 py-3 dark:bg-[rgba(28,25,23,0.5)]">
-                            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.workspaceNextStepLabel}</p>
-                            <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{resolveWorkspaceNextStep(copy, instance.status)}</p>
-                          </div>
-                          <div className="grid gap-3 sm:grid-cols-2">
-                            <WorkspaceMetricTile
-                              label={copy.workspaceOwnerLabel}
-                              value={instance.workshopMeta.facilitatorLabel ?? "n/a"}
-                            />
-                            <WorkspaceMetricTile label={copy.workspaceSignalLabel} value={participantSignal} />
-                          </div>
+                        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2.5">
+                          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.workspaceNextStepLabel}</p>
+                          <p className="mt-1.5 text-[13px] leading-5 text-[var(--text-primary)]">{resolveWorkspaceNextStep(copy, instance.status)}</p>
                         </div>
 
-                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                          <WorkspaceMetricTile
+                        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                          <WorkspaceMetaRow label={copy.workspaceOwnerLabel} value={instance.workshopMeta.facilitatorLabel ?? "n/a"} />
+                          <WorkspaceMetaRow label={copy.workspaceSignalLabel} value={participantSignal} />
+                          <WorkspaceMetaRow
                             label={copy.workspacePhaseLabel}
                             value={state?.workshopMeta.currentPhaseLabel ?? instance.workshopMeta.currentPhaseLabel}
-                            prominent
                           />
-                          <WorkspaceMetricTile label={copy.workspaceTeamsLabel} value={`${state?.teams.length ?? 0}`} prominent />
+                          <WorkspaceMetaRow label={copy.workspaceTeamsLabel} value={`${state?.teams.length ?? 0}`} />
                         </div>
 
-                        <div className="mt-auto pt-5">
+                        <div className="mt-auto pt-4">
                           <form
                             action={removeInstanceAction}
-                            className="flex items-end justify-between gap-4 rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] p-4 transition duration-200 group-hover:bg-[rgba(255,255,255,0.74)] dark:bg-[rgba(28,25,23,0.56)] dark:group-hover:bg-[rgba(28,25,23,0.72)]"
+                            className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3"
                           >
                             <input name="lang" type="hidden" value={lang} />
                             <input name="targetInstanceId" type="hidden" value={instance.id} />
-                            <span className="max-w-[15rem] text-xs leading-5 text-[var(--text-muted)]">{copy.removeInstanceHint}</span>
-                            <button className={adminDangerButtonClassName} type="submit">
+                            <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">archive-safe</span>
+                            <button className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]" type="submit">
                               {copy.removeInstanceButton}
                             </button>
                           </form>
                         </div>
                       </article>
                     );
-                  })
-                ) : (
-                  <div className="rounded-[24px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-soft)] p-6 lg:col-span-2">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.workspaceEmptyTitle}</h3>
-                    <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceEmptyBody}</p>
-                    <div className="mt-5 flex flex-wrap gap-3">
-                      <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
-                        {copy.workspaceResetFilters}
-                      </Link>
-                      <a className={adminPrimaryButtonClassName} href="#create-instance">
-                        {copy.createInstanceTitle}
-                      </a>
-                    </div>
+                })
+              ) : (
+                <div className="rounded-[24px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-soft)] p-6 lg:col-span-2">
+                  <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.workspaceEmptyTitle}</h3>
+                  <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceEmptyBody}</p>
+                  <div className="mt-5 flex flex-wrap gap-3">
+                    <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
+                      {copy.workspaceResetFilters}
+                    </Link>
+                    <a className={adminPrimaryButtonClassName} href="#create-instance">
+                      {copy.createInstanceTitle}
+                    </a>
                   </div>
-                )}
-              </div>
-            </AdminPanel>
+                </div>
+              )}
+            </div>
           </div>
-
-          <div className="space-y-6 xl:sticky xl:top-6 xl:self-start">
-            <AdminPanel eyebrow={copy.createInstanceTitle} title={copy.createInstanceTitle} description={copy.workspaceCreateDescription}>
-              <div id="create-instance" />
-              <div className="rounded-[26px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-5 text-[var(--accent-text)] shadow-[0_18px_36px_rgba(12,10,9,0.16)]">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.createInstanceTitle}</p>
-                <p className="mt-3 text-sm leading-6 text-[var(--accent-secondary)]">{copy.workspaceCreateDescription}</p>
-              </div>
-
-              <div className="rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.58)] p-4 dark:bg-[rgba(28,25,23,0.58)]">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.workspaceCreateStepsTitle}</p>
-                <div className="mt-4 space-y-3">
-                  <CreateStep index="01" body={copy.workspaceCreateStepOne} />
-                  <CreateStep index="02" body={copy.workspaceCreateStepTwo} />
-                  <CreateStep index="03" body={copy.workspaceCreateStepThree} />
-                </div>
-              </div>
-
-              <form action={createInstanceAction} className="mt-5 space-y-4">
-                <input name="lang" type="hidden" value={lang} />
-                <input name="accessInstanceId" type="hidden" value={workspaceAccessInstanceId} />
-
-                <div className="rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.58)] p-4 dark:bg-[rgba(28,25,23,0.58)]">
-                  <div>
-                    <FieldLabel htmlFor="template-id">{copy.instanceSelectLabel}</FieldLabel>
-                    <select id="template-id" name="templateId" className={`${adminInputClassName} mt-2`} defaultValue={workshopTemplates[0]?.id}>
-                      {workshopTemplates.map((template) => (
-                        <option key={template.id} value={template.id}>
-                          {template.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mt-4">
-                    <FieldLabel htmlFor="event-title">{copy.createInstanceEventTitleLabel}</FieldLabel>
-                    <input id="event-title" name="eventTitle" placeholder={copy.createInstanceEventTitlePlaceholder} className={`${adminInputClassName} mt-2`} />
-                  </div>
-
-                  <div className="mt-4">
-                    <FieldLabel htmlFor="instance-id">{copy.instanceIdLabel}</FieldLabel>
-                    <input id="instance-id" name="newInstanceId" placeholder={copy.newInstanceIdPlaceholder} className={`${adminInputClassName} mt-2`} />
-                  </div>
-                </div>
-
-                <div className="rounded-[24px] border border-[var(--border)] bg-[rgba(255,255,255,0.58)] p-4 dark:bg-[rgba(28,25,23,0.58)]">
-                  <div>
-                    <FieldLabel htmlFor="instance-date">{copy.workspaceWhenLabel}</FieldLabel>
-                    <input id="instance-date" name="dateRange" placeholder={copy.instanceDateRangePlaceholder} className={`${adminInputClassName} mt-2`} />
-                  </div>
-
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <FieldLabel htmlFor="instance-venue">{copy.workspaceWhereLabel}</FieldLabel>
-                      <input id="instance-venue" name="venueName" placeholder={copy.instanceVenuePlaceholder} className={`${adminInputClassName} mt-2`} />
-                    </div>
-                    <div>
-                      <FieldLabel htmlFor="instance-room">{copy.instanceRoomLabel}</FieldLabel>
-                      <input id="instance-room" name="roomName" placeholder={copy.instanceRoomPlaceholder} className={`${adminInputClassName} mt-2`} />
-                    </div>
-                  </div>
-
-                  <div className="mt-4">
-                    <FieldLabel htmlFor="instance-address">{copy.workspaceWhereLabel}</FieldLabel>
-                    <input id="instance-address" name="addressLine" placeholder={copy.instanceAddressPlaceholder} className={`${adminInputClassName} mt-2`} />
-                  </div>
-
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    <input name="city" placeholder={copy.instanceCityPlaceholder} className={adminInputClassName} />
-                    <input name="facilitatorLabel" placeholder={copy.instanceOwnerPlaceholder} className={adminInputClassName} />
-                  </div>
-
-                  <textarea
-                    name="locationDetails"
-                    rows={3}
-                    placeholder={copy.instanceLocationDetailsPlaceholder}
-                    className={`${adminInputClassName} mt-4`}
-                  />
-                </div>
-
-                <button className={`${adminPrimaryButtonClassName} w-full`} type="submit">
-                  {copy.createInstanceButton}
-                </button>
-              </form>
-            </AdminPanel>
-          </div>
-        </div>
+        </AdminPanel>
       </div>
     </main>
   );
@@ -448,21 +449,11 @@ function WorkspacePulseStat({ label, value }: { label: string; value: string }) 
   );
 }
 
-function WorkspaceMetricTile({
-  label,
-  value,
-  prominent = false,
-}: {
-  label: string;
-  value: string;
-  prominent?: boolean;
-}) {
+function WorkspaceMetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.56)] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[rgba(255,255,255,0.78)] dark:bg-[rgba(28,25,23,0.56)] dark:hover:bg-[rgba(28,25,23,0.74)]">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className={`mt-2 ${prominent ? "text-xl tracking-[-0.04em]" : "text-sm"} font-semibold text-[var(--text-primary)]`}>
-        {value}
-      </p>
+    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-3">
+      <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-1.5 text-sm font-medium leading-5 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
