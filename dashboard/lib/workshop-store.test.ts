@@ -405,10 +405,11 @@ describe("workshop-store", () => {
   });
 
   it("resets state from a sample template", async () => {
-    const state = await resetWorkshopState("sample-lab-d");
+    const state = await resetWorkshopState("blueprint-compact");
 
     expect(state.workshopId).toBe("sample-studio-a");
-    expect(state.workshopMeta.city).toBe("Lab D");
+    expect(state.workshopMeta.city).toBe("Studio A");
+    expect(state.rotation.scenario).toBe("17-participants");
     expect(state.agenda.map((item) => item.id)).toEqual(blueprintAgenda.phases.map((phase) => phase.id));
     expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
     expect(state.teams).toEqual([]);
@@ -431,14 +432,14 @@ describe("workshop-store", () => {
   it("creates and soft-removes workshop instances", async () => {
     const created = await createWorkshopInstance({
       id: "client-hackathon-2026-05",
-      templateId: "sample-lab-d",
+      templateId: "blueprint-compact",
       city: "Client HQ",
       dateRange: "12. května 2026 • Main room",
     });
 
     expect(created).toMatchObject({
       id: "client-hackathon-2026-05",
-      templateId: "sample-lab-d",
+      templateId: "blueprint-compact",
       workshopMeta: { city: "Client HQ" },
     });
     await expect(getWorkshopInstances()).resolves.toEqual(
@@ -473,7 +474,7 @@ describe("workshop-store", () => {
 
     const created = await createWorkshopInstance({
       id: "sample-studio-a",
-      templateId: "sample-lab-d",
+      templateId: "blueprint-compact",
       city: "Should not overwrite",
     });
 

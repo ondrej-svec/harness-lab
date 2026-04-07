@@ -456,13 +456,25 @@ export async function resetWorkshopState(templateId: string, instanceId = getCur
   const existingInstance = await instanceRepository.getInstance(instanceId);
   const nextState = createWorkshopStateFromTemplate(templateId, instanceId);
   if (existingInstance) {
+    const nextWorkshopMeta = {
+      ...nextState.workshopMeta,
+      eventTitle: existingInstance.workshopMeta.eventTitle,
+      city: existingInstance.workshopMeta.city,
+      dateRange: existingInstance.workshopMeta.dateRange,
+      venueName: existingInstance.workshopMeta.venueName,
+      roomName: existingInstance.workshopMeta.roomName,
+      addressLine: existingInstance.workshopMeta.addressLine,
+      locationDetails: existingInstance.workshopMeta.locationDetails,
+      facilitatorLabel: existingInstance.workshopMeta.facilitatorLabel,
+    };
+    nextState.workshopMeta = nextWorkshopMeta;
     await instanceRepository.updateInstance(instanceId, {
       ...existingInstance,
       templateId,
       status: "prepared",
       importedAt: new Date().toISOString(),
       removedAt: null,
-      workshopMeta: nextState.workshopMeta,
+      workshopMeta: nextWorkshopMeta,
     });
   }
   await getWorkshopStateRepository().saveState(instanceId, nextState);

@@ -88,9 +88,9 @@ async function handleSkillInstall(io, deps, flags) {
     writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
     writeLine(io.stdout, "Next steps:");
     writeLine(io.stdout, "  1. Open Codex or OpenCode in this repo.");
-    writeLine(io.stdout, "  2. Run `/workshop reference` for the command overview.");
-    writeLine(io.stdout, "  3. Run `/workshop setup` if your environment is not ready yet.");
-    writeLine(io.stdout, "  4. Run `/workshop` to get the current phase or fallback guidance.");
+    writeLine(io.stdout, "  2. In Codex, start with `$workshop reference`. In OpenCode, use `/workshop reference`.");
+    writeLine(io.stdout, "  3. If your environment is not ready yet, use `$workshop setup` in Codex or `/workshop setup` in OpenCode.");
+    writeLine(io.stdout, "  4. For other help, keep the same pattern: `$workshop ...` in Codex, `/workshop ...` in OpenCode.");
     return 0;
   } catch (error) {
     if (error instanceof SkillInstallError) {

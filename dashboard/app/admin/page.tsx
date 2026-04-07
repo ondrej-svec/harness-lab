@@ -119,7 +119,7 @@ function resolveWorkspaceNextStep(copy: (typeof adminCopy)["cs" | "en"], status:
 
 function buildTemplateOptionLabel(template: WorkshopTemplate, lang: "cs" | "en") {
   const audience = template.scenario === "20-participants" ? (lang === "cs" ? "20 lidí" : "20 participants") : lang === "cs" ? "17 lidí" : "17 participants";
-  return `${template.city} • ${template.room} • ${audience}`;
+  return `${template.label} • ${audience}`;
 }
 
 export default async function AdminWorkspacePage({

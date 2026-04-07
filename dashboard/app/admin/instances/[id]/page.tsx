@@ -61,6 +61,14 @@ export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
 
+function buildTemplateResetLabel(
+  template: (typeof workshopTemplates)[number],
+  lang: UiLanguage,
+) {
+  const audience = template.scenario === "20-participants" ? (lang === "cs" ? "20 lidí" : "20 participants") : lang === "cs" ? "17 lidí" : "17 participants";
+  return `${template.label} • ${audience}`;
+}
+
 function deriveNextTeamId(existingIds: string[]) {
   const numericIds = existingIds
     .map((id) => id.match(/^t(\d+)$/)?.[1])
@@ -713,7 +721,7 @@ export default async function AdminPage({
                       <select name="templateId" className={adminInputClassName}>
                         {workshopTemplates.map((template) => (
                           <option key={template.id} value={template.id}>
-                            {template.label} • {template.room}
+                            {buildTemplateResetLabel(template, lang)}
                           </option>
                         ))}
                       </select>

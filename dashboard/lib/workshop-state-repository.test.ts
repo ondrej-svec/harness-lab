@@ -86,7 +86,7 @@ describe("workshop-state-repository", () => {
       getWorkshopInstanceRepository: () => ({
         getInstance: vi.fn().mockResolvedValue({
           id: "neon-a",
-          templateId: "sample-lab-d",
+          templateId: "blueprint-compact",
           workshopMeta: { title: "Harness Lab" },
         }),
       }),

@@ -26,12 +26,10 @@ harness skill install
 
 4. otevřít agent nástroj nad tímto repem
 5. ověřit, že fungují minimálně:
-   - `/workshop`
-   - `/workshop setup`
-   - `/workshop brief`
-   - `/workshop reference`
+   - Codex: `$workshop reference`, `$workshop setup`, `$workshop brief`
+   - OpenCode: `/workshop reference`, `/workshop setup`, `/workshop brief`
 
-Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že má v agentovi začít přes `/workshop reference` nebo `/workshop setup`.
+Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že má v Codexu začít přes `$workshop ...` a v OpenCode přes `/workshop ...`.
 
 ## Poznámka
 

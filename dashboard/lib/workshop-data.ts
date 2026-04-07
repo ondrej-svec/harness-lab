@@ -118,6 +118,7 @@ export type WorkshopState = {
 export type WorkshopTemplate = {
   id: string;
   label: string;
+  defaultEventTitle: string;
   city: string;
   dateLabel: string;
   room: string;
@@ -136,6 +137,31 @@ export type WorkshopInstanceRecord = {
   removedAt: string | null;
   workshopMeta: WorkshopMeta;
 };
+
+function createSampleWorkshopMeta(input: {
+  eventTitle: string;
+  city: string;
+  room: string;
+  addressLine: string;
+  locationDetails: string;
+  facilitatorLabel?: string;
+}) {
+  return {
+    title: blueprintAgenda.title,
+    subtitle: blueprintAgenda.subtitle,
+    eventTitle: input.eventTitle,
+    city: input.city,
+    dateRange: `Ukázkový workshop den • ${input.room}`,
+    venueName: input.city,
+    roomName: input.room,
+    addressLine: input.addressLine,
+    locationDetails: input.locationDetails,
+    facilitatorLabel: input.facilitatorLabel ?? "facilitator crew",
+    currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
+    adminHint:
+      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
+  } satisfies WorkshopMeta;
+}
 
 function createAgendaFromBlueprint(currentPhaseId?: string): AgendaItem[] {
   const phaseId = currentPhaseId ?? blueprintAgenda.phases[2]?.id ?? blueprintAgenda.phases[0]?.id;
@@ -160,13 +186,13 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
   return {
     title: blueprintAgenda.title,
     subtitle: blueprintAgenda.subtitle,
-    eventTitle: template.label,
+    eventTitle: template.defaultEventTitle,
     city: template.city,
     dateRange: `${template.dateLabel} • ${template.room}`,
     venueName: template.city,
     roomName: template.room,
-    addressLine: `${template.city} campus`,
-    locationDetails: "Sample/demo workshop metadata",
+    addressLine: "Adresa nebo orientační bod",
+    locationDetails: "Doplňte konkrétní venue, room a organizační poznámky pro tuto akci.",
     facilitatorLabel: "facilitator crew",
     currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
     adminHint:
@@ -175,20 +201,76 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
 }
 
 export const workshopTemplates: WorkshopTemplate[] = [
-  { id: "sample-studio-a", label: "Ukázková instance A", city: "Studio A", dateLabel: "Ukázkový workshop den", room: "Demo room", scenario: "20-participants" },
-  { id: "sample-studio-b", label: "Ukázková instance B", city: "Studio B", dateLabel: "Ukázkový workshop den", room: "Breakout room", scenario: "20-participants" },
-  { id: "sample-lab-c", label: "Ukázková instance C", city: "Lab C", dateLabel: "Ukázkový workshop den", room: "Project room", scenario: "17-participants" },
-  { id: "sample-lab-d", label: "Ukázková instance D", city: "Lab D", dateLabel: "Ukázkový workshop den", room: "Review room", scenario: "17-participants" },
+  {
+    id: "blueprint-standard",
+    label: "Celodenní hackathon",
+    defaultEventTitle: "Harness Lab workshop",
+    city: "Workshop venue",
+    dateLabel: "Workshop day",
+    room: "Main room",
+    scenario: "20-participants",
+  },
+  {
+    id: "blueprint-compact",
+    label: "Kompaktní varianta",
+    defaultEventTitle: "Harness Lab workshop",
+    city: "Workshop venue",
+    dateLabel: "Workshop day",
+    room: "Main room",
+    scenario: "17-participants",
+  },
 ];
 
-export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplates.map((template) =>
+export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   createWorkshopInstanceRecord({
-    id: template.id,
-    templateId: template.id,
+    id: "sample-studio-a",
+    templateId: "blueprint-standard",
     importedAt: "2026-04-07T09:00:00.000Z",
-    workshopMeta: createWorkshopMetaFromTemplate(template),
+    workshopMeta: createSampleWorkshopMeta({
+      eventTitle: "Ukázková instance A",
+      city: "Studio A",
+      room: "Demo room",
+      addressLine: "Lab D campus, Studio A",
+      locationDetails: "Sample/demo workshop metadata",
+    }),
   }),
-);
+  createWorkshopInstanceRecord({
+    id: "sample-studio-b",
+    templateId: "blueprint-standard",
+    importedAt: "2026-04-07T09:30:00.000Z",
+    workshopMeta: createSampleWorkshopMeta({
+      eventTitle: "Ukázková instance B",
+      city: "Studio B",
+      room: "Breakout room",
+      addressLine: "Studio B campus, Breakout wing",
+      locationDetails: "Sample/demo workshop metadata",
+    }),
+  }),
+  createWorkshopInstanceRecord({
+    id: "sample-lab-c",
+    templateId: "blueprint-compact",
+    importedAt: "2026-04-07T10:00:00.000Z",
+    workshopMeta: createSampleWorkshopMeta({
+      eventTitle: "Ukázková instance C",
+      city: "Lab C",
+      room: "Project room",
+      addressLine: "Lab C campus, Lab C",
+      locationDetails: "Sample/demo workshop metadata",
+    }),
+  }),
+  createWorkshopInstanceRecord({
+    id: "sample-lab-d",
+    templateId: "blueprint-compact",
+    importedAt: "2026-04-07T10:30:00.000Z",
+    workshopMeta: createSampleWorkshopMeta({
+      eventTitle: "Ukázková instance D",
+      city: "Lab D",
+      room: "Review room",
+      addressLine: "Lab D campus, Lab D",
+      locationDetails: "Sample/demo workshop metadata",
+    }),
+  }),
+];
 
 export const seedWorkshopState: WorkshopState = {
   workshopId: "sample-studio-a",

@@ -129,7 +129,7 @@ describe("workshop instances route", () => {
         },
         body: JSON.stringify({
           id: "client-hackathon-2026-05",
-          templateId: "sample-lab-d",
+          templateId: "blueprint-compact",
           city: "Client HQ",
           dateRange: "12. května 2026 • Main room",
         }),
@@ -141,7 +141,7 @@ describe("workshop instances route", () => {
       ok: true,
       instance: {
         id: "client-hackathon-2026-05",
-        templateId: "sample-lab-d",
+        templateId: "blueprint-compact",
         workshopMeta: { city: "Client HQ" },
       },
     });

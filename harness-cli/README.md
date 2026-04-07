@@ -66,7 +66,7 @@ harness skill install
 ```
 
 This creates `.agents/skills/harness-lab-workshop` in the current Harness Lab repo checkout.
-After install, the CLI prints the first recommended agent commands, starting with `/workshop reference`.
+After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop reference` and `OpenCode: /workshop reference`.
 
 Default device/browser login:
 

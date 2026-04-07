@@ -183,7 +183,7 @@ describe("workshop route", () => {
     await expect(response.json()).resolves.toMatchObject({
       workshopId: "sample-studio-a",
       workshopMeta: { title: "Harness Lab" },
-      templates: expect.arrayContaining([expect.objectContaining({ id: "sample-lab-d" })]),
+      templates: expect.arrayContaining([expect.objectContaining({ id: "blueprint-compact" })]),
     });
   });
 
@@ -195,7 +195,7 @@ describe("workshop route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({ templateId: "sample-lab-d" }),
+        body: JSON.stringify({ templateId: "blueprint-compact" }),
       }),
     );
 
