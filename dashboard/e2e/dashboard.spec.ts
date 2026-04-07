@@ -134,24 +134,32 @@ test.describe("facilitator admin (file mode)", () => {
     },
   });
 
-  test("loads the protected admin surface and can drive a critical workshop control", async ({ page }) => {
+  test("loads the workspace cockpit, filters instances, and can drive a critical workshop control", async ({ page }) => {
     await page.goto("/admin");
 
-    await expect(page.getByRole("heading", { name: "řízení workshopu" })).toBeVisible();
-    await expect(page.locator("header").getByText("aktivní instance")).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "účet" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "workshopy a jejich instance" })).toBeVisible();
+    await expect(page.getByLabel("hledat workshop")).toBeVisible();
+    await page.getByLabel("hledat workshop").fill("Lab C");
+    await page.getByRole("button", { name: "použít filtry" }).click();
+    await expect(page.getByText("sample-lab-c")).toBeVisible();
+    await expect(page.getByRole("link", { name: "otevřít řízení" })).toHaveCount(1);
+
+    await page.goto("/admin");
+    await page.getByRole("link", { name: "otevřít řízení" }).first().click();
+
+    await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
+    await expect(page.getByRole("link", { name: "zpět na workspace" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" }).first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "continuation handoff" })).toBeVisible();
 
     await Promise.all([
-      page.waitForURL(/\/admin(\?.*)?$/),
+      page.waitForURL(/\/admin\/instances\/sample-studio-a(\?.*)?$/),
       page.getByRole("button", { name: "Odemknout" }).click(),
     ]);
     await expect(page.getByText(/^odemčeno$/).first()).toBeVisible();
 
-    await page.goto("/admin");
     await Promise.all([
-      page.waitForURL(/\/admin(\?.*)?$/),
+      page.waitForURL(/\/admin\/instances\/sample-studio-a(\?.*)?$/),
       page.getByRole("button", { name: "vytvořit archiv" }).click(),
     ]);
 
@@ -163,19 +171,27 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin");
     await expect(page).toHaveScreenshot("facilitator-overview-desktop.png", {
       fullPage: true,
+    });
+  });
+
+  test("keeps the facilitator control room visually stable on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 1200 });
+    await page.goto("/admin/instances/sample-studio-a");
+    await expect(page).toHaveScreenshot("facilitator-control-room-mobile.png", {
+      fullPage: true,
       mask: [page.getByText("Poslední archiv:")],
     });
   });
 
   test("shows facilitators section with file-mode fallback message", async ({ page }) => {
-    await page.goto("/admin?section=access");
+    await page.goto("/admin/instances/sample-studio-a?section=access");
 
     await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
     await expect(page.getByText("Správa facilitátorů vyžaduje neon mód.")).toBeVisible();
   });
 
   test("shows agenda source information on the agenda section", async ({ page }) => {
-    await page.goto("/admin?section=agenda");
+    await page.goto("/admin/instances/sample-studio-a?section=agenda");
 
     await expect(page.getByRole("heading", { name: "agenda a fáze" })).toBeVisible();
     await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();

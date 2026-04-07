@@ -89,8 +89,14 @@ export type SetupPath = {
 export type WorkshopMeta = {
   title: string;
   subtitle: string;
+  eventTitle?: string;
   city: string;
   dateRange: string;
+  venueName?: string;
+  roomName?: string;
+  addressLine?: string;
+  locationDetails?: string;
+  facilitatorLabel?: string;
   currentPhaseLabel: string;
   adminHint: string;
 };
@@ -154,8 +160,14 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
   return {
     title: blueprintAgenda.title,
     subtitle: blueprintAgenda.subtitle,
+    eventTitle: template.label,
     city: template.city,
     dateRange: `${template.dateLabel} • ${template.room}`,
+    venueName: template.city,
+    roomName: template.room,
+    addressLine: `${template.city} campus`,
+    locationDetails: "Sample/demo workshop metadata",
+    facilitatorLabel: "facilitator crew",
     currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
     adminHint:
       "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
@@ -182,6 +194,7 @@ export const seedWorkshopState: WorkshopState = {
   workshopId: "sample-studio-a",
   workshopMeta: {
     ...(sampleWorkshopInstances[0]?.workshopMeta ?? createWorkshopMetaFromTemplate(workshopTemplates[0])),
+    eventTitle: "Ukázkový workshop Harness Lab",
     currentPhaseLabel: "Build Phase 1",
   },
   agenda: createAgendaFromBlueprint(),

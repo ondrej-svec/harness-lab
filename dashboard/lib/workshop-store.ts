@@ -234,8 +234,14 @@ export async function getWorkshopInstances(options?: { includeRemoved?: boolean 
 export async function createWorkshopInstance(input: {
   id: string;
   templateId: string;
+  eventTitle?: string;
   city?: string;
   dateRange?: string;
+  venueName?: string;
+  roomName?: string;
+  addressLine?: string;
+  locationDetails?: string;
+  facilitatorLabel?: string;
 }, actorNeonUserId?: string | null) {
   const instanceRepository = getWorkshopInstanceRepository();
   const existingInstance = await instanceRepository.getInstance(input.id);
@@ -253,8 +259,14 @@ export async function createWorkshopInstance(input: {
     ...instance,
     workshopMeta: {
       ...instance.workshopMeta,
+      eventTitle: input.eventTitle?.trim() || instance.workshopMeta.eventTitle,
       city: input.city?.trim() || instance.workshopMeta.city,
       dateRange: input.dateRange?.trim() || instance.workshopMeta.dateRange,
+      venueName: input.venueName?.trim() || instance.workshopMeta.venueName,
+      roomName: input.roomName?.trim() || instance.workshopMeta.roomName,
+      addressLine: input.addressLine?.trim() || instance.workshopMeta.addressLine,
+      locationDetails: input.locationDetails?.trim() || instance.workshopMeta.locationDetails,
+      facilitatorLabel: input.facilitatorLabel?.trim() || instance.workshopMeta.facilitatorLabel,
     },
   };
 

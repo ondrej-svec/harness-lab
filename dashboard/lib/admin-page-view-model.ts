@@ -1,32 +1,67 @@
 import type { WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 
-export const adminSections = ["overview", "agenda", "teams", "signals", "access", "account"] as const;
-export type AdminSection = (typeof adminSections)[number];
+export const controlRoomSections = ["live", "agenda", "teams", "signals", "access", "settings"] as const;
+export type ControlRoomSection = (typeof controlRoomSections)[number];
+export type AdminSection = ControlRoomSection;
+
+export const legacyAdminSectionMap = {
+  overview: "live",
+  agenda: "agenda",
+  teams: "teams",
+  signals: "signals",
+  access: "access",
+  account: "settings",
+} as const;
+
+export type LegacyAdminSection = keyof typeof legacyAdminSectionMap;
+export type WorkspaceInstanceStatusFilter = "all" | "created" | "prepared" | "running" | "archived";
 
 type AdminCopy = Record<string, string>;
 type AgendaItem = WorkshopState["agenda"][number];
 
-export function resolveAdminSection(value: string | undefined): AdminSection {
-  return adminSections.find((section) => section === value) ?? "overview";
+export function resolveControlRoomSection(value: string | undefined): ControlRoomSection {
+  return controlRoomSections.find((section) => section === value) ?? "live";
 }
 
-export function buildAdminHref(options: {
+export function resolveLegacyAdminSection(value: string | undefined): LegacyAdminSection {
+  return (Object.keys(legacyAdminSectionMap) as LegacyAdminSection[]).find((section) => section === value) ?? "overview";
+}
+
+export function mapLegacyAdminSectionToControlRoomSection(value: string | undefined): ControlRoomSection {
+  return legacyAdminSectionMap[resolveLegacyAdminSection(value)];
+}
+
+export function buildAdminWorkspaceHref(options: {
   lang: UiLanguage;
-  section?: AdminSection;
-  instanceId?: string;
+  query?: string | null;
+  status?: WorkspaceInstanceStatusFilter | null;
+}) {
+  const params = new URLSearchParams();
+  if (options.query?.trim()) {
+    params.set("q", options.query.trim());
+  }
+  if (options.status && options.status !== "all") {
+    params.set("status", options.status);
+  }
+
+  const query = params.toString();
+  return withLang(query ? `/admin?${query}` : "/admin", options.lang);
+}
+
+export function buildAdminInstanceHref(options: {
+  lang: UiLanguage;
+  instanceId: string;
+  section?: ControlRoomSection;
   teamId?: string | null;
   agendaItemId?: string | null;
   error?: string | null;
   password?: string | null;
 }) {
-  const { lang, section, instanceId, teamId, agendaItemId, error, password } = options;
+  const { lang, instanceId, section, teamId, agendaItemId, error, password } = options;
   const params = new URLSearchParams();
-  if (section && section !== "overview") {
+  if (section && section !== "live") {
     params.set("section", section);
-  }
-  if (instanceId) {
-    params.set("instance", instanceId);
   }
   if (teamId) {
     params.set("team", teamId);
@@ -42,18 +77,154 @@ export function buildAdminHref(options: {
   }
 
   const query = params.toString();
-  return withLang(query ? `/admin?${query}` : "/admin", lang);
+  return withLang(query ? `/admin/instances/${instanceId}?${query}` : `/admin/instances/${instanceId}`, lang);
 }
 
-export function readActionState(formData: FormData) {
+// Legacy compatibility during the route split. The old admin page model treated all links
+// as one-page instance-scoped links; keep that shape available while control-room code migrates.
+export function buildAdminHref(options: {
+  lang: UiLanguage;
+  section?: ControlRoomSection | LegacyAdminSection;
+  instanceId?: string;
+  teamId?: string | null;
+  agendaItemId?: string | null;
+  error?: string | null;
+  password?: string | null;
+}) {
+  if (!options.instanceId) {
+    return buildAdminWorkspaceHref({ lang: options.lang });
+  }
+
+  const section =
+    options.section && options.section in legacyAdminSectionMap
+      ? legacyAdminSectionMap[options.section as LegacyAdminSection]
+      : resolveControlRoomSection(String(options.section ?? ""));
+
+  return buildAdminInstanceHref({
+    lang: options.lang,
+    instanceId: options.instanceId,
+    section,
+    teamId: options.teamId,
+    agendaItemId: options.agendaItemId,
+    error: options.error,
+    password: options.password,
+  });
+}
+
+export function buildLegacyAdminRedirectHref(options: {
+  lang: UiLanguage;
+  instanceId: string;
+  section?: string;
+  teamId?: string | null;
+  agendaItemId?: string | null;
+  error?: string | null;
+  password?: string | null;
+}) {
+  return buildAdminInstanceHref({
+    lang: options.lang,
+    instanceId: options.instanceId,
+    section: mapLegacyAdminSectionToControlRoomSection(options.section),
+    teamId: options.teamId,
+    agendaItemId: options.agendaItemId,
+    error: options.error,
+    password: options.password,
+  });
+}
+
+export function readControlRoomActionState(formData: FormData) {
   return {
     lang: resolveUiLanguage(String(formData.get("lang") ?? "")),
-    section: resolveAdminSection(String(formData.get("section") ?? "")),
+    section: resolveControlRoomSection(String(formData.get("section") ?? "")),
     instanceId: String(formData.get("instanceId") ?? "").trim(),
   };
 }
 
-export function deriveAdminPageState(
+export const readActionState = readControlRoomActionState;
+
+export function resolveWorkspaceStatusFilter(value: string | undefined): WorkspaceInstanceStatusFilter {
+  return ["created", "prepared", "running", "archived"].includes(String(value))
+    ? (value as WorkspaceInstanceStatusFilter)
+    : "all";
+}
+
+export function readWorkspaceFilters(searchParams: { q?: string; status?: string } | undefined) {
+  return {
+    query: searchParams?.q?.trim() ?? "",
+    status: resolveWorkspaceStatusFilter(searchParams?.status),
+  };
+}
+
+export function getWorkshopDisplayTitle(instance: WorkshopInstanceRecord) {
+  return instance.workshopMeta.eventTitle?.trim() || instance.workshopMeta.title || instance.id;
+}
+
+export function getWorkshopLocationLines(instance: WorkshopInstanceRecord) {
+  const lines = [
+    [instance.workshopMeta.venueName, instance.workshopMeta.roomName].filter(Boolean).join(" • "),
+    [instance.workshopMeta.addressLine, instance.workshopMeta.city].filter(Boolean).join(", "),
+    instance.workshopMeta.locationDetails ?? "",
+  ].filter(Boolean);
+
+  return lines;
+}
+
+export function filterWorkshopInstances(
+  instances: WorkshopInstanceRecord[],
+  filters: { query: string; status: WorkspaceInstanceStatusFilter },
+) {
+  const query = filters.query.trim().toLowerCase();
+
+  return instances.filter((instance) => {
+    if (filters.status !== "all" && instance.status !== filters.status) {
+      return false;
+    }
+
+    if (!query) {
+      return true;
+    }
+
+    const haystack = [
+      instance.id,
+      getWorkshopDisplayTitle(instance),
+      instance.workshopMeta.city,
+      instance.workshopMeta.dateRange,
+      instance.workshopMeta.venueName,
+      instance.workshopMeta.roomName,
+      instance.workshopMeta.addressLine,
+      instance.workshopMeta.facilitatorLabel,
+      instance.workshopMeta.currentPhaseLabel,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return haystack.includes(query);
+  });
+}
+
+export function buildWorkspaceStatusSummary(instances: WorkshopInstanceRecord[]) {
+  return {
+    all: instances.length,
+    created: instances.filter((instance) => instance.status === "created").length,
+    prepared: instances.filter((instance) => instance.status === "prepared").length,
+    running: instances.filter((instance) => instance.status === "running").length,
+    archived: instances.filter((instance) => instance.status === "archived").length,
+  };
+}
+
+export function buildWorkspaceStatusLabel(copy: AdminCopy, status: WorkshopInstanceRecord["status"]) {
+  const labels: Record<WorkshopInstanceRecord["status"], string> = {
+    created: copy.instanceStatusCreated,
+    prepared: copy.instanceStatusPrepared,
+    running: copy.instanceStatusRunning,
+    archived: copy.instanceStatusArchived,
+    removed: copy.instanceStatusRemoved,
+  };
+
+  return labels[status];
+}
+
+export function deriveControlRoomPageState(
   state: WorkshopState,
   availableInstances: WorkshopInstanceRecord[],
   activeInstanceId: string,
@@ -69,6 +240,8 @@ export function deriveAdminPageState(
   };
 }
 
+export const deriveAdminPageState = deriveControlRoomPageState;
+
 export function resolveActiveInstanceId(
   availableInstances: WorkshopInstanceRecord[],
   requestedInstanceId: string | undefined,
@@ -77,7 +250,7 @@ export function resolveActiveInstanceId(
   return availableInstances.find((instance) => instance.id === requestedInstanceId)?.id ?? defaultInstanceId;
 }
 
-export function buildAdminSummaryStats(options: {
+export function buildControlRoomSummaryStats(options: {
   copy: AdminCopy;
   state: WorkshopState;
   selectedInstance: WorkshopInstanceRecord | null;
@@ -88,7 +261,7 @@ export function buildAdminSummaryStats(options: {
   return [
     {
       label: copy.activeInstance,
-      value: selectedInstance?.workshopMeta.city ?? state.workshopId,
+      value: selectedInstance ? getWorkshopDisplayTitle(selectedInstance) : state.workshopMeta.eventTitle?.trim() || state.workshopId,
       hint: state.workshopId,
     },
     {
@@ -109,7 +282,9 @@ export function buildAdminSummaryStats(options: {
   ];
 }
 
-export function buildAdminOverviewState(options: {
+export const buildAdminSummaryStats = buildControlRoomSummaryStats;
+
+export function buildControlRoomLiveState(options: {
   copy: AdminCopy;
   lang: UiLanguage;
   state: WorkshopState;
@@ -128,7 +303,7 @@ export function buildAdminOverviewState(options: {
     liveNowTitle: `${currentAgendaItem?.time ?? ""}${currentAgendaItem ? " • " : ""}${currentAgendaItem?.title ?? ""}`.trim(),
     liveNowDescription: currentAgendaItem?.description ?? "",
     nextUpLabel: nextAgendaItem ? `${copy.nextUp}: ${nextAgendaItem.time} • ${nextAgendaItem.title}` : null,
-    agendaLink: buildAdminHref({ lang, section: "agenda", instanceId: activeInstanceId }),
+    agendaLink: buildAdminInstanceHref({ lang, section: "agenda", instanceId: activeInstanceId }),
     phaseOptions: state.agenda.map((item) => ({
       id: item.id,
       label: `${item.time} • ${item.title}`,
@@ -137,7 +312,9 @@ export function buildAdminOverviewState(options: {
   };
 }
 
-export function buildAdminSessionState(options: {
+export const buildAdminOverviewState = buildControlRoomLiveState;
+
+export function buildControlRoomSessionState(options: {
   copy: AdminCopy;
   signedInEmail: string | null;
   signedInName: string | null;
@@ -155,3 +332,7 @@ export function buildAdminSessionState(options: {
       : null,
   };
 }
+
+export const buildAdminSessionState = buildControlRoomSessionState;
+
+export const resolveAdminSection = resolveControlRoomSection;

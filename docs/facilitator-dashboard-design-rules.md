@@ -8,7 +8,7 @@ This note records the rules the redesign now follows so the system can stay cohe
 
 ## Product Rules
 
-1. One page can show the whole system, but it must not ask the user to parse the whole system at once.
+1. Workspace scope and instance scope should not compete on the same primary screen.
 2. The active instance is part of the control model, not just metadata.
 3. The current phase is a live runtime marker, not a hidden side effect of "move agenda".
 4. Blueprint edits and runtime edits must stay visibly separate.
@@ -17,10 +17,10 @@ This note records the rules the redesign now follows so the system can stay cohe
 ## Interaction Rules
 
 1. Navigation is lightweight.
-Selected sections use emphasis, not inversion. We use line-based state and typography, not black filled tabs that look like hard toggles.
+Workspace navigation should feel like overview and movement between events. Control-room navigation should feel like location inside one event, not like mode switching.
 
 2. Status stays persistent.
-Instance, live phase, rotation state, and team count stay visible in a compact summary strip at the top.
+In the control room, instance, live phase, rotation state, and team count stay visible in a compact summary strip at the top.
 
 3. Actions are grouped by intent.
 Phase control, continuation handoff, and safety actions each get their own block instead of being mixed into one generic control wall.
@@ -29,7 +29,7 @@ Phase control, continuation handoff, and safety actions each get their own block
 If a control changes live workshop state, the label must say what actually changes. "move live marker" is clearer than "move agenda".
 
 5. Scope must be explicit before action.
-The instance switcher sits in the header because every later action depends on it.
+The workspace lists instances as event records. Once inside the control room, actions are already scoped and should not compete with workspace management.
 
 ## Visual Rules
 
@@ -38,6 +38,9 @@ Use warm neutral surfaces, restrained contrast, and generous spacing before addi
 
 2. Fewer boxes, better boxes.
 Panels use soft grouping and internal rhythm. We avoid stacking too many identical bordered rectangles inside other bordered rectangles.
+
+2a. Use the desktop canvas.
+If the viewport is wide, the layout should express product structure with rails, grouped content, and readable density rather than leaving most of the screen idle.
 
 3. Typography carries hierarchy.
 Lowercase and calm tone remain part of the voice, but hierarchy comes from size, spacing, and density, not from shouting with contrast.
@@ -57,12 +60,12 @@ Corners are softened enough to make the panel feel intentional and modern, but n
 
 ## What Changed From The Earlier Version
 
-1. Selected navigation is now underlined text instead of black filled buttons.
-2. The active instance became a visible, switchable control.
-3. Phase control is named as phase control.
-4. Continuation and safety actions are separated from ordinary navigation.
-5. The top of the page now answers four questions immediately:
-Which instance am I controlling?
+1. `/admin` is now the workspace cockpit for workshop instances.
+2. Entering an instance opens a focused control room for that event.
+3. Instances are represented as event records rather than id-first technical rows.
+4. Search and filtering exist at the workspace level.
+5. The control room now answers four questions immediately:
+Which event am I controlling?
 What phase is live?
 Is continuation open?
 How many teams are in play?
@@ -71,8 +74,8 @@ How many teams are in play?
 
 Before shipping future facilitator UI changes, verify:
 
-1. Can a facilitator tell what instance they are editing in under 3 seconds?
-2. Can they tell what the primary next action is without reading every card?
+1. Can a facilitator tell whether they are in the workspace or inside one event in under 3 seconds?
+2. Can they tell what the primary next action is without reading every card or panel?
 3. Are high-impact actions visually separated from routine actions?
 4. Does selected navigation feel like location, not mode switching?
-5. Does the page still feel calm on mobile?
+5. Does the control room stay calm on mobile when the section switcher replaces the desktop rail?

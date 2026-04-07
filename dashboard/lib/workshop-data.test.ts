@@ -15,6 +15,9 @@ describe("workshop-data", () => {
     expect(state.workshopId).toBe("sample-lab-c");
     expect(state.workshopMeta.city).toBe("Lab C");
     expect(state.workshopMeta.dateRange).toBe("Ukázkový workshop den • Project room");
+    expect(state.workshopMeta.eventTitle).toBe("Ukázková instance C");
+    expect(state.workshopMeta.venueName).toBe("Lab C");
+    expect(state.workshopMeta.roomName).toBe("Project room");
     expect(state.rotation.revealed).toBe(false);
     expect(state.rotation.scenario).toBe("17-participants");
     expect(state.teams).toEqual([]);
@@ -49,8 +52,13 @@ describe("workshop-data", () => {
       workshopMeta: {
         title: "Harness Lab",
         subtitle: "Soukromá workshop instance",
+        eventTitle: "Client innovation day",
         city: "Client HQ",
         dateRange: "12. května 2026 • Main room",
+        venueName: "Client HQ",
+        roomName: "Main room",
+        addressLine: "Innovation street 12",
+        facilitatorLabel: "Ondrej",
         currentPhaseLabel: "Opening",
         adminHint: "Privátní data běží mimo public repo.",
       },
@@ -58,6 +66,7 @@ describe("workshop-data", () => {
 
     expect(state.workshopId).toBe("client-workshop-001");
     expect(state.workshopMeta.city).toBe("Client HQ");
+    expect(state.workshopMeta.eventTitle).toBe("Client innovation day");
     expect(state.rotation.scenario).toBe("20-participants");
     expect(state.agenda[0]?.status).toBe("current");
     expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
