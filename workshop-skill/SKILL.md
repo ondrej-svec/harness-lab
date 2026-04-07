@@ -1,3 +1,20 @@
+---
+name: workshop
+description: >
+  Participant-facing skill for the Harness Lab workshop. Supports `/workshop`
+  commands, setup, briefs, challenges, recap, and facilitator actions using live
+  dashboard data when available and local fallback content otherwise.
+allowed-tools:
+  - Read
+  - Grep
+  - Glob
+  - Agent
+  - AskUserQuestion
+  - Write
+  - Edit
+  - Bash
+---
+
 # Workshop
 
 Participant-facing skill for the Harness Lab workshop. All participant-facing copy is Czech. Technical terms stay in English.
