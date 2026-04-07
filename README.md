@@ -159,6 +159,8 @@ Deploy flow:
 
 GitHub Actions CI is consolidated into the `Dashboard CI` workflow, and Vercel should wait for the `Vercel - harness-lab-dashboard: deploy-ready` check.
 
+Workflow maintenance notes, current pinned action majors, and the `gitleaks` CLI rationale are documented in [github-actions-maintenance.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/github-actions-maintenance.md).
+
 ## Workshop Skill
 
 `workshop-skill/` is the primary participant interface:
