@@ -3,8 +3,12 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { runCli } from "../src/run-cli.js";
 import { readSession, setSessionStoreDepsForTests } from "../src/session-store.js";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
 
 function createMemoryIo(env) {
   let stdout = "";
@@ -372,6 +376,63 @@ test("help exits successfully", async () => {
 
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /Usage:/);
+});
+
+test("version exits successfully", async () => {
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["--version"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+  });
+
+  assert.equal(exitCode, 0);
+  assert.equal(io.getStdout().trim(), `harness ${version}`);
+});
+
+test("version command exits successfully", async () => {
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["version"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+  });
+
+  assert.equal(exitCode, 0);
+  assert.equal(io.getStdout().trim(), `harness ${version}`);
+});
+
+test("skill install creates a project-local .agents skill bundle", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-"));
+  await fs.mkdir(path.join(repoRoot, "workshop-skill"), { recursive: true });
+  await fs.mkdir(path.join(repoRoot, "content", "project-briefs"), { recursive: true });
+  await fs.mkdir(path.join(repoRoot, "docs"), { recursive: true });
+  await fs.mkdir(path.join(repoRoot, "workshop-blueprint"), { recursive: true });
+  await fs.writeFile(path.join(repoRoot, "workshop-skill", "SKILL.md"), "# Workshop\n");
+  await fs.writeFile(path.join(repoRoot, "workshop-skill", "setup.md"), "setup\n");
+  await fs.writeFile(path.join(repoRoot, "content", "project-briefs", "sample.md"), "brief\n");
+  await fs.writeFile(path.join(repoRoot, "docs", "workshop-event-context-contract.md"), "contract\n");
+  await fs.writeFile(path.join(repoRoot, "docs", "harness-cli-foundation.md"), "foundation\n");
+  await fs.writeFile(path.join(repoRoot, "workshop-blueprint", "README.md"), "blueprint\n");
+
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["skill", "install"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
+  assert.match(io.getStdout(), /\.agents\/skills/);
 });
 
 test("device auth can drive workshop status with the brokered facilitator session", async () => {

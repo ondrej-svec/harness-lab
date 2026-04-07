@@ -1,9 +1,11 @@
 # Harness CLI
 
-Small facilitator-facing CLI for Harness Lab.
+Small Harness Lab CLI for facilitator auth, workshop operations, and repo-local skill installation.
 
 Current shipped scope:
 
+- `harness version`
+- `harness skill install`
 - `harness auth login`
 - `harness auth logout`
 - `harness auth status`
@@ -33,6 +35,7 @@ npm install -g @harness-lab/cli
 Verify the binary:
 
 ```bash
+harness --version
 harness --help
 ```
 
@@ -48,6 +51,21 @@ or:
 cd harness-cli
 npm link
 ```
+
+Verify the local install:
+
+```bash
+harness version
+harness --help
+```
+
+Install the repo-local workshop skill bundle for Codex/OpenCode discovery:
+
+```bash
+harness skill install
+```
+
+This creates `.agents/skills/harness-lab-workshop` in the current Harness Lab repo checkout.
 
 Default device/browser login:
 
@@ -81,6 +99,7 @@ Workshop commands:
 
 ```bash
 harness auth status
+harness skill install
 harness workshop status
 harness workshop phase set rotation
 harness workshop archive --notes "Manual archive"

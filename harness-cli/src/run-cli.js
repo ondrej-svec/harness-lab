@@ -2,6 +2,11 @@ import { getDefaultDashboardUrl } from "./config.js";
 import { createHarnessClient, HarnessApiError } from "./client.js";
 import { prompt, writeLine } from "./io.js";
 import { deleteSession, readSession, sanitizeSession, writeSession, getSessionStorageMode, SessionStoreError } from "./session-store.js";
+import { installWorkshopSkill, SkillInstallError } from "./skill-install.js";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { version } = require("../package.json");
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -13,6 +18,14 @@ function parseArgs(argv) {
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
+    if (value === "-h") {
+      flags.help = true;
+      continue;
+    }
+    if (value === "-v") {
+      flags.version = true;
+      continue;
+    }
     if (value.startsWith("--")) {
       const key = value.slice(2);
       const next = argv[index + 1];
@@ -52,12 +65,35 @@ async function readJson(response) {
 
 function printUsage(io) {
   writeLine(io.stdout, "Usage:");
+  writeLine(io.stdout, "  harness --help");
+  writeLine(io.stdout, "  harness --version");
+  writeLine(io.stdout, "  harness version");
   writeLine(io.stdout, "  harness auth login [--auth device|basic|neon] [--dashboard-url URL] [--username USER] [--email EMAIL] [--password PASS] [--no-open]");
   writeLine(io.stdout, "  harness auth logout");
   writeLine(io.stdout, "  harness auth status");
+  writeLine(io.stdout, "  harness skill install [--force]");
   writeLine(io.stdout, "  harness workshop status");
   writeLine(io.stdout, "  harness workshop archive [--notes TEXT]");
   writeLine(io.stdout, "  harness workshop phase set <phase-id>");
+}
+
+function printVersion(io) {
+  writeLine(io.stdout, `harness ${version}`);
+}
+
+async function handleSkillInstall(io, deps, flags) {
+  try {
+    const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), { force: flags.force === true });
+    writeLine(io.stdout, `Installed Harness Lab workshop skill to ${result.installPath}`);
+    writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
+    return 0;
+  } catch (error) {
+    if (error instanceof SkillInstallError) {
+      writeLine(io.stderr, `Skill install failed: ${error.message}`);
+      return 1;
+    }
+    throw error;
+  }
 }
 
 function formatStorageError(error) {
@@ -471,11 +507,7 @@ async function handleWorkshopPhaseSet(io, env, positionals, deps) {
 
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
-  if (typeof fetchFn !== "function") {
-    throw new Error("Fetch is required to run the harness CLI.");
-  }
-
-  const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl };
+  const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
   const { positionals, flags } = parseArgs(argv);
   const [scope, action, subaction] = positionals;
 
@@ -484,9 +516,23 @@ export async function runCli(argv, io, deps = {}) {
     return 0;
   }
 
+  if (flags.version === true) {
+    printVersion(io);
+    return 0;
+  }
+
+  if (scope === "version") {
+    printVersion(io);
+    return 0;
+  }
+
   if (!scope) {
     printUsage(io);
     return 1;
+  }
+
+  if (typeof fetchFn !== "function") {
+    throw new Error("Fetch is required to run the harness CLI.");
   }
 
   if (scope === "auth" && action === "login") {
@@ -499,6 +545,10 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "auth" && action === "status") {
     return handleAuthStatus(io, io.env, mergedDeps);
+  }
+
+  if (scope === "skill" && action === "install") {
+    return handleSkillInstall(io, mergedDeps, flags);
   }
 
   if (scope === "workshop" && action === "status") {

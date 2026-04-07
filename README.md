@@ -184,6 +184,13 @@ Workflow maintenance notes, current pinned action majors, and the `gitleaks` CLI
 
 The default recommendation is to distribute the skill directly from the repo, not via npm.
 
+Recommended install path from this repo:
+
+```bash
+npm install -g @harness-lab/cli
+harness skill install
+```
+
 The facilitator privileged path now routes through the small `harness` CLI broker rather than storing raw auth or session state directly in the skill. The current model is described in:
 
 - [harness-cli-foundation.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
