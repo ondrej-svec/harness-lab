@@ -12,6 +12,14 @@ const MIGRATION_ORDER = [
   "2026-04-07-instance-lifecycle-and-agenda-authoring.sql",
 ];
 
+function hasTable(snapshot, tableName) {
+  return snapshot.tables.has(tableName);
+}
+
+function hasColumn(snapshot, tableName, columnName) {
+  return snapshot.columns.get(tableName)?.has(columnName) ?? false;
+}
+
 function compareMigrationFilenames(left, right) {
   const leftIndex = MIGRATION_ORDER.indexOf(left);
   const rightIndex = MIGRATION_ORDER.indexOf(right);
@@ -35,6 +43,51 @@ export function sortMigrationFilenames(filenames) {
   return [...filenames].sort(compareMigrationFilenames);
 }
 
+export function detectPreviouslyAppliedMigrations(snapshot) {
+  const applied = [];
+  const hasInstanceGrants = hasTable(snapshot, "instance_grants");
+  const baseRuntimeApplied =
+    hasTable(snapshot, "workshop_instances") &&
+    hasInstanceGrants &&
+    hasTable(snapshot, "participant_sessions");
+
+  if (baseRuntimeApplied) {
+    applied.push("2026-04-06-private-workshop-instance-runtime.sql");
+  }
+
+  const simplificationApplied =
+    hasInstanceGrants &&
+    (hasColumn(snapshot, "instance_grants", "neon_user_id") ||
+      !hasColumn(snapshot, "instance_grants", "facilitator_identity_id"));
+
+  if (simplificationApplied) {
+    applied.push("2026-04-06-facilitator-identity-simplification.sql");
+  }
+
+  if (
+    hasInstanceGrants &&
+    !hasTable(snapshot, "facilitator_identities") &&
+    !hasColumn(snapshot, "instance_grants", "facilitator_identity_id")
+  ) {
+    applied.push("2026-04-06-drop-facilitator-identities.sql");
+  }
+
+  if (hasTable(snapshot, "facilitator_device_auth") && hasTable(snapshot, "facilitator_cli_sessions")) {
+    applied.push("2026-04-07-facilitator-cli-device-auth.sql");
+  }
+
+  if (
+    hasColumn(snapshot, "workshop_instances", "blueprint_id") &&
+    hasColumn(snapshot, "workshop_instances", "blueprint_version") &&
+    hasColumn(snapshot, "workshop_instances", "imported_at") &&
+    hasColumn(snapshot, "workshop_instances", "removed_at")
+  ) {
+    applied.push("2026-04-07-instance-lifecycle-and-agenda-authoring.sql");
+  }
+
+  return sortMigrationFilenames(applied);
+}
+
 async function ensureMigrationsTable(client) {
   await client.query(`
     CREATE TABLE IF NOT EXISTS ${MIGRATIONS_TABLE} (
@@ -49,6 +102,67 @@ async function getAppliedMigrationFilenames(client) {
   return new Set(result.rows.map((row) => row.filename));
 }
 
+async function migrationTrackerExists(client) {
+  const result = await client.query(
+    `
+      SELECT EXISTS (
+        SELECT 1
+        FROM information_schema.tables
+        WHERE table_schema = 'public'
+          AND table_name = $1
+      ) AS exists
+    `,
+    [MIGRATIONS_TABLE],
+  );
+
+  return result.rows[0]?.exists === true;
+}
+
+async function getPublicSchemaSnapshot(client) {
+  const [tableResult, columnResult] = await Promise.all([
+    client.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+    `),
+    client.query(`
+      SELECT table_name, column_name
+      FROM information_schema.columns
+      WHERE table_schema = 'public'
+    `),
+  ]);
+
+  const tables = new Set(tableResult.rows.map((row) => row.table_name));
+  const columns = new Map();
+
+  for (const row of columnResult.rows) {
+    const tableColumns = columns.get(row.table_name) ?? new Set();
+    tableColumns.add(row.column_name);
+    columns.set(row.table_name, tableColumns);
+  }
+
+  return { tables, columns };
+}
+
+async function bootstrapAppliedMigrations(client) {
+  const trackerExists = await migrationTrackerExists(client);
+
+  if (trackerExists) {
+    return;
+  }
+
+  await ensureMigrationsTable(client);
+
+  const previouslyApplied = detectPreviouslyAppliedMigrations(await getPublicSchemaSnapshot(client));
+
+  for (const filename of previouslyApplied) {
+    await client.query(
+      `INSERT INTO ${MIGRATIONS_TABLE} (filename) VALUES ($1) ON CONFLICT (filename) DO NOTHING`,
+      [filename],
+    );
+  }
+}
+
 export async function runMigrations({ client, migrationsDir }) {
   const filenames = sortMigrationFilenames(
     (await readdir(migrationsDir)).filter((name) => name.endsWith(".sql")),
@@ -59,6 +173,7 @@ export async function runMigrations({ client, migrationsDir }) {
     return;
   }
 
+  await bootstrapAppliedMigrations(client);
   await ensureMigrationsTable(client);
 
   const appliedFilenames = await getAppliedMigrationFilenames(client);
