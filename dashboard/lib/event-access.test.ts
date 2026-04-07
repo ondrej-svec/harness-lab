@@ -1,4 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import {
   getConfiguredEventCode,
   getParticipantCoreBundle,
@@ -77,11 +80,19 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 
 describe("event-access", () => {
   const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
+  const originalDataDir = process.env.HARNESS_DATA_DIR;
+  const originalStatePath = process.env.HARNESS_STATE_PATH;
+  const originalInstancesPath = process.env.HARNESS_INSTANCES_PATH;
   let repository: MemoryEventAccessRepository;
   let accessRepository: MemoryParticipantEventAccessRepository;
+  let tempDir: string | null;
 
   beforeEach(() => {
+    vi.resetModules();
     process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
+    tempDir = null;
+    delete process.env.HARNESS_STATE_PATH;
+    delete process.env.HARNESS_INSTANCES_PATH;
     repository = new MemoryEventAccessRepository();
     accessRepository = new MemoryParticipantEventAccessRepository({
       id: "pea-sample-studio-a",
@@ -105,11 +116,29 @@ describe("event-access", () => {
     } else {
       process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
     }
+    if (originalDataDir === undefined) {
+      delete process.env.HARNESS_DATA_DIR;
+    } else {
+      process.env.HARNESS_DATA_DIR = originalDataDir;
+    }
+    if (originalStatePath === undefined) {
+      delete process.env.HARNESS_STATE_PATH;
+    } else {
+      process.env.HARNESS_STATE_PATH = originalStatePath;
+    }
+    if (originalInstancesPath === undefined) {
+      delete process.env.HARNESS_INSTANCES_PATH;
+    } else {
+      process.env.HARNESS_INSTANCES_PATH = originalInstancesPath;
+    }
 
     setEventAccessRepositoryForTests(null);
     setParticipantEventAccessRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
     vi.useRealTimers();
+    if (tempDir) {
+      return rm(tempDir, { recursive: true, force: true });
+    }
   });
 
   it("exposes a configured event access preview without leaking the stored code hash", async () => {
@@ -176,6 +205,8 @@ describe("event-access", () => {
   });
 
   it("builds the participant core bundle and protected team lookup shapes", async () => {
+    tempDir = await mkdtemp(path.join(tmpdir(), "harness-event-access-"));
+    process.env.HARNESS_DATA_DIR = tempDir;
     const core = await getParticipantCoreBundle();
     const teams = await getParticipantTeamLookup();
 

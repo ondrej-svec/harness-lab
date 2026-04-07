@@ -44,6 +44,19 @@ describe("workshop-state-repository", () => {
     });
   });
 
+  it("bootstraps the primary sample instance with the seeded demo workshop state", async () => {
+    const { FileWorkshopStateRepository } = await import("./workshop-state-repository");
+    const repository = new FileWorkshopStateRepository();
+
+    const initial = await repository.getState("sample-studio-a");
+
+    expect(initial).toMatchObject({
+      workshopId: "sample-studio-a",
+      teams: seedWorkshopState.teams,
+      sprintUpdates: seedWorkshopState.sprintUpdates,
+    });
+  });
+
   it("prefers an override repository", async () => {
     const mod = await import("./workshop-state-repository");
     const override = {
