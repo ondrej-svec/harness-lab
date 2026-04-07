@@ -4,6 +4,7 @@ import { prompt, writeLine } from "./io.js";
 import { deleteSession, readSession, sanitizeSession, writeSession, getSessionStorageMode, SessionStoreError } from "./session-store.js";
 import { installWorkshopSkill, SkillInstallError } from "./skill-install.js";
 import { createRequire } from "node:module";
+import { pathToFileURL } from "node:url";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
@@ -84,8 +85,13 @@ function printVersion(io) {
 async function handleSkillInstall(io, deps, flags) {
   try {
     const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), { force: flags.force === true });
-    writeLine(io.stdout, `Installed Harness Lab workshop skill to ${result.installPath}`);
-    writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
+    if (result.mode === "already_bundled") {
+      writeLine(io.stdout, `Harness Lab workshop skill is already bundled at ${result.installPath}`);
+      writeLine(io.stdout, "Codex and OpenCode should discover it from this repo via .agents/skills.");
+    } else {
+      writeLine(io.stdout, `Installed Harness Lab workshop skill to ${result.installPath}`);
+      writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
+    }
     writeLine(io.stdout, "Next steps:");
     writeLine(io.stdout, "  1. Open Codex or OpenCode in this repo.");
     writeLine(io.stdout, "  2. In Codex, start with `$workshop reference`. In OpenCode, use `/workshop reference`.");
@@ -570,4 +576,15 @@ export async function runCli(argv, io, deps = {}) {
 
   printUsage(io);
   return 1;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const exitCode = await runCli(process.argv.slice(2), {
+    stdin: process.stdin,
+    stdout: process.stdout,
+    stderr: process.stderr,
+    env: process.env,
+  });
+
+  process.exitCode = exitCode;
 }

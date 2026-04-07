@@ -440,6 +440,28 @@ test("skill install creates a project-local .agents skill bundle", async () => {
   assert.match(io.getStdout(), /\/workshop setup/);
 });
 
+test("skill install reports the repo-bundled skill instead of pretending to reinstall it", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-bundled-"));
+  await fs.mkdir(path.join(repoRoot, "workshop-skill"), { recursive: true });
+  await fs.mkdir(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop"), { recursive: true });
+  await fs.writeFile(path.join(repoRoot, "workshop-skill", "SKILL.md"), "# Workshop\n");
+  await fs.writeFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "# Installed\n");
+
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["skill", "install", "--force"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /already bundled/);
+  assert.doesNotMatch(io.getStdout(), /^Installed Harness Lab workshop skill/m);
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+});
+
 test("device auth can drive workshop status with the brokered facilitator session", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";

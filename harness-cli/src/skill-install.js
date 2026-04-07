@@ -41,6 +41,10 @@ export function getInstalledSkillPath(repoRoot) {
   return path.join(repoRoot, ".agents", "skills", SKILL_NAME);
 }
 
+async function hasBundledRepoSkill(repoRoot) {
+  return pathExists(path.join(getInstalledSkillPath(repoRoot), "SKILL.md"));
+}
+
 export async function installWorkshopSkill(startDir, options = {}) {
   const repoRoot = await findHarnessLabRepoRoot(startDir);
   if (!repoRoot) {
@@ -51,6 +55,17 @@ export async function installWorkshopSkill(startDir, options = {}) {
   }
 
   const installPath = getInstalledSkillPath(repoRoot);
+  const bundledRepoSkill = await hasBundledRepoSkill(repoRoot);
+
+  if (bundledRepoSkill) {
+    return {
+      repoRoot,
+      installPath,
+      skillName: SKILL_NAME,
+      mode: "already_bundled",
+    };
+  }
+
   if ((await pathExists(installPath)) && options.force !== true) {
     throw new SkillInstallError(
       `Skill already installed at ${installPath}. Re-run with --force to replace it.`,
@@ -78,5 +93,10 @@ export async function installWorkshopSkill(startDir, options = {}) {
     path.join(installPath, "docs", "harness-cli-foundation.md"),
   );
 
-  return { repoRoot, installPath, skillName: SKILL_NAME };
+  return {
+    repoRoot,
+    installPath,
+    skillName: SKILL_NAME,
+    mode: "installed",
+  };
 }
