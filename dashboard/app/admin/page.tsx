@@ -25,6 +25,8 @@ import {
   AdminPanel,
   FieldLabel,
   StatusPill,
+  adminHeroPanelClassName,
+  adminHeroTileClassName,
   adminInputClassName,
   adminPrimaryButtonClassName,
   adminSecondaryButtonClassName,
@@ -169,10 +171,10 @@ export default async function AdminWorkspacePage({
   const signedInName = authSession?.data?.user?.name ?? null;
 
   return (
-    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.58),transparent_34%),radial-gradient(circle_at_top_right,rgba(0,0,0,0.04),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
+    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
       <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
         <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
-          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.06),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.09),transparent_62%)]" />
+          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
           <div className="relative grid gap-6 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.4fr)_minmax(22rem,0.88fr)]">
             <div className="max-w-3xl">
               <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{copy.workspaceEyebrow}</p>
@@ -208,8 +210,8 @@ export default async function AdminWorkspacePage({
                 </form>
               </div>
 
-              <section className="rounded-[28px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.92))] p-5 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)]">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.workspaceSummaryTitle}</p>
+              <section className={`${adminHeroPanelClassName} p-5`}>
+                <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.workspaceSummaryTitle}</p>
                 <div className="mt-4 grid gap-3 sm:grid-cols-2">
                   <WorkspacePulseStat label={copy.workspaceStatsAll} value={`${workspaceStats.all}`} />
                   <WorkspacePulseStat label={copy.workspaceStatsPrepared} value={`${workspaceStats.prepared}`} />
@@ -217,7 +219,7 @@ export default async function AdminWorkspacePage({
                   <WorkspacePulseStat label={copy.workspaceStatsArchived} value={`${workspaceStats.archived}`} />
                 </div>
 
-                <div className="mt-4 space-y-2 border-t border-[var(--accent-border)] pt-4 text-xs leading-5 text-[var(--accent-secondary)]">
+                <div className="mt-4 space-y-2 border-t border-[var(--hero-border)] pt-4 text-xs leading-5 text-[var(--hero-secondary)]">
                   {signedInEmail ? (
                     <p>{`${copy.signedInAs}: ${signedInName ?? signedInEmail}${currentFacilitator?.grant.role ? ` • ${currentFacilitator.grant.role}` : ""}`}</p>
                   ) : null}
@@ -232,7 +234,7 @@ export default async function AdminWorkspacePage({
           <div className="space-y-5">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
               <form
-                className="grid gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.82),rgba(255,255,255,0.68))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.84),rgba(41,37,36,0.74))]"
+                className="grid gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end"
                 method="get"
               >
                 <div>
@@ -265,13 +267,13 @@ export default async function AdminWorkspacePage({
                 </div>
               </form>
 
-              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.84),rgba(255,255,255,0.7))] p-4 dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.84),rgba(41,37,36,0.74))] xl:w-[23rem]">
+              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 xl:w-[23rem]">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
                   <div>
                     <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.createInstanceTitle}</p>
                     <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceCreateDescription}</p>
                   </div>
-                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xl leading-none text-[var(--text-secondary)] transition group-open:rotate-45 dark:bg-[var(--surface-soft)]">
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xl leading-none text-[var(--text-secondary)] transition group-open:rotate-45">
                     +
                   </span>
                 </summary>
@@ -364,9 +366,9 @@ export default async function AdminWorkspacePage({
                     return (
                       <article
                         key={instance.id}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.94),rgba(255,255,255,0.82))] p-4 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_24px_40px_rgba(28,25,23,0.1)] dark:bg-[linear-gradient(180deg,rgba(28,26,24,0.94),rgba(28,26,24,0.84))] dark:hover:shadow-[0_24px_40px_rgba(0,0,0,0.28)]"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] p-4 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_24px_40px_rgba(28,25,23,0.1)]"
                       >
-                        <div className="absolute inset-x-0 top-0 h-14 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.05),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_62%)]" />
+                        <div className="absolute inset-x-0 top-0 h-14 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
                         <div className="relative flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
@@ -442,9 +444,9 @@ export default async function AdminWorkspacePage({
 
 function WorkspacePulseStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4 transition duration-200 hover:bg-[rgba(255,255,255,0.12)]">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--accent-muted)]">{label}</p>
-      <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[var(--accent-text)]">{value}</p>
+    <div className={`${adminHeroTileClassName} px-4 py-4`}>
+      <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--hero-muted)]">{label}</p>
+      <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[var(--hero-text)]">{value}</p>
     </div>
   );
 }
@@ -461,7 +463,7 @@ function WorkspaceMetaRow({ label, value }: { label: string; value: string }) {
 function CreateStep({ index, body }: { index: string; body: string }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[11px] font-semibold tracking-[0.12em] text-[var(--text-muted)] dark:bg-[rgba(28,25,23,0.82)]">
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[11px] font-semibold tracking-[0.12em] text-[var(--text-muted)]">
         {index}
       </span>
       <p className="pt-1 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>

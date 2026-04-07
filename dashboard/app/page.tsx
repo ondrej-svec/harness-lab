@@ -78,7 +78,7 @@ export default async function HomePage({
   const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(12,10,9,0.04),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
         <SiteHeader isParticipant={!!participantSession} lang={lang} copy={copy} />
 

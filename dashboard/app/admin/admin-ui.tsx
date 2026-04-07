@@ -14,8 +14,8 @@ export function AdminPanel({
   children: ReactNode;
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.88),rgba(255,255,255,0.74))] p-5 shadow-[var(--shadow-soft)] backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(28,25,23,0.1)] sm:p-6 dark:bg-[linear-gradient(180deg,rgba(28,26,24,0.92),rgba(28,26,24,0.84))] dark:hover:shadow-[0_24px_50px_rgba(0,0,0,0.3)]">
-      <div className="absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.04),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.06),transparent_62%)]" />
+    <section className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-5 shadow-[var(--shadow-soft)] backdrop-blur transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_50px_rgba(28,25,23,0.1)] sm:p-6">
+      <div className="absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
       <div className="relative">
         <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{eyebrow}</p>
         <h2 className="mt-2.5 text-[1.8rem] font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
@@ -36,7 +36,7 @@ export function ControlCard({
   children: ReactNode;
 }) {
   return (
-    <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,255,255,0.82))] p-5 shadow-[0_14px_30px_rgba(28,25,23,0.05)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_38px_rgba(28,25,23,0.08)] dark:bg-[linear-gradient(180deg,rgba(28,26,24,0.94),rgba(28,26,24,0.86))] dark:hover:shadow-[0_20px_38px_rgba(0,0,0,0.24)]">
+    <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] p-5 shadow-[0_14px_30px_rgba(28,25,23,0.05)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_38px_rgba(28,25,23,0.08)]">
       <h3 className="text-lg font-medium text-[var(--text-primary)]">{title}</h3>
       <p className="mt-2 text-[13px] leading-5 text-[var(--text-secondary)] sm:text-sm sm:leading-6">{description}</p>
       <div className="mt-4">{children}</div>
@@ -54,7 +54,7 @@ export function SummaryStat({
   hint?: string;
 }) {
   return (
-    <div className="bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(255,255,255,0.8))] px-6 py-5 transition-colors duration-200 dark:bg-[linear-gradient(180deg,rgba(12,10,9,0.98),rgba(28,25,23,0.9))]">
+    <div className="bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] px-6 py-5 transition-colors duration-200">
       <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-2 text-base font-semibold tracking-[-0.03em] text-[var(--text-primary)] sm:text-lg">{value}</p>
       {hint ? <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{hint}</p> : null}
@@ -73,7 +73,7 @@ export function KeyValueRow({
 }) {
   return (
     <div
-      className={`rounded-[20px] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.72))] px-4 py-3 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)] dark:bg-[linear-gradient(180deg,rgba(41,37,36,0.92),rgba(41,37,36,0.76))] dark:hover:bg-[rgba(41,37,36,0.96)] ${
+      className={`rounded-[20px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] px-4 py-3 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)] ${
         compact ? "space-y-1" : "flex items-start justify-between gap-6"
       }`}
     >
@@ -139,7 +139,13 @@ export const adminPrimaryButtonClassName =
   "inline-flex items-center justify-center rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-5 py-2.5 text-[13px] font-medium lowercase text-[var(--accent-text)] shadow-[0_12px_24px_rgba(12,10,9,0.12)] transition duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.1),0_12px_24px_rgba(12,10,9,0.12)]";
 
 export const adminSecondaryButtonClassName =
-  "inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[rgba(255,255,255,0.78)] px-5 py-2.5 text-[13px] font-medium lowercase text-[var(--text-primary)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--text-primary)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.08)] dark:bg-[rgba(28,26,24,0.82)]";
+  "inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--card-strong-top)] px-5 py-2.5 text-[13px] font-medium lowercase text-[var(--text-primary)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--text-primary)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.08)]";
 
 export const adminDangerButtonClassName =
   "inline-flex items-center justify-center rounded-full border border-[var(--danger)] bg-[var(--danger)] px-5 py-2.5 text-[13px] font-medium lowercase text-white shadow-[0_12px_24px_rgba(220,38,38,0.18)] transition duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(220,38,38,0.12),0_12px_24px_rgba(220,38,38,0.18)]";
+
+export const adminHeroPanelClassName =
+  "rounded-[28px] border border-[var(--hero-border)] bg-[linear-gradient(180deg,var(--hero-top),var(--hero-bottom))] text-[var(--hero-text)] shadow-[var(--hero-shadow)]";
+
+export const adminHeroTileClassName =
+  "rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] transition duration-200 hover:bg-[var(--hero-tile-hover)]";

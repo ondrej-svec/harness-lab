@@ -48,6 +48,8 @@ import {
   KeyValueRow,
   SummaryStat,
   StatusPill,
+  adminHeroPanelClassName,
+  adminHeroTileClassName,
   adminDangerButtonClassName,
   adminInputClassName,
   adminPrimaryButtonClassName,
@@ -398,10 +400,10 @@ export default async function AdminPage({
   });
 
   return (
-    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.58),transparent_34%),radial-gradient(circle_at_top_right,rgba(0,0,0,0.04),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
+    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
       <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
         <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
-          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,rgba(0,0,0,0.06),transparent_62%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.09),transparent_62%)]" />
+          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
           <div className="relative grid gap-6 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.42fr)_minmax(22rem,0.88fr)]">
             <div className="max-w-3xl">
                 <Link
@@ -447,8 +449,8 @@ export default async function AdminPage({
                   </form>
                 </div>
 
-                <section className="w-full rounded-[30px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-5 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)]">
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.overviewTitle}</p>
+                <section className={`${adminHeroPanelClassName} w-full p-5`}>
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.overviewTitle}</p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
                     <ControlRoomHeroMetric label={copy.workspaceWhenLabel} value={selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange} />
                     <ControlRoomHeroMetric
@@ -521,9 +523,9 @@ export default async function AdminPage({
 
         <div className="grid gap-6 xl:grid-cols-[15rem_minmax(0,1fr)]">
           <aside className="hidden xl:block">
-            <div className="sticky top-6 rounded-[30px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-4 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)]">
-              <p className="px-2 text-[11px] uppercase tracking-[0.28em] text-[var(--accent-muted)]">{copy.activeInstance}</p>
-              <p className="mt-2 px-2 text-sm leading-6 text-[var(--accent-secondary)]">{state.workshopId}</p>
+            <div className={`sticky top-6 ${adminHeroPanelClassName} p-4`}>
+              <p className="px-2 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.activeInstance}</p>
+              <p className="mt-2 px-2 text-sm leading-6 text-[var(--hero-secondary)]">{state.workshopId}</p>
               <nav className="flex flex-col gap-2">
                 <AdminSectionLink
                   lang={lang}
@@ -586,29 +588,29 @@ export default async function AdminPage({
           >
             <div className="grid gap-5 xl:grid-cols-[minmax(0,1.34fr)_minmax(21rem,0.8fr)]">
               <section className="space-y-4">
-                <div className="rounded-[30px] border border-[var(--accent-border)] bg-[linear-gradient(180deg,rgba(12,10,9,0.96),rgba(28,25,23,0.9))] p-6 text-[var(--accent-text)] shadow-[0_20px_44px_rgba(12,10,9,0.18)] sm:p-7">
+                <div className={`${adminHeroPanelClassName} p-6 sm:p-7`}>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--accent-muted)]">
+                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
                       {copy.liveNow}
                     </span>
-                    <span className="rounded-full border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--accent-secondary)]">
+                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
                       {state.workshopMeta.currentPhaseLabel}
                     </span>
                   </div>
                   <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
                     <div className="max-w-3xl">
-                      <h3 className="text-3xl font-semibold tracking-[-0.05em] text-[var(--accent-text)]">
+                      <h3 className="text-3xl font-semibold tracking-[-0.05em] text-[var(--hero-text)]">
                         {overviewState.liveNowTitle}
                       </h3>
-                      <p className="mt-4 max-w-2xl text-[15px] leading-6 text-[var(--accent-secondary)]">{overviewState.liveNowDescription}</p>
+                      <p className="mt-4 max-w-2xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
                     </div>
                     <div className="space-y-3">
                       {overviewState.nextUpLabel ? (
-                        <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-3 text-sm leading-6 text-[var(--accent-secondary)]">
+                        <div className="rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
                           {overviewState.nextUpLabel}
                         </div>
                       ) : null}
-                      <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-3 text-sm leading-6 text-[var(--accent-secondary)]">
+                      <div className="rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3 text-sm leading-6 text-[var(--hero-secondary)]">
                         {copy.workspaceSignalLabel}: {overviewState.participantState}
                       </div>
                     </div>
@@ -621,7 +623,7 @@ export default async function AdminPage({
                   ))}
                 </div>
 
-                <div className="rounded-[28px] border border-[var(--border)] bg-[rgba(255,255,255,0.7)] p-5 shadow-[0_14px_30px_rgba(28,25,23,0.05)] dark:bg-[rgba(28,25,23,0.74)] sm:p-6">
+                <div className="rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-5 shadow-[0_14px_30px_rgba(28,25,23,0.05)] sm:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
                     <Link
@@ -667,7 +669,7 @@ export default async function AdminPage({
                         {copy.hideAgainButton}
                       </button>
                     </div>
-                    <div className="rounded-[20px] border border-[var(--border)] bg-[rgba(255,255,255,0.54)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] dark:bg-[rgba(28,25,23,0.56)]">
+                    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
                       {copy.participantStatePrefix} {overviewState.participantState}.
                     </div>
                   </form>
@@ -1165,16 +1167,16 @@ function AdminActionStateFields({
 
 function ControlRoomHeroMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--accent-border)] bg-[rgba(255,255,255,0.08)] px-4 py-4 transition duration-200 hover:bg-[rgba(255,255,255,0.12)]">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--accent-muted)]">{label}</p>
-      <p className="mt-2 text-[13px] leading-5 text-[var(--accent-text)] sm:text-sm sm:leading-6">{value}</p>
+    <div className={`${adminHeroTileClassName} px-4 py-4`}>
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{label}</p>
+      <p className="mt-2 text-[13px] leading-5 text-[var(--hero-text)] sm:text-sm sm:leading-6">{value}</p>
     </div>
   );
 }
 
 function ControlRoomSnapshot({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[22px] border border-[var(--border)] bg-[rgba(255,255,255,0.62)] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[rgba(255,255,255,0.82)] dark:bg-[rgba(28,25,23,0.64)] dark:hover:bg-[rgba(28,25,23,0.78)]">
+    <div className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)]">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-2 text-[15px] font-semibold leading-5 text-[var(--text-primary)]">{value}</p>
     </div>
@@ -1206,7 +1208,7 @@ function TimelineRow({
     item.status === "current"
       ? "border-[var(--highlight-border)] bg-[var(--highlight-surface)] shadow-[0_14px_28px_rgba(28,25,23,0.08)]"
       : item.status === "done"
-        ? "border-[var(--border)] bg-[rgba(255,255,255,0.46)] dark:bg-[rgba(28,25,23,0.44)]"
+        ? "border-[var(--border)] bg-[var(--surface-soft)]"
         : "border-[var(--border)] bg-transparent";
 
   return (
@@ -1257,8 +1259,8 @@ function AdminSectionLink({
       className={`rounded-full border px-4 py-2 text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
         dark
           ? active
-            ? "border-[var(--accent-border)] bg-[rgba(255,255,255,0.12)] text-[var(--accent-text)] shadow-[0_10px_24px_rgba(0,0,0,0.18)]"
-            : "border-transparent text-[var(--accent-secondary)] hover:border-[var(--accent-border)] hover:bg-[rgba(255,255,255,0.08)] hover:text-[var(--accent-text)]"
+            ? "border-[var(--hero-border)] bg-[var(--hero-tile-hover)] text-[var(--hero-text)] shadow-[var(--hero-shadow-soft)]"
+            : "border-transparent text-[var(--hero-secondary)] hover:border-[var(--hero-border)] hover:bg-[var(--hero-tile-bg)] hover:text-[var(--hero-text)]"
           : active
             ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)] shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
             : "border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
