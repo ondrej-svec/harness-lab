@@ -30,11 +30,11 @@ const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/w
 const adminSections = ["overview", "agenda", "teams", "signals", "access", "account"] as const;
 type AdminSection = (typeof adminSections)[number];
 
-function resolveAdminSection(value: string | undefined): AdminSection {
+export function resolveAdminSection(value: string | undefined): AdminSection {
   return adminSections.find((section) => section === value) ?? "overview";
 }
 
-function buildAdminHref({
+export function buildAdminHref({
   lang,
   section,
   instanceId,
@@ -65,11 +65,23 @@ function buildAdminHref({
   return withLang(query ? `/admin?${query}` : "/admin", lang);
 }
 
-function readActionState(formData: FormData) {
+export function readActionState(formData: FormData) {
   return {
     lang: resolveUiLanguage(String(formData.get("lang") ?? "")),
     section: resolveAdminSection(String(formData.get("section") ?? "")),
     instanceId: String(formData.get("instanceId") ?? "").trim(),
+  };
+}
+
+export function deriveAdminPageState(
+  state: Awaited<ReturnType<typeof getWorkshopState>>,
+  availableInstances: Awaited<ReturnType<ReturnType<typeof getWorkshopInstanceRepository>["listInstances"]>>,
+  activeInstanceId: string,
+) {
+  return {
+    currentAgendaItem: state.agenda.find((item) => item.status === "current") ?? state.agenda[0],
+    nextAgendaItem: state.agenda.find((item) => item.status === "upcoming") ?? null,
+    selectedInstance: availableInstances.find((instance) => instance.id === activeInstanceId) ?? null,
   };
 }
 
@@ -330,9 +342,11 @@ export default async function AdminPage({
     isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
   ]);
 
-  const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0];
-  const nextAgendaItem = state.agenda.find((item) => item.status === "upcoming") ?? null;
-  const selectedInstance = availableInstances.find((instance) => instance.id === activeInstanceId) ?? null;
+  const { currentAgendaItem, nextAgendaItem, selectedInstance } = deriveAdminPageState(
+    state,
+    availableInstances,
+    activeInstanceId,
+  );
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;

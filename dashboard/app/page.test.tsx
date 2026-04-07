@@ -1,0 +1,130 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { publicCopy } from "@/lib/ui-language";
+import { seedWorkshopState } from "@/lib/workshop-data";
+
+const getConfiguredEventCode = vi.fn();
+const getParticipantSessionFromCookieStore = vi.fn();
+const getParticipantTeamLookup = vi.fn();
+const getWorkshopState = vi.fn();
+
+vi.mock("next/headers", () => ({
+  cookies: vi.fn(),
+}));
+
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
+}));
+
+vi.mock("@/lib/event-access", () => ({
+  getConfiguredEventCode,
+  getParticipantSessionFromCookieStore,
+  getParticipantTeamLookup,
+  participantSessionCookieName: "participant-session",
+  redeemEventCode: vi.fn(),
+  revokeParticipantSession: vi.fn(),
+}));
+
+vi.mock("@/lib/workshop-store", () => ({
+  getWorkshopState,
+}));
+
+const pageModulePromise = import("./page");
+
+describe("public page helpers", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("derives the current and next agenda items with only the first three public notes", async () => {
+    const { deriveHomePageState } = await pageModulePromise;
+    const state = structuredClone(seedWorkshopState);
+    state.agenda = [
+      { ...state.agenda[0], status: "done" },
+      { ...state.agenda[1], status: "current" },
+      { ...state.agenda[2], status: "upcoming" },
+    ];
+    state.ticker = [
+      { id: "1", label: "one", tone: "info" },
+      { id: "2", label: "two", tone: "signal" },
+      { id: "3", label: "three", tone: "highlight" },
+      { id: "4", label: "four", tone: "info" },
+    ];
+
+    expect(deriveHomePageState(state)).toMatchObject({
+      currentAgendaItem: state.agenda[1],
+      nextAgendaItem: state.agenda[2],
+      participantNotes: state.ticker.slice(0, 3),
+      rotationRevealed: state.rotation.revealed,
+    });
+  });
+
+  it("falls back to the first agenda item when none is marked current", async () => {
+    const { deriveHomePageState } = await pageModulePromise;
+    const state = structuredClone(seedWorkshopState);
+    state.agenda = state.agenda.map((item, index) => ({
+      ...item,
+      status: index === 0 ? "done" : "upcoming",
+    }));
+
+    expect(deriveHomePageState(state).currentAgendaItem).toEqual(state.agenda[0]);
+  });
+
+  it("maps known event access errors and falls back for unknown ones", async () => {
+    const { formatEventAccessError } = await pageModulePromise;
+
+    expect(formatEventAccessError("invalid_code", publicCopy.en)).toBe(publicCopy.en.invalidCode);
+    expect(formatEventAccessError("expired_code", publicCopy.en)).toBe(publicCopy.en.expiredCode);
+    expect(formatEventAccessError("anything-else", publicCopy.en)).toBe(publicCopy.en.unknownCodeError);
+  });
+
+  it("formats participant session expiry in the requested locale", async () => {
+    const { formatDateTime } = await pageModulePromise;
+    const value = "2026-04-06T10:30:00.000Z";
+
+    expect(formatDateTime(value, "en")).toContain("2026");
+    expect(formatDateTime(value, "cs")).toContain("2026");
+    expect(formatDateTime(value, "en")).not.toEqual(formatDateTime(value, "cs"));
+  });
+});
+
+describe("HomePage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
+    getConfiguredEventCode.mockResolvedValue({
+      isSample: true,
+      sampleCode: "lantern8-context4-handoff2",
+    });
+    getParticipantTeamLookup.mockResolvedValue({
+      items: structuredClone(seedWorkshopState.teams.slice(0, 2)),
+    });
+  });
+
+  it("returns the public overview when no participant session exists", async () => {
+    const { default: HomePage } = await pageModulePromise;
+    getParticipantSessionFromCookieStore.mockResolvedValue(null);
+
+    const view = await HomePage({
+      searchParams: Promise.resolve({ lang: "en", eventAccess: "invalid_code" }),
+    });
+
+    expect(view).toBeTruthy();
+    expect(getConfiguredEventCode).toHaveBeenCalledTimes(1);
+    expect(getParticipantTeamLookup).not.toHaveBeenCalled();
+  });
+
+  it("returns the participant room view when a participant session exists", async () => {
+    const { default: HomePage } = await pageModulePromise;
+    getParticipantSessionFromCookieStore.mockResolvedValue({
+      token: "session-token",
+      expiresAt: "2026-04-06T16:30:00.000Z",
+    });
+
+    const view = await HomePage({
+      searchParams: Promise.resolve({ lang: "cs" }),
+    });
+
+    expect(view).toBeTruthy();
+    expect(getParticipantTeamLookup).toHaveBeenCalledTimes(1);
+  });
+});

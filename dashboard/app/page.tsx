@@ -17,6 +17,19 @@ export const dynamic = "force-dynamic";
 const publicRepoUrl = "https://github.com/ondrej-svec/harness-lab";
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
 
+export function deriveHomePageState(state: Awaited<ReturnType<typeof getWorkshopState>>) {
+  const { agenda, rotation, ticker } = state;
+  const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
+  const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
+
+  return {
+    currentAgendaItem,
+    nextAgendaItem,
+    participantNotes: ticker.slice(0, 3),
+    rotationRevealed: rotation.revealed,
+  };
+}
+
 async function redeemEventCodeAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
@@ -67,10 +80,7 @@ export default async function HomePage({
   const participantSession = await getParticipantSessionFromCookieStore();
   const participantTeams = participantSession ? await getParticipantTeamLookup() : null;
   const configuredEventCode = await getConfiguredEventCode();
-  const { agenda, rotation, ticker } = state;
-  const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
-  const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
-  const participantNotes = ticker.slice(0, 3);
+  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(12,10,9,0.04),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
@@ -86,7 +96,7 @@ export default async function HomePage({
             participantSession={participantSession}
             participantTeams={participantTeams}
             publicNotes={participantNotes}
-            rotationRevealed={rotation.revealed}
+            rotationRevealed={rotationRevealed}
           />
         ) : (
           <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
@@ -507,14 +517,14 @@ function MetricCard({
   );
 }
 
-function formatDateTime(value: string, lang: UiLanguage) {
+export function formatDateTime(value: string, lang: UiLanguage) {
   return new Intl.DateTimeFormat(lang === "en" ? "en-US" : "cs-CZ", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
 }
 
-function formatEventAccessError(value: string, copy: (typeof publicCopy)[UiLanguage]) {
+export function formatEventAccessError(value: string, copy: (typeof publicCopy)[UiLanguage]) {
   switch (value) {
     case "invalid_code":
       return copy.invalidCode;
