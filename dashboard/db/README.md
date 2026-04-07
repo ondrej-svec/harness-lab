@@ -19,7 +19,9 @@ cd dashboard
 npm run db:migrate
 ```
 
-The migration runner applies every `.sql` file in `dashboard/db/migrations/` in sorted filename order using `HARNESS_DATABASE_URL` or `DATABASE_URL`.
+The migration runner applies every pending `.sql` file in `dashboard/db/migrations/` using `HARNESS_DATABASE_URL` or `DATABASE_URL`.
+Known legacy migrations run in a pinned compatibility order before any later filename-sorted additions.
+It records applied filenames in `_harness_schema_migrations`, so repeat deploys only run pending migrations.
 
 ## Current Tables
 
@@ -27,13 +29,14 @@ The migration runner applies every `.sql` file in `dashboard/db/migrations/` in 
 - `participant_event_access`
 - `participant_sessions`
 - `participant_redeem_attempts`
-- `facilitator_identities`
 - `instance_grants`
 - `teams`
 - `monitoring_snapshots`
 - `checkpoints`
 - `instance_archives`
 - `audit_log`
+- `facilitator_device_auth`
+- `facilitator_cli_sessions`
 
 ## Test Database
 
