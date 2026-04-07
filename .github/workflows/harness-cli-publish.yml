@@ -1,0 +1,136 @@
+name: Harness CLI Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Optional release tag to validate against package.json, for example harness-cli-v0.1.0"
+        required: false
+        type: string
+  release:
+    types:
+      - published
+
+concurrency:
+  group: harness-cli-publish-${{ github.event_name }}-${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify-cli-package:
+    name: verify-cli-package
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: harness-cli
+    permissions:
+      contents: read
+    outputs:
+      package_version: ${{ steps.package_meta.outputs.version }}
+      release_tag: ${{ steps.release_meta.outputs.release_tag }}
+      tarball_name: ${{ steps.pack.outputs.tarball_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - id: package_meta
+        name: Read package version
+        run: echo "version=$(node -p \"require('./package.json').version\")" >> "$GITHUB_OUTPUT"
+
+      - id: release_meta
+        name: Resolve release tag
+        shell: bash
+        env:
+          RELEASE_EVENT_TAG: ${{ github.event.release.tag_name }}
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          TAG="${RELEASE_EVENT_TAG:-${INPUT_RELEASE_TAG}}"
+          if [ -z "${TAG}" ]; then
+            TAG="harness-cli-v${{ steps.package_meta.outputs.version }}"
+          fi
+          echo "release_tag=${TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release tag shape
+        shell: bash
+        run: |
+          EXPECTED_TAG="harness-cli-v${{ steps.package_meta.outputs.version }}"
+          if [ "${{ steps.release_meta.outputs.release_tag }}" != "${EXPECTED_TAG}" ]; then
+            echo "Expected release tag ${EXPECTED_TAG}, got ${{ steps.release_meta.outputs.release_tag }}"
+            exit 1
+          fi
+
+      - run: npm test
+
+      - id: pack
+        name: Pack CLI tarball
+        shell: bash
+        run: |
+          TARBALL="$(npm pack | tail -n 1)"
+          echo "tarball_name=${TARBALL}" >> "$GITHUB_OUTPUT"
+
+      - name: Install packed tarball in smoke project
+        shell: bash
+        run: |
+          mkdir -p ../tmp/harness-cli-release-smoke
+          cd ../tmp/harness-cli-release-smoke
+          npm init -y
+          npm install "../../harness-cli/${{ steps.pack.outputs.tarball_name }}"
+
+      - name: Run CLI help smoke test
+        shell: bash
+        run: |
+          ../tmp/harness-cli-release-smoke/node_modules/.bin/harness --help
+
+      - name: Upload packed tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-cli-tarball
+          path: harness-cli/${{ steps.pack.outputs.tarball_name }}
+
+      - name: Write workflow summary
+        run: |
+          {
+            echo "## Harness CLI package verification"
+            echo
+            echo "- Package: \`@harness-lab/cli\`"
+            echo "- Version: \`${{ steps.package_meta.outputs.version }}\`"
+            echo "- Release tag: \`${{ steps.release_meta.outputs.release_tag }}\`"
+            echo "- Tarball: \`${{ steps.pack.outputs.tarball_name }}\`"
+            echo "- Publish mode: \`${{ github.event_name == 'release' && 'publish' || 'dry-run' }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish-cli-to-npm:
+    name: publish-cli-to-npm
+    needs:
+      - verify-cli-package
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: harness-cli
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Publish package to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public
+
+      - name: Write publish summary
+        run: |
+          {
+            echo "## Harness CLI published"
+            echo
+            echo "- Package: \`@harness-lab/cli\`"
+            echo "- Version: \`${{ needs.verify-cli-package.outputs.package_version }}\`"
+            echo "- Release tag: \`${{ needs.verify-cli-package.outputs.release_tag }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

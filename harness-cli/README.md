@@ -24,7 +24,19 @@ Current implementation posture:
 
 ## Install
 
-Local package install without publishing:
+Participant-facing default install:
+
+```bash
+npm install -g @harness-lab/cli
+```
+
+Verify the binary:
+
+```bash
+harness --help
+```
+
+Development or fallback install from this repository:
 
 ```bash
 npm install -g ./harness-cli
@@ -40,8 +52,7 @@ npm link
 Default device/browser login:
 
 ```bash
-cd harness-cli
-node ./bin/harness.js auth login \
+harness auth login \
   --dashboard-url https://harness-lab-dashboard.vercel.app
 ```
 
@@ -50,8 +61,7 @@ The CLI prints a verification URL plus user code, optionally opens the browser w
 Explicit local file-mode / Basic Auth fallback:
 
 ```bash
-cd harness-cli
-node ./bin/harness.js auth login \
+harness auth login \
   --auth basic \
   --dashboard-url http://localhost:3000 \
   --username facilitator \
@@ -61,8 +71,7 @@ node ./bin/harness.js auth login \
 Explicit Neon email/password bootstrap fallback:
 
 ```bash
-cd harness-cli
-node ./bin/harness.js auth login \
+harness auth login \
   --auth neon \
   --dashboard-url https://harness-lab-dashboard.vercel.app \
   --email facilitator@example.com
@@ -71,11 +80,11 @@ node ./bin/harness.js auth login \
 Workshop commands:
 
 ```bash
-node ./bin/harness.js auth status
-node ./bin/harness.js workshop status
-node ./bin/harness.js workshop phase set rotation
-node ./bin/harness.js workshop archive --notes "Manual archive"
-node ./bin/harness.js auth logout
+harness auth status
+harness workshop status
+harness workshop phase set rotation
+harness workshop archive --notes "Manual archive"
+harness auth logout
 ```
 
 Environment variables:
@@ -91,6 +100,6 @@ Environment variables:
 
 ## Release Gate
 
-npm publication is intentionally blocked on the release gate in
+Public npm publication is controlled by the release gate in
 [docs/harness-cli-publication-gate.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-publication-gate.md).
-The current posture is internal preview only until the gate is explicitly reopened.
+Normal development should still happen from this repository; npm is the participant-facing distribution path, not a substitute for repo-local development.

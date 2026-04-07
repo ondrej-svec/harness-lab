@@ -1,8 +1,30 @@
 {
   "name": "@harness-lab/cli",
   "version": "0.1.0",
-  "private": true,
+  "description": "Participant-facing Harness Lab CLI for facilitator auth and workshop operations",
+  "license": "UNLICENSED",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ondrej-svec/harness-lab.git",
+    "directory": "harness-cli"
+  },
+  "homepage": "https://github.com/ondrej-svec/harness-lab/tree/main/harness-cli",
+  "bugs": {
+    "url": "https://github.com/ondrej-svec/harness-lab/issues"
+  },
+  "keywords": [
+    "harness-lab",
+    "cli",
+    "workshop",
+    "ai-agents"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "bin",
     "src",

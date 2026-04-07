@@ -8,6 +8,7 @@ on:
       - "workshop-skill/**"
       - "dashboard/**"
       - ".github/workflows/dashboard-ci.yml"
+      - ".github/workflows/harness-cli-publish.yml"
   pull_request:
     paths:
       - "harness-cli/**"
@@ -15,6 +16,7 @@ on:
       - "workshop-skill/**"
       - "dashboard/**"
       - ".github/workflows/dashboard-ci.yml"
+      - ".github/workflows/harness-cli-publish.yml"
 
 concurrency:
   group: dashboard-ci-${{ github.workflow }}-${{ github.ref }}

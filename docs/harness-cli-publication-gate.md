@@ -1,15 +1,39 @@
 # Harness CLI Publication Gate
 
-The `@harness-lab/cli` package is not ready for public npm publication just because `npm pack` succeeds.
+The `@harness-lab/cli` package is participant-facing and publishable publicly, but only through an explicit release workflow.
 
 ## Current Decision
 
-The first npm release is **deferred until post-workshop hardening**.
+Public npm publication is **enabled behind an explicit release gate**.
 
-Until this document is updated deliberately, the CLI is limited to:
+Default posture:
 
-- local package install from this repository
-- internal preview use inside workshop operations
+- participants install with `npm install -g @harness-lab/cli`
+- development still happens from this repository
+- public publish happens only from the dedicated GitHub Actions workflow
+- routine pushes to `main` must never publish to npm automatically
+
+Release trigger:
+
+- actual npm publication happens on a published GitHub Release whose tag matches `harness-cli-v<package-version>`
+- dry-run verification can be executed through `workflow_dispatch` on the `Harness CLI Publish` workflow
+
+Current workflow auth model:
+
+- GitHub Actions uses the `NPM_TOKEN` repository secret for `npm publish`
+- trusted publishing can replace this later, but it is not required for the first release path
+
+Release ownership:
+
+- a release is initiated by a maintainer with GitHub Release permissions on this repository
+- the same maintainer, or another designated maintainer with npm org publish rights, owns rollback if a bad version ships
+- version bumps should be reviewed like any other user-facing surface change, not treated as mechanical noise
+
+Semver posture:
+
+- patch releases for fixes, doc-safe packaging changes, and low-risk CLI behavior corrections
+- minor releases for new participant-facing commands or meaningful UX expansion within the current CLI model
+- major releases only when breaking install, auth, command, or storage expectations intentionally
 
 ## Required Gate
 
@@ -24,21 +48,39 @@ All of the following must be true before public npm publication:
 - `npm pack` succeeds in CI
 - an install smoke test proves the packed tarball can be installed and the `harness` binary starts
 - rollback posture is documented for disabling device auth or npm distribution if regressions are found
+- the release tag matches the version in `harness-cli/package.json`
+- the publish workflow is initiated intentionally rather than by ordinary branch merges
 
 ## Release Smoke Checks
 
-The CI release smoke checks for the CLI are:
+The CLI release smoke checks are:
 
 - `cd harness-cli && npm test`
 - `cd harness-cli && npm pack`
 - install the packed tarball in a temporary Node project
 - run `./node_modules/.bin/harness --help`
 
+## First Release Checklist
+
+Before the first public release:
+
+- confirm `@harness-lab/cli` is still the intended package name and scope
+- confirm `NPM_TOKEN` exists in GitHub Actions with publish rights for the `harness-lab` organization
+- confirm the version in `harness-cli/package.json` is the intended public version
+- create a GitHub Release tagged `harness-cli-v<package-version>`
+- let the `Harness CLI Publish` workflow complete successfully
+- verify the published version with `npm view @harness-lab/cli version`
+- perform a fresh install with `npm install -g @harness-lab/cli`
+- run `harness --help`
+- run one real facilitator auth/status smoke check against the intended environment
+
 ## Rollback Posture
 
 If the brokered device flow or secure storage backends regress:
 
-- stop npm publication immediately
+- stop new npm publication immediately
+- deprecate the bad version with `npm deprecate @harness-lab/cli@<version> "<message>"`
+- publish a corrective patch release if needed
 - keep local-repo installation as the fallback path
 - instruct facilitators to use explicit bootstrap modes only for controlled recovery
 - ship the fix before reopening the release gate

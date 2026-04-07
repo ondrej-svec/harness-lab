@@ -13,10 +13,11 @@ Current implementation in this repo:
 - stores sessions in macOS Keychain, Windows Credential Manager, or Linux Secret Service by default
 - exposes dashboard-side device auth routes plus a facilitator approval page at `/admin/device`
 
-Still blocked before npm publication:
+Current npm release posture:
 
-- public release of the package itself
-- broader live-runtime manual validation against a deployed dashboard
+- participant-facing npm publication is supported through an explicit release workflow
+- routine development still happens from this repository
+- broader live-runtime manual validation against a deployed dashboard remains part of the first-release checklist
 
 ## Why The CLI Exists
 
