@@ -59,8 +59,7 @@ export async function requireFacilitatorRequest(request: Request) {
  * Guard for admin page access (Server Components): redirects to sign-in if unauthorized.
  * Uses next/headers for Server Component context.
  */
-export async function requireFacilitatorPageAccess() {
-  const instanceId = getCurrentWorkshopInstanceId();
+export async function requireFacilitatorPageAccess(instanceId = getCurrentWorkshopInstanceId()) {
   const service = getFacilitatorAuthService();
 
   if (isNeonAuthMode()) {
@@ -83,10 +82,10 @@ export async function requireFacilitatorPageAccess() {
 /**
  * Guard for admin server actions: checks origin trust + auth.
  */
-export async function requireFacilitatorActionAccess() {
+export async function requireFacilitatorActionAccess(instanceId = getCurrentWorkshopInstanceId()) {
   if (!(await requireTrustedActionOrigin())) {
     redirect("/");
   }
 
-  await requireFacilitatorPageAccess();
+  await requireFacilitatorPageAccess(instanceId);
 }

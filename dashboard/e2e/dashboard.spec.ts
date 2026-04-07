@@ -19,7 +19,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.getByText("repo před improvizací")).toBeVisible();
+    await expect(page.locator("#overview").getByText("repo před improvizací")).toBeVisible();
     await expect(page.getByText(/Celodenní workshop o kontextu, workflow a spolupráci s AI coding agenty/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "repo" })).toHaveAttribute(
       "href",
@@ -37,12 +37,18 @@ test.describe("participant dashboard", () => {
 
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
-    await expect(page.getByText("repo before improvisation")).toBeVisible();
+    await expect(page.locator("#overview").getByText("repo before improvisation")).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "facilitator login" })).toBeVisible();
 
     await page.getByRole("link", { name: "harness lab" }).click();
     await expect(page).toHaveURL(/\/\?lang=en$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("keeps the public mobile hero visually stable", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/");
+    await expect(page).toHaveScreenshot("public-mobile-home.png");
   });
 
   test("unlocks private participant context only after redeeming the event code", async ({ page }) => {
@@ -70,6 +76,14 @@ test.describe("participant dashboard", () => {
     await expect(page.getByRole("navigation").getByRole("link", { name: "místnost" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "poznámky" })).toBeVisible();
+  });
+
+  test("keeps the participant mobile room view visually stable", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/");
+    await page.getByLabel("event code").fill("lantern8-context4-handoff2");
+    await page.getByRole("button", { name: "otevřít vrstvu pro účastníky" }).click();
+    await expect(page).toHaveScreenshot("participant-mobile-room.png");
   });
 });
 
@@ -122,24 +136,33 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin");
 
     await expect(page.getByRole("heading", { name: "řízení workshopu" })).toBeVisible();
-    await expect(page.getByText("aktivní instance")).toBeVisible();
-    await expect(page.getByRole("link", { name: "agenda" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "účet" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "ovládání continuation shiftu" })).toBeVisible();
+    await expect(page.locator("header").getByText("aktivní instance")).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "účet" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "continuation handoff" })).toBeVisible();
 
     await Promise.all([
-      page.waitForURL("**/admin"),
+      page.waitForURL(/\/admin(\?.*)?$/),
       page.getByRole("button", { name: "Odemknout" }).click(),
     ]);
     await expect(page.getByText(/^odemčeno$/).first()).toBeVisible();
 
     await page.goto("/admin");
     await Promise.all([
-      page.waitForURL("**/admin"),
+      page.waitForURL(/\/admin(\?.*)?$/),
       page.getByRole("button", { name: "vytvořit archiv" }).click(),
     ]);
 
     await expect(page.getByText("Poslední archiv:")).toBeVisible();
+  });
+
+  test("keeps the facilitator overview visually stable", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1400 });
+    await page.goto("/admin");
+    await expect(page).toHaveScreenshot("facilitator-overview-desktop.png", {
+      fullPage: true,
+      mask: [page.getByText("Poslední archiv:")],
+    });
   });
 
   test("shows facilitators section with file-mode fallback message", async ({ page }) => {

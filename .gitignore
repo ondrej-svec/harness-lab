@@ -14,6 +14,8 @@ dashboard/data/*/
 dashboard/data/audit-log.json
 dashboard/data/facilitator-identities.json
 dashboard/test-results/
+dashboard/coverage/
+dashboard/tsconfig.tsbuildinfo
 
 monitoring/latest-monitoring.md
 monitoring/team-repos.tsv

@@ -12,5 +12,16 @@ export default defineConfig({
   },
   test: {
     exclude: ["e2e/**", "node_modules/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html"],
+      reportsDirectory: "./coverage",
+      include: ["app/**/*.ts", "app/**/*.tsx", "lib/**/*.ts"],
+      exclude: [
+        "e2e/**",
+        "lib/auth/__mocks__/**",
+        "next-env.d.ts",
+      ],
+    },
   },
 });

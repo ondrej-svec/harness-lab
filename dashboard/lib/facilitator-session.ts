@@ -13,7 +13,7 @@ export type FacilitatorSession = {
  * Get the current facilitator's session and grant info.
  * Returns null if not authenticated or no grant exists.
  */
-export async function getFacilitatorSession(): Promise<FacilitatorSession | null> {
+export async function getFacilitatorSession(instanceId = getCurrentWorkshopInstanceId()): Promise<FacilitatorSession | null> {
   if (getRuntimeStorageMode() !== "neon" || !process.env.NEON_AUTH_BASE_URL) {
     return null;
   }
@@ -24,7 +24,6 @@ export async function getFacilitatorSession(): Promise<FacilitatorSession | null
   const userId = session?.user?.id;
   if (!userId) return null;
 
-  const instanceId = getCurrentWorkshopInstanceId();
   const grant = await getInstanceGrantRepository().getActiveGrantByNeonUserId(instanceId, userId);
   if (!grant) return null;
 

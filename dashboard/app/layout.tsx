@@ -1,8 +1,21 @@
 import { headers } from "next/headers";
 import type { Metadata } from "next";
+import { Manrope, Space_Grotesk } from "next/font/google";
 import { resolveUiLanguage } from "@/lib/ui-language";
 import { ThemeProvider } from "./components/theme-provider";
 import "./globals.css";
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+const displayFont = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Harness Lab Dashboard",
@@ -22,7 +35,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 
   return (
     <html lang={lang} suppressHydrationWarning>
-      <body style={{ fontFamily: "'Avenir Next', 'Segoe UI', sans-serif" }}>
+      <body className={`${bodyFont.variable} ${displayFont.variable}`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
