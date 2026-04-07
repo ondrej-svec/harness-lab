@@ -1,3 +1,5 @@
+import blueprintAgenda from "./workshop-blueprint-agenda.json";
+
 export type AgendaItem = {
   id: string;
   title: string;
@@ -119,6 +121,22 @@ export type WorkshopInstanceRecord = {
   workshopMeta: WorkshopMeta;
 };
 
+function createAgendaFromBlueprint(currentPhaseId?: string): AgendaItem[] {
+  const phaseId = currentPhaseId ?? blueprintAgenda.phases[2]?.id ?? blueprintAgenda.phases[0]?.id;
+  const currentIndex = Math.max(
+    blueprintAgenda.phases.findIndex((phase) => phase.id === phaseId),
+    0,
+  );
+
+  return blueprintAgenda.phases.map((phase, index) => ({
+    id: phase.id,
+    title: phase.label,
+    time: phase.startTime,
+    description: phase.goal,
+    status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
+  }));
+}
+
 export const workshopTemplates: WorkshopTemplate[] = [
   { id: "sample-studio-a", label: "Ukázková instance A", city: "Studio A", dateLabel: "Ukázkový workshop den", room: "Demo room", scenario: "20-participants" },
   { id: "sample-studio-b", label: "Ukázková instance B", city: "Studio B", dateLabel: "Ukázkový workshop den", room: "Breakout room", scenario: "20-participants" },
@@ -130,11 +148,11 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplat
   id: template.id,
   templateId: template.id,
   workshopMeta: {
-    title: "Harness Lab",
-    subtitle: "Workshop operating system pro práci s AI agenty",
+    title: blueprintAgenda.title,
+    subtitle: blueprintAgenda.subtitle,
     city: template.city,
     dateRange: `${template.dateLabel} • ${template.room}`,
-    currentPhaseLabel: "Build Phase 1",
+    currentPhaseLabel: blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
     adminHint:
       "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
   },
@@ -142,52 +160,19 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = workshopTemplat
 
 export const seedWorkshopState: WorkshopState = {
   workshopId: "sample-studio-a",
-  workshopMeta: sampleWorkshopInstances[0]?.workshopMeta ?? {
-    title: "Harness Lab",
-    subtitle: "Workshop operating system pro práci s AI agenty",
-    city: "Ukázková instance",
-    dateRange: "Sample workshop day • Demo room",
+  workshopMeta: {
+    ...(sampleWorkshopInstances[0]?.workshopMeta ?? {
+      title: blueprintAgenda.title,
+      subtitle: blueprintAgenda.subtitle,
+      city: "Ukázková instance",
+      dateRange: "Sample workshop day • Demo room",
+      currentPhaseLabel: "Build Phase 1",
+      adminHint:
+        "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
+    }),
     currentPhaseLabel: "Build Phase 1",
-    adminHint:
-      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
   },
-  agenda: [
-    {
-      id: "opening",
-      title: "Úvod a naladění",
-      time: "9:10",
-      description: "Rámec dne, proč řešíme harness engineering a co účastníky čeká.",
-      status: "done",
-    },
-    {
-      id: "talk",
-      title: "Context is King",
-      time: "9:40",
-      description: "Krátký talk + porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži.",
-      status: "done",
-    },
-    {
-      id: "build-1",
-      title: "Build Phase 1",
-      time: "10:30",
-      description: "Repo, AGENTS.md, plán a první reviewed output ještě před obědem.",
-      status: "current",
-    },
-    {
-      id: "rotation",
-      title: "Rotace týmů",
-      time: "13:30",
-      description: "Plný přesun lidí mezi stoly. Pokračuje se jen s tím, co přežilo v repu.",
-      status: "upcoming",
-    },
-    {
-      id: "reveal",
-      title: "Reveal a reflexe",
-      time: "15:45",
-      description: "Co pomohlo pokračovat, co chybělo, co si odnáším do práce s agenty.",
-      status: "upcoming",
-    },
-  ],
+  agenda: createAgendaFromBlueprint(),
   teams: [
     {
       id: "t1",
@@ -441,10 +426,7 @@ export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord
     monitoring: [],
     sprintUpdates: [],
     challenges: seedWorkshopState.challenges.map((challenge) => ({ ...challenge, completedBy: [] })),
-    agenda: seedWorkshopState.agenda.map((item, index) => ({
-      ...item,
-      status: index === 0 ? "current" : "upcoming",
-    })),
+    agenda: createAgendaFromBlueprint(blueprintAgenda.phases[0]?.id),
     ticker: [
       {
         id: "tick-reset",

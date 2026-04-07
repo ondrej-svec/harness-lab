@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getCliSessionFromBearerToken, parseBearerToken } from "./facilitator-cli-auth-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getRuntimeStorageMode } from "./runtime-storage";
@@ -35,6 +36,12 @@ export async function requireFacilitatorRequest(request: Request) {
   const service = getFacilitatorAuthService();
 
   if (isNeonAuthMode()) {
+    const bearerToken = parseBearerToken(request.headers.get("authorization"));
+    if (bearerToken) {
+      const cliSession = await getCliSessionFromBearerToken(bearerToken);
+      return cliSession ? null : unauthorizedResponse();
+    }
+
     // Neon Auth: session-based check (reads cookies from request context)
     const authorized = await service.hasValidSession({ instanceId });
     return authorized ? null : unauthorizedResponse();

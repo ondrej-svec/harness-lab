@@ -47,6 +47,42 @@ export type InstanceGrantRecord = {
   revokedAt: string | null;
 };
 
+export type FacilitatorDeviceAuthStatus =
+  | "pending"
+  | "approved"
+  | "denied"
+  | "expired"
+  | "exchanged";
+
+export type FacilitatorDeviceAuthRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  deviceCodeHash: string;
+  userCodeHash: string;
+  status: FacilitatorDeviceAuthStatus;
+  createdAt: string;
+  expiresAt: string;
+  intervalSeconds: number;
+  verificationUri: string;
+  approvedAt: string | null;
+  deniedAt: string | null;
+  exchangedAt: string | null;
+  neonUserId: string | null;
+  role: InstanceGrantRecord["role"] | null;
+};
+
+export type FacilitatorCliSessionRecord = {
+  tokenHash: string;
+  instanceId: WorkshopInstanceId;
+  neonUserId: string;
+  role: InstanceGrantRecord["role"];
+  authMode: "device";
+  createdAt: string;
+  expiresAt: string;
+  lastUsedAt: string;
+  revokedAt: string | null;
+};
+
 export type FacilitatorGrantInfo = {
   id: string;
   instanceId: WorkshopInstanceId;
@@ -170,4 +206,23 @@ export interface InstanceGrantRepository {
   countActiveGrants(instanceId: WorkshopInstanceId): Promise<number>;
   createGrant(instanceId: WorkshopInstanceId, neonUserId: string, role: InstanceGrantRecord["role"]): Promise<InstanceGrantRecord>;
   revokeGrant(grantId: string): Promise<void>;
+}
+
+export interface FacilitatorCliAuthRepository {
+  createDeviceAuthorization(record: FacilitatorDeviceAuthRecord): Promise<void>;
+  getDeviceAuthorizationByDeviceCodeHash(
+    instanceId: WorkshopInstanceId,
+    deviceCodeHash: string,
+  ): Promise<FacilitatorDeviceAuthRecord | null>;
+  getDeviceAuthorizationByUserCodeHash(
+    instanceId: WorkshopInstanceId,
+    userCodeHash: string,
+  ): Promise<FacilitatorDeviceAuthRecord | null>;
+  updateDeviceAuthorization(record: FacilitatorDeviceAuthRecord): Promise<void>;
+  createCliSession(record: FacilitatorCliSessionRecord): Promise<void>;
+  getCliSessionByTokenHash(
+    instanceId: WorkshopInstanceId,
+    tokenHash: string,
+  ): Promise<FacilitatorCliSessionRecord | null>;
+  updateCliSession(record: FacilitatorCliSessionRecord): Promise<void>;
 }

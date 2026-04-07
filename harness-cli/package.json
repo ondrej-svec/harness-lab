@@ -1,0 +1,17 @@
+{
+  "name": "@harness-lab/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "bin": {
+    "harness": "./bin/harness.js"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}

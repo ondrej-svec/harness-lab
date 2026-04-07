@@ -4,38 +4,53 @@ Příkazy pro facilitátory, kteří řídí workshop instance přes AI agenta.
 
 ## Auth
 
-Facilitátor se musí nejdřív přihlásit přes Neon Auth. Agent získá session token voláním `/api/auth/sign-in/email` a uloží ho pro další requesty.
+Facilitátor se musí nejdřív přihlásit přes `harness` CLI. Skill nemá být další secret store pro raw credentials ani dlouhodobou session.
 
 ### `/workshop facilitator login`
 
-Zeptej se na email a heslo. Zavolej dashboard API:
+Pokud není aktivní facilitátorská session, řekni facilitátorovi, aby spustil:
 
-```
-POST {DASHBOARD_URL}/api/auth/sign-in/email
-Content-Type: application/json
-
-{ "email": "...", "password": "..." }
+```bash
+harness auth login
 ```
 
-Ulož session cookie/token pro další příkazy.
+CLI provede browser/device auth flow, uloží session do secure local storage a zpřístupní ji pro další privileged příkazy.
+
+Aktuální praktický path v repu:
+
+- default / browser-device auth:
+```bash
+harness auth login --dashboard-url https://harness-lab-dashboard.vercel.app
+```
+- file mode / lokální demo fallback:
+```bash
+harness auth login --auth basic --dashboard-url http://localhost:3000 --username facilitator --password secret
+```
+- neon mode / sdílený dashboard bootstrap fallback:
+```bash
+harness auth login --auth neon --dashboard-url https://harness-lab-dashboard.vercel.app --email facilitator@example.com
+```
+
+Poznámka:
+- CLI dnes defaultně používá browser/device auth a ukládá session do OS secure storage
+- `--auth basic` a `--auth neon` zůstávají jen jako explicitní fallback pro lokální dev/bootstrap
 
 ### `/workshop facilitator logout`
 
-Zavolej:
-```
-POST {DASHBOARD_URL}/api/auth/sign-out
-```
+Požádej o:
 
-Smaž uloženou session.
+```bash
+harness auth logout
+```
 
 ## Instance Management
 
 ### `/workshop facilitator status`
 
-Zavolej:
-```
-GET {DASHBOARD_URL}/api/workshop
-GET {DASHBOARD_URL}/api/admin/facilitators
+Preferovaný path:
+
+```bash
+harness workshop status
 ```
 
 Zobraz:
@@ -46,8 +61,11 @@ Zobraz:
 
 ### `/workshop facilitator grant <email> <role>`
 
-Zavolej:
-```
+Použij CLI-backed privileged request path. Skill nemá řešit auth bootstrap sám.
+
+API capability zůstává:
+
+```http
 POST {DASHBOARD_URL}/api/admin/facilitators
 Content-Type: application/json
 
@@ -68,8 +86,9 @@ Vyžaduje `owner` roli.
 
 ### `/workshop facilitator create-instance`
 
-Zavolej:
-```
+Vysvětli, že vytvoření instance má být popsané jako import z blueprintu. Preferovaný bootstrap je přes CLI-backed auth a sdílené runtime API:
+
+```http
 POST {DASHBOARD_URL}/api/workshop
 Content-Type: application/json
 
@@ -107,7 +126,7 @@ Agent potřebuje vědět URL dashboardu:
 ## Poznámky
 
 - Facilitátorské příkazy jsou oddělené od participant příkazů
-- `/workshop facilitator login` je jediný příkaz, který vyžaduje credentials
-- Všechny ostatní příkazy používají uloženou session
+- `/workshop facilitator login` má facilitátora navést do `harness auth login`
+- Všechny ostatní privileged příkazy používají CLI-backed uloženou session
 - Pokud session expiruje, agent řekne facilitátorovi, aby se znovu přihlásil
 - Tyto příkazy nikdy nezobrazuj participant účastníkům

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import blueprintAgenda from "./workshop-blueprint-agenda.json";
 import {
   createWorkshopStateFromInstance,
   createWorkshopStateFromTemplate,
@@ -19,6 +20,7 @@ describe("workshop-data", () => {
     expect(state.monitoring).toEqual([]);
     expect(state.sprintUpdates).toEqual([]);
     expect(state.challenges.every((challenge) => challenge.completedBy.length === 0)).toBe(true);
+    expect(state.agenda.map((item) => item.id)).toEqual(blueprintAgenda.phases.map((phase) => phase.id));
 
     expect(state.agenda[0]?.status).toBe("current");
     expect(state.agenda.slice(1).every((item) => item.status === "upcoming")).toBe(true);
@@ -57,6 +59,7 @@ describe("workshop-data", () => {
     expect(state.workshopMeta.city).toBe("Client HQ");
     expect(state.rotation.scenario).toBe("20-participants");
     expect(state.agenda[0]?.status).toBe("current");
+    expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
   });
 
   it("returns the team name when present and the id otherwise", () => {

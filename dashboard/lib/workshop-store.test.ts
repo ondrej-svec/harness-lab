@@ -1,5 +1,6 @@
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "./audit-log-repository";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import blueprintAgenda from "./workshop-blueprint-agenda.json";
 import { setCheckpointRepositoryForTests, type CheckpointRepository } from "./checkpoint-repository";
 import { setEventAccessRepositoryForTests, type EventAccessRepository } from "./event-access-repository";
 import { setInstanceArchiveRepositoryForTests, type InstanceArchiveRepository } from "./instance-archive-repository";
@@ -330,6 +331,8 @@ describe("workshop-store", () => {
 
     expect(state.workshopId).toBe("sample-lab-d");
     expect(state.workshopMeta.city).toBe("Lab D");
+    expect(state.agenda.map((item) => item.id)).toEqual(blueprintAgenda.phases.map((phase) => phase.id));
+    expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
     expect(state.teams).toEqual([]);
     expect(state.monitoring).toEqual([]);
     expect(state.sprintUpdates).toEqual([]);
