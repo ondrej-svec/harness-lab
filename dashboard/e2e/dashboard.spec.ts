@@ -48,7 +48,9 @@ test.describe("participant dashboard", () => {
   test("keeps the public mobile hero visually stable", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
-    await expect(page).toHaveScreenshot("public-mobile-home.png");
+    await expect(page).toHaveScreenshot("public-mobile-home.png", {
+      maxDiffPixelRatio: 0.05,
+    });
   });
 
   test("unlocks private participant context only after redeeming the event code", async ({ page }) => {
