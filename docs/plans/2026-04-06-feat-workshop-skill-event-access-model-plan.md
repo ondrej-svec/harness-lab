@@ -115,7 +115,7 @@ This is a **detailed** plan because it defines runtime auth, API contracts, part
 - The dashboard and the skill run in different client contexts and should not depend on fragile shared client state.
 - Independent redemption keeps the system conceptually clean: same event code, same backend, separate session artifacts per surface.
 - It avoids inventing a synchronization layer just to make two clients feel magically linked.
-- It keeps the skill portable across Codex/OpenCode without browser-specific assumptions.
+- It keeps the skill portable across Codex and pi without browser-specific assumptions.
 
 ### Why use a core bundle plus on-demand lookups
 
@@ -155,7 +155,7 @@ This is a **detailed** plan because it defines runtime auth, API contracts, part
 | `/workshop login` should be the primary explicit auth path, with implicit prompting as fallback | Verified | User-approved recommendation in this planning thread; aligns with teachable in-room workflow |
 | A small authenticated core bundle with on-demand team/runtime lookups is preferable to a large eager bundle | Verified | User-approved recommendation in this planning thread; aligns with least-exposure and smaller schema reasoning |
 | The workshop instance layer can support participant session records in addition to workshop state | Unverified | Current docs define workshop data storage, but not a participant-session schema yet |
-| Codex/OpenCode skill runtime can persist a redeemed participant session token or equivalent local state cleanly enough for workshop use | Unverified | Needs explicit design for the skill-side login/session persistence flow |
+| Codex/pi skill runtime can persist a redeemed participant session token or equivalent local state cleanly enough for workshop use | Unverified | Needs explicit design for the skill-side login/session persistence flow |
 | `AGENTS.md` is currently sufficient as the repo’s working doctrine for this feature | Unverified | Current `AGENTS.md` is stale: it still says “No tests yet” and does not encode current harness/testing/browser-use doctrine |
 
 Unverified assumptions must be resolved before full production rollout.

@@ -17,12 +17,14 @@
 
 ## Doporučené commands
 
-- V Codexu používejte `$skill-name`. V OpenCode používejte `/skill-name`.
-- `Codex: $plan` / `OpenCode: /plan` před větší implementací
-- `Codex: $test-writer` / `OpenCode: /test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
-- `Codex: $review` / `OpenCode: /review` po větším kusu práce
-- `Codex: $workshop status` / `OpenCode: /workshop status` pro orientaci během dne
-- `Codex: $workshop template` / `OpenCode: /workshop template` když repu chybí základní kontext
+- Workshop skill v Codexu: `$workshop ...`
+- Workshop skill v pi: `/skill:workshop`, potom si řekněte o `reference`, `setup`, `brief` nebo jinou workshop akci
+- Workflow skills jako `$plan`, `$test-writer` a `$review` jsou v tomto workshopu popsané Codex-first. V pi je berte jako volitelnou součást vlastního setupu, ne jako garantovaný default.
+- `Codex: $plan` před větší implementací
+- `Codex: $test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
+- `Codex: $review` po větším kusu práce
+- `Codex: $workshop status` pro orientaci během dne
+- `Codex: $workshop template` když repu chybí základní kontext
 
 ## Testy jako hranice důvěry
 

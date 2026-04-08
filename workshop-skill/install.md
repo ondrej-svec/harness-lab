@@ -27,12 +27,12 @@ harness skill install
 4. otevřít agent nástroj nad tímto repem
 5. ověřit, že fungují minimálně:
    - Codex: `$workshop reference`, `$workshop setup`, `$workshop brief`
-   - OpenCode: `/workshop reference`, `/workshop setup`, `/workshop brief`
+   - pi: `/skill:workshop`, potom si říct o `reference`, `setup` nebo `brief`
 
-Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že má v Codexu začít přes `$workshop ...` a v OpenCode přes `/workshop ...`.
+Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že může začít buď v Codexu přes `$workshop ...`, nebo v pi přes `/skill:workshop`.
 
 ## Poznámka
 
-`harness skill install` vytvoří projektový bundle v `.agents/skills/harness-lab-workshop`, aby skill našly Codex i OpenCode ve stejném repu.
+`harness skill install` vytvoří projektový bundle v `.agents/skills/harness-lab-workshop`, aby skill šel objevit v repu bez další distribuční vrstvy.
 
 Pokud se někdy ukáže, že repo-based install je pro účastníky opakovaně bolestivý, může později vzniknout distribuční wrapper. Není to ale výchozí cesta.

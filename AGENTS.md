@@ -20,7 +20,7 @@ This repository is the public-safe template version of the workshop. Real worksh
 │   ├── challenge-cards/   # Suggestion cards for tables (Czech)
 │   ├── talks/             # Talk outlines and speaker notes
 │   └── facilitation/      # Facilitation guides per segment
-├── workshop-skill/        # Participant-facing skill (Codex/OpenCode installable)
+├── workshop-skill/        # Participant-facing skill (Codex and pi compatible)
 ├── monitoring/            # Agent monitoring scripts for repo scanning
 ├── capture/               # Quick capture pipeline (voice → structured notes)
 └── materials/             # Print-ready cards, reference sheets, QR codes
@@ -81,7 +81,7 @@ Authoritative architecture references for the private workshop-instance model:
 ## Key Constraints
 
 - Dashboard must work on mobile (participants scan QR code)
-- Workshop skill must be installable in both Codex and OpenCode
+- Workshop skill must be installable in both Codex and pi
 - All facilitation content must be in Czech
 - No pre-work required from participants — everything works from zero on the day
 

@@ -59,14 +59,14 @@ harness version
 harness --help
 ```
 
-Install the repo-local workshop skill bundle for Codex/OpenCode discovery:
+Install the repo-local workshop skill bundle for Codex/pi discovery:
 
 ```bash
 harness skill install
 ```
 
 This creates `.agents/skills/harness-lab-workshop` in the current Harness Lab repo checkout.
-After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop reference` and `OpenCode: /workshop reference`.
+After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop reference` and `pi: /skill:workshop`.
 
 Default device/browser login:
 

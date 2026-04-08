@@ -105,11 +105,11 @@ async function handleSkillInstall(io, ui, deps, flags) {
     ui.blank();
     ui.section("Next steps");
     ui.numberedList([
-      "Open Codex or OpenCode in this repo.",
+      "Open Codex or pi in this repo.",
       "Start with the workshop reference card.",
-      "Codex: `$workshop reference`. OpenCode: `/workshop reference`.",
-      "Need setup help? Codex: `$workshop setup`. OpenCode: `/workshop setup`.",
-      "Other workshop commands follow the same pattern: `$workshop ...` in Codex and `/workshop ...` in OpenCode.",
+      "Codex: `$workshop reference`.",
+      "pi: `/skill:workshop`, then ask for the workshop reference card.",
+      "Need setup help? Codex: `$workshop setup`. pi: `/skill:workshop`, then ask for setup help.",
     ]);
     return 0;
   } catch (error) {

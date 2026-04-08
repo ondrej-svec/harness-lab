@@ -4,6 +4,7 @@
 
 Do 10:30 musí mít každý účastník jednu funkční cestu:
 
+- `pi`
 - `Codex CLI`
 - `Codex App`
 - nebo web fallback
@@ -18,6 +19,15 @@ Cíl není perfektní instalace. Cíl je dostat každého co nejdřív do práce
 2. Přihlaste se do Codex prostředí podle firemního flow.
 3. Otevřete repozitář.
 4. Pošlete první prompt.
+
+### pi
+
+1. Nainstalujte `pi`:
+   `npm install -g @mariozechner/pi-coding-agent`
+2. Přihlaste provider nebo účet, který chcete používat.
+3. Otevřete repozitář.
+4. Spusťte `pi`.
+5. Načtěte workshop skill přes `/skill:workshop` a řekněte si o další krok.
 
 ### Windows / macOS
 
@@ -35,7 +45,7 @@ Použijte ho ve chvíli, kdy vás blokuje instalace, firemní politika nebo aute
 - Nejde login → přejděte na `App` nebo web fallback a pokračujte.
 - Nejde CLI instalace → nenechte se blokovat déle než 7 minut.
 - Nejde otevřít repo → spárujte se s někým od stolu a vraťte se k tomu později.
-- Nevíte, co je další krok → v Codexu použijte `$workshop setup`, v OpenCode `/workshop setup`.
+- Nevíte, co je další krok → v Codexu použijte `$workshop setup`. V pi načtěte `/skill:workshop` a řekněte si o setup pomoc.
 
 ## Facilitátorské rozhodnutí
 

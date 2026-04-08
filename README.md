@@ -73,7 +73,7 @@ Recommended entry points:
 - `dashboard/` - live workshop dashboard and the foundation of the facilitator control plane
 - `harness-cli/` - small facilitator CLI client over the shared runtime APIs for local and dev operation
 - `content/` - project briefs, challenge cards, talks, and facilitation content
-- `workshop-skill/` - participant-facing skill for Codex and OpenCode
+- `workshop-skill/` - participant-facing skill for Codex and pi
 - `monitoring/` - facilitator monitoring MVP and helper scripts
 - `capture/` - templates and support material for quick observation capture
 - `materials/` - print and operational materials

@@ -22,7 +22,7 @@ Participant-facing skill for the Harness Lab workshop. All participant-facing co
 
 ## Purpose
 
-This skill is the primary workshop interface for participants in Codex or OpenCode. It should prefer live dashboard API data when available and fall back to the local bundled content when the API is unavailable.
+This skill is the primary workshop interface for participants in Codex or pi. It should prefer live dashboard API data when available and fall back to the local bundled content when the API is unavailable.
 
 Core mental model:
 - dashboard participant surface = orientace během dne
@@ -55,7 +55,7 @@ Rule:
 
 Syntax:
 - in Codex, invoke this skill as `$workshop ...`
-- in OpenCode, invoke this skill as `/workshop ...`
+- in pi, load it with `/skill:workshop` or let pi auto-load it, then ask for the relevant workshop action in natural language
 - the command names below are runtime-neutral descriptions of the same interface
 
 ### `workshop`
@@ -81,7 +81,8 @@ Clear the current participant session and return to fallback/public-only mode.
 
 ### `workshop setup`
 
-Guide the participant through Codex or OpenCode setup in Czech. Prefer the fastest viable path:
+Guide the participant through Codex or pi setup in Czech. Prefer the fastest viable path:
+- pi in terminal when the participant wants a hackable multi-model interface
 - Codex CLI on macOS/Linux
 - Codex App on Windows or macOS
 - web fallback if local install is blocked

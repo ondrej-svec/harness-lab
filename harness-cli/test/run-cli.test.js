@@ -438,9 +438,9 @@ test("skill install creates a project-local .agents skill bundle", async () => {
   assert.match(io.getStdout(), /Location: .*\.agents\/skills/);
   await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
   assert.match(io.getStdout(), /\$workshop reference/);
-  assert.match(io.getStdout(), /\/workshop reference/);
+  assert.match(io.getStdout(), /\/skill:workshop/);
   assert.match(io.getStdout(), /\$workshop setup/);
-  assert.match(io.getStdout(), /\/workshop setup/);
+  assert.match(io.getStdout(), /setup help/);
 });
 
 test("skill install reports the repo-bundled skill instead of pretending to reinstall it", async () => {

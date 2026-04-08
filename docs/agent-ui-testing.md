@@ -28,7 +28,7 @@ These are the tests that answer:
 
 ## 2. Agent-driven exploratory UI testing
 
-Use Codex / OpenCode / Claude-style browser-capable agents when you want fast feedback while building.
+Use Codex or other browser-capable agents when you want fast feedback while building.
 
 Best use cases:
 - visual inspection
