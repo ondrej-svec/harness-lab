@@ -435,7 +435,7 @@ test("skill install creates a project-local .agents skill bundle", async () => {
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
   assert.match(io.getStdout(), /Workshop Skill/);
-  assert.match(io.getStdout(), /Location: .*\.agents\/skills/);
+  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
   await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
   assert.match(io.getStdout(), /\$workshop reference/);
   assert.match(io.getStdout(), /\/skill:workshop/);
@@ -461,7 +461,7 @@ test("skill install reports the repo-bundled skill instead of pretending to rein
 
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /already bundled/);
-  assert.match(io.getStdout(), /Location: .*\.agents\/skills/);
+  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
   assert.doesNotMatch(io.getStdout(), /^Installed Harness Lab workshop skill/m);
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
 });
