@@ -3,8 +3,6 @@ import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { auth } from "./auth/server";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
-import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type {
@@ -68,7 +66,7 @@ function nowIso() {
 async function appendAudit(entry: {
   action: string;
   result: "success" | "failure";
-  instanceId: string;
+  instanceId: string | null;
   metadata?: Record<string, string | number | boolean | null>;
 }) {
   await getAuditLogRepository().append({
@@ -116,14 +114,14 @@ class FileFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
     await this.writeState(state);
   }
 
-  async getDeviceAuthorizationByDeviceCodeHash(instanceId: string, deviceCodeHash: string) {
+  async getDeviceAuthorizationByDeviceCodeHash(deviceCodeHash: string) {
     const state = await this.readState();
-    return state.deviceAuthorizations.find((item) => item.instanceId === instanceId && item.deviceCodeHash === deviceCodeHash) ?? null;
+    return state.deviceAuthorizations.find((item) => item.deviceCodeHash === deviceCodeHash) ?? null;
   }
 
-  async getDeviceAuthorizationByUserCodeHash(instanceId: string, userCodeHash: string) {
+  async getDeviceAuthorizationByUserCodeHash(userCodeHash: string) {
     const state = await this.readState();
-    return state.deviceAuthorizations.find((item) => item.instanceId === instanceId && item.userCodeHash === userCodeHash) ?? null;
+    return state.deviceAuthorizations.find((item) => item.userCodeHash === userCodeHash) ?? null;
   }
 
   async updateDeviceAuthorization(record: FacilitatorDeviceAuthRecord) {
@@ -138,9 +136,9 @@ class FileFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
     await this.writeState(state);
   }
 
-  async getCliSessionByTokenHash(instanceId: string, tokenHash: string) {
+  async getCliSessionByTokenHash(tokenHash: string) {
     const state = await this.readState();
-    return state.cliSessions.find((item) => item.instanceId === instanceId && item.tokenHash === tokenHash) ?? null;
+    return state.cliSessions.find((item) => item.tokenHash === tokenHash) ?? null;
   }
 
   async updateCliSession(record: FacilitatorCliSessionRecord) {
@@ -177,20 +175,20 @@ class NeonFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
     );
   }
 
-  async getDeviceAuthorizationByDeviceCodeHash(instanceId: string, deviceCodeHash: string) {
+  async getDeviceAuthorizationByDeviceCodeHash(deviceCodeHash: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(
-      `SELECT * FROM facilitator_device_auth WHERE instance_id = $1 AND device_code_hash = $2 LIMIT 1`,
-      [instanceId, deviceCodeHash],
+      `SELECT * FROM facilitator_device_auth WHERE device_code_hash = $1 LIMIT 1`,
+      [deviceCodeHash],
     )) as DeviceRow[];
     return rows[0] ? mapDeviceRow(rows[0]) : null;
   }
 
-  async getDeviceAuthorizationByUserCodeHash(instanceId: string, userCodeHash: string) {
+  async getDeviceAuthorizationByUserCodeHash(userCodeHash: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(
-      `SELECT * FROM facilitator_device_auth WHERE instance_id = $1 AND user_code_hash = $2 ORDER BY created_at DESC LIMIT 1`,
-      [instanceId, userCodeHash],
+      `SELECT * FROM facilitator_device_auth WHERE user_code_hash = $1 ORDER BY created_at DESC LIMIT 1`,
+      [userCodeHash],
     )) as DeviceRow[];
     return rows[0] ? mapDeviceRow(rows[0]) : null;
   }
@@ -214,9 +212,9 @@ class NeonFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
       ) VALUES ($1,$2,$3,$4,$5,$6::timestamptz,$7::timestamptz,$8::timestamptz,$9::timestamptz)`,
       [
         record.tokenHash,
-        record.instanceId,
+        null,
         record.neonUserId,
-        record.role,
+        null,
         record.authMode,
         record.createdAt,
         record.expiresAt,
@@ -226,11 +224,11 @@ class NeonFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
     );
   }
 
-  async getCliSessionByTokenHash(instanceId: string, tokenHash: string) {
+  async getCliSessionByTokenHash(tokenHash: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(
-      `SELECT * FROM facilitator_cli_sessions WHERE instance_id = $1 AND token_hash = $2 LIMIT 1`,
-      [instanceId, tokenHash],
+      `SELECT * FROM facilitator_cli_sessions WHERE token_hash = $1 LIMIT 1`,
+      [tokenHash],
     )) as SessionRow[];
     return rows[0] ? mapSessionRow(rows[0]) : null;
   }
@@ -246,7 +244,7 @@ class NeonFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository {
 
 type DeviceRow = {
   id: string;
-  instance_id: string;
+  instance_id: string | null;
   device_code_hash: string;
   user_code_hash: string;
   status: FacilitatorDeviceAuthRecord["status"];
@@ -263,9 +261,9 @@ type DeviceRow = {
 
 type SessionRow = {
   token_hash: string;
-  instance_id: string;
+  instance_id: string | null;
   neon_user_id: string;
-  role: InstanceGrantRecord["role"];
+  role: InstanceGrantRecord["role"] | null;
   auth_mode: "device";
   created_at: string;
   expires_at: string;
@@ -295,9 +293,7 @@ function mapDeviceRow(row: DeviceRow): FacilitatorDeviceAuthRecord {
 function mapSessionRow(row: SessionRow): FacilitatorCliSessionRecord {
   return {
     tokenHash: row.token_hash,
-    instanceId: row.instance_id,
     neonUserId: row.neon_user_id,
-    role: row.role,
     authMode: row.auth_mode,
     createdAt: row.created_at,
     expiresAt: row.expires_at,
@@ -315,7 +311,6 @@ export function getFacilitatorCliAuthRepository(): FacilitatorCliAuthRepository 
 }
 
 export async function startDeviceAuthorization(baseUrlOverride?: string) {
-  const instanceId = getCurrentWorkshopInstanceId();
   const deviceCode = getDeps().randomBytes(24).toString("base64url");
   const userCode = formatUserCode(getDeps().randomBytes(8));
   const createdAt = nowIso();
@@ -324,7 +319,7 @@ export async function startDeviceAuthorization(baseUrlOverride?: string) {
 
   await getFacilitatorCliAuthRepository().createDeviceAuthorization({
     id: `device-${getDeps().randomUuid()}`,
-    instanceId,
+    instanceId: null,
     deviceCodeHash: sha256(deviceCode),
     userCodeHash: sha256(userCode),
     status: "pending",
@@ -342,7 +337,7 @@ export async function startDeviceAuthorization(baseUrlOverride?: string) {
   await appendAudit({
     action: "facilitator_device_auth_start",
     result: "success",
-    instanceId,
+    instanceId: null,
     metadata: { verificationUri },
   });
 
@@ -356,22 +351,7 @@ export async function startDeviceAuthorization(baseUrlOverride?: string) {
   };
 }
 
-async function ensureGrantForNeonUser(instanceId: string, neonUserId: string) {
-  const grantRepo = getInstanceGrantRepository();
-  let grant = await grantRepo.getActiveGrantByNeonUserId(instanceId, neonUserId);
-
-  if (!grant) {
-    const grantCount = await grantRepo.countActiveGrants(instanceId);
-    if (grantCount === 0) {
-      grant = await grantRepo.createGrant(instanceId, neonUserId, "owner");
-    }
-  }
-
-  return grant;
-}
-
 export async function approveDeviceAuthorizationForCurrentSession(userCode: string) {
-  const instanceId = getCurrentWorkshopInstanceId();
   const session = auth ? (await auth.getSession()).data : null;
   const neonUserId = session?.user?.id ?? null;
 
@@ -379,18 +359,18 @@ export async function approveDeviceAuthorizationForCurrentSession(userCode: stri
     await appendAudit({
       action: "facilitator_device_auth_approve",
       result: "failure",
-      instanceId,
+      instanceId: null,
       metadata: { reason: "no_session" },
     });
     return { ok: false, error: "facilitator_sign_in_required" } as const;
   }
 
-  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByUserCodeHash(instanceId, sha256(userCode.trim().toUpperCase()));
+  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByUserCodeHash(sha256(userCode.trim().toUpperCase()));
   if (!record) {
     await appendAudit({
       action: "facilitator_device_auth_approve",
       result: "failure",
-      instanceId,
+      instanceId: null,
       metadata: { reason: "unknown_code" },
     });
     return { ok: false, error: "invalid_user_code" } as const;
@@ -402,41 +382,29 @@ export async function approveDeviceAuthorizationForCurrentSession(userCode: stri
     await appendAudit({
       action: "facilitator_device_auth_expire",
       result: "failure",
-      instanceId,
+      instanceId: record.instanceId,
       metadata: { deviceAuthId: record.id },
     });
     return { ok: false, error: "expired_user_code" } as const;
   }
 
-  const grant = await ensureGrantForNeonUser(instanceId, neonUserId);
-  if (!grant) {
-    await appendAudit({
-      action: "facilitator_device_auth_approve",
-      result: "failure",
-      instanceId,
-      metadata: { reason: "missing_grant", neonUserId },
-    });
-    return { ok: false, error: "facilitator_grant_required" } as const;
-  }
-
   record.status = "approved";
   record.approvedAt = nowIso();
   record.neonUserId = neonUserId;
-  record.role = grant.role;
+  record.role = null;
   await getFacilitatorCliAuthRepository().updateDeviceAuthorization(record);
   await appendAudit({
     action: "facilitator_device_auth_approve",
     result: "success",
-    instanceId,
-    metadata: { deviceAuthId: record.id, neonUserId, role: grant.role },
+    instanceId: record.instanceId,
+    metadata: { deviceAuthId: record.id, neonUserId },
   });
 
-  return { ok: true, role: grant.role } as const;
+  return { ok: true } as const;
 }
 
 export async function denyDeviceAuthorization(userCode: string) {
-  const instanceId = getCurrentWorkshopInstanceId();
-  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByUserCodeHash(instanceId, sha256(userCode.trim().toUpperCase()));
+  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByUserCodeHash(sha256(userCode.trim().toUpperCase()));
   if (!record) {
     return { ok: false, error: "invalid_user_code" } as const;
   }
@@ -447,15 +415,14 @@ export async function denyDeviceAuthorization(userCode: string) {
   await appendAudit({
     action: "facilitator_device_auth_deny",
     result: "failure",
-    instanceId,
+    instanceId: record.instanceId,
     metadata: { deviceAuthId: record.id },
   });
   return { ok: true } as const;
 }
 
 export async function pollDeviceAuthorization(deviceCode: string) {
-  const instanceId = getCurrentWorkshopInstanceId();
-  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByDeviceCodeHash(instanceId, sha256(deviceCode));
+  const record = await getFacilitatorCliAuthRepository().getDeviceAuthorizationByDeviceCodeHash(sha256(deviceCode));
   if (!record) {
     return { status: "invalid_device_code" } as const;
   }
@@ -466,7 +433,7 @@ export async function pollDeviceAuthorization(deviceCode: string) {
     await appendAudit({
       action: "facilitator_device_auth_expire",
       result: "failure",
-      instanceId,
+      instanceId: record.instanceId,
       metadata: { deviceAuthId: record.id },
     });
   }
@@ -483,7 +450,7 @@ export async function pollDeviceAuthorization(deviceCode: string) {
     return { status: "expired_token" } as const;
   }
 
-  if (record.status !== "approved" || !record.neonUserId || !record.role) {
+  if (record.status !== "approved" || !record.neonUserId) {
     return { status: "invalid_device_code" } as const;
   }
 
@@ -493,9 +460,7 @@ export async function pollDeviceAuthorization(deviceCode: string) {
 
   await getFacilitatorCliAuthRepository().createCliSession({
     tokenHash: sha256(accessToken),
-    instanceId,
     neonUserId: record.neonUserId,
-    role: record.role,
     authMode: "device",
     createdAt,
     expiresAt,
@@ -513,17 +478,14 @@ export async function pollDeviceAuthorization(deviceCode: string) {
     tokenType: "Bearer",
     expiresAt,
     session: {
-      instanceId,
       neonUserId: record.neonUserId,
-      role: record.role,
       authMode: "device" as const,
     },
   } as const;
 }
 
 export async function getCliSessionFromBearerToken(token: string) {
-  const instanceId = getCurrentWorkshopInstanceId();
-  const session = await getFacilitatorCliAuthRepository().getCliSessionByTokenHash(instanceId, sha256(token));
+  const session = await getFacilitatorCliAuthRepository().getCliSessionByTokenHash(sha256(token));
   if (!session || session.revokedAt) {
     return null;
   }
@@ -550,8 +512,8 @@ export async function revokeCliSessionFromBearerToken(token: string) {
   await appendAudit({
     action: "facilitator_cli_logout",
     result: "success",
-    instanceId: session.instanceId,
-    metadata: { neonUserId: session.neonUserId, role: session.role },
+    instanceId: null,
+    metadata: { neonUserId: session.neonUserId },
   });
   return { ok: true, session } as const;
 }

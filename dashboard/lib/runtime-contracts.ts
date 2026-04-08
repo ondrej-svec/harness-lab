@@ -56,7 +56,7 @@ export type FacilitatorDeviceAuthStatus =
 
 export type FacilitatorDeviceAuthRecord = {
   id: string;
-  instanceId: WorkshopInstanceId;
+  instanceId: WorkshopInstanceId | null;
   deviceCodeHash: string;
   userCodeHash: string;
   status: FacilitatorDeviceAuthStatus;
@@ -73,9 +73,7 @@ export type FacilitatorDeviceAuthRecord = {
 
 export type FacilitatorCliSessionRecord = {
   tokenHash: string;
-  instanceId: WorkshopInstanceId;
   neonUserId: string;
-  role: InstanceGrantRecord["role"];
   authMode: "device";
   createdAt: string;
   expiresAt: string;
@@ -194,7 +192,7 @@ export interface InstanceArchiveRepository {
 export interface FacilitatorAuthService {
   hasValidRequestCredentials(options: {
     authorizationHeader: string | null;
-    instanceId: WorkshopInstanceId;
+    instanceId?: WorkshopInstanceId | null;
   }): Promise<boolean>;
 
   /**
@@ -203,7 +201,7 @@ export interface FacilitatorAuthService {
    * Implementations that don't support session-based auth should return false.
    */
   hasValidSession(options: {
-    instanceId: WorkshopInstanceId;
+    instanceId?: WorkshopInstanceId | null;
   }): Promise<boolean>;
 }
 
@@ -217,19 +215,10 @@ export interface InstanceGrantRepository {
 
 export interface FacilitatorCliAuthRepository {
   createDeviceAuthorization(record: FacilitatorDeviceAuthRecord): Promise<void>;
-  getDeviceAuthorizationByDeviceCodeHash(
-    instanceId: WorkshopInstanceId,
-    deviceCodeHash: string,
-  ): Promise<FacilitatorDeviceAuthRecord | null>;
-  getDeviceAuthorizationByUserCodeHash(
-    instanceId: WorkshopInstanceId,
-    userCodeHash: string,
-  ): Promise<FacilitatorDeviceAuthRecord | null>;
+  getDeviceAuthorizationByDeviceCodeHash(deviceCodeHash: string): Promise<FacilitatorDeviceAuthRecord | null>;
+  getDeviceAuthorizationByUserCodeHash(userCodeHash: string): Promise<FacilitatorDeviceAuthRecord | null>;
   updateDeviceAuthorization(record: FacilitatorDeviceAuthRecord): Promise<void>;
   createCliSession(record: FacilitatorCliSessionRecord): Promise<void>;
-  getCliSessionByTokenHash(
-    instanceId: WorkshopInstanceId,
-    tokenHash: string,
-  ): Promise<FacilitatorCliSessionRecord | null>;
+  getCliSessionByTokenHash(tokenHash: string): Promise<FacilitatorCliSessionRecord | null>;
   updateCliSession(record: FacilitatorCliSessionRecord): Promise<void>;
 }

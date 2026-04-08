@@ -439,7 +439,6 @@ test("device auth is the default login path and stores a broker-token session", 
             expiresAt: "2099-04-07T22:00:00.000Z",
             session: {
               neonUserId: "neon-user-1",
-              role: "owner",
               authMode: "device",
             },
           }),
@@ -458,7 +457,7 @@ test("device auth is the default login path and stores a broker-token session", 
   assert.equal(session.authType, "device");
   assert.equal(session.accessToken, "device-token-1");
   assert.match(io.getStdout(), /ABCD-EFGH/);
-  assert.match(io.getStdout(), /Facilitator role: owner/);
+  assert.doesNotMatch(io.getStdout(), /Facilitator role/);
 });
 
 test("device auth status verifies the remote brokered session", async () => {
@@ -488,7 +487,6 @@ test("device auth status verifies the remote brokered session", async () => {
             expiresAt: "2099-04-07T22:00:00.000Z",
             session: {
               neonUserId: "neon-user-1",
-              role: "owner",
               authMode: "device",
             },
           }),
@@ -499,7 +497,7 @@ test("device auth status verifies the remote brokered session", async () => {
           assert.equal(options.headers.authorization, "Bearer device-token-1");
           return jsonResponse(200, {
             ok: true,
-            session: { neonUserId: "neon-user-1", role: "owner", authMode: "device" },
+            session: { neonUserId: "neon-user-1", authMode: "device" },
           });
         },
       ],
@@ -516,7 +514,7 @@ test("device auth status verifies the remote brokered session", async () => {
   const exitCode = await runCli(["auth", "status"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /"authType": "device"/);
-  assert.match(io.getStdout(), /"role": "owner"/);
+  assert.match(io.getStdout(), /"neonUserId": "neon-user-1"/);
 });
 
 test("device auth logout revokes the remote session before clearing local state", async () => {
@@ -546,7 +544,6 @@ test("device auth logout revokes the remote session before clearing local state"
             expiresAt: "2099-04-07T22:00:00.000Z",
             session: {
               neonUserId: "neon-user-1",
-              role: "owner",
               authMode: "device",
             },
           }),
@@ -773,7 +770,6 @@ test("device auth can drive workshop status with the brokered facilitator sessio
             expiresAt: "2099-04-07T22:00:00.000Z",
             session: {
               neonUserId: "neon-user-1",
-              role: "owner",
               authMode: "device",
             },
           }),
@@ -834,7 +830,6 @@ test("device auth can drive workshop create-instance with the brokered facilitat
             expiresAt: "2099-04-07T22:00:00.000Z",
             session: {
               neonUserId: "neon-user-1",
-              role: "owner",
               authMode: "device",
             },
           }),

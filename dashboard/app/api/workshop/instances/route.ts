@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getFacilitatorSession } from "@/lib/facilitator-session";
+import { getAuthenticatedFacilitator } from "@/lib/facilitator-session";
 import { parseWorkshopInstanceCreateBody } from "@/lib/workshop-instance-api";
 import { workshopTemplates } from "@/lib/workshop-data";
 import { createWorkshopInstance, getWorkshopInstances } from "@/lib/workshop-store";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 
 export async function GET(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const denied = await requireFacilitatorRequest(request, null);
   if (denied) {
     return denied;
   }
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const denied = await requireFacilitatorRequest(request, null);
   if (denied) {
     return denied;
   }
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   }
 
   const existing = await getWorkshopInstanceRepository().getInstance(parsed.value.id);
-  const facilitator = await getFacilitatorSession();
+  const facilitator = await getAuthenticatedFacilitator();
   const instance = await createWorkshopInstance(
     {
       ...parsed.value,

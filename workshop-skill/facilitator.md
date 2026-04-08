@@ -16,6 +16,11 @@ harness auth login
 
 CLI provede browser/device auth flow, uloží session do lokálního file storage a zpřístupní ji pro další privileged příkazy.
 
+Model:
+- `harness auth login` autentizuje facilitátora vůči platformě
+- konkrétní workshop instance se vybírá až při operaci nebo přes default context
+- instance grant se vyhodnocuje při přístupu ke konkrétní akci, ne při samotném loginu
+
 Aktuální praktický path v repu:
 
 - default / browser-device auth:

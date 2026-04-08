@@ -63,7 +63,7 @@ Preferred interactive path:
 1. facilitator starts `harness auth login`
 2. CLI opens browser or emits a device-code style flow
 3. dashboard auth/backend completes facilitator identity verification
-4. CLI stores the resulting session material in local session storage
+4. CLI stores the resulting platform session material in local session storage
 
 The facilitator skill should call the CLI for privileged operations instead of storing raw auth/session material itself.
 
@@ -72,6 +72,12 @@ Control model:
 - skill invokes CLI
 - CLI invokes shared protected dashboard APIs
 - APIs enforce authz, validation, idempotency, and audit logging
+
+Current auth layering:
+
+- `harness auth login` authenticates the facilitator to the platform
+- workshop commands then target a concrete workshop instance explicitly or through a default-selection rule
+- instance grants are checked when a workshop is targeted, not during login bootstrap
 
 For the current facilitator lifecycle slice:
 

@@ -116,4 +116,6 @@ Default model:
 - the participant dashboard stays public until private context is requested
 - `workshop-skill` should prefer `/workshop login` as the explicit auth path
 - facilitator identity is global, but authorization remains per instance grant
+- facilitator login bootstrap should not require the target workshop instance record to pre-exist
+- `HARNESS_WORKSHOP_INSTANCE_ID` is a default workshop context for operations, not a facilitator identity key
 - facilitator skill privileged commands should route through the `harness` CLI for local auth/session handling

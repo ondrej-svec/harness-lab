@@ -1,8 +1,7 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
-import { auth as neonAuth } from "./auth/server";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getInstanceGrantRepository } from "./instance-grant-repository";
+import { getAuthenticatedFacilitator, resolveFacilitatorGrant } from "./facilitator-session";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { assertValidNeonAuthConfiguration } from "./runtime-auth-configuration";
@@ -14,7 +13,7 @@ import { assertValidNeonAuthConfiguration } from "./runtime-auth-configuration";
 class BasicFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials(options: {
     authorizationHeader: string | null;
-    instanceId: string;
+    instanceId?: string | null;
   }) {
     const { authorizationHeader, instanceId } = options;
     const credentials = decodeBasicAuthHeader(authorizationHeader);
@@ -48,25 +47,21 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
  */
 class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials(
-    _: { authorizationHeader: string | null; instanceId: string },
+    _: { authorizationHeader: string | null; instanceId?: string | null },
   ) {
     void _;
     return false;
   }
 
-  async hasValidSession(options: { instanceId: string }) {
+  async hasValidSession(options: { instanceId?: string | null }) {
     const { instanceId } = options;
-    if (!neonAuth) {
-      return false;
-    }
-
-    const { data: session } = await neonAuth.getSession();
-    const userId = session?.user?.id ?? null;
+    const facilitator = await getAuthenticatedFacilitator();
+    const userId = facilitator?.neonUserId ?? null;
 
     if (!userId) {
       await getAuditLogRepository().append({
         id: `audit-${Date.now()}`,
-        instanceId,
+        instanceId: instanceId ?? null,
         actorKind: "facilitator",
         action: "facilitator_auth",
         result: "failure",
@@ -76,28 +71,20 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
       return false;
     }
 
-    const repo = getInstanceGrantRepository();
-
-    // One-hop: session.user.id → instance_grants.neon_user_id
-    let grant = await repo.getActiveGrantByNeonUserId(instanceId, userId);
-
-    // Auto-bootstrap: first user on a fresh instance becomes owner
-    if (!grant) {
-      const grantCount = await repo.countActiveGrants(instanceId);
-      if (grantCount === 0) {
-        grant = await repo.createGrant(instanceId, userId, "owner");
-        await getAuditLogRepository().append({
-          id: `audit-${Date.now()}`,
-          instanceId,
-          actorKind: "facilitator",
-          action: "facilitator_auto_bootstrap",
-          result: "success",
-          createdAt: new Date().toISOString(),
-          metadata: { neonUserId: userId, role: "owner" },
-        });
-      }
+    if (!instanceId) {
+      await getAuditLogRepository().append({
+        id: `audit-${Date.now()}`,
+        instanceId: null,
+        actorKind: "facilitator",
+        action: "facilitator_auth",
+        result: "success",
+        createdAt: new Date().toISOString(),
+        metadata: { neonUserId: userId, scope: "platform" },
+      });
+      return true;
     }
 
+    const grant = await resolveFacilitatorGrant(instanceId, userId);
     const hasGrant = Boolean(grant);
 
     if (!hasGrant) {

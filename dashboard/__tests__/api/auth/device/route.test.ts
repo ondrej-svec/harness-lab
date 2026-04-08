@@ -40,12 +40,12 @@ class MemoryFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository
     this.deviceAuthorizations.push(structuredClone(record));
   }
 
-  async getDeviceAuthorizationByDeviceCodeHash(instanceId: string, deviceCodeHash: string) {
-    return this.deviceAuthorizations.find((item) => item.instanceId === instanceId && item.deviceCodeHash === deviceCodeHash) ?? null;
+  async getDeviceAuthorizationByDeviceCodeHash(deviceCodeHash: string) {
+    return this.deviceAuthorizations.find((item) => item.deviceCodeHash === deviceCodeHash) ?? null;
   }
 
-  async getDeviceAuthorizationByUserCodeHash(instanceId: string, userCodeHash: string) {
-    return this.deviceAuthorizations.find((item) => item.instanceId === instanceId && item.userCodeHash === userCodeHash) ?? null;
+  async getDeviceAuthorizationByUserCodeHash(userCodeHash: string) {
+    return this.deviceAuthorizations.find((item) => item.userCodeHash === userCodeHash) ?? null;
   }
 
   async updateDeviceAuthorization(record: FacilitatorDeviceAuthRecord) {
@@ -56,8 +56,8 @@ class MemoryFacilitatorCliAuthRepository implements FacilitatorCliAuthRepository
     this.cliSessions.push(structuredClone(record));
   }
 
-  async getCliSessionByTokenHash(instanceId: string, tokenHash: string) {
-    return this.cliSessions.find((item) => item.instanceId === instanceId && item.tokenHash === tokenHash) ?? null;
+  async getCliSessionByTokenHash(tokenHash: string) {
+    return this.cliSessions.find((item) => item.tokenHash === tokenHash) ?? null;
   }
 
   async updateCliSession(record: FacilitatorCliSessionRecord) {
@@ -167,7 +167,7 @@ describe("device auth routes", () => {
         body: JSON.stringify({ userCode: started.userCode }),
       }),
     );
-    await expect(approveResponse.json()).resolves.toMatchObject({ ok: true, role: "owner" });
+    await expect(approveResponse.json()).resolves.toMatchObject({ ok: true });
 
     const authorizedResponse = await pollDeviceAuth(
       new Request("http://localhost/api/auth/device/poll", {
@@ -178,7 +178,8 @@ describe("device auth routes", () => {
     );
     const authorized = await authorizedResponse.json();
     expect(authorized.status).toBe("authorized");
-    expect(authorized.session).toMatchObject({ neonUserId: "neon-user-1", role: "owner", authMode: "device" });
+    expect(authorized.session).toMatchObject({ neonUserId: "neon-user-1", authMode: "device" });
+    expect(authorized.session).not.toHaveProperty("role");
 
     const sessionResponse = await getDeviceSession(
       new Request("http://localhost/api/auth/device/session", {
@@ -187,7 +188,7 @@ describe("device auth routes", () => {
     );
     await expect(sessionResponse.json()).resolves.toMatchObject({
       ok: true,
-      session: { neonUserId: "neon-user-1", role: "owner", authMode: "device" },
+      session: { neonUserId: "neon-user-1", authMode: "device" },
     });
 
     const logoutResponse = await logoutDeviceSession(
