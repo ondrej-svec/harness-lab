@@ -1,8 +1,23 @@
 # Harness Lab
 
-Public-safe template repo for a full-day workshop on how teams work with AI coding agents on real software.
+Open-source workshop template for teams working with AI coding agents on real software.
 
 Harness Lab teaches **harness engineering**: the discipline of engineering context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into disposable output.
+
+## Table of Contents
+
+- [What You Can Do Here](#what-you-can-do-here)
+- [Choose Your Path](#choose-your-path)
+- [Quick Start](#quick-start)
+- [What Harness Lab Is](#what-harness-lab-is)
+- [Working Principles](#working-principles)
+- [Participant Default Loop](#participant-default-loop)
+- [Workshop Blueprint](#workshop-blueprint)
+- [Repository Guide](#repository-guide)
+- [Public vs Private](#public-vs-private)
+- [Maintainer Collaboration](#maintainer-collaboration)
+- [Community Standards](#community-standards)
+- [Language](#language)
 
 ## What You Can Do Here
 
