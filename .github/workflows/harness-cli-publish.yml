@@ -64,6 +64,9 @@ jobs:
             exit 1
           fi
 
+      - name: Install CLI dependencies
+        run: npm ci
+
       - run: npm test
 
       - id: pack
@@ -122,6 +125,9 @@ jobs:
         with:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
+
+      - name: Install CLI dependencies
+        run: npm ci
 
       - name: Publish package to npm
         env:
