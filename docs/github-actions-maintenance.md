@@ -72,19 +72,21 @@ When GitHub Actions emits a runtime deprecation warning:
 3. if no safe maintained action exists, prefer a direct CLI or script invocation over a stale wrapper action
 4. document the reason here if the choice is non-obvious
 
-## Why `e2e-dashboard` is conditional
+## Why `e2e-dashboard` always runs on the self-hosted runner
 
-The `Dashboard CI` workflow scopes Playwright E2E to changes that touch:
+The `Dashboard CI` workflow now runs Playwright E2E on every matching workflow run, using the repository's self-hosted Linux ARM64 runner labels:
 
-- `dashboard/**`
+- `self-hosted`
+- `Linux`
+- `ARM64`
 
 That is intentional:
 
-- Playwright is the highest-cost default job in this repository
-- CLI-only, docs-only, and bundle-only changes should not spend the same hosted-runner budget as dashboard UI changes
-- `deploy-ready` should still require E2E when dashboard behavior changed, but should accept a skipped E2E job when no dashboard surface changed
+- Playwright is part of the dashboard trust boundary and should not be silently skipped for non-dashboard path mixes once low-cost self-hosted capacity exists
+- moving E2E off hosted runners removes most of the budget pressure that previously justified conditional execution
+- the self-hosted runner should carry the browser system dependencies at the machine level, so the workflow installs the Chromium browser without re-running the hosted-runner `--with-deps` path each time
 
-If a future change outside `dashboard/` genuinely needs the E2E suite, expand the scope rule deliberately instead of putting Playwright back on every workflow run by default.
+If the runner environment changes, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together rather than reintroducing ad hoc E2E skipping.
 
 ## Why the CLI self-hosted leg uses explicit runner labels
 

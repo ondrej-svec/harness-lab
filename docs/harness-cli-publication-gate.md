@@ -62,8 +62,8 @@ All of the following must be true before public npm publication:
 
 Note:
 
-- the default `Dashboard CI` workflow may skip `e2e-dashboard` when a change does not touch `dashboard/**`
-- that skip is acceptable for CLI-only publication readiness; the CLI release gate still relies on the dedicated CLI smoke checks and the `Harness CLI Publish` workflow verification
+- the default `Dashboard CI` workflow now runs `e2e-dashboard` on the self-hosted Linux ARM64 runner instead of conditionally skipping it for non-dashboard diffs
+- the CLI release gate still relies on the dedicated CLI smoke checks and the `Harness CLI Publish` workflow verification rather than treating dashboard Playwright as the only release signal
 
 ## Release Smoke Checks
 
