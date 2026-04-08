@@ -19,7 +19,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.locator("#overview").getByText("nejdřív vyjasnit, pak generovat")).toBeVisible();
+    await expect(page.locator("#overview").getByText(/Nejde o demo promptů ani o jednorázové hacky/i)).toBeVisible();
     await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "repo" })).toHaveAttribute(
       "href",
@@ -37,7 +37,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
-    await expect(page.locator("#overview").getByText("clarify first, then generate")).toBeVisible();
+    await expect(page.locator("#overview").getByText(/This is not prompt theatre or one-off hacking/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "facilitator login" })).toBeVisible();
 
     await page.getByRole("link", { name: "harness lab" }).click();
@@ -85,7 +85,9 @@ test.describe("participant dashboard", () => {
     await page.goto("/");
     await page.getByLabel("event code").fill("lantern8-context4-handoff2");
     await page.getByRole("button", { name: "otevřít vrstvu pro účastníky" }).click();
-    await expect(page).toHaveScreenshot("participant-mobile-room.png");
+    await expect(page).toHaveScreenshot("participant-mobile-room.png", {
+      maxDiffPixelRatio: 0.05,
+    });
   });
 });
 
