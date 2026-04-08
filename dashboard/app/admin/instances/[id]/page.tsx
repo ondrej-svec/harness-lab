@@ -138,8 +138,8 @@ function parseMultilineList(value: FormDataEntryValue | null) {
     .filter(Boolean);
 }
 
-function listToTextareaValue(items: string[]) {
-  return items.join("\n");
+function listToTextareaValue(items?: string[]) {
+  return (items ?? []).join("\n");
 }
 
 function buildRepoSourceHref(path: string) {
@@ -1528,9 +1528,9 @@ function AgendaItemDetail({
   compact?: boolean;
 }) {
   const sections: Array<{ title: string; items: string[] }> = [
-    { title: "Facilitator prompts", items: item.facilitatorPrompts },
-    { title: "Watch fors", items: item.watchFors },
-    { title: "Checkpoint questions", items: item.checkpointQuestions },
+    { title: "Facilitator prompts", items: item.facilitatorPrompts ?? [] },
+    { title: "Watch fors", items: item.watchFors ?? [] },
+    { title: "Checkpoint questions", items: item.checkpointQuestions ?? [] },
   ].filter((section) => section.items.length > 0);
 
   return (
@@ -1561,11 +1561,11 @@ function AgendaItemDetail({
         </div>
       ) : null}
 
-      {item.sourceRefs.length > 0 ? (
+      {(item.sourceRefs ?? []).length > 0 ? (
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">source material</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {item.sourceRefs.map((ref) => (
+            {(item.sourceRefs ?? []).map((ref) => (
               <a
                 key={`${ref.path}-${ref.label}`}
                 href={buildRepoSourceHref(ref.path)}
@@ -1644,19 +1644,19 @@ function PresenterSceneSummaryCard({
           </div>
         </div>
       ) : null}
-      {scene.facilitatorNotes.length > 0 ? (
+      {(scene.facilitatorNotes ?? []).length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">facilitator notes</p>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-            {scene.facilitatorNotes.map((note) => (
+            {(scene.facilitatorNotes ?? []).map((note) => (
               <li key={note}>• {note}</li>
             ))}
           </ul>
         </div>
       ) : null}
-      {scene.sourceRefs.length > 0 ? (
+      {(scene.sourceRefs ?? []).length > 0 ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          {scene.sourceRefs.map((ref: WorkshopSourceRef) => (
+          {(scene.sourceRefs ?? []).map((ref: WorkshopSourceRef) => (
             <a
               key={`${ref.path}-${ref.label}`}
               href={buildRepoSourceHref(ref.path)}
