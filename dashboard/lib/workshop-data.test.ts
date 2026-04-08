@@ -82,12 +82,22 @@ describe("workshop-data", () => {
       kind: "blueprint",
       defaultPresenterSceneId: blueprintAgenda.phases[0]?.defaultSceneId,
     });
-    expect(state.agenda[0]?.presenterScenes).toMatchObject([
-      expect.objectContaining({
-        id: blueprintAgenda.phases[0]?.scenes[0]?.id,
-        title: blueprintAgenda.phases[0]?.scenes[0]?.title,
-      }),
-    ]);
+    expect(state.agenda[0]?.presenterScenes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: blueprintAgenda.phases[0]?.scenes[0]?.id,
+          title: blueprintAgenda.phases[0]?.scenes[0]?.title,
+        }),
+      ]),
+    );
+  });
+
+  it("includes an explicit participant-view scene for every blueprint phase", () => {
+    expect(
+      seedWorkshopState.agenda.every((item) =>
+        item.presenterScenes.some((scene) => scene.sceneType === "participant-view"),
+      ),
+    ).toBe(true);
   });
 
   it("returns the team name when present and the id otherwise", () => {

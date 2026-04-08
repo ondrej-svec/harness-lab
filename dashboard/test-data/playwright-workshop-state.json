@@ -13,35 +13,90 @@
       "id": "opening",
       "title": "Úvod a naladění",
       "time": "9:10",
-      "description": "Rámec dne, proč řešíme harness engineering a co účastníky čeká.",
+      "description": "Místnost má pochopit, že nejde o soutěž v promptování. Cílem dne je postavit pracovní systém, který přežije handoff bez ústního dovysvětlování.",
+      "goal": "Nastavit energii dne a jasně pojmenovat, o čem workshop je a proč je continuation průběžný design constraint.",
+      "roomSummary": "Místnost má pochopit, že nejde o soutěž v promptování. Cílem dne je postavit pracovní systém, který přežije handoff bez ústního dovysvětlování.",
       "status": "done"
     },
     {
       "id": "talk",
       "title": "Context is King",
       "time": "9:40",
-      "description": "Krátký talk + porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži.",
+      "description": "Místnost má odnést, že AGENTS.md, skills, runbooky a testy nejsou doplněk. Jsou to mantinely, které dělají z agenta použitelného spolupracovníka.",
+      "goal": "Ukázat, že harness engineering je práce s instrukcemi, kontextem a workflow, ne soutěž o nejhezčí prompt.",
+      "roomSummary": "Místnost má odnést, že AGENTS.md, skills, runbooky a testy nejsou doplněk. Jsou to mantinely, které dělají z agenta použitelného spolupracovníka.",
+      "status": "done"
+    },
+    {
+      "id": "demo",
+      "title": "Codex demo",
+      "time": "10:05",
+      "description": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když přidáme kontext, plán a review. Nejde o kouzelný output ani feature tour.",
+      "goal": "Na jedné příběhové ukázce předvést workflow s AGENTS.md, plánem, implementací a review jako součástí běžné práce.",
+      "roomSummary": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když přidáme kontext, plán a review. Nejde o kouzelný output ani feature tour.",
       "status": "done"
     },
     {
       "id": "build-1",
       "title": "Build Phase 1",
       "time": "10:30",
-      "description": "Repo, AGENTS.md, plán a první reviewed output ještě před obědem.",
+      "description": "Facilitátor má držet viditelný milestone board, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
+      "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plan, nejmenší ověření a první reviewed output.",
+      "roomSummary": "Facilitátor má držet viditelný milestone board, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
       "status": "current"
+    },
+    {
+      "id": "intermezzo-1",
+      "title": "Intermezzo 1",
+      "time": "11:35",
+      "description": "Týmy krátce shrnou, co změnily a proč. Facilitátor spojí room signal, monitoring a jednu principovou pointu navázanou na to, co se opravdu děje.",
+      "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný output.",
+      "roomSummary": "Týmy krátce shrnou, co změnily a proč. Facilitátor spojí room signal, monitoring a jednu principovou pointu navázanou na to, co se opravdu děje.",
+      "status": "upcoming"
+    },
+    {
+      "id": "lunch-reset",
+      "title": "Oběd a příprava na handoff",
+      "time": "12:15",
+      "description": "Před obědem mají týmy uklidit kontext, dopsat další safe move a připravit repo na odpolední continuation. Oběd není pauza od handoffu.",
+      "goal": "Zastavit flow před odpoledním posunem a připravit týmy na to, že repo musí být čitelné i bez nich.",
+      "roomSummary": "Před obědem mají týmy uklidit kontext, dopsat další safe move a připravit repo na odpolední continuation. Oběd není pauza od handoffu.",
+      "status": "upcoming"
     },
     {
       "id": "rotation",
       "title": "Rotace týmů",
       "time": "13:30",
-      "description": "Plný přesun lidí mezi stoly. Pokračuje se jen s tím, co přežilo v repu.",
+      "description": "Nový tým prvních deset minut jen čte repo a mapuje situaci. Frustrace je signál kvality kontextu, ne chyba workshopu.",
+      "goal": "Vytvořit tvrdý handoff moment bez ústního dovysvětlování a nechat kvalitu repa ukázat, co přežilo.",
+      "roomSummary": "Nový tým prvních deset minut jen čte repo a mapuje situaci. Frustrace je signál kvality kontextu, ne chyba workshopu.",
+      "status": "upcoming"
+    },
+    {
+      "id": "build-2",
+      "title": "Build Phase 2",
+      "time": "13:45",
+      "description": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli systém kolem agenta a repa opravdu unese nový tým.",
+      "goal": "Navázat po rotaci jen z repo-native signálů a přetavit frustraci do lepší mapy, lepších checků a lepšího handoffu.",
+      "roomSummary": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli systém kolem agenta a repa opravdu unese nový tým.",
+      "status": "upcoming"
+    },
+    {
+      "id": "intermezzo-2",
+      "title": "Intermezzo 2",
+      "time": "14:45",
+      "description": "Druhé intermezzo má vytáhnout konkrétní signály z continuation části a připravit místnost na reveal a reflexi.",
+      "goal": "Krátce zachytit, co po rotaci skutečně pomohlo pokračovat a co se ukazuje jako slabé místo workshopového systému.",
+      "roomSummary": "Druhé intermezzo má vytáhnout konkrétní signály z continuation části a připravit místnost na reveal a reflexi.",
       "status": "upcoming"
     },
     {
       "id": "reveal",
       "title": "Reveal a reflexe",
       "time": "15:45",
-      "description": "Co pomohlo pokračovat, co chybělo, co si odnáším do práce s agenty.",
+      "description": "Reveal a reflexe nejsou soutěž týmů. Sledujeme, které signály pomáhají práci přežít handoff a které ji brzdí.",
+      "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít handoff, a převést je do další praxe i do lepšího workshopového systému.",
+      "roomSummary": "Reveal a reflexe nejsou soutěž týmů. Sledujeme, které signály pomáhají práci přežít handoff a které ji brzdí.",
       "status": "upcoming"
     }
   ],

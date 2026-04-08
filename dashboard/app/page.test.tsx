@@ -134,6 +134,44 @@ describe("public page helpers", () => {
         rotationRevealed: false,
       }).body,
     ).toBe(publicCopy.en.participantBodyHidden);
+    const buildPhasePanel = buildParticipantPanelState({
+      copy: publicCopy.cs,
+      lang: "cs",
+      currentAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "build-1"),
+      nextAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "intermezzo-1"),
+      participantSession: {
+        token: "session-token",
+        instanceId: "sample-studio-a",
+        expiresAt: "2026-04-06T16:30:00.000Z",
+        lastValidatedAt: "2026-04-06T10:30:00.000Z",
+      },
+      rotationRevealed: false,
+    });
+    expect(buildPhasePanel.guidanceLabel).toBe("Participant board");
+    expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
+    expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "hero")).toBe(true);
+    const customFallbackAgendaItem = {
+      ...seedWorkshopState.agenda[0]!,
+      id: "custom-fallback",
+      title: "Custom fallback",
+      presenterScenes: seedWorkshopState.agenda[0]!.presenterScenes.filter((scene) => scene.sceneType !== "participant-view"),
+    };
+    const fallbackPanel = buildParticipantPanelState({
+      copy: publicCopy.en,
+      lang: "en",
+      currentAgendaItem: customFallbackAgendaItem,
+      nextAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "talk"),
+      participantSession: {
+        token: "session-token",
+        instanceId: "sample-studio-a",
+        expiresAt: "2026-04-06T16:30:00.000Z",
+        lastValidatedAt: "2026-04-06T10:30:00.000Z",
+      },
+      rotationRevealed: false,
+    });
+    expect(fallbackPanel.guidanceLabel).toBe(publicCopy.en.participantGuidanceFallbackLabel);
+    expect(fallbackPanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
+    expect(fallbackPanel.guidanceBlocks.some((block) => block.type === "bullet-list")).toBe(true);
     expect(buildParticipantTeamCards(null)).toEqual([]);
     expect(buildSharedRoomNotes(seedWorkshopState.ticker)).toEqual(seedWorkshopState.ticker.map((item) => item.label));
   });

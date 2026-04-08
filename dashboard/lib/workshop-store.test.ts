@@ -456,11 +456,11 @@ describe("workshop-store", () => {
 
     expect(talkItem?.presenterScenes).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-briefing", sceneType: "briefing" }),
+        expect.objectContaining({ id: "talk-framing", sceneType: "briefing" }),
         expect.objectContaining({ id: "talk-participant-view", sceneType: "participant-view" }),
       ]),
     );
-    expect(talkItem?.defaultPresenterSceneId).toBe("talk-briefing");
+    expect(talkItem?.defaultPresenterSceneId).toBe("talk-framing");
     expect(state.agenda.every((item) => typeof item.order === "number")).toBe(true);
   });
 

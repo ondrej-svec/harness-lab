@@ -1,3 +1,36 @@
 {
-  "sessions": []
+  "sessions": [
+    {
+      "tokenHash": "f2adf3be7db2c2bccb82be1588d01698f47e632fd6808c1e44b44a67c969ab59",
+      "instanceId": "sample-studio-a",
+      "createdAt": "2026-04-08T12:32:57.681Z",
+      "lastValidatedAt": "2026-04-08T12:32:57.699Z",
+      "expiresAt": "2026-04-09T00:32:57.681Z",
+      "absoluteExpiresAt": "2026-04-09T04:32:57.681Z"
+    },
+    {
+      "tokenHash": "afd3ba6a360483d82e7b448ff7f9d07009873a703040b65dbb056cc43126da58",
+      "instanceId": "sample-studio-a",
+      "createdAt": "2026-04-08T12:43:23.592Z",
+      "lastValidatedAt": "2026-04-08T12:43:23.604Z",
+      "expiresAt": "2026-04-09T00:43:23.592Z",
+      "absoluteExpiresAt": "2026-04-09T04:43:23.592Z"
+    },
+    {
+      "tokenHash": "e204914cf4e8b18c99e3d7d0fb5182b99b742009709421ecc370e18b7565d0b4",
+      "instanceId": "sample-studio-a",
+      "createdAt": "2026-04-08T13:13:15.506Z",
+      "lastValidatedAt": "2026-04-08T13:13:15.522Z",
+      "expiresAt": "2026-04-09T01:13:15.506Z",
+      "absoluteExpiresAt": "2026-04-09T05:13:15.506Z"
+    },
+    {
+      "tokenHash": "5dd9711304f2f7265feefdfde7f7b93b174b03ef035ea6adf457cb4568e1ee27",
+      "instanceId": "sample-studio-a",
+      "createdAt": "2026-04-08T13:13:48.683Z",
+      "lastValidatedAt": "2026-04-08T13:13:48.691Z",
+      "expiresAt": "2026-04-09T01:13:48.683Z",
+      "absoluteExpiresAt": "2026-04-09T05:13:48.683Z"
+    }
+  ]
 }

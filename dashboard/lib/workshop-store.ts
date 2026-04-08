@@ -6,7 +6,10 @@ import {
   createWorkshopStateFromTemplate,
   type AgendaItem,
   type MonitoringSnapshot,
+  type PresenterBlock,
+  type PresenterChromePreset,
   type PresenterScene,
+  type PresenterSceneIntent,
   type SprintUpdate,
   type Team,
   type WorkshopInstanceRecord,
@@ -51,6 +54,113 @@ const auditRetentionDays = 30;
 const redeemAttemptRetentionDays = 7;
 const archiveRetentionDays = 30;
 
+function normalizeStringArray(value: unknown, fallback: string[] = []) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : fallback;
+}
+
+function normalizeBlocks(value: unknown, fallback: PresenterBlock[] = []) {
+  return Array.isArray(value) ? (value as PresenterBlock[]) : fallback;
+}
+
+function deriveSceneIntent(sceneType: PresenterScene["sceneType"]): PresenterSceneIntent {
+  switch (sceneType) {
+    case "briefing":
+      return "framing";
+    case "demo":
+      return "demo";
+    case "participant-view":
+      return "walkthrough";
+    case "checkpoint":
+      return "checkpoint";
+    case "reflection":
+      return "reflection";
+    case "transition":
+      return "transition";
+    default:
+      return "custom";
+  }
+}
+
+function deriveSceneChromePreset(sceneType: PresenterScene["sceneType"]): PresenterChromePreset {
+  switch (sceneType) {
+    case "participant-view":
+      return "participant";
+    case "checkpoint":
+      return "checkpoint";
+    case "transition":
+      return "agenda";
+    default:
+      return "minimal";
+  }
+}
+
+function buildFallbackPresenterBlocks(scene: {
+  sceneType: PresenterScene["sceneType"];
+  title: string;
+  body: string;
+}): PresenterBlock[] {
+  if (scene.sceneType === "participant-view") {
+    return [
+      {
+        id: "participant-preview",
+        type: "participant-preview",
+        body: scene.body,
+      },
+    ];
+  }
+
+  const blocks: PresenterBlock[] = [
+    {
+      id: "hero",
+      type: "hero",
+      title: scene.title,
+      body: scene.body || undefined,
+    },
+  ];
+
+  if (scene.body.trim().length > 0) {
+    blocks.push({
+      id: "body",
+      type: "rich-text",
+      content: scene.body,
+    });
+  }
+
+  return blocks;
+}
+
+function resolveSceneTitle(label: string, title: string | undefined, blocks?: PresenterBlock[]) {
+  if (typeof title === "string" && title.trim().length > 0) {
+    return title.trim();
+  }
+
+  const heroBlock = blocks?.find((block) => block.type === "hero");
+  return heroBlock?.title?.trim() || label.trim();
+}
+
+function resolveSceneBody(body: string | undefined, blocks?: PresenterBlock[]) {
+  if (typeof body === "string" && body.trim().length > 0) {
+    return body.trim();
+  }
+
+  const heroBlock = blocks?.find((block) => block.type === "hero");
+  if (heroBlock?.body?.trim()) {
+    return heroBlock.body.trim();
+  }
+
+  const richTextBlock = blocks?.find((block) => block.type === "rich-text");
+  if (richTextBlock?.content?.trim()) {
+    return richTextBlock.content.trim();
+  }
+
+  const bulletList = blocks?.find((block) => block.type === "bullet-list");
+  if (bulletList && bulletList.items.length > 0) {
+    return bulletList.items.join(" ");
+  }
+
+  return "";
+}
+
 function subtractDays(date: Date, days: number) {
   return new Date(date.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
 }
@@ -82,14 +192,25 @@ function normalizeStoredPresenterScene(
   agendaItemId: string,
   sceneIndex: number,
 ): PresenterScene {
+  const label = scene.label ?? fallbackScene?.label ?? `Scene ${sceneIndex + 1}`;
+  const sceneType = scene.sceneType ?? fallbackScene?.sceneType ?? "custom";
+  const blocks = normalizeBlocks(scene.blocks, fallbackScene?.blocks ?? []);
+  const title = resolveSceneTitle(label, scene.title ?? fallbackScene?.title, blocks);
+  const body = resolveSceneBody(scene.body ?? fallbackScene?.body, blocks);
+
   return {
     id: scene.id ?? fallbackScene?.id ?? `${agendaItemId}-scene-${sceneIndex + 1}`,
-    label: scene.label ?? fallbackScene?.label ?? `Scene ${sceneIndex + 1}`,
-    sceneType: scene.sceneType ?? fallbackScene?.sceneType ?? "custom",
-    title: scene.title ?? fallbackScene?.title ?? scene.label ?? fallbackScene?.label ?? `Scene ${sceneIndex + 1}`,
-    body: scene.body ?? fallbackScene?.body ?? "",
+    label,
+    sceneType,
+    intent: scene.intent ?? fallbackScene?.intent ?? deriveSceneIntent(sceneType),
+    chromePreset: scene.chromePreset ?? fallbackScene?.chromePreset ?? deriveSceneChromePreset(sceneType),
+    title,
+    body,
     ctaLabel: scene.ctaLabel ?? fallbackScene?.ctaLabel ?? null,
     ctaHref: scene.ctaHref ?? fallbackScene?.ctaHref ?? null,
+    facilitatorNotes: normalizeStringArray(scene.facilitatorNotes, fallbackScene?.facilitatorNotes ?? []),
+    sourceRefs: Array.isArray(scene.sourceRefs) ? scene.sourceRefs : fallbackScene?.sourceRefs ?? [],
+    blocks: blocks.length > 0 ? blocks : buildFallbackPresenterBlocks({ sceneType, title, body }),
     order: scene.order ?? fallbackScene?.order ?? sceneIndex + 1,
     enabled: scene.enabled ?? fallbackScene?.enabled ?? true,
     sourceBlueprintSceneId: scene.sourceBlueprintSceneId ?? fallbackScene?.sourceBlueprintSceneId ?? fallbackScene?.id ?? null,
@@ -121,6 +242,13 @@ function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): Ag
     title: item.title ?? fallbackItem?.title ?? `Agenda item ${index + 1}`,
     time: item.time ?? fallbackItem?.time ?? "",
     description: item.description ?? fallbackItem?.description ?? "",
+    intent: item.intent ?? fallbackItem?.intent ?? "custom",
+    goal: item.goal ?? item.description ?? fallbackItem?.goal ?? fallbackItem?.description ?? "",
+    roomSummary: item.roomSummary ?? item.description ?? fallbackItem?.roomSummary ?? fallbackItem?.description ?? "",
+    facilitatorPrompts: normalizeStringArray(item.facilitatorPrompts, fallbackItem?.facilitatorPrompts ?? []),
+    watchFors: normalizeStringArray(item.watchFors, fallbackItem?.watchFors ?? []),
+    checkpointQuestions: normalizeStringArray(item.checkpointQuestions, fallbackItem?.checkpointQuestions ?? []),
+    sourceRefs: Array.isArray(item.sourceRefs) ? item.sourceRefs : fallbackItem?.sourceRefs ?? [],
     order: item.order ?? fallbackItem?.order ?? index + 1,
     sourceBlueprintPhaseId:
       item.sourceBlueprintPhaseId ?? fallbackItem?.sourceBlueprintPhaseId ?? (fallbackItem ? fallbackItem.id : null),
@@ -225,12 +353,28 @@ export async function setCurrentAgendaItem(itemId: string, instanceId = getCurre
 
 export async function updateAgendaItem(
   itemId: string,
-  updates: Pick<AgendaItem, "title" | "time" | "description">,
+  updates: Pick<AgendaItem, "title" | "time" | "description" | "goal" | "roomSummary"> & {
+    facilitatorPrompts?: string[];
+    watchFors?: string[];
+    checkpointQuestions?: string[];
+    sourceRefs?: AgendaItem["sourceRefs"];
+  },
   instanceId = getCurrentWorkshopInstanceId(),
 ) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(
-      state.agenda.map((item) => (item.id === itemId ? { ...item, ...updates } : item)),
+      state.agenda.map((item) =>
+        item.id === itemId
+          ? {
+              ...item,
+              ...updates,
+              facilitatorPrompts: updates.facilitatorPrompts ?? item.facilitatorPrompts,
+              watchFors: updates.watchFors ?? item.watchFors,
+              checkpointQuestions: updates.checkpointQuestions ?? item.checkpointQuestions,
+              sourceRefs: updates.sourceRefs ?? item.sourceRefs,
+            }
+          : item,
+      ),
       state.agenda.find((item) => item.status === "current")?.id,
     );
     return {
@@ -242,7 +386,14 @@ export async function updateAgendaItem(
 }
 
 export async function addAgendaItem(
-  input: Pick<AgendaItem, "title" | "time" | "description"> & { afterItemId?: string | null },
+  input: Pick<AgendaItem, "title" | "time" | "description"> & {
+    goal?: string;
+    roomSummary?: string;
+    facilitatorPrompts?: string[];
+    watchFors?: string[];
+    checkpointQuestions?: string[];
+    afterItemId?: string | null;
+  },
   instanceId = getCurrentWorkshopInstanceId(),
 ) {
   return updateWorkshopState((state) => {
@@ -254,6 +405,13 @@ export async function addAgendaItem(
       title: input.title,
       time: input.time,
       description: input.description,
+      intent: "custom",
+      goal: input.goal ?? input.description,
+      roomSummary: input.roomSummary ?? input.description,
+      facilitatorPrompts: input.facilitatorPrompts ?? [],
+      watchFors: input.watchFors ?? [],
+      checkpointQuestions: input.checkpointQuestions ?? [],
+      sourceRefs: [],
       order: insertAt + 1,
       sourceBlueprintPhaseId: null,
       kind: "custom",
@@ -324,14 +482,24 @@ export async function moveAgendaItem(
 
 export async function addPresenterScene(
   agendaItemId: string,
-  input: Pick<PresenterScene, "label" | "sceneType" | "title" | "body"> & {
+  input: Pick<PresenterScene, "label" | "sceneType"> & {
+    title?: string;
+    body?: string;
+    intent?: PresenterSceneIntent;
+    chromePreset?: PresenterChromePreset;
     ctaLabel?: string | null;
     ctaHref?: string | null;
+    facilitatorNotes?: string[];
+    sourceRefs?: PresenterScene["sourceRefs"];
+    blocks?: PresenterBlock[];
   },
   instanceId = getCurrentWorkshopInstanceId(),
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
+      const blocks = normalizeBlocks(input.blocks, []);
+      const title = resolveSceneTitle(input.label, input.title, blocks);
+      const body = resolveSceneBody(input.body, blocks);
       const normalized = normalizePresenterScenes(
         [
           ...item.presenterScenes,
@@ -339,10 +507,15 @@ export async function addPresenterScene(
             id: `scene-${randomUUID()}`,
             label: input.label,
             sceneType: input.sceneType,
-            title: input.title,
-            body: input.body,
+            intent: input.intent ?? deriveSceneIntent(input.sceneType),
+            chromePreset: input.chromePreset ?? deriveSceneChromePreset(input.sceneType),
+            title,
+            body,
             ctaLabel: input.ctaLabel ?? null,
             ctaHref: input.ctaHref ?? null,
+            facilitatorNotes: normalizeStringArray(input.facilitatorNotes, []),
+            sourceRefs: Array.isArray(input.sourceRefs) ? input.sourceRefs : [],
+            blocks: blocks.length > 0 ? blocks : buildFallbackPresenterBlocks({ sceneType: input.sceneType, title, body }),
             order: item.presenterScenes.length + 1,
             enabled: true,
             sourceBlueprintSceneId: null,
@@ -363,9 +536,16 @@ export async function addPresenterScene(
 export async function updatePresenterScene(
   agendaItemId: string,
   sceneId: string,
-  updates: Pick<PresenterScene, "label" | "sceneType" | "title" | "body"> & {
+  updates: Pick<PresenterScene, "label" | "sceneType"> & {
+    title?: string;
+    body?: string;
+    intent?: PresenterSceneIntent;
+    chromePreset?: PresenterChromePreset;
     ctaLabel?: string | null;
     ctaHref?: string | null;
+    facilitatorNotes?: string[];
+    sourceRefs?: PresenterScene["sourceRefs"];
+    blocks?: PresenterBlock[];
   },
   instanceId = getCurrentWorkshopInstanceId(),
 ) {
@@ -373,19 +553,36 @@ export async function updatePresenterScene(
     updateAgendaScenes(state, agendaItemId, (item) => {
       requirePresenterScene(item, sceneId);
       const normalized = normalizePresenterScenes(
-        item.presenterScenes.map((scene) =>
-          scene.id === sceneId
-            ? {
-                ...scene,
-                label: updates.label,
-                sceneType: updates.sceneType,
-                title: updates.title,
-                body: updates.body,
-                ctaLabel: updates.ctaLabel ?? null,
-                ctaHref: updates.ctaHref ?? null,
-              }
-            : scene,
-        ),
+        item.presenterScenes.map((scene) => {
+          if (scene.id !== sceneId) {
+            return scene;
+          }
+
+          const blocks = normalizeBlocks(updates.blocks, scene.blocks);
+          const title = resolveSceneTitle(updates.label, updates.title, blocks);
+          const body = resolveSceneBody(updates.body, blocks);
+
+          return {
+            ...scene,
+            label: updates.label,
+            sceneType: updates.sceneType,
+            intent:
+              updates.intent ??
+              (scene.intent === "custom" ? deriveSceneIntent(updates.sceneType) : scene.intent ?? deriveSceneIntent(updates.sceneType)),
+            chromePreset:
+              updates.chromePreset ??
+              ((scene.chromePreset === "minimal" || scene.chromePreset === "participant" || scene.chromePreset === "checkpoint")
+                ? deriveSceneChromePreset(updates.sceneType)
+                : scene.chromePreset ?? deriveSceneChromePreset(updates.sceneType)),
+            title,
+            body,
+            ctaLabel: updates.ctaLabel ?? null,
+            ctaHref: updates.ctaHref ?? null,
+            facilitatorNotes: updates.facilitatorNotes ?? scene.facilitatorNotes,
+            sourceRefs: updates.sourceRefs ?? scene.sourceRefs,
+            blocks: blocks.length > 0 ? blocks : buildFallbackPresenterBlocks({ sceneType: updates.sceneType, title, body }),
+          };
+        }),
         item.defaultPresenterSceneId,
       );
 

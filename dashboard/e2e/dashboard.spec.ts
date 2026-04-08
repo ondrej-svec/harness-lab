@@ -72,6 +72,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByText("vrstva pro účastníky")).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
+    await expect(page.getByText("Co má tým držet viditelně před obědem")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
 
     // Verify context-aware nav — room links visible, public anchors gone
@@ -235,12 +236,14 @@ test.describe("facilitator admin (file mode)", () => {
     ]);
 
     await expect(popup.getByRole("heading", { name: "Build Phase 1" })).toBeVisible();
-    await expect(popup.getByText("Co má být vidět před obědem")).toBeVisible();
+    await expect(popup.getByText("Do 10:50 existuje repo.")).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
-    await expect(page.getByText("náhled participant vrstvy")).toBeVisible();
+    await expect(page.getByText("náhled participant vrstvy").first()).toBeVisible();
     await expect(page.locator("h2").filter({ hasText: "Context is King" })).toBeVisible();
-    await expect(page.getByText(/Krátký talk.*kvalitu kontextu/i)).toBeVisible();
+    await expect(page.getByText("Co má tým vidět bez facilitátorského šumu")).toBeVisible();
+    await expect(page.getByText("Live fáze a nejbližší další krok.")).toBeVisible();
+    await expect(page.getByText(/AGENTS\.md, skills, runbooky a testy nejsou doplněk/i).first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Tým 1" })).toBeVisible();
   });
 

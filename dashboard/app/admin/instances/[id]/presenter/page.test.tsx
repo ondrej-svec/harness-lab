@@ -63,9 +63,11 @@ describe("PresenterPage", () => {
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain(adminCopy.en.presenterParticipantPreviewLabel);
+    expect(html).toContain("Co má tým vidět bez facilitátorského šumu");
+    expect(html).toContain("Live fáze a nejbližší další krok.");
     expect(html).toContain("Context is King");
     expect(html).toContain("09:40 • Context is King");
-    expect(html).toContain("Krátký talk a porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži.");
+    expect(html).toContain("Místnost má odnést, že AGENTS.md, skills, runbooky a testy nejsou doplněk.");
     expect(html).toContain("Tým 1");
   });
 });

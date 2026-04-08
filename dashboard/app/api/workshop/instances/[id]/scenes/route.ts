@@ -10,9 +10,18 @@ import {
   setPresenterSceneEnabled,
   updatePresenterScene,
 } from "@/lib/workshop-store";
+import type { PresenterBlock, PresenterChromePreset, PresenterSceneIntent, PresenterSceneType } from "@/lib/workshop-data";
 
 function sceneMutationErrorResponse(error: unknown) {
   return workshopMutationErrorResponse(error);
+}
+
+function readStringArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : undefined;
+}
+
+function readBlocks(value: unknown) {
+  return Array.isArray(value) ? (value as PresenterBlock[]) : undefined;
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -51,15 +60,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   const body = (await request.json()) as {
     agendaItemId?: string;
     label?: string;
-    sceneType?: "briefing" | "demo" | "participant-view" | "checkpoint" | "reflection" | "custom";
+    sceneType?: PresenterSceneType;
     title?: string;
     body?: string;
+    intent?: PresenterSceneIntent;
+    chromePreset?: PresenterChromePreset;
     ctaLabel?: string | null;
     ctaHref?: string | null;
+    facilitatorNotes?: string[];
+    sourceRefs?: Array<{ label: string; path: string }>;
+    blocks?: PresenterBlock[];
   };
-  if (!body.agendaItemId || !body.label || !body.sceneType || !body.title || !body.body) {
+  if (!body.agendaItemId || !body.label || !body.sceneType) {
     return NextResponse.json(
-      { ok: false, error: "agendaItemId, label, sceneType, title and body are required" },
+      { ok: false, error: "agendaItemId, label and sceneType are required" },
       { status: 400 },
     );
   }
@@ -72,8 +86,13 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         sceneType: body.sceneType,
         title: body.title,
         body: body.body,
+        intent: body.intent,
+        chromePreset: body.chromePreset,
         ctaLabel: body.ctaLabel ?? null,
         ctaHref: body.ctaHref ?? null,
+        facilitatorNotes: readStringArray(body.facilitatorNotes),
+        sourceRefs: Array.isArray(body.sourceRefs) ? body.sourceRefs : undefined,
+        blocks: readBlocks(body.blocks),
       },
       id,
     );
@@ -97,11 +116,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         agendaItemId?: string;
         sceneId?: string;
         label?: string;
-        sceneType?: "briefing" | "demo" | "participant-view" | "checkpoint" | "reflection" | "custom";
+        sceneType?: PresenterSceneType;
         title?: string;
         body?: string;
+        intent?: PresenterSceneIntent;
+        chromePreset?: PresenterChromePreset;
         ctaLabel?: string | null;
         ctaHref?: string | null;
+        facilitatorNotes?: string[];
+        sourceRefs?: Array<{ label: string; path: string }>;
+        blocks?: PresenterBlock[];
       }
     | {
         action: "move";
@@ -163,9 +187,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
   }
 
-  if (!body.label || !body.sceneType || !body.title || !body.body) {
+  if (!body.label || !body.sceneType) {
     return NextResponse.json(
-      { ok: false, error: "label, sceneType, title and body are required for update" },
+      { ok: false, error: "label and sceneType are required for update" },
       { status: 400 },
     );
   }
@@ -179,8 +203,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         sceneType: body.sceneType,
         title: body.title,
         body: body.body,
+        intent: body.intent,
+        chromePreset: body.chromePreset,
         ctaLabel: body.ctaLabel ?? null,
         ctaHref: body.ctaHref ?? null,
+        facilitatorNotes: readStringArray(body.facilitatorNotes),
+        sourceRefs: Array.isArray(body.sourceRefs) ? body.sourceRefs : undefined,
+        blocks: readBlocks(body.blocks),
       },
       id,
     );

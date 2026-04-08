@@ -1,10 +1,49 @@
 import blueprintAgenda from "./workshop-blueprint-agenda.json";
 
+type WorkshopBlueprintScene = {
+  id: string;
+  label: string;
+  sceneType: string;
+  intent?: string;
+  chromePreset?: string;
+  title: string;
+  body: string;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  facilitatorNotes?: string[];
+  sourceRefs?: WorkshopSourceRef[];
+  blocks?: PresenterBlock[];
+};
+
+type WorkshopBlueprintPhase = {
+  id: string;
+  order: number;
+  label: string;
+  startTime: string;
+  kind?: string;
+  intent?: string;
+  goal: string;
+  roomSummary?: string;
+  facilitatorPrompts?: string[];
+  watchFors?: string[];
+  checkpointQuestions?: string[];
+  sourceRefs?: WorkshopSourceRef[];
+  defaultSceneId?: string | null;
+  scenes?: WorkshopBlueprintScene[];
+};
+
 export type AgendaItem = {
   id: string;
   title: string;
   time: string;
   description: string;
+  intent: AgendaItemIntent;
+  goal: string;
+  roomSummary: string;
+  facilitatorPrompts: string[];
+  watchFors: string[];
+  checkpointQuestions: string[];
+  sourceRefs: WorkshopSourceRef[];
   order: number;
   sourceBlueprintPhaseId: string | null;
   kind: "blueprint" | "custom";
@@ -13,27 +52,145 @@ export type AgendaItem = {
   presenterScenes: PresenterScene[];
 };
 
+export type WorkshopSourceRef = {
+  label: string;
+  path: string;
+};
+
+export type AgendaItemIntent =
+  | "framing"
+  | "teaching"
+  | "demo"
+  | "build"
+  | "checkpoint"
+  | "transition"
+  | "break"
+  | "handoff"
+  | "reflection"
+  | "closeout"
+  | "custom";
+
 export type PresenterSceneType =
   | "briefing"
   | "demo"
   | "participant-view"
   | "checkpoint"
   | "reflection"
+  | "transition"
   | "custom";
+
+export type PresenterSceneIntent =
+  | "framing"
+  | "teaching"
+  | "demo"
+  | "walkthrough"
+  | "checkpoint"
+  | "transition"
+  | "reflection"
+  | "custom";
+
+export type PresenterChromePreset =
+  | "minimal"
+  | "agenda"
+  | "checkpoint"
+  | "participant";
+
+type PresenterBlockBase = {
+  id: string;
+};
+
+export type PresenterBlock =
+  | (PresenterBlockBase & {
+      type: "hero";
+      eyebrow?: string;
+      title: string;
+      body?: string;
+    })
+  | (PresenterBlockBase & {
+      type: "rich-text";
+      content: string;
+    })
+  | (PresenterBlockBase & {
+      type: "bullet-list";
+      title?: string;
+      items: string[];
+    })
+  | (PresenterBlockBase & {
+      type: "quote";
+      quote: string;
+      attribution?: string;
+    })
+  | (PresenterBlockBase & {
+      type: "steps";
+      title?: string;
+      items: Array<{
+        title: string;
+        body?: string;
+      }>;
+    })
+  | (PresenterBlockBase & {
+      type: "checklist";
+      title?: string;
+      items: string[];
+    })
+  | (PresenterBlockBase & {
+      type: "image";
+      src: string;
+      alt: string;
+      caption?: string;
+    })
+  | (PresenterBlockBase & {
+      type: "link-list";
+      title?: string;
+      items: Array<{
+        label: string;
+        href?: string | null;
+        description?: string;
+      }>;
+    })
+  | (PresenterBlockBase & {
+      type: "callout";
+      tone: "info" | "warning" | "success";
+      title?: string;
+      body: string;
+    })
+  | (PresenterBlockBase & {
+      type: "participant-preview";
+      body?: string;
+    });
 
 export type PresenterScene = {
   id: string;
   label: string;
   sceneType: PresenterSceneType;
+  intent: PresenterSceneIntent;
+  chromePreset: PresenterChromePreset;
   title: string;
   body: string;
   ctaLabel: string | null;
   ctaHref: string | null;
+  facilitatorNotes: string[];
+  sourceRefs: WorkshopSourceRef[];
+  blocks: PresenterBlock[];
   order: number;
   enabled: boolean;
   sourceBlueprintSceneId: string | null;
   kind: "blueprint" | "custom";
 };
+
+const agendaItemIntents = [
+  "framing",
+  "teaching",
+  "demo",
+  "build",
+  "checkpoint",
+  "transition",
+  "break",
+  "handoff",
+  "reflection",
+  "closeout",
+  "custom",
+] as const satisfies AgendaItemIntent[];
 
 const presenterSceneTypes = [
   "briefing",
@@ -41,11 +198,81 @@ const presenterSceneTypes = [
   "participant-view",
   "checkpoint",
   "reflection",
+  "transition",
   "custom",
 ] as const satisfies PresenterSceneType[];
 
+const presenterSceneIntents = [
+  "framing",
+  "teaching",
+  "demo",
+  "walkthrough",
+  "checkpoint",
+  "transition",
+  "reflection",
+  "custom",
+] as const satisfies PresenterSceneIntent[];
+
+const presenterChromePresets = [
+  "minimal",
+  "agenda",
+  "checkpoint",
+  "participant",
+] as const satisfies PresenterChromePreset[];
+
+function buildFallbackPresenterBlocks(scene: {
+  sceneType: PresenterSceneType;
+  title: string;
+  body: string;
+}): PresenterBlock[] {
+  if (scene.sceneType === "participant-view") {
+    return [
+      {
+        id: `${scene.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "participant"}-preview`,
+        type: "participant-preview",
+        body: scene.body,
+      },
+    ];
+  }
+
+  const blocks: PresenterBlock[] = [
+    {
+      id: `${scene.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "scene"}-hero`,
+      type: "hero",
+      title: scene.title,
+      body: scene.body || undefined,
+    },
+  ];
+
+  if (scene.body.trim().length > 0) {
+    blocks.push({
+      id: `${scene.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") || "scene"}-body`,
+      type: "rich-text",
+      content: scene.body,
+    });
+  }
+
+  return blocks;
+}
+
+function normalizePresenterBlocks(value: unknown, fallback: PresenterBlock[] = []) {
+  return Array.isArray(value) ? (value as PresenterBlock[]) : fallback;
+}
+
+function normalizeAgendaItemIntent(value: string): AgendaItemIntent {
+  return agendaItemIntents.includes(value as AgendaItemIntent) ? (value as AgendaItemIntent) : "custom";
+}
+
 function normalizePresenterSceneType(value: string): PresenterSceneType {
   return presenterSceneTypes.includes(value as PresenterSceneType) ? (value as PresenterSceneType) : "custom";
+}
+
+function normalizePresenterSceneIntent(value: string): PresenterSceneIntent {
+  return presenterSceneIntents.includes(value as PresenterSceneIntent) ? (value as PresenterSceneIntent) : "custom";
+}
+
+function normalizePresenterChromePreset(value: string): PresenterChromePreset {
+  return presenterChromePresets.includes(value as PresenterChromePreset) ? (value as PresenterChromePreset) : "minimal";
 }
 
 export type Team = {
@@ -202,30 +429,53 @@ function createSampleWorkshopMeta(input: {
 }
 
 function createAgendaFromBlueprint(currentPhaseId?: string): AgendaItem[] {
-  const phaseId = currentPhaseId ?? blueprintAgenda.phases[2]?.id ?? blueprintAgenda.phases[0]?.id;
+  const phases = blueprintAgenda.phases as WorkshopBlueprintPhase[];
+  const phaseId =
+    currentPhaseId ??
+    phases.find((phase) => phase.id === "build-1")?.id ??
+    phases[0]?.id;
   const currentIndex = Math.max(
-    blueprintAgenda.phases.findIndex((phase) => phase.id === phaseId),
+    phases.findIndex((phase) => phase.id === phaseId),
     0,
   );
 
-  return blueprintAgenda.phases.map((phase, index) => ({
+  return phases.map((phase, index) => ({
     id: phase.id,
     title: phase.label,
     time: phase.startTime,
-    description: phase.goal,
+    description: phase.roomSummary ?? phase.goal,
+    intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
+    goal: phase.goal,
+    roomSummary: phase.roomSummary ?? phase.goal,
+    facilitatorPrompts: phase.facilitatorPrompts ?? [],
+    watchFors: phase.watchFors ?? [],
+    checkpointQuestions: phase.checkpointQuestions ?? [],
+    sourceRefs: phase.sourceRefs ?? [],
     order: phase.order,
     sourceBlueprintPhaseId: phase.id,
     kind: "blueprint" as const,
     status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
-    defaultPresenterSceneId: phase.defaultSceneId ?? phase.scenes[0]?.id ?? null,
+    defaultPresenterSceneId: phase.defaultSceneId ?? phase.scenes?.[0]?.id ?? null,
     presenterScenes: (phase.scenes ?? []).map((scene, sceneIndex) => ({
       id: scene.id,
       label: scene.label,
       sceneType: normalizePresenterSceneType(scene.sceneType),
+      intent: normalizePresenterSceneIntent(scene.intent ?? scene.sceneType ?? "custom"),
+      chromePreset: normalizePresenterChromePreset(scene.chromePreset ?? "minimal"),
       title: scene.title,
       body: scene.body,
       ctaLabel: scene.ctaLabel ?? null,
       ctaHref: scene.ctaHref ?? null,
+      facilitatorNotes: scene.facilitatorNotes ?? [],
+      sourceRefs: scene.sourceRefs ?? [],
+      blocks:
+        normalizePresenterBlocks(scene.blocks).length > 0
+          ? normalizePresenterBlocks(scene.blocks)
+          : buildFallbackPresenterBlocks({
+              sceneType: normalizePresenterSceneType(scene.sceneType),
+              title: scene.title,
+              body: scene.body,
+            }),
       order: sceneIndex + 1,
       enabled: true,
       sourceBlueprintSceneId: scene.id,

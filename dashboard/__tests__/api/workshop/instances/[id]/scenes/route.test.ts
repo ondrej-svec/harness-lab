@@ -50,7 +50,10 @@ describe("instance scenes route", () => {
       items: expect.arrayContaining([
         expect.objectContaining({
           agendaItemId: "talk",
-          scenes: expect.arrayContaining([expect.objectContaining({ id: "talk-demo" })]),
+          scenes: expect.arrayContaining([
+            expect.objectContaining({ id: "talk-micro-exercise", sceneType: "demo" }),
+            expect.objectContaining({ id: "talk-participant-view", sceneType: "participant-view" }),
+          ]),
         }),
       ]),
     });

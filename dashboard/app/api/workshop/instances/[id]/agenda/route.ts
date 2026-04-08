@@ -3,6 +3,10 @@ import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { addAgendaItem, getWorkshopState, moveAgendaItem, removeAgendaItem, setCurrentAgendaItem, updateAgendaItem } from "@/lib/workshop-store";
 
+function readStringArray(value: unknown) {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : undefined;
+}
+
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const denied = await requireFacilitatorRequest(request, id);
@@ -28,10 +32,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     title?: string;
     time?: string;
     description?: string;
+    goal?: string;
+    roomSummary?: string;
+    facilitatorPrompts?: string[];
+    watchFors?: string[];
+    checkpointQuestions?: string[];
     afterItemId?: string | null;
   };
-  if (!body.title || !body.time || !body.description) {
-    return NextResponse.json({ ok: false, error: "title, time and description are required" }, { status: 400 });
+  const description = body.roomSummary ?? body.goal ?? body.description;
+  if (!body.title || !body.time || !description) {
+    return NextResponse.json({ ok: false, error: "title, time, and roomSummary or description are required" }, { status: 400 });
   }
 
   try {
@@ -39,7 +49,12 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       {
         title: body.title,
         time: body.time,
-        description: body.description,
+        description,
+        goal: body.goal ?? description,
+        roomSummary: body.roomSummary ?? description,
+        facilitatorPrompts: readStringArray(body.facilitatorPrompts),
+        watchFors: readStringArray(body.watchFors),
+        checkpointQuestions: readStringArray(body.checkpointQuestions),
         afterItemId: body.afterItemId ?? null,
       },
       id,
@@ -60,7 +75,18 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const body = (await request.json()) as
     | { action?: "set_current"; itemId?: string }
     | { action: "move"; itemId?: string; direction?: "up" | "down" }
-    | { action: "update"; itemId?: string; title?: string; time?: string; description?: string };
+    | {
+        action: "update";
+        itemId?: string;
+        title?: string;
+        time?: string;
+        description?: string;
+        goal?: string;
+        roomSummary?: string;
+        facilitatorPrompts?: string[];
+        watchFors?: string[];
+        checkpointQuestions?: string[];
+      };
 
   if (body.action === "move") {
     if (!body.itemId || !body.direction) {
@@ -76,8 +102,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   if (body.action === "update") {
-    if (!body.itemId || !body.title || !body.time || !body.description) {
-      return NextResponse.json({ ok: false, error: "itemId, title, time and description are required" }, { status: 400 });
+    const description = body.roomSummary ?? body.goal ?? body.description;
+    if (!body.itemId || !body.title || !body.time || !description) {
+      return NextResponse.json(
+        { ok: false, error: "itemId, title, time, and roomSummary or description are required" },
+        { status: 400 },
+      );
     }
 
     try {
@@ -86,7 +116,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
         {
           title: body.title,
           time: body.time,
-          description: body.description,
+          description,
+          goal: body.goal ?? description,
+          roomSummary: body.roomSummary ?? description,
+          facilitatorPrompts: readStringArray(body.facilitatorPrompts) ?? [],
+          watchFors: readStringArray(body.watchFors) ?? [],
+          checkpointQuestions: readStringArray(body.checkpointQuestions) ?? [],
         },
         id,
       );

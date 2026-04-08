@@ -1,6 +1,6 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
-import type { TickerItem, WorkshopState } from "./workshop-data";
+import type { PresenterBlock, TickerItem, WorkshopState } from "./workshop-data";
 import { publicCopy, type UiLanguage, withLang } from "./ui-language";
 
 const publicRepoUrl = "https://github.com/ondrej-svec/harness-lab";
@@ -28,7 +28,54 @@ export type ParticipantPanelState = {
   currentPhaseTitle: string;
   currentPhaseDescription: string | null;
   nextPhaseLabel: string | null;
+  guidanceLabel: string | null;
+  guidanceBlocks: PresenterBlock[];
 };
+
+function buildFallbackParticipantGuidance(options: {
+  currentAgendaItem: AgendaItem | undefined;
+  copy: PublicCopy;
+}): { label: string | null; blocks: PresenterBlock[] } {
+  const { currentAgendaItem, copy } = options;
+
+  if (!currentAgendaItem) {
+    return { label: null, blocks: [] };
+  }
+
+  const blocks: PresenterBlock[] = [
+    {
+      id: `${currentAgendaItem.id}-participant-hero`,
+      type: "hero",
+      eyebrow: currentAgendaItem.title,
+      title: currentAgendaItem.goal || currentAgendaItem.title,
+      body: currentAgendaItem.roomSummary || currentAgendaItem.description || undefined,
+    },
+    {
+      id: `${currentAgendaItem.id}-participant-preview`,
+      type: "participant-preview",
+      body: copy.participantGuidancePreviewBody,
+    },
+  ];
+
+  const focusItems =
+    currentAgendaItem.checkpointQuestions.length > 0
+      ? currentAgendaItem.checkpointQuestions.slice(0, 3)
+      : [currentAgendaItem.roomSummary || currentAgendaItem.description].filter(Boolean);
+
+  if (focusItems.length > 0) {
+    blocks.splice(1, 0, {
+      id: `${currentAgendaItem.id}-participant-focus`,
+      type: "bullet-list",
+      title: copy.participantGuidanceFocusTitle,
+      items: focusItems,
+    });
+  }
+
+  return {
+    label: copy.participantGuidanceFallbackLabel,
+    blocks,
+  };
+}
 
 export type PublicAccessPanelState = {
   eventCodeDefaultValue: string;
@@ -110,6 +157,10 @@ export function buildParticipantPanelState(options: {
 }): ParticipantPanelState {
   const { copy, lang, currentAgendaItem, nextAgendaItem, participantSession, rotationRevealed } = options;
   const currentTitle = currentAgendaItem?.title ?? copy.participantTitleFallback;
+  const participantScene = currentAgendaItem?.presenterScenes.find(
+    (scene) => scene.enabled && scene.sceneType === "participant-view",
+  );
+  const fallbackGuidance = buildFallbackParticipantGuidance({ currentAgendaItem, copy });
 
   return {
     title: currentTitle,
@@ -123,6 +174,8 @@ export function buildParticipantPanelState(options: {
     currentPhaseTitle: `${currentAgendaItem?.time ?? ""}${currentAgendaItem ? " • " : ""}${currentTitle}`.trim(),
     currentPhaseDescription: currentAgendaItem?.description ?? null,
     nextPhaseLabel: nextAgendaItem ? `${copy.metricNext}: ${nextAgendaItem.time} • ${nextAgendaItem.title}` : null,
+    guidanceLabel: participantScene?.label ?? fallbackGuidance.label,
+    guidanceBlocks: participantScene?.blocks ?? fallbackGuidance.blocks,
   };
 }
 

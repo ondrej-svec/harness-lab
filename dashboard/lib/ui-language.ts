@@ -72,6 +72,10 @@ export const publicCopy = {
       "Continuation shift je odemčený. Nejdřív čtěte README, `AGENTS.md` a plán. Sepište si, co pomáhá, co chybí a jaký je další safe move, pak teprve měňte kód.",
     participantBodyHidden:
       "Soustřeďte se na krátké `AGENTS.md`, plán, build/test flow a první ověřený krok. Continuation shift se odemkne později.",
+    participantGuidanceFallbackLabel: "agenda pro tým",
+    participantGuidanceFocusTitle: "co držet teď",
+    participantGuidancePreviewBody:
+      "Držte pohromadě live moment, další blok a sdílené poznámky z místnosti. Když se zaseknete, vraťte se k mapě repa a nejmenšímu užitečnému ověření.",
     metricCurrentPhase: "aktuální fáze",
     metricNext: "další blok",
     metricSessionUntil: "session do",
@@ -148,6 +152,10 @@ export const publicCopy = {
       "The continuation shift is unlocked. Read README, `AGENTS.md`, and the plan first. Write down what helps, what is missing, and the next safe move before you change code.",
     participantBodyHidden:
       "Focus on a short `AGENTS.md`, the plan, the build/test flow, and the first verified step. The continuation shift will unlock later.",
+    participantGuidanceFallbackLabel: "team agenda",
+    participantGuidanceFocusTitle: "what to hold now",
+    participantGuidancePreviewBody:
+      "Keep the live moment, the next block, and shared room notes in view together. If you get stuck, go back to the repo map and the smallest useful verification step.",
     metricCurrentPhase: "current phase",
     metricNext: "next",
     metricSessionUntil: "session until",

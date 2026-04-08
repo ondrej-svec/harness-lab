@@ -223,7 +223,17 @@ Příklady:
 PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
 Content-Type: application/json
 
-{ "action": "update", "itemId": "build-1", "title": "...", "time": "...", "description": "..." }
+{
+  "action": "update",
+  "itemId": "build-1",
+  "title": "...",
+  "time": "...",
+  "goal": "...",
+  "roomSummary": "...",
+  "facilitatorPrompts": ["..."],
+  "watchFors": ["..."],
+  "checkpointQuestions": ["..."]
+}
 ```
 
 ```http
@@ -237,8 +247,25 @@ Content-Type: application/json
 POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
 Content-Type: application/json
 
-{ "title": "...", "time": "...", "description": "...", "afterItemId": "build-1" }
+{
+  "title": "...",
+  "time": "...",
+  "goal": "...",
+  "roomSummary": "...",
+  "facilitatorPrompts": ["..."],
+  "watchFors": ["..."],
+  "checkpointQuestions": ["..."],
+  "afterItemId": "build-1"
+}
 ```
+
+Pravidla:
+
+- agenda item je facilitátorský pack, ne jen `title/time/description`
+- preferované fieldy jsou `goal`, `roomSummary`, `facilitatorPrompts`, `watchFors`, `checkpointQuestions`
+- `description` zůstává compatibility field pro starší surface; pro room-facing shrnutí preferuj `roomSummary`
+- používej kanonická agenda ids jako `opening`, `talk`, `demo`, `build-1`, `intermezzo-1`, `rotation`, `build-2`, `intermezzo-2`, `reveal`
+- skill nemá vymýšlet vlastní názvy workshop momentů mimo tuto kostru
 
 ### `/workshop facilitator scenes`
 
@@ -251,6 +278,7 @@ Presenter scenes jsou agenda-linked room-facing výstupy pro facilitátora a pro
 - přeuspořádat scény
 - skrýt nebo znovu povolit scénu
 - smazat lokální scénu
+- číst a případně upravit `facilitatorNotes`, `sourceRefs` a `blocks`
 
 Instanční route:
 
@@ -272,8 +300,29 @@ Content-Type: application/json
   "agendaItemId": "talk",
   "label": "Prompt blob vs repo context",
   "sceneType": "demo",
+  "intent": "walkthrough",
+  "chromePreset": "agenda",
   "title": "Nejdřív bez kontextu, potom s mapou",
-  "body": "Ukažte rozdíl mezi prompt blobem a krátkou repo-native mapou.",
+  "facilitatorNotes": [
+    "Držte jednu story, ne feature tour."
+  ],
+  "blocks": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "title": "Nejdřív bez kontextu, potom s mapou",
+      "body": "Ukažte rozdíl mezi prompt blobem a krátkou repo-native mapou."
+    },
+    {
+      "id": "questions",
+      "type": "bullet-list",
+      "title": "Pointa",
+      "items": [
+        "Co není v repu, neexistuje.",
+        "Kontext je páka, ne kosmetika."
+      ]
+    }
+  ],
   "ctaLabel": "Potom přepnout na participant walkthrough"
 }
 ```
@@ -288,8 +337,17 @@ Content-Type: application/json
   "sceneId": "scene-123",
   "label": "Upravený demo flow",
   "sceneType": "demo",
+  "intent": "walkthrough",
+  "chromePreset": "agenda",
   "title": "Jedna story, ne feature tour",
-  "body": "Neukazujte pět režimů práce. Ukažte jeden čitelný workflow."
+  "blocks": [
+    {
+      "id": "hero",
+      "type": "hero",
+      "title": "Jedna story, ne feature tour",
+      "body": "Neukazujte pět režimů práce. Ukažte jeden čitelný workflow."
+    }
+  ]
 }
 ```
 
@@ -328,6 +386,10 @@ Při práci přes API:
 - neznámé `agendaItemId` nebo `sceneId` vrací `404`
 - malformed payload pořád vrací `400`
 - skill má stale target ids hlásit explicitně, ne pokračovat jako by se změna povedla
+- room-facing obsah patří do `blocks`, facilitátorské guidance do `facilitatorNotes`
+- `title/body` zůstávají kvůli compatibility, ale skill má preferovat strukturované `blocks`
+- když runtime agenda existuje, skill má číst a citovat její `goal`, `roomSummary`, `facilitatorPrompts`, `watchFors`, `checkpointQuestions`, `facilitatorNotes` a `blocks`
+- když runtime data nejsou dostupná, fallbackni na repo-native blueprint/facilitation docs a explicitně to řekni
 
 ### `/workshop facilitator archive`
 

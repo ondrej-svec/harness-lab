@@ -204,6 +204,8 @@ async function saveAgendaDetailsAction(formData: FormData) {
         title,
         time,
         description,
+        goal: goal || description,
+        roomSummary: roomSummary || description,
       },
       instanceId,
     );

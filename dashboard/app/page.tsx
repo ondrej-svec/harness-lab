@@ -19,6 +19,7 @@ import {
   deriveHomePageState,
   getBlueprintRepoUrl,
 } from "@/lib/public-page-view-model";
+import type { PresenterBlock } from "@/lib/workshop-data";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "./components/theme-switcher";
@@ -365,6 +366,18 @@ function ParticipantView({
               <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
             ) : null}
           </div>
+
+          {participantPanel.guidanceBlocks.length > 0 ? (
+            <div className="mt-6 space-y-4">
+              <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
+              <ParticipantGuidanceBlocks
+                blocks={participantPanel.guidanceBlocks}
+                copy={copy}
+                participantPanel={participantPanel}
+                sharedNotes={sharedNotes}
+              />
+            </div>
+          ) : null}
         </div>
 
         <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur">
@@ -477,6 +490,188 @@ function MetricCard({
     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
       <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
+    </div>
+  );
+}
+
+function ParticipantGuidanceBlocks({
+  blocks,
+  copy,
+  participantPanel,
+  sharedNotes,
+}: {
+  blocks: PresenterBlock[];
+  copy: (typeof publicCopy)[UiLanguage];
+  participantPanel: ReturnType<typeof buildParticipantPanelState>;
+  sharedNotes: string[];
+}) {
+  return (
+    <div className="space-y-4">
+      {blocks.map((block) => {
+        if (block.type === "hero") {
+          return (
+            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                {block.eyebrow ?? participantPanel.guidanceLabel ?? copy.participantEyebrow}
+              </p>
+              <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+                {block.title}
+              </h3>
+              {block.body ? <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
+            </div>
+          );
+        }
+
+        if (block.type === "participant-preview") {
+          return (
+            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+              {block.body ? <p className="text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
+                <MiniMetric label={copy.metricNext} value={participantPanel.nextPhaseLabel ?? copy.metricReflection} />
+              </div>
+              {sharedNotes.length > 0 ? (
+                <div className="mt-4 space-y-2">
+                  {sharedNotes.slice(0, 3).map((note) => (
+                    <div
+                      key={note}
+                      className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]"
+                    >
+                      {note}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          );
+        }
+
+        if (block.type === "bullet-list") {
+          return (
+            <ParticipantBlockCard key={block.id} title={block.title}>
+              <ul className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
+                {block.items.map((item) => (
+                  <li key={item}>• {item}</li>
+                ))}
+              </ul>
+            </ParticipantBlockCard>
+          );
+        }
+
+        if (block.type === "checklist") {
+          return (
+            <ParticipantBlockCard key={block.id} title={block.title}>
+              <div className="space-y-3">
+                {block.items.map((item) => (
+                  <div key={item} className="flex gap-3 rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                    <span className="mt-1 h-3 w-3 rounded-full border border-[var(--border-strong)]" />
+                    <p className="text-sm leading-6 text-[var(--text-secondary)]">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </ParticipantBlockCard>
+          );
+        }
+
+        if (block.type === "steps") {
+          return (
+            <ParticipantBlockCard key={block.id} title={block.title}>
+              <div className="space-y-4">
+                {block.items.map((item, index) => (
+                  <div key={`${item.title}-${index}`} className="grid gap-3 sm:grid-cols-[2rem_minmax(0,1fr)]">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] text-sm text-[var(--text-primary)]">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
+                      {item.body ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{item.body}</p> : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ParticipantBlockCard>
+          );
+        }
+
+        if (block.type === "callout") {
+          const toneClass =
+            block.tone === "warning"
+              ? "border-[var(--border-strong)] bg-[var(--surface-panel)]"
+              : "border-[var(--border)] bg-[var(--surface)]";
+          return (
+            <div key={block.id} className={`rounded-[24px] border p-5 ${toneClass}`}>
+              {block.title ? <p className="text-sm font-medium text-[var(--text-primary)]">{block.title}</p> : null}
+              <p className={block.title ? "mt-2 text-sm leading-7 text-[var(--text-secondary)]" : "text-sm leading-7 text-[var(--text-secondary)]"}>
+                {block.body}
+              </p>
+            </div>
+          );
+        }
+
+        if (block.type === "rich-text") {
+          return (
+            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-sm leading-7 text-[var(--text-secondary)] whitespace-pre-line">
+              {block.content}
+            </div>
+          );
+        }
+
+        if (block.type === "quote") {
+          return (
+            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
+              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">“{block.quote}”</blockquote>
+              {block.attribution ? <p className="mt-3 text-sm text-[var(--text-muted)]">{block.attribution}</p> : null}
+            </div>
+          );
+        }
+
+        if (block.type === "link-list") {
+          return (
+            <ParticipantBlockCard key={block.id} title={block.title}>
+              <div className="space-y-3">
+                {block.items.map((item) => (
+                  <div key={`${item.label}-${item.href ?? ""}`} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
+                    {item.description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p> : null}
+                  </div>
+                ))}
+              </div>
+            </ParticipantBlockCard>
+          );
+        }
+
+        return null;
+      })}
+    </div>
+  );
+}
+
+function ParticipantBlockCard({
+  title,
+  children,
+}: {
+  title?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+      {title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{title}</p> : null}
+      <div className={title ? "mt-4" : ""}>{children}</div>
+    </div>
+  );
+}
+
+function MiniMetric({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
