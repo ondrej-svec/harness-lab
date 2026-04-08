@@ -72,3 +72,19 @@ That is intentional:
 - `deploy-ready` should still require E2E when dashboard behavior changed, but should accept a skipped E2E job when no dashboard surface changed
 
 If a future change outside `dashboard/` genuinely needs the E2E suite, expand the scope rule deliberately instead of putting Playwright back on every workflow run by default.
+
+## Why the macOS CLI leg uses a self-hosted runner
+
+The macOS entry in `verify-harness-cli` uses the repository's self-hosted runner labels:
+
+- `self-hosted`
+- `macOS`
+- `ARM64`
+
+That is intentional:
+
+- macOS hosted minutes are relatively expensive compared with the rest of this workflow
+- the CLI matrix still needs one real macOS verification leg for packaging and install behavior
+- using explicit labels is safer than bare `self-hosted`, because it avoids accidentally routing the job onto the wrong runner if more self-hosted capacity is added later
+
+If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together.
