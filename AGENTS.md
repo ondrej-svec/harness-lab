@@ -10,18 +10,18 @@ This repository is the public-safe template version of the workshop. Real worksh
 
 Root rule:
 - `AGENTS.md` is the map, not the manual.
-- Deeper docs in [`docs/`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs), [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint), and surface-specific runbooks are the system of record.
+- Deeper docs in [`docs/`](docs/), [`workshop-blueprint/`](workshop-blueprint/), and surface-specific runbooks are the system of record.
 - If this file starts turning into an encyclopedia, move detail outward and link to it.
 
-For the maintenance standard behind this file, see [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md).
+For the maintenance standard behind this file, see [`docs/agents-md-standard.md`](docs/agents-md-standard.md).
 
 ## Read First
 
 Before making meaningful changes:
 
-1. Read [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/README.md) for repo orientation.
-2. Read [`docs/internal-harness.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md) for the maintainer-facing map.
-3. Read the current plan in [`docs/plans/`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans) if the task is non-trivial or already in flight.
+1. Read [`README.md`](README.md) for repo orientation.
+2. Read [`docs/internal-harness.md`](docs/internal-harness.md) for the maintainer-facing map.
+3. Read the current plan in [`docs/plans/`](docs/plans/) if the task is non-trivial or already in flight.
 4. Read the task-specific sources of truth below before editing code or workshop behavior.
 
 ## Task Routing
@@ -29,26 +29,26 @@ Before making meaningful changes:
 If you touch these areas, read these files first:
 
 - `dashboard/` UI, routes, or workshop state:
-  - [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
-  - [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-  - [`docs/agent-ui-testing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agent-ui-testing.md)
+  - [`docs/dashboard-surface-model.md`](docs/dashboard-surface-model.md)
+  - [`docs/dashboard-testing-strategy.md`](docs/dashboard-testing-strategy.md)
+  - [`docs/agent-ui-testing.md`](docs/agent-ui-testing.md)
 - facilitator auth, participant event access, or private runtime boundaries:
-  - [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-  - [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-  - [`docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-  - [`docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+  - [`docs/public-private-taxonomy.md`](docs/public-private-taxonomy.md)
+  - [`docs/private-workshop-instance-data-classification.md`](docs/private-workshop-instance-data-classification.md)
+  - [`docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`](docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+  - [`docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`](docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
 - workshop method, agenda shape, or canonical public workshop content:
-  - [`workshop-blueprint/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md)
-  - [`workshop-blueprint/day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
-  - [`workshop-blueprint/control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
-  - [`workshop-blueprint/edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
+  - [`workshop-blueprint/README.md`](workshop-blueprint/README.md)
+  - [`workshop-blueprint/day-structure.md`](workshop-blueprint/day-structure.md)
+  - [`workshop-blueprint/control-surfaces.md`](workshop-blueprint/control-surfaces.md)
+  - [`workshop-blueprint/edit-boundaries.md`](workshop-blueprint/edit-boundaries.md)
 - participant skill, install flow, or portable bundle behavior:
-  - [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-  - [`docs/resource-packaging-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
-  - [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
+  - [`workshop-skill/SKILL.md`](workshop-skill/SKILL.md)
+  - [`docs/resource-packaging-model.md`](docs/resource-packaging-model.md)
+  - [`docs/harness-cli-foundation.md`](docs/harness-cli-foundation.md)
 - participant-facing workshop copy:
-  - [`content/style-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md)
-  - [`content/style-examples.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md)
+  - [`content/style-guide.md`](content/style-guide.md)
+  - [`content/style-examples.md`](content/style-examples.md)
 
 ## Repo Map
 
@@ -101,7 +101,8 @@ npm run build
 
 Additional repo-specific checks:
 
-- if you change the portable workshop bundle, sync it with `node harness-cli/scripts/sync-workshop-bundle.mjs --with-repo-bundle`
+- if you change the portable workshop bundle, sync the packaged artifact with `node harness-cli/scripts/sync-workshop-bundle.mjs`
+- if you need a disposable repo-local discovery copy under `.agents/skills/`, generate it explicitly with `node harness-cli/scripts/sync-workshop-bundle.mjs --with-repo-bundle`
 - if you change architecture or trust boundaries, update the relevant ADR or boundary doc in the same slice of work
 
 ## Verification Boundary

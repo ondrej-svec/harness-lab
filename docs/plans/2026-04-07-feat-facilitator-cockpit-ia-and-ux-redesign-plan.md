@@ -3,7 +3,7 @@ title: "feat: facilitator cockpit IA and UX redesign"
 type: plan
 date: 2026-04-07
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md
 confidence: medium
 ---
 
@@ -13,7 +13,7 @@ Refactor the facilitator experience from one overloaded `/admin` page into a two
 
 ## Problem Statement
 
-The current facilitator surface in [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) mixes two distinct jobs:
+The current facilitator surface in [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) mixes two distinct jobs:
 
 - workspace-level instance management
 - single-instance live operations
@@ -94,13 +94,13 @@ Rejected because it would undersell the event model and optimize for scale befor
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The current `/admin` page is overloaded because it mixes workspace and instance scopes | Verified | Brainstorm findings plus direct review of [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) and current screenshots |
-| Workshop instances should be represented as event records rather than id-first technical rows | Verified | [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md), [`docs/private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md), and existing `workshopMeta` usage |
-| A separate route for the control room is feasible without breaking the underlying repository model | Verified | Current state and repository APIs are already instance-scoped in [`dashboard/lib/runtime-contracts.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-contracts.ts) |
+| The current `/admin` page is overloaded because it mixes workspace and instance scopes | Verified | Brainstorm findings plus direct review of [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) and current screenshots |
+| Workshop instances should be represented as event records rather than id-first technical rows | Verified | [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md), [`docs/private-workshop-instance-schema.md`](../private-workshop-instance-schema.md), and existing `workshopMeta` usage |
+| A separate route for the control room is feasible without breaking the underlying repository model | Verified | Current state and repository APIs are already instance-scoped in [`dashboard/lib/runtime-contracts.ts`](../../dashboard/lib/runtime-contracts.ts) |
 | Search and filtering are sufficient to keep a card-based workspace cockpit usable at moderate scale | Unverified | Desired by user; no current evidence of real instance volume. Needs pragmatic day-one filter scope |
-| Extending `workshopMeta` with richer location fields can happen without forcing private real-event data into the public template repo | Verified | Demo data remains sample-only, while real metadata stays private per [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md) |
+| Extending `workshopMeta` with richer location fields can happen without forcing private real-event data into the public template repo | Verified | Demo data remains sample-only, while real metadata stays private per [`docs/private-workshop-instance-data-classification.md`](../private-workshop-instance-data-classification.md) |
 | Mobile section switching can keep the control room understandable without making core actions too hidden | Unverified | Supported by general responsive guidance, but this specific surface needs validation through implementation and Playwright coverage |
-| Existing admin copy can be refactored into workspace-level and control-room-level language without redesigning the entire i18n model | Verified | Current `adminCopy` is centralized in [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts) |
+| Existing admin copy can be refactored into workspace-level and control-room-level language without redesigning the entire i18n model | Verified | Current `adminCopy` is centralized in [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts) |
 
 ## Risk Analysis
 
@@ -182,7 +182,7 @@ Goal: reduce monolith coupling before changing the UI.
 Tasks:
 
 - [x] Extend the workshop instance model to support richer event metadata needed by the workspace cockpit
-- [x] Update create/update instance flows in [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts) to accept the new metadata shape
+- [x] Update create/update instance flows in [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts) to accept the new metadata shape
 - [x] Refactor admin view-model helpers so workspace-cockpit helpers and control-room helpers are separate concerns
 - [x] Add helper builders for control-room hrefs and workspace filter/query persistence
 - [x] Split admin translation copy into workspace-level and control-room-level clusters while preserving Czech/English parity
@@ -234,8 +234,8 @@ Goal: ship the UX refactor with stronger trust boundaries than the current monol
 
 Tasks:
 
-- [x] Update unit tests in [`dashboard/app/admin/page.test.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.test.tsx) or split them by route/helper concern
-- [x] Update Playwright coverage in [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) to cover workspace cockpit and control-room entry
+- [x] Update unit tests in [`dashboard/app/admin/page.test.tsx`](../../dashboard/app/admin/page.test.tsx) or split them by route/helper concern
+- [x] Update Playwright coverage in [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) to cover workspace cockpit and control-room entry
 - [x] Add mobile control-room coverage and at least one search/filter assertion for the workspace cockpit
 - [x] Refresh screenshot baselines for both desktop and mobile facilitator views
 - [x] Update or extend facilitator design docs if the route split supersedes parts of the one-page doctrine
@@ -290,24 +290,24 @@ Exit criteria:
 
 ### Brainstorm
 
-- [`docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md)
+- [`docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md`](../brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md)
 
 ### Related local context
 
-- [`docs/facilitator-dashboard-design-rules.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md)
-- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- [`docs/private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
+- [`docs/facilitator-dashboard-design-rules.md`](../facilitator-dashboard-design-rules.md)
+- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md)
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md)
+- [`docs/private-workshop-instance-data-classification.md`](../private-workshop-instance-data-classification.md)
+- [`docs/private-workshop-instance-schema.md`](../private-workshop-instance-schema.md)
 
 ### Current implementation seams
 
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`dashboard/app/admin/page.test.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.test.tsx)
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
-- [`dashboard/lib/admin-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-page-view-model.ts)
-- [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts)
-- [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- [`dashboard/lib/workshop-instance-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-instance-repository.ts)
-- [`dashboard/lib/runtime-contracts.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-contracts.ts)
-- [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts)
+- [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx)
+- [`dashboard/app/admin/page.test.tsx`](../../dashboard/app/admin/page.test.tsx)
+- [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts)
+- [`dashboard/lib/admin-page-view-model.ts`](../../dashboard/lib/admin-page-view-model.ts)
+- [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts)
+- [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
+- [`dashboard/lib/workshop-instance-repository.ts`](../../dashboard/lib/workshop-instance-repository.ts)
+- [`dashboard/lib/runtime-contracts.ts`](../../dashboard/lib/runtime-contracts.ts)
+- [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts)

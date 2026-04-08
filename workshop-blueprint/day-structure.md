@@ -124,6 +124,6 @@ Habit installed:
 
 ## Canonical Agenda Source
 
-The reusable agenda lives in [`agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json).
+The reusable agenda lives in [`agenda.json`](agenda.json).
 
 Runtime workshop instances import from that blueprint and then track live phase position, reveal state, teams, and checkpoints locally in the private runtime layer.

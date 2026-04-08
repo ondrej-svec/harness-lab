@@ -72,11 +72,11 @@ Items like explicit `tsc --noEmit`, a global error boundary, or broader device-a
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| Minimal security headers can be added centrally in `next.config.ts` without changing the current UI architecture | Verified | [`next.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/next.config.ts) is minimal and currently adds no custom headers |
-| The public homepage does not depend on the current `GET /api/workshop` payload | Verified | [`page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx) renders from server-side state and [`public-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/public-page-view-model.ts) does not call `/api/workshop` |
-| Neon mode should never silently fall back to local/demo auth behavior when managed auth config is incomplete | Verified | [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md) explicitly says demo defaults must not be reused outside local file mode |
+| Minimal security headers can be added centrally in `next.config.ts` without changing the current UI architecture | Verified | [`next.config.ts`](../../dashboard/next.config.ts) is minimal and currently adds no custom headers |
+| The public homepage does not depend on the current `GET /api/workshop` payload | Verified | [`page.tsx`](../../dashboard/app/page.tsx) renders from server-side state and [`public-page-view-model.ts`](../../dashboard/lib/public-page-view-model.ts) does not call `/api/workshop` |
+| Neon mode should never silently fall back to local/demo auth behavior when managed auth config is incomplete | Verified | [`private-workshop-instance-env-matrix.md`](../private-workshop-instance-env-matrix.md) explicitly says demo defaults must not be reused outside local file mode |
 | A public health endpoint is required for the workshop runtime to be operable | Unverified | The review recommends one, but the repo currently has no documented requirement that anonymous uptime checks must expose runtime diagnostics |
-| Optimistic locking can be layered onto the `workshop_instances`/`workshop_state` write path without changing current read contracts | Unverified | [`workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts) and [`workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts) do not currently carry a version field through reads/writes |
+| Optimistic locking can be layered onto the `workshop_instances`/`workshop_state` write path without changing current read contracts | Unverified | [`workshop-store.ts`](../../dashboard/lib/workshop-store.ts) and [`workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts) do not currently carry a version field through reads/writes |
 | The delete-and-reinsert repository patterns for teams/checkpoints belong in the same implementation slice as workshop-state optimistic locking | Unverified | Those write paths are real, but they are adjacent to, not identical with, the shared-state overwrite problem |
 
 The unverified assumptions should become explicit early decisions during implementation, not silent premises.
@@ -157,7 +157,7 @@ Goal: reduce accidental public exposure without changing the user-facing worksho
 
 Tasks:
 
-- [x] Add a minimal header set in [`next.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/next.config.ts) for clickjacking, MIME sniffing, and referrer hardening.
+- [x] Add a minimal header set in [`next.config.ts`](../../dashboard/next.config.ts) for clickjacking, MIME sniffing, and referrer hardening.
 - [x] Change `GET /api/workshop` so anonymous callers cannot retrieve full workshop instance records.
 - [x] If a public workshop endpoint remains, ensure its response is explicitly public-safe and limited to fields already acceptable on public routes.
 - [x] Document the health-endpoint decision for this pass: no new anonymous diagnostic endpoint ships unless a later operational requirement appears.
@@ -193,8 +193,8 @@ Goal: stop blind overwrites on the main facilitator state write path.
 
 Tasks:
 
-- [x] Introduce a versioning strategy for the `workshop_state` owner row in [`workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts).
-- [x] Thread the version through read and write contracts so [`updateWorkshopState()`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts) can reject stale writes.
+- [x] Introduce a versioning strategy for the `workshop_state` owner row in [`workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts).
+- [x] Thread the version through read and write contracts so [`updateWorkshopState()`](../../dashboard/lib/workshop-store.ts) can reject stale writes.
 - [x] Return an explicit conflict outcome that routes/actions can surface as retryable rather than generic failure.
 - [x] Add concurrency-focused tests covering overlapping facilitator mutations to shared workshop state.
 - [x] Decide whether `replaceTeams()` / `replaceCheckpoints()` transactional safety is addressed here or documented as adjacent debt.
@@ -211,7 +211,7 @@ Goal: close the remaining worthwhile gaps once the trust-boundary work is stable
 
 Tasks:
 
-- [x] Add a minimal [`app/global-error.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app) for operator-visible failure handling.
+- [x] Add a minimal [`app/global-error.tsx`](../../dashboard/app/) for operator-visible failure handling.
 - [x] Decide and document the device-auth abuse posture for this pass, including whether throttling is implemented now or explicitly deferred.
 - [x] Decide whether an explicit `tsc --noEmit` step adds enough signal beyond `next build` to justify CI time and maintenance.
 - [x] Update runbook, env-matrix, and security docs anywhere the implementation changes the operating contract.
@@ -237,7 +237,7 @@ Dependency-ordered tracker for `$work`:
 
 ## Acceptance Criteria
 
-- Anonymous callers can no longer retrieve full workshop instance records from [`/api/workshop`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts) unless those records are explicitly reduced to a public-safe projection.
+- Anonymous callers can no longer retrieve full workshop instance records from [`/api/workshop`](../../dashboard/app/api/workshop/route.ts) unless those records are explicitly reduced to a public-safe projection.
 - The app emits a minimal baseline security-header set for all dashboard routes.
 - Neon runtime configuration fails closed when managed-auth requirements are incomplete, and file-mode demo behavior remains intact.
 - Sample event-code seeding no longer activates accidentally in Neon mode.
@@ -248,15 +248,15 @@ Dependency-ordered tracker for `$work`:
 
 ## References
 
-- Reviewed architecture doc: [2026-04-08-harness-lab-architecture-review.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/2026-04-08-harness-lab-architecture-review.md)
-- Prior hardening plan: [2026-04-06-feat-private-workshop-instance-hardening-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-private-workshop-instance-hardening-plan.md)
-- Auth model: [private-workshop-instance-auth-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
-- Security gates: [private-workshop-instance-security-gates.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
-- Env matrix: [private-workshop-instance-env-matrix.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
-- Public workshop route: [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts)
-- Facilitator auth seam: [facilitator-auth-service.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-auth-service.ts)
-- Facilitator request guard: [facilitator-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-access.ts)
-- Shared workshop-state write path: [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- Workshop-state repository: [workshop-state-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- Device auth start route: [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/auth/device/start/route.ts)
-- Dashboard CI workflow: [dashboard-ci.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
+- Reviewed architecture doc: [2026-04-08-harness-lab-architecture-review.md](../2026-04-08-harness-lab-architecture-review.md)
+- Prior hardening plan: [2026-04-06-feat-private-workshop-instance-hardening-plan.md](2026-04-06-feat-private-workshop-instance-hardening-plan.md)
+- Auth model: [private-workshop-instance-auth-model.md](../private-workshop-instance-auth-model.md)
+- Security gates: [private-workshop-instance-security-gates.md](../private-workshop-instance-security-gates.md)
+- Env matrix: [private-workshop-instance-env-matrix.md](../private-workshop-instance-env-matrix.md)
+- Public workshop route: [route.ts](../../dashboard/app/api/workshop/route.ts)
+- Facilitator auth seam: [facilitator-auth-service.ts](../../dashboard/lib/facilitator-auth-service.ts)
+- Facilitator request guard: [facilitator-access.ts](../../dashboard/lib/facilitator-access.ts)
+- Shared workshop-state write path: [workshop-store.ts](../../dashboard/lib/workshop-store.ts)
+- Workshop-state repository: [workshop-state-repository.ts](../../dashboard/lib/workshop-state-repository.ts)
+- Device auth start route: [route.ts](../../dashboard/app/api/auth/device/start/route.ts)
+- Dashboard CI workflow: [dashboard-ci.yml](../../.github/workflows/dashboard-ci.yml)

@@ -3,7 +3,7 @@ title: "feat: facilitator instance lifecycle, local agenda authoring, and team o
 type: plan
 date: 2026-04-07
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
 confidence: medium
 ---
 
@@ -379,16 +379,16 @@ Exit criteria:
 
 ## References
 
-- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
-- [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
-- [`docs/blueprint-import-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- [`docs/private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
-- [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts)
-- [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- [`dashboard/lib/workshop-instance-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-instance-repository.ts)
-- [`dashboard/lib/workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- [`dashboard/app/api/workshop/route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts)
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-- [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md)
+- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
+- [`docs/dashboard-surface-model.md`](../dashboard-surface-model.md)
+- [`docs/blueprint-import-model.md`](../blueprint-import-model.md)
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md)
+- [`docs/private-workshop-instance-schema.md`](../private-workshop-instance-schema.md)
+- [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts)
+- [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
+- [`dashboard/lib/workshop-instance-repository.ts`](../../dashboard/lib/workshop-instance-repository.ts)
+- [`dashboard/lib/workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts)
+- [`dashboard/app/api/workshop/route.ts`](../../dashboard/app/api/workshop/route.ts)
+- [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx)
+- [`workshop-skill/SKILL.md`](../../workshop-skill/SKILL.md)
+- [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md)

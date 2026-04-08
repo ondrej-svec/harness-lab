@@ -4,10 +4,10 @@ type: brainstorm
 date: 2026-04-07
 participants: [Ondrej, Codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+  - ../../dashboard/lib/ui-language.ts
+  - ../../content/style-guide.md
+  - ../../content/style-examples.md
+  - 2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
 ---
 
 # Public Homepage Copy
@@ -26,14 +26,14 @@ The actual job of the homepage is:
 
 ## Context
 
-Current copy in [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts) has several issues:
+Current copy in [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts) has several issues:
 
 - the hero leads with "kontext, workflow a spolupráce ... v reálném repozitáři," which makes the artifact feel more important than the work
 - the principles section uses "repo před improvizací" as a headline, which is memorable but too narrow and too artifact-centered
 - the footer line "Veřejná vstupní vrstva..." sounds like architecture documentation, not homepage copy
 - multiple lines are true from a system-design perspective but weak from a human-reading perspective
 
-Voice guidance in [`content/style-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md) and [`content/style-examples.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md) reinforces:
+Voice guidance in [`content/style-guide.md`](../../content/style-guide.md) and [`content/style-examples.md`](../../content/style-examples.md) reinforces:
 
 - natural Czech first
 - practical, peer-level tone
@@ -297,7 +297,7 @@ Recommended `co to je` direction:
 
 ## Next Steps
 
-- Rewrite the homepage copy in [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts) using the chosen direction
+- Rewrite the homepage copy in [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts) using the chosen direction
 - Read the Czech copy out loud and cut anything that sounds translated or overdesigned
 - Consider a small follow-up note or ADR if the homepage framing changes the stable product language across the repo
 - `$plan` if the copy rewrite should be paired with structural page changes

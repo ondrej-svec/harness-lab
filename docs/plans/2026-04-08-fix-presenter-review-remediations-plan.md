@@ -74,8 +74,8 @@ Rejected because the newly added presenter strings are the introduced regression
 |------------|--------|----------|
 | `participant-view` is intended to follow the selected presenter agenda item, not always the live phase | Verified | Review finding and current presenter route/query shape imply manual scene jumps should change visible output |
 | Shared scene mutations should report invalid target ids as failures | Verified | The feature was explicitly positioned as API-first for facilitator skills and coding agents |
-| Czech presenter strings belong under the same content/language rules as other facilitation content | Verified | [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md) states all facilitation content must be in Czech |
-| Existing presenter route and tests are the correct place to encode the selected-agenda behavior | Verified | [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/presenter/page.tsx) already owns presenter rendering and has dedicated tests |
+| Czech presenter strings belong under the same content/language rules as other facilitation content | Verified | [`AGENTS.md`](../../AGENTS.md) states all facilitation content must be in Czech |
+| Existing presenter route and tests are the correct place to encode the selected-agenda behavior | Verified | [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](../../dashboard/app/admin/instances/[id]/presenter/page.tsx) already owns presenter rendering and has dedicated tests |
 | The API should use a standard not-found style response for stale agenda/scene ids | Unverified | Current agenda route mostly uses `400` for malformed input but has no precedent yet for stale nested ids |
 
 The one unverified assumption should be resolved during implementation by choosing and documenting one explicit failure contract, preferably `404` for unknown agenda item / scene ids and `400` only for malformed payloads.
@@ -141,8 +141,8 @@ Mitigation:
 
 ## References
 
-- Reviewed presenter route: [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/presenter/page.tsx)
-- Reviewed scene API route: [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/instances/[id]/scenes/route.ts)
-- Shared scene/store logic: [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- Existing presenter implementation plan: [2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md)
-- Related agenda/runtime plan: [2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md)
+- Reviewed presenter route: [page.tsx](../../dashboard/app/admin/instances/[id]/presenter/page.tsx)
+- Reviewed scene API route: [route.ts](../../dashboard/app/api/workshop/instances/[id]/scenes/route.ts)
+- Shared scene/store logic: [workshop-store.ts](../../dashboard/lib/workshop-store.ts)
+- Existing presenter implementation plan: [2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md](2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md)
+- Related agenda/runtime plan: [2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md](2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md)

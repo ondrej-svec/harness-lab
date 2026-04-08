@@ -3,7 +3,7 @@ title: "feat: harness cli device auth and secure storage hardening"
 type: plan
 date: 2026-04-07
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
 confidence: medium
 ---
 
@@ -83,7 +83,7 @@ But they should become explicit fallback modes, not the primary documented path.
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The CLI should become the canonical local broker for facilitator auth and privileged workshop operations | Verified | Current blueprint/control-model work and [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) already state this |
+| The CLI should become the canonical local broker for facilitator auth and privileged workshop operations | Verified | Current blueprint/control-model work and [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md) already state this |
 | Browser/device auth is the right primary UX for an interactive facilitator CLI | Verified | Vercel moved `vercel login` to OAuth 2.0 Device Flow on September 12, 2025 and GitHub CLI defaults to browser/web auth |
 | The current dashboard auth stack can support an additional CLI-oriented device authorization flow without replacing Neon Auth | Unverified | Repo currently exposes Better Auth-style `/api/auth/*` routes, but a device-flow contract still needs design and validation |
 | macOS Keychain support is already practical in this repo | Verified | Implemented in `harness-cli/src/session-store.js` and tested locally |
@@ -287,12 +287,12 @@ Exit criteria:
 
 ## References
 
-- Existing control-model brainstorm: [2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
-- Existing control-model plan: [2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
-- Current CLI foundation: [harness-cli-foundation.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
-- Current CLI package: [harness-cli/README.md](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md)
-- Facilitator auth ADR: [2026-04-06-neon-auth-for-facilitator-identity.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-neon-auth-for-facilitator-identity.md)
-- Auth model: [private-workshop-instance-auth-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
+- Existing control-model brainstorm: [2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md](../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
+- Existing control-model plan: [2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md](2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
+- Current CLI foundation: [harness-cli-foundation.md](../harness-cli-foundation.md)
+- Current CLI package: [harness-cli/README.md](../../harness-cli/README.md)
+- Facilitator auth ADR: [2026-04-06-neon-auth-for-facilitator-identity.md](../adr/2026-04-06-neon-auth-for-facilitator-identity.md)
+- Auth model: [private-workshop-instance-auth-model.md](../private-workshop-instance-auth-model.md)
 - Vercel changelog: [New Vercel CLI login flow](https://vercel.com/changelog/new-vercel-cli-login-flow)
 - Vercel docs: [vercel login](https://vercel.com/docs/cli/login)
 - GitHub device flow docs: [Authorizing OAuth apps](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps)

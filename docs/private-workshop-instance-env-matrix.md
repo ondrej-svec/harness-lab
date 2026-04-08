@@ -61,8 +61,8 @@ The current workflows require this secret in GitHub Actions:
 
 Purpose:
 
-- powers [`dashboard-ci.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml) optional Neon integration coverage
-- powers [`private-runtime-preview-gate.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/private-runtime-preview-gate.yml) required preview-grade runtime verification
+- powers [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) optional Neon integration coverage
+- powers [`private-runtime-preview-gate.yml`](../.github/workflows/private-runtime-preview-gate.yml) required preview-grade runtime verification
 
 This secret should point to a preview-grade or disposable Neon database path, not the production branch.
 
@@ -72,5 +72,5 @@ Application runtime env vars are not the migration path by themselves. Schema ch
 
 See:
 
-- [`dashboard/db/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/db/README.md)
-- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
+- [`dashboard/db/README.md`](../dashboard/db/README.md)
+- [`private-workshop-instance-deployment-spec.md`](private-workshop-instance-deployment-spec.md)

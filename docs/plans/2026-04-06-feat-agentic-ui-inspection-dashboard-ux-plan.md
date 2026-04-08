@@ -221,12 +221,12 @@ Exit criteria:
 
 ### Local references
 
-- [`docs/agent-ui-testing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agent-ui-testing.md)
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
-- [`dashboard/playwright.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/playwright.config.ts)
-- [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
+- [`docs/agent-ui-testing.md`](../agent-ui-testing.md)
+- [`docs/dashboard-testing-strategy.md`](../dashboard-testing-strategy.md)
+- [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts)
+- [`dashboard/playwright.config.ts`](../../dashboard/playwright.config.ts)
+- [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx)
+- [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx)
 
 ### External references
 

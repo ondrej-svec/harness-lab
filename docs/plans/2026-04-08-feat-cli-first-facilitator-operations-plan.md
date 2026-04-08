@@ -3,7 +3,7 @@ title: "feat: cli-first facilitator operations over shared runtime APIs"
 type: plan
 date: 2026-04-08
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
 confidence: medium
 ---
 
@@ -99,12 +99,12 @@ Rejected because the chosen control model explicitly says dashboard and facilita
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| Facilitator auth should continue to live in `harness` rather than in arbitrary skill state | Verified | [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) and [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md) already state this explicitly |
+| Facilitator auth should continue to live in `harness` rather than in arbitrary skill state | Verified | [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md) and [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md) already state this explicitly |
 | Dashboard APIs should remain the canonical trust boundary for facilitator mutations | Verified | Existing route protection and control-model docs already position shared APIs as the common backend for dashboard and skill |
-| The current CLI command/testing seams are good enough to extend without a full rewrite | Verified | [`harness-cli/src/run-cli.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/run-cli.js), [`harness-cli/src/client.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/client.js), and [`harness-cli/test/run-cli.test.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/test/run-cli.test.js) already show a command-dispatch plus API-client pattern |
+| The current CLI command/testing seams are good enough to extend without a full rewrite | Verified | [`harness-cli/src/run-cli.js`](../../harness-cli/src/run-cli.js), [`harness-cli/src/client.js`](../../harness-cli/src/client.js), and [`harness-cli/test/run-cli.test.js`](../../harness-cli/test/run-cli.test.js) already show a command-dispatch plus API-client pattern |
 | Facilitator lifecycle commands such as create/update/remove/prepare are the next missing CLI slice | Verified | Current shipped CLI only covers status/archive/phase set, while facilitator docs and recent API work already point to broader lifecycle operations |
 | Participant CLI should remain out of scope for this plan | Verified | Existing blueprint/control-model work keeps participant access event-code-first and zero-prep |
-| Some higher-risk facilitator operations may need step-up auth beyond a reused device session | Unverified | [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) already hints that higher-risk mutations may require fresh approval, but the exact threshold is not finalized |
+| Some higher-risk facilitator operations may need step-up auth beyond a reused device session | Unverified | [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md) already hints that higher-risk mutations may require fresh approval, but the exact threshold is not finalized |
 | Shared request schema modules can be reused across dashboard and CLI without causing awkward package coupling | Unverified | The current repo is close, but the exact module boundary between `dashboard/` and `harness-cli/` still needs an intentional decision |
 | Operator ergonomics are improved by typed commands even when the underlying API already exists | Verified | Existing `status`, `archive`, and `phase set` commands already follow this pattern successfully |
 
@@ -215,15 +215,15 @@ Exit criteria:
 Goal: make facilitator lifecycle operations first-class `harness` commands rather than script recipes.
 
 Tasks:
-- [x] Extend [`harness-cli/src/client.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/client.js) with the missing facilitator methods for instance lifecycle operations.
-- [x] Extend [`harness-cli/src/run-cli.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/run-cli.js) with new command parsing and handlers.
+- [x] Extend [`harness-cli/src/client.js`](../../harness-cli/src/client.js) with the missing facilitator methods for instance lifecycle operations.
+- [x] Extend [`harness-cli/src/run-cli.js`](../../harness-cli/src/run-cli.js) with new command parsing and handlers.
 - [x] Support both typed flags and a reasonable interactive fallback for required fields when the command is missing values.
 - [x] Make command output readable for both humans and skills:
   - explicit success/failure
   - instance id
   - event title/date/venue summary when relevant
   - stable error text for common validation failures
-- [x] Update `harness --help` and [`harness-cli/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md) to advertise the new command surface.
+- [x] Update `harness --help` and [`harness-cli/README.md`](../../harness-cli/README.md) to advertise the new command surface.
 
 Exit criteria:
 - a facilitator can perform normal lifecycle operations through `harness` without raw scripts
@@ -235,9 +235,9 @@ Exit criteria:
 Goal: make the repo-native documentation reflect the actual control model cleanly.
 
 Tasks:
-- [x] Update [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md) so CLI is the preferred execution path for facilitator operations.
+- [x] Update [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md) so CLI is the preferred execution path for facilitator operations.
 - [x] Keep raw API examples as secondary reference material only where they add diagnostic or architectural value.
-- [x] Update [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md) and any related control-model docs so the CLI-first stance is explicit for facilitators.
+- [x] Update [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md) and any related control-model docs so the CLI-first stance is explicit for facilitators.
 - [x] Document the boundary rule clearly:
   - skill invokes CLI
   - CLI invokes API
@@ -296,18 +296,18 @@ Exit criteria:
 - The CLI uses the shared protected dashboard APIs; it does not reimplement server-side validation or authorization locally.
 - The API contract for lifecycle operations is explicit, stable, and covered by tests independent of the CLI.
 - `workshop-skill` documentation prefers CLI invocations for facilitator operations and no longer implies scripts are the normal path.
-- Normal facilitator lifecycle commands are discoverable through `harness --help` and documented in [`harness-cli/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md).
+- Normal facilitator lifecycle commands are discoverable through `harness --help` and documented in [`harness-cli/README.md`](../../harness-cli/README.md).
 - The participant path remains unchanged: no new participant CLI requirement is introduced by this work.
 
 ## References
 
-- [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
-- [`harness-cli/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md)
-- [`harness-cli/src/run-cli.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/run-cli.js)
-- [`harness-cli/src/client.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/src/client.js)
-- [`harness-cli/test/run-cli.test.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/test/run-cli.test.js)
-- [`harness-cli/test/skill-integration.test.js`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/test/skill-integration.test.js)
-- [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md)
-- [`docs/plans/2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
-- [`docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md)
-- [`docs/plans/2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md)
+- [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md)
+- [`harness-cli/README.md`](../../harness-cli/README.md)
+- [`harness-cli/src/run-cli.js`](../../harness-cli/src/run-cli.js)
+- [`harness-cli/src/client.js`](../../harness-cli/src/client.js)
+- [`harness-cli/test/run-cli.test.js`](../../harness-cli/test/run-cli.test.js)
+- [`harness-cli/test/skill-integration.test.js`](../../harness-cli/test/skill-integration.test.js)
+- [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md)
+- [`docs/plans/2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md`](2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
+- [`docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md`](2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md)
+- [`docs/plans/2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md`](2026-04-07-feat-instance-lifecycle-and-instance-local-agenda-authoring-plan.md)

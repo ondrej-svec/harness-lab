@@ -4,12 +4,12 @@ type: brainstorm
 date: 2026-04-08
 participants: [Ondrej, Codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/presenter/page.tsx
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md
+  - 2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
+  - ../../dashboard/app/admin/instances/[id]/presenter/page.tsx
+  - ../../dashboard/lib/workshop-blueprint-agenda.json
+  - ../../content/talks/context-is-king.md
+  - ../../content/talks/codex-demo-script.md
+  - ../../content/facilitation/master-guide.md
 ---
 
 # Facilitator Presenter Rich Content Redesign
@@ -59,14 +59,14 @@ That work should be kept.
 
 ### What the current implementation gets wrong
 
-The current presenter implementation in [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/presenter/page.tsx) is still basically a generic shell around a thin scene payload:
+The current presenter implementation in [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](../../dashboard/app/admin/instances/[id]/presenter/page.tsx) is still basically a generic shell around a thin scene payload:
 
 - one title
 - one body
 - optional CTA
 - generic metric tiles
 
-The current blueprint scene model in [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json) is likewise too narrow:
+The current blueprint scene model in [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json) is likewise too narrow:
 
 - `title`
 - `body`
@@ -88,9 +88,9 @@ That schema cannot express:
 
 The workshop content is already richer than the presenter system:
 
-- [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md) has the core reframing line, a meaningful quote, micro-exercise framing, and a substantial thesis list
-- [`content/talks/codex-demo-script.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md) already defines a concrete demo sequence plus fallbacks
-- [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md) already has milestone boards, facilitator prompts, intermezzo structure, rotation instructions, and reflection frames
+- [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md) has the core reframing line, a meaningful quote, micro-exercise framing, and a substantial thesis list
+- [`content/talks/codex-demo-script.md`](../../content/talks/codex-demo-script.md) already defines a concrete demo sequence plus fallbacks
+- [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md) already has milestone boards, facilitator prompts, intermezzo structure, rotation instructions, and reflection frames
 
 So the gap is not "we do not know what to say."
 

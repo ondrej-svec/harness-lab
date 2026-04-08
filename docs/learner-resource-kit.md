@@ -26,10 +26,10 @@ Výchozí participant pattern, který má learner kit posilovat, je:
 ### 1. Workshop skill
 
 Hlavní participant interface:
-- [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-- [`workshop-skill/setup.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/setup.md)
-- [`workshop-skill/reference.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/reference.md)
-- [`workshop-skill/recap.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/recap.md)
+- [`workshop-skill/SKILL.md`](../workshop-skill/SKILL.md)
+- [`workshop-skill/setup.md`](../workshop-skill/setup.md)
+- [`workshop-skill/reference.md`](../workshop-skill/reference.md)
+- [`workshop-skill/recap.md`](../workshop-skill/recap.md)
 
 Proč sem patří:
 - ukazuje, jak může participant-facing skill vést setup, workflow i ověřování v češtině
@@ -38,7 +38,7 @@ Proč sem patří:
 ### 2. `AGENTS.md` příklad
 
 Výchozí starter:
-- [`workshop-skill/template-agents.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/template-agents.md)
+- [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
 
 Proč sem patří:
 - je to nejmenší znovupoužitelný příklad trvalého kontextu v repu
@@ -47,7 +47,7 @@ Proč sem patří:
 ### 3. Příklad pro verification / review
 
 Výchozí checklist:
-- [`workshop-skill/analyze-checklist.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/analyze-checklist.md)
+- [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
 
 Proč sem patří:
 - dává konkrétní standard pro otázku „dokáže odtud pokračovat další tým?“
@@ -56,7 +56,7 @@ Proč sem patří:
 ### 4. Challenge cards
 
 Doporučený subset:
-- [`content/challenge-cards/deck.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/challenge-cards/deck.md)
+- [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
 Použití:
 - malé zásahy během workshopu
@@ -65,8 +65,8 @@ Použití:
 ### 5. Follow-up package
 
 Posílení po workshopu:
-- [`workshop-skill/follow-up-package.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/follow-up-package.md)
-- [`materials/participant-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/materials/participant-resource-kit.md)
+- [`workshop-skill/follow-up-package.md`](../workshop-skill/follow-up-package.md)
+- [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
 
 Proč sem patří:
 - proměňuje workshop z jednodenní akce na opakovatelný impuls ke změně chování
@@ -77,28 +77,28 @@ Proč sem patří:
 ### Během setupu
 
 Použijte:
-- [`workshop-skill/setup.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/setup.md)
-- [`workshop-skill/reference.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/reference.md)
+- [`workshop-skill/setup.md`](../workshop-skill/setup.md)
+- [`workshop-skill/reference.md`](../workshop-skill/reference.md)
 
 ### Během Build Phase 1
 
 Použijte:
-- [`workshop-skill/template-agents.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/template-agents.md)
-- the `Context Engineering` cards in [`content/challenge-cards/deck.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/challenge-cards/deck.md)
+- [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
+- the `Context Engineering` cards in [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
 ### Během continuation shift
 
 Použijte:
-- [`workshop-skill/analyze-checklist.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/analyze-checklist.md)
-- the `Workflow` cards in [`content/challenge-cards/deck.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/challenge-cards/deck.md)
+- [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
+- the `Workflow` cards in [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
 ### Po workshopu
 
 Použijte:
-- [`workshop-skill/recap.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/recap.md)
-- [`workshop-skill/follow-up-package.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/follow-up-package.md)
-- [`materials/participant-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/materials/participant-resource-kit.md)
-- [`learner-reference-gallery.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-reference-gallery.md)
+- [`workshop-skill/recap.md`](../workshop-skill/recap.md)
+- [`workshop-skill/follow-up-package.md`](../workshop-skill/follow-up-package.md)
+- [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
+- [`learner-reference-gallery.md`](learner-reference-gallery.md)
 
 ## Co si odnést do reálného projektu
 

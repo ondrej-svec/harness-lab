@@ -2,8 +2,8 @@
 
 This document defines the package maintenance routine for the repository package roots:
 
-- [`dashboard/package.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/package.json)
-- [`harness-cli/package.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json)
+- [`dashboard/package.json`](../dashboard/package.json)
+- [`harness-cli/package.json`](../harness-cli/package.json)
 
 ## Supported Node Policy
 

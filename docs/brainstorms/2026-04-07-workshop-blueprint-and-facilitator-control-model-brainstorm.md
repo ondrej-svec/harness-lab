@@ -4,11 +4,11 @@ type: brainstorm
 date: 2026-04-07
 participants: [Ondrej, Codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md
+  - ../dashboard-surface-model.md
+  - ../public-private-repo-split-proposal.md
+  - ../workshop-instance-runbook.md
+  - ../workshop-event-context-contract.md
+  - ../private-workshop-instance-data-classification.md
 ---
 
 # Workshop Blueprint And Facilitator Control Model
@@ -33,10 +33,10 @@ We need a model where:
 
 Existing docs already point in the right direction:
 
-- [`docs/public-private-repo-split-proposal.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md) already recommends one public template repo plus one private workshop-instance runtime layer rather than repo duplication.
-- [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md) already classifies agenda shape and public workshop framing as public repo content, while live event state belongs in private runtime.
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md) already describes runtime instances as private records created from a template.
-- [`docs/workshop-event-context-contract.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md) already treats dashboard and skill as two surfaces over shared event context.
+- [`docs/public-private-repo-split-proposal.md`](../public-private-repo-split-proposal.md) already recommends one public template repo plus one private workshop-instance runtime layer rather than repo duplication.
+- [`docs/private-workshop-instance-data-classification.md`](../private-workshop-instance-data-classification.md) already classifies agenda shape and public workshop framing as public repo content, while live event state belongs in private runtime.
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md) already describes runtime instances as private records created from a template.
+- [`docs/workshop-event-context-contract.md`](../workshop-event-context-contract.md) already treats dashboard and skill as two surfaces over shared event context.
 
 What is missing is a first-class artifact and product model that makes these boundaries visible to humans:
 

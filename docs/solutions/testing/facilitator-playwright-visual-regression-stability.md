@@ -11,9 +11,9 @@ symptoms:
 root_cause: "Facilitator snapshots were taken as full-page images, so small cross-platform font and wrapping differences changed total document height before pixel diff tolerance could help; snapshot refreshes could also be misleading if Playwright was still serving an older `.next` build."
 severity: medium
 related:
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md"
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md"
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/github-actions-maintenance.md"
+  - "../../dashboard-testing-strategy.md"
+  - "../../facilitator-dashboard-design-rules.md"
+  - "../../github-actions-maintenance.md"
 ---
 
 # Stabilize facilitator Playwright visual regression across macOS and Ubuntu
@@ -59,7 +59,7 @@ The stable fix had three parts.
 
 ### 1. Stop asserting long facilitator pages as full-page screenshots
 
-In [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts), the two facilitator visual tests were changed to viewport screenshots instead of `fullPage: true`.
+In [`dashboard/e2e/dashboard.spec.ts`](../../../dashboard/e2e/dashboard.spec.ts), the two facilitator visual tests were changed to viewport screenshots instead of `fullPage: true`.
 
 This keeps the regression focused on:
 
@@ -101,7 +101,7 @@ Use these rules for future facilitator visual coverage:
 
 ## Related
 
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`docs/facilitator-dashboard-design-rules.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md)
-- [`docs/github-actions-maintenance.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/github-actions-maintenance.md)
+- [`dashboard/e2e/dashboard.spec.ts`](../../../dashboard/e2e/dashboard.spec.ts)
+- [`docs/dashboard-testing-strategy.md`](../../dashboard-testing-strategy.md)
+- [`docs/facilitator-dashboard-design-rules.md`](../../facilitator-dashboard-design-rules.md)
+- [`docs/github-actions-maintenance.md`](../../github-actions-maintenance.md)

@@ -3,7 +3,7 @@ title: "feat: harden private workshop-instance runtime"
 type: plan
 date: 2026-04-06
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
 confidence: medium
 ---
 
@@ -15,8 +15,8 @@ Complete the second implementation slice for the private workshop-instance runti
 
 The first build plan is complete, but the follow-up architecture review found that the runtime is still only partially migrated and still carries several structural risks:
 
-- mutable workshop operations still write through one shared `workshop_state` document in [`workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- Neon participant session persistence still rewrites the whole session set in [`event-access-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts)
+- mutable workshop operations still write through one shared `workshop_state` document in [`workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
+- Neon participant session persistence still rewrites the whole session set in [`event-access-repository.ts`](../../dashboard/lib/event-access-repository.ts)
 - modeled runtime tables such as `checkpoints`, `monitoring_snapshots`, and `instance_archives` are not the live source of truth yet
 - facilitator auth still uses a split model where `/admin` depends on env-gated middleware while APIs/actions depend on repository-backed checks
 - privacy lifecycle behavior and shipping gates remain more documented than enforced
@@ -75,9 +75,9 @@ This is a **detailed** plan because it touches runtime data modeling, write sema
 | Assumption | Status | Evidence |
 |------------|--------|----------|
 | The current `workshop_state` shape can remain the participant/facilitator read contract while writes are moved underneath it | Verified | The architecture review recommended retaining it as a composed read model rather than removing it outright, and current routes already consume it consistently |
-| `checkpoints` and `monitoring_snapshots` are the right first entities to normalize out of `workshop_state` | Verified | These tables already exist in [`2026-04-06-private-workshop-instance-runtime.sql`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql) and were called out as half-migrated in the architecture review |
+| `checkpoints` and `monitoring_snapshots` are the right first entities to normalize out of `workshop_state` | Verified | These tables already exist in [`2026-04-06-private-workshop-instance-runtime.sql`](../../dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql) and were called out as half-migrated in the architecture review |
 | Team registry can stay embedded in `workshop_state` for one more slice without blocking the rest of the hardening work | Verified | This slice explicitly kept teams embedded while normalizing checkpoints and monitoring, and the remaining live flows still work through the existing read model and e2e coverage |
-| Record-level participant session writes can be added without changing the current participant UX | Verified | Routes already treat session persistence as an internal concern behind [`event-access.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts) and [`event-access-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts) |
+| Record-level participant session writes can be added without changing the current participant UX | Verified | Routes already treat session persistence as an internal concern behind [`event-access.ts`](../../dashboard/lib/event-access.ts) and [`event-access-repository.ts`](../../dashboard/lib/event-access-repository.ts) |
 | Facilitator auth can be unified behind one production path without breaking the current admin surface | Verified | `/admin` now only bootstraps the Basic Auth challenge while repository-backed credential and grant checks remain the sole production validator across routes and server actions |
 | CSRF/origin checks can be added incrementally without redesigning the whole admin UI | Verified | Facilitator mutations and participant redemption/logout now enforce trusted-origin checks without changing the current admin UX |
 | Archive/export flows can be implemented without introducing a background queue in this slice | Verified | The archive payload is now created synchronously through runtime repositories and exposed through the protected admin/API surface |
@@ -259,9 +259,9 @@ None left from this hardening slice. Team registration and facilitator checkpoin
 
 ## References
 
-- Architecture review: [`2026-04-06-private-workshop-instance-architecture-review.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/2026-04-06-private-workshop-instance-architecture-review.md)
-- Original build plan: [`2026-04-06-feat-private-workshop-instance-build-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-private-workshop-instance-build-plan.md)
-- Runtime topology ADR: [`2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- Auth boundary ADR: [`2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
-- Deployment spec: [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- Security gates: [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
+- Architecture review: [`2026-04-06-private-workshop-instance-architecture-review.md`](../2026-04-06-private-workshop-instance-architecture-review.md)
+- Original build plan: [`2026-04-06-feat-private-workshop-instance-build-plan.md`](2026-04-06-feat-private-workshop-instance-build-plan.md)
+- Runtime topology ADR: [`2026-04-06-private-workshop-instance-runtime-topology.md`](../adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- Auth boundary ADR: [`2026-04-06-private-workshop-instance-auth-boundary.md`](../adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- Deployment spec: [`private-workshop-instance-deployment-spec.md`](../private-workshop-instance-deployment-spec.md)
+- Security gates: [`private-workshop-instance-security-gates.md`](../private-workshop-instance-security-gates.md)

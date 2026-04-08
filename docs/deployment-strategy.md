@@ -27,14 +27,14 @@ Recommended production shape:
 - `rotation_events`
 
 The current seam for replacing local storage is:
-- [`workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
+- [`workshop-state-repository.ts`](../dashboard/lib/workshop-state-repository.ts)
 
 Authoritative follow-on specs:
 
-- [`2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
-- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
+- [`2026-04-06-private-workshop-instance-runtime-topology.md`](adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- [`private-workshop-instance-schema.md`](private-workshop-instance-schema.md)
+- [`private-workshop-instance-deployment-spec.md`](private-workshop-instance-deployment-spec.md)
+- [`private-workshop-instance-security-gates.md`](private-workshop-instance-security-gates.md)
 
 ## Access Model
 
@@ -112,5 +112,5 @@ Why this setup exists:
 
 See also:
 
-- [`private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- [`public-launch-history-cleanup-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-launch-history-cleanup-plan.md)
+- [`private-workshop-instance-data-classification.md`](private-workshop-instance-data-classification.md)
+- [`public-launch-history-cleanup-plan.md`](public-launch-history-cleanup-plan.md)

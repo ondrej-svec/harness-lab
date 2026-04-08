@@ -4,10 +4,10 @@ This document defines where workshop assets live once Harness Lab is treated as 
 
 For the formal production model, also see:
 
-- [`2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- [`2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
-- [`private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- [`public-launch-history-cleanup-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-launch-history-cleanup-plan.md)
+- [`2026-04-06-private-workshop-instance-runtime-topology.md`](adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- [`2026-04-06-private-workshop-instance-auth-boundary.md`](adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- [`private-workshop-instance-data-classification.md`](private-workshop-instance-data-classification.md)
+- [`public-launch-history-cleanup-plan.md`](public-launch-history-cleanup-plan.md)
 
 ## The Three Layers
 

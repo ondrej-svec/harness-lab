@@ -4,14 +4,14 @@ type: brainstorm
 date: 2026-04-08
 participants: [Ondrej, Codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md
+  - ../dashboard-surface-model.md
+  - ../facilitator-dashboard-design-rules.md
+  - ../workshop-instance-runbook.md
+  - 2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+  - 2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md
+  - ../../content/facilitation/master-guide.md
+  - ../../content/talks/codex-demo-script.md
+  - ../../content/talks/context-is-king.md
 ---
 
 # Facilitator Room Screen and Presenter Flow
@@ -41,12 +41,12 @@ Success means:
 
 ### What exists in the repo
 
-- [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md) already defines a two-surface model: participant surface for room orientation and facilitator surface for protected operations.
-- [`docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md) already moves `/admin` toward a workspace cockpit plus per-instance control room.
-- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md) already established the blueprint/runtime split: reusable workshop design in repo, instance-local changes at runtime.
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md) already treats agenda edits as instance-local runtime operations during a live event.
-- [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json) already contains the workshop’s shared and team phases, which is a natural skeleton for room-facing moments.
-- [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md), [`content/talks/codex-demo-script.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md), and [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md) already contain the substance of what the facilitator says during opening, demo, intermezzos, rotation, and reflection.
+- [`docs/dashboard-surface-model.md`](../dashboard-surface-model.md) already defines a two-surface model: participant surface for room orientation and facilitator surface for protected operations.
+- [`docs/brainstorms/2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md`](2026-04-07-facilitator-cockpit-ia-and-ux-redesign-brainstorm.md) already moves `/admin` toward a workspace cockpit plus per-instance control room.
+- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md) already established the blueprint/runtime split: reusable workshop design in repo, instance-local changes at runtime.
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md) already treats agenda edits as instance-local runtime operations during a live event.
+- [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json) already contains the workshop’s shared and team phases, which is a natural skeleton for room-facing moments.
+- [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md), [`content/talks/codex-demo-script.md`](../../content/talks/codex-demo-script.md), and [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md) already contain the substance of what the facilitator says during opening, demo, intermezzos, rotation, and reflection.
 
 ### What is missing
 

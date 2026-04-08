@@ -2,11 +2,11 @@
 
 This runbook is operational guidance. Architecture decisions and security gates now live in:
 
-- [`2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- [`2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
-- [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
-- [`private-workshop-instance-auth-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
-- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
+- [`2026-04-06-private-workshop-instance-runtime-topology.md`](adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- [`2026-04-06-private-workshop-instance-auth-boundary.md`](adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- [`private-workshop-instance-schema.md`](private-workshop-instance-schema.md)
+- [`private-workshop-instance-auth-model.md`](private-workshop-instance-auth-model.md)
+- [`private-workshop-instance-deployment-spec.md`](private-workshop-instance-deployment-spec.md)
 
 ## Current Deployment Baseline
 
@@ -57,14 +57,14 @@ For four hackathons under one company, configure each event as a separate privat
 - verify `HARNESS_STORAGE_MODE=neon` deployments fail closed if Neon Auth env is incomplete; do not accept fallback to file-mode auth
 - verify the target instance is in `prepared` state with the correct blueprint binding
 - verify admin protection
-- verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
+- verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](private-workshop-instance-env-matrix.md)
 - issue or rotate the shared participant event code
 - verify the participant event code expiry window
 - verify workshop skill files
 - verify the chosen instance starts in a clean state
 - verify participant access path and QR code
 - verify anonymous `GET /api/workshop` returns only the public-safe projection, not facilitator-grade instance records
-- verify preview or production checks required by [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md) for any recent architecture-sensitive change
+- verify preview or production checks required by [`private-workshop-instance-security-gates.md`](private-workshop-instance-security-gates.md) for any recent architecture-sensitive change
 
 ### 3. Run
 
@@ -95,7 +95,7 @@ After a workshop:
 - note that reset now creates an automatic pre-reset archive before clearing runtime state
 - export any closing notes or retrospective inputs
 - keep public repo improvements separate from private event records
-- apply retention and cleanup rules from [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
+- apply retention and cleanup rules from [`private-workshop-instance-schema.md`](private-workshop-instance-schema.md)
 - review structured `HARNESS_RUNTIME_ALERT` log lines for auth failures, redeem throttling, and archive events
 - use platform monitoring or protected surfaces for runtime diagnostics; do not add public instance or DB diagnostics to anonymous endpoints without an explicit review
 

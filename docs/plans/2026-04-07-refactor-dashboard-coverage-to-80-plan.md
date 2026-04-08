@@ -17,10 +17,10 @@ The dashboard now has materially better verification than before: critical parti
 
 That is a healthy baseline, but it is not enough to reach a higher-trust target like `80%` under the current architecture. The remaining low-coverage surface is concentrated in large App Router page files such as:
 
-- [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`dashboard/app/admin/sign-in/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/sign-in/page.tsx)
-- [`dashboard/app/admin/reset-password/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/reset-password/page.tsx)
+- [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx)
+- [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx)
+- [`dashboard/app/admin/sign-in/page.tsx`](../../dashboard/app/admin/sign-in/page.tsx)
+- [`dashboard/app/admin/reset-password/page.tsx`](../../dashboard/app/admin/reset-password/page.tsx)
 
 These files mix data loading, decision logic, formatting, section selection, and rendering in ways that are awkward to unit test directly. If we try to brute-force higher coverage with the current shape, we will mostly create brittle render tests that are expensive to maintain and weak at explaining failures.
 
@@ -50,9 +50,9 @@ This is a **detailed** plan because the work changes the effective testing archi
 
 ### Why extract view models first
 
-- The dashboard already follows a useful testing pyramid in [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md): pure logic first, tracer bullets second, browser coverage for critical flows.
+- The dashboard already follows a useful testing pyramid in [`docs/dashboard-testing-strategy.md`](../dashboard-testing-strategy.md): pure logic first, tracer bullets second, browser coverage for critical flows.
 - View-model extraction lets page logic move into the “pure logic” layer where unit tests are cheap and stable.
-- It also aligns with the repo doctrine in [`docs/harness-doctrine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md): improve the harness when the same issue repeats.
+- It also aligns with the repo doctrine in [`docs/harness-doctrine.md`](../harness-doctrine.md): improve the harness when the same issue repeats.
 
 ### Why keep Playwright narrow
 
@@ -120,8 +120,8 @@ Mitigation:
 Goal: identify which logic should move out of page files and where it should live.
 
 Tasks:
-- [ ] Map [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx) into data loading, decision logic, formatting helpers, and render-only sections.
-- [ ] Map [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) into routing/query parsing, section derivation, action-state helpers, overview/agenda/team/access render branches, and pure state formatting.
+- [ ] Map [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx) into data loading, decision logic, formatting helpers, and render-only sections.
+- [ ] Map [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) into routing/query parsing, section derivation, action-state helpers, overview/agenda/team/access render branches, and pure state formatting.
 - [ ] Define a naming/location convention for extracted modules, for example `view-model.ts`, `selectors.ts`, or section-specific helper files next to the page.
 - [ ] Decide which client pieces deserve direct component tests and which should remain covered only through Playwright.
 
@@ -137,7 +137,7 @@ Tasks:
 - [x] Move public-page state derivation, error mapping, section-state selection, and participant room shaping into explicit helper/view-model modules.
 - [x] Extract repeated render inputs for public signals, participant metrics, and footer/navigation state into pure return shapes.
 - [x] Add unit coverage for all public-page branch logic, including language-sensitive formatting and participant/public mode switching.
-- [ ] Keep [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) as the browser trust boundary for the mobile participant/public flows.
+- [ ] Keep [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) as the browser trust boundary for the mobile participant/public flows.
 
 Exit criteria:
 - public page logic coverage rises materially without adding broad DOM snapshots
@@ -163,7 +163,7 @@ Goal: cover the few remaining client-only components with the smallest viable se
 
 Tasks:
 - [x] Introduce a minimal component-test pattern for client components if the extracted logic still leaves meaningful uncovered interaction code.
-- [x] Add tests for [`dashboard/app/components/theme-switcher.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/components/theme-switcher.tsx) and [`dashboard/app/components/theme-provider.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/components/theme-provider.tsx) only if those files remain meaningful contributors to the gap.
+- [x] Add tests for [`dashboard/app/components/theme-switcher.tsx`](../../dashboard/app/components/theme-switcher.tsx) and [`dashboard/app/components/theme-provider.tsx`](../../dashboard/app/components/theme-provider.tsx) only if those files remain meaningful contributors to the gap.
 - [ ] Document the repo-standard approach for client component tests so future contributors do not invent their own.
 
 Exit criteria:
@@ -175,10 +175,10 @@ Exit criteria:
 Goal: make the coverage number honest, stable, and enforceable.
 
 Tasks:
-- [x] Review [`dashboard/vitest.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/vitest.config.ts) coverage include/exclude rules and confirm they match the intended dashboard trust boundary.
+- [x] Review [`dashboard/vitest.config.ts`](../../dashboard/vitest.config.ts) coverage include/exclude rules and confirm they match the intended dashboard trust boundary.
 - [x] Exclude only files that are clearly generated, purely contractual, or not worth line-based enforcement.
 - [x] Add a dashboard coverage threshold once the refactor stabilizes near the target.
-- [x] Update [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md) to reflect the new split between view-model tests, route tests, component tests, and Playwright.
+- [x] Update [`docs/dashboard-testing-strategy.md`](../dashboard-testing-strategy.md) to reflect the new split between view-model tests, route tests, component tests, and Playwright.
 
 Exit criteria:
 - coverage targets reflect real product trust, not reporting tricks
@@ -191,11 +191,11 @@ Exit criteria:
 - [x] Write down the target extraction pattern for public and admin pages before moving code.
 
 2. **Public page refactor**
-- [x] Extract public/participant view-model logic from [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx).
+- [x] Extract public/participant view-model logic from [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx).
 - [x] Add focused unit tests for public/participant decision branches.
 
 3. **Admin page refactor**
-- [x] Extract section-specific state derivation and redirect/query helpers from [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx).
+- [x] Extract section-specific state derivation and redirect/query helpers from [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx).
 - [x] Add unit tests for admin section view models and branch selection.
 
 4. **Client interaction coverage**
@@ -210,7 +210,7 @@ Exit criteria:
 ## Acceptance Criteria
 
 - The dashboard package has a documented testing architecture that explains what belongs in unit tests, route tests, component tests, and Playwright.
-- [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx) and [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) are substantially thinner because branch logic moved into testable helpers.
+- [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx) and [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) are substantially thinner because branch logic moved into testable helpers.
 - Coverage rises materially beyond the current mid-50s baseline without relying on brittle page snapshots.
 - The dashboard can plausibly reach about `80%` with honest include/exclude rules and stable tests.
 - Playwright remains focused on critical rendered flows rather than being abused as a percentage tool.
@@ -220,14 +220,14 @@ Exit criteria:
 
 ### Local references
 
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`docs/harness-doctrine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
-- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md)
-- [`dashboard/vitest.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/vitest.config.ts)
-- [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
+- [`docs/dashboard-testing-strategy.md`](../dashboard-testing-strategy.md)
+- [`docs/harness-doctrine.md`](../harness-doctrine.md)
+- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md)
+- [`dashboard/vitest.config.ts`](../../dashboard/vitest.config.ts)
+- [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx)
+- [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx)
+- [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts)
 
 ### Prior plan signal
 
-- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already established the repo’s intended split between exploratory/browser regression coverage and lower-level executable verification. This plan extends that same logic into the page layer rather than replacing it.
+- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already established the repo’s intended split between exploratory/browser regression coverage and lower-level executable verification. This plan extends that same logic into the page layer rather than replacing it.

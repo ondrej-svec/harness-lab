@@ -3,7 +3,7 @@ title: "feat: facilitator room screen and presenter flow"
 type: plan
 date: 2026-04-08
 status: completed
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
+brainstorm: ../brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
 confidence: medium
 ---
 
@@ -15,9 +15,9 @@ Add an agenda-driven presenter surface that the facilitator launches from the co
 
 Harness Lab already has:
 
-- a participant surface at [`dashboard/app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- a facilitator workspace and control room at [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) and [`dashboard/app/admin/instances/[id]/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx)
-- a runtime agenda model in [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) and [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
+- a participant surface at [`dashboard/app/page.tsx`](../../dashboard/app/page.tsx)
+- a facilitator workspace and control room at [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) and [`dashboard/app/admin/instances/[id]/page.tsx`](../../dashboard/app/admin/instances/[id]/page.tsx)
+- a runtime agenda model in [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) and [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
 
 What it does not have is a first-class answer to:
 
@@ -107,16 +107,16 @@ Rejected because it preserves the current fragmentation problem and fails the �
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The runtime agenda is the correct backbone for presenter flow | Verified | Chosen in the brainstorm and already reflected in [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json) plus [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts) |
-| Presenter mode should be launched from the facilitator control room | Verified | Explicit brainstorm decision and aligns with the current control-room route in [`dashboard/app/admin/instances/[id]/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx) |
+| The runtime agenda is the correct backbone for presenter flow | Verified | Chosen in the brainstorm and already reflected in [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json) plus [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts) |
+| Presenter mode should be launched from the facilitator control room | Verified | Explicit brainstorm decision and aligns with the current control-room route in [`dashboard/app/admin/instances/[id]/page.tsx`](../../dashboard/app/admin/instances/[id]/page.tsx) |
 | Presenter scenes should be room-safe web pages, not a slide engine | Verified | Explicit brainstorm decision and external live-coding / workshop facilitation evidence |
 | Blueprint defaults plus instance-local overrides is the right ownership model | Verified | Already chosen in prior blueprint/runtime work and reinforced by the brainstorm |
-| Facilitator-editable scene operations should ship through shared APIs so the skill can drive them | Verified | Existing agenda editing already follows this pattern via [`dashboard/app/api/workshop/instances/[id]/agenda/route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/instances/[id]/agenda/route.ts) and [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md) |
-| Existing agenda item shape can absorb scene references without breaking current participant and admin reads | Unverified | [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) currently models agenda items as title/time/description only |
-| The current control-room IA can accommodate a presenter launcher without overcrowding the `live` section | Unverified | [`dashboard/lib/admin-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-page-view-model.ts) already has a `live` default section, but no presenter affordance yet |
+| Facilitator-editable scene operations should ship through shared APIs so the skill can drive them | Verified | Existing agenda editing already follows this pattern via [`dashboard/app/api/workshop/instances/[id]/agenda/route.ts`](../../dashboard/app/api/workshop/instances/[id]/agenda/route.ts) and [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md) |
+| Existing agenda item shape can absorb scene references without breaking current participant and admin reads | Unverified | [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) currently models agenda items as title/time/description only |
+| The current control-room IA can accommodate a presenter launcher without overcrowding the `live` section | Unverified | [`dashboard/lib/admin-page-view-model.ts`](../../dashboard/lib/admin-page-view-model.ts) already has a `live` default section, but no presenter affordance yet |
 | The number of scenes per agenda item can stay disciplined enough for blueprint authoring | Unverified | No scene model exists yet; this needs an explicit day-one scene taxonomy and limits |
 | Day-one can omit second-screen facilitator notes without undermining usefulness | Unverified | The brainstorm left this open; it needs a deliberate v1 scoping call |
-| Intermezzo can remain implicit or be cleanly promoted into the blueprint agenda without destabilizing current workshop flow | Unverified | [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md) treats intermezzo as operationally important, but [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json) does not encode it explicitly |
+| Intermezzo can remain implicit or be cleanly promoted into the blueprint agenda without destabilizing current workshop flow | Unverified | [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md) treats intermezzo as operationally important, but [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json) does not encode it explicitly |
 
 Unverified assumptions must turn into early design tasks or explicit risks rather than staying implicit.
 
@@ -220,10 +220,10 @@ Goal: make presenter scenes a first-class part of the blueprint/runtime import m
 
 Tasks:
 
-- [x] Add presenter-scene defaults to the blueprint-owned workshop model currently rooted in [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json) or move that blueprint to a richer structure if needed.
-- [x] Extend the workshop state and instance projection types in [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) to represent imported scene defaults plus runtime overrides.
+- [x] Add presenter-scene defaults to the blueprint-owned workshop model currently rooted in [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json) or move that blueprint to a richer structure if needed.
+- [x] Extend the workshop state and instance projection types in [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) to represent imported scene defaults plus runtime overrides.
 - [x] Define how runtime-local overrides are stored: reorder, enable/disable, replace text, change default scene, and add instance-only scenes if allowed.
-- [x] Update blueprint-import / reset semantics in [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) and [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts) so reset re-imports blueprint scenes and discards runtime-only changes.
+- [x] Update blueprint-import / reset semantics in [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) and [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts) so reset re-imports blueprint scenes and discards runtime-only changes.
 - [x] Record enough metadata to trace whether a scene is blueprint-derived or instance-local.
 - [x] Expose the scene-aware runtime model through instance-scoped API payloads instead of keeping it page-local.
 
@@ -259,7 +259,7 @@ Goal: make presenter mode part of the normal facilitator workflow rather than a 
 
 Tasks:
 
-- [x] Add a presenter launcher to the `live` section of the control room in [`dashboard/app/admin/instances/[id]/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx).
+- [x] Add a presenter launcher to the `live` section of the control room in [`dashboard/app/admin/instances/[id]/page.tsx`](../../dashboard/app/admin/instances/[id]/page.tsx).
 - [x] Surface the current default scene and the next recommended room-facing action in the control room summary.
 - [x] Add scene navigation controls appropriate for live facilitation: open current scene, jump to another scene in the same agenda item, jump to another agenda item when needed.
 - [x] Add lightweight scene-management affordances for instance-local override if they are in day-one scope; otherwise, explicitly defer editing UI and keep launcher read-only first.
@@ -278,7 +278,7 @@ Goal: turn the current workshop method into reusable presenter-ready structure.
 
 Tasks:
 
-- [x] Map current blueprint phases to default scene sets using [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md), [`content/talks/codex-demo-script.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md), and [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md).
+- [x] Map current blueprint phases to default scene sets using [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md), [`content/talks/codex-demo-script.md`](../../content/talks/codex-demo-script.md), and [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md).
 - [x] Extract only the room-facing essentials into scene data: title, prompt, key takeaway, next action, and optional walkthrough target.
 - [x] Keep longer facilitator doctrine in docs and link to it from admin where useful rather than duplicating it inside scenes.
 - [x] Verify that each current shared phase has a sensible default room-facing scene and that team phases have either scene defaults or explicit “no room scene by default” behavior.
@@ -298,7 +298,7 @@ Tasks:
 
 - [x] Add unit coverage for scene resolution, default selection, override behavior, and reset/import semantics.
 - [x] Add API coverage for scene CRUD, reordering, enable/disable, and default-scene selection.
-- [x] Extend browser coverage in [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) for:
+- [x] Extend browser coverage in [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) for:
   - control-room launcher visibility
   - presenter route load
   - current-scene launch
@@ -306,7 +306,7 @@ Tasks:
   - participant-view scene behavior
 - [x] Add at least one mobile-focused presenter regression check.
 - [x] Update design/architecture docs to describe the presenter surface as a first-class room-facing extension of the participant/facilitator model.
-- [x] Update [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md) and [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md) so the facilitator skill knows how to inspect and mutate scenes, defaults, and agenda-linked presenter content.
+- [x] Update [`workshop-skill/SKILL.md`](../../workshop-skill/SKILL.md) and [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md) so the facilitator skill knows how to inspect and mutate scenes, defaults, and agenda-linked presenter content.
 - [x] Define day-one facilitator skill commands or subcommands for presenter scenes, for example scene list/show/create/update/reorder/remove/set-default.
 - [x] Document explicit non-goals so future work does not quietly expand into a slide editor.
 
@@ -370,13 +370,13 @@ Exit criteria:
 
 ## References
 
-- Brainstorm: [2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md)
-- Facilitator cockpit plan: [2026-04-07-feat-facilitator-cockpit-ia-and-ux-redesign-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-facilitator-cockpit-ia-and-ux-redesign-plan.md)
-- Blueprint/control-model plan: [2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
-- Agenda blueprint: [workshop-blueprint-agenda.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json)
-- Workshop types: [workshop-data.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts)
-- Workshop mutations: [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- Control-room routing and helpers: [admin-page-view-model.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-page-view-model.ts)
-- Participant surface: [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- Control room page: [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx)
-- Browser coverage baseline: [dashboard.spec.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
+- Brainstorm: [2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md](../brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md)
+- Facilitator cockpit plan: [2026-04-07-feat-facilitator-cockpit-ia-and-ux-redesign-plan.md](2026-04-07-feat-facilitator-cockpit-ia-and-ux-redesign-plan.md)
+- Blueprint/control-model plan: [2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md](2026-04-07-feat-workshop-blueprint-and-facilitator-control-model-plan.md)
+- Agenda blueprint: [workshop-blueprint-agenda.json](../../dashboard/lib/workshop-blueprint-agenda.json)
+- Workshop types: [workshop-data.ts](../../dashboard/lib/workshop-data.ts)
+- Workshop mutations: [workshop-store.ts](../../dashboard/lib/workshop-store.ts)
+- Control-room routing and helpers: [admin-page-view-model.ts](../../dashboard/lib/admin-page-view-model.ts)
+- Participant surface: [page.tsx](../../dashboard/app/page.tsx)
+- Control room page: [page.tsx](../../dashboard/app/admin/instances/[id]/page.tsx)
+- Browser coverage baseline: [dashboard.spec.ts](../../dashboard/e2e/dashboard.spec.ts)

@@ -11,9 +11,9 @@ This document is the quick answer to "what do I edit where?"
 
 Typical locations:
 
-- [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint)
-- [`content/`](/Users/ondrejsvec/projects/Bobo/harness-lab/content)
-- reusable docs in [`docs/`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs)
+- [`workshop-blueprint/`](./)
+- [`content/`](../content/)
+- reusable docs in [`docs/`](../docs/)
 - shared dashboard code and skill docs
 
 ## Edit The Private Runtime Instance When

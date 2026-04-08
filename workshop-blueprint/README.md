@@ -14,36 +14,35 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 
 ## Recommended Reading Order
 
-1. [`day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
-2. [`teaching-spine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/teaching-spine.md)
-3. [`operator-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/operator-guide.md)
-4. [`control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
-5. [`edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
-6. [`agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
+1. [`day-structure.md`](day-structure.md)
+2. [`teaching-spine.md`](teaching-spine.md)
+3. [`operator-guide.md`](operator-guide.md)
+4. [`control-surfaces.md`](control-surfaces.md)
+5. [`edit-boundaries.md`](edit-boundaries.md)
+6. [`agenda.json`](agenda.json)
 
 ## Blueprint Contents
 
 ### Human-readable guidance
 
-- [`day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
+- [`day-structure.md`](day-structure.md)
   Explains the workshop arc, phase goals, and what should survive handoff.
-- [`teaching-spine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/teaching-spine.md)
+- [`teaching-spine.md`](teaching-spine.md)
   Defines the habits, facilitator messages, and participant defaults the workshop should install.
-- [`operator-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/operator-guide.md)
+- [`operator-guide.md`](operator-guide.md)
   Explains how a facilitator prepares, runs, and closes a workshop.
-- [`control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
+- [`control-surfaces.md`](control-surfaces.md)
   Defines participant surface, facilitator dashboard, facilitator skill, and the `harness` CLI as equal clients of one runtime model.
-- [`edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
+- [`edit-boundaries.md`](edit-boundaries.md)
   Explains what changes in the public repo, what changes only in runtime, and how learnings are published back deliberately.
 
 ### Structured data
 
-- [`agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
+- [`agenda.json`](agenda.json)
   Canonical reusable agenda and workshop metadata for blueprint import.
 
 ## Related Runtime Documents
 
-- [`blueprint-import-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
-- [`harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
-- [`runtime-learning-publish-back.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
-- [`workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
+- [`harness-cli-foundation.md`](../docs/harness-cli-foundation.md)
+
+The deeper runtime and maintainer docs such as blueprint import, publish-back flow, and workshop-instance runbooks remain part of the source repository and maintainer path. They are intentionally not part of the portable participant bundle.

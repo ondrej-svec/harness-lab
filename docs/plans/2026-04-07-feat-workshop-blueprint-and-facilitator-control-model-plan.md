@@ -3,7 +3,7 @@ title: "feat: workshop blueprint and facilitator control model"
 type: plan
 date: 2026-04-07
 status: in_progress
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
 confidence: medium
 ---
 
@@ -94,7 +94,7 @@ This is a **detailed** plan because it spans repository structure, product infor
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The public repo should be the canonical source for the reusable workshop method | Verified | Chosen in the brainstorm and already consistent with [`docs/public-private-repo-split-proposal.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md) |
+| The public repo should be the canonical source for the reusable workshop method | Verified | Chosen in the brainstorm and already consistent with [`docs/public-private-repo-split-proposal.md`](../public-private-repo-split-proposal.md) |
 | Live workshop state should stay in the private runtime layer, not in tracked repo files | Verified | Existing runtime/data-classification docs already enforce this boundary |
 | Runtime edits must not auto-promote back into the blueprint | Verified | Explicit brainstorm decision |
 | Dashboard and facilitator skill should share the same runtime APIs | Verified | Explicit brainstorm decision |
@@ -307,11 +307,11 @@ Exit criteria:
 
 ## References
 
-- Brainstorm: [2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
-- Public/private model: [public-private-repo-split-proposal.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md)
-- Runtime operations: [workshop-instance-runbook.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- Event access contract: [workshop-event-context-contract.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md)
-- Data classification: [private-workshop-instance-data-classification.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- Existing skill/event-access plan: [2026-04-06-feat-workshop-skill-event-access-model-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-workshop-skill-event-access-model-plan.md)
-- Existing runtime build plan: [2026-04-06-feat-private-workshop-instance-build-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-private-workshop-instance-build-plan.md)
-- Existing facilitator skill auth discussion: [2026-04-06-feat-facilitator-identity-simplification-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-facilitator-identity-simplification-plan.md)
+- Brainstorm: [2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md](../brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md)
+- Public/private model: [public-private-repo-split-proposal.md](../public-private-repo-split-proposal.md)
+- Runtime operations: [workshop-instance-runbook.md](../workshop-instance-runbook.md)
+- Event access contract: [workshop-event-context-contract.md](../workshop-event-context-contract.md)
+- Data classification: [private-workshop-instance-data-classification.md](../private-workshop-instance-data-classification.md)
+- Existing skill/event-access plan: [2026-04-06-feat-workshop-skill-event-access-model-plan.md](2026-04-06-feat-workshop-skill-event-access-model-plan.md)
+- Existing runtime build plan: [2026-04-06-feat-private-workshop-instance-build-plan.md](2026-04-06-feat-private-workshop-instance-build-plan.md)
+- Existing facilitator skill auth discussion: [2026-04-06-feat-facilitator-identity-simplification-plan.md](2026-04-06-feat-facilitator-identity-simplification-plan.md)

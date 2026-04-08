@@ -6,8 +6,8 @@ This note records the current workflow action posture for Harness Lab and the re
 
 Primary workflow files:
 
-- [dashboard-ci.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
-- [harness-cli-publish.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/harness-cli-publish.yml)
+- [dashboard-ci.yml](../.github/workflows/dashboard-ci.yml)
+- [harness-cli-publish.yml](../.github/workflows/harness-cli-publish.yml)
 
 Current action majors:
 
@@ -23,14 +23,14 @@ Current action majors:
 
 The repository runtime baseline is Node 24:
 
-- [dashboard/package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/package.json)
-- [harness-cli/package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json)
+- [dashboard/package.json](../dashboard/package.json)
+- [harness-cli/package.json](../harness-cli/package.json)
 
 The workflows should request `node-version: 24` and should prefer current action majors instead of relying on temporary compatibility flags.
 
 ## Why `gitleaks` is CLI-based instead of `gitleaks-action`
 
-`gitleaks/gitleaks-action@v2` is still implemented on the deprecated `node20` action runtime. Because there is no newer major that moves that action onto the newer GitHub Actions runtime, Harness Lab uses the maintained `gitleaks` CLI release directly in [`dashboard-ci.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml).
+`gitleaks/gitleaks-action@v2` is still implemented on the deprecated `node20` action runtime. Because there is no newer major that moves that action onto the newer GitHub Actions runtime, Harness Lab uses the maintained `gitleaks` CLI release directly in [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml).
 
 That choice is intentional:
 

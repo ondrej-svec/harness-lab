@@ -4,14 +4,14 @@ type: brainstorm
 date: 2026-04-07
 participants: [Ondrej, Codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts
+  - ../facilitator-dashboard-design-rules.md
+  - ../plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md
+  - 2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
+  - ../workshop-instance-runbook.md
+  - ../private-workshop-instance-data-classification.md
+  - ../private-workshop-instance-schema.md
+  - ../../dashboard/app/admin/page.tsx
+  - ../../dashboard/lib/workshop-data.ts
 ---
 
 # Facilitator Cockpit IA and UX Redesign
@@ -40,16 +40,16 @@ Build a facilitator cockpit that makes workshop instances feel like understandab
 
 ### What exists
 
-- [`docs/facilitator-dashboard-design-rules.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md) already defines the intended tone: calm under pressure, explicit scope, grouped actions by intent, safety actions visible but not dominant.
-- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already identifies the facilitator surface as a control plane that needs stronger structure.
-- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md) already says the dashboard should act as runtime control plane for private workshop instances rather than hiding the workshop design inside dashboard internals.
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md) describes workshop instances as private event records with real date, venue, room, participant access, facilitator auth, and lifecycle state.
-- [`docs/private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md) proposes first-class instance fields such as `display_name`, `event_date`, `venue_name`, `room_name`, `status`, and `current_phase`.
-- [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) already carries event-like metadata such as title, subtitle, city, date range, and current phase label.
+- [`docs/facilitator-dashboard-design-rules.md`](../facilitator-dashboard-design-rules.md) already defines the intended tone: calm under pressure, explicit scope, grouped actions by intent, safety actions visible but not dominant.
+- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](../plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already identifies the facilitator surface as a control plane that needs stronger structure.
+- [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md) already says the dashboard should act as runtime control plane for private workshop instances rather than hiding the workshop design inside dashboard internals.
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md) describes workshop instances as private event records with real date, venue, room, participant access, facilitator auth, and lifecycle state.
+- [`docs/private-workshop-instance-schema.md`](../private-workshop-instance-schema.md) proposes first-class instance fields such as `display_name`, `event_date`, `venue_name`, `room_name`, `status`, and `current_phase`.
+- [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) already carries event-like metadata such as title, subtitle, city, date range, and current phase label.
 
 ### What the current UI shows
 
-Review of the current rendered facilitator overview and the implementation in [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) shows:
+Review of the current rendered facilitator overview and the implementation in [`dashboard/app/admin/page.tsx`](../../dashboard/app/admin/page.tsx) shows:
 
 - the top of the page mixes instance switching, instance creation, instance removal, language/theme/session controls, section navigation, summary stats, and workshop operations in one shell
 - desktop leaves large areas visually idle while compressing actual actions into narrow columns
@@ -186,7 +186,7 @@ It leaves room for real product feeling without enterprise-dashboard clutter:
 
 **Decision:** Yes, partially, and the context has changed.
 
-**Rationale:** [`docs/facilitator-dashboard-design-rules.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md) said one page can show the whole system if it does not force the user to parse the whole system at once. The current rendered evidence shows that the one-page model is not surviving contact with the real UI. The redesign therefore chooses a clearer workspace-level page plus focused instance control room.
+**Rationale:** [`docs/facilitator-dashboard-design-rules.md`](../facilitator-dashboard-design-rules.md) said one page can show the whole system if it does not force the user to parse the whole system at once. The current rendered evidence shows that the one-page model is not surviving contact with the real UI. The redesign therefore chooses a clearer workspace-level page plus focused instance control room.
 
 **Alternatives considered:** Preserving the one-page doctrine unchanged was rejected because the current execution demonstrates its practical limits for this product.
 

@@ -99,9 +99,9 @@ Update `AGENTS.md` or its linked docs when any of these happen:
 
 If the change affects the workshop teaching model too, also update:
 
-- [`workshop-skill/template-agents.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/template-agents.md)
-- [`workshop-skill/analyze-checklist.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/analyze-checklist.md)
-- [`docs/learner-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+- [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
+- [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
+- [`docs/learner-resource-kit.md`](learner-resource-kit.md)
 - the packaged bundle via `harness-cli/scripts/sync-workshop-bundle.mjs`
 
 ## Review Checklist
@@ -110,6 +110,7 @@ When reviewing `AGENTS.md`, check:
 
 - Is it still short enough to read quickly?
 - Does it route to the actual sources of truth?
+- Do its markdown links stay repo-relative so they work on GitHub and in local clones?
 - Does it expose real verification expectations?
 - Does it reflect current public/private boundaries?
 - Does it help a new human or agent find the next safe move?

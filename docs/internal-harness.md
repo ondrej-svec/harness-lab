@@ -17,8 +17,8 @@ The internal harness is the backstage operating system of this repo:
 It is not the participant handout. That lives in the learner resource kit.
 
 See:
-- [`resource-packaging-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
-- [`learner-resource-kit.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+- [`resource-packaging-model.md`](resource-packaging-model.md)
+- [`learner-resource-kit.md`](learner-resource-kit.md)
 
 ## Read Order
 
@@ -26,53 +26,53 @@ See:
 
 Start here to understand how work should be done in this repo.
 
-- [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
-- [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md)
-- [`docs/harness-doctrine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
-- [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
+- [`AGENTS.md`](../AGENTS.md)
+- [`docs/agents-md-standard.md`](agents-md-standard.md)
+- [`docs/harness-doctrine.md`](harness-doctrine.md)
+- [`docs/contributing.md`](contributing.md)
 
 ### 2. Public/Private Boundaries
 
 Read these before adding new data, routes, copy, or workshop operations.
 
-- [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- [`docs/workshop-event-context-contract.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md)
+- [`docs/public-private-taxonomy.md`](public-private-taxonomy.md)
+- [`docs/private-workshop-instance-data-classification.md`](private-workshop-instance-data-classification.md)
+- [`docs/workshop-event-context-contract.md`](workshop-event-context-contract.md)
 
 ### 3. Dashboard And Runtime Model
 
 Read these before changing participant or facilitator behavior.
 
-- [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
-- [`docs/deployment-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
+- [`docs/dashboard-surface-model.md`](dashboard-surface-model.md)
+- [`docs/deployment-strategy.md`](deployment-strategy.md)
+- [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)
 
 ### 4. Testing And Trust Boundaries
 
 Read these before changing UI flows, auth, or agent-facing behavior.
 
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`docs/agent-ui-testing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agent-ui-testing.md)
-- [`docs/private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
+- [`docs/dashboard-testing-strategy.md`](dashboard-testing-strategy.md)
+- [`docs/agent-ui-testing.md`](agent-ui-testing.md)
+- [`docs/private-workshop-instance-security-gates.md`](private-workshop-instance-security-gates.md)
 
 ### 5. Architecture Decisions
 
 Read the ADRs when changing topology, auth, or workshop-instance responsibilities.
 
-- [`docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- [`docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
-- [`docs/adr/2026-04-06-workshop-event-access-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md)
+- [`docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`](adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- [`docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`](adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- [`docs/adr/2026-04-06-workshop-event-access-model.md`](adr/2026-04-06-workshop-event-access-model.md)
 
 ## Operator Bundle
 
 If you only need the minimum backstage set, use this bundle:
 
-1. [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
-2. [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md)
-3. [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
-4. [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-5. [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-6. [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
+1. [`AGENTS.md`](../AGENTS.md)
+2. [`docs/agents-md-standard.md`](agents-md-standard.md)
+3. [`docs/contributing.md`](contributing.md)
+4. [`docs/public-private-taxonomy.md`](public-private-taxonomy.md)
+5. [`docs/dashboard-testing-strategy.md`](dashboard-testing-strategy.md)
+6. [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)
 
 ## Missing Or Repeated Friction
 

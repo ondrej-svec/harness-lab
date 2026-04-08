@@ -356,24 +356,24 @@ Exit criteria:
 
 ### Brainstorm
 
-- [`docs/plans/2026-04-06-brainstorm-workshop-skill-event-access-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-brainstorm-workshop-skill-event-access-model.md)
+- [`docs/plans/2026-04-06-brainstorm-workshop-skill-event-access-model.md`](2026-04-06-brainstorm-workshop-skill-event-access-model.md)
 
 ### Related repo docs
 
-- [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
-- [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- [`docs/deployment-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-- [`docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md)
-- [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
-- [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
+- [`docs/dashboard-surface-model.md`](../dashboard-surface-model.md)
+- [`docs/public-private-taxonomy.md`](../public-private-taxonomy.md)
+- [`docs/deployment-strategy.md`](../deployment-strategy.md)
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md)
+- [`workshop-skill/SKILL.md`](../../workshop-skill/SKILL.md)
+- [`docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md`](2026-04-06-docs-harness-lab-public-private-repositioning-plan.md)
+- [`docs/contributing.md`](../contributing.md)
+- [`AGENTS.md`](../../AGENTS.md)
 
 ### Relevant local implementation seams
 
-- [`dashboard/lib/workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- [`dashboard/lib/admin-auth.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.ts)
+- [`dashboard/lib/workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts)
+- [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
+- [`dashboard/lib/admin-auth.ts`](../../dashboard/lib/admin-auth.ts)
 
 ### External references
 

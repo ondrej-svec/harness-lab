@@ -12,10 +12,10 @@ Fast checks around pure logic:
 - state transitions that can be expressed without rendering a page
 
 Current examples:
-- [`workshop-data.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.test.ts)
-- [`admin-auth.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.test.ts)
-- [`public-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/public-page-view-model.ts)
-- [`admin-page-view-model.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-page-view-model.ts)
+- [`workshop-data.test.ts`](../dashboard/lib/workshop-data.test.ts)
+- [`admin-auth.test.ts`](../dashboard/lib/admin-auth.test.ts)
+- [`public-page-view-model.ts`](../dashboard/lib/public-page-view-model.ts)
+- [`admin-page-view-model.ts`](../dashboard/lib/admin-page-view-model.ts)
 
 ### 2. Tracer-bullet integration tests
 
@@ -82,11 +82,11 @@ This is not ceremony. It is how we keep agent-generated code aligned with intent
 
 - Include `app/**/*.ts`, `app/**/*.tsx`, and `lib/**/*.ts` because those files hold real product behavior.
 - Exclude generated files, test-only mocks, and contracts-only files where line coverage is not meaningful.
-- In the current dashboard setup, [`runtime-contracts.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-contracts.ts) is excluded because it is a type contract module with no executable runtime behavior.
+- In the current dashboard setup, [`runtime-contracts.ts`](../dashboard/lib/runtime-contracts.ts) is excluded because it is a type contract module with no executable runtime behavior.
 
 ## Current Gaps
 
-- the two large page shells in [`app/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx) and [`app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) are still under-covered because most remaining lines are render composition
+- the two large page shells in [`app/page.tsx`](../dashboard/app/page.tsx) and [`app/admin/page.tsx`](../dashboard/app/admin/page.tsx) are still under-covered because most remaining lines are render composition
 - browser-level coverage exists for the key participant and facilitator flows, but it remains intentionally thin
 - several repository adapters still need either focused tests or an explicit decision about whether they are part of the trusted coverage boundary
 

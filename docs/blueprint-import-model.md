@@ -24,7 +24,7 @@ Copied from the public repo into a new or reset instance:
 - blueprint reference metadata
 
 Primary source:
-- [`workshop-blueprint/agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
+- [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
 
 ### Instance-local data
 

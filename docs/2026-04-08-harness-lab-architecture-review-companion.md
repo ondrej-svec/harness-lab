@@ -1,6 +1,6 @@
 # 2026-04-08 Architecture Review Companion
 
-This note is the repo-verified companion to [`2026-04-08-harness-lab-architecture-review.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/2026-04-08-harness-lab-architecture-review.md).
+This note is the repo-verified companion to [`2026-04-08-harness-lab-architecture-review.md`](2026-04-08-harness-lab-architecture-review.md).
 
 Use this file as the implementation source of truth when the review and the code disagree.
 
@@ -10,13 +10,13 @@ The coworker review surfaced several real issues, but some recommended remediati
 
 ## Shipped In This Follow-Up
 
-- Added baseline security headers in [`dashboard/next.config.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/next.config.ts).
-- Narrowed anonymous `GET /api/workshop` to a public-safe projection in [`dashboard/app/api/workshop/route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts).
-- Made Neon facilitator auth fail closed on incomplete managed-auth config through [`dashboard/lib/runtime-auth-configuration.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-auth-configuration.ts), [`dashboard/lib/facilitator-auth-service.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-auth-service.ts), [`dashboard/lib/facilitator-access.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-access.ts), and [`dashboard/lib/facilitator-session.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-session.ts).
-- Stopped automatic sample event-code seeding in Neon mode unless `HARNESS_EVENT_CODE` is explicitly configured in [`dashboard/lib/participant-event-access-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/participant-event-access-repository.ts).
-- Added optimistic locking for shared `workshop_state` writes via `state_version` in [`dashboard/lib/workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts) and [`dashboard/db/migrations/2026-04-08-workshop-state-optimistic-locking.sql`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/db/migrations/2026-04-08-workshop-state-optimistic-locking.sql).
-- Standardized retryable `409 workshop_state_conflict` responses for facilitator mutations through [`dashboard/lib/workshop-mutation-response.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-mutation-response.ts).
-- Added a minimal operator-visible app error boundary in [`dashboard/app/global-error.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/global-error.tsx).
+- Added baseline security headers in [`dashboard/next.config.ts`](../dashboard/next.config.ts).
+- Narrowed anonymous `GET /api/workshop` to a public-safe projection in [`dashboard/app/api/workshop/route.ts`](../dashboard/app/api/workshop/route.ts).
+- Made Neon facilitator auth fail closed on incomplete managed-auth config through [`dashboard/lib/runtime-auth-configuration.ts`](../dashboard/lib/runtime-auth-configuration.ts), [`dashboard/lib/facilitator-auth-service.ts`](../dashboard/lib/facilitator-auth-service.ts), [`dashboard/lib/facilitator-access.ts`](../dashboard/lib/facilitator-access.ts), and [`dashboard/lib/facilitator-session.ts`](../dashboard/lib/facilitator-session.ts).
+- Stopped automatic sample event-code seeding in Neon mode unless `HARNESS_EVENT_CODE` is explicitly configured in [`dashboard/lib/participant-event-access-repository.ts`](../dashboard/lib/participant-event-access-repository.ts).
+- Added optimistic locking for shared `workshop_state` writes via `state_version` in [`dashboard/lib/workshop-state-repository.ts`](../dashboard/lib/workshop-state-repository.ts) and [`dashboard/db/migrations/2026-04-08-workshop-state-optimistic-locking.sql`](../dashboard/db/migrations/2026-04-08-workshop-state-optimistic-locking.sql).
+- Standardized retryable `409 workshop_state_conflict` responses for facilitator mutations through [`dashboard/lib/workshop-mutation-response.ts`](../dashboard/lib/workshop-mutation-response.ts).
+- Added a minimal operator-visible app error boundary in [`dashboard/app/global-error.tsx`](../dashboard/app/global-error.tsx).
 
 ## Corrected Recommendations
 
@@ -97,4 +97,4 @@ The follow-up was verified with focused Vitest coverage for:
 
 See also:
 
-- [`docs/plans/2026-04-08-fix-architecture-review-follow-up-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-08-fix-architecture-review-follow-up-plan.md)
+- [`docs/plans/2026-04-08-fix-architecture-review-follow-up-plan.md`](plans/2026-04-08-fix-architecture-review-follow-up-plan.md)

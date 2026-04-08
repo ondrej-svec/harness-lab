@@ -15,9 +15,20 @@ If an artifact mixes backstage operations with participant teaching:
 - create a smaller participant-safe subset for the learner kit
 
 See:
-- [resource-packaging-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
-- [internal-harness.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md)
-- [learner-resource-kit.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/learner-resource-kit.md)
+- [resource-packaging-model.md](resource-packaging-model.md)
+- [internal-harness.md](internal-harness.md)
+- [learner-resource-kit.md](learner-resource-kit.md)
+
+## Link Hygiene
+
+Use repository-relative markdown links, not local filesystem-absolute paths.
+
+Good:
+- `[workshop-blueprint/README.md](../workshop-blueprint/README.md)`
+- `[dashboard-surface-model.md](dashboard-surface-model.md)`
+
+Do not write markdown links like:
+- ``(/absolute/path/to/harness-lab/...)``
 
 ## Working Rule
 
@@ -59,8 +70,8 @@ npm run build
 
 ## Related Docs
 
-- [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- [dashboard-surface-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
-- [dashboard-testing-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [harness-doctrine.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
-- [resource-packaging-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
+- [public-private-taxonomy.md](public-private-taxonomy.md)
+- [dashboard-surface-model.md](dashboard-surface-model.md)
+- [dashboard-testing-strategy.md](dashboard-testing-strategy.md)
+- [harness-doctrine.md](harness-doctrine.md)
+- [resource-packaging-model.md](resource-packaging-model.md)

@@ -3,7 +3,7 @@ title: "feat: deploy private workshop runtime to preview and production"
 type: plan
 date: 2026-04-06
 status: in_progress
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
 confidence: medium
 ---
 
@@ -17,9 +17,9 @@ The application runtime is now production-shaped, but the actual deployment path
 
 Today the repo has:
 
-- a documented Vercel + Neon deployment model in [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- CI and preview-safety validation in [`dashboard-ci.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml) and [`private-runtime-preview-gate.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/private-runtime-preview-gate.yml)
-- a runtime that can run in file mode or Neon mode from [`dashboard/.env.example`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/.env.example)
+- a documented Vercel + Neon deployment model in [`private-workshop-instance-deployment-spec.md`](../private-workshop-instance-deployment-spec.md)
+- CI and preview-safety validation in [`dashboard-ci.yml`](../../.github/workflows/dashboard-ci.yml) and [`private-runtime-preview-gate.yml`](../../.github/workflows/private-runtime-preview-gate.yml)
+- a runtime that can run in file mode or Neon mode from [`dashboard/.env.example`](../../dashboard/.env.example)
 - no checked-in Vercel project config, no linked project metadata, no automated deployment workflow, and no confirmed secret inventory loaded into real preview/production environments
 
 This matters because the system is now implementationally ready enough that the main remaining gap is operational: if preview and production are not bootstrapped deliberately, the repo will keep claiming a deployment model that exists only on paper.
@@ -80,13 +80,13 @@ This is a **detailed** plan because deployment here touches infrastructure owner
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| One Vercel project rooted at `dashboard/` is still the correct operating model | Verified | The original brainstorm chose one shared deployment, and [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md) defines one Vercel project for `dashboard/` |
+| One Vercel project rooted at `dashboard/` is still the correct operating model | Verified | The original brainstorm chose one shared deployment, and [`private-workshop-instance-deployment-spec.md`](../private-workshop-instance-deployment-spec.md) defines one Vercel project for `dashboard/` |
 | GitHub Actions should remain release gates rather than the primary deployment runner | Verified | The repo currently contains verification workflows only and no deployment workflow, which aligns with the deployment spec’s preview/promotion model |
 | Vercel CLI is appropriate for bootstrap and emergency operations but not required for every normal deployment | Verified | Vercel’s current CLI supports project linking and manual preview/production deploys, while official env docs treat Git-driven preview and production as the normal path [Vercel CLI docs](https://vercel.com/docs/cli/deploy), [env docs](https://vercel.com/docs/projects/environment-variables) |
 | Neon’s Vercel integration can provide one database branch per preview deployment | Verified | Neon’s current integration docs explicitly describe one isolated database branch per preview plus environment-variable injection [Neon guide](https://neon.com/docs/guides/vercel/), [branch-per-preview](https://neon.com/flow/branch-per-preview) |
 | Preview deployments can be protected at the Vercel project layer without breaking middleware-based auth | Verified | Vercel’s current deployment protection docs state protection applies to all requests, including Middleware [Deployment Protection](https://vercel.com/docs/deployment-protection) |
 | Production deployment protection requirements will fit the chosen Vercel plan | Unverified | Current Vercel docs show stronger production protection options depend on plan level, and the actual team/project plan is not yet confirmed |
-| The repo’s current environment-variable surface is complete enough for preview and production bootstrapping | Unverified | [`dashboard/.env.example`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/.env.example) still reflects mostly local/demo defaults, not a finalized production env inventory |
+| The repo’s current environment-variable surface is complete enough for preview and production bootstrapping | Unverified | [`dashboard/.env.example`](../../dashboard/.env.example) still reflects mostly local/demo defaults, not a finalized production env inventory |
 | Preview branches should inherit production-like schema but not necessarily real workshop data | Verified | The architecture review explicitly recommended schema-only or sanitized preview data for privacy-sensitive previews |
 | The current build pipeline is sufficient to apply database migrations during preview/prod deploys | Unverified | The repo has runtime SQL migration files but no checked-in migration runner in Vercel build settings yet |
 
@@ -278,12 +278,12 @@ Dependency-ordered tracker for `$work`:
 
 ## References
 
-- Brainstorm: [`2026-04-06-private-workshop-instance-model-brainstorm.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
-- Deployment spec: [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- Deployment strategy: [`deployment-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
-- Runbook: [`workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- CI workflow: [`dashboard-ci.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
-- Preview gate workflow: [`private-runtime-preview-gate.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/private-runtime-preview-gate.yml)
+- Brainstorm: [`2026-04-06-private-workshop-instance-model-brainstorm.md`](../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
+- Deployment spec: [`private-workshop-instance-deployment-spec.md`](../private-workshop-instance-deployment-spec.md)
+- Deployment strategy: [`deployment-strategy.md`](../deployment-strategy.md)
+- Runbook: [`workshop-instance-runbook.md`](../workshop-instance-runbook.md)
+- CI workflow: [`dashboard-ci.yml`](../../.github/workflows/dashboard-ci.yml)
+- Preview gate workflow: [`private-runtime-preview-gate.yml`](../../.github/workflows/private-runtime-preview-gate.yml)
 - Vercel CLI deploy docs: https://vercel.com/docs/cli/deploy
 - Vercel environment variables docs: https://vercel.com/docs/projects/environment-variables
 - Vercel deployment protection docs: https://vercel.com/docs/deployment-protection

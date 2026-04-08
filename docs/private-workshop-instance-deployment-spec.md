@@ -51,7 +51,7 @@ Rules:
 
 Operator matrix:
 
-- [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
+- [`private-workshop-instance-env-matrix.md`](private-workshop-instance-env-matrix.md)
 
 ## Neon Preview Branch Use
 

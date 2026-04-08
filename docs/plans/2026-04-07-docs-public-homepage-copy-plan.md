@@ -3,7 +3,7 @@ title: "docs: public homepage copy rewrite"
 type: plan
 date: 2026-04-07
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-public-homepage-copy-brainstorm.md
+brainstorm: ../brainstorms/2026-04-07-public-homepage-copy-brainstorm.md
 confidence: high
 ---
 
@@ -13,7 +13,7 @@ Rewrite the public homepage copy so it explains Harness Lab as a workshop about 
 
 ## Problem Statement
 
-The current homepage copy in [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts) is directionally true but framed around the wrong protagonist.
+The current homepage copy in [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts) is directionally true but framed around the wrong protagonist.
 
 It currently foregrounds:
 
@@ -54,7 +54,7 @@ This is a **standard** plan because the scope is bounded to the public copy surf
 ### Why rewrite in place rather than restructure the page first
 
 - The core problem is the wording, not the layout.
-- The relevant strings are already centralized in [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts), which makes a targeted rewrite feasible.
+- The relevant strings are already centralized in [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts), which makes a targeted rewrite feasible.
 - Changing structure and copy at the same time would make it harder to tell whether the improvement came from framing or from layout changes.
 
 ### Why lead with teamwork and AI coding agents
@@ -71,7 +71,7 @@ This is a **standard** plan because the scope is bounded to the public copy surf
 
 ### Why include test and snapshot updates in a copy plan
 
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) already asserts specific homepage strings.
+- [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) already asserts specific homepage strings.
 - The public mobile screenshot baseline will likely shift because hero and principle copy lengths affect layout.
 - In this repo, even copy-only changes should preserve the existing trust boundary between content and rendered verification.
 
@@ -79,7 +79,7 @@ This is a **standard** plan because the scope is bounded to the public copy surf
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The homepage copy surface is primarily controlled from [`dashboard/lib/ui-language.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts) | Verified | Search results show hero, principle, details, and footer strings centralized there |
+| The homepage copy surface is primarily controlled from [`dashboard/lib/ui-language.ts`](../../dashboard/lib/ui-language.ts) | Verified | Search results show hero, principle, details, and footer strings centralized there |
 | No layout change is required to materially improve the message | Verified | The user’s critique and the brainstorm both focus on framing and wording rather than structure |
 | The existing public page layout can absorb revised copy without becoming unusably cramped on mobile | Unverified | Likely, but longer or sharper phrasing may require screenshot review and minor trimming |
 | English copy should remain conceptually aligned even if it is not polished as deeply as Czech in the same pass | Verified | The page already supports explicit English mode and Playwright covers it |
@@ -145,7 +145,7 @@ Mitigation:
 - [x] Keep English concise enough to avoid unnecessary mobile layout expansion.
 
 4. **Update verification artifacts**
-- [x] Replace exact-string assertions in [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) that currently reference the old hero and principle copy.
+- [x] Replace exact-string assertions in [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) that currently reference the old hero and principle copy.
 - [x] Review whether the English-mode assertions need parallel updates.
 - [x] Regenerate the public mobile screenshot baseline only after the copy is stable.
 
@@ -160,14 +160,14 @@ Mitigation:
 - The public principle cards are rewritten around the way of working, not around artifact-first headlines like `repo před improvizací`.
 - The `co to je` and footer copy read as natural public-facing Czech and no longer use architecture-document phrasing such as "veřejná vstupní vrstva."
 - The English homepage copy communicates the same core framing as the Czech version.
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts) is updated so the browser suite verifies the revised copy rather than pinning the old messaging.
+- [`dashboard/e2e/dashboard.spec.ts`](../../dashboard/e2e/dashboard.spec.ts) is updated so the browser suite verifies the revised copy rather than pinning the old messaging.
 - The public mobile visual baseline is updated only if the rewrite materially changes rendered wrapping, and the resulting page remains legible on mobile.
 
 ## References
 
-- Brainstorm: [2026-04-07-public-homepage-copy-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-07-public-homepage-copy-brainstorm.md)
-- Copy source: [ui-language.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/ui-language.ts)
-- Public page rendering: [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/page.tsx)
-- Browser verification: [dashboard.spec.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
-- Voice guidance: [style-guide.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md)
-- Voice examples: [style-examples.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md)
+- Brainstorm: [2026-04-07-public-homepage-copy-brainstorm.md](../brainstorms/2026-04-07-public-homepage-copy-brainstorm.md)
+- Copy source: [ui-language.ts](../../dashboard/lib/ui-language.ts)
+- Public page rendering: [page.tsx](../../dashboard/app/page.tsx)
+- Browser verification: [dashboard.spec.ts](../../dashboard/e2e/dashboard.spec.ts)
+- Voice guidance: [style-guide.md](../../content/style-guide.md)
+- Voice examples: [style-examples.md](../../content/style-examples.md)

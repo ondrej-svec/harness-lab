@@ -3,7 +3,7 @@ title: "feat: private workshop-instance architecture"
 type: plan
 date: 2026-04-06
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
 confidence: medium
 ---
 
@@ -67,10 +67,10 @@ This is a **detailed** plan because it spans data architecture, authentication b
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| One shared deployed system with many workshop instances is the correct operating model | Verified | Chosen in the brainstorm and already reflected in [`deployment-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md) and [`workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md) |
-| Real event state must move out of tracked source and stay server-side | Verified | Chosen in the brainstorm and consistent with [`public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md) |
-| Public content plus private event-instance state should be composed at runtime | Verified | Chosen in the brainstorm and consistent with [`workshop-event-context-contract.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md) |
-| Facilitator auth must remain separate from participant event access | Verified | Accepted in [`ADR 2026-04-06 workshop event access model`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md) and aligned with OWASP authentication and authorization guidance |
+| One shared deployed system with many workshop instances is the correct operating model | Verified | Chosen in the brainstorm and already reflected in [`deployment-strategy.md`](../deployment-strategy.md) and [`workshop-instance-runbook.md`](../workshop-instance-runbook.md) |
+| Real event state must move out of tracked source and stay server-side | Verified | Chosen in the brainstorm and consistent with [`public-private-taxonomy.md`](../public-private-taxonomy.md) |
+| Public content plus private event-instance state should be composed at runtime | Verified | Chosen in the brainstorm and consistent with [`workshop-event-context-contract.md`](../workshop-event-context-contract.md) |
+| Facilitator auth must remain separate from participant event access | Verified | Accepted in [`ADR 2026-04-06 workshop event access model`](../adr/2026-04-06-workshop-event-access-model.md) and aligned with OWASP authentication and authorization guidance |
 | Vercel preview deployments plus Neon preview branches are a suitable release model for this app | Verified | Supported by current Vercel preview-promotion guidance and Neon preview-branch integration docs |
 | Custom/lightweight facilitator auth will remain preferable to a managed identity layer | Unverified | Current repo uses lightweight auth, but the security/maintenance tradeoff is not yet proven |
 | Preview-to-production without a separate staging environment is sufficient if release gates are strong | Unverified | Plausible for this system, but depends on disciplined checks and rollback procedures |
@@ -239,13 +239,13 @@ Exit criteria:
 
 ## References
 
-- Brainstorm: [2026-04-06-private-workshop-instance-model-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
-- Existing runtime direction: [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
-- Existing operating model: [workshop-instance-runbook.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- Existing repo-boundary taxonomy: [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- Repo split proposal: [public-private-repo-split-proposal.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md)
-- Existing event access ADR: [2026-04-06-workshop-event-access-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md)
-- Harness doctrine: [harness-doctrine.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
+- Brainstorm: [2026-04-06-private-workshop-instance-model-brainstorm.md](../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
+- Existing runtime direction: [deployment-strategy.md](../deployment-strategy.md)
+- Existing operating model: [workshop-instance-runbook.md](../workshop-instance-runbook.md)
+- Existing repo-boundary taxonomy: [public-private-taxonomy.md](../public-private-taxonomy.md)
+- Repo split proposal: [public-private-repo-split-proposal.md](../public-private-repo-split-proposal.md)
+- Existing event access ADR: [2026-04-06-workshop-event-access-model.md](../adr/2026-04-06-workshop-event-access-model.md)
+- Harness doctrine: [harness-doctrine.md](../harness-doctrine.md)
 - OWASP Authentication Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html
 - OWASP Session Management Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html
 - OWASP Authorization Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html

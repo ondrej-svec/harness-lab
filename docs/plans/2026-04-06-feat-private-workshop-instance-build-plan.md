@@ -3,7 +3,7 @@ title: "feat: build private workshop-instance runtime"
 type: plan
 date: 2026-04-06
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
+brainstorm: ../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md
 confidence: medium
 ---
 
@@ -17,10 +17,10 @@ Harness Lab now has the architecture and doctrine for a public repo plus private
 
 Current implementation gaps:
 
-- workshop state is stored through a file adapter in [`workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- participant sessions are stored through a file adapter in [`event-access-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts)
-- participant event access in [`event-access.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts) is single-event and sample-code oriented rather than instance-scoped
-- facilitator protection in [`admin-auth.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.ts) and [`middleware.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts) is global basic auth rather than facilitator identity plus per-instance grants
+- workshop state is stored through a file adapter in [`workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts)
+- participant sessions are stored through a file adapter in [`event-access-repository.ts`](../../dashboard/lib/event-access-repository.ts)
+- participant event access in [`event-access.ts`](../../dashboard/lib/event-access.ts) is single-event and sample-code oriented rather than instance-scoped
+- facilitator protection in [`admin-auth.ts`](../../dashboard/lib/admin-auth.ts) and [`middleware.ts`](../../dashboard/middleware.ts) is global basic auth rather than facilitator identity plus per-instance grants
 - the repo has a written public-launch cleanup plan, but no migration off repo-backed live state and no verified history scrub
 
 This matters because the current code can demonstrate the concept, but it cannot safely operate real workshops under the runtime model chosen in the original brainstorm.
@@ -88,13 +88,13 @@ Default planning posture:
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The existing store/repository seams are sufficient to introduce production adapters without a full dashboard rewrite | Verified | [`workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts), [`workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts), and [`event-access-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts) already isolate persistence concerns |
-| Public participant routes can keep their current UX while the underlying source of truth changes | Verified | Existing event-context routes in [`route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-context/core/route.ts) and [`route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-context/teams/route.ts) already separate public and participant-authenticated reads |
+| The existing store/repository seams are sufficient to introduce production adapters without a full dashboard rewrite | Verified | [`workshop-store.ts`](../../dashboard/lib/workshop-store.ts), [`workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts), and [`event-access-repository.ts`](../../dashboard/lib/event-access-repository.ts) already isolate persistence concerns |
+| Public participant routes can keep their current UX while the underlying source of truth changes | Verified | Existing event-context routes in [`route.ts`](../../dashboard/app/api/event-context/core/route.ts) and [`route.ts`](../../dashboard/app/api/event-context/teams/route.ts) already separate public and participant-authenticated reads |
 | `instance_id` can be introduced without breaking the public template model | Verified | The architecture docs explicitly require runtime composition of repo content plus instance state and do not require public content duplication |
-| Participant event access should remain shared-event-code based in the first production version | Verified | Accepted in the original brainstorm and reinforced by [`2026-04-06-workshop-event-access-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md) |
+| Participant event access should remain shared-event-code based in the first production version | Verified | Accepted in the original brainstorm and reinforced by [`2026-04-06-workshop-event-access-model.md`](../adr/2026-04-06-workshop-event-access-model.md) |
 | Neon Auth is a viable first-choice solution for facilitator identity and sessions | Unverified | Current Neon docs describe managed branchable auth with Next.js server support, but this repo has not validated the exact fit for its facilitator workflow yet |
 | The first production facilitator path can still fall back to custom auth if Neon Auth proves too constraining | Unverified | The architecture pack allows this temporarily, but the long-term security and maintenance tradeoff is still not proven |
-| The current route split is good enough to migrate incrementally rather than redesigning all endpoints first | Unverified | The repo has a workable split today, but some routes such as [`route.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/teams/route.ts) mix participant reads and facilitator writes |
+| The current route split is good enough to migrate incrementally rather than redesigning all endpoints first | Unverified | The repo has a workable split today, but some routes such as [`route.ts`](../../dashboard/app/api/teams/route.ts) mix participant reads and facilitator writes |
 | Neon preview branches plus protected previews will be available and practical for this repo’s workflow | Unverified | The deployment spec assumes this path, but the repository has not exercised it yet |
 | Existing demo/test fixtures can be cleanly separated from any future real event data without destabilizing tests | Unverified | Test and seed data patterns exist, but no production migration has happened yet |
 
@@ -295,21 +295,21 @@ Exit criteria:
 
 ## References
 
-- Original brainstorm: [2026-04-06-private-workshop-instance-model-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
-- Architecture plan: [2026-04-06-feat-private-workshop-instance-architecture-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-private-workshop-instance-architecture-plan.md)
-- Runtime topology ADR: [2026-04-06-private-workshop-instance-runtime-topology.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
-- Auth boundary ADR: [2026-04-06-private-workshop-instance-auth-boundary.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
-- Event access ADR: [2026-04-06-workshop-event-access-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md)
-- Event context contract: [workshop-event-context-contract.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-event-context-contract.md)
-- Schema design: [private-workshop-instance-schema.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
-- Auth model: [private-workshop-instance-auth-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-auth-model.md)
-- Deployment spec: [private-workshop-instance-deployment-spec.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- Security gates: [private-workshop-instance-security-gates.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
-- History cleanup plan: [public-launch-history-cleanup-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-launch-history-cleanup-plan.md)
-- Current state store seam: [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- Current workshop state repository: [workshop-state-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- Current event access repository: [event-access-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts)
-- Current participant session logic: [event-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts)
-- Current facilitator auth and protection: [admin-auth.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.ts), [middleware.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts)
+- Original brainstorm: [2026-04-06-private-workshop-instance-model-brainstorm.md](../brainstorms/2026-04-06-private-workshop-instance-model-brainstorm.md)
+- Architecture plan: [2026-04-06-feat-private-workshop-instance-architecture-plan.md](2026-04-06-feat-private-workshop-instance-architecture-plan.md)
+- Runtime topology ADR: [2026-04-06-private-workshop-instance-runtime-topology.md](../adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+- Auth boundary ADR: [2026-04-06-private-workshop-instance-auth-boundary.md](../adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- Event access ADR: [2026-04-06-workshop-event-access-model.md](../adr/2026-04-06-workshop-event-access-model.md)
+- Event context contract: [workshop-event-context-contract.md](../workshop-event-context-contract.md)
+- Schema design: [private-workshop-instance-schema.md](../private-workshop-instance-schema.md)
+- Auth model: [private-workshop-instance-auth-model.md](../private-workshop-instance-auth-model.md)
+- Deployment spec: [private-workshop-instance-deployment-spec.md](../private-workshop-instance-deployment-spec.md)
+- Security gates: [private-workshop-instance-security-gates.md](../private-workshop-instance-security-gates.md)
+- History cleanup plan: [public-launch-history-cleanup-plan.md](../public-launch-history-cleanup-plan.md)
+- Current state store seam: [workshop-store.ts](../../dashboard/lib/workshop-store.ts)
+- Current workshop state repository: [workshop-state-repository.ts](../../dashboard/lib/workshop-state-repository.ts)
+- Current event access repository: [event-access-repository.ts](../../dashboard/lib/event-access-repository.ts)
+- Current participant session logic: [event-access.ts](../../dashboard/lib/event-access.ts)
+- Current facilitator auth and protection: [admin-auth.ts](../../dashboard/lib/admin-auth.ts), [middleware.ts](../../dashboard/middleware.ts)
 - Neon Auth overview: https://neon.com/docs/auth/overview
 - Neon branchable auth changelog: https://neon.com/docs/changelog/2025-12-12

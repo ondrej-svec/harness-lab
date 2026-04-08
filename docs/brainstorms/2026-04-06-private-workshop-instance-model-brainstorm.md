@@ -4,11 +4,11 @@ type: brainstorm
 date: 2026-04-06
 participants: [user, codex]
 related:
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-repo-split-proposal.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md
-  - /Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md
+  - ../public-private-taxonomy.md
+  - ../public-private-repo-split-proposal.md
+  - ../deployment-strategy.md
+  - ../workshop-instance-runbook.md
+  - ../adr/2026-04-06-workshop-event-access-model.md
 ---
 
 # Private Workshop Instance Model
@@ -29,10 +29,10 @@ This is not just a storage question. The real problem combines:
 
 Existing repo direction already points toward a layered model:
 
-- [public-private-taxonomy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md) defines a public template repo, private workshop-instance layer, and separate team repos
-- [deployment-strategy.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md) already recommends one Vercel deployment backed by private production storage
-- [workshop-instance-runbook.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md) already assumes many private workshop instances rather than a new app per event
-- [ADR 2026-04-06 workshop event access model](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-workshop-event-access-model.md) already established public participant surfaces, shared event-code redemption, and separate facilitator auth
+- [public-private-taxonomy.md](../public-private-taxonomy.md) defines a public template repo, private workshop-instance layer, and separate team repos
+- [deployment-strategy.md](../deployment-strategy.md) already recommends one Vercel deployment backed by private production storage
+- [workshop-instance-runbook.md](../workshop-instance-runbook.md) already assumes many private workshop instances rather than a new app per event
+- [ADR 2026-04-06 workshop event access model](../adr/2026-04-06-workshop-event-access-model.md) already established public participant surfaces, shared event-code redemption, and separate facilitator auth
 
 The new discussion clarified several important operating constraints:
 

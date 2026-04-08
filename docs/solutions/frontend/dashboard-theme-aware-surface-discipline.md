@@ -11,9 +11,9 @@ symptoms:
 root_cause: "The app had theme tokens, but key dashboard surfaces bypassed them with page-specific hardcoded dark gradients and one-off light/dark overrides, so the UI was not actually consuming a single theme system."
 severity: medium
 related:
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md"
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/facilitator-dashboard-design-rules.md"
-  - "/Users/ondrejsvec/projects/Bobo/harness-lab/docs/solutions/testing/facilitator-playwright-visual-regression-stability.md"
+  - "../../plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md"
+  - "../../facilitator-dashboard-design-rules.md"
+  - "../testing/facilitator-playwright-visual-regression-stability.md"
 ---
 
 # Keep dashboard surfaces theme-aware by routing all admin chrome through semantic tokens
@@ -37,7 +37,7 @@ The theme problem was architectural, not just cosmetic.
 
 ### 1. Tokens existed, but important surfaces bypassed them
 
-The dashboard had semantic variables in [`dashboard/app/globals.css`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/globals.css), but several key facilitator surfaces still used:
+The dashboard had semantic variables in [`dashboard/app/globals.css`](../../../dashboard/app/globals.css), but several key facilitator surfaces still used:
 
 - hardcoded dark gradients
 - raw RGBA values embedded directly in JSX class strings
@@ -47,7 +47,7 @@ That meant the visual identity of the admin app depended on per-page implementat
 
 ### 2. Shared admin primitives were not fully authoritative
 
-Even though [`dashboard/app/admin/admin-ui.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/admin-ui.tsx) already contained shared panel and button primitives, the strongest chrome still lived outside those abstractions:
+Even though [`dashboard/app/admin/admin-ui.tsx`](../../../dashboard/app/admin/admin-ui.tsx) already contained shared panel and button primitives, the strongest chrome still lived outside those abstractions:
 
 - workspace summary hero
 - control-room hero
@@ -62,7 +62,7 @@ The durable fix was to make the theme system authoritative for dashboard chrome.
 
 ### 1. Expand the semantic token set
 
-In [`dashboard/app/globals.css`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/globals.css), add surface-level tokens that reflect actual dashboard building blocks, not just generic colors:
+In [`dashboard/app/globals.css`](../../../dashboard/app/globals.css), add surface-level tokens that reflect actual dashboard building blocks, not just generic colors:
 
 - `--card-top`, `--card-bottom`
 - `--card-strong-top`, `--card-strong-bottom`
@@ -75,7 +75,7 @@ The key lesson is that if the UI repeatedly invents a visual pattern, it needs a
 
 ### 2. Push shared admin chrome into reusable primitives
 
-In [`dashboard/app/admin/admin-ui.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/admin-ui.tsx):
+In [`dashboard/app/admin/admin-ui.tsx`](../../../dashboard/app/admin/admin-ui.tsx):
 
 - shared panels and cards were converted to token-based gradients
 - secondary buttons stopped carrying raw light/dark background values
@@ -87,8 +87,8 @@ This makes the primitives the source of truth instead of a convenience layer.
 
 In:
 
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`dashboard/app/admin/instances/[id]/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx)
+- [`dashboard/app/admin/page.tsx`](../../../dashboard/app/admin/page.tsx)
+- [`dashboard/app/admin/instances/[id]/page.tsx`](../../../dashboard/app/admin/instances/[id]/page.tsx)
 
 the facilitator hero panels, hero tiles, side rail, live-state blocks, and summary surfaces were changed from hardcoded dark gradients to token-driven hero surfaces.
 
@@ -117,8 +117,8 @@ Use these rules for future dashboard work:
 
 ## Related
 
-- [`dashboard/app/globals.css`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/globals.css)
-- [`dashboard/app/admin/admin-ui.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/admin-ui.tsx)
-- [`dashboard/app/admin/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx)
-- [`dashboard/app/admin/instances/[id]/page.tsx`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/page.tsx)
-- [`docs/plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md)
+- [`dashboard/app/globals.css`](../../../dashboard/app/globals.css)
+- [`dashboard/app/admin/admin-ui.tsx`](../../../dashboard/app/admin/admin-ui.tsx)
+- [`dashboard/app/admin/page.tsx`](../../../dashboard/app/admin/page.tsx)
+- [`dashboard/app/admin/instances/[id]/page.tsx`](../../../dashboard/app/admin/instances/[id]/page.tsx)
+- [`docs/plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md`](../../plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md)

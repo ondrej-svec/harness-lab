@@ -57,7 +57,7 @@ Rejected because the package is on the live facilitator auth path and the repoâ€
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| `dashboard` is the Vercel-built package that needs the strongest dependency posture | Verified | Current build logs and [dashboard/package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/package.json) |
+| `dashboard` is the Vercel-built package that needs the strongest dependency posture | Verified | Current build logs and [dashboard/package.json](../../dashboard/package.json) |
 | `harness-cli` is low risk from a dependency perspective | Verified | Single direct dependency (`chalk`) and zero audit findings in the current audit pass |
 | `@neondatabase/auth` latest published version is still `0.2.0-beta.1` and it still pins `better-auth@1.4.6` | Verified | `npm view @neondatabase/auth version dependencies` during the audit |
 | A safe in-place upgrade of `@neondatabase/auth` is currently available | Unverified | Current evidence points the other way; verify again before implementation starts |
@@ -186,11 +186,11 @@ Exit criteria: future contributors can understand the policy without reconstruct
 
 ## References
 
-- Existing migration baseline: [docs/plans/2026-04-06-feat-neon-auth-facilitator-migration-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-neon-auth-facilitator-migration-plan.md)
-- Existing auth decision: [docs/adr/2026-04-06-neon-auth-for-facilitator-identity.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-neon-auth-for-facilitator-identity.md)
-- Current security gate: [docs/private-workshop-instance-security-gates.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
-- Current CI gate: [.github/workflows/dashboard-ci.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
-- Current dashboard manifest: [dashboard/package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/package.json)
-- Current CLI manifest: [harness-cli/package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json)
+- Existing migration baseline: [docs/plans/2026-04-06-feat-neon-auth-facilitator-migration-plan.md](2026-04-06-feat-neon-auth-facilitator-migration-plan.md)
+- Existing auth decision: [docs/adr/2026-04-06-neon-auth-for-facilitator-identity.md](../adr/2026-04-06-neon-auth-for-facilitator-identity.md)
+- Current security gate: [docs/private-workshop-instance-security-gates.md](../private-workshop-instance-security-gates.md)
+- Current CI gate: [.github/workflows/dashboard-ci.yml](../../.github/workflows/dashboard-ci.yml)
+- Current dashboard manifest: [dashboard/package.json](../../dashboard/package.json)
+- Current CLI manifest: [harness-cli/package.json](../../harness-cli/package.json)
 - Better Auth advisory: https://github.com/advisories/GHSA-xg6x-h9c9-2m83
 - Vercel Node engine override behavior: https://vercel.com/docs/functions/runtimes/node-js/node-js-versions

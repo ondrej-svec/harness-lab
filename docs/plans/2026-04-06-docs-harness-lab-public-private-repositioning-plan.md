@@ -171,7 +171,7 @@ Exit criteria:
 Goal: make the public repo feel like a coherent workshop kit instead of a partially exposed internal event repo.
 
 Tasks:
-- [x] Rewrite [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/README.md) around Harness Lab as the public identity.
+- [x] Rewrite [`README.md`](../../README.md) around Harness Lab as the public identity.
 - [x] Remove public-facing mentions that spoil the handoff mechanic, including "Silent Post" and "signature exercise" framing.
 - [x] Replace exact dates, venues, and event counts with generic or sample wording.
 - [x] Review participant-facing markdown for vocabulary consistency across repo, dashboard, and skill.
@@ -303,23 +303,23 @@ Exit criteria:
 
 ### Local references
 
-- [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/README.md)
-- [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts)
-- [`dashboard/lib/admin-auth.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.ts)
-- [`dashboard/lib/admin-auth.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/admin-auth.test.ts)
-- [`dashboard/lib/workshop-data.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.test.ts)
-- [`dashboard/lib/workshop-state-repository.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-- [`dashboard/lib/workshop-store.test.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.test.ts)
-- [`dashboard/lib/workshop-store.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
-- [`docs/deployment-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/deployment-strategy.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
-- [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-- [`workshop-skill/install.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/install.md)
-- [`workshop-skill/reference.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/reference.md)
-- [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md)
-- [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md)
+- [`README.md`](../../README.md)
+- [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts)
+- [`dashboard/lib/admin-auth.ts`](../../dashboard/lib/admin-auth.ts)
+- [`dashboard/lib/admin-auth.test.ts`](../../dashboard/lib/admin-auth.test.ts)
+- [`dashboard/lib/workshop-data.test.ts`](../../dashboard/lib/workshop-data.test.ts)
+- [`dashboard/lib/workshop-state-repository.ts`](../../dashboard/lib/workshop-state-repository.ts)
+- [`dashboard/lib/workshop-store.test.ts`](../../dashboard/lib/workshop-store.test.ts)
+- [`dashboard/lib/workshop-store.ts`](../../dashboard/lib/workshop-store.ts)
+- [`docs/dashboard-testing-strategy.md`](../dashboard-testing-strategy.md)
+- [`docs/contributing.md`](../contributing.md)
+- [`docs/deployment-strategy.md`](../deployment-strategy.md)
+- [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md)
+- [`workshop-skill/SKILL.md`](../../workshop-skill/SKILL.md)
+- [`workshop-skill/install.md`](../../workshop-skill/install.md)
+- [`workshop-skill/reference.md`](../../workshop-skill/reference.md)
+- [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md)
+- [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md)
 
 ### External references
 

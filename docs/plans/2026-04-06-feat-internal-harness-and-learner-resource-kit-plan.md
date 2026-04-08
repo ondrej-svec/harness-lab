@@ -250,10 +250,10 @@ Exit criteria:
 
 ## References
 
-- [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/README.md)
-- [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
-- [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
-- [`workshop-skill/follow-up-package.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/follow-up-package.md)
-- [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- [`docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md)
-- [`docs/plans/2026-04-06-feat-workshop-skill-event-access-model-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-06-feat-workshop-skill-event-access-model-plan.md)
+- [`README.md`](../../README.md)
+- [`AGENTS.md`](../../AGENTS.md)
+- [`workshop-skill/SKILL.md`](../../workshop-skill/SKILL.md)
+- [`workshop-skill/follow-up-package.md`](../../workshop-skill/follow-up-package.md)
+- [`docs/public-private-taxonomy.md`](../public-private-taxonomy.md)
+- [`docs/plans/2026-04-06-docs-harness-lab-public-private-repositioning-plan.md`](2026-04-06-docs-harness-lab-public-private-repositioning-plan.md)
+- [`docs/plans/2026-04-06-feat-workshop-skill-event-access-model-plan.md`](2026-04-06-feat-workshop-skill-event-access-model-plan.md)

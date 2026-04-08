@@ -2,7 +2,7 @@
 
 Date: 2026-04-06
 Author: Codex
-Repo: `/Users/ondrejsvec/projects/Bobo/harness-lab`
+Repo root: `..`
 Audience: repo owner / future CTO handoff / operators shipping the private workshop-instance runtime
 
 ## Assumed Constraints
@@ -14,7 +14,7 @@ This review assumes:
 - the public repo must stay public-safe
 - the current priority is production-capable workshop operations, not a general-purpose SaaS platform
 
-These assumptions are consistent with [AGENTS.md](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md), the accepted ADRs, and the current implementation shape.
+These assumptions are consistent with [AGENTS.md](../AGENTS.md), the accepted ADRs, and the current implementation shape.
 
 ## Architecture Decision Records
 
@@ -44,62 +44,62 @@ The system is production-capable for low-concurrency, operator-driven workshops 
 
 ### Verified stack
 
-- Next.js App Router on React 19 and TypeScript in [package.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/package.json)
-- file-backed local adapters plus Neon-backed private runtime adapters selected by [runtime-storage.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/runtime-storage.ts)
-- one shared workshop state service surface in [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
-- participant event-code flow in [event-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts)
-- facilitator grant checks in [facilitator-auth-service.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-auth-service.ts)
-- middleware gate for `/admin` in [middleware.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts)
+- Next.js App Router on React 19 and TypeScript in [package.json](../dashboard/package.json)
+- file-backed local adapters plus Neon-backed private runtime adapters selected by [runtime-storage.ts](../dashboard/lib/runtime-storage.ts)
+- one shared workshop state service surface in [workshop-store.ts](../dashboard/lib/workshop-store.ts)
+- participant event-code flow in [event-access.ts](../dashboard/lib/event-access.ts)
+- facilitator grant checks in [facilitator-auth-service.ts](../dashboard/lib/facilitator-auth-service.ts)
+- middleware gate for `/admin` in [middleware.ts](../dashboard/middleware.ts)
 
 ### Verified route/auth matrix
 
 | Method | Path | Auth | Verified source |
 | --- | --- | --- | --- |
-| `GET` | `/api/briefs` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/briefs/route.ts) |
-| `GET` | `/api/challenges` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/challenges/route.ts) |
-| `GET` | `/api/agenda` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/agenda/route.ts) |
-| `PATCH` | `/api/agenda` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/agenda/route.ts) |
-| `GET` | `/api/rotation` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/rotation/route.ts) |
-| `PATCH` | `/api/rotation` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/rotation/route.ts) |
-| `GET` | `/api/workshop` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts) |
-| `POST` | `/api/workshop` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/workshop/route.ts) |
-| `GET` | `/api/checkpoints` | participant session | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/checkpoints/route.ts) |
-| `POST` | `/api/checkpoints` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/checkpoints/route.ts) |
-| `GET` | `/api/event-context/core` | participant session | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-context/core/route.ts) |
-| `GET` | `/api/event-context/teams` | participant session | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-context/teams/route.ts) |
-| `GET` | `/api/teams` | participant session | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/teams/route.ts) |
-| `POST` | `/api/admin/teams` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/admin/teams/route.ts) |
-| `PATCH` | `/api/admin/teams` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/admin/teams/route.ts) |
-| `GET` | `/api/monitoring` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/monitoring/route.ts) |
-| `POST` | `/api/monitoring` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/monitoring/route.ts) |
-| `POST` | `/api/challenges/[id]/complete` | facilitator | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/challenges/[id]/complete/route.ts) |
-| `POST` | `/api/event-access/redeem` | none | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-access/redeem/route.ts) |
-| `POST` | `/api/event-access/logout` | participant session cookie | [route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-access/logout/route.ts) |
-| page + server actions | `/admin` | env Basic Auth at middleware + facilitator check in actions | [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx), [middleware.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts), [facilitator-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-access.ts) |
+| `GET` | `/api/briefs` | none | [route.ts](../dashboard/app/api/briefs/route.ts) |
+| `GET` | `/api/challenges` | none | [route.ts](../dashboard/app/api/challenges/route.ts) |
+| `GET` | `/api/agenda` | none | [route.ts](../dashboard/app/api/agenda/route.ts) |
+| `PATCH` | `/api/agenda` | facilitator | [route.ts](../dashboard/app/api/agenda/route.ts) |
+| `GET` | `/api/rotation` | none | [route.ts](../dashboard/app/api/rotation/route.ts) |
+| `PATCH` | `/api/rotation` | facilitator | [route.ts](../dashboard/app/api/rotation/route.ts) |
+| `GET` | `/api/workshop` | none | [route.ts](../dashboard/app/api/workshop/route.ts) |
+| `POST` | `/api/workshop` | facilitator | [route.ts](../dashboard/app/api/workshop/route.ts) |
+| `GET` | `/api/checkpoints` | participant session | [route.ts](../dashboard/app/api/checkpoints/route.ts) |
+| `POST` | `/api/checkpoints` | facilitator | [route.ts](../dashboard/app/api/checkpoints/route.ts) |
+| `GET` | `/api/event-context/core` | participant session | [route.ts](../dashboard/app/api/event-context/core/route.ts) |
+| `GET` | `/api/event-context/teams` | participant session | [route.ts](../dashboard/app/api/event-context/teams/route.ts) |
+| `GET` | `/api/teams` | participant session | [route.ts](../dashboard/app/api/teams/route.ts) |
+| `POST` | `/api/admin/teams` | facilitator | [route.ts](../dashboard/app/api/admin/teams/route.ts) |
+| `PATCH` | `/api/admin/teams` | facilitator | [route.ts](../dashboard/app/api/admin/teams/route.ts) |
+| `GET` | `/api/monitoring` | facilitator | [route.ts](../dashboard/app/api/monitoring/route.ts) |
+| `POST` | `/api/monitoring` | facilitator | [route.ts](../dashboard/app/api/monitoring/route.ts) |
+| `POST` | `/api/challenges/[id]/complete` | facilitator | [route.ts](../dashboard/app/api/challenges/[id]/complete/route.ts) |
+| `POST` | `/api/event-access/redeem` | none | [route.ts](../dashboard/app/api/event-access/redeem/route.ts) |
+| `POST` | `/api/event-access/logout` | participant session cookie | [route.ts](../dashboard/app/api/event-access/logout/route.ts) |
+| page + server actions | `/admin` | env Basic Auth at middleware + facilitator check in actions | [page.tsx](../dashboard/app/admin/page.tsx), [middleware.ts](../dashboard/middleware.ts), [facilitator-access.ts](../dashboard/lib/facilitator-access.ts) |
 
 ### Verified data flow
 
 Current runtime flow is:
 
-1. resolve `instance_id` from environment via [instance-context.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/instance-context.ts)
-2. read or seed workshop state through [workshop-state-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts)
-3. participant routes validate a hashed session through [event-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts)
-4. facilitator routes validate username/password against identity + instance grant through [facilitator-auth-service.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-auth-service.ts)
-5. most mutations still modify the same `WorkshopState` object in [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts)
+1. resolve `instance_id` from environment via [instance-context.ts](../dashboard/lib/instance-context.ts)
+2. read or seed workshop state through [workshop-state-repository.ts](../dashboard/lib/workshop-state-repository.ts)
+3. participant routes validate a hashed session through [event-access.ts](../dashboard/lib/event-access.ts)
+4. facilitator routes validate username/password against identity + instance grant through [facilitator-auth-service.ts](../dashboard/lib/facilitator-auth-service.ts)
+5. most mutations still modify the same `WorkshopState` object in [workshop-store.ts](../dashboard/lib/workshop-store.ts)
 
 ## Security
 
 ### What is now materially better
 
-- participant session cookies store opaque tokens while persistence uses `token_hash`, not raw tokens, in [event-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts) and [event-access-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts)
+- participant session cookies store opaque tokens while persistence uses `token_hash`, not raw tokens, in [event-access.ts](../dashboard/lib/event-access.ts) and [event-access-repository.ts](../dashboard/lib/event-access-repository.ts)
 - facilitator API routes are now explicitly protected instead of depending on one mixed route surface
-- CI includes dependency review, CodeQL, and secret scanning in [.github/workflows/dependency-review.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dependency-review.yml), [.github/workflows/codeql.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/codeql.yml), and [.github/workflows/secret-scan.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/secret-scan.yml)
+- CI includes dependency review, CodeQL, and secret scanning in [.github/workflows/dependency-review.yml](../.github/workflows/dependency-review.yml), [.github/workflows/codeql.yml](../.github/workflows/codeql.yml), and [.github/workflows/secret-scan.yml](../.github/workflows/secret-scan.yml)
 
 ### Verified gaps
 
 #### 1. Dual facilitator auth sources still exist
 
-The accepted auth ADR says facilitator identity should be global and grants should authorize per instance. In practice, `/admin` still depends first on environment Basic Auth in [middleware.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts), while API and server actions then depend on the DB-backed auth service in [facilitator-auth-service.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-auth-service.ts).
+The accepted auth ADR says facilitator identity should be global and grants should authorize per instance. In practice, `/admin` still depends first on environment Basic Auth in [middleware.ts](../dashboard/middleware.ts), while API and server actions then depend on the DB-backed auth service in [facilitator-auth-service.ts](../dashboard/lib/facilitator-auth-service.ts).
 
 Architectural consequence:
 
@@ -114,28 +114,28 @@ There is no verified CSRF token or origin-checking layer across facilitator muta
 This is especially relevant because:
 
 - facilitator mutations are POST/PATCH endpoints on the same origin
-- server actions in [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/page.tsx) are high-impact state writers
+- server actions in [page.tsx](../dashboard/app/admin/page.tsx) are high-impact state writers
 - Basic Auth and same-site cookies are not a complete CSRF strategy by themselves
 
 #### 3. No rate limiting on participant code redemption
 
-[event-access/redeem/route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-access/redeem/route.ts) and [event-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access.ts) validate codes correctly, but there is no throttling or lockout path. The earlier event-access planning docs explicitly called out rate limiting; the implementation does not.
+[event-access/redeem/route.ts](../dashboard/app/api/event-access/redeem/route.ts) and [event-access.ts](../dashboard/lib/event-access.ts) validate codes correctly, but there is no throttling or lockout path. The earlier event-access planning docs explicitly called out rate limiting; the implementation does not.
 
 ### Data exposure notes
 
-The participant-safe teams lookup in [event-context/teams/route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/event-context/teams/route.ts) deliberately returns a minimized view. However, [teams/route.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/api/teams/route.ts) returns full `Team` objects from [workshop-data.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts), including `members` and `projectBriefId`, to any participant session. That may be acceptable for workshop operations, but it is a broader disclosure surface than the participant-specific contract implies.
+The participant-safe teams lookup in [event-context/teams/route.ts](../dashboard/app/api/event-context/teams/route.ts) deliberately returns a minimized view. However, [teams/route.ts](../dashboard/app/api/teams/route.ts) returns full `Team` objects from [workshop-data.ts](../dashboard/lib/workshop-data.ts), including `members` and `projectBriefId`, to any participant session. That may be acceptable for workshop operations, but it is a broader disclosure surface than the participant-specific contract implies.
 
 ## Architecture Bottlenecks
 
 ### Bottleneck 1: Whole-document workshop-state persistence
 
-Most stateful operations call [updateWorkshopState()](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts), which:
+Most stateful operations call [updateWorkshopState()](../dashboard/lib/workshop-store.ts), which:
 
 1. reads the full `WorkshopState`
 2. mutates one slice in memory
 3. writes the entire document back
 
-The Neon adapter persists that entire state blob into `workshop_instances.workshop_state` in [workshop-state-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-state-repository.ts).
+The Neon adapter persists that entire state blob into `workshop_instances.workshop_state` in [workshop-state-repository.ts](../dashboard/lib/workshop-state-repository.ts).
 
 Compute profile:
 
@@ -147,7 +147,7 @@ Why this matters:
 
 - concurrent facilitator writes can overwrite each other
 - operational entities that should have separate retention and audit rules stay coupled
-- schema tables such as `checkpoints` and `monitoring_snapshots` remain unused despite being created in [2026-04-06-private-workshop-instance-runtime.sql](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql)
+- schema tables such as `checkpoints` and `monitoring_snapshots` remain unused despite being created in [2026-04-06-private-workshop-instance-runtime.sql](../dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql)
 
 Recommendation:
 
@@ -156,7 +156,7 @@ Recommendation:
 
 ### Bottleneck 2: Participant session persistence is destructive under concurrency
 
-The Neon session adapter in [event-access-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts) deletes all sessions for an instance, then reinserts the provided array.
+The Neon session adapter in [event-access-repository.ts](../dashboard/lib/event-access-repository.ts) deletes all sessions for an instance, then reinserts the provided array.
 
 Why this matters:
 
@@ -171,16 +171,16 @@ Recommendation:
 
 ### Bottleneck 3: Monitoring and checkpoint architecture is only half migrated
 
-The schema defines dedicated `monitoring_snapshots` and `checkpoints` tables in [2026-04-06-private-workshop-instance-runtime.sql](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql), but runtime writes still go through `workshop_state.monitoring` and `workshop_state.sprintUpdates` in [workshop-store.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-store.ts). [monitoring-snapshot-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/monitoring-snapshot-repository.ts) is only a wrapper around `WorkshopState`.
+The schema defines dedicated `monitoring_snapshots` and `checkpoints` tables in [2026-04-06-private-workshop-instance-runtime.sql](../dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql), but runtime writes still go through `workshop_state.monitoring` and `workshop_state.sprintUpdates` in [workshop-store.ts](../dashboard/lib/workshop-store.ts). [monitoring-snapshot-repository.ts](../dashboard/lib/monitoring-snapshot-repository.ts) is only a wrapper around `WorkshopState`.
 
 Architectural consequence:
 
-- retention rules described in [private-workshop-instance-schema.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md) cannot actually be enforced at the entity level
+- retention rules described in [private-workshop-instance-schema.md](private-workshop-instance-schema.md) cannot actually be enforced at the entity level
 - archive/export behavior is undefined because the modeled tables are not the live source of truth
 
 ### Bottleneck 4: Facilitator page auth remains middleware-coupled
 
-`/admin` page access depends on [middleware.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/middleware.ts) forwarding the header into `x-harness-authorization`, which [facilitator-access.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-access.ts) then uses in server actions.
+`/admin` page access depends on [middleware.ts](../dashboard/middleware.ts) forwarding the header into `x-harness-authorization`, which [facilitator-access.ts](../dashboard/lib/facilitator-access.ts) then uses in server actions.
 
 This is workable, but it couples security-critical behavior to a request-header hop instead of a first-class session model. It also means the architecture is still closer to “protected by Basic Auth plus DB checks” than to the accepted “separate facilitator identity plane.”
 
@@ -218,19 +218,19 @@ That failure mode will happen long before Vercel or Neon throughput limits becom
 
 Private runtime data now includes:
 
-- participant session hashes in [event-access-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/event-access-repository.ts)
-- participant event access hashes in [participant-event-access-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/participant-event-access-repository.ts)
-- facilitator identities in [facilitator-identity-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/facilitator-identity-repository.ts)
-- facilitator instance grants in [instance-grant-repository.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/instance-grant-repository.ts)
-- workshop teams and member names embedded in [workshop-data.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) and persisted as `workshop_state`
+- participant session hashes in [event-access-repository.ts](../dashboard/lib/event-access-repository.ts)
+- participant event access hashes in [participant-event-access-repository.ts](../dashboard/lib/participant-event-access-repository.ts)
+- facilitator identities in [facilitator-identity-repository.ts](../dashboard/lib/facilitator-identity-repository.ts)
+- facilitator instance grants in [instance-grant-repository.ts](../dashboard/lib/instance-grant-repository.ts)
+- workshop teams and member names embedded in [workshop-data.ts](../dashboard/lib/workshop-data.ts) and persisted as `workshop_state`
 
 ### Verified compliance posture
 
 The repo now has good policy intent in:
 
-- [private-workshop-instance-data-classification.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
-- [private-workshop-instance-schema.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
-- [public-launch-history-cleanup-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-launch-history-cleanup-plan.md)
+- [private-workshop-instance-data-classification.md](private-workshop-instance-data-classification.md)
+- [private-workshop-instance-schema.md](private-workshop-instance-schema.md)
+- [public-launch-history-cleanup-plan.md](public-launch-history-cleanup-plan.md)
 
 But the implementation still lacks:
 
@@ -247,13 +247,13 @@ The repo is **privacy-aware by design docs**, but **not yet operationally comple
 
 ### What exists
 
-- lint, unit test, and build automation in [dashboard-ci.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
-- supply-chain and code scanning in [dependency-review.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dependency-review.yml), [codeql.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/codeql.yml), and [secret-scan.yml](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/secret-scan.yml)
-- env-gated Neon integration test in [neon-runtime.integration.test.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/neon-runtime.integration.test.ts)
+- lint, unit test, and build automation in [dashboard-ci.yml](../.github/workflows/dashboard-ci.yml)
+- supply-chain and code scanning in [dependency-review.yml](../.github/workflows/dependency-review.yml), [codeql.yml](../.github/workflows/codeql.yml), and [secret-scan.yml](../.github/workflows/secret-scan.yml)
+- env-gated Neon integration test in [neon-runtime.integration.test.ts](../dashboard/lib/neon-runtime.integration.test.ts)
 
 ### What is still missing
 
-- Playwright is not part of CI despite being a required gate in [private-workshop-instance-security-gates.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
+- Playwright is not part of CI despite being a required gate in [private-workshop-instance-security-gates.md](private-workshop-instance-security-gates.md)
 - Neon integration is not enforced in CI because the test is skipped without `HARNESS_TEST_DATABASE_URL`
 - no runtime error monitoring or alert path is wired
 - no admin tooling exists for archive/export/grant management beyond direct state mutation

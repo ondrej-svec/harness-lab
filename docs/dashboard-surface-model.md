@@ -77,8 +77,8 @@ Design rules:
 There are now two explicit layers:
 
 - public blueprint layer
-  - canonical reusable agenda structure lives in [`workshop-blueprint/agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
-  - supporting human-readable workshop method docs live in [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint)
+  - canonical reusable agenda structure lives in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
+  - supporting human-readable workshop method docs live in [`workshop-blueprint/`](../workshop-blueprint/)
 - runtime instance layer
   - instance create/reset imports blueprint-owned fields into the active workshop instance
   - imported agenda becomes a runtime copy that facilitators may edit locally for that instance
@@ -114,8 +114,8 @@ The rule is:
 
 The blueprint/runtime split is defined more fully in:
 
-- [`blueprint-import-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
-- [`runtime-learning-publish-back.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
+- [`blueprint-import-model.md`](blueprint-import-model.md)
+- [`runtime-learning-publish-back.md`](runtime-learning-publish-back.md)
 
 ## Data Boundary
 

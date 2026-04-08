@@ -3,7 +3,7 @@ title: "feat: rich facilitator agenda and presenter content model"
 type: plan
 date: 2026-04-08
 status: complete
-brainstorm: /Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md
+brainstorm: ../brainstorms/2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md
 confidence: medium
 ---
 
@@ -15,9 +15,9 @@ Replace the current thin phase timeline with a richer workshop-day model so the 
 
 Harness Lab currently splits the facilitator’s real operating model across three places:
 
-- a thin runtime agenda in [`dashboard/lib/workshop-blueprint-agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json)
-- richer workshop method content in [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md)
-- talk and demo detail in [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md) and [`content/talks/codex-demo-script.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md)
+- a thin runtime agenda in [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json)
+- richer workshop method content in [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md)
+- talk and demo detail in [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md) and [`content/talks/codex-demo-script.md`](../../content/talks/codex-demo-script.md)
 
 That split makes the dashboard feel incomplete in real use:
 
@@ -66,7 +66,7 @@ This is a **detailed** plan because it changes the workshop’s core source-of-t
   - Keep the blueprint public-safe and reusable.
 
 - [x] Extend the runtime data model and import/reset semantics.
-  - Expand the workshop blueprint/runtime types in [`dashboard/lib/workshop-data.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts) to carry the richer agenda and presenter-pack shape.
+  - Expand the workshop blueprint/runtime types in [`dashboard/lib/workshop-data.ts`](../../dashboard/lib/workshop-data.ts) to carry the richer agenda and presenter-pack shape.
   - Update import/reset behavior so the richer blueprint agenda is copied into runtime instances cleanly.
   - Preserve traceability for blueprint-owned versus runtime-local agenda and scene content.
   - Define how instance-local overrides work for pack fields, scene ordering, scene enablement, and facilitator notes.
@@ -90,7 +90,7 @@ This is a **detailed** plan because it changes the workshop’s core source-of-t
   - Keep `participant-preview` as one scene block/scene type inside a richer presenter sequence rather than the primary model.
 
 - [x] Align the facilitator skill with the richer workshop-day model.
-  - Update [`workshop-skill/facilitator.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/facilitator.md) so facilitator commands refer to agenda items, presenter packs, and explicit workshop moments rather than a thin timeline.
+  - Update [`workshop-skill/facilitator.md`](../../workshop-skill/facilitator.md) so facilitator commands refer to agenda items, presenter packs, and explicit workshop moments rather than a thin timeline.
   - Add or refine commands/prompts that let the facilitator inspect and operate the rich agenda structure through the same runtime APIs.
   - Ensure the skill falls back to repo-native content only when runtime data is unavailable, and says so explicitly.
   - Keep CLI/API examples aligned with the canonical agenda ids and data contract.
@@ -151,7 +151,7 @@ Rejected for v1 because it adds a fragile implicit authoring pipeline. A conscio
 
 | Assumption | Status | Evidence |
 |------------|--------|----------|
-| The workshop method already exists in repo-native content strongly enough to author a rich canonical agenda without inventing new substance | Verified | [`content/facilitation/master-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md), [`content/talks/context-is-king.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md), and [`content/talks/codex-demo-script.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md) already contain the missing detail |
+| The workshop method already exists in repo-native content strongly enough to author a rich canonical agenda without inventing new substance | Verified | [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md), [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md), and [`content/talks/codex-demo-script.md`](../../content/talks/codex-demo-script.md) already contain the missing detail |
 | Agenda items remain the right top-level unit for runtime sequencing and presenter packs | Verified | Both brainstorms retained agenda ownership and the current runtime already uses agenda as the live backbone |
 | Intermezzos are important enough to deserve first-class agenda representation | Verified | The facilitation guide treats them as repeatable workshop checkpoints, not incidental notes |
 | A structured block model is sufficient for v1 rich scenes without needing a full presentation editor | Verified | The brainstorm explicitly selected a bounded block taxonomy that covers the known content types |
@@ -331,13 +331,13 @@ Exit criteria:
 
 ## References
 
-- Primary brainstorm: [2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md)
-- Supporting brainstorm: [2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md)
-- Prior implementation plan: [2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md)
-- Blueprint model: [workshop-blueprint-agenda.json](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-blueprint-agenda.json)
-- Runtime types: [workshop-data.ts](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/lib/workshop-data.ts)
-- Presenter route: [page.tsx](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/app/admin/instances/[id]/presenter/page.tsx)
-- Facilitator guide: [master-guide.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/facilitation/master-guide.md)
-- Talk content: [context-is-king.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/context-is-king.md)
-- Demo content: [codex-demo-script.md](/Users/ondrejsvec/projects/Bobo/harness-lab/content/talks/codex-demo-script.md)
-- Surface rules: [dashboard-surface-model.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
+- Primary brainstorm: [2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md](../brainstorms/2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md)
+- Supporting brainstorm: [2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md](../brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md)
+- Prior implementation plan: [2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md](2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md)
+- Blueprint model: [workshop-blueprint-agenda.json](../../dashboard/lib/workshop-blueprint-agenda.json)
+- Runtime types: [workshop-data.ts](../../dashboard/lib/workshop-data.ts)
+- Presenter route: [page.tsx](../../dashboard/app/admin/instances/[id]/presenter/page.tsx)
+- Facilitator guide: [master-guide.md](../../content/facilitation/master-guide.md)
+- Talk content: [context-is-king.md](../../content/talks/context-is-king.md)
+- Demo content: [codex-demo-script.md](../../content/talks/codex-demo-script.md)
+- Surface rules: [dashboard-surface-model.md](../dashboard-surface-model.md)

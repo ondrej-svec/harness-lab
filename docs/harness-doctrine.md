@@ -41,12 +41,12 @@ That is the loop Harness Lab is trying to teach.
 
 For the current private workshop-instance architecture, the required sensors and release gates are defined in:
 
-- [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
-- [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
-- [`dependency-maintenance.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dependency-maintenance.md)
+- [`private-workshop-instance-security-gates.md`](private-workshop-instance-security-gates.md)
+- [`private-workshop-instance-deployment-spec.md`](private-workshop-instance-deployment-spec.md)
+- [`dependency-maintenance.md`](dependency-maintenance.md)
 
 For the reusable workshop method itself, the canonical public operating surface now starts in:
 
-- [`workshop-blueprint/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md)
-- [`blueprint-import-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/blueprint-import-model.md)
-- [`runtime-learning-publish-back.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/runtime-learning-publish-back.md)
+- [`workshop-blueprint/README.md`](../workshop-blueprint/README.md)
+- [`blueprint-import-model.md`](blueprint-import-model.md)
+- [`runtime-learning-publish-back.md`](runtime-learning-publish-back.md)

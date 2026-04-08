@@ -16,7 +16,7 @@ The facilitator does not use the live dashboard to silently rewrite the reusable
 
 ## Before The Day
 
-1. Start from the public blueprint in [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md).
+1. Start from the public blueprint in [`README.md`](README.md).
 2. Create or prepare a private workshop instance by importing the blueprint.
 3. Attach instance-local metadata outside the public repo:
    - real date

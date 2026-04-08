@@ -21,7 +21,7 @@ Best use cases:
 
 In this repo:
 - `npm run test:e2e`
-- [`dashboard/e2e/dashboard.spec.ts`](/Users/ondrejsvec/projects/Bobo/harness-lab/dashboard/e2e/dashboard.spec.ts)
+- [`dashboard/e2e/dashboard.spec.ts`](../dashboard/e2e/dashboard.spec.ts)
 
 These are the tests that answer:
 - "did we break something that used to work?"
