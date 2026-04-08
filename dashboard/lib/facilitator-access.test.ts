@@ -6,6 +6,8 @@ const getCliSessionFromBearerToken = vi.fn();
 const parseBearerToken = vi.fn();
 const hasValidRequestCredentials = vi.fn();
 const hasValidSession = vi.fn();
+const resolveFacilitatorGrant = vi.fn();
+const getInstance = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 const requireTrustedActionOrigin = vi.fn();
 
@@ -29,8 +31,18 @@ vi.mock("./facilitator-auth-service", () => ({
   }),
 }));
 
+vi.mock("./facilitator-session", () => ({
+  resolveFacilitatorGrant,
+}));
+
 vi.mock("./instance-context", () => ({
   getCurrentWorkshopInstanceId: () => "sample-studio-a",
+}));
+
+vi.mock("./workshop-instance-repository", () => ({
+  getWorkshopInstanceRepository: () => ({
+    getInstance,
+  }),
 }));
 
 vi.mock("./runtime-storage", () => ({
@@ -59,8 +71,10 @@ describe("facilitator-access", () => {
     headers.mockResolvedValue(new Headers());
     hasValidRequestCredentials.mockResolvedValue(true);
     hasValidSession.mockResolvedValue(true);
+    resolveFacilitatorGrant.mockResolvedValue({ id: "grant-1", role: "owner" });
     parseBearerToken.mockReturnValue(null);
     getCliSessionFromBearerToken.mockResolvedValue(null);
+    getInstance.mockImplementation(async (instanceId) => ({ id: instanceId }));
     requireTrustedActionOrigin.mockResolvedValue(true);
   });
 
@@ -103,7 +117,7 @@ describe("facilitator-access", () => {
     process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
     parseBearerToken.mockReturnValue("cli-token");
-    getCliSessionFromBearerToken.mockResolvedValue({ tokenHash: "hash" });
+    getCliSessionFromBearerToken.mockResolvedValue({ tokenHash: "hash", neonUserId: "user-1" });
 
     const response = await requireFacilitatorRequest(
       new Request("http://localhost/api/admin/facilitators", {
@@ -115,7 +129,22 @@ describe("facilitator-access", () => {
 
     expect(response).toBeNull();
     expect(getCliSessionFromBearerToken).toHaveBeenCalledWith("cli-token");
+    expect(resolveFacilitatorGrant).toHaveBeenCalledWith("sample-studio-a", "user-1");
     expect(hasValidSession).not.toHaveBeenCalled();
+  });
+
+  it("returns an explicit not-found error when the target workshop does not exist", async () => {
+    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    getInstance.mockResolvedValueOnce(null);
+
+    const response = await requireFacilitatorRequest(
+      new Request("http://localhost/api/admin/facilitators/ghost"),
+      "ghost-instance",
+    );
+
+    expect(response?.status).toBe(404);
+    await expect(response?.json()).resolves.toEqual({ ok: false, error: "instance not found" });
+    expect(hasValidRequestCredentials).not.toHaveBeenCalled();
   });
 
   it("falls back to session auth in neon mode without a cli token", async () => {
@@ -174,7 +203,6 @@ describe("facilitator-access", () => {
     process.env.NEON_AUTH_BASE_URL = originalBaseUrl;
     process.env.NEON_AUTH_COOKIE_SECRET = originalCookieSecret;
   });
-});
   it("throws when neon mode is selected without a complete auth config", async () => {
     const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
@@ -187,3 +215,4 @@ describe("facilitator-access", () => {
       "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET are required when HARNESS_STORAGE_MODE=neon",
     );
   });
+});

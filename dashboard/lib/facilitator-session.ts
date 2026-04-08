@@ -13,6 +13,11 @@ export type FacilitatorSession = {
   grant: InstanceGrantRecord;
 };
 
+export type ResolvedFacilitatorGrant = {
+  grant: InstanceGrantRecord | null;
+  autoBootstrapped: boolean;
+};
+
 export async function getAuthenticatedFacilitator(): Promise<AuthenticatedFacilitator | null> {
   if (!isNeonRuntimeMode()) {
     return null;
@@ -29,17 +34,27 @@ export async function getAuthenticatedFacilitator(): Promise<AuthenticatedFacili
   return userId ? { neonUserId: userId } : null;
 }
 
-export async function resolveFacilitatorGrant(instanceId: string, neonUserId: string): Promise<InstanceGrantRecord | null> {
+export async function resolveFacilitatorGrantWithBootstrap(
+  instanceId: string,
+  neonUserId: string,
+): Promise<ResolvedFacilitatorGrant> {
   const repo = getInstanceGrantRepository();
   let grant = await repo.getActiveGrantByNeonUserId(instanceId, neonUserId);
+  let autoBootstrapped = false;
 
   if (!grant) {
     const grantCount = await repo.countActiveGrants(instanceId);
     if (grantCount === 0) {
       grant = await repo.createGrant(instanceId, neonUserId, "owner");
+      autoBootstrapped = true;
     }
   }
 
+  return { grant, autoBootstrapped };
+}
+
+export async function resolveFacilitatorGrant(instanceId: string, neonUserId: string): Promise<InstanceGrantRecord | null> {
+  const { grant } = await resolveFacilitatorGrantWithBootstrap(instanceId, neonUserId);
   return grant;
 }
 

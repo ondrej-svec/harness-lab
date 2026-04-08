@@ -6,9 +6,19 @@ import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { resolveFacilitatorGrant } from "./facilitator-session";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
+import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 
 function unauthorizedResponse() {
   return new Response("Authentication required", { status: 401 });
+}
+
+function jsonErrorResponse(status: number, error: string) {
+  return new Response(JSON.stringify({ ok: false, error }), {
+    status,
+    headers: {
+      "content-type": "application/json",
+    },
+  });
 }
 
 function isNeonAuthMode() {
@@ -20,12 +30,38 @@ function isNeonAuthMode() {
   return true;
 }
 
+async function resolveTargetWorkshopInstance(instanceId?: string | null) {
+  if (instanceId === null) {
+    return { instanceId: null as null, errorResponse: null as Response | null };
+  }
+
+  const resolvedInstanceId = instanceId === undefined ? getCurrentWorkshopInstanceId() : instanceId;
+  if (!resolvedInstanceId) {
+    return {
+      instanceId: null as null,
+      errorResponse: jsonErrorResponse(400, "no target workshop selected"),
+    };
+  }
+
+  const instance = await getWorkshopInstanceRepository().getInstance(resolvedInstanceId);
+  if (!instance) {
+    return {
+      instanceId: null as null,
+      errorResponse:
+        instanceId === undefined
+          ? jsonErrorResponse(400, "default workshop instance is not available")
+          : jsonErrorResponse(404, "instance not found"),
+    };
+  }
+
+  return { instanceId: resolvedInstanceId, errorResponse: null as Response | null };
+}
+
 /**
  * Guard for API routes: returns an error response if unauthorized, null if authorized.
  * Uses the Request object directly (no next/headers dependency).
  */
 export async function requireFacilitatorRequest(request: Request, instanceId?: string | null) {
-  const resolvedInstanceId = instanceId === undefined ? getCurrentWorkshopInstanceId() : instanceId;
   if (request.method !== "GET") {
     if (
       !isTrustedOrigin({
@@ -37,6 +73,11 @@ export async function requireFacilitatorRequest(request: Request, instanceId?: s
     ) {
       return untrustedOriginResponse();
     }
+  }
+
+  const { instanceId: resolvedInstanceId, errorResponse } = await resolveTargetWorkshopInstance(instanceId);
+  if (errorResponse) {
+    return errorResponse;
   }
 
   const service = getFacilitatorAuthService();
@@ -75,7 +116,11 @@ export async function requireFacilitatorRequest(request: Request, instanceId?: s
  * Uses next/headers for Server Component context.
  */
 export async function requireFacilitatorPageAccess(instanceId?: string | null) {
-  const resolvedInstanceId = instanceId === undefined ? getCurrentWorkshopInstanceId() : instanceId;
+  const { instanceId: resolvedInstanceId, errorResponse } = await resolveTargetWorkshopInstance(instanceId);
+  if (errorResponse) {
+    redirect(instanceId === undefined ? "/admin?error=default_instance_missing" : "/admin?error=instance_not_found");
+  }
+
   const service = getFacilitatorAuthService();
 
   if (isNeonAuthMode()) {

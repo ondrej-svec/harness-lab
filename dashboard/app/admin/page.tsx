@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
-import { getFacilitatorSession } from "@/lib/facilitator-session";
 import {
   buildAdminInstanceHref,
   buildAdminWorkspaceHref,
@@ -47,8 +46,7 @@ async function signOutAction(formData: FormData) {
 async function createInstanceAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-  const accessInstanceId = String(formData.get("accessInstanceId") ?? "").trim();
-  await requireFacilitatorActionAccess(accessInstanceId);
+  await requireFacilitatorActionAccess(null);
 
   const id = String(formData.get("newInstanceId") ?? "").trim();
   const templateId = workshopTemplates[0]?.id ?? "";
@@ -152,11 +150,7 @@ export default async function AdminWorkspacePage({
   const lang = resolveUiLanguage(params?.lang);
   const copy = adminCopy[lang];
   const instanceRepo = getWorkshopInstanceRepository();
-  const [availableInstances, defaultInstanceId] = await Promise.all([
-    instanceRepo.listInstances(),
-    instanceRepo.getDefaultInstanceId(),
-  ]);
-  const workspaceAccessInstanceId = availableInstances[0]?.id ?? defaultInstanceId;
+  const availableInstances = await instanceRepo.listInstances();
 
   if (params?.instance) {
     redirect(
@@ -172,17 +166,15 @@ export default async function AdminWorkspacePage({
     );
   }
 
-  await requireFacilitatorPageAccess(workspaceAccessInstanceId);
+  await requireFacilitatorPageAccess(null);
 
   const filters = readWorkspaceFilters({ q: params?.q, status: params?.status });
   const filteredInstances = filterWorkshopInstances(availableInstances, filters);
   const workspaceStats = buildWorkspaceStatusSummary(availableInstances);
-  const [loadedCurrentFacilitator, loadedAuthSession, loadedWorkshopStates] = await Promise.all([
-    getRuntimeStorageMode() === "neon" ? getFacilitatorSession(workspaceAccessInstanceId) : Promise.resolve(null),
+  const [loadedAuthSession, loadedWorkshopStates] = await Promise.all([
     getRuntimeStorageMode() === "neon" && auth ? auth.getSession() : Promise.resolve({ data: null }),
     Promise.all(filteredInstances.map(async (instance) => ({ instanceId: instance.id, state: await getWorkshopState(instance.id) }))),
   ]);
-  const currentFacilitator: Awaited<ReturnType<typeof getFacilitatorSession>> = loadedCurrentFacilitator;
   const authSession: Awaited<ReturnType<NonNullable<typeof auth>["getSession"]>> | { data: null } = loadedAuthSession;
   const workshopStates: Array<{ instanceId: string; state: Awaited<ReturnType<typeof getWorkshopState>> }> = loadedWorkshopStates;
 
@@ -235,7 +227,7 @@ export default async function AdminWorkspacePage({
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.workspaceSummaryTitle}</p>
                 {signedInEmail ? (
-                  <p className="text-xs leading-5 text-[var(--hero-secondary)]">{`${copy.signedInAs}: ${signedInName ?? signedInEmail}${currentFacilitator?.grant.role ? ` • ${currentFacilitator.grant.role}` : ""}`}</p>
+                  <p className="text-xs leading-5 text-[var(--hero-secondary)]">{`${copy.signedInAs}: ${signedInName ?? signedInEmail}`}</p>
                 ) : null}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
@@ -311,7 +303,6 @@ export default async function AdminWorkspacePage({
 
                     <form action={createInstanceAction} className="space-y-3">
                       <input name="lang" type="hidden" value={lang} />
-                      <input name="accessInstanceId" type="hidden" value={workspaceAccessInstanceId} />
 
                       <div className="grid gap-3 sm:grid-cols-2">
                         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] sm:col-span-2">

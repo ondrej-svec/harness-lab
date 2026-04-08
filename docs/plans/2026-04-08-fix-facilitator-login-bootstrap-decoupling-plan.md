@@ -210,7 +210,7 @@ Tasks:
   - workshop selection is separate from login
   - workshop authorization is instance-scoped
   - default instance context applies to operations, not login
-- [ ] Define one target-instance resolution order for CLI and dashboard:
+- [x] Define one target-instance resolution order for CLI and dashboard:
   - explicit instance id
   - route-selected instance
   - deployment default
@@ -267,9 +267,9 @@ Goal: make the new model legible to facilitators and agents.
 
 Tasks:
 - [x] Update `harness auth login` and `harness auth status` messaging so they describe auth success independently from workshop access
-- [ ] Decide which CLI commands should require explicit `--instance-id` versus allowing a default selected/deployment instance
-- [ ] Add or document a discoverable “which workshops can I operate on?” path using the existing instances surface
-- [ ] Ensure workshop commands surface clear failures for:
+- [x] Decide which CLI commands should require explicit `--instance-id` versus allowing a default selected/deployment instance
+- [x] Add or document a discoverable “which workshops can I operate on?” path using the existing instances surface
+- [x] Ensure workshop commands surface clear failures for:
   - no workshop selected
   - missing default instance
   - unknown instance
@@ -313,9 +313,10 @@ Exit criteria:
 - [x] Document the new auth boundary and audit expectations.
 - [x] Refactor device auth and CLI session contracts so bootstrap is not instance-bound.
 - [x] Apply the corresponding Neon/file-mode persistence changes.
-- [ ] Standardize target-instance resolution so selection is explicit and consistent.
+- [x] Standardize target-instance resolution so selection is explicit and consistent.
 - [x] Move grant lookup and owner auto-bootstrap to instance-targeted authorization paths.
-- [ ] Update facilitator guards, dashboard semantics, and CLI messaging to separate login success from workshop selection and workshop authorization.
+- [x] Update facilitator guards and dashboard semantics to separate login success from workshop selection and workshop authorization.
+- [ ] Finish the remaining CLI messaging polish so workshop-selection failures carry command-specific hints.
 - [x] Add regression coverage for login bootstrap without a seeded instance and for first-use owner bootstrap.
 - [x] Update ADR/runbook/facilitator docs to match the new model.
 

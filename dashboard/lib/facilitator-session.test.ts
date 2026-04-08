@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const getSession = vi.fn();
 const getActiveGrantByNeonUserId = vi.fn();
+const countActiveGrants = vi.fn();
+const createGrant = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 
 vi.mock("./auth/server", () => ({
@@ -13,6 +15,8 @@ vi.mock("./auth/server", () => ({
 vi.mock("./instance-grant-repository", () => ({
   getInstanceGrantRepository: () => ({
     getActiveGrantByNeonUserId,
+    countActiveGrants,
+    createGrant,
   }),
 }));
 
@@ -35,6 +39,8 @@ describe("facilitator-session", () => {
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
+    countActiveGrants.mockResolvedValue(1);
+    createGrant.mockResolvedValue(null);
   });
 
   it("returns null outside neon mode", async () => {

@@ -118,4 +118,6 @@ Default model:
 - facilitator identity is global, but authorization remains per instance grant
 - facilitator login bootstrap should not require the target workshop instance record to pre-exist
 - `HARNESS_WORKSHOP_INSTANCE_ID` is a default workshop context for operations, not a facilitator identity key
+- the admin workspace and instance-creation flow are platform-scoped surfaces; they should not require a grant on an arbitrary first workshop
+- control-room pages and workshop mutations stay instance-scoped and should fail clearly when the target instance is unknown or the default instance is missing
 - facilitator skill privileged commands should route through the `harness` CLI for local auth/session handling

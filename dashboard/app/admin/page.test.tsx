@@ -102,7 +102,7 @@ describe("AdminWorkspacePage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
+    expect(requireFacilitatorPageAccess).toHaveBeenCalledWith(null);
     expect(getWorkshopState).toHaveBeenCalledTimes(sampleWorkshopInstances.length);
     expect(html).toContain(adminCopy.en.workspaceTitle);
     expect(html).toContain(adminCopy.en.workspaceOpenInstance);

@@ -1,7 +1,7 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getAuthenticatedFacilitator, resolveFacilitatorGrant } from "./facilitator-session";
+import { getAuthenticatedFacilitator, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { assertValidNeonAuthConfiguration } from "./runtime-auth-configuration";
@@ -84,7 +84,7 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
       return true;
     }
 
-    const grant = await resolveFacilitatorGrant(instanceId, userId);
+    const { grant, autoBootstrapped } = await resolveFacilitatorGrantWithBootstrap(instanceId, userId);
     const hasGrant = Boolean(grant);
 
     if (!hasGrant) {
@@ -93,6 +93,18 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
         severity: "warning",
         instanceId,
         metadata: { reason: "missing_grant", neonUserId: userId },
+      });
+    }
+
+    if (autoBootstrapped && grant) {
+      await getAuditLogRepository().append({
+        id: `audit-${Date.now()}`,
+        instanceId,
+        actorKind: "facilitator",
+        action: "facilitator_auto_bootstrap",
+        result: "success",
+        createdAt: new Date().toISOString(),
+        metadata: { neonUserId: userId, role: grant.role },
       });
     }
 
