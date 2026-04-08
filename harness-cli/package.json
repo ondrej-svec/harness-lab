@@ -2,7 +2,7 @@
   "name": "@harness-lab/cli",
   "version": "0.2.4",
   "description": "Participant-facing Harness Lab CLI for facilitator auth and workshop operations",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "repository": {
     "type": "git",
