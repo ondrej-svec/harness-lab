@@ -64,6 +64,99 @@ async function readJson(response) {
   }
 }
 
+function readStringFlag(flags, ...keys) {
+  for (const key of keys) {
+    if (typeof flags[key] === "string") {
+      const trimmed = String(flags[key]).trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+function readOptionalPositional(positionals, index) {
+  const value = positionals[index];
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
+async function readRequiredCommandValue(io, flags, keys, promptLabel, fallbackValue) {
+  const fromFlags = readStringFlag(flags, ...keys);
+  if (fromFlags) {
+    return fromFlags;
+  }
+
+  if (typeof fallbackValue === "string" && fallbackValue.trim().length > 0) {
+    return fallbackValue.trim();
+  }
+
+  const prompted = await prompt(io, promptLabel);
+  return prompted.trim();
+}
+
+function buildWorkshopMetadataInput(flags) {
+  const input = {
+    eventTitle: readStringFlag(flags, "event-title", "title"),
+    city: readStringFlag(flags, "city"),
+    dateRange: readStringFlag(flags, "date-range", "date"),
+    venueName: readStringFlag(flags, "venue-name", "venue"),
+    roomName: readStringFlag(flags, "room-name", "room"),
+    addressLine: readStringFlag(flags, "address-line", "address"),
+    locationDetails: readStringFlag(flags, "location-details", "location"),
+    facilitatorLabel: readStringFlag(flags, "facilitator-label", "facilitator"),
+  };
+
+  return Object.fromEntries(Object.entries(input).filter(([, value]) => typeof value === "string"));
+}
+
+function hasWorkshopMetadataInput(input) {
+  return Object.keys(input).length > 0;
+}
+
+async function promptWorkshopMetadataInput(io) {
+  const prompts = [
+    ["eventTitle", "Event title (leave blank to skip): "],
+    ["city", "City (leave blank to skip): "],
+    ["dateRange", "Date range (leave blank to skip): "],
+    ["venueName", "Venue name (leave blank to skip): "],
+    ["roomName", "Room name (leave blank to skip): "],
+    ["addressLine", "Address line (leave blank to skip): "],
+    ["locationDetails", "Location details (leave blank to skip): "],
+    ["facilitatorLabel", "Facilitator label (leave blank to skip): "],
+  ];
+  const values = {};
+
+  for (const [key, label] of prompts) {
+    const value = await prompt(io, label);
+    if (value) {
+      values[key] = value;
+    }
+  }
+
+  return values;
+}
+
+function summarizeWorkshopInstance(instance) {
+  const workshopMeta = instance?.workshopMeta ?? {};
+
+  return {
+    instanceId: instance?.id ?? null,
+    status: instance?.status ?? null,
+    eventTitle: workshopMeta.eventTitle ?? null,
+    city: workshopMeta.city ?? null,
+    dateRange: workshopMeta.dateRange ?? null,
+    venueName: workshopMeta.venueName ?? null,
+    roomName: workshopMeta.roomName ?? null,
+  };
+}
+
 function printUsage(io, ui) {
   ui.heading("Harness CLI");
   ui.paragraph(`Version ${version}`);
@@ -83,6 +176,10 @@ function printUsage(io, ui) {
     "harness skill install [--force]",
     "harness workshop status",
     "harness workshop archive [--notes TEXT]",
+    "harness workshop create-instance [<instance-id>] [--template-id ID] [--event-title TEXT] [--city CITY]",
+    "harness workshop update-instance <instance-id> [--event-title TEXT] [--city CITY]",
+    "harness workshop prepare <instance-id>",
+    "harness workshop remove-instance <instance-id>",
     "harness workshop phase set <phase-id>",
   ]);
 }
@@ -498,6 +595,171 @@ async function handleWorkshopArchive(io, ui, env, flags, deps) {
   }
 }
 
+async function handleWorkshopCreateInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const payload = {
+    id: instanceId,
+    ...(readStringFlag(flags, "template-id", "template") ? { templateId: readStringFlag(flags, "template-id", "template") } : {}),
+    ...buildWorkshopMetadataInput(flags),
+  };
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.createWorkshopInstance(payload);
+    ui.json("Workshop Create Instance", {
+      ok: true,
+      created: result.created ?? true,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Create instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopUpdateInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  let payload = buildWorkshopMetadataInput(flags);
+  if (!hasWorkshopMetadataInput(payload)) {
+    payload = await promptWorkshopMetadataInput(io);
+  }
+
+  if (!hasWorkshopMetadataInput(payload)) {
+    ui.status(
+      "error",
+      "At least one metadata field is required. Use flags such as --event-title, --date-range, --venue-name, or --room-name.",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateWorkshopInstance(instanceId, payload);
+    ui.json("Workshop Update Instance", {
+      ok: true,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Update instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopPrepare(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.prepareWorkshopInstance(instanceId);
+    ui.json("Workshop Prepare", {
+      ok: true,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Prepare failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopRemoveInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    await client.removeWorkshopInstance(instanceId);
+    ui.json("Workshop Remove Instance", {
+      ok: true,
+      instanceId,
+      removed: true,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Remove instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
   const phaseId = positionals[3];
   if (!phaseId) {
@@ -577,6 +839,22 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "archive") {
     return handleWorkshopArchive(io, ui, io.env, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "create-instance") {
+    return handleWorkshopCreateInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "update-instance") {
+    return handleWorkshopUpdateInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "prepare") {
+    return handleWorkshopPrepare(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "remove-instance") {
+    return handleWorkshopRemoveInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "phase" && subaction === "set") {

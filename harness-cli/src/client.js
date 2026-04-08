@@ -97,5 +97,26 @@ export function createHarnessClient({ fetchFn, session }) {
     archiveWorkshop(notes) {
       return request("/api/workshop/archive", { method: "POST", body: notes ? { notes } : {} });
     },
+    createWorkshopInstance(input) {
+      return request("/api/workshop/instances", { method: "POST", body: input });
+    },
+    updateWorkshopInstance(instanceId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}`, {
+        method: "PATCH",
+        body: { action: "update_metadata", ...input },
+      });
+    },
+    prepareWorkshopInstance(instanceId) {
+      return request("/api/workshop", {
+        method: "POST",
+        body: { action: "prepare", instanceId },
+      });
+    },
+    removeWorkshopInstance(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}`, {
+        method: "PATCH",
+        body: { action: "remove" },
+      });
+    },
   };
 }

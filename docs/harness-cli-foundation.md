@@ -7,7 +7,7 @@ This document defines the deliberately small v1 scope for the facilitator-side `
 Current implementation in this repo:
 
 - lives in [`harness-cli/`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli)
-- covers `auth login/logout/status` plus `workshop status/archive/phase set`
+- covers `auth login/logout/status` plus `workshop status/create-instance/update-instance/prepare/remove-instance/archive/phase set`
 - targets the existing shared dashboard facilitator APIs
 - is tested for browser/device auth, local-dev Basic Auth fallback, and cookie-backed Neon bootstrap fallback
 - stores sessions in a local file under `HARNESS_CLI_HOME` or `~/.harness` by default
@@ -38,8 +38,11 @@ Required commands:
 - `harness auth logout`
 - `harness auth status`
 - `harness workshop status`
+- `harness workshop create-instance`
+- `harness workshop update-instance`
 - `harness workshop archive`
 - `harness workshop prepare`
+- `harness workshop remove-instance`
 - `harness workshop phase set <phase-id>`
 
 The CLI may also expose a thin authenticated request wrapper for facilitator skills.
@@ -62,6 +65,18 @@ Preferred interactive path:
 4. CLI stores the resulting session material in local session storage
 
 The facilitator skill should call the CLI for privileged operations instead of storing raw auth/session material itself.
+
+Control model:
+
+- skill invokes CLI
+- CLI invokes shared protected dashboard APIs
+- APIs enforce authz, validation, idempotency, and audit logging
+
+For the current facilitator lifecycle slice:
+
+- `workshop status`, `create-instance`, `update-instance`, and `prepare` are brokered-session commands
+- `workshop remove-instance` remains owner-only on the server
+- facilitator `grant` and `revoke` remain a later step-up policy slice rather than part of this lifecycle command set
 
 Current step-up posture:
 

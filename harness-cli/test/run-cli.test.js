@@ -185,6 +185,209 @@ test("workshop archive forwards optional notes", async () => {
   assert.deepEqual(requestBody, { notes: "After lunch reset" });
 });
 
+test("workshop create-instance sends rich metadata and reports created state", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "POST http://localhost:3000/api/workshop/instances",
+        async (_url, options) => {
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            created: true,
+            instance: {
+              id: requestBody.id,
+              status: "created",
+              workshopMeta: {
+                eventTitle: requestBody.eventTitle,
+                dateRange: requestBody.dateRange,
+                venueName: requestBody.venueName,
+                roomName: requestBody.roomName,
+                city: requestBody.city,
+              },
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(
+    [
+      "workshop",
+      "create-instance",
+      "developer-hackathon-praha-24-4-saturn",
+      "--template-id",
+      "blueprint-default",
+      "--event-title",
+      "Developer Hackathon Praha",
+      "--city",
+      "Praha",
+      "--date-range",
+      "24. dubna 2026",
+      "--venue-name",
+      "Seyfor Praha jednicka 103",
+      "--room-name",
+      "Saturn",
+      "--address-line",
+      "CZ, Praha 8, Sokolovska 695/115b",
+      "--location-details",
+      "17 osob + lektor",
+      "--facilitator-label",
+      "Ondrej",
+    ],
+    io,
+    { fetchFn },
+  );
+
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, {
+    id: "developer-hackathon-praha-24-4-saturn",
+    templateId: "blueprint-default",
+    eventTitle: "Developer Hackathon Praha",
+    city: "Praha",
+    dateRange: "24. dubna 2026",
+    venueName: "Seyfor Praha jednicka 103",
+    roomName: "Saturn",
+    addressLine: "CZ, Praha 8, Sokolovska 695/115b",
+    locationDetails: "17 osob + lektor",
+    facilitatorLabel: "Ondrej",
+  });
+  assert.match(io.getStdout(), /"created": true/);
+  assert.match(io.getStdout(), /Developer Hackathon Praha/);
+});
+
+test("workshop create-instance surfaces validation failures from the API", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "POST http://localhost:3000/api/workshop/instances",
+        async () => jsonResponse(400, { ok: false, error: "id must be a lowercase slug using only letters, numbers, and hyphens" }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "create-instance", "Developer Hackathon Praha"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /Create instance failed: id must be a lowercase slug/);
+});
+
+test("workshop update-instance patches metadata through the shared instance route", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async (_url, options) => {
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            instance: {
+              id: "sample-studio-a",
+              status: "prepared",
+              workshopMeta: {
+                eventTitle: "Developer Hackathon Praha",
+                roomName: "Jupiter",
+              },
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(
+    ["workshop", "update-instance", "sample-studio-a", "--event-title", "Developer Hackathon Praha", "--room-name", "Jupiter"],
+    io,
+    { fetchFn },
+  );
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, {
+    action: "update_metadata",
+    eventTitle: "Developer Hackathon Praha",
+    roomName: "Jupiter",
+  });
+  assert.match(io.getStdout(), /Jupiter/);
+});
+
+test("workshop prepare sends the target instance id", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "POST http://localhost:3000/api/workshop",
+        async (_url, options) => {
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            instance: {
+              id: "sample-studio-a",
+              status: "prepared",
+              workshopMeta: { eventTitle: "Developer Hackathon Praha" },
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "prepare", "sample-studio-a"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, { action: "prepare", instanceId: "sample-studio-a" });
+  assert.match(io.getStdout(), /"status": "prepared"/);
+});
+
+test("workshop remove-instance reports owner-only failures from the API", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async () => jsonResponse(403, { ok: false, error: "owner role required" }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "remove-instance", "sample-studio-a"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /Remove instance failed: owner role required/);
+});
+
 test("auth logout removes the persisted session", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
@@ -525,6 +728,77 @@ test("device auth can drive workshop status with the brokered facilitator sessio
   const exitCode = await runCli(["workshop", "status"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /Build Phase 1/);
+});
+
+test("device auth can drive workshop create-instance with the brokered facilitator session", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "POST http://localhost:3000/api/auth/device/start",
+        async () =>
+          jsonResponse(200, {
+            deviceCode: "device-code-1",
+            userCode: "ABCD-EFGH",
+            verificationUri: "http://localhost:3000/admin/device",
+            verificationUriComplete: "http://localhost:3000/admin/device?user_code=ABCD-EFGH",
+            expiresAt: "2099-04-07T10:10:00.000Z",
+            intervalSeconds: 0,
+          }),
+      ],
+      [
+        "POST http://localhost:3000/api/auth/device/poll",
+        async () =>
+          jsonResponse(200, {
+            status: "authorized",
+            accessToken: "device-token-1",
+            expiresAt: "2099-04-07T22:00:00.000Z",
+            session: {
+              neonUserId: "neon-user-1",
+              role: "owner",
+              authMode: "device",
+            },
+          }),
+      ],
+      [
+        "POST http://localhost:3000/api/workshop/instances",
+        async (_url, options) => {
+          assert.equal(options.headers.authorization, "Bearer device-token-1");
+          assert.deepEqual(JSON.parse(String(options.body)), {
+            id: "developer-hackathon-brno-21-4-dakar",
+            eventTitle: "Developer Hackathon Brno",
+          });
+          return jsonResponse(200, {
+            ok: true,
+            created: false,
+            instance: {
+              id: "developer-hackathon-brno-21-4-dakar",
+              status: "prepared",
+              workshopMeta: { eventTitle: "Developer Hackathon Brno" },
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login"], loginIo, {
+    fetchFn,
+    openUrl: async () => {},
+    sleepFn: async () => {},
+  });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(
+    ["workshop", "create-instance", "developer-hackathon-brno-21-4-dakar", "--event-title", "Developer Hackathon Brno"],
+    io,
+    { fetchFn },
+  );
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /"created": false/);
+  assert.match(io.getStdout(), /Developer Hackathon Brno/);
 });
 
 test("neon auth login stores a cookie-backed session and verifies it remotely", async () => {

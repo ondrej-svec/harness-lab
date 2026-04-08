@@ -10,6 +10,10 @@ Current shipped scope:
 - `harness auth logout`
 - `harness auth status`
 - `harness workshop status`
+- `harness workshop create-instance`
+- `harness workshop update-instance`
+- `harness workshop prepare`
+- `harness workshop remove-instance`
 - `harness workshop archive`
 - `harness workshop phase set <phase-id>`
 
@@ -102,10 +106,20 @@ Workshop commands:
 harness auth status
 harness skill install
 harness workshop status
+harness workshop create-instance developer-hackathon-praha-24-4-saturn --event-title "Developer Hackathon Praha"
+harness workshop update-instance developer-hackathon-praha-24-4-saturn --room-name Saturn
+harness workshop prepare developer-hackathon-praha-24-4-saturn
+harness workshop remove-instance developer-hackathon-praha-24-4-saturn
 harness workshop phase set rotation
 harness workshop archive --notes "Manual archive"
 harness auth logout
 ```
+
+Facilitator lifecycle commands are intentionally CLI-first:
+
+- skill invokes `harness`
+- `harness` invokes the protected dashboard APIs
+- the dashboard APIs remain the source of truth for authorization, validation, idempotency, and audit logging
 
 Environment variables:
 

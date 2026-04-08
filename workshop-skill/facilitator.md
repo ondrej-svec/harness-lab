@@ -87,28 +87,22 @@ Vyžaduje `owner` roli.
 
 ### `/workshop facilitator create-instance`
 
-Vysvětli, že vytvoření instance má být popsané jako import z blueprintu. Preferovaný bootstrap je přes CLI-backed auth a sdílené runtime API:
+Preferovaný path je CLI příkaz nad sdíleným runtime API:
 
-```http
-POST {DASHBOARD_URL}/api/workshop
-Content-Type: application/json
-
-{
-  "action": "create",
-  "id": "developer-hackathon-praha-24-4-saturn",
-  "templateId": "blueprint-default",
-  "eventTitle": "Developer Hackathon Praha",
-  "city": "Praha",
-  "dateRange": "24. dubna 2026",
-  "venueName": "Seyfor Praha jednička 103",
-  "roomName": "Saturn",
-  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
-  "locationDetails": "17 osob + lektor",
-  "facilitatorLabel": "Ondrej"
-}
+```bash
+harness workshop create-instance developer-hackathon-praha-24-4-saturn \
+  --template-id blueprint-default \
+  --event-title "Developer Hackathon Praha" \
+  --city Praha \
+  --date-range "24. dubna 2026" \
+  --venue-name "Seyfor Praha jednička 103" \
+  --room-name Saturn \
+  --address-line "CZ, Praha 8, Sokolovska 695/115b" \
+  --location-details "17 osob + lektor" \
+  --facilitator-label Ondrej
 ```
 
-Nebo explicitně přes instanční route:
+Raw API reference zůstává jen jako diagnostická nebo architektonická reference:
 
 ```http
 POST {DASHBOARD_URL}/api/workshop/instances
@@ -129,13 +123,27 @@ Content-Type: application/json
 ```
 
 Poznámky pro skill:
+- skill má preferovat CLI, ne ručně skládané `fetch` skripty
 - `id` musí být lowercase slug s písmeny, čísly a pomlčkami
 - když skill volá create opakovaně se stejným `id`, route vrací `created: false` a existující instance record
 - nehádej venue metadata zkráceně, když je facilitátor zná; pošli je rovnou při create
 
 ### `/workshop facilitator update-instance <instance-id>`
 
-Když facilitátor chce upravit metadata bez resetu instance, použij:
+Preferovaný path:
+
+```bash
+harness workshop update-instance developer-hackathon-praha-24-4-saturn \
+  --event-title "Developer Hackathon Praha" \
+  --date-range "24. dubna 2026" \
+  --venue-name "Seyfor Praha jednička 103" \
+  --room-name Saturn \
+  --address-line "CZ, Praha 8, Sokolovska 695/115b" \
+  --location-details "17 osob + lektor" \
+  --facilitator-label Ondrej
+```
+
+Raw API reference:
 
 ```http
 PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
@@ -160,19 +168,32 @@ Pravidla:
 
 ### `/workshop facilitator prepare`
 
-Zavolej:
+Preferovaný path:
+
+```bash
+harness workshop prepare developer-hackathon-praha-24-4-saturn
 ```
+
+Raw API reference:
+
+```http
 POST {DASHBOARD_URL}/api/workshop
 Content-Type: application/json
 
-{ "action": "prepare" }
+{ "action": "prepare", "instanceId": "developer-hackathon-praha-24-4-saturn" }
 ```
 
 Nastaví instanci do stavu `prepared`, ověří event code.
 
 ### `/workshop facilitator remove-instance <instance-id>`
 
-Bezpečné odebrání z aktivního seznamu:
+Preferovaný path:
+
+```bash
+harness workshop remove-instance developer-hackathon-praha-24-4-saturn
+```
+
+Raw API reference:
 
 ```http
 PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
@@ -180,6 +201,10 @@ Content-Type: application/json
 
 { "action": "remove" }
 ```
+
+Pravidla:
+- remove zůstává owner-only operace
+- skill má facilitátora upozornit, že jde o destruktivní odebrání z aktivního seznamu, ne o běžnou editaci metadata
 
 ### `/workshop facilitator agenda`
 
