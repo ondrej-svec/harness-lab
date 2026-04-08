@@ -16,17 +16,17 @@
       "startTime": "09:10",
       "kind": "shared",
       "intent": "framing",
-      "goal": "Nastavit energii dne a jasně pojmenovat, o čem workshop je a proč je continuation průběžný design constraint.",
-      "roomSummary": "Místnost má pochopit, že nejde o soutěž v promptování. Cílem dne je postavit pracovní systém, který přežije handoff bez ústního dovysvětlování.",
+      "goal": "Nastavit tón dne a jasně pojmenovat, o čem workshop je a proč musí být práce od začátku připravená na převzetí dalším týmem.",
+      "roomSummary": "Místnost má hned pochopit, že nejde o soutěž v promptování. Cílem dne je postavit repo, workflow a instrukce, na které se dá navázat bez ústního dovysvětlování.",
       "facilitatorPrompts": [
         "Dnes nejde o to být nejrychlejší. Jde o to předat práci tak, aby ji cizí tým dokázal převzít a posunout dál.",
         "Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.",
-        "Odpolední část prověří, jestli repo umí mluvit samo za sebe."
+        "Odpolední část prověří, jestli repo opravdu unese převzetí dalším týmem."
       ],
       "watchFors": [
         "Někdo to rámuje jako soutěž v promptování nebo feature race.",
         "Týmy čekají na nástrojové demo místo toho, aby pochopily pracovní disciplínu.",
-        "Facilitátor mluví jen o outputu a neukáže handoff constraint."
+        "Facilitátor mluví jen o výstupu a neukáže, že předání bez dovysvětlování je součást zadání."
       ],
       "checkpointQuestions": [
         "Kde by to našel další tým bez vás?",
@@ -47,10 +47,10 @@
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "minimal",
-          "title": "Nestavíme jen output",
+          "title": "Nestavíme jen výsledek",
           "body": "Stavíme pracovní systém pro práci s AI coding agenty. Důkazem dne nebude nejhezčí prompt, ale repo a workflow, na které se dá navázat.",
           "facilitatorNotes": [
-            "Začni klidně, ale ostře. Musí zaznít handoff constraint i to, že repo-native kontext je týmová infrastruktura.",
+            "Začni klidně, ale ostře. Musí zaznít, že předání bez dovysvětlování je součást zadání a že kontext zapsaný v repu je týmová infrastruktura.",
             "Nepřetahuj to do tool marketingu. Jde o disciplínu."
           ],
           "sourceRefs": [
@@ -64,8 +64,8 @@
               "id": "opening-hero",
               "type": "hero",
               "eyebrow": "Harness Lab",
-              "title": "Dnes nestavíme jen output",
-              "body": "Stavíme pracovní systém pro práci s AI coding agenty. Cílem dne je repo a workflow, které přežijí handoff bez ústního dovysvětlování."
+              "title": "Dnes nestavíme jen výsledek",
+              "body": "Stavíme repo, workflow a pracovní instrukce pro práci s AI coding agenty. Cílem dne je systém, který unese handoff bez ústního dovysvětlování."
             },
             {
               "id": "opening-principles",
@@ -74,13 +74,14 @@
               "items": [
                 "Nejde o soutěž v promptování.",
                 "Po vás má zůstat použitelný kontext v repu.",
-                "Odpolední continuation prověří, jestli repo umí mluvit samo za sebe."
+                "Odpolední návaznost prověří, jestli repo opravdu unese převzetí dalším týmem."
               ]
             },
             {
               "id": "opening-quote",
               "type": "quote",
-              "quote": "Dnes nejde o to být nejrychlejší. Jde o to předat práci tak, aby ji cizí tým dokázal převzít a posunout dál."
+              "quote": "Dnes nejde o to být nejrychlejší. Jde o to předat práci tak, aby ji cizí tým dokázal převzít a posunout dál.",
+              "attribution": "Harness Lab facilitation framing"
             }
           ]
         },
@@ -91,7 +92,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Otázky, které budeš vracet celý den",
-          "body": "Používej krátké otázky, které týmy vrací zpátky k repu, k ověření a k dalšímu safe move.",
+          "body": "Používej krátké otázky, které týmy vrací k repu, k ověření a k dalšímu bezpečnému kroku.",
           "facilitatorNotes": [
             "Tuhle scénu si můžeš otevřít kdykoli jako rychlou oporu pro coaching."
           ],
@@ -117,14 +118,14 @@
         },
         {
           "id": "opening-participant-view",
-          "label": "Participant welcome board",
+          "label": "Úvodní tabule pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Jak číst začátek dne",
-          "body": "Participant vrstva na startu dne drží smysl workshopu, live moment a signál, že důležité věci mají žít v repu, ne jen v hovoru.",
+          "body": "Vrstva pro účastníky na startu dne drží smysl workshopu, to, co právě běží, a signál, že důležité věci mají být zapsané v repu, ne jen vyřčené u stolu.",
           "facilitatorNotes": [
-            "Tuhle scénu použij, když chceš místnosti ukázat, že participant vrstva není promo banner, ale pracovní orientace."
+            "Tuhle scénu použij, když chceš místnosti ukázat, že vrstva pro účastníky není promo banner, ale pracovní orientace."
           ],
           "sourceRefs": [
             {
@@ -137,23 +138,23 @@
               "id": "opening-participant-hero",
               "type": "hero",
               "eyebrow": "Harness Lab",
-              "title": "Dnes nejde o prompt theatre",
-              "body": "Účastnická vrstva má od začátku držet stejnou logiku jako facilitátor: live fázi, další krok a disciplínu, že co není v repu, neexistuje."
+              "title": "Dnes nejde o promptovací exhibici",
+              "body": "Vrstva pro účastníky má od začátku držet stejnou logiku jako facilitátor: aktuální fázi, další krok a disciplínu, že co není v repu, není spolehlivě předatelné."
             },
             {
               "id": "opening-participant-focus",
               "type": "bullet-list",
               "title": "Na co se naladit",
               "items": [
-                "Repo-native kontext je součást práce, ne doplněk.",
+                "Kontext zapsaný přímo v repu je součást práce, ne doplněk.",
                 "Další krok má být bezpečný a dohledatelný.",
-                "Odpolední continuation prověří, co přežije handoff."
+                "Odpolední návaznost prověří, co po týmu opravdu zůstalo."
               ]
             },
             {
               "id": "opening-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva drží začátek dne čitelně: co právě běží, co přijde dál a proč je důležité ukládat pravidla do repa."
+              "body": "Vrstva pro účastníky drží začátek dne čitelně: co právě běží, co přijde dál a proč je důležité ukládat pravidla do repa."
             }
           ]
         }
@@ -174,9 +175,9 @@
         "Když agent dělá víc, vy musíte lépe ověřovat."
       ],
       "watchFors": [
-        "Talk sklouzává do feature tour nástroje.",
-        "Týmy slyší hlavně prompting tips místo workflow disciplíny.",
-        "Chybí vazba na odpolední continuation."
+        "Talk sklouzává k předvádění funkcí nástroje.",
+        "Týmy slyší hlavně tipy k promptování místo workflow disciplíny.",
+        "Chybí vazba na odpolední návaznost."
       ],
       "checkpointQuestions": [
         "Co dnes přesunete z hlavy nebo z chatu do repa?",
@@ -224,7 +225,7 @@
                 "AGENTS.md, skills a runbooky jsou týmová infrastruktura.",
                 "Co není v repu, neexistuje.",
                 "Testy jsou hranice důvěry.",
-                "Handoff je průběžný constraint, ne závěr dne."
+                "Handoff je průběžná podmínka práce, ne závěr dne."
               ]
             }
           ]
@@ -235,7 +236,7 @@
           "sceneType": "demo",
           "intent": "walkthrough",
           "chromePreset": "agenda",
-          "title": "Prompt blob vs. repo-native kontext",
+          "title": "Prompt bez opory vs. kontext v repu",
           "body": "Stejný malý úkol. Jednou bez kontextu, podruhé s krátkým zadáním a 4 prvky v AGENTS.md. Nehledáme nejhezčí prompt. Hledáme přenositelný pracovní systém.",
           "facilitatorNotes": [
             "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru a hranic."
@@ -258,7 +259,7 @@
                 },
                 {
                   "title": "Varianta A: prompt blob",
-                  "body": "Bez struktury, bez repo-native kontextu."
+                  "body": "Bez struktury a bez kontextu zapsaného v repu."
                 },
                 {
                   "title": "Varianta B: 4 prvky kontextu",
@@ -277,14 +278,16 @@
         },
         {
           "id": "talk-participant-view",
-          "label": "Participant walkthrough",
+          "label": "Průchod vrstvou pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Participant surface walkthrough",
-          "body": "Ukažte participant vrstvu jako skutečný operační povrch pro tým: live moment, nejbližší další krok, shared room notes a signál, že repo a room state drží pohromadě.",
+          "title": "Jak vypadá vrstva pro účastníky",
+          "body": "Ukažte vrstvu pro účastníky jako skutečný pracovní povrch pro tým: aktuální moment, nejbližší další krok, sdílené poznámky pro celou místnost a signál, že dashboard i týmový pohled drží stejný workshopový moment.",
+          "ctaLabel": "Otevřít workshop skill reference",
+          "ctaHref": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md",
           "facilitatorNotes": [
-            "Použij jen krátce. Je to bridge do toho, že participant vrstva i facilitator dashboard musí být konzistentní."
+            "Použij ji jen krátce. Je to most k tomu, že vrstva pro účastníky i facilitátorský dashboard musí být konzistentní."
           ],
           "sourceRefs": [
             {
@@ -296,31 +299,31 @@
             {
               "id": "talk-participant-hero",
               "type": "hero",
-              "eyebrow": "Participant surface",
+              "eyebrow": "Vrstva pro účastníky",
               "title": "Co má tým vidět bez facilitátorského šumu",
-              "body": "Participant vrstva nemá být dekorace. Má dát týmu v jednom pohledu live fázi, další krok, shared room notes a jistotu, že dashboard a room view mluví jedním jazykem."
+              "body": "Vrstva pro účastníky nemá být dekorace. Má dát týmu v jednom pohledu aktuální fázi, další krok, sdílené poznámky pro celou místnost a jistotu, že dashboard i týmový pohled mluví jedním jazykem."
             },
             {
               "id": "talk-participant-cues",
               "type": "bullet-list",
               "title": "Na co upozornit místnost",
               "items": [
-                "Live fáze a nejbližší další krok.",
-                "Sdílené room notes, které pomáhají všem stolům stejně.",
-                "Stejný workshop moment na participant vrstvě i v control roomu."
+                "Aktuální fáze a nejbližší další krok.",
+                "Sdílené poznámky pro celou místnost, které pomáhají všem stolům stejně.",
+                "Stejný workshopový moment ve vrstvě pro účastníky i na facilitátorském dashboardu."
               ]
             },
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva má ukazovat jen to, co tým opravdu potřebuje teď: live moment, další krok a sdílené poznámky z místnosti."
+              "body": "Vrstva pro účastníky má ukazovat jen to, co tým opravdu potřebuje teď: aktuální moment, další krok a sdílené poznámky z místnosti."
             },
             {
               "id": "talk-participant-bridge",
               "type": "callout",
               "tone": "info",
-              "title": "Bridge do dne",
-              "body": "Tahle vrstva je participant ekvivalent facilitator packu. Každý důležitý workshop moment má mít konzistentní podobu na obou stranách."
+              "title": "Most do dne",
+              "body": "Tahle vrstva je účastnický ekvivalent facilitátorského balíčku. Každý důležitý workshopový moment má mít konzistentní podobu na obou stranách."
             }
           ]
         }
@@ -334,16 +337,16 @@
       "kind": "shared",
       "intent": "demo",
       "goal": "Na jedné příběhové ukázce předvést workflow s AGENTS.md, plánem, implementací a review jako součástí běžné práce.",
-      "roomSummary": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když přidáme kontext, plán a review. Nejde o kouzelný output ani feature tour.",
+      "roomSummary": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když přidáme kontext, plán a review. Nejde o kouzelný výsledek ani přehlídku funkcí.",
       "facilitatorPrompts": [
-        "Jedna příběhová ukázka, ne seznam feature.",
+        "Jedna příběhová ukázka, ne seznam funkcí.",
         "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj.",
         "Review není nouzová brzda na konci. Je to součást workflow."
       ],
       "watchFors": [
         "Demo je dlouhé a čeká na generování.",
         "Ukazuje se pět režimů práce místo jedné jasné linky.",
-        "Chybí explicitní closure pointy po AGENTS.md, /plan a /review."
+        "Chybí jasná zastavení po `AGENTS.md`, `/plan` a `/review`."
       ],
       "checkpointQuestions": [
         "Co v tomhle flow nese záměr a omezení?",
@@ -386,7 +389,8 @@
             {
               "id": "demo-story-quote",
               "type": "quote",
-              "quote": "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj."
+              "quote": "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj.",
+              "attribution": "Harness Lab demo framing"
             }
           ]
         },
@@ -397,10 +401,10 @@
           "intent": "walkthrough",
           "chromePreset": "agenda",
           "title": "Od AGENTS.md k review",
-          "body": "Krátký sled kroků, který jde zopakovat i u stolu: kontext, /plan, malý kus implementace, /review, krátký skill moment.",
+          "body": "Krátký sled kroků, který jde zopakovat i u stolu: kontext, `/plan`, malý kus implementace, `/review` a krátké použití skillu.",
           "facilitatorNotes": [
             "Měj připravené snapshoty pro fallbacky. Nečekej dlouho na generování.",
-            "Neukazuj feature tour ani pět různých modalit."
+            "Neukazuj přehlídku funkcí ani pět různých režimů práce."
           ],
           "sourceRefs": [
             {
@@ -439,14 +443,17 @@
               "items": [
                 {
                   "label": "CLI nejede",
+                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md",
                   "description": "Přejdi na Codex App."
                 },
                 {
                   "label": "App nejede",
+                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/README.md",
                   "description": "Použij web fallback."
                 },
                 {
                   "label": "Demo je pomalé",
+                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/docs/agent-ui-testing.md",
                   "description": "Měj repo snapshot po každém kroku."
                 }
               ]
@@ -455,14 +462,14 @@
         },
         {
           "id": "demo-participant-view",
-          "label": "Participant demo board",
+          "label": "Demo pohled pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Demo jako workflow, ne feature tour",
-          "body": "Participant vrstva během dema drží jednu příběhovou linku: kontext, plán, ověření a review. Nemá z něj dělat nástrojové menu.",
+          "title": "Demo jako workflow, ne přehlídka funkcí",
+          "body": "Vrstva pro účastníky během dema drží jednu příběhovou linku: kontext, plán, ověření a review. Nemá z něj dělat nástrojové menu.",
           "facilitatorNotes": [
-            "Použij, když chceš publiku připomenout, že i demo má mít learner-facing logiku a jasnou pracovní linku."
+            "Použij ji, když chceš publiku připomenout, že i demo má mít logiku pro účastníky a jasnou pracovní linku."
           ],
           "sourceRefs": [
             {
@@ -475,7 +482,7 @@
               "id": "demo-participant-hero",
               "type": "hero",
               "eyebrow": "Codex demo",
-              "title": "Sledujte pracovní systém, ne jen output",
+              "title": "Sledujte pracovní systém, ne jen výsledek",
               "body": "Během dema držte v hlavě jednu linku: odkud se bere kontext, kde vzniká plán, co se ověřuje a jak review vrací důvěru."
             },
             {
@@ -500,7 +507,7 @@
             {
               "id": "demo-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva u dema ukazuje workflow cue, ne feature checklist."
+              "body": "Vrstva pro účastníky u dema ukazuje pracovní linku, ne seznam funkcí."
             }
           ]
         }
@@ -509,16 +516,16 @@
     {
       "id": "build-1",
       "order": 4,
-      "label": "Build Phase 1",
+      "label": "Build fáze 1",
       "startTime": "10:30",
       "kind": "team",
       "intent": "build",
-      "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plan, nejmenší ověření a první reviewed output.",
-      "roomSummary": "Facilitátor má držet viditelný milestone board, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
+      "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plan, nejmenší ověření a první ověřený výstup.",
+      "roomSummary": "Facilitátor má držet viditelnou tabuli milníků, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
       "facilitatorPrompts": [
         "Nejdřív coach, pak mentor, učitel až jako poslední možnost.",
         "Když tým žádné ověření nemá, tlačte na nejmenší možný test nebo tracer bullet.",
-        "Participantům vracejte learner-facing artefakty, ne celý backstage Harness Lab."
+        "Vracejte týmům artefakty, ze kterých se dá pracovat, ne celý facilitátorský backstage."
       ],
       "watchFors": [
         "Tým generuje text dál, ale nic neověřuje.",
@@ -540,14 +547,14 @@
       "scenes": [
         {
           "id": "build-1-milestones",
-          "label": "Milestone board",
+          "label": "Milníky před obědem",
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Co má být vidět do oběda",
-          "body": "Repo, AGENTS.md, plan, build/test command nebo tracer bullet a první reviewed output.",
+          "body": "Repo, AGENTS.md, plan, build/test command nebo tracer bullet a první ověřený výstup.",
           "facilitatorNotes": [
-            "Tohle je hlavní room cue pro Build Phase 1. Měj ho často na projektoru."
+            "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru."
           ],
           "sourceRefs": [
             {
@@ -559,13 +566,13 @@
             {
               "id": "build-1-checklist",
               "type": "checklist",
-              "title": "Milestones",
+              "title": "Milníky",
               "items": [
                 "Do 10:50 existuje repo.",
                 "Do 11:15 existuje AGENTS.md.",
                 "Do 11:30 existuje plan.",
                 "Do 11:45 existuje build/test command nebo tracer bullet.",
-                "Do 12:00 existuje první reviewed output."
+                "Do 12:00 existuje první ověřený výstup."
               ]
             },
             {
@@ -579,14 +586,14 @@
         },
         {
           "id": "build-1-coaching",
-          "label": "Coaching cues",
+          "label": "Coaching otázky",
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Na co se při obcházení dívat",
-          "body": "Pracujte s coaching otázkami a vracejte tým k learner-facing artefaktům a explicitnímu ověření.",
+          "body": "Pracujte krátkými coaching otázkami a vracejte tým k artefaktům, ze kterých se dá opravdu pracovat, a k explicitnímu ověření.",
           "facilitatorNotes": [
-            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu safe move."
+            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu bezpečnému kroku."
           ],
           "sourceRefs": [
             {
@@ -603,21 +610,23 @@
                 "Jedna společná představa o cíli.",
                 "Kontext přibývá v repu, ne jen v hovoru.",
                 "Existuje test, tracer bullet nebo jiný explicitní check.",
-                "Je z repa vidět, co je hotové a co další safe move."
+                "Je z repa vidět, co je hotové a jaký je další bezpečný krok."
               ]
             }
           ]
         },
         {
           "id": "build-1-participant-view",
-          "label": "Participant board",
+          "label": "Týmová tabule",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Build Phase 1 pro tým",
-          "body": "Participant vrstva během Build Phase 1 nemá ukazovat celý backstage. Má držet live moment, další krok a room signal, aby tým věděl, co je teď podstatné.",
+          "title": "První build fáze pro tým",
+          "body": "Vrstva pro účastníky během první build fáze nemá ukazovat celý backstage. Má držet aktuální moment, další krok a signál z místnosti, aby tým věděl, co je teď podstatné.",
+          "ctaLabel": "Otevřít install flow",
+          "ctaHref": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md",
           "facilitatorNotes": [
-            "Použij to ve chvíli, kdy chceš týmu vrátit learner-facing pohled místo facilitátorského backstage."
+            "Použij ji ve chvíli, kdy chceš týmu vrátit pohled pro účastníky místo facilitátorského backstage."
           ],
           "sourceRefs": [
             {
@@ -629,9 +638,9 @@
             {
               "id": "build-1-participant-hero",
               "type": "hero",
-              "eyebrow": "Build Phase 1",
+              "eyebrow": "Build fáze 1",
               "title": "Co má tým držet viditelně před obědem",
-              "body": "Krátké AGENTS.md jako mapu, plan, build/test flow a první ověřený krok. Participant vrstva má držet pohromadě room signal i další safe move."
+              "body": "Krátké AGENTS.md jako mapu, plan, build/test flow a první ověřený krok. Vrstva pro účastníky má držet pohromadě signál z místnosti i další bezpečný krok."
             },
             {
               "id": "build-1-participant-focus",
@@ -640,13 +649,13 @@
               "items": [
                 "Krátké AGENTS.md jako mapu repa.",
                 "Plan a první ověřený krok.",
-                "Room signal, který pomůže i dalšímu týmu navázat."
+                "Signál z místnosti, který pomůže i dalšímu týmu navázat."
               ]
             },
             {
               "id": "build-1-participant-preview",
               "type": "participant-preview",
-              "body": "Sledujte live fázi, další blok a shared room notes. Backstage patří facilitátorovi, ne participant vrstvě."
+              "body": "Sledujte aktuální fázi, další blok a sdílené poznámky pro celou místnost. Backstage patří facilitátorovi, ne vrstvě pro účastníky."
             },
             {
               "id": "build-1-participant-callout",
@@ -666,8 +675,8 @@
       "startTime": "11:35",
       "kind": "shared",
       "intent": "checkpoint",
-      "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný output.",
-      "roomSummary": "Týmy krátce shrnou, co změnily a proč. Facilitátor spojí room signal, monitoring a jednu principovou pointu navázanou na to, co se opravdu děje.",
+      "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný výsledek.",
+      "roomSummary": "Týmy krátce shrnou, co změnily a proč. Facilitátor spojí signály z místnosti, monitoring a jednu principovou pointu navázanou na to, co se opravdu děje.",
       "facilitatorPrompts": [
         "Co jste změnili a proč?",
         "Co jste přesunuli z chatu nebo z hlavy do repa?",
@@ -693,7 +702,7 @@
       "scenes": [
         {
           "id": "intermezzo-1-checkpoint",
-          "label": "Checkpoint board",
+          "label": "Checkpoint tabule",
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
@@ -742,12 +751,12 @@
         },
         {
           "id": "intermezzo-1-participant-view",
-          "label": "Participant intermezzo board",
+          "label": "Intermezzo pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Intermezzo: co si má místnost všimnout",
-          "body": "Participant vrstva v intermezzu stahuje pozornost ke konkrétním signálům z týmů a z místnosti, ne k reportingu pro reporting.",
+          "body": "Vrstva pro účastníky v intermezzu stahuje pozornost ke konkrétním signálům z týmů a z místnosti, ne k reportingu pro reporting.",
           "facilitatorNotes": [
             "Tahle scéna drží intermezzo jako krátký checkpoint pro celou místnost."
           ],
@@ -778,7 +787,7 @@
             {
               "id": "intermezzo-1-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva drží intermezzo jako společný checkpoint, ne jako backstage shrnutí."
+              "body": "Vrstva pro účastníky drží intermezzo jako společný checkpoint, ne jako backstage shrnutí."
             }
           ]
         }
@@ -792,20 +801,20 @@
       "kind": "shared",
       "intent": "transition",
       "goal": "Zastavit flow před odpoledním posunem a připravit týmy na to, že repo musí být čitelné i bez nich.",
-      "roomSummary": "Před obědem mají týmy uklidit kontext, dopsat další safe move a připravit repo na odpolední continuation. Oběd není pauza od handoffu.",
+      "roomSummary": "Před obědem mají týmy uklidit kontext, dopsat další bezpečný krok a připravit repo na odpolední návaznost. Oběd není pauza od handoffu.",
       "facilitatorPrompts": [
-        "Handoff není závěr dne. Je to průběžný design constraint.",
+        "Handoff není závěr dne. Je to průběžná podmínka celé práce.",
         "Dopište, co má další tým číst jako první.",
         "Pokud nějaké pravidlo padlo dvakrát nahlas, patří do repa."
       ],
       "watchFors": [
-        "Týmy odchází na oběd bez jasného next step a bez uklizeného kontextu.",
+        "Týmy odchází na oběd bez jasného dalšího kroku a bez uklizeného kontextu.",
         "Klíčové rozhodnutí zůstalo v hlavách.",
         "Repo polední stav nevysvětluje."
       ],
       "checkpointQuestions": [
         "Co má další tým číst jako první?",
-        "Je z repa poznat, co je hotové, hypotéza a další safe move?",
+        "Je z repa poznat, co je hotové, co je hypotéza a jaký je další bezpečný krok?",
         "Co ještě žije jen v hovoru a musí do repa?"
       ],
       "sourceRefs": [
@@ -822,14 +831,14 @@
       "scenes": [
         {
           "id": "lunch-reset-transition",
-          "label": "Lunch reset",
+          "label": "Polední srovnání",
           "sceneType": "transition",
           "intent": "transition",
           "chromePreset": "agenda",
           "title": "Uklidit, ne utéct",
-          "body": "Před odchodem na oběd musí být z repa poznat, co se změnilo, co to ověřuje a jaký je další safe move pro cizí tým.",
+          "body": "Před odchodem na oběd musí být z repa poznat, co se změnilo, co to ověřuje a jaký je další bezpečný krok pro cizí tým.",
           "facilitatorNotes": [
-            "Tohle je tichý handoff prep. Vysvětli ho jako součást práce, ne jako administrativu."
+            "Tohle je tichá příprava na handoff. Vysvětli ji jako součást práce, ne jako administrativu."
           ],
           "sourceRefs": [
             {
@@ -843,7 +852,7 @@
               "type": "checklist",
               "title": "Před obědem",
               "items": [
-                "Je dopsaný další safe move.",
+                "Je dopsaný další bezpečný krok.",
                 "Klíčová pravidla a rozhodnutí jsou v repu.",
                 "Je jasné, co je hotové a co je jen hypotéza.",
                 "Další tým ví, co má číst jako první."
@@ -853,12 +862,12 @@
         },
         {
           "id": "lunch-reset-participant-view",
-          "label": "Participant lunch reset board",
+          "label": "Polední tabule pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Před obědem uklidit kontext",
-          "body": "Participant vrstva před obědem drží handoff prep: co má být dopsané, co má další tým číst jako první a co ještě nesmí zůstat jen v hovoru.",
+          "body": "Vrstva pro účastníky před obědem drží přípravu na handoff: co má být dopsané, co má další tým číst jako první a co ještě nesmí zůstat jen v hovoru.",
           "facilitatorNotes": [
             "Použij, když chceš týmům připomenout, že oběd není pauza od handoffu."
           ],
@@ -872,8 +881,8 @@
             {
               "id": "lunch-reset-participant-hero",
               "type": "hero",
-              "eyebrow": "Lunch reset",
-              "title": "Neodcházejte bez dalšího safe move",
+              "eyebrow": "Oběd a handoff",
+              "title": "Neodcházejte bez dalšího bezpečného kroku",
               "body": "Než půjdete na oběd, musí být z repa jasné, co se změnilo, co je hotové, co je hypotéza a kudy má další tým navázat."
             },
             {
@@ -881,7 +890,7 @@
               "type": "checklist",
               "title": "Před odchodem",
               "items": [
-                "Je dopsaný další safe move.",
+                "Je dopsaný další bezpečný krok.",
                 "Klíčová rozhodnutí jsou v repu.",
                 "Je jasné, co je hotové a co hypotéza.",
                 "Další tým ví, co má otevřít jako první."
@@ -890,7 +899,7 @@
             {
               "id": "lunch-reset-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva během lunch resetu drží handoff-ready pohled, ne jen odpočet do oběda."
+              "body": "Vrstva pro účastníky během poledního srovnání drží pohled připravený na handoff, ne jen odpočet do oběda."
             }
           ]
         }
@@ -913,10 +922,10 @@
       "watchFors": [
         "Původní tým začíná dovysvětlovat ústně.",
         "Nový tým hned edituje první soubor bez mapy situace.",
-        "Facilitátor zachraňuje slabý repo signal mluveným handoffem."
+        "Facilitátor zachraňuje slabý signál v repu mluveným handoffem."
       ],
       "checkpointQuestions": [
-        "Co pomáhá, co chybí, co je rizikové a jaký je další safe move?",
+        "Co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok?",
         "Je z repa jasné, po čem sáhnout jako první?",
         "Co musí být po rotaci dopsáno, zpřesněno nebo ověřeno?"
       ],
@@ -930,7 +939,7 @@
       "scenes": [
         {
           "id": "rotation-framing",
-          "label": "Rotation framing",
+          "label": "Rámec rotace",
           "sceneType": "briefing",
           "intent": "transition",
           "chromePreset": "minimal",
@@ -949,7 +958,7 @@
             {
               "id": "rotation-hero",
               "type": "hero",
-              "eyebrow": "Continuation shift",
+              "eyebrow": "Odpolední převzetí",
               "title": "Bez ústního handoffu",
               "body": "Repo teď musí mluvit samo za sebe."
             },
@@ -971,7 +980,7 @@
           "title": "Jak začít po rotaci",
           "body": "Začněte README, AGENTS.md a planem. Nejdřív mapa, pak teprve změny.",
           "facilitatorNotes": [
-            "Když tým neví, po čem sáhnout, vrať ho k learner kit artefaktům."
+            "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu."
           ],
           "sourceRefs": [
             {
@@ -991,7 +1000,7 @@
                 },
                 {
                   "title": "Napište vlastní diagnózu",
-                  "body": "Co pomáhá, co chybí, co je rizikové a jaký je další safe move."
+                  "body": "Co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok."
                 },
                 {
                   "title": "Teprve potom měňte kód",
@@ -1003,14 +1012,14 @@
         },
         {
           "id": "rotation-participant-view",
-          "label": "Participant handoff board",
+          "label": "Pohled pro účastníky při převzetí",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Rotace bez ústního handoffu",
-          "body": "Participant vrstva při rotaci drží nový tým u mapy repa, dalšího safe move a signálů z místnosti. Nemá nahrazovat ústní dovysvětlování.",
+          "body": "Vrstva pro účastníky při rotaci drží nový tým u mapy repa, dalšího bezpečného kroku a signálů z místnosti. Nemá nahrazovat ústní dovysvětlování.",
           "facilitatorNotes": [
-            "Tohle je participant ekvivalent tvrdého handoff momentu. Pomáhá udržet místnost v disciplíně bez backstage detailů."
+            "Tohle je účastnický ekvivalent tvrdého handoff momentu. Pomáhá udržet místnost v disciplíně bez backstage detailů."
           ],
           "sourceRefs": [
             {
@@ -1022,9 +1031,9 @@
             {
               "id": "rotation-participant-hero",
               "type": "hero",
-              "eyebrow": "Continuation shift",
+              "eyebrow": "Odpolední převzetí",
               "title": "Nový tým začíná mapou, ne improvizací",
-              "body": "Nejdřív čtěte README, AGENTS.md a plan. Participant vrstva má držet pohromadě live moment, další krok a shared room notes."
+              "body": "Nejdřív čtěte README, AGENTS.md a plan. Vrstva pro účastníky má držet pohromadě aktuální moment, další krok a sdílené poznámky pro celou místnost."
             },
             {
               "id": "rotation-participant-steps",
@@ -1037,7 +1046,7 @@
                 },
                 {
                   "title": "Napište vlastní diagnózu",
-                  "body": "Co pomáhá, co chybí, co je rizikové a jaký je další safe move."
+                  "body": "Co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok."
                 },
                 {
                   "title": "Teprve potom měňte věci",
@@ -1048,7 +1057,7 @@
             {
               "id": "rotation-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva nemá zachraňovat slabý repo signal. Má pomoct týmu držet společnou orientaci při převzetí práce."
+              "body": "Vrstva pro účastníky nemá zachraňovat slabý signál v repu. Má pomoct týmu držet společnou orientaci při převzetí práce."
             }
           ]
         }
@@ -1057,20 +1066,20 @@
     {
       "id": "build-2",
       "order": 8,
-      "label": "Build Phase 2",
+      "label": "Build fáze 2",
       "startTime": "13:45",
       "kind": "team",
       "intent": "build",
-      "goal": "Navázat po rotaci jen z repo-native signálů a přetavit frustraci do lepší mapy, lepších checků a lepšího handoffu.",
+      "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepších checků a lepšího handoffu.",
       "roomSummary": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli systém kolem agenta a repa opravdu unese nový tým.",
       "facilitatorPrompts": [
-        "Nepomáhejte týmům ústním handoffem nahrazovat slabý repo signal.",
+        "Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.",
         "Pojmenujte, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.",
         "Každá opakující se bolest je kandidát na lepší template, check nebo runbook."
       ],
       "watchFors": [
-        "Tým jen opravuje chaos, ale neproměňuje ho v lepší guidance.",
-        "Slabý repo signal se pořád zachraňuje hovorem.",
+        "Tým jen opravuje chaos, ale neproměňuje ho v lepší návod pro další práci.",
+        "Slabý signál v repu se pořád zachraňuje hovorem.",
         "Chybí explicitní nová verifikace po převzetí práce."
       ],
       "checkpointQuestions": [
@@ -1113,7 +1122,7 @@
               "type": "bullet-list",
               "title": "Po rotaci",
               "items": [
-                "Nezachraňujte slabý repo signal ústním handoffem.",
+                "Nezachraňujte slabý signál v repu ústním handoffem.",
                 "Dopište, co musí být po rotaci zpřesněno nebo ověřeno.",
                 "Proměňte opakující se bolest v lepší template, check nebo runbook."
               ]
@@ -1122,14 +1131,14 @@
         },
         {
           "id": "build-2-participant-view",
-          "label": "Participant continuation board",
+          "label": "Pokračování pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Continuation po rotaci",
-          "body": "Participant vrstva po rotaci drží nový tým u toho, co přežilo v repu, co teď ověřuje a co musí být zpřesněno, aby šla práce bezpečně dál.",
+          "title": "Návaznost po rotaci",
+          "body": "Vrstva pro účastníky po rotaci drží nový tým u toho, co přežilo v repu, co teď ověřuje a co musí být zpřesněno, aby šla práce bezpečně dál.",
           "facilitatorNotes": [
-            "Tohle je participant ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další check."
+            "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další check."
           ],
           "sourceRefs": [
             {
@@ -1141,9 +1150,9 @@
             {
               "id": "build-2-participant-hero",
               "type": "hero",
-              "eyebrow": "Build Phase 2",
+              "eyebrow": "Build fáze 2",
               "title": "Pokračujte jen z toho, co je dohledatelné",
-              "body": "Po rotaci už participant vrstva neukazuje startovní onboarding. Má držet shared orientaci v tom, co pomáhá, co chybí a co je další bezpečný check."
+              "body": "Po rotaci už vrstva pro účastníky neukazuje startovní onboarding. Má držet společnou orientaci v tom, co pomáhá, co chybí a jaký je další bezpečný check."
             },
             {
               "id": "build-2-participant-bullets",
@@ -1158,7 +1167,7 @@
             {
               "id": "build-2-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva ve druhé build fázi drží continuation signály, ne nostalgii po původním týmu."
+              "body": "Vrstva pro účastníky ve druhé build fázi drží signály pro návaznost, ne nostalgii po původním týmu."
             }
           ]
         }
@@ -1172,7 +1181,7 @@
       "kind": "shared",
       "intent": "checkpoint",
       "goal": "Krátce zachytit, co po rotaci skutečně pomohlo pokračovat a co se ukazuje jako slabé místo workshopového systému.",
-      "roomSummary": "Druhé intermezzo má vytáhnout konkrétní signály z continuation části a připravit místnost na reveal a reflexi.",
+      "roomSummary": "Druhé intermezzo má vytáhnout konkrétní signály z návazné části dne a připravit místnost na reveal a reflexi.",
       "facilitatorPrompts": [
         "Co vám po rotaci pomohlo pokračovat?",
         "Co chybělo nebo brzdilo?",
@@ -1202,12 +1211,12 @@
       "scenes": [
         {
           "id": "intermezzo-2-reflection",
-          "label": "Continuation signály",
+          "label": "Signály návaznosti",
           "sceneType": "checkpoint",
           "intent": "reflection",
           "chromePreset": "checkpoint",
           "title": "Co po rotaci opravdu pomohlo",
-          "body": "Sbíráme konkrétní signály z continuation části a připravujeme místnost na reveal: co pomohlo, co chybělo a co je kandidát na lepší template.",
+          "body": "Sbíráme konkrétní signály z návazné části dne a připravujeme místnost na reveal: co pomohlo, co chybělo a co je kandidát na lepší template.",
           "facilitatorNotes": [
             "Vyžaduj konkrétní příklady z repa, ne obecné dojmy."
           ],
@@ -1232,14 +1241,14 @@
         },
         {
           "id": "intermezzo-2-participant-view",
-          "label": "Participant continuation signals board",
+          "label": "Signály návaznosti pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Co po rotaci opravdu pomáhá",
-          "body": "Participant vrstva v druhém intermezzu stahuje místnost k tomu, které repo signály skutečně pomohly pokračovat a které zůstávají slabé.",
+          "body": "Vrstva pro účastníky v druhém intermezzu stahuje místnost k tomu, které signály v repu skutečně pomohly pokračovat a které zůstávají slabé.",
           "facilitatorNotes": [
-            "Tahle scéna pomáhá stáhnout odpolední část ke konkrétním continuation signálům před reveal."
+            "Tahle scéna pomáhá stáhnout odpolední část ke konkrétním signálům návaznosti před reveal."
           ],
           "sourceRefs": [
             {
@@ -1252,7 +1261,7 @@
               "id": "intermezzo-2-participant-hero",
               "type": "hero",
               "eyebrow": "Intermezzo 2",
-              "title": "Sbíráme continuation signály",
+              "title": "Sbíráme signály návaznosti",
               "body": "Nezajímá nás jen co se povedlo, ale které signály v repu opravdu pomohly novému týmu pokračovat."
             },
             {
@@ -1268,7 +1277,7 @@
             {
               "id": "intermezzo-2-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva tady drží společnou reflexi nad continuation částí, ne výsledkovou tabuli."
+              "body": "Vrstva pro účastníky tady drží společnou reflexi nad návaznou částí dne, ne výsledkovou tabuli."
             }
           ]
         }
@@ -1291,7 +1300,7 @@
       "watchFors": [
         "Reflexe sklouzne do hodnocení týmů.",
         "Otázky zůstanou příliš obecné a bez vazby na repo.",
-        "Nevznikne next step pro příští týden ani pro zlepšení blueprintu."
+        "Nevznikne další krok pro příští týden ani pro zlepšení blueprintu."
       ],
       "checkpointQuestions": [
         "Co vám pomohlo pokračovat?",
@@ -1338,7 +1347,7 @@
         },
         {
           "id": "reveal-w3",
-          "label": "W3 closeout",
+          "label": "W3 zakončení",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "agenda",
@@ -1378,18 +1387,18 @@
               "type": "callout",
               "tone": "success",
               "title": "Sledujeme systém",
-              "body": "Každá opakující se bolest je kandidát na lepší template, challenge card nebo guidance v blueprintu."
+              "body": "Každá opakující se bolest je kandidát na lepší template, challenge card nebo vodítko v blueprintu."
             }
           ]
         },
         {
           "id": "reveal-participant-view",
-          "label": "Participant closeout board",
+          "label": "Závěrečná tabule pro účastníky",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Co si odnášíme z dne",
-          "body": "Participant vrstva na konci dne má stáhnout pozornost k tomu, co práci pomohlo přežít handoff a co si tým bere do další praxe.",
+          "body": "Vrstva pro účastníky na konci dne má stáhnout pozornost k tomu, co práci pomohlo přežít handoff a co si tým bere do další praxe.",
           "facilitatorNotes": [
             "Použij tuhle scénu při závěrečném stažení dne do konkrétních signálů a dalších kroků."
           ],
@@ -1420,7 +1429,7 @@
             {
               "id": "reveal-participant-preview",
               "type": "participant-preview",
-              "body": "Participant vrstva drží závěrečný moment v konkrétních signálech, ne v hodnocení týmů."
+              "body": "Vrstva pro účastníky drží závěrečný moment v konkrétních signálech, ne v hodnocení týmů."
             }
           ]
         }

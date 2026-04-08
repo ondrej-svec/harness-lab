@@ -1,8 +1,9 @@
-import { workshopTemplates } from "./workshop-data";
+import { workshopTemplates, type WorkshopContentLanguage } from "./workshop-data";
 
 export type WorkshopInstanceCreateInput = {
   id: string;
   templateId?: string;
+  contentLang?: WorkshopContentLanguage;
   eventTitle?: string;
   city?: string;
   dateRange?: string;
@@ -20,6 +21,11 @@ type ValidationResult<T> =
   | { ok: false; error: string };
 
 const workshopInstanceIdPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+function readOptionalContentLanguageField(body: Record<string, unknown>, key: "contentLang") {
+  const value = body[key];
+  return value === "en" || value === "cs" ? value : undefined;
+}
 
 function readOptionalStringField(body: Record<string, unknown>, key: keyof WorkshopInstanceCreateInput) {
   const value = body[key];
@@ -63,6 +69,7 @@ export function parseWorkshopInstanceCreateBody(body: unknown): ValidationResult
     value: {
       id,
       templateId,
+      contentLang: readOptionalContentLanguageField(record, "contentLang"),
       eventTitle: readOptionalStringField(record, "eventTitle"),
       city: readOptionalStringField(record, "city"),
       dateRange: readOptionalStringField(record, "dateRange"),
@@ -82,6 +89,7 @@ export function parseWorkshopInstanceMetadataUpdateBody(body: unknown): Validati
 
   const record = body as Record<string, unknown>;
   const value = {
+    contentLang: readOptionalContentLanguageField(record, "contentLang"),
     eventTitle: readOptionalStringField(record, "eventTitle"),
     city: readOptionalStringField(record, "city"),
     dateRange: readOptionalStringField(record, "dateRange"),
@@ -97,7 +105,7 @@ export function parseWorkshopInstanceMetadataUpdateBody(body: unknown): Validati
     return {
       ok: false,
       error:
-        "at least one metadata field is required (eventTitle, city, dateRange, venueName, roomName, addressLine, locationDetails, facilitatorLabel)",
+        "at least one metadata field is required (contentLang, eventTitle, city, dateRange, venueName, roomName, addressLine, locationDetails, facilitatorLabel)",
     };
   }
 

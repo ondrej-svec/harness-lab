@@ -377,17 +377,24 @@ function ParticipantView({
             </div>
           </div>
 
-          {participantPanel.guidanceBlocks.length > 0 ? (
-            <div className="mt-6 space-y-4">
-              <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
-              <ParticipantGuidanceBlocks
-                blocks={participantPanel.guidanceBlocks}
+	          {participantPanel.guidanceBlocks.length > 0 ? (
+	            <div className="mt-6 space-y-4">
+	              <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
+	              <ParticipantGuidanceBlocks
+	                blocks={participantPanel.guidanceBlocks}
                 copy={copy}
                 participantPanel={participantPanel}
-              />
-            </div>
-          ) : null}
-        </div>
+	              />
+	            </div>
+	          ) : null}
+	          {participantPanel.guidanceCtaLabel ? (
+	            <GuidanceCta
+	              href={participantPanel.guidanceCtaHref}
+	              label={participantPanel.guidanceCtaLabel}
+	              openLabel={copy.openLinkLabel}
+	            />
+	          ) : null}
+	        </div>
 
         <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur">
           <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
@@ -618,29 +625,33 @@ function ParticipantGuidanceBlocks({
           );
         }
 
-        if (block.type === "quote") {
-          return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
-              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">“{block.quote}”</blockquote>
-              {block.attribution ? <p className="mt-3 text-sm text-[var(--text-muted)]">{block.attribution}</p> : null}
-            </div>
-          );
-        }
+	        if (block.type === "quote") {
+	          const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
+	          return (
+	            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
+	              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">“{block.quote}”</blockquote>
+	              <p className="mt-3 text-sm text-[var(--text-muted)]">{attribution}</p>
+	            </div>
+	          );
+	        }
 
-        if (block.type === "link-list") {
+	        if (block.type === "link-list") {
           return (
-            <ParticipantBlockCard key={block.id} title={block.title}>
-              <div className="space-y-3">
-                {block.items.map((item) => (
-                  <div key={`${item.label}-${item.href ?? ""}`} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
-                    {item.description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p> : null}
-                  </div>
-                ))}
-              </div>
-            </ParticipantBlockCard>
-          );
-        }
+	            <ParticipantBlockCard key={block.id} title={block.title}>
+	              <div className="space-y-3">
+	                {block.items.map((item) => (
+	                  <ActionablePanelLink
+	                    key={`${item.label}-${item.href ?? ""}`}
+	                    href={item.href ?? null}
+	                    label={item.label}
+	                    description={item.description}
+	                    openLabel={copy.openLinkLabel}
+	                  />
+	                ))}
+	              </div>
+	            </ParticipantBlockCard>
+	          );
+	        }
 
         return null;
       })}
@@ -660,7 +671,96 @@ function ParticipantBlockCard({
       {title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{title}</p> : null}
       <div className={title ? "mt-4" : ""}>{children}</div>
     </div>
+	);
+}
+
+function GuidanceCta({
+  href,
+  label,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  openLabel: string;
+}) {
+  return (
+    <div className="mt-5">
+      <ActionablePrimaryLink href={href} label={label} openLabel={openLabel} />
+    </div>
   );
+}
+
+function ActionablePrimaryLink({
+  href,
+  label,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  openLabel: string;
+}) {
+  if (!href) {
+    return (
+      <div className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)]">
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      className="inline-flex w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+      href={href}
+      rel={isExternalHref(href) ? "noreferrer" : undefined}
+      target={isExternalHref(href) ? "_blank" : undefined}
+    >
+      <span>{label}</span>
+      <span className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span>
+    </a>
+  );
+}
+
+function ActionablePanelLink({
+  href,
+  label,
+  description,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  description?: string;
+  openLabel: string;
+}) {
+  const className =
+    "rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
+  const content = (
+    <>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
+        {href ? <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span> : null}
+      </div>
+      {description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{description}</p> : null}
+    </>
+  );
+
+  if (!href) {
+    return <div className={className}>{content}</div>;
+  }
+
+  return (
+    <a
+      className={`block ${className}`}
+      href={href}
+      rel={isExternalHref(href) ? "noreferrer" : undefined}
+      target={isExternalHref(href) ? "_blank" : undefined}
+    >
+      {content}
+    </a>
+  );
+}
+
+function isExternalHref(href: string) {
+  return /^https?:\/\//.test(href);
 }
 
 function MiniMetric({

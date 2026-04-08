@@ -65,6 +65,9 @@ Design rules:
 - presenter scenes are agenda-linked web pages, not a general slide authoring system
 - presenter content belongs to the same blueprint/runtime model as agenda content
 - room-facing rendering may use facilitator auth, but must not expose facilitator controls or privileged operational state by default
+- participant walkthrough scenes should stay cue-first and must not default to facilitator-monitoring chrome such as team checkpoint dashboards or room-pulse metrics
+- attributed quotes must show visible attribution on the room-facing page
+- image-backed scenes should carry explicit caption/source context when they rely on internal reference material
 
 ## Facilitator Auth Model
 
@@ -79,7 +82,8 @@ Design rules:
 There are now two explicit layers:
 
 - public blueprint layer
-  - canonical reusable agenda structure lives in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
+  - canonical runtime-facing structured agenda blueprint lives in [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json)
+  - public-readable workshop-method summary remains in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
   - supporting human-readable workshop method docs live in [`workshop-blueprint/`](../workshop-blueprint/)
 - runtime instance layer
   - instance create/reset imports blueprint-owned fields into the active workshop instance
@@ -118,6 +122,7 @@ The blueprint/runtime split is defined more fully in:
 
 - [`blueprint-import-model.md`](blueprint-import-model.md)
 - [`runtime-learning-publish-back.md`](runtime-learning-publish-back.md)
+- [`workshop-content-language-architecture.md`](workshop-content-language-architecture.md)
 
 ## Data Boundary
 

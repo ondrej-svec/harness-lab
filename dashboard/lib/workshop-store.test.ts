@@ -464,6 +464,28 @@ describe("workshop-store", () => {
     expect(state.agenda.every((item) => typeof item.order === "number")).toBe(true);
   });
 
+  it("projects English blueprint content for legacy English workshop state on read", async () => {
+    repository = new MemoryWorkshopStateRepository({
+      ...structuredClone(seedWorkshopState),
+      workshopMeta: {
+        ...structuredClone(seedWorkshopState.workshopMeta),
+        contentLang: "en",
+        subtitle: "Workshop operating system pro práci s AI agenty",
+        adminHint: "Repo používá ukázková data.",
+      },
+    });
+    setWorkshopStateRepositoryForTests(repository);
+
+    const state = await getWorkshopState();
+
+    expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
+    expect(state.agenda[0]?.title).toBe("Opening and orientation");
+    expect(state.briefs[0]?.problem).toContain("Developers lose time");
+    expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
+    expect(state.setupPaths[0]?.summary).toContain("fastest path");
+    expect(state.ticker[0]?.label).toBe("Team 3 just added its first custom skill.");
+  });
+
   it("updates facilitator-controlled team and checkpoint state", async () => {
     await updateCheckpoint("t1", "Checkpoint po facilitaci");
     let state = await getWorkshopState();
@@ -510,6 +532,7 @@ describe("workshop-store", () => {
 
     expect(state.workshopId).toBe("sample-studio-a");
     expect(state.workshopMeta.city).toBe("Studio A");
+    expect(state.workshopMeta.contentLang).toBe("cs");
     expect(state.rotation.scenario).toBe("20-participants");
     expect(state.agenda.map((item) => item.id)).toEqual(blueprintAgenda.phases.map((phase) => phase.id));
     expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
@@ -534,6 +557,7 @@ describe("workshop-store", () => {
     const created = await createWorkshopInstance({
       id: "client-hackathon-2026-05",
       templateId: "blueprint-default",
+      contentLang: "en",
       city: "Client HQ",
       dateRange: "12. května 2026",
     });
@@ -541,14 +565,14 @@ describe("workshop-store", () => {
     expect(created).toMatchObject({
       id: "client-hackathon-2026-05",
       templateId: "blueprint-default",
-      workshopMeta: { city: "Client HQ" },
+      workshopMeta: { city: "Client HQ", contentLang: "en" },
     });
     await expect(getWorkshopInstances()).resolves.toEqual(
       expect.arrayContaining([expect.objectContaining({ id: "client-hackathon-2026-05" })]),
     );
     await expect(getWorkshopState("client-hackathon-2026-05")).resolves.toMatchObject({
       workshopId: "client-hackathon-2026-05",
-      workshopMeta: { city: "Client HQ" },
+      workshopMeta: { city: "Client HQ", contentLang: "en" },
     });
 
     await removeWorkshopInstance("client-hackathon-2026-05");

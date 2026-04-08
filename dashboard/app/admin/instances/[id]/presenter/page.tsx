@@ -1,10 +1,7 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
-import { buildAdminInstanceHref } from "@/lib/admin-page-view-model";
-import { buildSharedRoomNotes } from "@/lib/public-page-view-model";
-import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
+import { buildPresenterPageState } from "@/lib/presenter-view-model";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
 import type { AgendaItem, PresenterBlock, PresenterScene } from "@/lib/workshop-data";
@@ -45,112 +42,34 @@ export default async function PresenterPage({
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-5 py-5 text-[var(--text-primary)] sm:px-8 sm:py-8">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6">
         <header className="rounded-[30px] border border-[var(--border)] bg-[var(--surface-panel)] px-6 py-5 shadow-[var(--shadow-soft)]">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-3xl">
-              <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterPageEyebrow}</p>
-              <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
-                {presenterState.activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}
-              </h1>
-              {presenterState.selectedScene ? (
-                <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{presenterState.selectedScene.label}</p>
-              ) : (
-                <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
-              )}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                href={buildAdminInstanceHref({ lang, instanceId })}
-              >
-                {copy.presenterBack}
-              </Link>
-            </div>
+          <div className="max-w-4xl">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterPageEyebrow}</p>
+            <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
+              {presenterState.activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}
+            </h1>
+            {presenterState.selectedScene ? (
+              <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{presenterState.selectedScene.label}</p>
+            ) : (
+              <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
+            )}
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)]">
-          <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)]">
-            <p className="px-2 text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterAgendaLabel}</p>
-            <nav className="mt-3 flex flex-col gap-2">
-              {presenterState.agendaItems.map((item) => {
-                const defaultScene =
-                  item.presenterScenes.find((scene) => scene.id === item.defaultPresenterSceneId && scene.enabled) ??
-                  item.presenterScenes.find((scene) => scene.enabled);
-                return (
-                  <Link
-                    key={item.id}
-                    href={buildPresenterRouteHref({
-                      lang,
-                      instanceId,
-                      agendaItemId: item.id,
-                      sceneId: defaultScene?.id ?? null,
-                    })}
-                    className={`rounded-[20px] border px-3 py-3 text-sm transition ${
-                      presenterState.activeAgendaItem?.id === item.id
-                        ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)]"
-                        : "border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                    }`}
-                  >
-                    <span className="block text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{item.time}</span>
-                    <span className="mt-1 block font-medium">{item.title}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-          </aside>
-
-          <section className="space-y-6">
-            <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] sm:p-8">
-              {presenterState.selectedScene ? (
-                <RoomScene
-                  copy={copy}
-                  state={state}
-                  agendaItem={presenterState.activeAgendaItem}
-                  nextAgendaItem={presenterNextAgendaItem}
-                  scene={presenterState.selectedScene}
-                />
-              ) : (
-                <EmptyScene copy={copy} />
-              )}
-            </div>
-
-            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)]">
-              <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterScenesLabel}</p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {(presenterState.activeAgendaItem?.presenterScenes ?? []).map((scene) => (
-                  scene.enabled ? (
-                    <Link
-                      key={scene.id}
-                      href={buildPresenterRouteHref({
-                        lang,
-                        instanceId,
-                        agendaItemId: presenterState.activeAgendaItem?.id ?? null,
-                        sceneId: scene.id,
-                      })}
-                      className={`rounded-full border px-4 py-2 text-sm transition ${
-                        presenterState.selectedScene?.id === scene.id
-                          ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)]"
-                          : "border-[var(--border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-                      }`}
-                    >
-                      {scene.label}
-                    </Link>
-                  ) : (
-                    <span
-                      key={scene.id}
-                      className="rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-muted)]"
-                    >
-                      {scene.label} • {copy.presenterSceneDisabled}
-                    </span>
-                  )
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
+        <section className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] sm:p-8">
+          {presenterState.selectedScene ? (
+            <RoomScene
+              copy={copy}
+              state={state}
+              agendaItem={presenterState.activeAgendaItem}
+              nextAgendaItem={presenterNextAgendaItem}
+              scene={presenterState.selectedScene}
+            />
+          ) : (
+            <EmptyScene copy={copy} />
+          )}
+        </section>
       </div>
     </main>
   );
@@ -171,7 +90,6 @@ function RoomScene({
 }) {
   const blocks = scene.blocks.length > 0 ? scene.blocks : buildFallbackBlocks(scene);
   const showSceneContext = scene.chromePreset === "checkpoint" || scene.chromePreset === "agenda";
-  const sharedNotes = buildSharedRoomNotes(state.ticker);
 
   return (
     <div className="space-y-8">
@@ -180,7 +98,6 @@ function RoomScene({
           copy={copy}
           agendaItem={agendaItem}
           nextAgendaItem={nextAgendaItem}
-          sharedNotes={sharedNotes}
         />
       ) : null}
 
@@ -217,73 +134,39 @@ function RoomScene({
         </div>
       ) : null}
 
-        <SceneBlocks
+      <SceneBlocks
         blocks={blocks}
         copy={copy}
-        state={state}
         activeAgendaItem={agendaItem}
-        nextAgendaItem={nextAgendaItem}
-        sharedNotes={sharedNotes}
+        participantCueFirst={scene.chromePreset === "participant"}
       />
 
-      {scene.ctaLabel ? (
-        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4 text-base leading-7 text-[var(--text-primary)]">
-          {scene.ctaLabel}
-        </div>
-      ) : null}
+      {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
     </div>
   );
 }
 
 function ParticipantPreview({
   copy,
-  state,
   activeAgendaItem,
-  nextAgendaItem,
   selectedSceneBody,
-  sharedNotes,
 }: {
   copy: (typeof adminCopy)["cs" | "en"];
-  state: Awaited<ReturnType<typeof getWorkshopState>>;
   activeAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | null;
-  nextAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | null;
   selectedSceneBody: string;
-  sharedNotes: string[];
 }) {
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
-      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterCueLabel}</p>
-        <p className="mt-3 text-lg leading-8 text-[var(--text-primary)]">{selectedSceneBody}</p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-3">
-          <MiniSceneMetric
-            label={copy.currentPhase}
-            value={`${activeAgendaItem?.time ?? ""}${activeAgendaItem ? " • " : ""}${activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}`.trim()}
-          />
-          <MiniSceneMetric
-            label={copy.nextUp}
-            value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-          />
-          <MiniSceneMetric label={copy.presenterRoomPulseLabel} value={`${sharedNotes.length}`} />
-        </div>
-      </div>
-
-      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.teams}</p>
-        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
-          {state.teams.slice(0, 3).map((team) => (
-            <article key={team.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <div>
-                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">{team.name}</h3>
-                  <p className="mt-1 text-sm text-[var(--text-muted)]">{team.city}</p>
-                </div>
-                <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</span>
-              </div>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line">{team.checkpoint}</p>
-            </article>
-          ))}
-        </div>
+    <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] px-6 py-6 sm:px-8 sm:py-8">
+      <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterCueLabel}</p>
+      <div className="mt-5 max-w-5xl">
+        {activeAgendaItem ? (
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+            {activeAgendaItem.time} • {activeAgendaItem.title}
+          </p>
+        ) : null}
+        <p className="mt-4 text-2xl font-medium leading-10 text-[var(--text-primary)] sm:text-[2.5rem] sm:leading-[1.15]">
+          {selectedSceneBody}
+        </p>
       </div>
     </div>
   );
@@ -307,7 +190,6 @@ function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
         type: "hero",
         eyebrow: "Participant surface",
         title: scene.title,
-        body: scene.body || undefined,
       },
       { id: "participant-preview", type: "participant-preview", body: scene.body },
     ];
@@ -332,18 +214,16 @@ function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
 function SceneBlocks({
   blocks,
   copy,
-  state,
   activeAgendaItem,
-  nextAgendaItem,
-  sharedNotes,
+  participantCueFirst,
 }: {
   blocks: PresenterBlock[];
   copy: (typeof adminCopy)["cs" | "en"];
-  state: Awaited<ReturnType<typeof getWorkshopState>>;
   activeAgendaItem: AgendaItem | null;
-  nextAgendaItem: AgendaItem | null;
-  sharedNotes: string[];
+  participantCueFirst?: boolean;
 }) {
+  const hasParticipantPreview = participantCueFirst && blocks.some((block) => block.type === "participant-preview");
+
   return (
     <div className="space-y-6">
       {blocks.map((block) => {
@@ -352,16 +232,14 @@ function SceneBlocks({
             <ParticipantPreview
               key={block.id}
               copy={copy}
-              state={state}
               activeAgendaItem={activeAgendaItem}
-              nextAgendaItem={nextAgendaItem}
               selectedSceneBody={block.body ?? activeAgendaItem?.roomSummary ?? ""}
-              sharedNotes={sharedNotes}
             />
           );
         }
 
         if (block.type === "hero") {
+          const heroBody = hasParticipantPreview ? null : block.body ?? null;
           return (
             <div key={block.id}>
               {block.eyebrow ? (
@@ -372,8 +250,8 @@ function SceneBlocks({
               <h2 className="mt-4 max-w-5xl text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl">
                 {block.title}
               </h2>
-              {block.body ? (
-                <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">{block.body}</p>
+              {heroBody ? (
+                <p className="mt-6 max-w-4xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">{heroBody}</p>
               ) : null}
             </div>
           );
@@ -400,12 +278,11 @@ function SceneBlocks({
         }
 
         if (block.type === "quote") {
+          const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
           return (
             <div key={block.id} className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] px-6 py-6">
               <blockquote className="text-2xl font-medium leading-10 text-[var(--text-primary)]">“{block.quote}”</blockquote>
-              {block.attribution ? (
-                <p className="mt-4 text-sm text-[var(--text-muted)]">{block.attribution}</p>
-              ) : null}
+              <p className="mt-4 text-sm text-[var(--text-muted)]">{attribution}</p>
             </div>
           );
         }
@@ -450,7 +327,18 @@ function SceneBlocks({
             <figure key={block.id} className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={block.src} alt={block.alt} className="w-full rounded-[20px] object-cover" />
-              {block.caption ? <figcaption className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{block.caption}</figcaption> : null}
+              {block.caption || block.sourceLabel ? (
+                <figcaption className="mt-3 space-y-2">
+                  {block.caption ? <p className="text-sm leading-6 text-[var(--text-secondary)]">{block.caption}</p> : null}
+                  {block.sourceLabel ? (
+                    <ImageSourceAttribution
+                      href={block.sourceHref ?? null}
+                      label={block.sourceLabel}
+                      openLabel={copy.openLinkLabel}
+                    />
+                  ) : null}
+                </figcaption>
+              ) : null}
             </figure>
           );
         }
@@ -460,10 +348,13 @@ function SceneBlocks({
             <BlockCard key={block.id} title={block.title}>
               <div className="space-y-3">
                 {block.items.map((item) => (
-                  <div key={`${item.label}-${item.href ?? ""}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <p className="text-base font-medium text-[var(--text-primary)]">{item.label}</p>
-                    {item.description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p> : null}
-                  </div>
+                  <ActionableSceneLink
+                    key={`${item.label}-${item.href ?? ""}`}
+                    href={item.href ?? null}
+                    label={item.label}
+                    description={item.description}
+                    openLabel={copy.openLinkLabel}
+                  />
                 ))}
               </div>
             </BlockCard>
@@ -484,12 +375,10 @@ function ParticipantSceneContext({
   copy,
   agendaItem,
   nextAgendaItem,
-  sharedNotes,
 }: {
   copy: (typeof adminCopy)["cs" | "en"];
   agendaItem: AgendaItem | null;
   nextAgendaItem: AgendaItem | null;
-  sharedNotes: string[];
 }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(18rem,0.95fr)]">
@@ -502,16 +391,10 @@ function ParticipantSceneContext({
           <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{agendaItem.roomSummary}</p>
         ) : null}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <MiniSceneMetric
-          label={copy.nextUp}
-          value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-        />
-        <MiniSceneMetric
-          label={copy.presenterRoomPulseLabel}
-          value={sharedNotes.length > 0 ? sharedNotes[0]! : copy.presenterNoSceneBody}
-        />
-      </div>
+      <MiniSceneMetric
+        label={copy.nextUp}
+        value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
+      />
     </div>
   );
 }
@@ -538,4 +421,103 @@ function BlockCard({
       <div className={title ? "mt-4" : ""}>{children}</div>
     </div>
   );
+}
+
+function SceneCta({
+  href,
+  label,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  openLabel: string;
+}) {
+  if (!href) {
+    return (
+      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4 text-base leading-7 text-[var(--text-primary)]">
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <a
+      className="inline-flex w-full items-center justify-between rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface-soft)] px-5 py-4 text-base text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+      href={href}
+      rel={isExternalHref(href) ? "noreferrer" : undefined}
+      target={isExternalHref(href) ? "_blank" : undefined}
+    >
+      <span>{label}</span>
+      <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span>
+    </a>
+  );
+}
+
+function ActionableSceneLink({
+  href,
+  label,
+  description,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  description?: string;
+  openLabel: string;
+}) {
+  const className =
+    "rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
+  const content = (
+    <>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-base font-medium text-[var(--text-primary)]">{label}</p>
+        {href ? <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span> : null}
+      </div>
+      {description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{description}</p> : null}
+    </>
+  );
+
+  if (!href) {
+    return <div className={className}>{content}</div>;
+  }
+
+  return (
+    <a
+      className={`block ${className}`}
+      href={href}
+      rel={isExternalHref(href) ? "noreferrer" : undefined}
+      target={isExternalHref(href) ? "_blank" : undefined}
+    >
+      {content}
+    </a>
+  );
+}
+
+function ImageSourceAttribution({
+  href,
+  label,
+  openLabel,
+}: {
+  href: string | null;
+  label: string;
+  openLabel: string;
+}) {
+  if (!href) {
+    return <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>;
+  }
+
+  return (
+    <a
+      className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
+      href={href}
+      rel={isExternalHref(href) ? "noreferrer" : undefined}
+      target={isExternalHref(href) ? "_blank" : undefined}
+    >
+      <span>{label}</span>
+      <span>{openLabel}</span>
+    </a>
+  );
+}
+
+function isExternalHref(href: string) {
+  return /^https?:\/\//.test(href);
 }

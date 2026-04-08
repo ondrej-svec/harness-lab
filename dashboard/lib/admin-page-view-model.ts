@@ -38,6 +38,7 @@ export function buildAdminWorkspaceHref(options: {
   lang: UiLanguage;
   query?: string | null;
   status?: WorkspaceInstanceStatusFilter | null;
+  removeInstanceId?: string | null;
 }) {
   const params = new URLSearchParams();
   if (options.query?.trim()) {
@@ -45,6 +46,9 @@ export function buildAdminWorkspaceHref(options: {
   }
   if (options.status && options.status !== "all") {
     params.set("status", options.status);
+  }
+  if (options.removeInstanceId?.trim()) {
+    params.set("removeInstance", options.removeInstanceId.trim());
   }
 
   const query = params.toString();
@@ -282,8 +286,8 @@ export function buildControlRoomSummaryStats(options: {
       hint: currentAgendaItem?.time ?? "",
     },
     {
-      label: copy.rotation,
-      value: state.rotation.revealed ? copy.rotationUnlocked : copy.rotationHidden,
+      label: copy.participantSurfaceCardTitle,
+      value: state.rotation.revealed ? copy.participantStateUnlocked : copy.participantStateHidden,
       hint: state.rotation.scenario,
     },
     {
@@ -309,11 +313,11 @@ export function buildControlRoomLiveState(options: {
   return {
     compactRows: [
       { label: lang === "cs" ? "id instance" : "instance id", value: state.workshopId },
-      { label: copy.currentPhase, value: state.workshopMeta.currentPhaseLabel },
       { label: copy.rotation, value: state.rotation.scenario },
+      { label: copy.teams, value: `${state.teams.length}` },
     ],
     liveNowTitle: `${currentAgendaItem?.time ?? ""}${currentAgendaItem ? " • " : ""}${currentAgendaItem?.title ?? ""}`.trim(),
-    liveNowDescription: currentAgendaItem?.description ?? "",
+    liveNowDescription: currentAgendaItem?.roomSummary || currentAgendaItem?.description || "",
     nextUpLabel: nextAgendaItem ? `${copy.nextUp}: ${nextAgendaItem.time} • ${nextAgendaItem.title}` : null,
     agendaLink: buildAdminInstanceHref({ lang, section: "agenda", instanceId: activeInstanceId }),
     phaseOptions: state.agenda.map((item) => ({

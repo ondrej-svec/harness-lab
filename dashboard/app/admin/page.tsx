@@ -22,10 +22,12 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { createWorkshopInstance, getWorkshopState, removeWorkshopInstance } from "@/lib/workshop-store";
 import {
   AdminLanguageSwitcher,
+  AdminDialog,
   FieldLabel,
   StatusPill,
   adminHeroPanelClassName,
   adminHeroTileClassName,
+  adminDangerButtonClassName,
   adminInputClassName,
   adminPanelSurfaceClassName,
   adminPrimaryButtonClassName,
@@ -51,6 +53,7 @@ async function createInstanceAction(formData: FormData) {
   const id = String(formData.get("newInstanceId") ?? "").trim();
   const templateId = workshopTemplates[0]?.id ?? "";
   const eventTitle = String(formData.get("eventTitle") ?? "").trim();
+  const contentLang = formData.get("contentLang") === "en" ? "en" : "cs";
   const city = String(formData.get("city") ?? "").trim();
   const dateRange = formatWorkshopDateLabel(String(formData.get("dateRange") ?? ""), lang);
   const venueName = String(formData.get("venueName") ?? "").trim();
@@ -63,6 +66,7 @@ async function createInstanceAction(formData: FormData) {
     await createWorkshopInstance({
       id,
       templateId,
+      contentLang,
       eventTitle,
       city,
       dateRange,
@@ -79,17 +83,43 @@ async function createInstanceAction(formData: FormData) {
   redirect(buildAdminWorkspaceHref({ lang }));
 }
 
+function getContentLanguageLabel(
+  contentLang: "cs" | "en" | undefined,
+  copy: (typeof adminCopy)["cs" | "en"],
+) {
+  return contentLang === "en" ? copy.contentLanguageEnglish : copy.contentLanguageCzech;
+}
+
 async function removeInstanceAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+  const query = String(formData.get("q") ?? "").trim();
+  const status = String(formData.get("status") ?? "").trim();
   const targetInstanceId = String(formData.get("targetInstanceId") ?? "").trim();
+  const confirmRemoveInstanceId = String(formData.get("confirmRemoveInstanceId") ?? "").trim();
   if (!targetInstanceId) {
     redirect(buildAdminWorkspaceHref({ lang }));
+  }
+  if (confirmRemoveInstanceId !== targetInstanceId) {
+    redirect(
+      buildAdminWorkspaceHref({
+        lang,
+        query,
+        status: status === "created" || status === "prepared" || status === "running" || status === "archived" ? status : "all",
+        removeInstanceId: targetInstanceId,
+      }),
+    );
   }
 
   await requireFacilitatorActionAccess(targetInstanceId);
   await removeWorkshopInstance(targetInstanceId);
-  redirect(buildAdminWorkspaceHref({ lang }));
+  redirect(
+    buildAdminWorkspaceHref({
+      lang,
+      query,
+      status: status === "created" || status === "prepared" || status === "running" || status === "archived" ? status : "all",
+    }),
+  );
 }
 
 function resolveStatusTone(status: string): "neutral" | "live" | "archived" {
@@ -144,6 +174,7 @@ export default async function AdminWorkspacePage({
     agendaItem?: string;
     error?: string;
     password?: string;
+    removeInstance?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -169,7 +200,11 @@ export default async function AdminWorkspacePage({
   await requireFacilitatorPageAccess(null);
 
   const filters = readWorkspaceFilters({ q: params?.q, status: params?.status });
+  const removeInstanceId = params?.removeInstance?.trim() || null;
   const filteredInstances = filterWorkshopInstances(availableInstances, filters);
+  const removeTargetInstance = removeInstanceId
+    ? availableInstances.find((instance) => instance.id === removeInstanceId) ?? null
+    : null;
   const workspaceStats = buildWorkspaceStatusSummary(availableInstances);
   const [loadedAuthSession, loadedWorkshopStates] = await Promise.all([
     getRuntimeStorageMode() === "neon" && auth ? auth.getSession() : Promise.resolve({ data: null }),
@@ -327,6 +362,14 @@ export default async function AdminWorkspacePage({
                         </div>
 
                         <div>
+                          <FieldLabel htmlFor="content-lang">{copy.contentLanguageLabel}</FieldLabel>
+                          <select id="content-lang" name="contentLang" defaultValue="cs" className={`${adminInputClassName} mt-2`}>
+                            <option value="cs">{copy.contentLanguageCzech}</option>
+                            <option value="en">{copy.contentLanguageEnglish}</option>
+                          </select>
+                        </div>
+
+                        <div>
                           <FieldLabel htmlFor="instance-address">{copy.instanceAddressLabel}</FieldLabel>
                           <input id="instance-address" name="addressLine" placeholder={copy.instanceAddressPlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>
@@ -412,18 +455,28 @@ export default async function AdminWorkspacePage({
                             label={copy.workspacePhaseLabel}
                             value={state?.workshopMeta.currentPhaseLabel ?? instance.workshopMeta.currentPhaseLabel}
                           />
+                          <WorkspaceMetaRow
+                            label={copy.contentLanguageLabel}
+                            value={getContentLanguageLabel(instance.workshopMeta.contentLang, copy)}
+                          />
                           <WorkspaceMetaRow label={copy.workspaceTeamsLabel} value={`${state?.teams.length ?? 0}`} />
                         </div>
 
                         <div className="mt-auto pt-4">
-                          <form action={removeInstanceAction} className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
-                            <input name="lang" type="hidden" value={lang} />
-                            <input name="targetInstanceId" type="hidden" value={instance.id} />
+                          <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
                             <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">archive-safe</span>
-                            <AdminSubmitButton className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]">
-                              {copy.removeInstanceButton}
-                            </AdminSubmitButton>
-                          </form>
+                            <Link
+                              className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]"
+                              href={buildAdminWorkspaceHref({
+                                lang,
+                                query: filters.query,
+                                status: filters.status,
+                                removeInstanceId: instance.id,
+                              })}
+                            >
+                              {copy.removeInstanceReviewButton}
+                            </Link>
+                          </div>
                         </div>
                       </article>
                     );
@@ -446,6 +499,48 @@ export default async function AdminWorkspacePage({
           </div>
         </section>
       </div>
+      {removeTargetInstance ? (
+        <AdminDialog
+          eyebrow={copy.removeInstanceDialogEyebrow}
+          title={copy.removeInstanceDialogTitle}
+          description={copy.removeInstanceDialogDescription}
+          closeHref={buildAdminWorkspaceHref({ lang, query: filters.query, status: filters.status })}
+          closeLabel={copy.cancelButton}
+        >
+          <div className="space-y-4">
+            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.activeInstance}</p>
+              <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">{getWorkshopDisplayTitle(removeTargetInstance)}</p>
+              <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{removeTargetInstance.id}</p>
+            </div>
+            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+              <p className="text-sm leading-6 text-[var(--text-primary)]">{copy.removeInstanceArchiveNote}</p>
+            </div>
+            <div className="rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--danger)]">{copy.removeInstanceConsequenceLabel}</p>
+              <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{copy.removeInstanceConsequenceBody}</p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+              <Link
+                className={`${adminSecondaryButtonClassName} w-full sm:w-auto`}
+                href={buildAdminWorkspaceHref({ lang, query: filters.query, status: filters.status })}
+              >
+                {copy.cancelButton}
+              </Link>
+              <form action={removeInstanceAction} className="w-full sm:w-auto">
+                <input name="lang" type="hidden" value={lang} />
+                <input name="q" type="hidden" value={filters.query} />
+                <input name="status" type="hidden" value={filters.status} />
+                <input name="targetInstanceId" type="hidden" value={removeTargetInstance.id} />
+                <input name="confirmRemoveInstanceId" type="hidden" value={removeTargetInstance.id} />
+                <AdminSubmitButton className={`${adminDangerButtonClassName} w-full sm:w-auto`}>
+                  {copy.confirmRemoveInstanceButton}
+                </AdminSubmitButton>
+              </form>
+            </div>
+          </div>
+        </AdminDialog>
+      ) : null}
     </main>
   );
 }

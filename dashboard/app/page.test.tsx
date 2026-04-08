@@ -1,6 +1,7 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { publicCopy } from "@/lib/ui-language";
-import { seedWorkshopState } from "@/lib/workshop-data";
+import { createWorkshopStateFromTemplate, seedWorkshopState } from "@/lib/workshop-data";
 
 const getConfiguredEventCode = vi.fn();
 const getParticipantSessionFromCookieStore = vi.fn();
@@ -102,8 +103,10 @@ describe("public page helpers", () => {
       publicCopy.en.navRoom,
       publicCopy.en.navTeams,
       publicCopy.en.navNotes,
-      publicCopy.en.navFacilitatorLogin,
     ]);
+    expect(buildSiteHeaderNavLinks({ isParticipant: false, lang: "en", copy: publicCopy.en }).map((item) => item.label)).toContain(
+      publicCopy.en.navFacilitatorLogin,
+    );
     expect(buildPublicFooterLinks("cs", publicCopy.cs).map((item) => item.label)).toContain(publicCopy.cs.footerBlueprint);
     expect(getBlueprintRepoUrl()).toContain("workshop-blueprint");
     expect(getPublicRepoUrl()).toContain("harness-lab");
@@ -147,7 +150,9 @@ describe("public page helpers", () => {
       },
       rotationRevealed: false,
     });
-    expect(buildPhasePanel.guidanceLabel).toBe("Participant board");
+    expect(buildPhasePanel.guidanceLabel).toBe("Týmová tabule");
+    expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install flow");
+    expect(buildPhasePanel.guidanceCtaHref).toContain("workshop-skill/install.md");
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "hero")).toBe(true);
     const customFallbackAgendaItem = {
@@ -205,6 +210,24 @@ describe("HomePage", () => {
 
   it("returns the participant room view when a participant session exists", async () => {
     const { default: HomePage } = await import("./page");
+    const state = structuredClone(seedWorkshopState);
+    const buildPhase = state.agenda.find((item) => item.id === "build-1");
+    const participantScene = buildPhase?.presenterScenes.find((scene) => scene.id === "build-1-participant-view");
+    if (participantScene) {
+      participantScene.blocks.push({
+        id: "participant-links",
+        type: "link-list",
+        title: "Další reference",
+        items: [
+          {
+            label: "Workshop skill reference",
+            href: "https://example.com/reference",
+            description: "Otevři instalační a referenční flow.",
+          },
+        ],
+      });
+    }
+    getWorkshopState.mockResolvedValue(state);
     getParticipantSessionFromCookieStore.mockResolvedValue({
       token: "session-token",
       expiresAt: "2026-04-06T16:30:00.000Z",
@@ -213,8 +236,32 @@ describe("HomePage", () => {
     const view = await HomePage({
       searchParams: Promise.resolve({ lang: "cs" }),
     });
+    const html = renderToStaticMarkup(view);
 
     expect(view).toBeTruthy();
     expect(getParticipantTeamLookup).toHaveBeenCalledTimes(1);
+    expect(html).not.toContain(publicCopy.cs.navFacilitatorLogin);
+    expect(html).toContain("href=\"https://example.com/reference\"");
+    expect(html).toContain(publicCopy.cs.openLinkLabel);
+    expect(html).toContain("href=\"https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md\"");
+  });
+
+  it("renders English participant guidance for an English-content workshop instance", async () => {
+    const { default: HomePage } = await import("./page");
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
+    getWorkshopState.mockResolvedValue(state);
+    getParticipantSessionFromCookieStore.mockResolvedValue({
+      token: "session-token",
+      expiresAt: "2026-04-06T16:30:00.000Z",
+    });
+
+    const view = await HomePage({
+      searchParams: Promise.resolve({ lang: "en" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("Opening and orientation");
+    expect(html).toContain("Participant welcome board");
+    expect(html).toContain("Today is not prompt theatre");
   });
 });

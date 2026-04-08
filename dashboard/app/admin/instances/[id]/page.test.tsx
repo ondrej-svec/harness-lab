@@ -111,7 +111,31 @@ describe("Admin control room page", () => {
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-b");
     expect(html).toContain(adminCopy.en.controlRoomBack);
     expect(html).toContain(adminCopy.en.navLive);
-    expect(html).toContain(adminCopy.en.continuationTitle);
+    expect(html).toContain(adminCopy.en.moveAgendaTitle);
+    expect(html).toContain(adminCopy.en.presenterCardTitle);
+    expect(html).not.toContain(adminCopy.en.archiveResetTitle);
+    expect(html).not.toContain(adminCopy.en.continuationTitle);
+    expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
+  });
+
+  it("shows the handoff control only when the live moment is at rotation", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+    const state = structuredClone(seedWorkshopState);
+    state.agenda = state.agenda.map((item) => ({
+      ...item,
+      status: item.id === "rotation" ? "current" : "done",
+    }));
+    getWorkshopState.mockResolvedValue(state);
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "live" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.handoffMomentTitle);
+    expect(html).toContain(adminCopy.en.handoffMomentJumpButton);
+    expect(html).toContain("13:30 • Rotace týmů");
   });
 
   it("renders the agenda editor sheet for the selected agenda item", async () => {
@@ -128,6 +152,24 @@ describe("Admin control room page", () => {
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
     expect(html).toContain('value="Context is King"');
+  });
+
+  it("keeps persistent runtime context visible outside the live section", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.activeInstance);
+    expect(html).toContain("sample-studio-a");
+    expect(html).toContain(adminCopy.en.currentPhase);
+    expect(html).toContain("Build fáze 1");
+    expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
+    expect(html).toContain(adminCopy.en.participantStateHidden);
+    expect(html).toContain("20-participants");
   });
 
   it("renders team editing in the teams section", async () => {
@@ -163,5 +205,23 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.checkpointChangedLabel);
     expect(html).toContain(adminCopy.en.checkpointVerifiedLabel);
     expect(html).toContain(adminCopy.en.checkpointNextStepLabel);
+  });
+
+  it("keeps safety actions in settings instead of the live canvas", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "settings" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
+    expect(html).toContain(adminCopy.en.participantSurfaceRecoveryHint);
+    expect(html).toContain(adminCopy.en.unlockButton);
+    expect(html).toContain(adminCopy.en.hideAgainButton);
+    expect(html).toContain(adminCopy.en.archiveResetTitle);
+    expect(html).toContain(adminCopy.en.settingsSafetyEyebrow);
+    expect(html).toContain(adminCopy.en.blueprintLinkLabel);
   });
 });

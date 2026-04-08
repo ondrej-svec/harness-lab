@@ -116,6 +116,7 @@ describe("workshop instance route", () => {
         },
         body: JSON.stringify({
           action: "update_metadata",
+          contentLang: "en",
           eventTitle: "Developer Hackathon Praha",
           dateRange: "24. dubna 2026",
           venueName: "Seyfor Praha jednička 103",
@@ -132,6 +133,7 @@ describe("workshop instance route", () => {
       instance: {
         id: "sample-studio-a",
         workshopMeta: {
+          contentLang: "en",
           eventTitle: "Developer Hackathon Praha",
           dateRange: "24. dubna 2026",
           venueName: "Seyfor Praha jednička 103",
@@ -141,12 +143,14 @@ describe("workshop instance route", () => {
     });
     await expect(instanceRepository.getInstance("sample-studio-a")).resolves.toMatchObject({
       workshopMeta: {
+        contentLang: "en",
         eventTitle: "Developer Hackathon Praha",
         addressLine: "CZ, Praha 8, Sokolovska 695/115b",
       },
     });
     await expect(stateRepository.getState("sample-studio-a")).resolves.toMatchObject({
       workshopMeta: {
+        contentLang: "en",
         eventTitle: "Developer Hackathon Praha",
         venueName: "Seyfor Praha jednička 103",
       },
@@ -170,7 +174,7 @@ describe("workshop instance route", () => {
     await expect(response.json()).resolves.toEqual({
       ok: false,
       error:
-        "at least one metadata field is required (eventTitle, city, dateRange, venueName, roomName, addressLine, locationDetails, facilitatorLabel)",
+        "at least one metadata field is required (contentLang, eventTitle, city, dateRange, venueName, roomName, addressLine, locationDetails, facilitatorLabel)",
     });
   });
 });

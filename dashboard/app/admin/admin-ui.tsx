@@ -194,3 +194,42 @@ export function AdminSheet({
     </div>
   );
 }
+
+export function AdminDialog({
+  eyebrow,
+  title,
+  description,
+  closeHref,
+  closeLabel,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  closeHref: string;
+  closeLabel: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
+      <div className="absolute inset-0">
+        <Link aria-label={closeLabel} className="block h-full w-full" href={closeHref} />
+      </div>
+      <section className="relative w-full max-w-[36rem] overflow-hidden rounded-[30px] border border-[var(--border-strong)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[var(--shadow-overlay)] backdrop-blur">
+        <div className="border-b border-[var(--border)] px-5 py-4 sm:px-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{eyebrow}</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
+            </div>
+            <Link className={adminGhostButtonClassName} href={closeHref}>
+              {closeLabel}
+            </Link>
+          </div>
+        </div>
+        <div className="px-5 py-5 sm:px-6">{children}</div>
+      </section>
+    </div>
+  );
+}

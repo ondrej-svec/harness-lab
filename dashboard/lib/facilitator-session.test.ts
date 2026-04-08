@@ -28,13 +28,16 @@ vi.mock("./runtime-storage", () => ({
   getRuntimeStorageMode,
 }));
 
-const facilitatorSessionModulePromise = import("./facilitator-session");
+function importFacilitatorSessionModule() {
+  return import("./facilitator-session");
+}
 
 describe("facilitator-session", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
   const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
 
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
@@ -44,14 +47,14 @@ describe("facilitator-session", () => {
   });
 
   it("returns null outside neon mode", async () => {
-    const { getFacilitatorSession } = await facilitatorSessionModulePromise;
+    const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getRuntimeStorageMode.mockReturnValue("file");
 
     await expect(getFacilitatorSession()).resolves.toBeNull();
   });
 
   it("throws when neon auth is not fully configured", async () => {
-    const { getFacilitatorSession } = await facilitatorSessionModulePromise;
+    const { getFacilitatorSession } = await importFacilitatorSessionModule();
     delete process.env.NEON_AUTH_BASE_URL;
 
     await expect(getFacilitatorSession()).rejects.toThrow(
@@ -60,14 +63,14 @@ describe("facilitator-session", () => {
   });
 
   it("returns null when there is no signed-in user", async () => {
-    const { getFacilitatorSession } = await facilitatorSessionModulePromise;
+    const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getSession.mockResolvedValue({ data: null });
 
     await expect(getFacilitatorSession()).resolves.toBeNull();
   });
 
   it("returns null when the signed-in user has no active grant", async () => {
-    const { getFacilitatorSession } = await facilitatorSessionModulePromise;
+    const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getSession.mockResolvedValue({ data: { user: { id: "user-1" } } });
     getActiveGrantByNeonUserId.mockResolvedValue(null);
 
@@ -76,7 +79,7 @@ describe("facilitator-session", () => {
   });
 
   it("returns the facilitator session when a grant exists", async () => {
-    const { getFacilitatorSession } = await facilitatorSessionModulePromise;
+    const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getSession.mockResolvedValue({ data: { user: { id: "user-1" } } });
     getActiveGrantByNeonUserId.mockResolvedValue({ id: "grant-1", role: "owner" });
 

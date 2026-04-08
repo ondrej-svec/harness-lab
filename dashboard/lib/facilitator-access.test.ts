@@ -57,13 +57,16 @@ vi.mock("./request-integrity", async () => {
   };
 });
 
-const facilitatorAccessModulePromise = import("./facilitator-access");
+function importFacilitatorAccessModule() {
+  return import("./facilitator-access");
+}
 
 describe("facilitator-access", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
   const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
 
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
     delete process.env.NEON_AUTH_BASE_URL;
     delete process.env.NEON_AUTH_COOKIE_SECRET;
@@ -79,7 +82,7 @@ describe("facilitator-access", () => {
   });
 
   it("allows authorized file-mode requests", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     const response = await requireFacilitatorRequest(
       new Request("http://localhost/api/admin/facilitators", {
         headers: {
@@ -96,7 +99,7 @@ describe("facilitator-access", () => {
   });
 
   it("rejects untrusted non-GET requests before auth checks", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     const response = await requireFacilitatorRequest(
       new Request("http://localhost/api/admin/facilitators", {
         method: "POST",
@@ -112,7 +115,7 @@ describe("facilitator-access", () => {
   });
 
   it("uses cli bearer tokens in neon auth mode", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
@@ -134,7 +137,7 @@ describe("facilitator-access", () => {
   });
 
   it("returns an explicit not-found error when the target workshop does not exist", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     getInstance.mockResolvedValueOnce(null);
 
     const response = await requireFacilitatorRequest(
@@ -148,7 +151,7 @@ describe("facilitator-access", () => {
   });
 
   it("falls back to session auth in neon mode without a cli token", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
@@ -163,7 +166,7 @@ describe("facilitator-access", () => {
   });
 
   it("redirects page access to sign-in when file-mode credentials are missing", async () => {
-    const { requireFacilitatorPageAccess } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorPageAccess } = await importFacilitatorAccessModule();
     headers.mockResolvedValue(new Headers());
     hasValidRequestCredentials.mockResolvedValue(false);
 
@@ -177,7 +180,7 @@ describe("facilitator-access", () => {
   });
 
   it("checks trusted origin before server actions", async () => {
-    const { requireFacilitatorActionAccess } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorActionAccess } = await importFacilitatorAccessModule();
     requireTrustedActionOrigin.mockResolvedValue(false);
 
     await requireFacilitatorActionAccess("sample-studio-a");
@@ -186,7 +189,7 @@ describe("facilitator-access", () => {
   });
 
   it("continues to page access when the action origin is trusted", async () => {
-    const { requireFacilitatorActionAccess } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorActionAccess } = await importFacilitatorAccessModule();
     headers.mockResolvedValue(
       new Headers([["x-harness-authorization", "Basic forwarded"]]),
     );
@@ -204,7 +207,7 @@ describe("facilitator-access", () => {
     process.env.NEON_AUTH_COOKIE_SECRET = originalCookieSecret;
   });
   it("throws when neon mode is selected without a complete auth config", async () => {
-    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     delete process.env.NEON_AUTH_COOKIE_SECRET;
     getRuntimeStorageMode.mockReturnValue("neon");

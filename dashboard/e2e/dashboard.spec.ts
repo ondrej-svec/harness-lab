@@ -70,7 +70,7 @@ test.describe("participant dashboard", () => {
 
     await page.reload();
 
-    await expect(page.getByText("vrstva pro účastníky")).toBeVisible();
+    await expect(page.getByText("vrstva pro účastníky", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
     await expect(page.getByText("Co má tým držet viditelně před obědem")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
@@ -153,20 +153,32 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
     await expect(page.getByRole("link", { name: "zpět na workspace" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" }).first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "continuation handoff" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "řízení fáze" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
+    const phaseControlSummary = page.locator('select[name="agendaId"]').locator("xpath=ancestor::form/preceding-sibling::*[1]");
 
-    await Promise.all([
-      page.waitForURL(/\/admin\/instances\/sample-studio-a(\?.*)?$/),
-      page.getByRole("button", { name: "Odemknout" }).click(),
-    ]);
-    await expect(page.getByText(/^odemčeno$/).first()).toBeVisible();
+    await page.locator('select[name="agendaId"]').selectOption("rotation");
+    await page.getByRole("button", { name: "posunout live marker" }).click();
 
-    await Promise.all([
-      page.waitForURL(/\/admin\/instances\/sample-studio-a(\?.*)?$/),
-      page.getByRole("button", { name: "vytvořit archiv" }).click(),
-    ]);
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
+    await expect(phaseControlSummary).toContainText("13:30 • Rotace týmů");
 
-    await expect(page.getByText("Poslední archiv:")).toBeVisible();
+    await page.getByRole("button", { name: "Odemknout" }).click();
+    await expect(page.getByText(/předání je odemčeno/i).first()).toBeVisible();
+    await page.goto("/admin/instances/sample-studio-a");
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
+
+    await page.locator('select[name="agendaId"]').selectOption("build-2");
+    await page.getByRole("button", { name: "posunout live marker" }).click();
+    await expect(phaseControlSummary).toContainText("13:45 • Build Phase 2");
+    await expect(phaseControlSummary).toContainText("14:45 • Intermezzo 2");
+    await expect(phaseControlSummary).not.toContainText("13:30 • Rotace týmů");
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
+
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
+    await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
+    await page.getByRole("button", { name: "znovu skrýt" }).click();
+    await expect(page.getByText(/předání je skryté/i).first()).toBeVisible();
   });
 
   test("keeps the facilitator overview visually stable", async ({ page }) => {
@@ -178,6 +190,16 @@ test.describe("facilitator admin (file mode)", () => {
       // designed viewport shell instead of the scroll length.
       maxDiffPixelRatio: 0.08,
     });
+  });
+
+  test("uses a confirmation dialog before instance removal", async ({ page }) => {
+    await page.goto("/admin");
+
+    await page.getByRole("link", { name: "zkontrolovat odebrání" }).first().click();
+
+    await expect(page.getByRole("heading", { name: "opravdu odebrat tuto instanci?" })).toBeVisible();
+    await expect(page.getByText("Před odebráním vznikne automatický archiv")).toBeVisible();
+    await expect(page.getByRole("button", { name: "potvrdit odebrání" })).toBeVisible();
   });
 
   test("reflows the expanded instance-creation sheet below workspace filters on desktop", async ({ page }) => {
@@ -204,6 +226,15 @@ test.describe("facilitator admin (file mode)", () => {
     await page.setViewportSize({ width: 393, height: 1200 });
     await page.goto("/admin/instances/sample-studio-a");
     await expect(page).toHaveScreenshot("facilitator-control-room-mobile.png", {
+      mask: [page.getByText("Poslední archiv:")],
+      maxDiffPixelRatio: 0.08,
+    });
+  });
+
+  test("keeps the facilitator control room visually stable on ipad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 1366 });
+    await page.goto("/admin/instances/sample-studio-a");
+    await expect(page).toHaveScreenshot("facilitator-control-room-ipad.png", {
       mask: [page.getByText("Poslední archiv:")],
       maxDiffPixelRatio: 0.08,
     });
@@ -236,16 +267,18 @@ test.describe("facilitator admin (file mode)", () => {
       page.getByRole("link", { name: "otevřít projekci" }).click(),
     ]);
 
-    await expect(popup.getByRole("heading", { name: "Build Phase 1" })).toBeVisible();
-    await expect(popup.getByText("Do 10:50 existuje repo.")).toBeVisible();
+    await expect(popup.getByText("projekce pro místnost").first()).toBeVisible();
+    await expect(popup.locator("main h1").first()).toBeVisible();
+    await expect(popup.getByRole("link", { name: "zpět do režie" })).toHaveCount(0);
+    await expect(popup.getByRole("navigation")).toHaveCount(0);
 
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
-    await expect(page.getByText("signál z místnosti").first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "Context is King" })).toBeVisible();
     await expect(page.getByText("Co má tým vidět bez facilitátorského šumu")).toBeVisible();
-    await expect(page.getByText("Live fáze a nejbližší další krok.")).toBeVisible();
-    await expect(page.getByText(/AGENTS\.md, skills, runbooky a testy nejsou doplněk/i).first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Tým 1" })).toBeVisible();
+    await expect(page.getByText("Aktuální fáze a nejbližší další krok.")).toBeVisible();
+    await expect(page.getByText("Vrstva pro účastníky nemá být dekorace.")).toHaveCount(0);
+    await expect(page.getByText("signál z místnosti")).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Tým 1" })).toHaveCount(0);
   });
 
   test("renders the room screen on mobile", async ({ page }) => {
@@ -254,6 +287,24 @@ test.describe("facilitator admin (file mode)", () => {
 
     await expect(page.getByRole("heading", { name: "Rotace týmů" })).toBeVisible();
     await expect(page.getByText("Bez ústního handoffu")).toBeVisible();
+  });
+
+  test("keeps the default room screen visually stable on ipad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation");
+
+    await expect(page).toHaveScreenshot("presenter-default-room-screen-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+  });
+
+  test("keeps the participant walkthrough visually stable on ipad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
+
+    await expect(page).toHaveScreenshot("presenter-participant-walkthrough-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {

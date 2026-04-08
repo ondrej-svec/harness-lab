@@ -1,9 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { getAuditLogRepository } from "./audit-log-repository";
 import {
+  createAgendaFromBlueprint,
+  createPreparedInstanceTicker,
   createWorkshopInstanceRecord,
+  createWorkshopInventory,
   createWorkshopStateFromInstance,
   createWorkshopStateFromTemplate,
+  getBlueprintWorkshopMetaCopy,
   type AgendaItem,
   type MonitoringSnapshot,
   type PresenterBlock,
@@ -12,6 +16,7 @@ import {
   type PresenterSceneIntent,
   type SprintUpdate,
   type Team,
+  type WorkshopContentLanguage,
   type WorkshopInstanceRecord,
   type WorkshopState,
   seedWorkshopState,
@@ -60,6 +65,10 @@ function normalizeStringArray(value: unknown, fallback: string[] = []) {
 
 function normalizeBlocks(value: unknown, fallback: PresenterBlock[] = []) {
   return Array.isArray(value) ? (value as PresenterBlock[]) : fallback;
+}
+
+function resolveStoredContentLanguage(value: unknown): WorkshopContentLanguage {
+  return value === "en" ? "en" : "cs";
 }
 
 function deriveSceneIntent(sceneType: PresenterScene["sceneType"]): PresenterSceneIntent {
@@ -186,6 +195,144 @@ function resolveCurrentPhaseLabel(agenda: AgendaItem[], currentPhaseLabel: strin
   return agenda.find((item) => item.status === "current")?.title ?? currentPhaseLabel;
 }
 
+function mergeLocalizedAgenda(existingAgenda: AgendaItem[], localizedAgenda: AgendaItem[]) {
+  const localizedByPhaseId = new Map(
+    localizedAgenda.map((item) => [item.sourceBlueprintPhaseId ?? item.id, item] as const),
+  );
+
+  return existingAgenda.map((item) => {
+    if (item.kind !== "blueprint") {
+      return item;
+    }
+
+    const localizedItem = localizedByPhaseId.get(item.sourceBlueprintPhaseId ?? item.id);
+    if (!localizedItem) {
+      return item;
+    }
+
+    const localizedScenesById = new Map(
+      localizedItem.presenterScenes.map((scene) => [scene.sourceBlueprintSceneId ?? scene.id, scene] as const),
+    );
+
+    const mergedScenes = item.presenterScenes.map((scene) => {
+      if (scene.kind !== "blueprint") {
+        return scene;
+      }
+
+      const localizedScene = localizedScenesById.get(scene.sourceBlueprintSceneId ?? scene.id);
+      if (!localizedScene) {
+        return scene;
+      }
+
+      return {
+        ...localizedScene,
+        order: scene.order,
+        enabled: scene.enabled,
+        kind: "blueprint" as const,
+        sourceBlueprintSceneId: scene.sourceBlueprintSceneId ?? localizedScene.sourceBlueprintSceneId,
+      };
+    });
+
+    const existingBlueprintSceneIds = new Set(
+      mergedScenes
+        .filter((scene) => scene.kind === "blueprint")
+        .map((scene) => scene.sourceBlueprintSceneId ?? scene.id),
+    );
+
+    const appendedScenes = localizedItem.presenterScenes
+      .filter((scene) => !existingBlueprintSceneIds.has(scene.sourceBlueprintSceneId ?? scene.id))
+      .map((scene, index) => ({
+        ...scene,
+        order: mergedScenes.length + index + 1,
+      }));
+
+    const normalizedSceneState = normalizePresenterScenes(
+      [...mergedScenes, ...appendedScenes],
+      item.defaultPresenterSceneId ?? localizedItem.defaultPresenterSceneId,
+    );
+
+    return {
+      ...item,
+      title: localizedItem.title,
+      description: localizedItem.description,
+      goal: localizedItem.goal,
+      roomSummary: localizedItem.roomSummary,
+      facilitatorPrompts: [...localizedItem.facilitatorPrompts],
+      watchFors: [...localizedItem.watchFors],
+      checkpointQuestions: [...localizedItem.checkpointQuestions],
+      sourceRefs: [...localizedItem.sourceRefs],
+      presenterScenes: normalizedSceneState.scenes,
+      defaultPresenterSceneId: normalizedSceneState.defaultPresenterSceneId,
+    };
+  });
+}
+
+function mergeLocalizedChallenges(
+  existingChallenges: WorkshopState["challenges"],
+  localizedChallenges: WorkshopState["challenges"],
+) {
+  const localizedById = new Map(localizedChallenges.map((challenge) => [challenge.id, challenge] as const));
+
+  return existingChallenges.map((challenge) => {
+    const localizedChallenge = localizedById.get(challenge.id);
+    return localizedChallenge
+      ? {
+          ...localizedChallenge,
+          completedBy: [...challenge.completedBy],
+        }
+      : challenge;
+  });
+}
+
+function projectLocalizedTicker(
+  ticker: WorkshopState["ticker"],
+  contentLang: WorkshopContentLanguage,
+  localizedTicker: WorkshopState["ticker"],
+) {
+  if (contentLang === "cs") {
+    return ticker;
+  }
+
+  if (ticker.length === 1 && ticker[0]?.id === "tick-reset") {
+    return createPreparedInstanceTicker("", contentLang);
+  }
+
+  const defaultTickerIds = new Set(localizedTicker.map((item) => item.id));
+  if (ticker.length > 0 && ticker.every((item) => defaultTickerIds.has(item.id))) {
+    return localizedTicker.map((item) => ({ ...item }));
+  }
+
+  return ticker;
+}
+
+function projectLocalizedWorkshopState(state: WorkshopState) {
+  const contentLang = resolveStoredContentLanguage(state.workshopMeta.contentLang);
+  if (contentLang === "cs") {
+    return state;
+  }
+
+  const metaCopy = getBlueprintWorkshopMetaCopy(contentLang);
+  const currentAgendaItemId = state.agenda.find((item) => item.status === "current")?.id ?? state.agenda[0]?.id;
+  const localizedAgenda = mergeLocalizedAgenda(state.agenda, createAgendaFromBlueprint(contentLang, currentAgendaItemId));
+  const localizedInventory = createWorkshopInventory(contentLang);
+
+  return {
+    ...state,
+    agenda: localizedAgenda,
+    briefs: localizedInventory.briefs,
+    challenges: mergeLocalizedChallenges(state.challenges, localizedInventory.challenges),
+    ticker: projectLocalizedTicker(state.ticker, contentLang, localizedInventory.ticker),
+    setupPaths: localizedInventory.setupPaths,
+    workshopMeta: {
+      ...state.workshopMeta,
+      title: metaCopy.title,
+      subtitle: metaCopy.subtitle,
+      adminHint: metaCopy.adminHint,
+      currentPhaseLabel: resolveCurrentPhaseLabel(localizedAgenda, state.workshopMeta.currentPhaseLabel),
+    },
+  };
+}
+
 function normalizeStoredPresenterScene(
   scene: Partial<PresenterScene>,
   fallbackScene: PresenterScene | undefined,
@@ -269,15 +416,18 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
     agenda[0]?.id;
   const normalizedAgenda = normalizeAgenda(agenda, currentAgendaItemId);
 
-  return {
+  const normalizedState = {
     ...state,
     version: state.version ?? 1,
     agenda: normalizedAgenda,
     workshopMeta: {
       ...state.workshopMeta,
+      contentLang: resolveStoredContentLanguage(state.workshopMeta?.contentLang),
       currentPhaseLabel: resolveCurrentPhaseLabel(normalizedAgenda, state.workshopMeta.currentPhaseLabel),
     },
   };
+
+  return projectLocalizedWorkshopState(normalizedState);
 }
 
 function updateAgendaScenes(
@@ -730,6 +880,7 @@ export async function getWorkshopInstances(options?: { includeRemoved?: boolean 
 export async function createWorkshopInstance(input: {
   id: string;
   templateId?: string;
+  contentLang?: WorkshopContentLanguage;
   eventTitle?: string;
   city?: string;
   dateRange?: string;
@@ -751,11 +902,13 @@ export async function createWorkshopInstance(input: {
     id: input.id,
     templateId,
     importedAt: now,
+    contentLang: input.contentLang,
   });
   const nextInstance: WorkshopInstanceRecord = {
     ...instance,
     workshopMeta: {
       ...instance.workshopMeta,
+      contentLang: input.contentLang ?? instance.workshopMeta.contentLang,
       eventTitle: input.eventTitle?.trim() || instance.workshopMeta.eventTitle,
       city: input.city?.trim() || instance.workshopMeta.city,
       dateRange: input.dateRange?.trim() || instance.workshopMeta.dateRange,
@@ -791,6 +944,7 @@ export async function createWorkshopInstance(input: {
 export async function updateWorkshopInstanceMetadata(
   instanceId: string,
   input: {
+    contentLang?: WorkshopContentLanguage;
     eventTitle?: string;
     city?: string;
     dateRange?: string;
@@ -810,6 +964,7 @@ export async function updateWorkshopInstanceMetadata(
 
   const nextWorkshopMeta = {
     ...current.workshopMeta,
+    contentLang: input.contentLang ?? current.workshopMeta.contentLang,
     eventTitle: input.eventTitle?.trim() || current.workshopMeta.eventTitle,
     city: input.city?.trim() || current.workshopMeta.city,
     dateRange: input.dateRange?.trim() || current.workshopMeta.dateRange,
@@ -1030,10 +1185,15 @@ export async function resetWorkshopState(templateId = workshopTemplates[0]?.id |
 
   const instanceRepository = getWorkshopInstanceRepository();
   const existingInstance = await instanceRepository.getInstance(instanceId);
-  const nextState = createWorkshopStateFromTemplate(templateId, instanceId);
+  const nextState = createWorkshopStateFromTemplate(
+    templateId,
+    instanceId,
+    existingInstance ? resolveStoredContentLanguage(existingInstance.workshopMeta.contentLang) : undefined,
+  );
   if (existingInstance) {
     const nextWorkshopMeta = {
       ...nextState.workshopMeta,
+      contentLang: resolveStoredContentLanguage(existingInstance.workshopMeta.contentLang),
       eventTitle: existingInstance.workshopMeta.eventTitle,
       city: existingInstance.workshopMeta.city,
       dateRange: existingInstance.workshopMeta.dateRange,

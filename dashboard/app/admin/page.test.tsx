@@ -69,6 +69,9 @@ describe("workspace admin helpers", () => {
     expect(buildAdminWorkspaceHref({ lang: "en", query: "studio", status: "running" })).toBe(
       "/admin?q=studio&status=running&lang=en",
     );
+    expect(buildAdminWorkspaceHref({ lang: "en", query: "studio", status: "running", removeInstanceId: "sample-studio-a" })).toBe(
+      "/admin?q=studio&status=running&removeInstance=sample-studio-a&lang=en",
+    );
     expect(
       buildAdminInstanceHref({
         lang: "en",
@@ -111,6 +114,8 @@ describe("AdminWorkspacePage", () => {
     expect(html).toContain(adminCopy.en.instanceOwnerPlaceholder);
     expect(html).toContain('type="date"');
     expect(html).toContain("/admin/instances/sample-studio-a?lang=en");
+    expect(html).toContain(adminCopy.en.removeInstanceReviewButton);
+    expect(html).not.toContain(adminCopy.en.confirmRemoveInstanceButton);
   });
 
   it("filters the workspace gallery by query", async () => {
@@ -133,5 +138,20 @@ describe("AdminWorkspacePage", () => {
     });
 
     expect(redirect).toHaveBeenCalledWith("/admin/instances/sample-studio-b?section=signals&lang=en");
+  });
+
+  it("renders a confirmation dialog before removing an instance", async () => {
+    const { default: AdminWorkspacePage } = await adminPageModulePromise;
+
+    const view = await AdminWorkspacePage({
+      searchParams: Promise.resolve({ lang: "en", removeInstance: "sample-studio-a" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.removeInstanceDialogTitle);
+    expect(html).toContain(adminCopy.en.removeInstanceArchiveNote);
+    expect(html).toContain(adminCopy.en.confirmRemoveInstanceButton);
+    expect(html).toContain('name="confirmRemoveInstanceId"');
+    expect(html).toContain('value="sample-studio-a"');
   });
 });

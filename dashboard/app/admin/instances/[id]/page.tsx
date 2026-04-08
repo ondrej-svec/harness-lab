@@ -5,11 +5,11 @@ import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/
 import { auth } from "@/lib/auth/server";
 import {
   buildAdminHref,
+  buildAdminSummaryStats,
   buildAdminWorkspaceHref,
   buildWorkspaceStatusLabel,
   buildAdminOverviewState,
   buildAdminSessionState,
-  buildAdminSummaryStats,
   deriveAdminPageState,
   getWorkshopDisplayTitle,
   getWorkshopLocationLines,
@@ -50,10 +50,8 @@ import {
   ControlCard,
   FieldLabel,
   KeyValueRow,
-  SummaryStat,
   StatusPill,
   adminHeroPanelClassName,
-  adminHeroTileClassName,
   adminDangerButtonClassName,
   adminGhostButtonClassName,
   adminInputClassName,
@@ -547,7 +545,6 @@ export default async function AdminPage({
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
   const fileModeUsername = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
-  const summaryStats = buildAdminSummaryStats({ copy, state, selectedInstance, currentAgendaItem });
   const overviewState = buildAdminOverviewState({
     copy,
     lang,
@@ -562,6 +559,12 @@ export default async function AdminPage({
     signedInName,
     currentRole: currentFacilitator?.grant.role ?? null,
     latestArchive,
+  });
+  const persistentSummaryRows = buildAdminSummaryStats({
+    copy,
+    state,
+    selectedInstance,
+    currentAgendaItem,
   });
   const presenterState = buildPresenterControlState({
     state,
@@ -600,14 +603,33 @@ export default async function AdminPage({
           agendaItemId: currentAgendaItem.id,
         })
       : agendaBaseHref;
+  const contextualHandoffItem =
+    (currentAgendaItem && (currentAgendaItem as RichAgendaItem).intent === "handoff"
+      ? (currentAgendaItem as RichAgendaItem)
+      : nextAgendaItem && (nextAgendaItem as RichAgendaItem).intent === "handoff"
+        ? (nextAgendaItem as RichAgendaItem)
+        : null) ?? null;
+  const handoffAgendaHref = contextualHandoffItem
+    ? buildAdminHref({
+        lang,
+        section: "agenda",
+        instanceId: activeInstanceId,
+        agendaItemId: contextualHandoffItem.id,
+      })
+    : null;
+  const handoffIsLive = contextualHandoffItem?.id === currentAgendaItem?.id;
+  const instanceWhenLabel = selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange;
+  const instanceWhereLabel = (selectedInstance ? getWorkshopLocationLines(selectedInstance).join(" / ") : "") || state.workshopMeta.city;
+  const instanceOwnerLabel = selectedInstance?.workshopMeta.facilitatorLabel ?? "n/a";
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
       <div className="mx-auto flex max-w-[112rem] flex-col gap-6">
         <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
-          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
-          <div className="relative grid gap-5 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.34fr)_minmax(23rem,0.9fr)] 2xl:grid-cols-[minmax(0,1.42fr)_minmax(25rem,0.92fr)]">
-            <div className="max-w-3xl">
+          <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
+          <div className="relative space-y-5 p-6 sm:p-7">
+            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+              <div className="max-w-3xl">
                 <Link
                   href={buildAdminWorkspaceHref({ lang })}
                   className="inline-flex text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
@@ -628,47 +650,30 @@ export default async function AdminPage({
                   {selectedInstance ? getWorkshopDisplayTitle(selectedInstance) : copy.pageTitle}
                 </h1>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.controlRoomBody}</p>
-              </div>
-
-              <div className="flex w-full max-w-2xl flex-col gap-4 xl:items-end">
-                <div className="flex items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:self-end">
-                  <AdminLanguageSwitcher
-                    lang={lang}
-                    csHref={buildAdminHref({ lang: "cs", section: activeSection, instanceId: activeInstanceId })}
-                    enHref={buildAdminHref({ lang: "en", section: activeSection, instanceId: activeInstanceId })}
-                  />
-                  <span>/</span>
-                  <ThemeSwitcher />
-                  <span>/</span>
-                  <form action={signOutAction}>
-                    <input name="lang" type="hidden" value={lang} />
-                    <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
-                      {copy.signOutButton}
-                    </AdminSubmitButton>
-                  </form>
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <ControlRoomHeaderMeta label={copy.workspaceWhenLabel} value={instanceWhenLabel} />
+                  <ControlRoomHeaderMeta label={copy.workspaceWhereLabel} value={instanceWhereLabel} />
+                  <ControlRoomHeaderMeta label={copy.workspaceOwnerLabel} value={instanceOwnerLabel} />
                 </div>
-
-                <section className={`${adminHeroPanelClassName} w-full p-4`}>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">
-                      {copy.liveNow}
-                    </span>
-                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
-                      {state.workshopMeta.currentPhaseLabel}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.overviewTitle}</p>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <ControlRoomHeroMetric label={copy.workspaceWhenLabel} value={selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange} />
-                    <ControlRoomHeroMetric
-                      label={copy.workspaceWhereLabel}
-                      value={(selectedInstance ? getWorkshopLocationLines(selectedInstance).join(" / ") : "") || state.workshopMeta.city}
-                    />
-                    <ControlRoomHeroMetric label={copy.workspaceOwnerLabel} value={selectedInstance?.workshopMeta.facilitatorLabel ?? "n/a"} />
-                    <ControlRoomHeroMetric label={copy.workspaceSignalLabel} value={overviewState.participantState} />
-                  </div>
-                </section>
               </div>
+
+              <div className="flex flex-wrap items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:justify-end">
+                <AdminLanguageSwitcher
+                  lang={lang}
+                  csHref={buildAdminHref({ lang: "cs", section: activeSection, instanceId: activeInstanceId })}
+                  enHref={buildAdminHref({ lang: "en", section: activeSection, instanceId: activeInstanceId })}
+                />
+                <span>/</span>
+                <ThemeSwitcher />
+                <span>/</span>
+                <form action={signOutAction}>
+                  <input name="lang" type="hidden" value={lang} />
+                  <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+                    {copy.signOutButton}
+                  </AdminSubmitButton>
+                </form>
+              </div>
+            </div>
 
             <nav className="grid grid-cols-3 gap-2 border-t border-[var(--border)] pt-4 sm:flex sm:flex-wrap sm:gap-x-3 sm:gap-y-3 xl:hidden">
               <AdminSectionLink
@@ -714,17 +719,15 @@ export default async function AdminPage({
                 instanceId={activeInstanceId}
               />
             </nav>
-          </div>
-
-          <div className="grid grid-cols-2 gap-px border-t border-[var(--border)] bg-[var(--border)] md:grid-cols-4">
-            {summaryStats.map((stat) => (
-              <SummaryStat key={stat.label} label={stat.label} value={stat.value} hint={stat.hint} />
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-2 border-t border-[var(--border)] px-6 py-4 text-xs leading-5 text-[var(--text-muted)] sm:px-7">
-            {sessionState.signedInLine ? <p>{sessionState.signedInLine}</p> : null}
-            {sessionState.archiveLine ? <p>{sessionState.archiveLine}</p> : null}
+            <div className="grid gap-3 border-t border-[var(--border)] pt-4 sm:grid-cols-2 xl:grid-cols-4">
+              {persistentSummaryRows.map((row) => (
+                <ControlRoomPersistentSummary key={row.label} label={row.label} value={row.value} hint={row.hint} />
+              ))}
+            </div>
+            <div className="flex flex-col gap-2 text-xs leading-5 text-[var(--text-muted)]">
+              {sessionState.signedInLine ? <p>{sessionState.signedInLine}</p> : null}
+              {sessionState.archiveLine ? <p>{sessionState.archiveLine}</p> : null}
+            </div>
           </div>
         </header>
 
@@ -794,7 +797,7 @@ export default async function AdminPage({
             description={copy.overviewDescription}
           >
             <div className="grid gap-5 xl:grid-cols-[minmax(0,1.42fr)_minmax(22rem,0.86fr)] 2xl:grid-cols-[minmax(0,1.5fr)_minmax(24rem,0.82fr)]">
-              <section className="space-y-4">
+              <section className="order-2 space-y-4 xl:order-1">
                 <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
@@ -824,12 +827,6 @@ export default async function AdminPage({
                   </div>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                  {overviewState.compactRows.map((row) => (
-                    <ControlRoomSnapshot key={row.label} label={row.label} value={row.value} />
-                  ))}
-                </div>
-
                 <div className="rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-5 shadow-[0_14px_30px_rgba(28,25,23,0.05)] sm:p-6">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
@@ -848,50 +845,88 @@ export default async function AdminPage({
                 </div>
               </section>
 
-              <section className="space-y-4">
+              <section className="order-1 space-y-4 xl:order-2">
                 <ControlCard title={copy.moveAgendaTitle} description={copy.phaseControlHint}>
-                  <form action={setAgendaAction} className="space-y-3">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <select name="agendaId" defaultValue={currentAgendaItem?.id} className={adminInputClassName}>
-                      {overviewState.phaseOptions.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.label}
-                        </option>
-                      ))}
-                    </select>
-                    <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
-                      {copy.setCurrentPhase}
-                    </AdminSubmitButton>
-                  </form>
-                </ControlCard>
-
-                <ControlCard title={copy.continuationTitle} description={copy.continuationDescription}>
-                  <form action={toggleRotationAction} className="space-y-4">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <div className="grid grid-cols-2 gap-3">
-                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
-                        {copy.unlockButton}
-                      </AdminSubmitButton>
-                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
-                        {copy.hideAgainButton}
-                      </AdminSubmitButton>
-                    </div>
-                    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.participantStatePrefix} {overviewState.participantState}.
-                    </div>
-                  </form>
-
-                  <div className="mt-5 space-y-2 border-t border-[var(--border)] pt-4">
-                    {state.rotation.slots.map((slot) => (
-                      <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
-                        <p className="font-medium text-[var(--text-primary)]">
-                          {slot.fromTeam} → {slot.toTeam}
+                  <div className="space-y-3">
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.liveNow}</p>
+                      <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                        {currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
+                      </p>
+                      {nextAgendaItem ? (
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                          {copy.nextUp}: {nextAgendaItem.time} • {nextAgendaItem.title}
                         </p>
-                        <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
-                      </div>
-                    ))}
+                      ) : null}
+                    </div>
+                    <form action={setAgendaAction} className="space-y-3">
+                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                      <select name="agendaId" defaultValue={currentAgendaItem?.id} className={adminInputClassName}>
+                        {overviewState.phaseOptions.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.label}
+                          </option>
+                        ))}
+                      </select>
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
+                        {copy.setCurrentPhase}
+                      </AdminSubmitButton>
+                    </form>
                   </div>
                 </ControlCard>
+
+                {contextualHandoffItem && handoffAgendaHref ? (
+                  <ControlCard
+                    title={copy.handoffMomentTitle}
+                    description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
+                  >
+                    <div className="space-y-4">
+                      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                              {handoffIsLive ? copy.liveNow : copy.nextUp}
+                            </p>
+                            <p className="mt-2 text-sm font-semibold text-[var(--text-primary)]">
+                              {contextualHandoffItem.time} • {contextualHandoffItem.title}
+                            </p>
+                          </div>
+                          <Link className={adminGhostButtonClassName} href={handoffAgendaHref}>
+                            {copy.handoffMomentJumpButton}
+                          </Link>
+                        </div>
+                        <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                          {contextualHandoffItem.roomSummary || contextualHandoffItem.description}
+                        </p>
+                      </div>
+                      <form action={toggleRotationAction} className="space-y-4">
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <div className="grid grid-cols-2 gap-3">
+                          <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
+                            {copy.unlockButton}
+                          </AdminSubmitButton>
+                          <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
+                            {copy.hideAgainButton}
+                          </AdminSubmitButton>
+                        </div>
+                        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                          {copy.participantStatePrefix} {overviewState.participantState}.
+                        </div>
+                      </form>
+                    </div>
+
+                    <div className="mt-5 space-y-2 border-t border-[var(--border)] pt-4">
+                      {state.rotation.slots.map((slot) => (
+                        <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                          <p className="font-medium text-[var(--text-primary)]">
+                            {slot.fromTeam} → {slot.toTeam}
+                          </p>
+                          <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </ControlCard>
+                ) : null}
 
                 <ControlCard title={copy.presenterCardTitle} description={copy.presenterCardDescription}>
                   <div className="space-y-4">
@@ -918,47 +953,6 @@ export default async function AdminPage({
                           {copy.presenterOpenParticipantButton}
                         </a>
                       ) : null}
-                    </div>
-                  </div>
-                </ControlCard>
-
-                <ControlCard title={copy.archiveResetTitle} description={copy.archiveResetDescription}>
-                  <div className="space-y-4">
-                    <form action={archiveWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                      <textarea
-                        name="notes"
-                        rows={3}
-                        placeholder={copy.archivePlaceholder}
-                        className={adminInputClassName}
-                      />
-                      <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
-                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
-                        {copy.archiveButton}
-                      </AdminSubmitButton>
-                    </form>
-
-                    <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
-                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                      <p className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                        {copy.resetBlueprintSummary}
-                      </p>
-                      <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
-                      <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
-                        {copy.resetButton}
-                      </AdminSubmitButton>
-                    </form>
-
-                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                      <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.blueprintLinkHint}</p>
-                      <a
-                        href={blueprintRepoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-3 inline-flex text-sm font-medium lowercase text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
-                      >
-                        {copy.blueprintLinkLabel}
-                      </a>
                     </div>
                   </div>
                 </ControlCard>
@@ -1060,7 +1054,7 @@ export default async function AdminPage({
                       {copy.agendaRuntimeNotice}
                     </div>
 
-                    <AgendaItemDetail item={selectedAgendaItem} lang={lang} />
+                    <AgendaItemDetail item={selectedAgendaItem} lang={lang} copy={copy} />
 
                     <details className="rounded-[22px] border border-[var(--border)] bg-[var(--card-top)] p-4">
                       <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
@@ -1410,49 +1404,120 @@ export default async function AdminPage({
               )}
             </AdminPanel>
 
-            <AdminPanel eyebrow={copy.accountEyebrow} title={copy.passwordCardTitle} description={copy.accountDescription}>
-              {!isNeonMode || !auth ? (
-                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                  <p className="text-sm text-[var(--text-muted)]">{copy.accountFileMode}</p>
+            <div className="space-y-6">
+              <AdminPanel
+                eyebrow={copy.settingsSafetyEyebrow}
+                title={copy.participantSurfaceCardTitle}
+                description={copy.participantSurfaceCardDescription}
+              >
+                <div className="space-y-4">
+                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                    {copy.participantStatePrefix} {overviewState.participantState}.
+                  </div>
+                  <form action={toggleRotationAction} className="space-y-4">
+                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
+                        {copy.unlockButton}
+                      </AdminSubmitButton>
+                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
+                        {copy.hideAgainButton}
+                      </AdminSubmitButton>
+                    </div>
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantSurfaceRecoveryHint}</p>
+                  </form>
                 </div>
-              ) : (
-                <form action={changePasswordAction} className="space-y-4">
-                  <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                  <div>
-                    <FieldLabel htmlFor="current-password">{copy.currentPasswordLabel}</FieldLabel>
-                    <input id="current-password" name="currentPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="new-password">{copy.newPasswordLabel}</FieldLabel>
-                    <input id="new-password" name="newPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                  </div>
-                  <div>
-                    <FieldLabel htmlFor="confirm-password">{copy.confirmPasswordLabel}</FieldLabel>
-                    <input id="confirm-password" name="confirmPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                  </div>
-                  <label className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
-                    <input name="revokeOtherSessions" type="checkbox" defaultChecked />
-                    <span>{copy.revokeSessionsLabel}</span>
-                  </label>
+              </AdminPanel>
 
-                  {passwordParam === "changed" ? (
-                    <p className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)]">
-                      {copy.passwordChanged}
+              <AdminPanel eyebrow={copy.accountEyebrow} title={copy.passwordCardTitle} description={copy.accountDescription}>
+                {!isNeonMode || !auth ? (
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-sm text-[var(--text-muted)]">{copy.accountFileMode}</p>
+                  </div>
+                ) : (
+                  <form action={changePasswordAction} className="space-y-4">
+                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                    <div>
+                      <FieldLabel htmlFor="current-password">{copy.currentPasswordLabel}</FieldLabel>
+                      <input id="current-password" name="currentPassword" type="password" required className={`${adminInputClassName} mt-2`} />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="new-password">{copy.newPasswordLabel}</FieldLabel>
+                      <input id="new-password" name="newPassword" type="password" required className={`${adminInputClassName} mt-2`} />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="confirm-password">{copy.confirmPasswordLabel}</FieldLabel>
+                      <input id="confirm-password" name="confirmPassword" type="password" required className={`${adminInputClassName} mt-2`} />
+                    </div>
+                    <label className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
+                      <input name="revokeOtherSessions" type="checkbox" defaultChecked />
+                      <span>{copy.revokeSessionsLabel}</span>
+                    </label>
+
+                    {passwordParam === "changed" ? (
+                      <p className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)]">
+                        {copy.passwordChanged}
+                      </p>
+                    ) : null}
+
+                    {errorParam ? (
+                      <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                        {errorParam === "password_mismatch" ? copy.passwordMismatch : decodeURIComponent(errorParam)}
+                      </p>
+                    ) : null}
+
+                    <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                      {copy.changePasswordButton}
+                    </AdminSubmitButton>
+                  </form>
+                )}
+              </AdminPanel>
+
+              <AdminPanel
+                eyebrow={copy.settingsSafetyEyebrow}
+                title={copy.archiveResetTitle}
+                description={copy.archiveResetDescription}
+              >
+                <div className="space-y-4">
+                  <form action={archiveWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                    <textarea
+                      name="notes"
+                      rows={3}
+                      placeholder={copy.archivePlaceholder}
+                      className={adminInputClassName}
+                    />
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
+                    <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
+                      {copy.archiveButton}
+                    </AdminSubmitButton>
+                  </form>
+
+                  <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
+                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                    <p className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      {copy.resetBlueprintSummary}
                     </p>
-                  ) : null}
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
+                    <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
+                      {copy.resetButton}
+                    </AdminSubmitButton>
+                  </form>
 
-                  {errorParam ? (
-                    <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
-                      {errorParam === "password_mismatch" ? copy.passwordMismatch : decodeURIComponent(errorParam)}
-                    </p>
-                  ) : null}
-
-                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
-                    {copy.changePasswordButton}
-                  </AdminSubmitButton>
-                </form>
-              )}
-            </AdminPanel>
+                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                    <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.blueprintLinkHint}</p>
+                    <a
+                      href={blueprintRepoUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 inline-flex text-sm font-medium lowercase text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
+                    >
+                      {copy.blueprintLinkLabel}
+                    </a>
+                  </div>
+                </div>
+              </AdminPanel>
+            </div>
           </div>
         ) : null}
           </div>
@@ -1515,20 +1580,29 @@ function AdminActionStateFields({
   );
 }
 
-function ControlRoomHeroMetric({ label, value }: { label: string; value: string }) {
+function ControlRoomHeaderMeta({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`${adminHeroTileClassName} px-4 py-4`}>
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{label}</p>
-      <p className="mt-2 text-[13px] leading-5 text-[var(--hero-text)] sm:text-sm sm:leading-6">{value}</p>
+    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
 
-function ControlRoomSnapshot({ label, value }: { label: string; value: string }) {
+function ControlRoomPersistentSummary({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: string;
+  hint?: string;
+}) {
   return (
-    <div className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] px-4 py-4 transition duration-200 hover:border-[var(--border-strong)] hover:bg-[var(--surface)]">
+    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-2 text-[15px] font-semibold leading-5 text-[var(--text-primary)]">{value}</p>
+      <p className="mt-2 text-sm font-semibold leading-6 text-[var(--text-primary)]">{value}</p>
+      {hint ? <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{hint}</p> : null}
     </div>
   );
 }
@@ -1560,16 +1634,16 @@ function AgendaItemEditorSheetBody({
         <input name="agendaId" type="hidden" value={item.id} />
         <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_9rem]">
           <div>
-            <FieldLabel htmlFor="agenda-title">title</FieldLabel>
+            <FieldLabel htmlFor="agenda-title">{copy.agendaFieldTitle}</FieldLabel>
             <input id="agenda-title" name="title" defaultValue={item.title} className={`${adminInputClassName} mt-2`} />
           </div>
           <div>
-            <FieldLabel htmlFor="agenda-time">time</FieldLabel>
+            <FieldLabel htmlFor="agenda-time">{copy.agendaFieldTime}</FieldLabel>
             <input id="agenda-time" name="time" defaultValue={item.time} className={`${adminInputClassName} mt-2`} />
           </div>
         </div>
         <div>
-          <FieldLabel htmlFor="agenda-goal">goal</FieldLabel>
+          <FieldLabel htmlFor="agenda-goal">{copy.agendaFieldGoal}</FieldLabel>
           <textarea
             id="agenda-goal"
             name="goal"
@@ -1579,7 +1653,7 @@ function AgendaItemEditorSheetBody({
           />
         </div>
         <div>
-          <FieldLabel htmlFor="agenda-room-summary">room summary</FieldLabel>
+          <FieldLabel htmlFor="agenda-room-summary">{copy.agendaFieldRoomSummary}</FieldLabel>
           <textarea
             id="agenda-room-summary"
             name="roomSummary"
@@ -1589,7 +1663,7 @@ function AgendaItemEditorSheetBody({
           />
         </div>
         <div>
-          <FieldLabel htmlFor="agenda-prompts">facilitator prompts</FieldLabel>
+          <FieldLabel htmlFor="agenda-prompts">{copy.agendaFieldFacilitatorPrompts}</FieldLabel>
           <textarea
             id="agenda-prompts"
             name="facilitatorPrompts"
@@ -1599,7 +1673,7 @@ function AgendaItemEditorSheetBody({
           />
         </div>
         <div>
-          <FieldLabel htmlFor="agenda-watch-fors">watch fors</FieldLabel>
+          <FieldLabel htmlFor="agenda-watch-fors">{copy.agendaFieldWatchFors}</FieldLabel>
           <textarea
             id="agenda-watch-fors"
             name="watchFors"
@@ -1609,7 +1683,7 @@ function AgendaItemEditorSheetBody({
           />
         </div>
         <div>
-          <FieldLabel htmlFor="agenda-checkpoints">checkpoint questions</FieldLabel>
+          <FieldLabel htmlFor="agenda-checkpoints">{copy.agendaFieldCheckpointQuestions}</FieldLabel>
           <textarea
             id="agenda-checkpoints"
             name="checkpointQuestions"
@@ -1671,25 +1745,25 @@ function AgendaItemCreateSheetBody({
     <form action={addAgendaItemAction} className="space-y-4">
       <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
       <div>
-        <FieldLabel htmlFor="new-agenda-title">title</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-title">{copy.agendaFieldTitle}</FieldLabel>
         <input id="new-agenda-title" name="title" placeholder={copy.addAgendaItemTitle} className={`${adminInputClassName} mt-2`} />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-time">time</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-time">{copy.agendaFieldTime}</FieldLabel>
         <input id="new-agenda-time" name="time" placeholder="16:10" className={`${adminInputClassName} mt-2`} />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-goal">goal</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-goal">{copy.agendaFieldGoal}</FieldLabel>
         <textarea
           id="new-agenda-goal"
           name="goal"
           rows={3}
-          placeholder="Co ma tahle chvile udelat"
+          placeholder={copy.agendaNewGoalPlaceholder}
           className={`${adminInputClassName} mt-2`}
         />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-room-summary">room summary</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-room-summary">{copy.agendaFieldRoomSummary}</FieldLabel>
         <textarea
           id="new-agenda-room-summary"
           name="roomSummary"
@@ -1699,37 +1773,37 @@ function AgendaItemCreateSheetBody({
         />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-prompts">facilitator prompts</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-prompts">{copy.agendaFieldFacilitatorPrompts}</FieldLabel>
         <textarea
           id="new-agenda-prompts"
           name="facilitatorPrompts"
           rows={4}
-          placeholder="Jedna prompt nebo otazka na radek"
+          placeholder={copy.agendaNewPromptPlaceholder}
           className={`${adminInputClassName} mt-2`}
         />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-watch-fors">watch fors</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-watch-fors">{copy.agendaFieldWatchFors}</FieldLabel>
         <textarea
           id="new-agenda-watch-fors"
           name="watchFors"
           rows={4}
-          placeholder="Na co si dat pozor"
+          placeholder={copy.agendaNewWatchForPlaceholder}
           className={`${adminInputClassName} mt-2`}
         />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-checkpoints">checkpoint questions</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-checkpoints">{copy.agendaFieldCheckpointQuestions}</FieldLabel>
         <textarea
           id="new-agenda-checkpoints"
           name="checkpointQuestions"
           rows={4}
-          placeholder="Checkpoint otazky"
+          placeholder={copy.agendaNewCheckpointPlaceholder}
           className={`${adminInputClassName} mt-2`}
         />
       </div>
       <div>
-        <FieldLabel htmlFor="new-agenda-after">insert after</FieldLabel>
+        <FieldLabel htmlFor="new-agenda-after">{copy.agendaFieldInsertAfter}</FieldLabel>
         <select
           id="new-agenda-after"
           name="afterItemId"
@@ -1751,27 +1825,29 @@ function AgendaItemCreateSheetBody({
 function AgendaItemDetail({
   item,
   lang,
+  copy,
   compact = false,
 }: {
   item: RichAgendaItem;
   lang: UiLanguage;
+  copy: (typeof adminCopy)[UiLanguage];
   compact?: boolean;
 }) {
   const sections: Array<{ title: string; items: string[] }> = [
-    { title: "Facilitator prompts", items: item.facilitatorPrompts ?? [] },
-    { title: "Watch fors", items: item.watchFors ?? [] },
-    { title: "Checkpoint questions", items: item.checkpointQuestions ?? [] },
+    { title: copy.agendaFieldFacilitatorPrompts, items: item.facilitatorPrompts ?? [] },
+    { title: copy.agendaFieldWatchFors, items: item.watchFors ?? [] },
+    { title: copy.agendaFieldCheckpointQuestions, items: item.checkpointQuestions ?? [] },
   ].filter((section) => section.items.length > 0);
 
   return (
     <div className={`${compact ? "mt-4 space-y-4" : "space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4"}`}>
       <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">goal</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailGoalTitle}</p>
           <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.goal}</p>
         </div>
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">room summary</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailRoomSummaryTitle}</p>
           <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.roomSummary}</p>
         </div>
       </div>
@@ -1793,7 +1869,7 @@ function AgendaItemDetail({
 
       {(item.sourceRefs ?? []).length > 0 ? (
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">source material</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {(item.sourceRefs ?? []).map((ref) => (
               <a
@@ -1804,9 +1880,7 @@ function AgendaItemDetail({
                 className="flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
               >
                 <span className="font-medium">{ref.label}</span>
-                <span className="text-xs text-[var(--text-muted)]">
-                  {lang === "cs" ? "otevrit v repu" : "open in repo"}
-                </span>
+                <span className="text-xs text-[var(--text-muted)]">{copy.openRepoLabel}</span>
               </a>
             ))}
           </div>
@@ -1867,7 +1941,7 @@ function PresenterSceneSummaryCard({
       <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
       {sceneBlocks.length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">room blocks</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterRoomBlocksTitle}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {sceneBlocks.map((block) => (
               <span
@@ -1882,7 +1956,7 @@ function PresenterSceneSummaryCard({
       ) : null}
       {(scene.facilitatorNotes ?? []).length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">facilitator notes</p>
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterFacilitatorNotesTitle}</p>
           <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
             {(scene.facilitatorNotes ?? []).map((note) => (
               <li key={note}>• {note}</li>
@@ -1901,7 +1975,7 @@ function PresenterSceneSummaryCard({
               className="flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--card-top)]"
             >
               <span className="font-medium">{ref.label}</span>
-              <span className="text-xs text-[var(--text-muted)]">{lang === "cs" ? "otevrit" : "open"}</span>
+              <span className="text-xs text-[var(--text-muted)]">{copy.openLinkLabel}</span>
             </a>
           ))}
         </div>

@@ -53,6 +53,42 @@ Inside the control room, the first screen must answer four questions immediately
 
 If a panel does not help answer one of those questions, it should be secondary or hidden by default.
 
+## Device Priority
+
+The control room is iPad-first.
+
+That means:
+
+- the primary operating flow should make sense in a single column or a simple two-zone layout
+- phone remains acceptable for quick checks and short interventions
+- desktop is an expansion of the same model, not the source of truth
+- projection launch should work cleanly from the same facilitator flow without turning the live screen into a second admin console
+
+If a desktop composition only feels good because it adds more simultaneous panels, the structure is probably wrong.
+
+## Live Canvas Contract
+
+The default `live` section is the run-the-room surface.
+
+It may show:
+
+- the current workshop moment
+- the next transition
+- participant surface signal
+- one room-facing launch action
+- one contextual runtime action group when the agenda moment requires it
+
+It must not show by default:
+
+- archive and reset controls
+- blueprint-edit references
+- permanent global continuation controls detached from the actual handoff moment
+- authoring panels or explanatory storage notes
+
+Continuation belongs with the handoff / rotation moment. If that moment is not current or next, the control should not dominate the `live` canvas.
+
+If the facilitator still needs to correct participant reveal later, provide that as a secondary recovery control on another layer such as `settings`, not as a co-primary card on `live`.
+
 ## Layout Rules
 
 ### 1. Keep desktop section navigation in a rail
@@ -72,6 +108,7 @@ Allowed pattern:
 - persistent summary header for event context
 - left rail for section location on desktop
 - compact section switcher on mobile
+- keep shared runtime orientation in the shell so non-`live` sections still show current phase, participant-surface state, and team count
 
 ### 2. Use the canvas for reading and operating, not authoring
 
@@ -87,6 +124,7 @@ The default canvas should not show:
 - full edit forms for the selected item
 - add-item forms
 - source-of-truth implementation notes as a full panel
+- safety actions that are not part of the current workshop moment
 
 ### 3. Use two columns, not three competing narratives
 
@@ -110,7 +148,9 @@ Use inline controls only for:
 
 - changing the live marker
 - opening the room screen
-- simple binary state changes like continuation reveal/hide
+- simple binary state changes only when they belong to the current or next workshop moment
+
+Do not keep fallback override controls on the default canvas once the relevant moment has passed.
 
 ### 2. Side sheet
 
@@ -217,6 +257,20 @@ This keeps the reading order obvious:
 - inspect
 - act
 - reveal secondary detail only when needed
+
+## Live View Pattern
+
+The `live` section should use this structure:
+
+1. Primary status panel: what is live now, what comes next, and what the participant surface currently exposes
+2. Compact runtime snapshots belong to the shared shell; the `live` canvas should not restate the same strip unless a moment-specific card genuinely needs it
+3. Timeline context below the fold
+4. Secondary action column:
+   - phase control
+   - contextual handoff / rotation control when relevant
+   - room-screen launch
+
+Safety actions belong in `settings`, not in the default `live` stack.
 
 ## Copy Rules
 

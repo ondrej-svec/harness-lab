@@ -32,6 +32,8 @@ export type ParticipantPanelState = {
   sessionUntilLabel: string;
   sessionUntilValue: string;
   guidanceLabel: string | null;
+  guidanceCtaLabel: string | null;
+  guidanceCtaHref: string | null;
   guidanceBlocks: PresenterBlock[];
 };
 
@@ -105,23 +107,21 @@ export function buildSiteHeaderNavLinks(options: {
   copy: PublicCopy;
 }): HeaderNavLink[] {
   const { isParticipant, lang, copy } = options;
-  const links = isParticipant
-    ? [
-        { href: "#room", label: copy.navRoom },
-        { href: "#teams", label: copy.navTeams },
-        { href: "#notes", label: copy.navNotes },
-      ]
-    : [
-        { href: "#overview", label: copy.navOverview },
-        { href: "#principles", label: copy.navPrinciples },
-        { href: "#details", label: copy.navDetails },
-        { href: blueprintRepoUrl, label: copy.navBlueprint, external: true },
-        { href: "#access", label: copy.navParticipantAccess },
-        { href: publicRepoUrl, label: copy.navRepo, external: true },
-      ];
+  if (isParticipant) {
+    return [
+      { href: "#room", label: copy.navRoom },
+      { href: "#teams", label: copy.navTeams },
+      { href: "#notes", label: copy.navNotes },
+    ];
+  }
 
   return [
-    ...links,
+    { href: "#overview", label: copy.navOverview },
+    { href: "#principles", label: copy.navPrinciples },
+    { href: "#details", label: copy.navDetails },
+    { href: blueprintRepoUrl, label: copy.navBlueprint, external: true },
+    { href: "#access", label: copy.navParticipantAccess },
+    { href: publicRepoUrl, label: copy.navRepo, external: true },
     { href: withLang("/admin", lang), label: copy.navFacilitatorLogin },
   ];
 }
@@ -183,6 +183,8 @@ export function buildParticipantPanelState(options: {
     sessionUntilLabel: copy.metricSessionUntil,
     sessionUntilValue,
     guidanceLabel: participantScene?.label ?? fallbackGuidance.label,
+    guidanceCtaLabel: participantScene?.ctaLabel ?? null,
+    guidanceCtaHref: participantScene?.ctaHref ?? null,
     guidanceBlocks: participantScene?.blocks ?? fallbackGuidance.blocks,
   };
 }

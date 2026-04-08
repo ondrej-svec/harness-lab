@@ -24,16 +24,26 @@ For the concrete component, layout, and progressive-disclosure system, see [`fac
 Workspace navigation should feel like overview and movement between events. Control-room navigation should feel like location inside one event, not like mode switching.
 
 2. Status stays persistent.
-In the control room, instance, live phase, rotation state, and team count stay visible in a compact summary strip at the top.
+In the control room, instance identity plus live phase, participant-surface state, and team count stay visible in a compact summary strip at the top.
 
 3. Actions are grouped by intent.
-Phase control, continuation handoff, and safety actions each get their own block instead of being mixed into one generic control wall.
+Phase control, contextual handoff control, room launch, and safety actions should not compete in one generic control wall.
 
 4. High-impact controls need explicit labels.
 If a control changes live workshop state, the label must say what actually changes. "move live marker" is clearer than "move agenda".
 
 5. Scope must be explicit before action.
 The workspace lists instances as event records. Once inside the control room, actions are already scoped and should not compete with workspace management.
+
+6. The default live surface is run-the-room, not operate-everything.
+Archive/reset and blueprint references stay visible in the product, but they belong on a secondary settings layer rather than on the live canvas.
+
+7. Continuation is contextual.
+Participant reveal belongs with the handoff / rotation moment, not as a permanent always-visible switch.
+If facilitators still need to correct it later, the fallback belongs on a secondary layer such as `settings`, not back on the default `live` canvas.
+
+8. Workspace removal requires confirmation.
+Removing an instance is a safety action in the workspace cockpit. The card may expose the intent, but the destructive submit belongs in a confirmation dialog that explains the automatic archive behavior.
 
 ## Visual Rules
 
@@ -45,6 +55,9 @@ Panels use soft grouping and internal rhythm. We avoid stacking too many identic
 
 2a. Use the desktop canvas.
 If the viewport is wide, the layout should express product structure with rails, grouped content, and readable density rather than leaving most of the screen idle.
+
+2b. Device priority is iPad first.
+The facilitator is more likely to be walking with an iPad or checking the room from a phone than sitting at a large monitor. Desktop should expand the same flow, not redefine it.
 
 3. Typography carries hierarchy.
 Lowercase and calm tone remain part of the voice, but hierarchy comes from size, spacing, and density, not from shouting with contrast.
@@ -71,8 +84,8 @@ Corners are softened enough to make the panel feel intentional and modern, but n
 5. The control room now answers four questions immediately:
 Which event am I controlling?
 What phase is live?
-Is continuation open?
-How many teams are in play?
+What happens next?
+Which action matters now?
 
 ## Review Checklist
 

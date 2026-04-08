@@ -16,6 +16,7 @@ describe("workshop-data", () => {
     expect(state.workshopMeta.city).toBe("Workshop venue");
     expect(state.workshopMeta.dateRange).toBe("Workshop day");
     expect(state.workshopMeta.eventTitle).toBe("Harness Lab workshop");
+    expect(state.workshopMeta.contentLang).toBe("cs");
     expect(state.workshopMeta.venueName).toBe("Workshop venue");
     expect(state.workshopMeta.roomName).toBe("Main room");
     expect(state.rotation.revealed).toBe(false);
@@ -43,6 +44,26 @@ describe("workshop-data", () => {
     ]);
   });
 
+  it("resolves localized agenda and presenter content for an English-content instance", () => {
+    const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
+    const opening = state.agenda[0];
+    const participantScene = opening?.presenterScenes.find((scene) => scene.id === "opening-participant-view");
+
+    expect(state.workshopMeta.contentLang).toBe("en");
+    expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
+    expect(opening?.title).toBe("Opening and orientation");
+    expect(opening?.goal).toContain("Set the tone for the day");
+    expect(participantScene?.title).toBe("How to read the start of the day");
+    expect(participantScene?.blocks[0]).toMatchObject({
+      id: "opening-participant-hero",
+      title: "Today is not prompt theatre",
+    });
+    expect(state.briefs[0]?.problem).toContain("Developers lose time");
+    expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
+    expect(state.setupPaths[0]?.summary).toContain("fastest path");
+    expect(state.ticker[0]?.label).toBe("Instance is ready. Register teams and start the first checkpoint.");
+  });
+
   it("falls back to the seed state when a template is unknown", () => {
     const state = createWorkshopStateFromTemplate("missing-template");
 
@@ -57,7 +78,8 @@ describe("workshop-data", () => {
       templateId: "blueprint-default",
       workshopMeta: {
         title: "Harness Lab",
-        subtitle: "Soukromá workshop instance",
+        subtitle: "Private workshop instance",
+        contentLang: "en",
         eventTitle: "Client innovation day",
         city: "Client HQ",
         dateRange: "12. května 2026",
@@ -72,10 +94,11 @@ describe("workshop-data", () => {
 
     expect(state.workshopId).toBe("client-workshop-001");
     expect(state.workshopMeta.city).toBe("Client HQ");
+    expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.eventTitle).toBe("Client innovation day");
     expect(state.rotation.scenario).toBe("20-participants");
     expect(state.agenda[0]?.status).toBe("current");
-    expect(state.agenda[0]?.title).toBe(blueprintAgenda.phases[0]?.label);
+    expect(state.agenda[0]?.title).toBe("Opening and orientation");
     expect(state.agenda[0]).toMatchObject({
       order: 1,
       sourceBlueprintPhaseId: blueprintAgenda.phases[0]?.id,
@@ -86,7 +109,7 @@ describe("workshop-data", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: blueprintAgenda.phases[0]?.scenes[0]?.id,
-          title: blueprintAgenda.phases[0]?.scenes[0]?.title,
+          title: "We are not building output alone",
         }),
       ]),
     );
