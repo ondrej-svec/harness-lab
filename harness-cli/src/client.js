@@ -40,11 +40,13 @@ export function createHarnessClient({ fetchFn, session }) {
   }
 
   async function request(path, options = {}) {
+    const method = options.method ?? "GET";
     const response = await fetchFn(`${baseUrl}${path}`, {
-      method: options.method ?? "GET",
+      method,
       headers: {
         accept: "application/json",
         ...authHeaders,
+        ...(method !== "GET" && method !== "HEAD" ? { origin: baseUrl } : {}),
         ...(options.body ? { "content-type": "application/json" } : {}),
         ...(options.headers ?? {}),
       },

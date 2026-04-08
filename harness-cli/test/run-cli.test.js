@@ -196,6 +196,7 @@ test("workshop create-instance sends rich metadata and reports created state", a
       [
         "POST http://localhost:3000/api/workshop/instances",
         async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
           requestBody = JSON.parse(String(options.body));
           return jsonResponse(200, {
             ok: true,
@@ -298,6 +299,7 @@ test("workshop update-instance patches metadata through the shared instance rout
       [
         "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
         async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
           requestBody = JSON.parse(String(options.body));
           return jsonResponse(200, {
             ok: true,
@@ -343,6 +345,7 @@ test("workshop prepare sends the target instance id", async () => {
       [
         "POST http://localhost:3000/api/workshop",
         async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
           requestBody = JSON.parse(String(options.body));
           return jsonResponse(200, {
             ok: true,
@@ -375,7 +378,10 @@ test("workshop remove-instance reports owner-only failures from the API", async 
       ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
       [
         "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
-        async () => jsonResponse(403, { ok: false, error: "owner role required" }),
+        async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
+          return jsonResponse(403, { ok: false, error: "owner role required" });
+        },
       ],
     ]),
   );
@@ -766,6 +772,7 @@ test("device auth can drive workshop create-instance with the brokered facilitat
         "POST http://localhost:3000/api/workshop/instances",
         async (_url, options) => {
           assert.equal(options.headers.authorization, "Bearer device-token-1");
+          assert.equal(options.headers.origin, "http://localhost:3000");
           assert.deepEqual(JSON.parse(String(options.body)), {
             id: "developer-hackathon-brno-21-4-dakar",
             eventTitle: "Developer Hackathon Brno",
