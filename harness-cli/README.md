@@ -121,10 +121,10 @@ Workshop commands:
 harness auth status
 harness skill install
 harness workshop status
-harness workshop create-instance developer-hackathon-praha-24-4-saturn --event-title "Developer Hackathon Praha"
-harness workshop update-instance developer-hackathon-praha-24-4-saturn --room-name Saturn
-harness workshop prepare developer-hackathon-praha-24-4-saturn
-harness workshop remove-instance developer-hackathon-praha-24-4-saturn
+harness workshop create-instance sample-workshop-demo-orbit --event-title "Sample Workshop Demo"
+harness workshop update-instance sample-workshop-demo-orbit --room-name Orbit
+harness workshop prepare sample-workshop-demo-orbit
+harness workshop remove-instance sample-workshop-demo-orbit
 harness workshop phase set rotation
 harness workshop archive --notes "Manual archive"
 harness auth logout
