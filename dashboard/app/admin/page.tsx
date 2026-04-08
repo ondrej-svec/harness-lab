@@ -177,11 +177,14 @@ export default async function AdminWorkspacePage({
   const filters = readWorkspaceFilters({ q: params?.q, status: params?.status });
   const filteredInstances = filterWorkshopInstances(availableInstances, filters);
   const workspaceStats = buildWorkspaceStatusSummary(availableInstances);
-  const [currentFacilitator, authSession, workshopStates] = await Promise.all([
+  const [loadedCurrentFacilitator, loadedAuthSession, loadedWorkshopStates] = await Promise.all([
     getRuntimeStorageMode() === "neon" ? getFacilitatorSession(workspaceAccessInstanceId) : Promise.resolve(null),
     getRuntimeStorageMode() === "neon" && auth ? auth.getSession() : Promise.resolve({ data: null }),
     Promise.all(filteredInstances.map(async (instance) => ({ instanceId: instance.id, state: await getWorkshopState(instance.id) }))),
   ]);
+  const currentFacilitator: Awaited<ReturnType<typeof getFacilitatorSession>> = loadedCurrentFacilitator;
+  const authSession: Awaited<ReturnType<NonNullable<typeof auth>["getSession"]>> | { data: null } = loadedAuthSession;
+  const workshopStates: Array<{ instanceId: string; state: Awaited<ReturnType<typeof getWorkshopState>> }> = loadedWorkshopStates;
 
   const workshopStateMap = new Map(workshopStates.map((entry) => [entry.instanceId, entry.state]));
   const signedInEmail = authSession?.data?.user?.email ?? null;

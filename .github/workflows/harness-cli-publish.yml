@@ -33,7 +33,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
 
       - id: package_meta
         name: Read package version
@@ -123,7 +123,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
           registry-url: "https://registry.npmjs.org"
 
       - name: Install CLI dependencies

@@ -25,7 +25,7 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { workshopTemplates } from "@/lib/workshop-data";
+import { workshopTemplates, type AgendaItem, type Team } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addAgendaItem,
@@ -434,13 +434,20 @@ export default async function AdminPage({
   await requireFacilitatorPageAccess(activeInstanceId);
 
   const isNeonMode = getRuntimeStorageMode() === "neon";
-  const [state, latestArchive, facilitatorGrants, currentFacilitator, authSession] = await Promise.all([
-    getWorkshopState(activeInstanceId),
-    getLatestWorkshopArchive(activeInstanceId),
-    isNeonMode ? getInstanceGrantRepository().listActiveGrants(activeInstanceId) : Promise.resolve([]),
-    isNeonMode ? getFacilitatorSession(activeInstanceId) : Promise.resolve(null),
-    isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
-  ]);
+  const [loadedState, loadedLatestArchive, loadedFacilitatorGrants, loadedCurrentFacilitator, loadedAuthSession] =
+    await Promise.all([
+      getWorkshopState(activeInstanceId),
+      getLatestWorkshopArchive(activeInstanceId),
+      isNeonMode ? getInstanceGrantRepository().listActiveGrants(activeInstanceId) : Promise.resolve([]),
+      isNeonMode ? getFacilitatorSession(activeInstanceId) : Promise.resolve(null),
+      isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
+    ]);
+  const state: Awaited<ReturnType<typeof getWorkshopState>> = loadedState;
+  const latestArchive: Awaited<ReturnType<typeof getLatestWorkshopArchive>> = loadedLatestArchive;
+  const facilitatorGrants: Awaited<ReturnType<ReturnType<typeof getInstanceGrantRepository>["listActiveGrants"]>> =
+    loadedFacilitatorGrants;
+  const currentFacilitator: Awaited<ReturnType<typeof getFacilitatorSession>> = loadedCurrentFacilitator;
+  const authSession: Awaited<ReturnType<NonNullable<typeof auth>["getSession"]>> | { data: null } = loadedAuthSession;
 
   const { currentAgendaItem, nextAgendaItem, selectedInstance } = deriveAdminPageState(
     state,
@@ -448,8 +455,8 @@ export default async function AdminPage({
     activeInstanceId,
   );
   const selectedAgendaItem =
-    state.agenda.find((item) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0] ?? null;
-  const selectedTeam = state.teams.find((team) => team.id === query?.team) ?? state.teams[0] ?? null;
+    state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0] ?? null;
+  const selectedTeam = state.teams.find((team: Team) => team.id === query?.team) ?? state.teams[0] ?? null;
   const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;

@@ -9,8 +9,7 @@ describe("theme switcher component wiring", () => {
       const actual = await vi.importActual<typeof import("react")>("react");
       return {
         ...actual,
-        useEffect: (effect: () => void) => effect(),
-        useState: () => [true, vi.fn()] as const,
+        useSyncExternalStore: () => true,
       };
     });
     vi.doMock("next-themes", () => ({

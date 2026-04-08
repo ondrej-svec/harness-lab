@@ -61,6 +61,7 @@ Current repo gate:
 
 - linting for the dashboard and supporting code
 - dependency review on pull requests
+- installed dependency audit for shipped package roots
 - code scanning such as CodeQL or an equivalent maintained static-analysis path
 - secret scanning for tracked files and pull requests
 - one lightweight DAST path against a protected preview or other production-safe endpoint set

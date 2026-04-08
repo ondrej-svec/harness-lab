@@ -43,6 +43,7 @@ For the current private workshop-instance architecture, the required sensors and
 
 - [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md)
 - [`private-workshop-instance-deployment-spec.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-deployment-spec.md)
+- [`dependency-maintenance.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dependency-maintenance.md)
 
 For the reusable workshop method itself, the canonical public operating surface now starts in:
 

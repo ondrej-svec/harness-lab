@@ -43,7 +43,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
           cache-dependency-path: harness-cli/package-lock.json
 
@@ -82,7 +82,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
           cache-dependency-path: dashboard/package-lock.json
 
@@ -116,7 +116,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
           cache-dependency-path: dashboard/package-lock.json
 
@@ -192,6 +192,33 @@ jobs:
       - uses: actions/checkout@v6
       - uses: actions/dependency-review-action@v4
 
+  audit-packages:
+    name: audit-packages (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - dashboard
+          - harness-cli
+    defaults:
+      run:
+        working-directory: ${{ matrix.package }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ${{ matrix.package }}/package-lock.json
+
+      - run: npm ci
+
+      - run: npm audit --audit-level=high
+
   deploy-ready:
     name: deploy-ready
     if: always()
@@ -206,6 +233,7 @@ jobs:
       - secret-scan
       - sast-semgrep
       - dependency-review
+      - audit-packages
     steps:
       - name: Assess aggregate CI result
         id: assess
@@ -216,6 +244,7 @@ jobs:
           SECRET_SCAN_RESULT: ${{ needs.secret-scan.result }}
           SAST_SEMGREP_RESULT: ${{ needs.sast-semgrep.result }}
           DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+          AUDIT_PACKAGES_RESULT: ${{ needs.audit-packages.result }}
         run: |
           echo "verify-harness-cli: ${CLI_RESULT}"
           echo "verify-dashboard: ${VERIFY_RESULT}"
@@ -223,6 +252,7 @@ jobs:
           echo "secret-scan: ${SECRET_SCAN_RESULT}"
           echo "sast-semgrep: ${SAST_SEMGREP_RESULT}"
           echo "dependency-review: ${DEPENDENCY_REVIEW_RESULT}"
+          echo "audit-packages: ${AUDIT_PACKAGES_RESULT}"
 
           STATE="success"
           DESCRIPTION="Ready for Vercel promotion"
@@ -255,6 +285,11 @@ jobs:
           if [ "${STATE}" = "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "success" ] && [ "${DEPENDENCY_REVIEW_RESULT}" != "skipped" ]; then
             STATE="failure"
             DESCRIPTION="dependency-review failed"
+          fi
+
+          if [ "${STATE}" = "success" ] && [ "${AUDIT_PACKAGES_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="audit-packages failed"
           fi
 
           echo "state=${STATE}" >> "$GITHUB_OUTPUT"

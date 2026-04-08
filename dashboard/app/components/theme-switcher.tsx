@@ -1,13 +1,15 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export const themeOptions = [
   { value: "system", label: "auto" },
   { value: "light", label: "☀" },
   { value: "dark", label: "☾" },
 ] as const;
+
+const subscribe = () => () => {};
 
 export function renderThemeSwitcherContent({
   mounted,
@@ -43,9 +45,7 @@ export function renderThemeSwitcherContent({
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
 
   return renderThemeSwitcherContent({ mounted, theme, setTheme });
 }
