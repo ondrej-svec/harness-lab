@@ -4,9 +4,9 @@
   "title": "Harness Lab",
   "subtitle": "Workshop operating system pro práci s AI agenty",
   "principles": [
-    "Kontext před generováním",
-    "Ověřujte po malých krocích",
-    "Pište tak, aby se dalo pokračovat"
+    "Mapa před pohybem",
+    "Ověření je hranice důvěry",
+    "Pište tak, aby další tým mohl pokračovat"
   ],
   "phases": [
     {
@@ -15,7 +15,7 @@
       "label": "Úvod a naladění",
       "startTime": "09:10",
       "kind": "shared",
-      "goal": "Rámec dne, proč řešíme harness engineering a co účastníky čeká."
+      "goal": "Rámec dne: nejde o promptování, ale o repo a workflow, které přežijí handoff."
     },
     {
       "id": "talk",
@@ -23,7 +23,7 @@
       "label": "Context is King",
       "startTime": "09:40",
       "kind": "shared",
-      "goal": "Krátký talk a porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži."
+      "goal": "Krátký talk a porovnání přístupů. Krátká mapa v repu je silnější než prompt blob."
     },
     {
       "id": "build-1",
@@ -31,7 +31,7 @@
       "label": "Build Phase 1",
       "startTime": "10:30",
       "kind": "team",
-      "goal": "Repo, AGENTS.md, plán a první reviewed output ještě před obědem."
+      "goal": "Nejdřív udělejte z repa operating surface: krátké AGENTS.md, plán, build/test flow, první ověření a první reviewed output."
     },
     {
       "id": "rotation",
@@ -39,7 +39,7 @@
       "label": "Rotace týmů",
       "startTime": "13:30",
       "kind": "team",
-      "goal": "Plný přesun lidí mezi stoly. Pokračuje se jen s tím, co přežilo v repu."
+      "goal": "Plný přesun lidí mezi stoly. Nejdřív čtěte a napište diagnózu, až pak měňte kód."
     },
     {
       "id": "reveal",
@@ -47,7 +47,7 @@
       "label": "Reveal a reflexe",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Co pomohlo pokračovat, co chybělo, co si odnáším do práce s agenty."
+      "goal": "Co pomohlo pokračovat, co chybělo, a kterou bolest teď proměníme v lepší harness."
     }
   ],
   "runtimeImport": {

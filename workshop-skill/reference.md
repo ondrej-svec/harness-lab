@@ -1,5 +1,12 @@
 # Workshop Reference
 
+## 4 pracovní defaulty pro dnešek
+
+- `Mapa před pohybem` — nejdřív udělejte z repa místo, kde se dá orientovat
+- `Co není v repu, neexistuje` — důležité dohody, pravidla a next steps patří do souborů
+- `Ověření je hranice důvěry` — s větší autonomií musí růst i kvalita evidence
+- `Handoff je průběžný constraint` — další tým má najít první safe move bez vašeho výkladu
+
 ## 4 prvky dobrého zadání
 
 - `Cíl` — co má agent konkrétně vytvořit nebo změnit
@@ -10,9 +17,11 @@
 ## Rychlý checklist pro handoff
 
 - Existuje `AGENTS.md`?
+- Je `AGENTS.md` krátká mapa, ne přerostlý dump?
 - Jsou v repu build/test příkazy, které umí spustit i další tým?
 - Je jasné, co už funguje, co je rozpracované a co je jen nápad?
 - Je v repu plan, runbook nebo jiný dokument, ze kterého další tým pochopí záměr?
+- Je dohledatelné, co bylo skutečně ověřeno?
 - Najde nový tým během pár minut první bezpečný krok?
 
 ## Doporučené commands
@@ -23,8 +32,9 @@
 - `Codex: $plan` před větší implementací
 - `Codex: $test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
 - `Codex: $review` po větším kusu práce
-- `Codex: $workshop status` pro orientaci během dne
+- `Codex: $workshop` pro orientaci během dne
 - `Codex: $workshop template` když repu chybí základní kontext
+- `Codex: $workshop analyze` před handoffem nebo po rotaci, když chcete rychle odhalit slepá místa v repu
 
 ## Testy jako hranice důvěry
 
@@ -42,4 +52,4 @@
 
 ## Rychlá připomínka
 
-Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu.
+Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu a ověření musí být dohledatelné.

@@ -140,8 +140,27 @@ describe("Admin control room page", () => {
 
     expect(html).toContain(adminCopy.en.editTeamTitle);
     expect(html).toContain(adminCopy.en.createAnotherTeamLabel);
+    expect(html).toContain(adminCopy.en.checkpointChangedLabel);
+    expect(html).toContain(adminCopy.en.checkpointVerifiedLabel);
+    expect(html).toContain(adminCopy.en.checkpointNextStepLabel);
     expect(html).toContain('value="t3"');
     expect(html).toContain('value="Tým 3"');
     expect(html).toContain("https://github.com/example/code-review-helper");
+  });
+
+  it("renders structured evidence fields in the signals section", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "signals" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.signalDescription);
+    expect(html).toContain(adminCopy.en.checkpointFormHint);
+    expect(html).toContain(adminCopy.en.checkpointChangedLabel);
+    expect(html).toContain(adminCopy.en.checkpointVerifiedLabel);
+    expect(html).toContain(adminCopy.en.checkpointNextStepLabel);
   });
 });

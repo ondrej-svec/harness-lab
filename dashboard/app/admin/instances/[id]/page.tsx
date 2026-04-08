@@ -78,6 +78,65 @@ function deriveNextTeamId(existingIds: string[]) {
   return `t${nextNumber}`;
 }
 
+function buildEvidenceSummary(parts: {
+  changed?: string;
+  verified?: string;
+  nextStep?: string;
+  fallback?: string;
+}) {
+  const items = [
+    parts.changed ? `Co se změnilo: ${parts.changed}` : null,
+    parts.verified ? `Co to ověřuje: ${parts.verified}` : null,
+    parts.nextStep ? `Další safe move: ${parts.nextStep}` : null,
+  ].filter(Boolean);
+
+  if (items.length > 0) {
+    return items.join("\n");
+  }
+
+  return parts.fallback?.trim() ?? "";
+}
+
+function parseEvidenceSummary(value: string) {
+  const normalized = value.trim();
+  if (!normalized) {
+    return { changed: "", verified: "", nextStep: "" };
+  }
+
+  const result = { changed: "", verified: "", nextStep: "" };
+  let matched = false;
+
+  for (const line of normalized.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      continue;
+    }
+
+    if (trimmed.startsWith("Co se změnilo:")) {
+      result.changed = trimmed.replace("Co se změnilo:", "").trim();
+      matched = true;
+      continue;
+    }
+
+    if (trimmed.startsWith("Co to ověřuje:")) {
+      result.verified = trimmed.replace("Co to ověřuje:", "").trim();
+      matched = true;
+      continue;
+    }
+
+    if (trimmed.startsWith("Další safe move:")) {
+      result.nextStep = trimmed.replace("Další safe move:", "").trim();
+      matched = true;
+    }
+  }
+
+  if (!matched) {
+    result.changed = normalized;
+  }
+
+  return result;
+}
+
 async function signOutAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
@@ -168,7 +227,12 @@ async function addCheckpointFeedAction(formData: FormData) {
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
   const teamId = String(formData.get("teamId") ?? "");
-  const text = String(formData.get("text") ?? "");
+  const text = buildEvidenceSummary({
+    changed: String(formData.get("checkpointChanged") ?? "").trim(),
+    verified: String(formData.get("checkpointVerified") ?? "").trim(),
+    nextStep: String(formData.get("checkpointNextStep") ?? "").trim(),
+    fallback: String(formData.get("text") ?? "").trim(),
+  });
   const at = String(formData.get("at") ?? "");
   if (teamId && text && at) {
     await addSprintUpdate(
@@ -206,7 +270,12 @@ async function registerTeamAction(formData: FormData) {
   const city = String(formData.get("city") ?? "Studio A").trim();
   const repoUrl = String(formData.get("repoUrl") ?? "").trim();
   const projectBriefId = String(formData.get("projectBriefId") ?? "").trim();
-  const checkpoint = String(formData.get("checkpoint") ?? "").trim();
+  const checkpoint = buildEvidenceSummary({
+    changed: String(formData.get("checkpointChanged") ?? "").trim(),
+    verified: String(formData.get("checkpointVerified") ?? "").trim(),
+    nextStep: String(formData.get("checkpointNextStep") ?? "").trim(),
+    fallback: String(formData.get("checkpoint") ?? "").trim(),
+  });
   const membersRaw = String(formData.get("members") ?? "").trim();
 
   if (id && name && repoUrl && projectBriefId) {
@@ -388,6 +457,7 @@ export default async function AdminPage({
   const selectedAgendaItem =
     state.agenda.find((item) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0] ?? null;
   const selectedTeam = state.teams.find((team) => team.id === query?.team) ?? state.teams[0] ?? null;
+  const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
@@ -929,13 +999,42 @@ export default async function AdminPage({
                     defaultValue={selectedTeam?.members.join(", ") ?? ""}
                     className={adminInputClassName}
                   />
-                  <textarea
-                    name="checkpoint"
-                    rows={5}
-                    placeholder={copy.teamCheckpointPlaceholder}
-                    defaultValue={selectedTeam?.checkpoint ?? ""}
-                    className={adminInputClassName}
-                  />
+                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                    {copy.checkpointFormHint}
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="checkpoint-changed">{copy.checkpointChangedLabel}</FieldLabel>
+                    <textarea
+                      id="checkpoint-changed"
+                      name="checkpointChanged"
+                      rows={3}
+                      placeholder={copy.checkpointChangedLabel}
+                      defaultValue={selectedTeamCheckpoint.changed}
+                      className={`${adminInputClassName} mt-2`}
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="checkpoint-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
+                    <textarea
+                      id="checkpoint-verified"
+                      name="checkpointVerified"
+                      rows={3}
+                      placeholder={copy.checkpointVerifiedLabel}
+                      defaultValue={selectedTeamCheckpoint.verified}
+                      className={`${adminInputClassName} mt-2`}
+                    />
+                  </div>
+                  <div>
+                    <FieldLabel htmlFor="checkpoint-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
+                    <textarea
+                      id="checkpoint-next-step"
+                      name="checkpointNextStep"
+                      rows={3}
+                      placeholder={copy.checkpointNextStepLabel}
+                      defaultValue={selectedTeamCheckpoint.nextStep}
+                      className={`${adminInputClassName} mt-2`}
+                    />
+                  </div>
                   <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
                   </AdminSubmitButton>
@@ -974,7 +1073,7 @@ export default async function AdminPage({
                         </Link>
                       </div>
                     </div>
-                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
                     <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{team.members.join(", ")}</p>
                   </div>
                 ))}
@@ -995,8 +1094,25 @@ export default async function AdminPage({
                     </option>
                   ))}
                 </select>
-                <input name="at" defaultValue="11:15" className={adminInputClassName} />
-                <textarea name="text" rows={4} className={adminInputClassName} />
+                <div>
+                  <FieldLabel htmlFor="signal-at">{copy.checkpointAtLabel}</FieldLabel>
+                  <input id="signal-at" name="at" defaultValue="11:15" className={`${adminInputClassName} mt-2`} />
+                </div>
+                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                  {copy.checkpointFormHint}
+                </div>
+                <div>
+                  <FieldLabel htmlFor="signal-changed">{copy.checkpointChangedLabel}</FieldLabel>
+                  <textarea id="signal-changed" name="checkpointChanged" rows={3} className={`${adminInputClassName} mt-2`} />
+                </div>
+                <div>
+                  <FieldLabel htmlFor="signal-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
+                  <textarea id="signal-verified" name="checkpointVerified" rows={3} className={`${adminInputClassName} mt-2`} />
+                </div>
+                <div>
+                  <FieldLabel htmlFor="signal-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
+                  <textarea id="signal-next-step" name="checkpointNextStep" rows={3} className={`${adminInputClassName} mt-2`} />
+                </div>
                 <AdminSubmitButton className={adminPrimaryButtonClassName}>
                   {copy.addUpdateButton}
                 </AdminSubmitButton>

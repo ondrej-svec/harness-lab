@@ -4,6 +4,13 @@
 
 Do 10:30 potřebujete jednu funkční cestu do Codexu nebo pi. Ne perfektní setup. Funkční cestu.
 
+První cíl po setupu není feature. Je to orientace:
+
+- otevřít repo
+- načíst workshop guidance
+- vytvořit krátké `AGENTS.md`
+- pojmenovat první ověřitelný krok
+
 ## Nejrychlejší volba
 
 - terminálový, hackovatelný multi-model setup: `pi`
@@ -52,3 +59,4 @@ npm install -g @mariozechner/pi-coding-agent
 - Umíte otevřít repo.
 - Umíte poslat prompt.
 - Máte jednu funkční cestu, jak během workshopu pracovat s agentem.
+- Víte, jaký je první safe move v repu po setupu.

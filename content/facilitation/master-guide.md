@@ -15,6 +15,14 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - Nejde o soutěž v promptování.
 - Jde o práci s agentem tak, aby po vás zůstával použitelný kontext.
 - Odpolední část prověří, jestli repo umí mluvit samo za sebe.
+- Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.
+
+### Co má facilitátor průběžně vracet
+
+- „Kde by to našel další tým bez vás?“
+- „Co je tady skutečně ověřené?“
+- „Je `AGENTS.md` mapa, nebo už se z něj stává dump?“
+- „Jaký je další bezpečný krok pro cizího člověka nebo agenta?“
 
 ## Build Phase 1
 
@@ -23,7 +31,8 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 1. do 10:50 existuje repo
 2. do 11:15 existuje `AGENTS.md`
 3. do 11:30 existuje plan
-4. do 12:00 existuje první reviewed output
+4. do 11:45 existuje build/test command nebo tracer bullet
+5. do 12:00 existuje první reviewed output
 
 ### Role facilitátora
 
@@ -38,6 +47,8 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - Přibývá kontext v repu, nebo zůstává jen v chatu a v hlavách?
 - Ověřují si výstupy, nebo jen generují další text?
 - Mají test, tracer bullet nebo jiné explicitní ověření, které drží agenta v mezích?
+- Je z repa poznat, co je hotové, co je rozpracované a co je jen hypotéza?
+- Uměl by jiný tým během pěti minut najít první bezpečný krok?
 
 ### Facilitační pointa k testům
 
@@ -48,6 +59,13 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - U UI práce připomínejte pattern: rychlá agent exploration v izolovaném prostředí, potom browser test, potom lidské review.
 - Pokud tým mluví o tom, že „agent to prostě nakliká v mém browseru“, vraťte debatu k sandboxu, nízkému riziku a explicitní kontrole.
 
+### Co normalizovat
+
+- `AGENTS.md` jako krátkou mapu, ne rostoucí skladiště všeho
+- plan jako pracovní artefakt, ne ceremonii navíc
+- malý průběžný úklid, když se začne šířit chaos nebo duplicity
+- převod opakovaných připomínek do repa místo dalšího ústního mentoringu
+
 ## Intermezza
 
 Každé intermezzo má tři kroky:
@@ -55,6 +73,12 @@ Každé intermezzo má tři kroky:
 1. Týmy napíšou jednu větu: „Co jsme změnili a proč.“
 2. Ondřej shrne, co vidí u stolů a co ukazuje monitoring.
 3. Zazní jedna principová pointa navázaná na to, co se opravdu děje v místnosti.
+
+Preferované checkpoint otázky:
+
+- Co jste přesunuli z chatu nebo z hlavy do repa?
+- Co dnes ověřujete pomocí spustitelného checku?
+- Co by měl číst další tým jako první?
 
 ### Smysl intermezz
 
@@ -74,7 +98,14 @@ Každé intermezzo má tři kroky:
 - Začněte `README`, `AGENTS.md` a planem.
 - Needitujte hned první soubor, který otevřete.
 - Nejprve si udělejte mapu: co funguje, co chybí, co je rizikové.
+- Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další safe move.
 - Když tým neví, po čem sáhnout, vraťte ho k learner kit artefaktům: `template-agents`, `reference`, `analyze-checklist`, challenge cards.
+
+### Facilitační pointa k rotaci
+
+- Frustrace je užitečný signál, pokud ukazuje na skrytý kontext nebo chybějící verifikaci.
+- Nepomáhejte týmům ústním handoffem nahrazovat slabý repo signal.
+- Pomáhejte jim pojmenovat, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.
 
 ## Reveal a reflexe
 
@@ -97,3 +128,4 @@ Otázky:
 - Nehodnotíme, který tým byl lepší.
 - Díváme se na systém: které signály pomáhají práci přežít handoff a které ji brzdí.
 - Sbíráme konkrétní příklady, ne obecné dojmy.
+- Každá opakující se bolest je kandidát na lepší template, challenge card nebo guidance v blueprintu.

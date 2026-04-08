@@ -114,10 +114,11 @@ Show:
 ### `workshop help`
 
 Give phase-aware coaching. Examples:
-- during Build Phase 1: remind the team to get `AGENTS.md`, a plan, and a reviewed output in place
+- during Build Phase 1: remind the team to get a short `AGENTS.md`, a plan, commands, one executable check, and a reviewed output in place
 - during the continuation shift: tell the team to read before editing and to preserve evidence of what they changed
 - when the team is letting the agent work with more autonomy: push them toward tests, tracer bullets, or another executable check
 - for UI work: recommend `agent exploration -> Playwright regression -> human review` as the safe default workflow
+- when teams keep repeating the same rule out loud: push them to encode it in the repo instead of relying on chat memory
 
 ### `workshop template`
 
@@ -127,6 +128,7 @@ Generate a starter `AGENTS.md` for the participant's current project using the 4
 - constraints
 - done when
 Use `workshop-skill/template-agents.md` as the default scaffold.
+Keep it short and map-like. Prefer links to deeper docs over long prose dumps.
 
 ### `workshop recap`
 
@@ -193,6 +195,7 @@ Return:
 - what helps continuation
 - what is missing
 - one concrete next improvement
+- whether the repo makes the next safe move obvious for a new team
 
 ## Fallback Content
 
@@ -225,4 +228,6 @@ Relevant local files:
 - Keep command names, file names, and code terms in English.
 - Prefer actionable next steps over theory during build phases.
 - Treat tests and executable checks as the default trust boundary once the agent is doing meaningful implementation work.
+- Prefer repo-native guidance over advice that would stay only in chat.
+- Treat `AGENTS.md` as a map that points to sources of truth, not as a giant instruction dump.
 - Do not present unrestricted browser autonomy in a normal authenticated browser as the default recommendation.

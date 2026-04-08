@@ -15,10 +15,11 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 ## Recommended Reading Order
 
 1. [`day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
-2. [`operator-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/operator-guide.md)
-3. [`control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
-4. [`edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
-5. [`agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
+2. [`teaching-spine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/teaching-spine.md)
+3. [`operator-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/operator-guide.md)
+4. [`control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
+5. [`edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
+6. [`agenda.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/agenda.json)
 
 ## Blueprint Contents
 
@@ -26,6 +27,8 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 
 - [`day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
   Explains the workshop arc, phase goals, and what should survive handoff.
+- [`teaching-spine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/teaching-spine.md)
+  Defines the habits, facilitator messages, and participant defaults the workshop should install.
 - [`operator-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/operator-guide.md)
   Explains how a facilitator prepares, runs, and closes a workshop.
 - [`control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)

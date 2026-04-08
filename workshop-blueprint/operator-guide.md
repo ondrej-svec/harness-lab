@@ -35,6 +35,13 @@ Operate the live instance through the shared runtime control surfaces:
 - facilitator skill for AI-assisted operations
 - `harness` CLI for privileged auth bootstrap and local secure credential/session handling
 
+Facilitation priority order:
+
+1. keep the next safe move obvious
+2. push teams to encode context in the repo instead of explaining it orally
+3. ask for executable verification before encouraging more autonomy
+4. treat continuation friction as a signal to improve the harness, not as a participant failure
+
 Typical runtime-only actions:
 
 - move the current phase
@@ -59,3 +66,9 @@ These actions affect only the active workshop instance unless a facilitator deli
 If a change should help the next workshop by default, it belongs in the blueprint and must be committed deliberately.
 
 If a change only helps the current live event, it belongs in the runtime instance and must not auto-promote back into the repo.
+
+## What To Keep Reinforcing
+
+- `AGENTS.md` should stay short and point outward to deeper sources of truth.
+- The repo should contain plan, commands, verification evidence, and the next safe step.
+- When a repeated issue appears across tables, turn it into a stronger template, challenge, reference card, or check.

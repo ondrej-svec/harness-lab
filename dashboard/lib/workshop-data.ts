@@ -288,7 +288,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Anna", "David", "Eva", "Marek", "Tomáš"],
       repoUrl: "https://github.com/example/standup-bot",
       projectBriefId: "standup-bot",
-      checkpoint: "Repo založeno, AGENTS.md existuje, plán čeká na review.",
+      checkpoint: "AGENTS.md je hotové jako krátká mapa, build flow je popsaný a další safe move je dopsat první ověření.",
     },
     {
       id: "t2",
@@ -297,7 +297,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Jana", "Karel", "Lucie", "Petr", "Veronika"],
       repoUrl: "https://github.com/example/devtoolbox-cli",
       projectBriefId: "devtoolbox-cli",
-      checkpoint: "První slash command flow funguje, challenge karta zatím nesplněna.",
+      checkpoint: "První slash command flow funguje, ale chybí jasné ověření a runbook pro tým po rotaci.",
     },
     {
       id: "t3",
@@ -306,7 +306,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Adam", "Barbora", "Filip", "Lenka"],
       repoUrl: "https://github.com/example/code-review-helper",
       projectBriefId: "code-review-helper",
-      checkpoint: "Skill kostra hotová, teď dopisují runbook pro další tým.",
+      checkpoint: "Skill kostra hotová, heuristiky jsou sepsané a další safe move je dopsat runbook pro další tým.",
     },
     {
       id: "t4",
@@ -315,7 +315,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Daniel", "Hana", "Jakub", "Zuzana"],
       repoUrl: "https://github.com/example/metrics-dashboard",
       projectBriefId: "metrics-dashboard",
-      checkpoint: "Dashboard žije, ale chybí instrukce pro seed dat a lokální spuštění.",
+      checkpoint: "Dashboard žije, ale zatím není dohledatelné, co je skutečně ověřené a jak spustit seed data lokálně.",
     },
   ],
   briefs: [
@@ -411,10 +411,10 @@ export const seedWorkshopState: WorkshopState = {
   challenges: [
     {
       id: "agents-md",
-      title: "Vytvořte AGENTS.md",
+      title: "Vytvořte AGENTS.md jako mapu",
       category: "Context Engineering",
       phaseHint: "before-lunch",
-      description: "Zapište cíle, příkazy build/test a pravidla, která mají přežít po rotaci.",
+      description: "Zapište cíl, build/test flow, trvalá pravidla a kam má další tým sáhnout jako první.",
       completedBy: ["t1", "t3"],
     },
     {
@@ -422,7 +422,7 @@ export const seedWorkshopState: WorkshopState = {
       title: "Napište skill pro code review",
       category: "Context Engineering",
       phaseHint: "before-lunch",
-      description: "Alespoň jedna opakovatelná review rutina musí být v repu jako skill nebo runbook.",
+      description: "Alespoň jedna opakovatelná review rutina musí být v repu jako skill nebo runbook, ne jen v promptu.",
       completedBy: [],
     },
     {
@@ -430,8 +430,16 @@ export const seedWorkshopState: WorkshopState = {
       title: "Použijte /plan před kódováním",
       category: "Workflow",
       phaseHint: "before-lunch",
-      description: "Nechte agenta nejprve rozplánovat práci a označte v repu, z čeho se vycházelo.",
+      description: "Nechte agenta nejprve rozplánovat práci, ukažte z čeho se vycházelo a dopište další safe move.",
       completedBy: ["t2"],
+    },
+    {
+      id: "smallest-verification",
+      title: "Přidejte nejmenší užitečné ověření",
+      category: "Workflow",
+      phaseHint: "before-lunch",
+      description: "Vytvořte RED test, tracer bullet nebo jednoduchý browser check dřív, než dáte agentovi víc autonomie.",
+      completedBy: [],
     },
     {
       id: "parallel-agents",
@@ -446,7 +454,7 @@ export const seedWorkshopState: WorkshopState = {
       title: "Přidejte 'Done When' ke každému tasku",
       category: "Meta",
       phaseHint: "anytime",
-      description: "Každý důležitý task musí mít explicitní kritérium dokončení.",
+      description: "Každý důležitý task musí mít explicitní kritérium dokončení a odkaz na ověření.",
       completedBy: ["t4"],
     },
   ],
@@ -456,14 +464,14 @@ export const seedWorkshopState: WorkshopState = {
     slots: [
       { fromTeam: "Tým 1", toTeam: "Tým 3", note: "Nikdo nezůstává u svého původního stolu." },
       { fromTeam: "Tým 2", toTeam: "Tým 4", note: "Přesuňte se i s laptopem, ale bez ústního handoffu." },
-      { fromTeam: "Tým 3", toTeam: "Tým 1", note: "Otevřete nejdřív README, AGENTS.md a plán." },
-      { fromTeam: "Tým 4", toTeam: "Tým 2", note: "První 10 minut jen čtěte a mapujte repo." },
+      { fromTeam: "Tým 3", toTeam: "Tým 1", note: "Otevřete nejdřív README, AGENTS.md a plán. Hledejte další safe move." },
+      { fromTeam: "Tým 4", toTeam: "Tým 2", note: "První 10 minut jen čtěte, mapujte repo a napište vlastní diagnózu." },
     ],
   },
   ticker: [
     { id: "tick-1", label: "Tým 3 právě přidal první vlastní skill.", tone: "highlight" },
     { id: "tick-2", label: "Tým 1 má 6 commitů za posledních 30 minut.", tone: "signal" },
-    { id: "tick-3", label: "Intermezzo za 12 minut: napište jednu větu 'co jsme změnili a proč'.", tone: "info" },
+    { id: "tick-3", label: "Intermezzo za 12 minut: napište co jste změnili, co to ověřuje a co má další tým číst jako první.", tone: "info" },
   ],
   monitoring: [
     { teamId: "t1", agentsFile: true, skillsCount: 1, commitsLast30Min: 6, testsVisible: 2 },
@@ -475,19 +483,19 @@ export const seedWorkshopState: WorkshopState = {
     {
       id: "u1",
       teamId: "t1",
-      text: "Vyjasnili jsme build flow a přesunuli trvalá pravidla z promptu do AGENTS.md.",
+      text: "Vyjasnili jsme build flow, přesunuli trvalá pravidla z promptu do AGENTS.md a doplnili další safe move.",
       at: "10:47",
     },
     {
       id: "u2",
       teamId: "t3",
-      text: "Rozdělili jsme agentovi práci na ingest diffu a tvorbu checklistu.",
+      text: "Rozdělili jsme agentovi práci na ingest diffu a tvorbu checklistu a přidali první ověřitelný check.",
       at: "10:52",
     },
     {
       id: "u3",
       teamId: "t4",
-      text: "Seed data jsme oddělili od UI, aby rotace nezdědila chaos.",
+      text: "Seed data jsme oddělili od UI a dopsali, co je hotové, co je hypotéza a co má další tým číst jako první.",
       at: "10:58",
     },
   ],

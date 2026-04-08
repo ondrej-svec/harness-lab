@@ -372,7 +372,7 @@ function ParticipantView({
           <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
           <div className="mt-6 space-y-3">
             {sharedNotes.map((note) => (
-              <div key={note} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+              <div key={note} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line">
                 {note}
               </div>
             ))}
@@ -403,7 +403,7 @@ function ParticipantView({
                     </div>
                     <span className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{team.id}</span>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                  <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
                   <p className="mt-4 break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
                     {team.repoUrl}
                   </p>
@@ -421,7 +421,7 @@ function ParticipantView({
           <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
           <div className="mt-4 grid gap-4">
             {sharedNotes.map((note) => (
-              <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur">
+              <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line">
                 {note}
               </div>
             ))}
