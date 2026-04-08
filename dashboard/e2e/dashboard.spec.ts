@@ -239,8 +239,8 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(popup.getByText("Do 10:50 existuje repo.")).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
-    await expect(page.getByText("náhled participant vrstvy").first()).toBeVisible();
-    await expect(page.locator("h2").filter({ hasText: "Context is King" })).toBeVisible();
+    await expect(page.getByText("signál z místnosti").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Context is King" })).toBeVisible();
     await expect(page.getByText("Co má tým vidět bez facilitátorského šumu")).toBeVisible();
     await expect(page.getByText("Live fáze a nejbližší další krok.")).toBeVisible();
     await expect(page.getByText(/AGENTS\.md, skills, runbooky a testy nejsou doplněk/i).first()).toBeVisible();

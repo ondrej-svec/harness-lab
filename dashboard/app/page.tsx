@@ -338,6 +338,7 @@ function ParticipantView({
   });
   const teamCards = buildParticipantTeamCards(participantTeams);
   const sharedNotes = buildSharedRoomNotes(publicNotes);
+  const roomNotesSummary = sharedNotes.length > 0 ? `${sharedNotes.length}` : "0";
   return (
     <>
       <section className="grid gap-8 border-b border-[var(--border)] py-10 lg:grid-cols-[1.12fr_0.88fr]" id="room">
@@ -350,21 +351,30 @@ function ParticipantView({
             {participantPanel.body}
           </p>
 
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {participantPanel.metrics.map((metric) => (
-              <MetricCard key={metric.label} label={metric.label} value={metric.value} />
-            ))}
-          </div>
+          <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
+            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
+              <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
+              {participantPanel.currentPhaseDescription ? (
+                <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{participantPanel.currentPhaseDescription}</p>
+              ) : null}
+              {participantPanel.nextPhaseLabel ? (
+                <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
+              ) : null}
+            </div>
 
-          <div className="mt-6 rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
-            <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
-            {participantPanel.currentPhaseDescription ? (
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{participantPanel.currentPhaseDescription}</p>
-            ) : null}
-            {participantPanel.nextPhaseLabel ? (
-              <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
-            ) : null}
+            <div className="grid gap-4 sm:grid-cols-2">
+              <MetricCard label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
+              <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
+              <a
+                href="#notes"
+                className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
+              >
+                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
+                <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{roomNotesSummary}</p>
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.navNotes}</p>
+              </a>
+            </div>
           </div>
 
           {participantPanel.guidanceBlocks.length > 0 ? (
@@ -374,7 +384,6 @@ function ParticipantView({
                 blocks={participantPanel.guidanceBlocks}
                 copy={copy}
                 participantPanel={participantPanel}
-                sharedNotes={sharedNotes}
               />
             </div>
           ) : null}
@@ -383,12 +392,18 @@ function ParticipantView({
         <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur">
           <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
           <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
-          <div className="mt-6 space-y-3">
-            {sharedNotes.map((note) => (
-              <div key={note} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line">
-                {note}
-              </div>
-            ))}
+          <div className="mt-6 grid gap-3">
+            <MetricCard label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
+            <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
+            <a
+              href="#notes"
+              className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition hover:border-[var(--border-strong)]"
+            >
+              <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                {sharedNotes.length > 0 ? sharedNotes[0] : copy.noRoomData}
+              </p>
+            </a>
           </div>
           <form action={logoutEventCodeAction} className="mt-6">
             <input name="lang" type="hidden" value={lang} />
@@ -498,12 +513,10 @@ function ParticipantGuidanceBlocks({
   blocks,
   copy,
   participantPanel,
-  sharedNotes,
 }: {
   blocks: PresenterBlock[];
   copy: (typeof publicCopy)[UiLanguage];
   participantPanel: ReturnType<typeof buildParticipantPanelState>;
-  sharedNotes: string[];
 }) {
   return (
     <div className="space-y-4">
@@ -526,22 +539,11 @@ function ParticipantGuidanceBlocks({
           return (
             <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
               {block.body ? <p className="text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
-                <MiniMetric label={copy.metricNext} value={participantPanel.nextPhaseLabel ?? copy.metricReflection} />
+                <MiniMetric label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
+                <MiniMetric label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
               </div>
-              {sharedNotes.length > 0 ? (
-                <div className="mt-4 space-y-2">
-                  {sharedNotes.slice(0, 3).map((note) => (
-                    <div
-                      key={note}
-                      className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]"
-                    >
-                      {note}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
             </div>
           );
         }

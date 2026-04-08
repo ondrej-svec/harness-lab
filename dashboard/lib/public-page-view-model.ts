@@ -28,6 +28,9 @@ export type ParticipantPanelState = {
   currentPhaseTitle: string;
   currentPhaseDescription: string | null;
   nextPhaseLabel: string | null;
+  nextPhaseTitle: string | null;
+  sessionUntilLabel: string;
+  sessionUntilValue: string;
   guidanceLabel: string | null;
   guidanceBlocks: PresenterBlock[];
 };
@@ -161,6 +164,8 @@ export function buildParticipantPanelState(options: {
     (scene) => scene.enabled && scene.sceneType === "participant-view",
   );
   const fallbackGuidance = buildFallbackParticipantGuidance({ currentAgendaItem, copy });
+  const sessionUntilValue = formatDateTime(participantSession.expiresAt, lang);
+  const nextPhaseTitle = nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : null;
 
   return {
     title: currentTitle,
@@ -168,12 +173,15 @@ export function buildParticipantPanelState(options: {
     metrics: [
       { label: copy.metricCurrentPhase, value: currentTitle },
       { label: copy.metricNext, value: nextAgendaItem?.title ?? copy.metricReflection },
-      { label: copy.metricSessionUntil, value: formatDateTime(participantSession.expiresAt, lang) },
+      { label: copy.metricSessionUntil, value: sessionUntilValue },
     ],
     currentPhaseLabel: copy.metricCurrentPhase,
     currentPhaseTitle: `${currentAgendaItem?.time ?? ""}${currentAgendaItem ? " • " : ""}${currentTitle}`.trim(),
     currentPhaseDescription: currentAgendaItem?.description ?? null,
-    nextPhaseLabel: nextAgendaItem ? `${copy.metricNext}: ${nextAgendaItem.time} • ${nextAgendaItem.title}` : null,
+    nextPhaseLabel: nextPhaseTitle ? `${copy.metricNext}: ${nextPhaseTitle}` : null,
+    nextPhaseTitle,
+    sessionUntilLabel: copy.metricSessionUntil,
+    sessionUntilValue,
     guidanceLabel: participantScene?.label ?? fallbackGuidance.label,
     guidanceBlocks: participantScene?.blocks ?? fallbackGuidance.blocks,
   };

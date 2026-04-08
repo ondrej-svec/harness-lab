@@ -170,11 +170,20 @@ function RoomScene({
   scene: PresenterScene;
 }) {
   const blocks = scene.blocks.length > 0 ? scene.blocks : buildFallbackBlocks(scene);
-  const showSceneContext =
-    scene.chromePreset === "checkpoint" || scene.chromePreset === "agenda" || scene.chromePreset === "participant";
+  const showSceneContext = scene.chromePreset === "checkpoint" || scene.chromePreset === "agenda";
+  const sharedNotes = buildSharedRoomNotes(state.ticker);
 
   return (
     <div className="space-y-8">
+      {scene.chromePreset === "participant" ? (
+        <ParticipantSceneContext
+          copy={copy}
+          agendaItem={agendaItem}
+          nextAgendaItem={nextAgendaItem}
+          sharedNotes={sharedNotes}
+        />
+      ) : null}
+
       {showSceneContext ? (
         <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
@@ -208,12 +217,13 @@ function RoomScene({
         </div>
       ) : null}
 
-      <SceneBlocks
+        <SceneBlocks
         blocks={blocks}
         copy={copy}
         state={state}
         activeAgendaItem={agendaItem}
         nextAgendaItem={nextAgendaItem}
+        sharedNotes={sharedNotes}
       />
 
       {scene.ctaLabel ? (
@@ -241,52 +251,39 @@ function ParticipantPreview({
   sharedNotes: string[];
 }) {
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterParticipantPreviewLabel}</p>
-        <h2 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl">
-          {activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}
-        </h2>
-        <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">{selectedSceneBody}</p>
+    <div className="grid gap-4 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterCueLabel}</p>
+        <p className="mt-3 text-lg leading-8 text-[var(--text-primary)]">{selectedSceneBody}</p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <MiniSceneMetric
+            label={copy.currentPhase}
+            value={`${activeAgendaItem?.time ?? ""}${activeAgendaItem ? " • " : ""}${activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}`.trim()}
+          />
+          <MiniSceneMetric
+            label={copy.nextUp}
+            value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
+          />
+          <MiniSceneMetric label={copy.presenterRoomPulseLabel} value={`${sharedNotes.length}`} />
+        </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.08fr_0.92fr]">
-        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.currentPhase}</p>
-          <p className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">
-            {`${activeAgendaItem?.time ?? ""}${activeAgendaItem ? " • " : ""}${activeAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel}`.trim()}
-          </p>
-          {activeAgendaItem?.description ? (
-            <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{activeAgendaItem.description}</p>
-          ) : null}
-          {nextAgendaItem ? (
-            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">
-              {copy.nextUp}: {nextAgendaItem.time} • {nextAgendaItem.title}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterScenesLabel}</p>
-          <div className="mt-4 space-y-3">
-            {sharedNotes.slice(0, 3).map((note) => (
-              <div key={note} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {note}
+      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.teams}</p>
+        <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-1">
+          {state.teams.slice(0, 3).map((team) => (
+            <article key={team.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold text-[var(--text-primary)]">{team.name}</h3>
+                  <p className="mt-1 text-sm text-[var(--text-muted)]">{team.city}</p>
+                </div>
+                <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</span>
               </div>
-            ))}
-          </div>
+              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line">{team.checkpoint}</p>
+            </article>
+          ))}
         </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {state.teams.slice(0, 3).map((team) => (
-          <article key={team.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
-            <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{team.name}</h3>
-            <p className="mt-2 text-sm text-[var(--text-muted)]">{team.city}</p>
-            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line">{team.checkpoint}</p>
-          </article>
-        ))}
       </div>
     </div>
   );
@@ -338,12 +335,14 @@ function SceneBlocks({
   state,
   activeAgendaItem,
   nextAgendaItem,
+  sharedNotes,
 }: {
   blocks: PresenterBlock[];
   copy: (typeof adminCopy)["cs" | "en"];
   state: Awaited<ReturnType<typeof getWorkshopState>>;
   activeAgendaItem: AgendaItem | null;
   nextAgendaItem: AgendaItem | null;
+  sharedNotes: string[];
 }) {
   return (
     <div className="space-y-6">
@@ -357,7 +356,7 @@ function SceneBlocks({
               activeAgendaItem={activeAgendaItem}
               nextAgendaItem={nextAgendaItem}
               selectedSceneBody={block.body ?? activeAgendaItem?.roomSummary ?? ""}
-              sharedNotes={buildSharedRoomNotes(state.ticker)}
+              sharedNotes={sharedNotes}
             />
           );
         }
@@ -477,6 +476,51 @@ function SceneBlocks({
           </BlockCard>
         );
       })}
+    </div>
+  );
+}
+
+function ParticipantSceneContext({
+  copy,
+  agendaItem,
+  nextAgendaItem,
+  sharedNotes,
+}: {
+  copy: (typeof adminCopy)["cs" | "en"];
+  agendaItem: AgendaItem | null;
+  nextAgendaItem: AgendaItem | null;
+  sharedNotes: string[];
+}) {
+  return (
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(18rem,0.95fr)]">
+      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.currentPhase}</p>
+        <p className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">
+          {agendaItem ? `${agendaItem.time} • ${agendaItem.title}` : copy.presenterNoSceneTitle}
+        </p>
+        {agendaItem?.roomSummary ? (
+          <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{agendaItem.roomSummary}</p>
+        ) : null}
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <MiniSceneMetric
+          label={copy.nextUp}
+          value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
+        />
+        <MiniSceneMetric
+          label={copy.presenterRoomPulseLabel}
+          value={sharedNotes.length > 0 ? sharedNotes[0]! : copy.presenterNoSceneBody}
+        />
+      </div>
+    </div>
+  );
+}
+
+function MiniSceneMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-3 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
