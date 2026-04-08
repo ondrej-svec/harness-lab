@@ -17,11 +17,20 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 - [OpenAI Codex skills documentation](https://developers.openai.com/codex/skills)
   Hodí se ve chvíli, kdy chcete z opakovaných promptů udělat znovupoužitelné repo-native skills.
 
+- [OpenAI Codex plugins](https://developers.openai.com/codex/plugins)
+  Dobré pro pochopení, kdy v Codexu použít pluginy a marketplace místo samotných repo-native skills. Pro workshop je berte jako volitelný Codex akcelerátor, ne jako základní bootstrap.
+
+- [OpenAI Codex build plugins](https://developers.openai.com/codex/plugins/build)
+  Hodí se maintainerům, když chtějí pochopit marketplace model, repo-local marketplace nebo bundling skills, app integrations a MCP serverů do jednoho Codex package.
+
 - [OpenAI Codex `AGENTS.md` documentation](https://developers.openai.com/codex/agents-md)
   Nejlepší výchozí bod pro pochopení toho, jak mají být repo instructions strukturované a scoped.
 
 - [OpenAI Codex workflows](https://developers.openai.com/codex/workflows)
   Dobré pro převedení workshopových návyků do reálných projektových workflow.
+
+- [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
+  Dobré pro pochopení, proč má být repo knowledge systémem záznamu a proč jsou plans, review a garbage collection součást engineering discipline, ne bonus navíc.
 
 ## Veřejné repozitáře
 
@@ -40,6 +49,11 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 - [vercel-labs/agent-skills](https://github.com/vercel-labs/agent-skills)
   Dobré příklady kvalitních a praktických skills, hlavně pro frontend a React práci.
 
+## Volitelné workflow packs
+
+- [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)
+  Silná volitelná volba pro lidi, kteří chtějí explicitní loop `brainstorm -> plan -> work -> review -> compound`. Repo dnes umí instalaci i pro Codex a pi, ale berte to jako akcelerátor nad workshop defaultem, ne jako nutný setup.
+
 ## Praktické patterny
 
 - Začněte repo kontextem dřív, než začnete opakovat prompt.
@@ -47,6 +61,9 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 
 - Skills používejte pro opakované workflow, ne jako jednorázové chat makro.
   Když se stejný task vrací napříč více sessions nebo repy, je to kandidát na skill.
+
+- Pluginy a marketplace berte jako Codex-specific distribuční vrstvu, ne jako definici workshop metody.
+  Když něco učíme jako Harness Lab default, mělo by to dávat smysl i mimo Codex. Plugin má smysl tam, kde skutečně přidává Codex integrations nebo pohodlnější distribuci.
 
 - Testy, tracer bullets a checklisty berte jako hranici důvěry.
   Čím víc autonomie agent dostane, tím méně stačí „rychle jsem projel diff“.
