@@ -38,6 +38,7 @@
     "chalk": "^5.6.2"
   },
   "scripts": {
+    "preverify:workshop-bundle": "node ./scripts/sync-workshop-bundle.mjs --with-repo-bundle",
     "prepack": "node ./scripts/sync-workshop-bundle.mjs",
     "sync:workshop-bundle": "node ./scripts/sync-workshop-bundle.mjs --with-repo-bundle",
     "verify:workshop-bundle": "node ./scripts/verify-workshop-bundle.mjs",
