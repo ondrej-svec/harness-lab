@@ -5,11 +5,11 @@
 Výchozí doporučení pro Harness Lab je instalace přes `@harness-lab/cli` do vašeho aktuálního pracovního repa.
 
 Proč:
-- skill je pořád repo-native obsah, ale nemá záviset na tom, že máte zrovna klon tohoto veřejného repa
+- skill je pořád obsah opřený o repo, ale nemá záviset na tom, že máte zrovna klon tohoto veřejného repa
 - stejné soubory slouží jako fallback i jako dokumentace
-- participant má mít funkční workshop companion přímo v týmovém repu
+- účastník má mít funkční workshop companion přímo v týmovém repu
 
-## Doporučený participant flow
+## Doporučený postup pro účastníka
 
 1. otevřít svůj týmový nebo workshopový repo
 2. nainstalovat Harness CLI:
@@ -48,11 +48,11 @@ Doporučený další postup:
 2. otevřít `commands`, `reference` a `brief`
 3. doplnit `AGENTS.md`
 4. podle potřeby použít `brainstorm`, `plan`, `work`, `review` nebo `compound`, pokud je ve svém agent setupu máte k dispozici
-5. když chcete participant materiály bez hledání v GitHubu, použít `workshop resources`, `workshop gallery` a `workshop follow-up`
+5. když chcete materiály pro účastníky bez hledání v GitHubu, použijte `workshop resources`, `workshop gallery` a `workshop follow-up`
 
 ## Poznámka
 
 `harness skill install` vytvoří projektový bundle v `.agents/skills/harness-lab-workshop`, aby skill šel objevit v repu bez další distribuční vrstvy.
-Tuto složku berte jako generovaný workshop bundle, ne jako hlavní authoring surface.
+Tuto složku berte jako generovaný workshop bundle, ne jako hlavní autorský zdroj.
 
-Participant login není potřeba pro samotnou existenci skillu. `workshop login` je až krok pro odemčení live event contextu.
+Přihlášení účastníka není potřeba pro samotnou existenci skillu. `workshop login` je až krok pro odemčení live event contextu.

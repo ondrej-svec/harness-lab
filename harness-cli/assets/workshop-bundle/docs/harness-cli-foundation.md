@@ -63,7 +63,7 @@ Preferred interactive path:
 1. facilitator starts `harness auth login`
 2. CLI opens browser or emits a device-code style flow
 3. dashboard auth/backend completes facilitator identity verification
-4. CLI stores the resulting session material in local session storage
+4. CLI stores the resulting platform session material in local session storage
 
 The facilitator skill should call the CLI for privileged operations instead of storing raw auth/session material itself.
 
@@ -72,6 +72,37 @@ Control model:
 - skill invokes CLI
 - CLI invokes shared protected dashboard APIs
 - APIs enforce authz, validation, idempotency, and audit logging
+
+Current auth layering:
+
+- `harness auth login` authenticates the facilitator to the platform
+- workshop commands then target a concrete workshop instance explicitly or through a default-selection rule
+- instance grants are checked when a workshop is targeted, not during login bootstrap
+
+Current target-selection order:
+
+1. an explicit command or route instance id
+2. the selected control-room instance in the dashboard
+3. the deployment default `HARNESS_WORKSHOP_INSTANCE_ID`
+4. a repository fallback only on surfaces that intentionally present a workspace-level default
+
+Current command posture:
+
+- explicit target required:
+  - `harness workshop update-instance <instance-id>`
+  - `harness workshop prepare <instance-id>`
+  - `harness workshop remove-instance <instance-id>`
+- explicit target is the created resource:
+  - `harness workshop create-instance [<instance-id>]`
+- deployment-default target:
+  - `harness workshop status`
+  - `harness workshop archive`
+  - `harness workshop phase set <phase-id>`
+
+Current discoverability path:
+
+- facilitators can inspect available workshop instances through the dashboard workspace view
+- the same platform-scoped list lives behind the authenticated instances API surface at `/api/workshop/instances`
 
 For the current facilitator lifecycle slice:
 

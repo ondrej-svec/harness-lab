@@ -24,7 +24,7 @@ Pošli účastníkům:
 
 ## 1 týden po workshopu
 
-Krátký follow-up dotaz:
+Krátký navazující dotaz:
 
 - Vytvořili jste `AGENTS.md` v reálném projektu?
 - Přidali jste build/test příkazy nebo sekci `Done When`?

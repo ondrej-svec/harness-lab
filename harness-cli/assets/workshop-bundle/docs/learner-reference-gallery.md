@@ -12,19 +12,19 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 ## Oficiální dokumentace
 
 - [OpenAI Codex documentation](https://developers.openai.com/codex)
-  Použijte jako hlavní zdroj pro aktuální Codex workflows, skills, `AGENTS.md`, subagents a security guidance.
+  Použijte jako hlavní zdroj pro aktuální Codex workflow, skills, `AGENTS.md`, subagenty a bezpečnostní doporučení.
 
 - [OpenAI Codex best practices](https://developers.openai.com/codex/learn/best-practices)
   Nejlepší rychlý vstup pro to, jak Codex používat jako dlouhodobého spolupracovníka: kontext, `AGENTS.md`, review, verification, MCP a automatizace.
 
 - [OpenAI Codex skills documentation](https://developers.openai.com/codex/skills)
-  Hodí se ve chvíli, kdy chcete z opakovaných promptů udělat znovupoužitelné repo-native skills.
+  Hodí se ve chvíli, kdy chcete z opakovaných promptů udělat znovupoužitelné skills zapsané přímo v repu.
 
 - [OpenAI Codex plugins](https://developers.openai.com/codex/plugins)
-  Dobré pro pochopení, kdy v Codexu použít pluginy a marketplace místo samotných repo-native skills. Pro workshop je berte jako volitelný Codex akcelerátor, ne jako základní bootstrap.
+  Dobré pro pochopení, kdy v Codexu použít pluginy a marketplace místo samotných skills zapsaných v repu. Pro workshop je berte jako volitelný Codex akcelerátor, ne jako základní bootstrap.
 
 - [OpenAI Codex build plugins](https://developers.openai.com/codex/plugins/build)
-  Hodí se maintainerům, když chtějí pochopit marketplace model, repo-local marketplace nebo bundling skills, app integrations a MCP serverů do jednoho Codex package.
+  Hodí se maintainerům, když chtějí pochopit marketplace model, repo-local marketplace nebo balení skills, app integrací a MCP serverů do jednoho Codex balíčku.
 
 - [OpenAI Codex workflows](https://developers.openai.com/codex/workflows)
   Dobré pro převedení workshopových návyků do reálných projektových workflow.
@@ -66,12 +66,12 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
   Když se stejný task vrací napříč více sessions nebo repy, je to kandidát na skill.
 
 - Pluginy a marketplace berte jako Codex-specific distribuční vrstvu, ne jako definici workshop metody.
-  Když něco učíme jako Harness Lab default, mělo by to dávat smysl i mimo Codex. Plugin má smysl tam, kde skutečně přidává Codex integrations nebo pohodlnější distribuci.
+  Když něco učíme jako výchozí přístup v Harness Labu, mělo by to dávat smysl i mimo Codex. Plugin má smysl tam, kde skutečně přidává Codex integrace nebo pohodlnější distribuci.
 
 - Testy, tracer bullets a checklisty berte jako hranici důvěry.
   Čím víc autonomie agent dostane, tím méně stačí „rychle jsem projel diff“.
 
-- Participant-facing příklady držte menší než backstage systémy.
+- Příklady pro účastníky držte menší než backstage systémy.
   Dobrý learner artefakt je kopírovatelný a čitelný, ne vyčerpávající.
 
 ## Pravidlo čerstvosti

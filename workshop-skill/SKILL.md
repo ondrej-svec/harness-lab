@@ -18,7 +18,7 @@ allowed-tools:
 
 # Workshop
 
-Participant-facing skill for the Harness Lab workshop. All participant-facing copy is Czech. Technical terms stay in English.
+Participant-facing skill for the Harness Lab workshop. Command semantics stay in English, but participant-facing delivery should follow the active workshop `contentLang` when live runtime data is available and fall back to the best reviewed bundled locale otherwise.
 
 ## Purpose
 
@@ -31,6 +31,8 @@ Core mental model:
 - dashboard facilitator surface = řízení workshop instance
 - workshop skill = AI interface ke stejnému workshop systému
 - workshop blueprint = veřejná kanonická definice workshop method
+- `uiLang` = jazyk product chrome
+- `contentLang` = jazyk workshopového obsahu pro participant-facing delivery
 
 ## Sources Of Truth
 
@@ -44,6 +46,7 @@ Use runtime dashboard data for anything that changes during the workshop day:
 Use repo-native content for stable public guidance:
 - `content/` workshop materials
 - `workshop-skill/` reference docs
+- `workshop-skill/locales/<locale>/` when a reviewed localized fallback doc exists for the requested delivery language
 - `workshop-blueprint/` for the reusable workshop method
 - challenge cards, project briefs, and public-safe framing
 
@@ -52,6 +55,10 @@ Rule:
 - repo docs first for durable workshop guidance
 - if runtime is unavailable, fall back to repo material and say explicitly that the answer is fallback rather than live state
 - runtime edits do not imply blueprint edits; reusable changes belong back in the repo deliberately
+- prefer workshop `contentLang` for participant-facing responses in live mode
+- if there is no live workshop context, prefer the best reviewed bundled locale and say when the answer is fallback content rather than live workshop state
+- for bundled fallback docs, resolve `workshop-skill/locales/<locale>/...` first; if a reviewed localized doc does not exist yet, fall back to the best reviewed bundled locale and say so explicitly
+- do not translate workshop copy ad hoc when a reviewed locale exists in the repo or bundle
 
 ## Commands
 
@@ -83,12 +90,12 @@ Clear the current participant session and return to fallback/public-only mode.
 
 ### `workshop setup`
 
-Guide the participant through Codex or pi setup in Czech. Prefer the fastest viable path:
+Guide the participant through Codex or pi setup in the active workshop content language. Prefer the fastest viable path:
 - pi in terminal when the participant wants a hackable multi-model interface
 - Codex CLI on macOS/Linux
 - Codex App on Windows or macOS
 - web fallback if local install is blocked
-Use the content from `workshop-skill/setup.md`.
+Use `workshop-skill/locales/<locale>/setup.md` when present, otherwise fall back to `workshop-skill/setup.md`.
 
 ### `workshop brief`
 
@@ -97,6 +104,7 @@ Show the assigned project brief. Include:
 - user stories
 - architecture considerations
 - first recommended prompt for the AI agent
+If live runtime brief data is unavailable, prefer `content/project-briefs/locales/<locale>/<brief>.md` when present and otherwise fall back to `content/project-briefs/<brief>.md`.
 
 ### `workshop challenges`
 
@@ -104,6 +112,7 @@ Show available challenge cards, clearly marking:
 - semi-mandatory before lunch
 - semi-mandatory after the continuation shift
 - optional stretch cards
+If live runtime challenge data is unavailable, prefer `content/challenge-cards/locales/<locale>/deck.md` when present and otherwise fall back to `content/challenge-cards/deck.md`.
 
 ### `workshop team`
 
@@ -135,8 +144,8 @@ Keep it short and map-like. Prefer links to deeper docs over long prose dumps.
 
 ### `workshop recap`
 
-Return a short post-workshop reinforcement prompt in Czech.
-Use the content from `workshop-skill/recap.md`.
+Return a short post-workshop reinforcement prompt in the active workshop content language.
+Use `workshop-skill/locales/<locale>/recap.md` when present, otherwise fall back to `workshop-skill/recap.md`.
 
 ### `workshop commands`
 
@@ -144,7 +153,7 @@ Return a short participant-facing menu of the skill surface:
 - what the main commands are
 - when to use them
 - the shortest recommended path for a new participant
-Use `workshop-skill/commands.md`.
+Use `workshop-skill/locales/<locale>/commands.md` when present, otherwise fall back to `workshop-skill/commands.md`.
 
 ### `workshop closing`
 
@@ -157,14 +166,14 @@ Treat this as facilitator-facing. Do not proactively surface it to participants 
 
 ### `workshop reference`
 
-Return the workshop reference card from `workshop-skill/reference.md`.
+Return the workshop reference card from `workshop-skill/locales/<locale>/reference.md` when present, otherwise fall back to `workshop-skill/reference.md`.
 
 ### `workshop resources`
 
 Return the participant-facing resource bundle after or during the workshop.
 Use these sources together:
-- `materials/participant-resource-kit.md`
-- `docs/learner-resource-kit.md`
+- `materials/locales/<locale>/participant-resource-kit.md` when present, otherwise `materials/participant-resource-kit.md`
+- `docs/locales/<locale>/learner-resource-kit.md` when present, otherwise `docs/learner-resource-kit.md`
 
 The response should:
 - summarize what is in the kit
@@ -173,12 +182,12 @@ The response should:
 
 ### `workshop gallery`
 
-Return the curated external reference gallery from `docs/learner-reference-gallery.md`.
+Return the curated external reference gallery from `docs/locales/<locale>/learner-reference-gallery.md` when present, otherwise `docs/learner-reference-gallery.md`.
 Use this when the participant asks for further reading, public examples, optional skill packs, or recommended external resources after the workshop.
 
 ### `workshop follow-up`
 
-Return the follow-up package from `workshop-skill/follow-up-package.md`.
+Return the follow-up package from `workshop-skill/locales/<locale>/follow-up-package.md` when present, otherwise `workshop-skill/follow-up-package.md`.
 Use this when the participant asks what to do after the workshop, what to revisit tomorrow, or what materials to keep using next week.
 
 ### `workshop facilitator login`
@@ -209,6 +218,7 @@ Prefer invoking `harness workshop create-instance` over raw API scripts.
 The skill should support rich event metadata, not just id and city:
 - `id`
 - `templateId`
+- `contentLang`
 - `eventTitle`
 - `city`
 - `dateRange`
@@ -223,6 +233,7 @@ The skill should support rich event metadata, not just id and city:
 Update event metadata for an existing workshop instance. Requires facilitator session.
 Prefer invoking `harness workshop update-instance` over raw API scripts.
 Use this when the facilitator wants to correct or refine date, venue, room, address, or event title without resetting the instance.
+Support `contentLang` changes explicitly so facilitators can choose workshop delivery language per instance without changing admin UI language.
 
 ### `workshop facilitator remove-instance`
 

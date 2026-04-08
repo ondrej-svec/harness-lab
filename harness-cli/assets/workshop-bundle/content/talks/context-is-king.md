@@ -6,36 +6,36 @@ Tento workshop skill i dashboard vznikly stejným způsobem, jakým dnes budeme 
 
 ## Klíčová linka
 
-Harness engineering je práce s instrukcemi, kontextem a workflow tak, aby agent dělal správné věci opakovaně a předvídatelně. Team lead přece neříká každých třicet sekund jednomu vývojáři, co má dělat. Vytváří systém, ve kterém tým funguje. A přesně tohle dnes budeme dělat pro agenty.
+Harness engineering je práce s instrukcemi, kontextem a workflow tak, aby agent dělal správné věci opakovaně a předvídatelně. Team lead přece neříká každých třicet sekund jednomu vývojáři, co má dělat. Staví systém, ve kterém tým funguje. A přesně tohle dnes budeme dělat pro agenty.
 
-Moje hlavní reframing věta pro dnešek:
+Moje hlavní věta pro dnešek:
 
 > Neučíme se "lépe promptovat". Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
 
 ## Mikro-cvičení
 
-Všichni dostanou stejný malý úkol. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na repo-native kontext. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a kritéria hotovo i do dalšího kroku.
+Všichni dostanou stejný malý úkol. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a kritéria hotovo i do dalšího kroku.
 
 ## Hlavní teze
 
 - Kontext je páka, ne kosmetika.
 - `AGENTS.md`, skills a runbooky jsou týmová infrastruktura.
 - `AGENTS.md` nemá být encyklopedie. Má to být mapa, která ukáže, kam sáhnout dál.
-- Co není v repu, neexistuje. Slack, ústní dovysvětlení a "to si pamatujeme" se při continuation rozpadají.
+- Co není v repu, neexistuje. Slack, ústní dovysvětlení a "to si pamatujeme" se při návaznosti rozpadají.
 - Testy jsou hranice důvěry. Když agent pracuje samostatněji, musíte mnohem líp ověřovat, že udělal právě to, co jste chtěli.
 - Jednoduché mantinely zrychlují práci. Agentovi pomáhá jasný build/test flow, viditelné hranice a předvídatelná struktura.
 - U UI práce je výchozí pattern: agent exploration, potom repeatable browser test, potom lidské review.
-- „Nech model jezdit v mém běžném přihlášeném browseru“ není default. Bezpečnější je izolované lokální prostředí a jasné mantinely.
+- „Nech model jezdit v mém běžném přihlášeném browseru“ není výchozí doporučení. Bezpečnější je izolované lokální prostředí a jasné mantinely.
 - RED → GREEN není s agenty pomalejší. Naopak často zlevňuje korekce, protože agent dostane přesnější mantinely.
 - Úklid není bonus po workshopu. Když narazíte na opakující se chaos, je čas ho proměnit v lepší template, check nebo runbook.
-- Odpolední continuation prověří, jestli váš kontext funguje i bez vás.
+- Odpolední návaznost prověří, jestli váš kontext funguje i bez vás.
 
 ## Co chci, aby si adoptovali
 
-- Než začnu generovat feature, udělám z repa místo, kde se dá orientovat.
+- Než začnu generovat další funkci, udělám z repa místo, kde se dá orientovat.
 - Když řekneme nějaké pravidlo dvakrát nahlas, patří do repa.
 - Když agent dělá víc, já musím lépe ověřovat.
-- Handoff není závěr dne. Je to průběžný design constraint.
+- Handoff není závěr dne. Je to průběžná podmínka celé práce.
 
 ## Závěr
 

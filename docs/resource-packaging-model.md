@@ -148,8 +148,10 @@ The default response to repeated friction is:
 For participant-facing workshop guidance:
 
 - the authored source of truth stays in this repository
+- canonical shared workshop copy may be authored in English while reviewed localized delivery is shipped per locale, especially Czech for real workshop runs
 - portable bundle outputs may be generated from that source for installable skill distribution
 - generated bundle outputs must not become a second authored content system
+- portable bundle outputs should preserve the same locale contract as the dashboard and `workshop` skill rather than assuming Czech-only delivery
 - generated bundle outputs must stay portable: no author-machine absolute paths and no links to bundle-local files that are not actually shipped
 - the repo-local `.agents/skills/harness-lab-workshop` copy is also generated output and should be kept in sync with the authored source rather than edited independently
 - live participant runtime context still belongs behind the dashboard/event-access APIs rather than inside the portable bundle

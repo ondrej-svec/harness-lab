@@ -7,11 +7,11 @@ Do 10:30 potřebujete jednu funkční cestu do Codexu nebo pi. Ne perfektní set
 První cíl po setupu není feature. Je to orientace:
 
 - otevřít repo
-- načíst workshop guidance
+- načíst workshopové pokyny
 - vytvořit krátké `AGENTS.md`
 - pojmenovat první ověřitelný krok
 
-Garantovaný default pro dnešek je `workshop` skill. Další workflow skills nebo externí toolkity jsou volitelné zrychlení, ne podmínka účasti.
+Garantovaný výchozí nástroj pro dnešek je `workshop` skill. Další workflow skills nebo externí toolkity jsou volitelné zrychlení, ne podmínka účasti.
 
 ## Nejrychlejší volba
 
@@ -61,13 +61,13 @@ npm install -g @mariozechner/pi-coding-agent
 1. Spusťte `workshop` reference:
    - Codex: `$workshop reference`
    - pi: `/skill:workshop`, potom si řekněte o `reference`
-   - když chcete rychlý přehled skill surface: `Codex: $workshop commands`
+   - když chcete rychlý přehled toho, co skill umí: `Codex: $workshop commands`
 2. Otevřete brief:
    - Codex: `$workshop brief`
    - pi: `/skill:workshop`, potom si řekněte o `brief`
 3. Doplňte krátké `AGENTS.md`:
    - Codex: `$workshop template`
-4. Pojmenujte první safe move:
+4. Pojmenujte první bezpečný krok:
    - ideálně přes `plan`, případně `brainstorm`, když scope ještě není jasný
 5. Přidejte jeden executable check:
    - RED test, tracer bullet nebo aspoň jasný review/checklist krok
@@ -81,4 +81,4 @@ npm install -g @mariozechner/pi-coding-agent
 - Umíte otevřít repo.
 - Umíte poslat prompt.
 - Máte jednu funkční cestu, jak během workshopu pracovat s agentem.
-- Víte, jaký je první safe move v repu po setupu.
+- Víte, jaký je první bezpečný krok v repu po setupu.

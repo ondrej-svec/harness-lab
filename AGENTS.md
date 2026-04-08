@@ -70,11 +70,14 @@ If you touch these areas, read these files first:
 
 ## Language
 
-- All participant-facing content: **Czech**
+- Dev-facing docs and architecture notes: **English**
+- Shared structured workshop content: canonical English authoring with reviewed localized delivery
+- Participant-facing workshop delivery: per-workshop `contentLang` such as Czech or English
+- Czech remains a first-class reviewed locale for real workshop runs
 - Technical terms (AGENTS.md, skills, slash commands): English
 - Code and configuration: English
-- This file and dev-facing docs: English
-- Participant-facing copy should follow `content/style-guide.md` and `content/style-examples.md`
+- Participant-facing Czech copy should follow `content/style-guide.md` and `content/style-examples.md`
+- Language architecture details live in [`docs/workshop-content-language-architecture.md`](docs/workshop-content-language-architecture.md)
 
 ## Working Rules
 
@@ -122,7 +125,7 @@ Additional repo-specific checks:
 
 - Dashboard must work on mobile (participants scan QR code)
 - Workshop skill must be installable in both Codex and pi
-- All facilitation content must be in Czech
+- The system must support reviewed Czech workshop delivery without tying all authored source content to Czech-only storage
 - No pre-work required from participants — everything works from zero on the day
 
 ## Trust Boundaries

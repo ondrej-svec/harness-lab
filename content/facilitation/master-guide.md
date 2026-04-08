@@ -14,7 +14,7 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 
 - Nejde o soutěž v promptování.
 - Jde o práci s agentem tak, aby po vás zůstával použitelný kontext.
-- Odpolední část prověří, jestli repo umí mluvit samo za sebe.
+- Odpolední část prověří, jestli repo opravdu unese převzetí dalším týmem.
 - Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.
 
 ### Co má facilitátor průběžně vracet
@@ -24,7 +24,7 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - „Je `AGENTS.md` mapa, nebo už se z něj stává dump?“
 - „Jaký je další bezpečný krok pro cizího člověka nebo agenta?“
 
-## Build Phase 1
+## Build fáze 1
 
 ### Viditelný milestone board
 
@@ -32,14 +32,14 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 2. do 11:15 existuje `AGENTS.md`
 3. do 11:30 existuje plan
 4. do 11:45 existuje build/test command nebo tracer bullet
-5. do 12:00 existuje první reviewed output
+5. do 12:00 existuje první ověřený výstup
 
 ### Role facilitátora
 
 - nejdřív coach — ptejte se, co tým potřebuje a kde je zaseknutý
 - pak mentor — pomozte s workflow nebo s nástrojem
 - učitel až jako poslední možnost — krátce vysvětlete princip a vraťte tým do práce
-- participantům vracejte hlavně learner-facing artefakty, ne celý backstage Harness Lab
+- vracejte týmům hlavně artefakty, ze kterých se dá opravdu pracovat, ne celý backstage Harness Lab
 
 ### Na co se při obcházení dívat
 
@@ -84,7 +84,7 @@ Preferované checkpoint otázky:
 
 - zviditelnit učení napříč týmy
 - udělat z průběhu dne sérii krátkých checkpointů
-- připomenout, že workflow je stejně důležité jako samotný output
+- připomenout, že workflow je stejně důležité jako samotný výsledek
 - vracet týmy k tomu, že bez ověření jen akcelerují nejistotu
 
 ## Rotace
@@ -98,13 +98,13 @@ Preferované checkpoint otázky:
 - Začněte `README`, `AGENTS.md` a planem.
 - Needitujte hned první soubor, který otevřete.
 - Nejprve si udělejte mapu: co funguje, co chybí, co je rizikové.
-- Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další safe move.
-- Když tým neví, po čem sáhnout, vraťte ho k learner kit artefaktům: `template-agents`, `reference`, `analyze-checklist`, challenge cards.
+- Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.
+- Když tým neví, po čem sáhnout, vraťte ho k learner kitu: `template-agents`, `reference`, `analyze-checklist` a challenge cards.
 
 ### Facilitační pointa k rotaci
 
 - Frustrace je užitečný signál, pokud ukazuje na skrytý kontext nebo chybějící verifikaci.
-- Nepomáhejte týmům ústním handoffem nahrazovat slabý repo signal.
+- Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.
 - Pomáhejte jim pojmenovat, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.
 
 ## Reveal a reflexe
@@ -128,4 +128,4 @@ Otázky:
 - Nehodnotíme, který tým byl lepší.
 - Díváme se na systém: které signály pomáhají práci přežít handoff a které ji brzdí.
 - Sbíráme konkrétní příklady, ne obecné dojmy.
-- Každá opakující se bolest je kandidát na lepší template, challenge card nebo guidance v blueprintu.
+- Každá opakující se bolest je kandidát na lepší template, challenge card nebo vodítko v blueprintu.

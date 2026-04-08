@@ -88,7 +88,7 @@ Don't:
 
 ## Approved English Terms
 
-Tyto výrazy se v participant-facing textech běžně nechávají v angličtině:
+Tyto výrazy se v textech pro účastníky běžně nechávají v angličtině:
 
 - `prompt`
 - `review`

@@ -4,9 +4,9 @@ Použijte to jako krátkou mapu repa. Ne jako encyklopedii. Když detail patří
 
 Nejdůležitější pravidlo:
 - napište, kam má agent sáhnout jako první
-- napište, co je source of truth
+- napište, co je zdroj pravdy
 - napište, jak se práce ověří
-- když se text nafukuje, přidejte deeper doc a odkažte na něj
+- když se text nafukuje, přidejte navazující dokument a odkažte na něj
 
 ## Goal
 
@@ -18,7 +18,7 @@ Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
 - Rozhodnutí, která už padla
 - Systémy nebo integrace, na které se navazuje
 - Kam má agent sáhnout jako první
-- Které docs nebo runbooky jsou source of truth
+- Které docs nebo runbooky jsou zdroj pravdy
 
 ## Constraints
 
@@ -32,4 +32,4 @@ Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
 - Jak poznáme, že je práce hotová
 - Jaké ověření musí proběhnout
 - Jak má vypadat handoff pro dalšího člověka nebo agenta
-- Jaký bude další safe move, pokud práce zůstane rozdělaná
+- Jaký bude další bezpečný krok, pokud práce zůstane rozdělaná
