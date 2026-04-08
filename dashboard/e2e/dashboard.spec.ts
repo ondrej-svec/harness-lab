@@ -179,6 +179,26 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
+  test("reflows the expanded instance-creation sheet below workspace filters on desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 1200 });
+    await page.goto("/admin");
+
+    const filters = page.locator("form[method='get']").first();
+    const createPanel = page.locator("details").first();
+    await page.locator("details summary").first().click();
+
+    await expect(createPanel).toHaveAttribute("open", "");
+
+    const filtersBox = await filters.boundingBox();
+    const createPanelBox = await createPanel.boundingBox();
+
+    expect(filtersBox).not.toBeNull();
+    expect(createPanelBox).not.toBeNull();
+    expect(createPanelBox!.y).toBeGreaterThanOrEqual(filtersBox!.y + filtersBox!.height - 4);
+    expect(createPanelBox!.x).toBeLessThanOrEqual(filtersBox!.x + 8);
+    expect(createPanelBox!.width).toBeGreaterThanOrEqual(filtersBox!.width);
+  });
+
   test("keeps the facilitator control room visually stable on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 1200 });
     await page.goto("/admin/instances/sample-studio-a");

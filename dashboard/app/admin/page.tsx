@@ -239,7 +239,7 @@ export default async function AdminWorkspacePage({
           <div className="space-y-4">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
               <form
-                className="grid gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end"
+                className="grid min-w-0 gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end"
                 method="get"
               >
                 <div>
@@ -272,7 +272,7 @@ export default async function AdminWorkspacePage({
                 </div>
               </form>
 
-              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 transition-all duration-200 open:shadow-[var(--shadow-soft)] xl:w-[23rem] xl:open:w-full">
+              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 transition-all duration-200 open:shadow-[var(--shadow-soft)] xl:col-start-2 xl:w-[23rem] xl:open:col-span-2 xl:open:col-start-1 xl:open:row-start-2 xl:open:w-auto">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.createInstanceTitle}</p>
