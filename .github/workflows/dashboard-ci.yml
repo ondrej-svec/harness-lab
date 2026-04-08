@@ -66,7 +66,7 @@ jobs:
           fi
 
   verify-harness-cli:
-    name: verify-harness-cli (${{ matrix.name }})
+    name: verify-harness-cli (${{ matrix.name }}, Node ${{ matrix.node_version }})
     runs-on: ${{ fromJSON(matrix.runs_on) }}
     strategy:
       fail-fast: false
@@ -74,10 +74,13 @@ jobs:
         include:
           - name: ubuntu-latest
             runs_on: '"ubuntu-latest"'
+            node_version: 22
           - name: windows-latest
             runs_on: '"windows-latest"'
+            node_version: 22
           - name: macOS-self-hosted
             runs_on: '["self-hosted","macOS","ARM64"]'
+            node_version: 25
     defaults:
       run:
         working-directory: harness-cli
@@ -88,7 +91,7 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: ${{ matrix.node_version }}
           cache: npm
           cache-dependency-path: harness-cli/package-lock.json
 

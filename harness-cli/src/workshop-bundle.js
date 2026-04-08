@@ -63,7 +63,29 @@ export async function pathExists(targetPath) {
 
 async function copyDirectoryTree(sourceRoot, targetRoot) {
   for (const [sourceRelativePath, targetRelativePath] of DIRECTORY_COPIES) {
-    await fs.cp(path.join(sourceRoot, sourceRelativePath), path.join(targetRoot, targetRelativePath), { recursive: true });
+    await copyDirectoryRecursive(
+      path.join(sourceRoot, sourceRelativePath),
+      path.join(targetRoot, targetRelativePath),
+    );
+  }
+}
+
+async function copyDirectoryRecursive(sourcePath, targetPath) {
+  const entries = await fs.readdir(sourcePath, { withFileTypes: true });
+  await fs.mkdir(targetPath, { recursive: true });
+
+  for (const entry of entries) {
+    const sourceEntryPath = path.join(sourcePath, entry.name);
+    const targetEntryPath = path.join(targetPath, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyDirectoryRecursive(sourceEntryPath, targetEntryPath);
+      continue;
+    }
+
+    if (entry.isFile()) {
+      await fs.copyFile(sourceEntryPath, targetEntryPath);
+    }
   }
 }
 

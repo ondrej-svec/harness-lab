@@ -14,19 +14,19 @@ Current action majors:
 | Action | Version | Why |
 |--------|---------|-----|
 | `actions/checkout` | `v6` | current major used across CI and publish workflows |
-| `actions/setup-node` | `v6` | current major used with the Node 24 baseline |
+| `actions/setup-node` | `v6` | current major used with the Node 22 dashboard baseline and newer CLI smoke coverage |
 | `actions/upload-artifact` | `v7` | current major used by the CLI publish dry-run |
 | `actions/github-script` | `v8` | current major used for the Vercel promotion status |
 | `actions/dependency-review-action` | `v4` | still the current major as of this update |
 
 ## Node runtime posture
 
-The repository runtime baseline is Node 24:
+The repository now has split Node posture by surface:
 
-- [dashboard/package.json](../dashboard/package.json)
-- [harness-cli/package.json](../harness-cli/package.json)
+- [dashboard/package.json](../dashboard/package.json) is pinned to Node `22.x`
+- [harness-cli/package.json](../harness-cli/package.json) declares a minimum floor of Node `>=22`
 
-The workflows should request `node-version: 24` and should prefer current action majors instead of relying on temporary compatibility flags.
+The workflows should keep the deployed dashboard surface on Node `22`, and should verify the participant CLI on both the baseline major and at least one newer major before treating the compatibility claim as trustworthy.
 
 ## Why `gitleaks` is CLI-based instead of `gitleaks-action`
 
@@ -85,6 +85,7 @@ That is intentional:
 
 - macOS hosted minutes are relatively expensive compared with the rest of this workflow
 - the CLI matrix still needs one real macOS verification leg for packaging and install behavior
+- the self-hosted leg now also verifies the CLI on a newer Node major so the published `engines` floor does not drift into wishful thinking
 - using explicit labels is safer than bare `self-hosted`, because it avoids accidentally routing the job onto the wrong runner if more self-hosted capacity is added later
 
 If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together.

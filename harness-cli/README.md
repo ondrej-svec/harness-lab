@@ -36,6 +36,11 @@ Participant-facing default install:
 npm install -g @harness-lab/cli
 ```
 
+Supported runtime:
+
+- Node `22` or newer
+- npm `10` or newer recommended
+
 Verify the binary:
 
 ```bash

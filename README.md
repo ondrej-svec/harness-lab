@@ -134,6 +134,11 @@ npm install -g @harness-lab/cli
 harness --help
 ```
 
+Current CLI support target:
+
+- Node `22` or newer
+- npm `10` or newer recommended
+
 For command usage and local development install paths, see
 [harness-cli/README.md](harness-cli/README.md).
 

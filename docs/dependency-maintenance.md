@@ -8,13 +8,14 @@ This document defines the package maintenance routine for the repository package
 ## Supported Node Policy
 
 - `dashboard` supports Node `22.x`
-- `harness-cli` supports Node `22.x`
-- do not use floating engine ranges such as `>=24` in package manifests
+- `harness-cli` supports Node `>=22`
+- do not use floating engine ranges in deployed app manifests
+- portable participant tooling may use a minimum-floor range when cross-major install compatibility is deliberate and verified
 
 Reason:
 
-- Vercel and local installs should stay on an intentional major
-- the workshop should stay low-friction for participants and facilitators
+- Vercel should stay on an intentional major for deployed app behavior
+- the participant CLI should stay low-friction across common local Node installs
 - framework and type packages in this repo do not currently require Node 24
 
 ## Required Automated Checks

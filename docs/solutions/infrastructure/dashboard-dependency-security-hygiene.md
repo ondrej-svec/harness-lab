@@ -42,8 +42,9 @@ This was not one bug. It was dependency-policy drift:
 
 Apply the remediation in four slices:
 
-1. Pin Node majors explicitly:
-   - set `dashboard` and `harness-cli` to `engines.node: "22.x"`
+1. Pin the deployed app Node major explicitly and make CLI support deliberate:
+   - set `dashboard` to `engines.node: "22.x"`
+   - keep the participant CLI on a documented minimum floor once newer installs are intentionally verified
    - update GitHub Actions jobs that install Node so CI and package policy agree
 
 2. Align low-risk package versions:
@@ -68,7 +69,7 @@ After the dependency alignment, fix any newly surfaced lint/type issues rather t
 
 ## Prevention
 
-- Keep package roots on explicit supported Node majors, never floating `>=` majors for deployed apps.
+- Keep deployed app package roots on explicit supported Node majors, and only use a wider minimum-floor range for portable tooling when that wider claim is deliberately verified.
 - When upgrading `eslint-config-next` to a new major line, check whether it exports native flat config before reaching for `FlatCompat`.
 - Treat auth, session, database, and deployment packages as security-sensitive dependencies. If upstream publishes a vulnerable transitive subtree and no safe release exists yet, use a narrow override only as a temporary bridge.
 - Run both:
