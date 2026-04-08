@@ -1,6 +1,6 @@
 # Harness Lab
 
-## Project Overview
+## Mission
 
 Harness Lab is a full-day experiential developer workshop ("Developer Hackathon") teaching **harness engineering** — the discipline of engineering context, instructions, and workflows for AI coding agents.
 
@@ -8,22 +8,63 @@ The workshop is designed around build phases, a mid-day continuation shift, and 
 
 This repository is the public-safe template version of the workshop. Real workshop dates, venues, and live operational state should live in the private workshop-instance layer, not here.
 
-## Repository Structure
+Root rule:
+- `AGENTS.md` is the map, not the manual.
+- Deeper docs in [`docs/`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs), [`workshop-blueprint/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint), and surface-specific runbooks are the system of record.
+- If this file starts turning into an encyclopedia, move detail outward and link to it.
+
+For the maintenance standard behind this file, see [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md).
+
+## Read First
+
+Before making meaningful changes:
+
+1. Read [`README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/README.md) for repo orientation.
+2. Read [`docs/internal-harness.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/internal-harness.md) for the maintainer-facing map.
+3. Read the current plan in [`docs/plans/`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans) if the task is non-trivial or already in flight.
+4. Read the task-specific sources of truth below before editing code or workshop behavior.
+
+## Task Routing
+
+If you touch these areas, read these files first:
+
+- `dashboard/` UI, routes, or workshop state:
+  - [`docs/dashboard-surface-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-surface-model.md)
+  - [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
+  - [`docs/agent-ui-testing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agent-ui-testing.md)
+- facilitator auth, participant event access, or private runtime boundaries:
+  - [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
+  - [`docs/private-workshop-instance-data-classification.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-data-classification.md)
+  - [`docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md)
+  - [`docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md)
+- workshop method, agenda shape, or canonical public workshop content:
+  - [`workshop-blueprint/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/README.md)
+  - [`workshop-blueprint/day-structure.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/day-structure.md)
+  - [`workshop-blueprint/control-surfaces.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/control-surfaces.md)
+  - [`workshop-blueprint/edit-boundaries.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-blueprint/edit-boundaries.md)
+- participant skill, install flow, or portable bundle behavior:
+  - [`workshop-skill/SKILL.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/SKILL.md)
+  - [`docs/resource-packaging-model.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/resource-packaging-model.md)
+  - [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
+- participant-facing workshop copy:
+  - [`content/style-guide.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-guide.md)
+  - [`content/style-examples.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/style-examples.md)
+
+## Repo Map
 
 ```
 /
-├── AGENTS.md              # This file
-├── README.md
-├── dashboard/             # Next.js App Router — workshop web page (Vercel)
-├── content/
-│   ├── project-briefs/    # Product definitions for teams (Czech)
-│   ├── challenge-cards/   # Suggestion cards for tables (Czech)
-│   ├── talks/             # Talk outlines and speaker notes
-│   └── facilitation/      # Facilitation guides per segment
-├── workshop-skill/        # Participant-facing skill (Codex and pi compatible)
-├── monitoring/            # Agent monitoring scripts for repo scanning
-├── capture/               # Quick capture pipeline (voice → structured notes)
-└── materials/             # Print-ready cards, reference sheets, QR codes
+├── AGENTS.md              # Short operating map for agents and maintainers
+├── README.md              # Public repo orientation
+├── dashboard/             # Next.js App Router workshop application
+├── workshop-blueprint/    # Canonical public definition of the workshop method
+├── workshop-skill/        # Authored participant-facing skill and AGENTS starter
+├── harness-cli/           # CLI for participant bundle install and facilitator ops
+├── content/               # Participant-facing briefs, cards, talks, facilitation
+├── docs/                  # System of record for doctrine, plans, ADRs, boundaries
+├── materials/             # Participant-facing print and takeaway assets
+├── monitoring/            # Repo scanning and workshop monitoring helpers
+└── capture/               # Quick capture pipeline and related support material
 ```
 
 ## Language
@@ -34,10 +75,23 @@ This repository is the public-safe template version of the workshop. Real worksh
 - This file and dev-facing docs: English
 - Participant-facing copy should follow `content/style-guide.md` and `content/style-examples.md`
 
-## Build & Test
+## Working Rules
+
+- Prefer repository knowledge over chat memory. If a rule or decision should survive the session, write it down in the repo.
+- Prefer progressive disclosure. Keep this file short and route to deeper docs instead of pasting long policy blocks here.
+- When the same issue repeats, improve the harness: add or sharpen instructions, tests, runbooks, or review routines.
+- Do not introduce live workshop data, real logistics, or participant-private context into tracked public files.
+- Keep the workshop method transferable across coding agents. Codex-specific helpers are useful accelerators, not the whole method.
+
+## Framework Guidance
+
+- `dashboard/` uses Next.js App Router with strict TypeScript and Tailwind CSS.
+- Before changing framework-sensitive code in `dashboard/`, prefer the version-matched docs shipped in `dashboard/node_modules/next/dist/docs/` and the current Next.js AI agents guide.
+- Treat framework docs as a source of truth when an implementation detail may have changed recently.
+
+## Build And Test
 
 ```bash
-# Dashboard
 cd dashboard && npm install && npm run dev
 npm run test
 npm run test:e2e
@@ -45,18 +99,13 @@ npm run lint
 npm run build
 ```
 
-## Code Conventions
+Additional repo-specific checks:
 
-- Next.js App Router (no Pages Router)
-- TypeScript strict mode
-- Tailwind CSS for styling
-- Content files in Markdown
-- Keep it simple — this is a workshop support tool, not a product
+- if you change the portable workshop bundle, sync it with `node harness-cli/scripts/sync-workshop-bundle.mjs --with-repo-bundle`
+- if you change architecture or trust boundaries, update the relevant ADR or boundary doc in the same slice of work
 
-## Working Doctrine
+## Verification Boundary
 
-- Harness Lab must embody the same harness-engineering discipline it teaches.
-- Put context before generation: important constraints, architecture boundaries, and operating rules should exist in repo-native guidance before high-autonomy implementation.
 - Treat tests and executable checks as the default trust boundary once an agent is doing meaningful implementation work.
 - Prefer the smallest useful failing test, tracer bullet, or executable check before implementation when behavior or trust boundaries change.
 - For UI work, use the layered workflow:
@@ -64,19 +113,7 @@ npm run build
   2. repeatable Playwright regression for critical flows
   3. human review before considering the change complete
 - Do not treat unrestricted browser autonomy in a normal authenticated browser as the default workflow.
-- When architecture or trust boundaries change, write or update the relevant ADR/note alongside the implementation.
-- Improve the harness when issues repeat: strengthen context, rules, tests, or review routines instead of only fixing the immediate output.
-
-Authoritative architecture references for the private workshop-instance model:
-
-- `docs/adr/2026-04-06-private-workshop-instance-runtime-topology.md`
-- `docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md`
-- `docs/private-workshop-instance-data-classification.md`
-- `docs/private-workshop-instance-schema.md`
-- `docs/private-workshop-instance-auth-model.md`
-- `docs/private-workshop-instance-deployment-spec.md`
-- `docs/private-workshop-instance-security-gates.md`
-- `docs/public-launch-history-cleanup-plan.md`
+- A change is not done when the diff looks plausible. It is done when the relevant checks ran, the docs still match reality, and the next team can continue without guessing.
 
 ## Key Constraints
 
@@ -91,3 +128,12 @@ Authoritative architecture references for the private workshop-instance model:
 - Participant-private workshop context belongs in the private workshop-instance layer and must not leak through public routes or files.
 - Facilitator routes and mutations must stay on a separate auth path from participant event access.
 - Any new artifact that is not safe to reveal before the event belongs in the private runtime layer or a separate private ops workspace, not in tracked repo files.
+
+## Done Criteria
+
+Before claiming work complete:
+
+1. Run the relevant tests, lint, build, or tracer checks for the touched surface.
+2. State clearly what you verified and what you did not verify.
+3. Update plans, ADRs, runbooks, or harness docs when the change alters behavior, boundaries, or repeated workflow rules.
+4. Leave the next safe move obvious for the next human or agent if the task is only partially complete.

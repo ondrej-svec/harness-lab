@@ -14,6 +14,9 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 - [OpenAI Codex documentation](https://developers.openai.com/codex)
   Použijte jako hlavní zdroj pro aktuální Codex workflows, skills, `AGENTS.md`, subagents a security guidance.
 
+- [OpenAI Codex best practices](https://developers.openai.com/codex/learn/best-practices)
+  Nejlepší rychlý vstup pro to, jak Codex používat jako dlouhodobého spolupracovníka: kontext, `AGENTS.md`, review, verification, MCP a automatizace.
+
 - [OpenAI Codex skills documentation](https://developers.openai.com/codex/skills)
   Hodí se ve chvíli, kdy chcete z opakovaných promptů udělat znovupoužitelné repo-native skills.
 
@@ -23,14 +26,14 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 - [OpenAI Codex build plugins](https://developers.openai.com/codex/plugins/build)
   Hodí se maintainerům, když chtějí pochopit marketplace model, repo-local marketplace nebo bundling skills, app integrations a MCP serverů do jednoho Codex package.
 
-- [OpenAI Codex `AGENTS.md` documentation](https://developers.openai.com/codex/agents-md)
-  Nejlepší výchozí bod pro pochopení toho, jak mají být repo instructions strukturované a scoped.
-
 - [OpenAI Codex workflows](https://developers.openai.com/codex/workflows)
   Dobré pro převedení workshopových návyků do reálných projektových workflow.
 
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
   Dobré pro pochopení, proč má být repo knowledge systémem záznamu a proč jsou plans, review a garbage collection součást engineering discipline, ne bonus navíc.
+
+- [Next.js AI Coding Agents](https://nextjs.org/docs/app/guides/ai-agents)
+  Důležité hlavně pro Next.js projekty: ukazuje, proč mají agenti číst version-matched framework docs místo spoléhání na starší paměť modelu.
 
 ## Veřejné repozitáře
 

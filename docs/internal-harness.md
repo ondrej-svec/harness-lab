@@ -27,6 +27,7 @@ See:
 Start here to understand how work should be done in this repo.
 
 - [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
+- [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md)
 - [`docs/harness-doctrine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
 - [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
 
@@ -67,10 +68,11 @@ Read the ADRs when changing topology, auth, or workshop-instance responsibilitie
 If you only need the minimum backstage set, use this bundle:
 
 1. [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
-2. [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
-3. [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-4. [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-5. [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
+2. [`docs/agents-md-standard.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/agents-md-standard.md)
+3. [`docs/contributing.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/contributing.md)
+4. [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
+5. [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
+6. [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
 
 ## Missing Or Repeated Friction
 

@@ -14,6 +14,13 @@ Má odpovídat na otázky:
 - jak zařídit, aby práce přežila handoff?
 - co musím ověřit, než výstupu uvěřím?
 
+Výchozí participant pattern, který má learner kit posilovat, je:
+- `workshop` pro orientaci
+- `brainstorm` nebo `plan` před větším řezem
+- `work` proti jednomu ověřitelnému cíli
+- `review` před důvěrou
+- `compound` a cleanup pro věci, které mají přežít session
+
 ## Jádro learner kitu
 
 ### 1. Workshop skill
@@ -102,10 +109,13 @@ Použijte:
    - context
    - constraints
    - done when
-2. Přidejte build/test příkazy, které zvládne spustit další tým nebo agent bez ústního dovysvětlení.
-3. Přidejte jeden review nebo handoff checklist.
-4. Přesuňte jedno trvalé pravidlo z chatu do repa.
-5. Před větší implementací použijte plan a po větší změně review nebo check.
+2. Do `context` napište, co má agent číst jako první a které docs jsou source of truth.
+3. Do `done when` napište konkrétní ověření a další safe move, když práce zůstane rozdělaná.
+4. Přidejte build/test příkazy, které zvládne spustit další tým nebo agent bez ústního dovysvětlení.
+5. Přidejte jeden review nebo handoff checklist.
+6. Přesuňte jedno trvalé pravidlo z chatu do repa.
+7. Před větší implementací použijte plan a po větší změně review nebo check.
+8. Když už používáte externí workflow skill pack, napojte ho až nad tento základ místo toho, abyste jím nahrazovali repo-native kontext a verification.
 
 ## Co sem nepatří
 
