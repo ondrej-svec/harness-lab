@@ -43,6 +43,7 @@ Read these before adding new data, routes, copy, or workshop operations.
 
 Read these before changing participant or facilitator behavior.
 
+- [`docs/dashboard-design-system.md`](dashboard-design-system.md)
 - [`docs/dashboard-surface-model.md`](dashboard-surface-model.md)
 - [`docs/deployment-strategy.md`](deployment-strategy.md)
 - [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)

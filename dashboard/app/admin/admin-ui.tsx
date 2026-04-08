@@ -142,13 +142,55 @@ export const adminPrimaryButtonClassName =
   "inline-flex items-center justify-center rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-5 py-2.5 text-[length:13px] font-semibold lowercase tracking-[0.01em] text-[color:var(--accent-text)] shadow-[0_12px_24px_rgba(12,10,9,0.12)] transition duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.1),0_12px_24px_rgba(12,10,9,0.12)]";
 
 export const adminSecondaryButtonClassName =
-  "inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--card-strong-top)] px-5 py-2.5 text-[length:13px] font-medium lowercase text-[color:var(--text-primary)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--text-primary)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.08)]";
+  "inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--card-strong-top)] px-5 py-2.5 text-[length:13px] font-medium text-[color:var(--text-primary)] transition duration-200 hover:-translate-y-0.5 hover:border-[var(--text-primary)] hover:bg-[var(--surface)] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.08)]";
+
+export const adminGhostButtonClassName =
+  "inline-flex items-center justify-center rounded-full border border-transparent px-4 py-2.5 text-[13px] font-medium text-[color:var(--text-secondary)] transition duration-200 hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)] focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(12,10,9,0.08)]";
 
 export const adminDangerButtonClassName =
-  "inline-flex items-center justify-center rounded-full border border-[var(--danger)] bg-[var(--danger)] px-5 py-2.5 text-[13px] font-medium lowercase text-white shadow-[0_12px_24px_rgba(220,38,38,0.18)] transition duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(220,38,38,0.12),0_12px_24px_rgba(220,38,38,0.18)]";
+  "inline-flex items-center justify-center rounded-full border border-[var(--danger)] bg-[var(--danger)] px-5 py-2.5 text-[13px] font-medium text-white shadow-[0_12px_24px_rgba(220,38,38,0.18)] transition duration-200 hover:-translate-y-0.5 hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[0_0_0_4px_rgba(220,38,38,0.12),0_12px_24px_rgba(220,38,38,0.18)]";
 
 export const adminHeroPanelClassName =
   "rounded-[28px] border border-[var(--hero-border)] bg-[linear-gradient(180deg,var(--hero-top),var(--hero-bottom))] text-[var(--hero-text)] shadow-[var(--hero-shadow)]";
 
 export const adminHeroTileClassName =
   "rounded-[22px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] transition duration-200 hover:bg-[var(--hero-tile-hover)]";
+
+export function AdminSheet({
+  eyebrow,
+  title,
+  description,
+  closeHref,
+  closeLabel,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  closeHref: string;
+  closeLabel: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex justify-end bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
+      <div className="absolute inset-0">
+        <Link aria-label={closeLabel} className="block h-full w-full" href={closeHref} />
+      </div>
+      <section className="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden rounded-[30px] border border-[var(--border-strong)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[var(--shadow-overlay)] backdrop-blur">
+        <div className="border-b border-[var(--border)] px-5 py-4 sm:px-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{eyebrow}</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
+            </div>
+            <Link className={adminGhostButtonClassName} href={closeHref}>
+              {closeLabel}
+            </Link>
+          </div>
+        </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
+      </section>
+    </div>
+  );
+}

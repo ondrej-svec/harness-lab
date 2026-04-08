@@ -44,6 +44,8 @@
   --selection-text: #000000;
   --highlight-surface: #f7f3ec;
   --highlight-border: rgba(23, 20, 17, 0.14);
+  --overlay-scrim: rgba(23, 20, 17, 0.26);
+  --shadow-overlay: 0 28px 60px rgba(23, 20, 17, 0.18);
 }
 
 .dark {
@@ -87,6 +89,8 @@
   --selection-text: #ffffff;
   --highlight-surface: #26221f;
   --highlight-border: rgba(247, 242, 234, 0.15);
+  --overlay-scrim: rgba(0, 0, 0, 0.52);
+  --shadow-overlay: 0 28px 60px rgba(0, 0, 0, 0.48);
 }
 
 /* ——— Base resets ——— */

@@ -4,6 +4,8 @@ import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 export const controlRoomSections = ["live", "agenda", "teams", "signals", "access", "settings"] as const;
 export type ControlRoomSection = (typeof controlRoomSections)[number];
 export type AdminSection = ControlRoomSection;
+export const controlRoomOverlays = ["agenda-edit", "agenda-add"] as const;
+export type ControlRoomOverlay = (typeof controlRoomOverlays)[number];
 
 export const legacyAdminSectionMap = {
   overview: "live",
@@ -57,8 +59,9 @@ export function buildAdminInstanceHref(options: {
   agendaItemId?: string | null;
   error?: string | null;
   password?: string | null;
+  overlay?: ControlRoomOverlay | null;
 }) {
-  const { lang, instanceId, section, teamId, agendaItemId, error, password } = options;
+  const { lang, instanceId, section, teamId, agendaItemId, error, password, overlay } = options;
   const params = new URLSearchParams();
   if (section && section !== "live") {
     params.set("section", section);
@@ -75,6 +78,9 @@ export function buildAdminInstanceHref(options: {
   if (password) {
     params.set("password", password);
   }
+  if (overlay) {
+    params.set("overlay", overlay);
+  }
 
   const query = params.toString();
   return withLang(query ? `/admin/instances/${instanceId}?${query}` : `/admin/instances/${instanceId}`, lang);
@@ -90,6 +96,7 @@ export function buildAdminHref(options: {
   agendaItemId?: string | null;
   error?: string | null;
   password?: string | null;
+  overlay?: ControlRoomOverlay | null;
 }) {
   if (!options.instanceId) {
     return buildAdminWorkspaceHref({ lang: options.lang });
@@ -108,6 +115,7 @@ export function buildAdminHref(options: {
     agendaItemId: options.agendaItemId,
     error: options.error,
     password: options.password,
+    overlay: options.overlay,
   });
 }
 
@@ -140,6 +148,10 @@ export function readControlRoomActionState(formData: FormData) {
 }
 
 export const readActionState = readControlRoomActionState;
+
+export function resolveControlRoomOverlay(value: string | undefined): ControlRoomOverlay | null {
+  return controlRoomOverlays.find((overlay) => overlay === value) ?? null;
+}
 
 export function resolveWorkspaceStatusFilter(value: string | undefined): WorkspaceInstanceStatusFilter {
   return ["created", "prepared", "running", "archived"].includes(String(value))

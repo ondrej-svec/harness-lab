@@ -2,6 +2,8 @@
 
 Harness Lab dashboard is split into three surfaces with different jobs and different trust boundaries.
 
+Shared UI and interaction foundations for all of them live in [`dashboard-design-system.md`](./dashboard-design-system.md). Surface-specific responsibilities in this file should refine that system, not replace it.
+
 ## Participant Surface
 
 Purpose:

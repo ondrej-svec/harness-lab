@@ -1,5 +1,7 @@
 # Public And Participant Surface Design Rules
 
+This file is a surface-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md).
+
 ## Purpose
 
 The public homepage and the participant room view solve different jobs.

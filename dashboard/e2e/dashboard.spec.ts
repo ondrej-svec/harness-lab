@@ -220,6 +220,7 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=agenda");
 
     await expect(page.getByRole("heading", { name: "agenda a fáze" })).toBeVisible();
+    await page.getByText("zdroj a ukládání").click();
     await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();
     await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
   });

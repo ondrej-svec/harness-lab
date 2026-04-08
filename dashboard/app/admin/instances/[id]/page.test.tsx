@@ -114,16 +114,17 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.continuationTitle);
   });
 
-  it("renders the agenda editor for the selected agenda item", async () => {
+  it("renders the agenda editor sheet for the selected agenda item", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk", overlay: "agenda-edit" }),
     });
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain(adminCopy.en.agendaEditTitle);
+    expect(html).toContain(adminCopy.en.closePanelButton);
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
     expect(html).toContain('value="Context is King"');

@@ -29,6 +29,7 @@ Before making meaningful changes:
 If you touch these areas, read these files first:
 
 - `dashboard/` UI, routes, or workshop state:
+  - [`docs/dashboard-design-system.md`](docs/dashboard-design-system.md)
   - [`docs/dashboard-surface-model.md`](docs/dashboard-surface-model.md)
   - [`docs/dashboard-testing-strategy.md`](docs/dashboard-testing-strategy.md)
   - [`docs/agent-ui-testing.md`](docs/agent-ui-testing.md)
@@ -80,6 +81,7 @@ If you touch these areas, read these files first:
 - Prefer repository knowledge over chat memory. If a rule or decision should survive the session, write it down in the repo.
 - Prefer progressive disclosure. Keep this file short and route to deeper docs instead of pasting long policy blocks here.
 - When the same issue repeats, improve the harness: add or sharpen instructions, tests, runbooks, or review routines.
+- For dashboard UI work, treat [`docs/dashboard-design-system.md`](docs/dashboard-design-system.md) as the shared visual and interaction baseline. Update it or the relevant surface-specific design doc when you introduce a new recurring UI pattern.
 - Do not introduce live workshop data, real logistics, or participant-private context into tracked public files.
 - Keep the workshop method transferable across coding agents. Codex-specific helpers are useful accelerators, not the whole method.
 

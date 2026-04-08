@@ -1,10 +1,14 @@
 # Facilitator Dashboard Design Rules
 
+This file is a facilitator-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md).
+
 ## Why This Exists
 
 The facilitator surface is an operations tool for a live workshop day. It should feel calm, precise, and obvious under time pressure. The earlier version had the right data but weak control hierarchy: status, navigation, and high-impact actions all looked too similar.
 
 This note records the rules the redesign now follows so the system can stay coherent as the participant surface and later facilitator flows evolve.
+
+For the concrete component, layout, and progressive-disclosure system, see [`facilitator-control-room-design-system.md`](./facilitator-control-room-design-system.md).
 
 ## Product Rules
 
