@@ -85,7 +85,7 @@ Dobře:
 
 - Commands, file names, slash commands a literal terms piš v backticks.
 - Nadpisy a běžný výklad piš normální češtinou.
-- V participant-facing textu nezahlcuj čtenáře dlouhými bloky textu.
+- V textech pro účastníky nezahlcuj čtenáře dlouhými bloky textu.
 
 ## Audience Calibration
 
@@ -97,10 +97,12 @@ Workshop je pro developery. Nepiš, jako by publikum bylo netechnické.
 
 ## Final Check Before Publishing
 
-Před uložením participant-facing textu si ověř:
+Před uložením textu pro účastníky si ověř:
 
 1. Zní to jako přirozená čeština?
 2. Pochopí to český developer napoprvé?
 3. Nepřekládám něco, co má zůstat v angličtině?
 4. Nezní to jako marketing nebo korporát?
 5. Je z textu jasné, co má člověk udělat?
+
+Pro finální workshop-ready revizi použijte i [`content/czech-editorial-review-checklist.md`](./czech-editorial-review-checklist.md).

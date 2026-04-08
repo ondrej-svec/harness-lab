@@ -12,7 +12,7 @@ Když agent dělá `/workshop analyze`, měl by projít:
 - jestli je dohledatelné, co bylo skutečně ověřeno
 - kolik pravidel žije jen v promptu a ne v repu
 - jak snadné by bylo pokračovat po rotaci bez ústního handoffu
-- jestli je zřejmý další safe move
+- jestli je zřejmý další bezpečný krok
 
 ## Výstup
 

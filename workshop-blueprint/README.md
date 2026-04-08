@@ -39,10 +39,17 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 ### Structured data
 
 - [`agenda.json`](agenda.json)
-  Canonical reusable agenda and workshop metadata for blueprint import.
+  Public-readable workshop agenda summary and workshop metadata.
 
 ## Related Runtime Documents
 
 - [`harness-cli-foundation.md`](../docs/harness-cli-foundation.md)
 
 The deeper runtime and maintainer docs such as blueprint import, publish-back flow, and workshop-instance runbooks remain part of the source repository and maintainer path. They are intentionally not part of the portable participant bundle.
+
+For maintainers working in the source repository, the runtime-facing structured agenda sources are:
+
+- `docs/workshop-content-language-architecture.md`
+- `dashboard/lib/workshop-blueprint-agenda.json`
+
+Treat those as maintainer/source-repo references, not as portable participant-bundle docs.

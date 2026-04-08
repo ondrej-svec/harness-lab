@@ -21,8 +21,11 @@ const FILE_COPIES = [
   ["docs/workshop-event-context-contract.md", "docs/workshop-event-context-contract.md"],
   ["docs/harness-cli-foundation.md", "docs/harness-cli-foundation.md"],
   ["docs/learner-resource-kit.md", "docs/learner-resource-kit.md"],
+  ["docs/locales/en/learner-resource-kit.md", "docs/locales/en/learner-resource-kit.md"],
   ["docs/learner-reference-gallery.md", "docs/learner-reference-gallery.md"],
+  ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
+  ["materials/locales/en/participant-resource-kit.md", "materials/locales/en/participant-resource-kit.md"],
 ];
 
 export function getPackageRoot() {

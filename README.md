@@ -8,7 +8,7 @@ Harness Lab is not about prompt theatre or one-off hacks. It is about context, d
 
 Pick the shortest path for your role:
 
-- participant: install `@harness-lab/cli` in your own project, run `harness skill install`, then start with [workshop-skill/install.md](workshop-skill/install.md), [workshop-skill/setup.md](workshop-skill/setup.md), and [workshop-skill/reference.md](workshop-skill/reference.md)
+- participant: install `@harness-lab/cli` in your own project, run `harness skill install`, open your agent in that repo, then start with `Codex: $workshop commands` or `pi: /skill:workshop` so the participant guidance follows the live workshop context or best reviewed bundled locale
 - facilitator: start with [harness-cli/README.md](harness-cli/README.md), then [workshop-skill/facilitator.md](workshop-skill/facilitator.md)
 - maintainer or workshop designer: start with [workshop-blueprint/README.md](workshop-blueprint/README.md) and [public-private-taxonomy.md](docs/public-private-taxonomy.md)
 - quick internal demo: show this README, then [harness-cli/README.md](harness-cli/README.md), then the participant command flow in [workshop-skill/commands.md](workshop-skill/commands.md)
@@ -139,14 +139,19 @@ For command usage and local development install paths, see
 
 ## Language
 
-The language split in this repo is intentional:
+The language split in this repo is intentional, but it has two different layers:
 
 - dev-facing repo surfaces such as `README.md`, `AGENTS.md`, architecture notes, and technical docs are in English
-- participant-facing workshop content is in Czech
+- dashboard/product chrome may be shown in Czech or English
+- shared structured workshop content is moving toward canonical English authoring with reviewed localized delivery, especially Czech for real workshop runs
 - code and configuration stay in English
 - technical terms such as skills, commands, and harness vocabulary remain in English where that improves clarity
 
-Style guidance for participant-facing copy lives in:
+Current language architecture and terminology are documented in:
+
+- [docs/workshop-content-language-architecture.md](docs/workshop-content-language-architecture.md)
+
+Style guidance for Czech participant-facing copy lives in:
 
 - [content/style-guide.md](content/style-guide.md)
 - [content/style-examples.md](content/style-examples.md)

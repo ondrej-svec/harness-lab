@@ -1,11 +1,11 @@
 # Workshop Reference
 
-## 4 pracovní defaulty pro dnešek
+## 4 pracovní výchozí body pro dnešek
 
 - `Mapa před pohybem` — nejdřív udělejte z repa místo, kde se dá orientovat
-- `Co není v repu, neexistuje` — důležité dohody, pravidla a next steps patří do souborů
+- `Co není v repu, neexistuje` — důležité dohody, pravidla a další kroky patří do souborů
 - `Ověření je hranice důvěry` — s větší autonomií musí růst i kvalita evidence
-- `Handoff je průběžný constraint` — další tým má najít první safe move bez vašeho výkladu
+- `Handoff je průběžná podmínka práce` — další tým má najít první bezpečný krok bez vašeho výkladu
 
 ## 4 prvky dobrého zadání
 
@@ -24,16 +24,16 @@
 - Je dohledatelné, co bylo skutečně ověřeno?
 - Najde nový tým během pár minut první bezpečný krok?
 
-## Doporučené commands
+## Doporučené příkazy
 
 - Workshop skill v Codexu: `$workshop ...`
 - Workshop skill v pi: `/skill:workshop`, potom si řekněte o `reference`, `setup`, `brief` nebo jinou workshop akci
 - Když nevíte, co skill umí: `Codex: $workshop commands`
-- Workshop skill je garantovaný default. Workflow skills a externí toolkity jsou doporučené akcelerátory, ne povinný bootstrap.
-- Workflow skills jako `$brainstorm`, `$plan`, `$work`, `$test-writer`, `$review` a `$compound` jsou v tomto workshopu popsané Codex-first. V pi je berte jako volitelnou součást vlastního setupu, ne jako garantovaný default.
+- Workshop skill je garantovaný výchozí nástroj. Workflow skills a externí toolkity jsou doporučené akcelerátory, ne povinný bootstrap.
+- Workflow skills jako `$brainstorm`, `$plan`, `$work`, `$test-writer`, `$review` a `$compound` jsou v tomto workshopu popsané hlavně pro Codex. V pi je berte jako volitelnou součást vlastního setupu, ne jako garantovaný výchozí stav.
 - `Codex: $workshop reference` na začátku dne nebo po ztrátě orientace
 - `Codex: $workshop brief` když potřebujete znovu ukotvit zadání
-- `Codex: $workshop resources` když chcete participant kit a learner kit bez hledání v repu
+- `Codex: $workshop resources` když chcete účastnický kit a learner kit bez hledání v repu
 - `Codex: $workshop gallery` když chcete další veřejné docs, repozitáře a volitelné toolkity
 - `Codex: $workshop follow-up` když řešíte, co si odnést po workshopu
 - `Codex: $brainstorm` když ještě není jasné, co je nejrozumnější scope nebo slice
@@ -41,19 +41,19 @@
 - `Codex: $work` když už máte plan a chcete držet implementaci v jedné linii
 - `Codex: $test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
 - `Codex: $review` po větším kusu práce
-- `Codex: $compound` když chcete převést learning, fix nebo workflow pravidlo do trvalého repo-native artefaktu
+- `Codex: $compound` když chcete převést nové zjištění, fix nebo workflow pravidlo do trvalého artefaktu v repu
 - `Codex: $workshop` pro orientaci během dne
 - `Codex: $workshop template` když repu chybí základní kontext
 - `Codex: $workshop analyze` před handoffem nebo po rotaci, když chcete rychle odhalit slepá místa v repu
 
-## Doporučený participant loop
+## Doporučený pracovní rytmus
 
-- `workshop` pro orientaci a další safe move
+- `workshop` pro orientaci a další bezpečný krok
 - `brainstorm` nebo rovnou `plan`, když už je scope zřejmý
 - `work` proti jednomu ověřitelnému cíli
 - `review` před tím, než změně uvěříte
 - `compound` nebo krátký runbook, když něco stojí za zachování
-- průběžná cleanup práce: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
+- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
 
 ## Testy jako hranice důvěry
 
@@ -76,5 +76,5 @@ Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext 
 ## Kam dál po workshopu
 
 - Oficiální docs, OpenAI článek o Harness Engineering a ověřené veřejné skill repozitáře najdete v [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md).
-- Když už používáte další workflow pack nebo toolkit, berte ho jako rozšíření nad tímto základem, ne jako náhradu za `AGENTS.md`, ověřování a repo-native handoff.
+- Když už používáte další workflow pack nebo toolkit, berte ho jako rozšíření nad tímto základem, ne jako náhradu za `AGENTS.md`, ověřování a handoff opřený o repo.
 - Když nechcete hledat v repu, použijte přímo `workshop resources`, `workshop gallery` nebo `workshop follow-up`.

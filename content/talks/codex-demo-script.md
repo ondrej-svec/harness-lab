@@ -2,7 +2,7 @@
 
 ## Cíl
 
-Jedna příběhová ukázka, ne seznam feature. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem.
+Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem.
 
 ## Příběh
 
@@ -35,9 +35,9 @@ Jedna příběhová ukázka, ne seznam feature. Publikum má během 15 minut poc
 ## Co explicitně neukazovat
 
 - pět různých režimů práce
-- složitou feature tour
+- složitou přehlídku funkcí
 - dlouhé čekání na generování
 
 ## Pointa pro místnost
 
-Nejde o to ukázat „kouzelný output“. Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán a review.
+Nejde o to ukázat „kouzelný výsledek“. Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán a review.

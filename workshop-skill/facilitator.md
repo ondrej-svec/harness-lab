@@ -97,6 +97,7 @@ Preferovaný path je CLI příkaz nad sdíleným runtime API:
 ```bash
 harness workshop create-instance developer-hackathon-praha-24-4-saturn \
   --template-id blueprint-default \
+  --content-lang cs \
   --event-title "Developer Hackathon Praha" \
   --city Praha \
   --date-range "24. dubna 2026" \
@@ -116,6 +117,7 @@ Content-Type: application/json
 {
   "id": "developer-hackathon-praha-24-4-saturn",
   "templateId": "blueprint-default",
+  "contentLang": "cs",
   "eventTitle": "Developer Hackathon Praha",
   "city": "Praha",
   "dateRange": "24. dubna 2026",
@@ -130,6 +132,7 @@ Content-Type: application/json
 Poznámky pro skill:
 - skill má preferovat CLI, ne ručně skládané `fetch` skripty
 - `id` musí být lowercase slug s písmeny, čísly a pomlčkami
+- `contentLang` určuje jazyk workshopového obsahu pro dashboard, presenter a skill delivery; není to totéž jako UI language
 - když skill volá create opakovaně se stejným `id`, route vrací `created: false` a existující instance record
 - nehádej venue metadata zkráceně, když je facilitátor zná; pošli je rovnou při create
 
@@ -139,6 +142,7 @@ Preferovaný path:
 
 ```bash
 harness workshop update-instance developer-hackathon-praha-24-4-saturn \
+  --content-lang en \
   --event-title "Developer Hackathon Praha" \
   --date-range "24. dubna 2026" \
   --venue-name "Seyfor Praha jednička 103" \
@@ -156,6 +160,7 @@ Content-Type: application/json
 
 {
   "action": "update_metadata",
+  "contentLang": "en",
   "eventTitle": "Developer Hackathon Praha",
   "dateRange": "24. dubna 2026",
   "venueName": "Seyfor Praha jednička 103",
@@ -309,14 +314,14 @@ Content-Type: application/json
   "chromePreset": "agenda",
   "title": "Nejdřív bez kontextu, potom s mapou",
   "facilitatorNotes": [
-    "Držte jednu story, ne feature tour."
+    "Držte jednu story, ne přehlídku funkcí."
   ],
   "blocks": [
     {
       "id": "hero",
       "type": "hero",
       "title": "Nejdřív bez kontextu, potom s mapou",
-      "body": "Ukažte rozdíl mezi prompt blobem a krátkou repo-native mapou."
+      "body": "Ukažte rozdíl mezi prompt blobem a krátkou mapou zapsanou v repu."
     },
     {
       "id": "questions",
@@ -344,12 +349,12 @@ Content-Type: application/json
   "sceneType": "demo",
   "intent": "walkthrough",
   "chromePreset": "agenda",
-  "title": "Jedna story, ne feature tour",
+  "title": "Jedna story, ne přehlídka funkcí",
   "blocks": [
     {
       "id": "hero",
       "type": "hero",
-      "title": "Jedna story, ne feature tour",
+      "title": "Jedna story, ne přehlídka funkcí",
       "body": "Neukazujte pět režimů práce. Ukažte jeden čitelný workflow."
     }
   ]
@@ -391,10 +396,10 @@ Při práci přes API:
 - neznámé `agendaItemId` nebo `sceneId` vrací `404`
 - malformed payload pořád vrací `400`
 - skill má stale target ids hlásit explicitně, ne pokračovat jako by se změna povedla
-- room-facing obsah patří do `blocks`, facilitátorské guidance do `facilitatorNotes`
+- room-facing obsah patří do `blocks`, facilitátorské pokyny do `facilitatorNotes`
 - `title/body` zůstávají kvůli compatibility, ale skill má preferovat strukturované `blocks`
 - když runtime agenda existuje, skill má číst a citovat její `goal`, `roomSummary`, `facilitatorPrompts`, `watchFors`, `checkpointQuestions`, `facilitatorNotes` a `blocks`
-- když runtime data nejsou dostupná, fallbackni na repo-native blueprint/facilitation docs a explicitně to řekni
+- když runtime data nejsou dostupná, fallbackni na blueprint a facilitační docs z repa a explicitně to řekni
 
 ### `/workshop facilitator archive`
 

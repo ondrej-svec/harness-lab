@@ -57,6 +57,8 @@ async function createEnv() {
   };
 }
 
+const repoReadmeUrl = new URL("../../README.md", import.meta.url);
+
 test.afterEach(() => {
   setSessionStoreDepsForTests(null);
 });
@@ -628,6 +630,14 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.equal(exitCode, 0);
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "setup.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "reference.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "follow-up-package.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "locales", "en", "deck.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-reference-gallery.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "locales", "en", "participant-resource-kit.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "learner-reference-gallery.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "participant-resource-kit.md"));
@@ -639,8 +649,25 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(io.getStdout(), /\$workshop commands/);
   assert.match(io.getStdout(), /\/skill:workshop/);
   assert.match(io.getStdout(), /\$workshop resources/);
+  const installedSkill = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "utf8");
+  assert.match(installedSkill, /best reviewed bundled locale/);
   const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");
-  assert.match(installedReference, /Workshop skill je garantovaný default/);
+  assert.match(installedReference, /Workshop skill je garantovaný výchozí nástroj/);
+  const installedEnglishReference = await fs.readFile(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "reference.md"),
+    "utf8",
+  );
+  assert.match(installedEnglishReference, /4 working defaults for today/);
+  const installedEnglishBrief = await fs.readFile(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"),
+    "utf8",
+  );
+  assert.match(installedEnglishBrief, /Almost every team ends up with small one-off scripts/);
+  const installedEnglishLearnerKit = await fs.readFile(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"),
+    "utf8",
+  );
+  assert.match(installedEnglishLearnerKit, /This page defines the participant-facing resource kit/);
 });
 
 test("skill install reports an existing current install at the target path", async () => {
@@ -698,7 +725,39 @@ test("skill install refreshes a stale install without requiring force", async ()
   assert.match(io.getStdout(), /Refreshed the installed Harness Lab workshop skill bundle/);
   const refreshedReference = await fs.readFile(referencePath, "utf8");
   assert.notEqual(refreshedReference, "stale reference\n");
-  assert.match(refreshedReference, /Workshop skill je garantovaný default/);
+  assert.match(refreshedReference, /Workshop skill je garantovaný výchozí nástroj/);
+});
+
+test("repo README routes participants through the locale-aware workshop interface", async () => {
+  const readme = await fs.readFile(repoReadmeUrl, "utf8");
+
+  assert.match(readme, /Codex: \$workshop commands/);
+  assert.match(readme, /pi: \/skill:workshop/);
+  assert.doesNotMatch(readme, /participant:.*workshop-skill\/install\.md/);
+  assert.doesNotMatch(readme, /participant:.*workshop-skill\/reference\.md/);
+});
+
+test("installed workshop blueprint README stays portable and avoids GitHub main drift", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-blueprint-readme-"));
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["skill", "install"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+
+  const installedBlueprintReadme = await fs.readFile(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-blueprint", "README.md"),
+    "utf8",
+  );
+
+  assert.doesNotMatch(installedBlueprintReadme, /github\.com\/ondrej-svec\/harness-lab\/blob\/main/);
+  assert.match(installedBlueprintReadme, /maintainer\/source-repo references/);
 });
 
 test("skill install force refreshes an existing install", async () => {

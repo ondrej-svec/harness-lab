@@ -29,14 +29,14 @@ Checklist pro handoff:
 ## 3. Používejte malý workflow, ne chaos
 
 Doporučený základ:
-- `workshop` pro orientaci a další safe move
+- `workshop` pro orientaci a další bezpečný krok
 - `/brainstorm`, když ještě není jasný scope nebo první slice
 - `/plan` před větší implementací
 - `/work` nebo jiný úzký implementační loop, když už víte co stavíte
 - test nebo jiný executable check před důležitou změnou
 - `/review` po větším kusu práce
-- `/compound` nebo krátká repo-native poznámka, když objev udělá další práci levnější
-- malý cleanup průběžně: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
+- `/compound` nebo krátká poznámka zapsaná přímo v repu, když objev udělá další práci levnější
+- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
 
 ## 4. Přesuňte jedno pravidlo z chatu do repa
 
@@ -53,7 +53,7 @@ Výchozí pattern:
 - `Playwright regression`
 - `human review`
 
-Nenechávejte model jako default ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
+Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
 
 ## 6. Co si projít po workshopu
 
@@ -62,7 +62,7 @@ Nenechávejte model jako default ovládat váš běžný přihlášený browser 
 - [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md)
 
 Poznámka:
-- `workshop` skill je garantovaný workshop default
+- `workshop` skill je garantovaný výchozí nástroj workshopu
 - další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
 
 ## Výzva na příští týden
