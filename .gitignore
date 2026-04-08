@@ -23,3 +23,5 @@ monitoring/team-repos.tsv
 
 harness-cli/*.tgz
 harness-cli/node_modules/
+
+.agents/skills/harness-lab-workshop/
