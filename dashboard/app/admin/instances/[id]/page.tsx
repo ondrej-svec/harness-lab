@@ -25,7 +25,7 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { workshopTemplates, type AgendaItem, type Team } from "@/lib/workshop-data";
+import { workshopTemplates, type AgendaItem, type PresenterScene, type Team, type WorkshopSourceRef } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addAgendaItem,
@@ -61,6 +61,7 @@ import {
 export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
+const repoBlobBaseUrl = "https://github.com/ondrej-svec/harness-lab/blob/main";
 
 function deriveNextTeamId(existingIds: string[]) {
   const numericIds = existingIds
@@ -130,6 +131,21 @@ function parseEvidenceSummary(value: string) {
   return result;
 }
 
+function parseMultilineList(value: FormDataEntryValue | null) {
+  return String(value ?? "")
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function listToTextareaValue(items: string[]) {
+  return items.join("\n");
+}
+
+function buildRepoSourceHref(path: string) {
+  return `${repoBlobBaseUrl}/${path}`;
+}
+
 async function signOutAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
@@ -157,10 +173,25 @@ async function saveAgendaDetailsAction(formData: FormData) {
   const agendaId = String(formData.get("agendaId") ?? "");
   const title = String(formData.get("title") ?? "").trim();
   const time = String(formData.get("time") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
+  const goal = String(formData.get("goal") ?? "").trim();
+  const roomSummary = String(formData.get("roomSummary") ?? "").trim();
+  const description = roomSummary || goal;
 
   if (agendaId && title && time && description) {
-    await updateAgendaItem(agendaId, { title, time, description }, instanceId);
+    await updateAgendaItem(
+      agendaId,
+      {
+        title,
+        time,
+        description,
+        goal: goal || description,
+        roomSummary: roomSummary || description,
+        facilitatorPrompts: parseMultilineList(formData.get("facilitatorPrompts")),
+        watchFors: parseMultilineList(formData.get("watchFors")),
+        checkpointQuestions: parseMultilineList(formData.get("checkpointQuestions")),
+      },
+      instanceId,
+    );
   }
 
   redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
@@ -172,11 +203,26 @@ async function addAgendaItemAction(formData: FormData) {
   await requireFacilitatorActionAccess(instanceId);
   const title = String(formData.get("title") ?? "").trim();
   const time = String(formData.get("time") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
+  const goal = String(formData.get("goal") ?? "").trim();
+  const roomSummary = String(formData.get("roomSummary") ?? "").trim();
+  const description = roomSummary || goal || String(formData.get("description") ?? "").trim();
   const afterItemId = String(formData.get("afterItemId") ?? "").trim();
 
   if (title && time && description) {
-    const state = await addAgendaItem({ title, time, description, afterItemId: afterItemId || null }, instanceId);
+    const state = await addAgendaItem(
+      {
+        title,
+        time,
+        description,
+        goal: goal || description,
+        roomSummary: roomSummary || description,
+        facilitatorPrompts: parseMultilineList(formData.get("facilitatorPrompts")),
+        watchFors: parseMultilineList(formData.get("watchFors")),
+        checkpointQuestions: parseMultilineList(formData.get("checkpointQuestions")),
+        afterItemId: afterItemId || null,
+      },
+      instanceId,
+    );
     const createdItem = state.agenda.find((item) => item.kind === "custom" && item.title === title && item.time === time);
     redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: createdItem?.id ?? null }));
   }
@@ -461,6 +507,7 @@ export default async function AdminPage({
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
+  const fileModeUsername = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
   const summaryStats = buildAdminSummaryStats({ copy, state, selectedInstance, currentAgendaItem });
   const overviewState = buildAdminOverviewState({
     copy,
@@ -485,10 +532,10 @@ export default async function AdminPage({
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
-      <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
+      <div className="mx-auto flex max-w-[112rem] flex-col gap-6">
         <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
           <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
-          <div className="relative grid gap-5 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.28fr)_minmax(21rem,0.82fr)]">
+          <div className="relative grid gap-5 p-6 sm:p-7 xl:grid-cols-[minmax(0,1.34fr)_minmax(23rem,0.9fr)] 2xl:grid-cols-[minmax(0,1.42fr)_minmax(25rem,0.92fr)]">
             <div className="max-w-3xl">
                 <Link
                   href={buildAdminWorkspaceHref({ lang })}
@@ -512,7 +559,7 @@ export default async function AdminPage({
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.controlRoomBody}</p>
               </div>
 
-              <div className="flex w-full max-w-xl flex-col gap-4 xl:items-end">
+              <div className="flex w-full max-w-2xl flex-col gap-4 xl:items-end">
                 <div className="flex items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:self-end">
                   <AdminLanguageSwitcher
                     lang={lang}
@@ -610,7 +657,7 @@ export default async function AdminPage({
           </div>
         </header>
 
-        <div className="grid gap-6 xl:grid-cols-[15rem_minmax(0,1fr)]">
+        <div className="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[17rem_minmax(0,1fr)]">
           <aside className="hidden xl:block">
             <div className={`sticky top-6 ${adminHeroPanelClassName} p-4`}>
               <p className="px-2 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.activeInstance}</p>
@@ -668,14 +715,14 @@ export default async function AdminPage({
             </div>
           </aside>
 
-          <div className="space-y-6">
+          <div className="space-y-6 2xl:space-y-7">
         {activeSection === "live" ? (
           <AdminPanel
             eyebrow={copy.workshopStateEyebrow}
             title={copy.overviewTitle}
             description={copy.overviewDescription}
           >
-            <div className="grid gap-5 xl:grid-cols-[minmax(0,1.34fr)_minmax(21rem,0.8fr)]">
+            <div className="grid gap-5 xl:grid-cols-[minmax(0,1.42fr)_minmax(22rem,0.86fr)] 2xl:grid-cols-[minmax(0,1.5fr)_minmax(24rem,0.82fr)]">
               <section className="space-y-4">
                 <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
                   <div className="flex flex-wrap items-center gap-2">
@@ -706,7 +753,7 @@ export default async function AdminPage({
                   </div>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                   {overviewState.compactRows.map((row) => (
                     <ControlRoomSnapshot key={row.label} label={row.label} value={row.value} />
                   ))}
@@ -850,69 +897,120 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "agenda" ? (
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.9fr)]">
-            <AdminPanel
-              eyebrow={copy.workshopStateEyebrow}
-              title={copy.agendaSectionTitle}
-              description={copy.agendaSectionDescription}
-            >
-              <div className="space-y-3">
-                {state.agenda.map((item) => (
-                  <div
-                    key={item.id}
-                    className={`rounded-[20px] border p-4 ${
-                      selectedAgendaItem?.id === item.id
-                        ? "border-[var(--text-primary)] bg-[var(--surface)]"
-                        : "border-[var(--border)] bg-[var(--surface-soft)]"
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <TimelineRow item={item} copy={copy} detailed />
-                      <Link
-                        href={buildAdminHref({
-                          lang,
-                          section: activeSection,
-                          instanceId: activeInstanceId,
-                          agendaItemId: item.id,
-                        })}
-                        className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                      >
-                        {copy.editActionLabel}
-                      </Link>
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.94fr)] 2xl:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.9fr)_minmax(19rem,0.82fr)]">
+            <div className="2xl:min-h-full">
+              <AdminPanel
+                eyebrow={copy.workshopStateEyebrow}
+                title={copy.agendaSectionTitle}
+                description={copy.agendaSectionDescription}
+              >
+                <div className="space-y-3">
+                  {state.agenda.map((item) => (
+                    <div
+                      key={item.id}
+                      className={`rounded-[20px] border p-4 ${
+                        selectedAgendaItem?.id === item.id
+                          ? "border-[var(--text-primary)] bg-[var(--surface)]"
+                          : "border-[var(--border)] bg-[var(--surface-soft)]"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <TimelineRow item={item} copy={copy} detailed />
+                        <Link
+                          href={buildAdminHref({
+                            lang,
+                            section: activeSection,
+                            instanceId: activeInstanceId,
+                            agendaItemId: item.id,
+                          })}
+                          className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                        >
+                          {copy.editActionLabel}
+                        </Link>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </AdminPanel>
-
-            <div className="space-y-6">
-              <AdminPanel eyebrow={copy.currentPhase} title={copy.agendaCurrentTitle} description={copy.phaseControlHint}>
-                <div className="space-y-4">
-                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.liveNow}</p>
-                    <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
-                      {currentAgendaItem?.time} • {currentAgendaItem?.title}
-                    </p>
-                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{currentAgendaItem?.description}</p>
-                  </div>
+                  ))}
                 </div>
               </AdminPanel>
+            </div>
 
+            <div className="space-y-6">
               <AdminPanel eyebrow={copy.agendaEditEyebrow} title={copy.agendaEditTitle} description={copy.agendaEditDescription}>
                 {selectedAgendaItem ? (
                   <div className="space-y-4">
+                    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaEditEyebrow}</p>
+                      <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
+                        {selectedAgendaItem.time} • {selectedAgendaItem.title}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+                        {selectedAgendaItem.roomSummary || selectedAgendaItem.description}
+                      </p>
+                    </div>
+
                     <form action={saveAgendaDetailsAction} className="space-y-3">
                       <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                       <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                      <input name="title" defaultValue={selectedAgendaItem.title} className={adminInputClassName} />
-                      <input name="time" defaultValue={selectedAgendaItem.time} className={adminInputClassName} />
-                      <textarea name="description" rows={4} defaultValue={selectedAgendaItem.description} className={adminInputClassName} />
-                      <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                      <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_9rem]">
+                        <input name="title" defaultValue={selectedAgendaItem.title} className={adminInputClassName} />
+                        <input name="time" defaultValue={selectedAgendaItem.time} className={adminInputClassName} />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="agenda-goal">goal</FieldLabel>
+                        <textarea
+                          id="agenda-goal"
+                          name="goal"
+                          rows={3}
+                          defaultValue={selectedAgendaItem.goal}
+                          className={`${adminInputClassName} mt-2`}
+                        />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="agenda-room-summary">room summary</FieldLabel>
+                        <textarea
+                          id="agenda-room-summary"
+                          name="roomSummary"
+                          rows={4}
+                          defaultValue={selectedAgendaItem.roomSummary}
+                          className={`${adminInputClassName} mt-2`}
+                        />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="agenda-prompts">facilitator prompts</FieldLabel>
+                        <textarea
+                          id="agenda-prompts"
+                          name="facilitatorPrompts"
+                          rows={4}
+                          defaultValue={listToTextareaValue(selectedAgendaItem.facilitatorPrompts)}
+                          className={`${adminInputClassName} mt-2`}
+                        />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="agenda-watch-fors">watch fors</FieldLabel>
+                        <textarea
+                          id="agenda-watch-fors"
+                          name="watchFors"
+                          rows={4}
+                          defaultValue={listToTextareaValue(selectedAgendaItem.watchFors)}
+                          className={`${adminInputClassName} mt-2`}
+                        />
+                      </div>
+                      <div>
+                        <FieldLabel htmlFor="agenda-checkpoints">checkpoint questions</FieldLabel>
+                        <textarea
+                          id="agenda-checkpoints"
+                          name="checkpointQuestions"
+                          rows={4}
+                          defaultValue={listToTextareaValue(selectedAgendaItem.checkpointQuestions)}
+                          className={`${adminInputClassName} mt-2`}
+                        />
+                      </div>
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
                         {copy.saveAgendaItemButton}
                       </AdminSubmitButton>
                     </form>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid gap-3 sm:grid-cols-2">
                       <form action={moveAgendaItemAction}>
                         <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                         <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
@@ -931,31 +1029,54 @@ export default async function AdminPage({
                       </form>
                     </div>
 
-                    <form action={setAgendaAction} className="space-y-3">
-                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                      <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
-                        {copy.setCurrentPhase}
-                      </AdminSubmitButton>
-                    </form>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <form action={setAgendaAction}>
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                        <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
+                          {copy.setCurrentPhase}
+                        </AdminSubmitButton>
+                      </form>
 
-                    <form action={removeAgendaItemAction}>
-                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                      <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                      <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
-                        {copy.removeAgendaItemButton}
-                      </AdminSubmitButton>
-                    </form>
+                      <form action={removeAgendaItemAction}>
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                        <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
+                          {copy.removeAgendaItemButton}
+                        </AdminSubmitButton>
+                      </form>
+                    </div>
                   </div>
                 ) : null}
               </AdminPanel>
 
+              <AdminPanel eyebrow={copy.currentPhase} title={copy.agendaCurrentTitle} description={copy.phaseControlHint}>
+                <div className="space-y-4">
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.liveNow}</p>
+                    <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">
+                      {currentAgendaItem?.time} • {currentAgendaItem?.title}
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      {currentAgendaItem?.roomSummary || currentAgendaItem?.description}
+                    </p>
+                    {currentAgendaItem ? <AgendaItemDetail item={currentAgendaItem} lang={lang} compact /> : null}
+                  </div>
+                </div>
+              </AdminPanel>
+            </div>
+
+            <div className="space-y-6">
               <AdminPanel eyebrow={copy.agendaEditEyebrow} title={copy.addAgendaItemTitle} description={copy.addAgendaItemDescription}>
                 <form action={addAgendaItemAction} className="space-y-3">
                   <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                   <input name="title" placeholder={copy.addAgendaItemTitle} className={adminInputClassName} />
                   <input name="time" placeholder="16:10" className={adminInputClassName} />
-                  <textarea name="description" rows={4} placeholder={copy.teamCheckpointPlaceholder} className={adminInputClassName} />
+                  <textarea name="goal" rows={3} placeholder="Co má tahle chvíle udělat" className={adminInputClassName} />
+                  <textarea name="roomSummary" rows={4} placeholder={copy.teamCheckpointPlaceholder} className={adminInputClassName} />
+                  <textarea name="facilitatorPrompts" rows={3} placeholder="Jedna prompt/otázka na řádek" className={adminInputClassName} />
+                  <textarea name="watchFors" rows={3} placeholder="Na co si dát pozor" className={adminInputClassName} />
+                  <textarea name="checkpointQuestions" rows={3} placeholder="Checkpoint otázky" className={adminInputClassName} />
                   <select name="afterItemId" defaultValue={selectedAgendaItem?.id ?? ""} className={adminInputClassName}>
                     {state.agenda.map((item) => (
                       <option key={item.id} value={item.id}>
@@ -963,7 +1084,7 @@ export default async function AdminPage({
                       </option>
                     ))}
                   </select>
-                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                  <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
                     {copy.addAgendaItemButton}
                   </AdminSubmitButton>
                 </form>
@@ -974,32 +1095,15 @@ export default async function AdminPage({
                   <div className="space-y-3">
                     {selectedAgendaItem.presenterScenes.length > 0 ? (
                       selectedAgendaItem.presenterScenes.map((scene) => (
-                        <div key={scene.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                          <div className="flex flex-wrap items-center justify-between gap-3">
-                            <div>
-                              <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
-                              <p className="text-sm leading-6 text-[var(--text-secondary)]">
-                                {scene.sceneType}
-                                {selectedAgendaItem.defaultPresenterSceneId === scene.id ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
-                                {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
-                              </p>
-                            </div>
-                            <a
-                              href={buildPresenterRouteHref({
-                                lang,
-                                instanceId: activeInstanceId,
-                                agendaItemId: selectedAgendaItem.id,
-                                sceneId: scene.id,
-                              })}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                            >
-                              {copy.presenterOpenSelectedScene}
-                            </a>
-                          </div>
-                          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
-                        </div>
+                        <PresenterSceneSummaryCard
+                          key={scene.id}
+                          scene={scene}
+                          agendaItemId={selectedAgendaItem.id}
+                          activeInstanceId={activeInstanceId}
+                          lang={lang}
+                          copy={copy}
+                          isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
+                        />
                       ))
                     ) : (
                       <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
@@ -1026,7 +1130,7 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "teams" ? (
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
+          <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
             <AdminPanel
               eyebrow={copy.teamOpsEyebrow}
               title={selectedTeam ? copy.editTeamTitle : copy.registerTeamTitle}
@@ -1051,7 +1155,7 @@ export default async function AdminPage({
                   </div>
                 ) : null}
 
-                <form action={registerTeamAction} className="grid gap-3">
+                <form action={registerTeamAction} className="grid gap-3 lg:grid-cols-2">
                   <AdminActionStateFields
                     lang={lang}
                     section={activeSection}
@@ -1060,7 +1164,12 @@ export default async function AdminPage({
                   <input name="id" type="hidden" value={selectedTeam?.id ?? ""} />
                   <input name="name" placeholder={copy.teamNamePlaceholder} defaultValue={selectedTeam?.name ?? ""} className={adminInputClassName} />
                   <input name="city" placeholder="Studio A" defaultValue={selectedTeam?.city ?? ""} className={adminInputClassName} />
-                  <input name="repoUrl" placeholder="https://github.com/..." defaultValue={selectedTeam?.repoUrl ?? ""} className={adminInputClassName} />
+                  <input
+                    name="repoUrl"
+                    placeholder="https://github.com/..."
+                    defaultValue={selectedTeam?.repoUrl ?? ""}
+                    className={`${adminInputClassName} lg:col-span-2`}
+                  />
                   <input name="projectBriefId" placeholder="standup-bot" defaultValue={selectedTeam?.projectBriefId ?? ""} className={adminInputClassName} />
                   <input
                     name="members"
@@ -1068,10 +1177,10 @@ export default async function AdminPage({
                     defaultValue={selectedTeam?.members.join(", ") ?? ""}
                     className={adminInputClassName}
                   />
-                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
                     {copy.checkpointFormHint}
                   </div>
-                  <div>
+                  <div className="lg:col-span-2">
                     <FieldLabel htmlFor="checkpoint-changed">{copy.checkpointChangedLabel}</FieldLabel>
                     <textarea
                       id="checkpoint-changed"
@@ -1082,7 +1191,7 @@ export default async function AdminPage({
                       className={`${adminInputClassName} mt-2`}
                     />
                   </div>
-                  <div>
+                  <div className="lg:col-span-2">
                     <FieldLabel htmlFor="checkpoint-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
                     <textarea
                       id="checkpoint-verified"
@@ -1093,7 +1202,7 @@ export default async function AdminPage({
                       className={`${adminInputClassName} mt-2`}
                     />
                   </div>
-                  <div>
+                  <div className="lg:col-span-2">
                     <FieldLabel htmlFor="checkpoint-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
                     <textarea
                       id="checkpoint-next-step"
@@ -1104,7 +1213,7 @@ export default async function AdminPage({
                       className={`${adminInputClassName} mt-2`}
                     />
                   </div>
-                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                  <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
                     {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
                   </AdminSubmitButton>
                 </form>
@@ -1112,7 +1221,7 @@ export default async function AdminPage({
             </AdminPanel>
 
             <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
-              <div className="space-y-3">
+              <div className="grid gap-3 2xl:grid-cols-2">
                 {state.teams.map((team) => (
                   <div
                     key={team.id}
@@ -1152,9 +1261,9 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "signals" ? (
-          <div className="grid gap-6 xl:grid-cols-2">
+          <div className="grid gap-6 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
             <AdminPanel eyebrow={copy.signalEyebrow} title={copy.sprintFeedTitle} description={copy.signalDescription}>
-              <form action={addCheckpointFeedAction} className="space-y-3">
+              <form action={addCheckpointFeedAction} className="grid gap-3 lg:grid-cols-2">
                 <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                 <select name="teamId" className={adminInputClassName}>
                   {state.teams.map((team) => (
@@ -1167,22 +1276,22 @@ export default async function AdminPage({
                   <FieldLabel htmlFor="signal-at">{copy.checkpointAtLabel}</FieldLabel>
                   <input id="signal-at" name="at" defaultValue="11:15" className={`${adminInputClassName} mt-2`} />
                 </div>
-                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
                   {copy.checkpointFormHint}
                 </div>
-                <div>
+                <div className="lg:col-span-2">
                   <FieldLabel htmlFor="signal-changed">{copy.checkpointChangedLabel}</FieldLabel>
                   <textarea id="signal-changed" name="checkpointChanged" rows={3} className={`${adminInputClassName} mt-2`} />
                 </div>
-                <div>
+                <div className="lg:col-span-2">
                   <FieldLabel htmlFor="signal-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
                   <textarea id="signal-verified" name="checkpointVerified" rows={3} className={`${adminInputClassName} mt-2`} />
                 </div>
-                <div>
+                <div className="lg:col-span-2">
                   <FieldLabel htmlFor="signal-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
                   <textarea id="signal-next-step" name="checkpointNextStep" rows={3} className={`${adminInputClassName} mt-2`} />
                 </div>
-                <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
                   {copy.addUpdateButton}
                 </AdminSubmitButton>
               </form>
@@ -1216,16 +1325,43 @@ export default async function AdminPage({
         {activeSection === "access" ? (
           <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>
             {!isNeonMode ? (
-              <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                <p className="text-sm text-[var(--text-muted)]">{copy.fileModeFacilitators}</p>
+              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeFacilitatorsPanelTitle}</p>
+                  <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeFacilitatorsPanelBody}</p>
+                  <p className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
+                    {copy.fileModeFacilitators}
+                  </p>
+                  <div className="mt-4 space-y-3">
+                    <KeyValueRow label={copy.fileModeAuthModeLabel} value={copy.fileModeAuthModeValue} />
+                    <KeyValueRow label={copy.fileModeUsernameLabel} value={fileModeUsername} />
+                    <KeyValueRow label={copy.fileModeScopeLabel} value={copy.fileModeScopeValue} />
+                  </div>
+                </div>
+
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeUpgradeTitle}</p>
+                  <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeUpgradeBody}</p>
+                  <div className="mt-4 space-y-3">
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                      {copy.fileModeUpgradeBenefitOne}
+                    </div>
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                      {copy.fileModeUpgradeBenefitTwo}
+                    </div>
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                      {copy.fileModeUpgradeBenefitThree}
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
-              <div className="space-y-5">
-                {facilitatorGrants.length === 0 ? (
-                  <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>
-                ) : (
-                  <div className="space-y-3">
-                    {facilitatorGrants.map((grant) => (
+              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.84fr)]">
+                <div className="space-y-3">
+                  {facilitatorGrants.length === 0 ? (
+                    <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>
+                  ) : (
+                    facilitatorGrants.map((grant) => (
                       <div key={grant.id} className="flex items-center justify-between gap-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
                         <div>
                           <p className="text-sm font-medium text-[var(--text-primary)]">
@@ -1246,14 +1382,14 @@ export default async function AdminPage({
                           </form>
                         ) : null}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
 
                 {isOwner ? (
                   <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
                     <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.addFacilitatorTitle}</h3>
-                    <form action={addFacilitatorAction} className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(10rem,0.45fr)_auto] md:items-end">
+                    <form action={addFacilitatorAction} className="mt-4 grid gap-3">
                       <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
                       <input
                         name="email"
@@ -1267,7 +1403,7 @@ export default async function AdminPage({
                         <option value="owner">owner</option>
                         <option value="observer">observer</option>
                       </select>
-                      <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
                         {copy.addFacilitatorButton}
                       </AdminSubmitButton>
                     </form>
@@ -1279,7 +1415,7 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "settings" ? (
-          <div className="grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+          <div className="grid gap-6 xl:grid-cols-[minmax(20rem,0.82fr)_minmax(0,1.18fr)]">
             <AdminPanel eyebrow={copy.accountEyebrow} title={copy.accountTitle} description={copy.accountDescription}>
               {!isNeonMode || !auth ? (
                 <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
@@ -1382,6 +1518,161 @@ function ControlRoomSnapshot({ label, value }: { label: string; value: string })
   );
 }
 
+function AgendaItemDetail({
+  item,
+  lang,
+  compact = false,
+}: {
+  item: AgendaItem;
+  lang: UiLanguage;
+  compact?: boolean;
+}) {
+  const sections: Array<{ title: string; items: string[] }> = [
+    { title: "Facilitator prompts", items: item.facilitatorPrompts },
+    { title: "Watch fors", items: item.watchFors },
+    { title: "Checkpoint questions", items: item.checkpointQuestions },
+  ].filter((section) => section.items.length > 0);
+
+  return (
+    <div className={`${compact ? "mt-4 space-y-4" : "space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4"}`}>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">goal</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.goal}</p>
+        </div>
+        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">room summary</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.roomSummary}</p>
+        </div>
+      </div>
+
+      {sections.length > 0 ? (
+        <div className="grid gap-3 xl:grid-cols-3">
+          {sections.map((section) => (
+            <div key={section.title} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
+              <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+                {section.items.map((value) => (
+                  <li key={value}>• {value}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {item.sourceRefs.length > 0 ? (
+        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">source material</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {item.sourceRefs.map((ref) => (
+              <a
+                key={`${ref.path}-${ref.label}`}
+                href={buildRepoSourceHref(ref.path)}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex rounded-full border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+              >
+                {ref.label}
+              </a>
+            ))}
+          </div>
+          {!compact ? (
+            <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
+              {lang === "cs" ? "Dashboard a zdrojové materiály mají sdílet stejný agenda backbone." : "Dashboard and source materials should share the same agenda backbone."}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function PresenterSceneSummaryCard({
+  scene,
+  agendaItemId,
+  activeInstanceId,
+  lang,
+  copy,
+  isDefault,
+}: {
+  scene: PresenterScene;
+  agendaItemId: string;
+  activeInstanceId: string;
+  lang: UiLanguage;
+  copy: (typeof adminCopy)[UiLanguage];
+  isDefault: boolean;
+}) {
+  return (
+    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
+          <p className="text-sm leading-6 text-[var(--text-secondary)]">
+            {scene.sceneType} • {scene.intent} • {scene.chromePreset}
+            {isDefault ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
+            {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
+          </p>
+        </div>
+        <a
+          href={buildPresenterRouteHref({
+            lang,
+            instanceId: activeInstanceId,
+            agendaItemId,
+            sceneId: scene.id,
+          })}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+        >
+          {copy.presenterOpenSelectedScene}
+        </a>
+      </div>
+      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
+      {scene.blocks.length > 0 ? (
+        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">room blocks</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {scene.blocks.map((block) => (
+              <span
+                key={block.id}
+                className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)]"
+              >
+                {block.type}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {scene.facilitatorNotes.length > 0 ? (
+        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">facilitator notes</p>
+          <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
+            {scene.facilitatorNotes.map((note) => (
+              <li key={note}>• {note}</li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {scene.sourceRefs.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {scene.sourceRefs.map((ref: WorkshopSourceRef) => (
+            <a
+              key={`${ref.path}-${ref.label}`}
+              href={buildRepoSourceHref(ref.path)}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex rounded-full border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+            >
+              {ref.label}
+            </a>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function TimelineRow({
   item,
   copy,
@@ -1425,7 +1716,7 @@ function TimelineRow({
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{statusLabel}</span>
           </div>
           {detailed || item.status === "current" ? (
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.description}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.roomSummary || item.description}</p>
           ) : null}
         </div>
       </div>
