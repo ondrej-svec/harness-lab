@@ -1,6 +1,6 @@
 import { getDefaultDashboardUrl } from "./config.js";
 import { createHarnessClient, HarnessApiError } from "./client.js";
-import { prompt, writeLine } from "./io.js";
+import { createCliUi, prompt, writeLine } from "./io.js";
 import { deleteSession, readSession, sanitizeSession, writeSession, getSessionStorageMode, SessionStoreError } from "./session-store.js";
 import { installWorkshopSkill, SkillInstallError } from "./skill-install.js";
 import { createRequire } from "node:module";
@@ -64,43 +64,57 @@ async function readJson(response) {
   }
 }
 
-function printUsage(io) {
-  writeLine(io.stdout, "Usage:");
-  writeLine(io.stdout, "  harness --help");
-  writeLine(io.stdout, "  harness --version");
-  writeLine(io.stdout, "  harness version");
-  writeLine(io.stdout, "  harness auth login [--auth device|basic|neon] [--dashboard-url URL] [--username USER] [--email EMAIL] [--password PASS] [--no-open]");
-  writeLine(io.stdout, "  harness auth logout");
-  writeLine(io.stdout, "  harness auth status");
-  writeLine(io.stdout, "  harness skill install [--force]");
-  writeLine(io.stdout, "  harness workshop status");
-  writeLine(io.stdout, "  harness workshop archive [--notes TEXT]");
-  writeLine(io.stdout, "  harness workshop phase set <phase-id>");
+function printUsage(io, ui) {
+  ui.heading("Harness CLI");
+  ui.paragraph(`Version ${version}`);
+  ui.blank();
+  ui.section("Usage");
+  ui.commandList([
+    "harness --help",
+    "harness --version",
+    "harness version",
+  ]);
+  ui.blank();
+  ui.section("Commands");
+  ui.commandList([
+    "harness auth login [--auth device|basic|neon] [--dashboard-url URL] [--username USER] [--email EMAIL] [--password PASS] [--no-open]",
+    "harness auth logout",
+    "harness auth status",
+    "harness skill install [--force]",
+    "harness workshop status",
+    "harness workshop archive [--notes TEXT]",
+    "harness workshop phase set <phase-id>",
+  ]);
 }
 
 function printVersion(io) {
   writeLine(io.stdout, `harness ${version}`);
 }
 
-async function handleSkillInstall(io, deps, flags) {
+async function handleSkillInstall(io, ui, deps, flags) {
   try {
     const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), { force: flags.force === true });
+    ui.heading("Workshop Skill");
     if (result.mode === "already_bundled") {
-      writeLine(io.stdout, `Harness Lab workshop skill is already bundled at ${result.installPath}`);
-      writeLine(io.stdout, "Codex and OpenCode should discover it from this repo via .agents/skills.");
+      ui.status("ok", "Harness Lab workshop skill is already bundled in this repo.");
     } else {
-      writeLine(io.stdout, `Installed Harness Lab workshop skill to ${result.installPath}`);
-      writeLine(io.stdout, "Codex and OpenCode should now discover it from this repo via .agents/skills.");
+      ui.status("ok", "Installed the Harness Lab workshop skill bundle.");
     }
-    writeLine(io.stdout, "Next steps:");
-    writeLine(io.stdout, "  1. Open Codex or OpenCode in this repo.");
-    writeLine(io.stdout, "  2. In Codex, start with `$workshop reference`. In OpenCode, use `/workshop reference`.");
-    writeLine(io.stdout, "  3. If your environment is not ready yet, use `$workshop setup` in Codex or `/workshop setup` in OpenCode.");
-    writeLine(io.stdout, "  4. For other help, keep the same pattern: `$workshop ...` in Codex, `/workshop ...` in OpenCode.");
+    ui.keyValue("Location", result.installPath);
+    ui.keyValue("Discovery", ".agents/skills");
+    ui.blank();
+    ui.section("Next steps");
+    ui.numberedList([
+      "Open Codex or OpenCode in this repo.",
+      "Start with the workshop reference card.",
+      "Codex: `$workshop reference`. OpenCode: `/workshop reference`.",
+      "Need setup help? Codex: `$workshop setup`. OpenCode: `/workshop setup`.",
+      "Other workshop commands follow the same pattern: `$workshop ...` in Codex and `/workshop ...` in OpenCode.",
+    ]);
     return 0;
   } catch (error) {
     if (error instanceof SkillInstallError) {
-      writeLine(io.stderr, `Skill install failed: ${error.message}`);
+      ui.status("error", `Skill install failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
@@ -115,23 +129,23 @@ function formatStorageError(error) {
   return "Harness CLI could not access the configured session store.";
 }
 
-async function persistSession(io, env, session) {
+async function persistSession(io, ui, env, session) {
   try {
     await writeSession(env, session);
     return true;
   } catch (error) {
-    writeLine(io.stderr, `Session storage failed: ${formatStorageError(error)}`);
+    ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return false;
   }
 }
 
-async function handleBasicAuthLogin(io, env, flags, deps) {
+async function handleBasicAuthLogin(io, ui, env, flags, deps) {
   const dashboardUrl = String(flags["dashboard-url"] ?? getDefaultDashboardUrl(env));
   const username = String(flags.username ?? env.HARNESS_ADMIN_USERNAME ?? (await prompt(io, "Username: ")));
   const password = String(flags.password ?? env.HARNESS_ADMIN_PASSWORD ?? (await prompt(io, "Password: ")));
 
   if (!username || !password) {
-    writeLine(io.stderr, "Username and password are required.");
+    ui.status("error", "Username and password are required.", { stream: "stderr" });
     return 1;
   }
 
@@ -148,31 +162,33 @@ async function handleBasicAuthLogin(io, env, flags, deps) {
 
   try {
     const payload = await client.verifyAccess();
-    if (!(await persistSession(io, env, session))) {
+    if (!(await persistSession(io, ui, env, session))) {
       return 1;
     }
-    writeLine(io.stdout, `Logged in to ${dashboardUrl}`);
-    writeLine(io.stdout, `Session storage: ${getSessionStorageMode(env)}`);
+    ui.heading("Auth Login");
+    ui.status("ok", "Logged in.");
+    ui.keyValue("Dashboard", dashboardUrl);
+    ui.keyValue("Session storage", getSessionStorageMode(env));
     if (payload?.workshopId) {
-      writeLine(io.stdout, `Workshop: ${payload.workshopId}`);
+      ui.keyValue("Workshop", payload.workshopId);
     }
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Login failed: ${error.message}`);
+      ui.status("error", `Login failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
   }
 }
 
-async function handleNeonAuthLogin(io, env, flags, deps) {
+async function handleNeonAuthLogin(io, ui, env, flags, deps) {
   const dashboardUrl = String(flags["dashboard-url"] ?? getDefaultDashboardUrl(env));
   const email = String(flags.email ?? env.HARNESS_FACILITATOR_EMAIL ?? (await prompt(io, "Email: ")));
   const password = String(flags.password ?? env.HARNESS_FACILITATOR_PASSWORD ?? (await prompt(io, "Password: ")));
 
   if (!email || !password) {
-    writeLine(io.stderr, "Email and password are required.");
+    ui.status("error", "Email and password are required.", { stream: "stderr" });
     return 1;
   }
 
@@ -193,13 +209,13 @@ async function handleNeonAuthLogin(io, env, flags, deps) {
         : payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
           ? payload.error
           : `Login failed with status ${signInResponse.status}`;
-    writeLine(io.stderr, `Login failed: ${message}`);
+    ui.status("error", `Login failed: ${message}`, { stream: "stderr" });
     return 1;
   }
 
   const setCookie = signInResponse.headers?.get?.("set-cookie");
   if (!setCookie) {
-    writeLine(io.stderr, "Login failed: auth response did not include a session cookie.");
+    ui.status("error", "Login failed: auth response did not include a session cookie.", { stream: "stderr" });
     return 1;
   }
 
@@ -215,25 +231,27 @@ async function handleNeonAuthLogin(io, env, flags, deps) {
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const authSession = await client.getAuthSession();
-    if (!(await persistSession(io, env, session))) {
+    if (!(await persistSession(io, ui, env, session))) {
       return 1;
     }
-    writeLine(io.stdout, `Logged in to ${dashboardUrl}`);
-    writeLine(io.stdout, `Session storage: ${getSessionStorageMode(env)}`);
+    ui.heading("Auth Login");
+    ui.status("ok", "Logged in.");
+    ui.keyValue("Dashboard", dashboardUrl);
+    ui.keyValue("Session storage", getSessionStorageMode(env));
     if (authSession?.user?.email) {
-      writeLine(io.stdout, `Facilitator: ${authSession.user.email}`);
+      ui.keyValue("Facilitator", authSession.user.email);
     }
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Session verification failed: ${error.message}`);
+      ui.status("error", `Session verification failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
   }
 }
 
-async function handleDeviceAuthLogin(io, env, flags, deps) {
+async function handleDeviceAuthLogin(io, ui, env, flags, deps) {
   const dashboardUrl = String(flags["dashboard-url"] ?? getDefaultDashboardUrl(env));
   const client = createHarnessClient({
     fetchFn: deps.fetchFn,
@@ -242,10 +260,11 @@ async function handleDeviceAuthLogin(io, env, flags, deps) {
 
   try {
     const deviceAuth = await client.startDeviceAuthorization();
-    writeLine(io.stdout, `Open: ${deviceAuth.verificationUriComplete ?? deviceAuth.verificationUri}`);
-    writeLine(io.stdout, `Code: ${deviceAuth.userCode}`);
-    writeLine(io.stdout, `Expires: ${deviceAuth.expiresAt}`);
-    writeLine(io.stdout, "Approve the login in a browser, then the CLI will continue automatically.");
+    ui.heading("Device Login");
+    ui.status("info", "Approve the login in a browser. The CLI will continue automatically.");
+    ui.keyValue("Open", deviceAuth.verificationUriComplete ?? deviceAuth.verificationUri);
+    ui.keyValue("Code", deviceAuth.userCode);
+    ui.keyValue("Expires", deviceAuth.expiresAt);
 
     if (flags["no-open"] !== true && typeof deps.openUrl === "function") {
       await deps.openUrl(deviceAuth.verificationUriComplete ?? deviceAuth.verificationUri);
@@ -271,42 +290,44 @@ async function handleDeviceAuthLogin(io, env, flags, deps) {
           expiresAt: result.expiresAt,
         };
 
-        if (!(await persistSession(io, env, session))) {
+        if (!(await persistSession(io, ui, env, session))) {
           return 1;
         }
 
-        writeLine(io.stdout, `Logged in to ${dashboardUrl}`);
-        writeLine(io.stdout, `Session storage: ${getSessionStorageMode(env)}`);
+        ui.blank();
+        ui.status("ok", "Logged in.");
+        ui.keyValue("Dashboard", dashboardUrl);
+        ui.keyValue("Session storage", getSessionStorageMode(env));
         if (result.session?.role) {
-          writeLine(io.stdout, `Facilitator role: ${result.session.role}`);
+          ui.keyValue("Facilitator role", result.session.role);
         }
         return 0;
       }
 
       if (result.status === "access_denied") {
-        writeLine(io.stderr, "Login failed: device authorization was denied.");
+        ui.status("error", "Login failed: device authorization was denied.", { stream: "stderr" });
         return 1;
       }
 
       if (result.status === "expired_token") {
-        writeLine(io.stderr, "Login failed: device authorization expired.");
+        ui.status("error", "Login failed: device authorization expired.", { stream: "stderr" });
         return 1;
       }
 
-      writeLine(io.stderr, "Login failed: device authorization could not be completed.");
+      ui.status("error", "Login failed: device authorization could not be completed.", { stream: "stderr" });
       return 1;
     }
 
-    writeLine(io.stderr, "Login failed: device authorization expired.");
+    ui.status("error", "Login failed: device authorization expired.", { stream: "stderr" });
     return 1;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Login failed: ${error.message}`);
+      ui.status("error", `Login failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
 
     if (error instanceof SessionStoreError) {
-      writeLine(io.stderr, `Session storage failed: ${error.message}`);
+      ui.status("error", `Session storage failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
 
@@ -314,45 +335,45 @@ async function handleDeviceAuthLogin(io, env, flags, deps) {
   }
 }
 
-async function handleAuthLogin(io, env, flags, deps) {
+async function handleAuthLogin(io, ui, env, flags, deps) {
   const authMode = String(flags.auth ?? env.HARNESS_AUTH_MODE ?? "device");
 
   if (authMode === "device") {
-    return handleDeviceAuthLogin(io, env, flags, deps);
+    return handleDeviceAuthLogin(io, ui, env, flags, deps);
   }
 
   if (authMode === "neon") {
-    return handleNeonAuthLogin(io, env, flags, deps);
+    return handleNeonAuthLogin(io, ui, env, flags, deps);
   }
 
-  return handleBasicAuthLogin(io, env, flags, deps);
+  return handleBasicAuthLogin(io, ui, env, flags, deps);
 }
 
-async function requireSession(io, env) {
+async function requireSession(io, ui, env) {
   try {
     const session = await readSession(env);
     if (!session) {
-      writeLine(io.stderr, "No active session. Run `harness auth login` first.");
+      ui.status("error", "No active session. Run `harness auth login` first.", { stream: "stderr" });
       return null;
     }
     return session;
   } catch (error) {
-    writeLine(io.stderr, `Session storage failed: ${formatStorageError(error)}`);
+    ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return null;
   }
 }
 
-async function handleAuthStatus(io, env, deps) {
+async function handleAuthStatus(io, ui, env, deps) {
   let session;
   try {
     session = await readSession(env);
   } catch (error) {
-    writeLine(io.stderr, `Session storage failed: ${formatStorageError(error)}`);
+    ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return 1;
   }
 
   if (!session) {
-    writeLine(io.stdout, "Not logged in.");
+    ui.status("info", "Not logged in.");
     return 0;
   }
 
@@ -360,14 +381,11 @@ async function handleAuthStatus(io, env, deps) {
     try {
       const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
       const deviceSession = await client.getDeviceSession();
-      writeLine(
-        io.stdout,
-        JSON.stringify({ ok: true, session: sanitizeSession(session, env), remoteSession: deviceSession.session }, null, 2),
-      );
+      ui.json("Auth Status", { ok: true, session: sanitizeSession(session, env), remoteSession: deviceSession.session });
       return 0;
     } catch (error) {
       if (error instanceof HarnessApiError) {
-        writeLine(io.stdout, JSON.stringify({ ok: false, session: sanitizeSession(session, env), error: error.message }, null, 2));
+        ui.json("Auth Status", { ok: false, session: sanitizeSession(session, env), error: error.message });
         return 1;
       }
       throw error;
@@ -378,30 +396,27 @@ async function handleAuthStatus(io, env, deps) {
     try {
       const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
       const authSession = await client.getAuthSession();
-      writeLine(
-        io.stdout,
-        JSON.stringify({ ok: true, session: sanitizeSession(session, env), remoteSession: authSession }, null, 2),
-      );
+      ui.json("Auth Status", { ok: true, session: sanitizeSession(session, env), remoteSession: authSession });
       return 0;
     } catch (error) {
       if (error instanceof HarnessApiError) {
-        writeLine(io.stdout, JSON.stringify({ ok: false, session: sanitizeSession(session, env), error: error.message }, null, 2));
+        ui.json("Auth Status", { ok: false, session: sanitizeSession(session, env), error: error.message });
         return 1;
       }
       throw error;
     }
   }
 
-  writeLine(io.stdout, JSON.stringify({ ok: true, session: sanitizeSession(session, env) }, null, 2));
+  ui.json("Auth Status", { ok: true, session: sanitizeSession(session, env) });
   return 0;
 }
 
-async function handleAuthLogout(io, env, deps) {
+async function handleAuthLogout(io, ui, env, deps) {
   let session;
   try {
     session = await readSession(env);
   } catch (error) {
-    writeLine(io.stderr, `Session storage failed: ${formatStorageError(error)}`);
+    ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return 1;
   }
 
@@ -430,15 +445,15 @@ async function handleAuthLogout(io, env, deps) {
   try {
     await deleteSession(env);
   } catch (error) {
-    writeLine(io.stderr, `Session storage failed: ${formatStorageError(error)}`);
+    ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return 1;
   }
-  writeLine(io.stdout, "Logged out.");
+  ui.status("ok", "Logged out.");
   return 0;
 }
 
-async function handleWorkshopStatus(io, env, deps) {
-  const session = await requireSession(io, env);
+async function handleWorkshopStatus(io, ui, env, deps) {
+  const session = await requireSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -446,32 +461,25 @@ async function handleWorkshopStatus(io, env, deps) {
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const [workshop, agenda] = await Promise.all([client.getWorkshopStatus(), client.getAgenda()]);
-    writeLine(
-      io.stdout,
-      JSON.stringify(
-        {
-          ok: true,
-          workshopId: workshop.workshopId,
-          workshopMeta: workshop.workshopMeta,
-          currentPhase: agenda.phase,
-          templates: workshop.templates,
-        },
-        null,
-        2,
-      ),
-    );
+    ui.json("Workshop Status", {
+      ok: true,
+      workshopId: workshop.workshopId,
+      workshopMeta: workshop.workshopMeta,
+      currentPhase: agenda.phase,
+      templates: workshop.templates,
+    });
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Workshop status failed: ${error.message}`);
+      ui.status("error", `Workshop status failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
   }
 }
 
-async function handleWorkshopArchive(io, env, flags, deps) {
-  const session = await requireSession(io, env);
+async function handleWorkshopArchive(io, ui, env, flags, deps) {
+  const session = await requireSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -479,25 +487,25 @@ async function handleWorkshopArchive(io, env, flags, deps) {
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const result = await client.archiveWorkshop(typeof flags.notes === "string" ? flags.notes : undefined);
-    writeLine(io.stdout, JSON.stringify(result, null, 2));
+    ui.json("Workshop Archive", result);
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Archive failed: ${error.message}`);
+      ui.status("error", `Archive failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
   }
 }
 
-async function handleWorkshopPhaseSet(io, env, positionals, deps) {
+async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
   const phaseId = positionals[3];
   if (!phaseId) {
-    writeLine(io.stderr, "Phase id is required.");
+    ui.status("error", "Phase id is required.", { stream: "stderr" });
     return 1;
   }
 
-  const session = await requireSession(io, env);
+  const session = await requireSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -505,11 +513,11 @@ async function handleWorkshopPhaseSet(io, env, positionals, deps) {
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const result = await client.setCurrentPhase(phaseId);
-    writeLine(io.stdout, JSON.stringify(result, null, 2));
+    ui.json("Workshop Phase", result);
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
-      writeLine(io.stderr, `Phase update failed: ${error.message}`);
+      ui.status("error", `Phase update failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
@@ -519,11 +527,12 @@ async function handleWorkshopPhaseSet(io, env, positionals, deps) {
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
   const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
+  const ui = createCliUi(io);
   const { positionals, flags } = parseArgs(argv);
   const [scope, action, subaction] = positionals;
 
   if (flags.help === true) {
-    printUsage(io);
+    printUsage(io, ui);
     return 0;
   }
 
@@ -538,7 +547,7 @@ export async function runCli(argv, io, deps = {}) {
   }
 
   if (!scope) {
-    printUsage(io);
+    printUsage(io, ui);
     return 1;
   }
 
@@ -547,34 +556,34 @@ export async function runCli(argv, io, deps = {}) {
   }
 
   if (scope === "auth" && action === "login") {
-    return handleAuthLogin(io, io.env, flags, mergedDeps);
+    return handleAuthLogin(io, ui, io.env, flags, mergedDeps);
   }
 
   if (scope === "auth" && action === "logout") {
-    return handleAuthLogout(io, io.env, mergedDeps);
+    return handleAuthLogout(io, ui, io.env, mergedDeps);
   }
 
   if (scope === "auth" && action === "status") {
-    return handleAuthStatus(io, io.env, mergedDeps);
+    return handleAuthStatus(io, ui, io.env, mergedDeps);
   }
 
   if (scope === "skill" && action === "install") {
-    return handleSkillInstall(io, mergedDeps, flags);
+    return handleSkillInstall(io, ui, mergedDeps, flags);
   }
 
   if (scope === "workshop" && action === "status") {
-    return handleWorkshopStatus(io, io.env, mergedDeps);
+    return handleWorkshopStatus(io, ui, io.env, mergedDeps);
   }
 
   if (scope === "workshop" && action === "archive") {
-    return handleWorkshopArchive(io, io.env, flags, mergedDeps);
+    return handleWorkshopArchive(io, ui, io.env, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "phase" && subaction === "set") {
-    return handleWorkshopPhaseSet(io, io.env, positionals, mergedDeps);
+    return handleWorkshopPhaseSet(io, ui, io.env, positionals, mergedDeps);
   }
 
-  printUsage(io);
+  printUsage(io, ui);
   return 1;
 }
 

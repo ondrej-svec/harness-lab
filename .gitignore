@@ -22,3 +22,4 @@ monitoring/latest-monitoring.md
 monitoring/team-repos.tsv
 
 harness-cli/*.tgz
+harness-cli/node_modules/
