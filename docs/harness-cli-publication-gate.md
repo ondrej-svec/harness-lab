@@ -62,8 +62,9 @@ All of the following must be true before public npm publication:
 
 Note:
 
-- the default `Dashboard CI` workflow now runs `e2e-dashboard` on the self-hosted Linux ARM64 runner instead of conditionally skipping it for non-dashboard diffs
+- the default `Dashboard CI` workflow runs dashboard E2E on every matching run, but uses GitHub-hosted runners for `pull_request` events and the self-hosted Linux ARM64 runner only for trusted `push` validation
 - the CLI release gate still relies on the dedicated CLI smoke checks and the `Harness CLI Publish` workflow verification rather than treating dashboard Playwright as the only release signal
+- `Harness CLI Publish` intentionally stays on `ubuntu-latest` so npm publication does not share a runner with PR-executed workloads
 
 ## Release Smoke Checks
 

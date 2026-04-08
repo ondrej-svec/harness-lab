@@ -72,25 +72,28 @@ When GitHub Actions emits a runtime deprecation warning:
 3. if no safe maintained action exists, prefer a direct CLI or script invocation over a stale wrapper action
 4. document the reason here if the choice is non-obvious
 
-## Why `e2e-dashboard` always runs on the self-hosted runner
+## Why dashboard E2E is split by trust level
 
-The `Dashboard CI` workflow now runs Playwright E2E on every matching workflow run, using the repository's self-hosted Linux ARM64 runner labels:
+The `Dashboard CI` workflow runs Playwright E2E on every matching workflow run, but not on the same runner for every event:
 
-- `self-hosted`
-- `Linux`
-- `ARM64`
+- `pull_request` runs use `ubuntu-latest`
+- `push` runs use the repository's self-hosted Linux ARM64 runner labels:
+  - `self-hosted`
+  - `Linux`
+  - `ARM64`
 
 That is intentional:
 
-- Playwright is part of the dashboard trust boundary and should not be silently skipped for non-dashboard path mixes once low-cost self-hosted capacity exists
-- moving E2E off hosted runners removes most of the budget pressure that previously justified conditional execution
-- the self-hosted runner should carry the browser system dependencies at the machine level, so the workflow installs the Chromium browser without re-running the hosted-runner `--with-deps` path each time
+- Playwright is part of the dashboard trust boundary and should not be silently skipped
+- public or externally contributed PR code must not execute on the self-hosted runner
+- trusted push validation can still use the lower-cost self-hosted machine
+- the self-hosted runner should carry the browser system dependencies at the machine level, so the push workflow installs Chromium without re-running the hosted-runner `--with-deps` path each time
 
-If the runner environment changes, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together rather than reintroducing ad hoc E2E skipping.
+If the runner environment or trust model changes, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together rather than reintroducing ad hoc E2E skipping or letting untrusted PRs land on self-hosted infrastructure.
 
 ## Why the CLI self-hosted leg uses explicit runner labels
 
-The self-hosted CLI jobs use the repository's explicit runner labels:
+The self-hosted CLI verification leg in `Dashboard CI` uses the repository's explicit runner labels:
 
 - `self-hosted`
 - `Linux`
@@ -99,12 +102,12 @@ The self-hosted CLI jobs use the repository's explicit runner labels:
 That is intentional:
 
 - hosted minutes are more expensive than using the available self-hosted runner for a repeatable CLI verification leg
-- the CLI matrix still keeps hosted Ubuntu and Windows coverage, while the newer-Node leg runs on the available self-hosted Linux ARM64 runner
-- the dedicated `Harness CLI Publish` workflow should use the same runner so release verification and npm publication do not move back onto hosted minutes
+- the CLI matrix still keeps hosted Ubuntu and Windows coverage for pull requests, while the newer-Node leg runs on the available self-hosted Linux ARM64 runner only for trusted `push` events
+- public or externally contributed PR code must stay on GitHub-hosted runners
 - the self-hosted leg now also verifies the CLI on a newer Node major so the published `engines` floor does not drift into wishful thinking
 - using explicit labels is safer than bare `self-hosted`, because it avoids accidentally routing the job onto the wrong runner if more self-hosted capacity is added later
 
-If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml), [`harness-cli-publish.yml`](../.github/workflows/harness-cli-publish.yml), and this note together.
+If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together.
 
 ## Why the publish workflow audits the CLI again
 
@@ -115,3 +118,9 @@ That is intentional:
 - the CLI is a public install surface, so release-time dependency hygiene should not rely only on a previous branch CI run
 - the extra audit is cheap because the CLI dependency tree is small
 - a release job should fail closed if the resolved CLI dependency graph has high-severity findings at publish time
+
+The publish workflow intentionally stays on `ubuntu-latest` instead of the shared self-hosted runner:
+
+- npm publication uses `NPM_TOKEN`, so it should not share a runner with general PR validation workloads
+- a GitHub-hosted runner gives the release path a cleaner secret boundary
+- release frequency is low enough that the hosted-runner cost is a reasonable trade for safer publication

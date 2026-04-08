@@ -36,9 +36,6 @@ jobs:
           - name: windows-latest
             runs_on: '"windows-latest"'
             node_version: 22
-          - name: linux-self-hosted
-            runs_on: '["self-hosted","Linux","ARM64"]'
-            node_version: 25
     defaults:
       run:
         working-directory: harness-cli
@@ -50,6 +47,60 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node_version }}
+          cache: npm
+          cache-dependency-path: harness-cli/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run verify:workshop-bundle
+
+      - run: npm test
+
+      - run: npm pack
+
+      - name: Install packed CLI tarball
+        shell: bash
+        run: |
+          TARBALL="$(ls -1 *.tgz | head -n 1)"
+          mkdir -p ../tmp/harness-cli-smoke
+          cd ../tmp/harness-cli-smoke
+          npm init -y
+          npm install "../../harness-cli/${TARBALL}"
+
+      - name: Run CLI help smoke test
+        shell: bash
+        run: |
+          ../tmp/harness-cli-smoke/node_modules/.bin/harness --help
+
+      - name: Run portable skill install smoke test
+        shell: bash
+        run: |
+          mkdir -p ../tmp/harness-cli-target-repo
+          ../tmp/harness-cli-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-target-repo
+
+      - name: Run portable skill reinstall smoke test
+        shell: bash
+        run: |
+          ../tmp/harness-cli-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-target-repo
+
+  verify-harness-cli-self-hosted:
+    name: verify-harness-cli (linux-self-hosted, Node 25)
+    if: github.event_name == 'push'
+    runs-on:
+      - self-hosted
+      - Linux
+      - ARM64
+    defaults:
+      run:
+        working-directory: harness-cli
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
           cache: npm
           cache-dependency-path: harness-cli/package-lock.json
 
@@ -120,13 +171,41 @@ jobs:
         run: npm test -- neon-auth.integration.test.ts
 
   e2e-dashboard:
-    name: e2e-dashboard
+    name: e2e-dashboard (pull_request, hosted)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs:
+      - verify-dashboard
+    defaults:
+      run:
+        working-directory: dashboard
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:e2e
+
+  e2e-dashboard-self-hosted:
+    name: e2e-dashboard (push, self-hosted)
+    if: github.event_name == 'push'
     runs-on:
       - self-hosted
       - Linux
       - ARM64
     needs:
-      - verify-harness-cli
       - verify-dashboard
     defaults:
       run:
@@ -251,7 +330,9 @@ jobs:
     needs:
       - verify-dashboard
       - verify-harness-cli
+      - verify-harness-cli-self-hosted
       - e2e-dashboard
+      - e2e-dashboard-self-hosted
       - secret-scan
       - sast-semgrep
       - dependency-review
@@ -260,17 +341,23 @@ jobs:
       - name: Assess aggregate CI result
         id: assess
         env:
+          EVENT_NAME: ${{ github.event_name }}
           VERIFY_RESULT: ${{ needs.verify-dashboard.result }}
           CLI_RESULT: ${{ needs.verify-harness-cli.result }}
-          E2E_RESULT: ${{ needs.e2e-dashboard.result }}
+          CLI_SELF_HOSTED_RESULT: ${{ needs.verify-harness-cli-self-hosted.result }}
+          E2E_PR_RESULT: ${{ needs.e2e-dashboard.result }}
+          E2E_PUSH_RESULT: ${{ needs.e2e-dashboard-self-hosted.result }}
           SECRET_SCAN_RESULT: ${{ needs.secret-scan.result }}
           SAST_SEMGREP_RESULT: ${{ needs.sast-semgrep.result }}
           DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
           AUDIT_PACKAGES_RESULT: ${{ needs.audit-packages.result }}
         run: |
+          echo "event-name: ${EVENT_NAME}"
           echo "verify-harness-cli: ${CLI_RESULT}"
+          echo "verify-harness-cli-self-hosted: ${CLI_SELF_HOSTED_RESULT}"
           echo "verify-dashboard: ${VERIFY_RESULT}"
-          echo "e2e-dashboard: ${E2E_RESULT}"
+          echo "e2e-dashboard (pull_request, hosted): ${E2E_PR_RESULT}"
+          echo "e2e-dashboard (push, self-hosted): ${E2E_PUSH_RESULT}"
           echo "secret-scan: ${SECRET_SCAN_RESULT}"
           echo "sast-semgrep: ${SAST_SEMGREP_RESULT}"
           echo "dependency-review: ${DEPENDENCY_REVIEW_RESULT}"
@@ -289,9 +376,19 @@ jobs:
             DESCRIPTION="verify-dashboard failed"
           fi
 
-          if [ "${STATE}" = "success" ] && [ "${E2E_RESULT}" != "success" ]; then
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${CLI_SELF_HOSTED_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="verify-harness-cli-self-hosted failed"
+          fi
+
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "pull_request" ] && [ "${E2E_PR_RESULT}" != "success" ]; then
             STATE="failure"
             DESCRIPTION="e2e-dashboard failed"
+          fi
+
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${E2E_PUSH_RESULT}" != "success" ]; then
+            STATE="failure"
+            DESCRIPTION="e2e-dashboard-self-hosted failed"
           fi
 
           if [ "${STATE}" = "success" ] && [ "${SECRET_SCAN_RESULT}" != "success" ]; then
