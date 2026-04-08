@@ -617,19 +617,8 @@ test("version command exits successfully", async () => {
   assert.equal(io.getStdout().trim(), `harness ${version}`);
 });
 
-test("skill install creates a project-local .agents skill bundle", async () => {
+test("skill install creates a portable .agents skill bundle in the current repo", async () => {
   const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-"));
-  await fs.mkdir(path.join(repoRoot, "workshop-skill"), { recursive: true });
-  await fs.mkdir(path.join(repoRoot, "content", "project-briefs"), { recursive: true });
-  await fs.mkdir(path.join(repoRoot, "docs"), { recursive: true });
-  await fs.mkdir(path.join(repoRoot, "workshop-blueprint"), { recursive: true });
-  await fs.writeFile(path.join(repoRoot, "workshop-skill", "SKILL.md"), "# Workshop\n");
-  await fs.writeFile(path.join(repoRoot, "workshop-skill", "setup.md"), "setup\n");
-  await fs.writeFile(path.join(repoRoot, "content", "project-briefs", "sample.md"), "brief\n");
-  await fs.writeFile(path.join(repoRoot, "docs", "workshop-event-context-contract.md"), "contract\n");
-  await fs.writeFile(path.join(repoRoot, "docs", "harness-cli-foundation.md"), "foundation\n");
-  await fs.writeFile(path.join(repoRoot, "workshop-blueprint", "README.md"), "blueprint\n");
-
   const env = await createEnv();
   const io = createMemoryIo(env);
   const exitCode = await runCli(["skill", "install"], io, {
@@ -643,23 +632,91 @@ test("skill install creates a project-local .agents skill bundle", async () => {
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "learner-reference-gallery.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "participant-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "bundle-manifest.json"));
   assert.match(io.getStdout(), /Workshop Skill/);
   assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
+  assert.match(io.getStdout(), /Target:/);
   await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
-  assert.match(io.getStdout(), /\$workshop reference/);
+  assert.match(io.getStdout(), /\$workshop commands/);
   assert.match(io.getStdout(), /\/skill:workshop/);
-  assert.match(io.getStdout(), /\$workshop setup/);
-  assert.match(io.getStdout(), /setup help/);
+  assert.match(io.getStdout(), /\$workshop resources/);
+  const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");
+  assert.match(installedReference, /Workshop skill je garantovaný default/);
 });
 
-test("skill install reports the repo-bundled skill instead of pretending to reinstall it", async () => {
-  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-bundled-"));
-  await fs.mkdir(path.join(repoRoot, "workshop-skill"), { recursive: true });
-  await fs.mkdir(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop"), { recursive: true });
-  await fs.writeFile(path.join(repoRoot, "workshop-skill", "SKILL.md"), "# Workshop\n");
-  await fs.writeFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "# Installed\n");
-
+test("skill install reports an existing current install at the target path", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-current-"));
   const env = await createEnv();
+  const firstIo = createMemoryIo(env);
+  const firstExitCode = await runCli(["skill", "install"], firstIo, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(firstExitCode, 0);
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["skill", "install"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /already current at the target path/);
+  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+});
+
+test("skill install refreshes a stale install without requiring force", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-refresh-"));
+  const env = await createEnv();
+  const firstIo = createMemoryIo(env);
+  const firstExitCode = await runCli(["skill", "install"], firstIo, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(firstExitCode, 0);
+
+  const referencePath = path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md");
+  await fs.writeFile(referencePath, "stale reference\n");
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["skill", "install"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /Refreshed the installed Harness Lab workshop skill bundle/);
+  const refreshedReference = await fs.readFile(referencePath, "utf8");
+  assert.notEqual(refreshedReference, "stale reference\n");
+  assert.match(refreshedReference, /Workshop skill je garantovaný default/);
+});
+
+test("skill install force refreshes an existing install", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-force-"));
+  const env = await createEnv();
+  const firstIo = createMemoryIo(env);
+  const firstExitCode = await runCli(["skill", "install"], firstIo, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(firstExitCode, 0);
+
   const io = createMemoryIo(env);
   const exitCode = await runCli(["skill", "install", "--force"], io, {
     fetchFn: async () => {
@@ -669,10 +726,24 @@ test("skill install reports the repo-bundled skill instead of pretending to rein
   });
 
   assert.equal(exitCode, 0);
-  assert.match(io.getStdout(), /already bundled/);
-  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
-  assert.doesNotMatch(io.getStdout(), /^Installed Harness Lab workshop skill/m);
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  assert.match(io.getStdout(), /Refreshed the installed Harness Lab workshop skill bundle/);
+});
+
+test("skill install supports an explicit target repo path", async () => {
+  const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-cwd-"));
+  const targetRepo = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-target-"));
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["skill", "install", "--target", targetRepo], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd,
+  });
+
+  assert.equal(exitCode, 0);
+  await fs.access(path.join(targetRepo, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  assert.match(io.getStdout(), new RegExp(`Target: ${targetRepo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
 });
 
 test("device auth can drive workshop status with the brokered facilitator session", async () => {

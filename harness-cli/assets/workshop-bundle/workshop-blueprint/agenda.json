@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "blueprintId": "harness-lab-core-day",
+  "title": "Harness Lab",
+  "subtitle": "Workshop operating system pro práci s AI agenty",
+  "principles": [
+    "Mapa před pohybem",
+    "Ověření je hranice důvěry",
+    "Pište tak, aby další tým mohl pokračovat"
+  ],
+  "phases": [
+    {
+      "id": "opening",
+      "order": 1,
+      "label": "Úvod a naladění",
+      "startTime": "09:10",
+      "kind": "shared",
+      "goal": "Rámec dne: nejde o promptování, ale o repo a workflow, které přežijí handoff."
+    },
+    {
+      "id": "talk",
+      "order": 2,
+      "label": "Context is King",
+      "startTime": "09:40",
+      "kind": "shared",
+      "goal": "Krátký talk a porovnání přístupů. Krátká mapa v repu je silnější než prompt blob."
+    },
+    {
+      "id": "build-1",
+      "order": 3,
+      "label": "Build Phase 1",
+      "startTime": "10:30",
+      "kind": "team",
+      "goal": "Nejdřív udělejte z repa operating surface: krátké AGENTS.md, plán, build/test flow, první ověření a první reviewed output."
+    },
+    {
+      "id": "rotation",
+      "order": 4,
+      "label": "Rotace týmů",
+      "startTime": "13:30",
+      "kind": "team",
+      "goal": "Plný přesun lidí mezi stoly. Nejdřív čtěte a napište diagnózu, až pak měňte kód."
+    },
+    {
+      "id": "reveal",
+      "order": 5,
+      "label": "Reveal a reflexe",
+      "startTime": "15:45",
+      "kind": "shared",
+      "goal": "Co pomohlo pokračovat, co chybělo, a kterou bolest teď proměníme v lepší harness."
+    }
+  ],
+  "runtimeImport": {
+    "copiedIntoInstance": [
+      "title",
+      "subtitle",
+      "phases"
+    ],
+    "instanceLocalOnly": [
+      "currentPhaseId",
+      "continuationRevealed",
+      "realDate",
+      "venue",
+      "room",
+      "teamRegistry",
+      "checkpoints",
+      "monitoringSnapshots"
+    ]
+  }
+}

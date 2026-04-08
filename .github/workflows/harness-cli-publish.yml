@@ -67,6 +67,8 @@ jobs:
       - name: Install CLI dependencies
         run: npm ci
 
+      - run: npm run verify:workshop-bundle
+
       - run: npm test
 
       - id: pack
@@ -88,6 +90,17 @@ jobs:
         shell: bash
         run: |
           ../tmp/harness-cli-release-smoke/node_modules/.bin/harness --help
+
+      - name: Run portable skill install smoke test
+        shell: bash
+        run: |
+          mkdir -p ../tmp/harness-cli-release-target
+          ../tmp/harness-cli-release-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-release-target
+
+      - name: Run portable skill reinstall smoke test
+        shell: bash
+        run: |
+          ../tmp/harness-cli-release-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-release-target
 
       - name: Upload packed tarball
         uses: actions/upload-artifact@v7

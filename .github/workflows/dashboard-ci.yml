@@ -49,6 +49,8 @@ jobs:
 
       - run: npm ci
 
+      - run: npm run verify:workshop-bundle
+
       - run: npm test
 
       - run: npm pack
@@ -66,6 +68,17 @@ jobs:
         shell: bash
         run: |
           ../tmp/harness-cli-smoke/node_modules/.bin/harness --help
+
+      - name: Run portable skill install smoke test
+        shell: bash
+        run: |
+          mkdir -p ../tmp/harness-cli-target-repo
+          ../tmp/harness-cli-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-target-repo
+
+      - name: Run portable skill reinstall smoke test
+        shell: bash
+        run: |
+          ../tmp/harness-cli-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-target-repo
 
   verify-dashboard:
     name: verify-dashboard

@@ -45,8 +45,15 @@ All of the following must be true before public npm publication:
 - dashboard-side device auth routes, approval flow, audit logging, and bearer-session validation are covered by tests
 - CLI integration tests cover login, status, logout, and at least one facilitator workshop command
 - cross-platform CI runs the CLI auth/storage test matrix on macOS, Windows, and Linux
+- cross-platform CI proves the packed CLI can install the portable workshop skill bundle into an arbitrary repo path
+- release verification proves `harness skill install` reports the correct state on rerun: installed, refreshed, or already current
 - `npm pack` succeeds in CI
 - an install smoke test proves the packed tarball can be installed and the `harness` binary starts
+- the packed tarball contains the intended portable workshop bundle assets
+- the generated packaged bundle and repo-local bundle pass portability verification:
+  - no author-machine absolute repo paths in participant-facing bundled content
+  - no bundled markdown links to local files that are not actually shipped
+  - generated bundle outputs are in sync with the authored source
 - rollback posture is documented for disabling device auth or npm distribution if regressions are found
 - the release tag matches the version in `harness-cli/package.json`
 - the publish workflow is initiated intentionally rather than by ordinary branch merges
@@ -56,9 +63,12 @@ All of the following must be true before public npm publication:
 The CLI release smoke checks are:
 
 - `cd harness-cli && npm test`
+- `cd harness-cli && npm run verify:workshop-bundle`
 - `cd harness-cli && npm pack`
 - install the packed tarball in a temporary Node project
 - run `./node_modules/.bin/harness --help`
+- run `./node_modules/.bin/harness skill install --target ./sample-repo`
+- rerun `./node_modules/.bin/harness skill install --target ./sample-repo` and confirm it reports the target as already current
 
 ## First Release Checklist
 

@@ -1,6 +1,6 @@
 # Harness CLI
 
-Small Harness Lab CLI for facilitator auth, workshop operations, and repo-local skill installation.
+Small Harness Lab CLI for facilitator auth, workshop operations, and portable workshop skill installation.
 
 Current shipped scope:
 
@@ -63,14 +63,23 @@ harness version
 harness --help
 ```
 
-Install the repo-local workshop skill bundle for Codex/pi discovery:
+Install the portable workshop skill bundle into your current repo for Codex/pi discovery:
 
 ```bash
 harness skill install
 ```
 
-This creates `.agents/skills/harness-lab-workshop` in the current Harness Lab repo checkout.
-After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop reference` and `pi: /skill:workshop`.
+Optional explicit target:
+
+```bash
+harness skill install --target /path/to/team-repo
+```
+
+This creates `.agents/skills/harness-lab-workshop` in the target repo. The install does not require a local clone of the Harness Lab source repo.
+Rerunning `harness skill install` refreshes the installed bundle when the packaged workshop content changed and reports clearly when the target is already current. Use `--force` only when you want a full reinstall.
+After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop commands` and `pi: /skill:workshop`.
+
+Treat `.agents/skills/harness-lab-workshop` as generated workshop bundle content. The canonical authored source remains in this repository under `workshop-skill/`, `workshop-blueprint/`, selected `docs/`, and selected `materials/`.
 
 Default device/browser login:
 
@@ -135,5 +144,5 @@ Environment variables:
 ## Release Gate
 
 Public npm publication is controlled by the release gate in
-[docs/harness-cli-publication-gate.md](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-publication-gate.md).
+[docs/harness-cli-publication-gate.md](../docs/harness-cli-publication-gate.md).
 Normal development should still happen from this repository; npm is the participant-facing distribution path, not a substitute for repo-local development.

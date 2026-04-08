@@ -16,8 +16,8 @@ The repository already treats `harness-cli/` as a real CLI boundary, but its dis
 
 Today:
 
-- [`harness-cli/package.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json) is still `"private": true`
-- [`docs/harness-cli-publication-gate.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-publication-gate.md) explicitly defers public npm publication
+- [`harness-cli/package.json`](../../harness-cli/package.json) is still `"private": true`
+- [`docs/harness-cli-publication-gate.md`](../harness-cli-publication-gate.md) explicitly defers public npm publication
 - CI proves `npm pack` and install smoke behavior, but there is no release pipeline that turns a verified package into an actual installable public version
 - the current repo has already shown why local `.tgz` artifacts should not be the distribution mechanism
 - participant-facing use is now expected soon, and the npm organization `harness-lab` already exists
@@ -189,7 +189,7 @@ Goal: make `harness-cli` public-package ready at the metadata layer.
 
 Tasks:
 
-- [x] Remove `"private": true` from [`harness-cli/package.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json).
+- [x] Remove `"private": true` from [`harness-cli/package.json`](../../harness-cli/package.json).
 - [x] Verify the package name, scope, and public visibility posture for `@harness-lab/cli`.
 - [x] Add any missing public package metadata that improves registry quality, at minimum:
   - description
@@ -234,8 +234,8 @@ Goal: make npm the default install story everywhere it should be.
 
 Tasks:
 
-- [x] Update [`harness-cli/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md) so npm install becomes the primary participant-facing path.
-- [x] Update [`docs/harness-cli-publication-gate.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-publication-gate.md) from “deferred” to the new release posture.
+- [x] Update [`harness-cli/README.md`](../../harness-cli/README.md) so npm install becomes the primary participant-facing path.
+- [x] Update [`docs/harness-cli-publication-gate.md`](../harness-cli-publication-gate.md) from “deferred” to the new release posture.
 - [x] Update any repo docs or skill docs that currently imply local-only installation.
 - [x] Keep repo-local install documented as a development/fallback path, not as the main install path.
 - [x] Add first-release notes that explain what commands are supported and what is still intentionally out of scope.
@@ -295,9 +295,9 @@ Exit criteria:
 
 ## References
 
-- [`harness-cli/package.json`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/package.json)
-- [`harness-cli/README.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/harness-cli/README.md)
-- [`docs/harness-cli-foundation.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-foundation.md)
-- [`docs/harness-cli-publication-gate.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-cli-publication-gate.md)
-- [`docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md)
-- [`.github/workflows/dashboard-ci.yml`](/Users/ondrejsvec/projects/Bobo/harness-lab/.github/workflows/dashboard-ci.yml)
+- [`harness-cli/package.json`](../../harness-cli/package.json)
+- [`harness-cli/README.md`](../../harness-cli/README.md)
+- [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md)
+- [`docs/harness-cli-publication-gate.md`](../harness-cli-publication-gate.md)
+- [`docs/plans/2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md`](2026-04-07-feat-harness-cli-device-auth-and-secure-storage-plan.md)
+- [`.github/workflows/dashboard-ci.yml`](../../.github/workflows/dashboard-ci.yml)

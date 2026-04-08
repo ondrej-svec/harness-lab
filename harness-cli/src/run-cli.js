@@ -173,7 +173,7 @@ function printUsage(io, ui) {
     "harness auth login [--auth device|basic|neon] [--dashboard-url URL] [--username USER] [--email EMAIL] [--password PASS] [--no-open]",
     "harness auth logout",
     "harness auth status",
-    "harness skill install [--force]",
+    "harness skill install [--target PATH] [--force]",
     "harness workshop status",
     "harness workshop archive [--notes TEXT]",
     "harness workshop create-instance [<instance-id>] [--template-id ID] [--event-title TEXT] [--city CITY]",
@@ -190,23 +190,30 @@ function printVersion(io) {
 
 async function handleSkillInstall(io, ui, deps, flags) {
   try {
-    const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), { force: flags.force === true });
+    const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), {
+      force: flags.force === true,
+      target: readStringFlag(flags, "target"),
+    });
     ui.heading("Workshop Skill");
-    if (result.mode === "already_bundled") {
-      ui.status("ok", "Harness Lab workshop skill is already bundled in this repo.");
+    if (result.mode === "already_current") {
+      ui.status("ok", "Harness Lab workshop skill is already current at the target path.");
+    } else if (result.mode === "refreshed") {
+      ui.status("ok", "Refreshed the installed Harness Lab workshop skill bundle.");
     } else {
       ui.status("ok", "Installed the Harness Lab workshop skill bundle.");
     }
+    ui.keyValue("Target", result.targetRoot);
     ui.keyValue("Location", result.installPath);
     ui.keyValue("Discovery", ".agents/skills");
+    ui.keyValue("Bundle source", result.sourceMode === "packaged_bundle" ? "packaged portable bundle" : "source checkout fallback");
     ui.blank();
     ui.section("Next steps");
     ui.numberedList([
-      "Open Codex or pi in this repo.",
-      "Start with the workshop reference card.",
-      "Codex: `$workshop reference`.",
-      "pi: `/skill:workshop`, then ask for the workshop reference card.",
-      "Need setup help? Codex: `$workshop setup`. pi: `/skill:workshop`, then ask for setup help.",
+      "Open Codex or pi in the target repo.",
+      "Start with the workshop command menu.",
+      "Codex: `$workshop commands`.",
+      "pi: `/skill:workshop`, then ask for the workshop commands.",
+      "Next: `$workshop reference`, `$workshop brief`, and `$workshop resources`.",
     ]);
     return 0;
   } catch (error) {

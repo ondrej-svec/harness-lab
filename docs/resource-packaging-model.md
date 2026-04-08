@@ -2,6 +2,12 @@
 
 Harness Lab ships three distinct resource layers from the same public-safe repository.
 
+These layers are authored once in the repo, but they may be distributed through more than one surface:
+
+- source docs in the public repo
+- the portable participant skill bundle shipped inside `@harness-lab/cli`
+- the dashboard participant surface for live room use
+
 ## The Three Outputs
 
 ### 1. Internal Harness
@@ -23,11 +29,11 @@ This layer optimizes for:
 - repeatable verification
 
 Examples:
-- [`AGENTS.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/AGENTS.md)
-- [`docs/harness-doctrine.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/harness-doctrine.md)
-- [`docs/public-private-taxonomy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/public-private-taxonomy.md)
-- [`docs/dashboard-testing-strategy.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/dashboard-testing-strategy.md)
-- [`docs/workshop-instance-runbook.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/workshop-instance-runbook.md)
+- [`AGENTS.md`](../AGENTS.md)
+- [`docs/harness-doctrine.md`](harness-doctrine.md)
+- [`docs/public-private-taxonomy.md`](public-private-taxonomy.md)
+- [`docs/dashboard-testing-strategy.md`](dashboard-testing-strategy.md)
+- [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)
 
 ### 2. Learner Resource Kit
 
@@ -47,11 +53,11 @@ This layer optimizes for:
 - concrete examples over theory
 
 Examples:
-- [`workshop-skill/`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill)
-- [`content/challenge-cards/deck.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/content/challenge-cards/deck.md)
-- [`workshop-skill/template-agents.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/template-agents.md)
-- [`workshop-skill/analyze-checklist.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/analyze-checklist.md)
-- [`workshop-skill/follow-up-package.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/workshop-skill/follow-up-package.md)
+- [`workshop-skill/`](../workshop-skill/)
+- [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
+- [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
+- [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
+- [`workshop-skill/follow-up-package.md`](../workshop-skill/follow-up-package.md)
 
 ### 3. External Reference Gallery
 
@@ -136,3 +142,14 @@ The default response to repeated friction is:
 - strengthen the internal harness
 - update the learner kit subset
 - refresh the external reference gallery only if the current list is no longer the best next step
+
+## Distribution Rule
+
+For participant-facing workshop guidance:
+
+- the authored source of truth stays in this repository
+- portable bundle outputs may be generated from that source for installable skill distribution
+- generated bundle outputs must not become a second authored content system
+- generated bundle outputs must stay portable: no author-machine absolute paths and no links to bundle-local files that are not actually shipped
+- the repo-local `.agents/skills/harness-lab-workshop` copy is also generated output and should be kept in sync with the authored source rather than edited independently
+- live participant runtime context still belongs behind the dashboard/event-access APIs rather than inside the portable bundle
