@@ -25,7 +25,7 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { workshopTemplates, type AgendaItem, type PresenterScene, type Team, type WorkshopSourceRef } from "@/lib/workshop-data";
+import { workshopTemplates, type AgendaItem, type PresenterScene, type Team } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addAgendaItem,
@@ -57,6 +57,33 @@ import {
   adminPrimaryButtonClassName,
   adminSecondaryButtonClassName,
 } from "../../admin-ui";
+
+type SourceRef = {
+  path: string;
+  label: string;
+};
+
+type RichAgendaItem = AgendaItem & Partial<{
+  goal: string;
+  roomSummary: string;
+  facilitatorPrompts: string[];
+  watchFors: string[];
+  checkpointQuestions: string[];
+  sourceRefs: SourceRef[];
+}>;
+
+type PresenterBlock = {
+  id: string;
+  type: string;
+};
+
+type RichPresenterScene = PresenterScene & Partial<{
+  intent: string;
+  chromePreset: string;
+  blocks: PresenterBlock[];
+  facilitatorNotes: string[];
+  sourceRefs: SourceRef[];
+}>;
 
 export const dynamic = "force-dynamic";
 
@@ -131,13 +158,6 @@ function parseEvidenceSummary(value: string) {
   return result;
 }
 
-function parseMultilineList(value: FormDataEntryValue | null) {
-  return String(value ?? "")
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
 function listToTextareaValue(items?: string[]) {
   return (items ?? []).join("\n");
 }
@@ -184,11 +204,6 @@ async function saveAgendaDetailsAction(formData: FormData) {
         title,
         time,
         description,
-        goal: goal || description,
-        roomSummary: roomSummary || description,
-        facilitatorPrompts: parseMultilineList(formData.get("facilitatorPrompts")),
-        watchFors: parseMultilineList(formData.get("watchFors")),
-        checkpointQuestions: parseMultilineList(formData.get("checkpointQuestions")),
       },
       instanceId,
     );
@@ -214,11 +229,6 @@ async function addAgendaItemAction(formData: FormData) {
         title,
         time,
         description,
-        goal: goal || description,
-        roomSummary: roomSummary || description,
-        facilitatorPrompts: parseMultilineList(formData.get("facilitatorPrompts")),
-        watchFors: parseMultilineList(formData.get("watchFors")),
-        checkpointQuestions: parseMultilineList(formData.get("checkpointQuestions")),
         afterItemId: afterItemId || null,
       },
       instanceId,
@@ -500,8 +510,10 @@ export default async function AdminPage({
     availableInstances,
     activeInstanceId,
   );
+  const richCurrentAgendaItem = currentAgendaItem as RichAgendaItem | null;
   const selectedAgendaItem =
-    state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0] ?? null;
+    ((state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined) ??
+    null;
   const selectedTeam = state.teams.find((team: Team) => team.id === query?.team) ?? state.teams[0] ?? null;
   const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
   const isOwner = currentFacilitator?.grant.role === "owner";
@@ -1058,9 +1070,9 @@ export default async function AdminPage({
                       {currentAgendaItem?.time} • {currentAgendaItem?.title}
                     </p>
                     <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-                      {currentAgendaItem?.roomSummary || currentAgendaItem?.description}
+                      {richCurrentAgendaItem?.roomSummary || currentAgendaItem?.description}
                     </p>
-                    {currentAgendaItem ? <AgendaItemDetail item={currentAgendaItem} lang={lang} compact /> : null}
+                    {richCurrentAgendaItem ? <AgendaItemDetail item={richCurrentAgendaItem} lang={lang} compact /> : null}
                   </div>
                 </div>
               </AdminPanel>
@@ -1523,7 +1535,7 @@ function AgendaItemDetail({
   lang,
   compact = false,
 }: {
-  item: AgendaItem;
+  item: RichAgendaItem;
   lang: UiLanguage;
   compact?: boolean;
 }) {
@@ -1596,20 +1608,23 @@ function PresenterSceneSummaryCard({
   copy,
   isDefault,
 }: {
-  scene: PresenterScene;
+  scene: RichPresenterScene;
   agendaItemId: string;
   activeInstanceId: string;
   lang: UiLanguage;
   copy: (typeof adminCopy)[UiLanguage];
   isDefault: boolean;
 }) {
+  const sceneBlocks = scene.blocks ?? [];
+  const sceneMeta = [scene.sceneType, scene.intent, scene.chromePreset].filter(Boolean).join(" • ");
+
   return (
     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
           <p className="text-sm leading-6 text-[var(--text-secondary)]">
-            {scene.sceneType} • {scene.intent} • {scene.chromePreset}
+            {sceneMeta}
             {isDefault ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
             {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
           </p>
@@ -1629,11 +1644,11 @@ function PresenterSceneSummaryCard({
         </a>
       </div>
       <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
-      {scene.blocks.length > 0 ? (
+      {sceneBlocks.length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">room blocks</p>
           <div className="mt-3 flex flex-wrap gap-2">
-            {scene.blocks.map((block) => (
+            {sceneBlocks.map((block) => (
               <span
                 key={block.id}
                 className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)]"
@@ -1656,7 +1671,7 @@ function PresenterSceneSummaryCard({
       ) : null}
       {(scene.sourceRefs ?? []).length > 0 ? (
         <div className="mt-4 flex flex-wrap gap-2">
-          {(scene.sourceRefs ?? []).map((ref: WorkshopSourceRef) => (
+          {(scene.sourceRefs ?? []).map((ref: SourceRef) => (
             <a
               key={`${ref.path}-${ref.label}`}
               href={buildRepoSourceHref(ref.path)}
@@ -1682,6 +1697,7 @@ function TimelineRow({
   copy: (typeof adminCopy)[UiLanguage];
   detailed?: boolean;
 }) {
+  const detailItem = item as RichAgendaItem;
   const statusLabel =
     item.status === "done"
       ? copy.agendaStatusDone
@@ -1716,7 +1732,7 @@ function TimelineRow({
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{statusLabel}</span>
           </div>
           {detailed || item.status === "current" ? (
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{item.roomSummary || item.description}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{detailItem.roomSummary || item.description}</p>
           ) : null}
         </div>
       </div>
