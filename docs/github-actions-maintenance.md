@@ -86,18 +86,18 @@ That is intentional:
 
 If a future change outside `dashboard/` genuinely needs the E2E suite, expand the scope rule deliberately instead of putting Playwright back on every workflow run by default.
 
-## Why the macOS CLI leg uses a self-hosted runner
+## Why the CLI self-hosted leg uses explicit runner labels
 
-The macOS CLI jobs use the repository's self-hosted runner labels:
+The self-hosted CLI jobs use the repository's explicit runner labels:
 
 - `self-hosted`
-- `macOS`
+- `Linux`
 - `ARM64`
 
 That is intentional:
 
-- macOS hosted minutes are relatively expensive compared with the rest of this workflow
-- the CLI matrix still needs one real macOS verification leg for packaging and install behavior
+- hosted minutes are more expensive than using the available self-hosted runner for a repeatable CLI verification leg
+- the CLI matrix still keeps hosted Ubuntu and Windows coverage, while the newer-Node leg runs on the available self-hosted Linux ARM64 runner
 - the dedicated `Harness CLI Publish` workflow should use the same runner so release verification and npm publication do not move back onto hosted minutes
 - the self-hosted leg now also verifies the CLI on a newer Node major so the published `engines` floor does not drift into wishful thinking
 - using explicit labels is safer than bare `self-hosted`, because it avoids accidentally routing the job onto the wrong runner if more self-hosted capacity is added later

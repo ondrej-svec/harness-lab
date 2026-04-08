@@ -78,8 +78,8 @@ jobs:
           - name: windows-latest
             runs_on: '"windows-latest"'
             node_version: 22
-          - name: macOS-self-hosted
-            runs_on: '["self-hosted","macOS","ARM64"]'
+          - name: linux-self-hosted
+            runs_on: '["self-hosted","Linux","ARM64"]'
             node_version: 25
     defaults:
       run:

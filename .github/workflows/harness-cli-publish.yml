@@ -20,7 +20,7 @@ jobs:
     name: verify-cli-package
     runs-on:
       - self-hosted
-      - macOS
+      - Linux
       - ARM64
     defaults:
       run:
@@ -133,7 +133,7 @@ jobs:
     if: github.event_name == 'release'
     runs-on:
       - self-hosted
-      - macOS
+      - Linux
       - ARM64
     defaults:
       run:
