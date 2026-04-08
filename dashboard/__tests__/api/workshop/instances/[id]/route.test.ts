@@ -117,11 +117,11 @@ describe("workshop instance route", () => {
         body: JSON.stringify({
           action: "update_metadata",
           contentLang: "en",
-          eventTitle: "Developer Hackathon Praha",
-          dateRange: "24. dubna 2026",
-          venueName: "Seyfor Praha jednička 103",
-          roomName: "Saturn",
-          addressLine: "CZ, Praha 8, Sokolovska 695/115b",
+          eventTitle: "Sample Workshop Demo",
+          dateRange: "15. června 2026",
+          venueName: "Example Campus North",
+          roomName: "Orbit",
+          addressLine: "Example Avenue 123",
         }),
       }),
       { params: Promise.resolve({ id: "sample-studio-a" }) },
@@ -134,25 +134,25 @@ describe("workshop instance route", () => {
         id: "sample-studio-a",
         workshopMeta: {
           contentLang: "en",
-          eventTitle: "Developer Hackathon Praha",
-          dateRange: "24. dubna 2026",
-          venueName: "Seyfor Praha jednička 103",
-          roomName: "Saturn",
+          eventTitle: "Sample Workshop Demo",
+          dateRange: "15. června 2026",
+          venueName: "Example Campus North",
+          roomName: "Orbit",
         },
       },
     });
     await expect(instanceRepository.getInstance("sample-studio-a")).resolves.toMatchObject({
       workshopMeta: {
         contentLang: "en",
-        eventTitle: "Developer Hackathon Praha",
-        addressLine: "CZ, Praha 8, Sokolovska 695/115b",
+        eventTitle: "Sample Workshop Demo",
+        addressLine: "Example Avenue 123",
       },
     });
     await expect(stateRepository.getState("sample-studio-a")).resolves.toMatchObject({
       workshopMeta: {
         contentLang: "en",
-        eventTitle: "Developer Hackathon Praha",
-        venueName: "Seyfor Praha jednička 103",
+        eventTitle: "Sample Workshop Demo",
+        venueName: "Example Campus North",
       },
     });
   });

@@ -289,13 +289,13 @@ describe("workshop route", () => {
         },
         body: JSON.stringify({
           action: "create",
-          id: "developer-hackathon-praha-24-4-saturn",
+          id: "sample-workshop-demo-orbit",
           templateId: "blueprint-default",
-          eventTitle: "Developer Hackathon Praha",
-          city: "Praha",
-          dateRange: "24. dubna 2026",
-          venueName: "Seyfor Praha jednička 103",
-          roomName: "Saturn",
+          eventTitle: "Sample Workshop Demo",
+          city: "Example City",
+          dateRange: "15. června 2026",
+          venueName: "Example Campus North",
+          roomName: "Orbit",
         }),
       }),
     );
@@ -305,11 +305,11 @@ describe("workshop route", () => {
       ok: true,
       created: true,
       instance: {
-        id: "developer-hackathon-praha-24-4-saturn",
+        id: "sample-workshop-demo-orbit",
         workshopMeta: {
-          eventTitle: "Developer Hackathon Praha",
-          city: "Praha",
-          venueName: "Seyfor Praha jednička 103",
+          eventTitle: "Sample Workshop Demo",
+          city: "Example City",
+          venueName: "Example Campus North",
         },
       },
     });

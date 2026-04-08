@@ -145,14 +145,14 @@ describe("workshop instances route", () => {
           id: "client-hackathon-2026-05",
           templateId: "blueprint-default",
           contentLang: "en",
-          eventTitle: "Developer Hackathon Praha",
-          city: "Client HQ",
-          dateRange: "12. května 2026",
-          venueName: "Seyfor Praha jednička 103",
-          roomName: "Saturn",
-          addressLine: "CZ, Praha 8, Sokolovska 695/115b",
-          locationDetails: "17 osob + lektor",
-          facilitatorLabel: "Ondrej",
+          eventTitle: "Sample Workshop Demo",
+          city: "Example City",
+          dateRange: "15. června 2026",
+          venueName: "Example Campus North",
+          roomName: "Orbit",
+          addressLine: "Example Avenue 123",
+          locationDetails: "12 participants + facilitator",
+          facilitatorLabel: "Alex",
         }),
       }),
     );
@@ -166,10 +166,10 @@ describe("workshop instances route", () => {
         templateId: "blueprint-default",
         workshopMeta: {
           contentLang: "en",
-          eventTitle: "Developer Hackathon Praha",
-          city: "Client HQ",
-          venueName: "Seyfor Praha jednička 103",
-          roomName: "Saturn",
+          eventTitle: "Sample Workshop Demo",
+          city: "Example City",
+          venueName: "Example Campus North",
+          roomName: "Orbit",
         },
       },
     });
@@ -177,18 +177,18 @@ describe("workshop instances route", () => {
       id: "client-hackathon-2026-05",
       workshopMeta: {
         contentLang: "en",
-        addressLine: "CZ, Praha 8, Sokolovska 695/115b",
-        locationDetails: "17 osob + lektor",
-        facilitatorLabel: "Ondrej",
+        addressLine: "Example Avenue 123",
+        locationDetails: "12 participants + facilitator",
+        facilitatorLabel: "Alex",
       },
     });
     await expect(stateRepository.getState("client-hackathon-2026-05")).resolves.toMatchObject({
       workshopId: "client-hackathon-2026-05",
       workshopMeta: {
         contentLang: "en",
-        eventTitle: "Developer Hackathon Praha",
-        city: "Client HQ",
-        venueName: "Seyfor Praha jednička 103",
+        eventTitle: "Sample Workshop Demo",
+        city: "Example City",
+        venueName: "Example Campus North",
       },
     });
   });
@@ -202,7 +202,7 @@ describe("workshop instances route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
-          id: "Developer Hackathon Praha",
+          id: "Sample Workshop Demo",
           templateId: "missing-template",
         }),
       }),

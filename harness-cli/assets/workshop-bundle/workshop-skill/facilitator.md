@@ -95,17 +95,17 @@ Vyžaduje `owner` roli.
 Preferovaný path je CLI příkaz nad sdíleným runtime API:
 
 ```bash
-harness workshop create-instance developer-hackathon-praha-24-4-saturn \
+harness workshop create-instance sample-workshop-demo-orbit \
   --template-id blueprint-default \
   --content-lang cs \
-  --event-title "Developer Hackathon Praha" \
-  --city Praha \
-  --date-range "24. dubna 2026" \
-  --venue-name "Seyfor Praha jednička 103" \
-  --room-name Saturn \
-  --address-line "CZ, Praha 8, Sokolovska 695/115b" \
-  --location-details "17 osob + lektor" \
-  --facilitator-label Ondrej
+  --event-title "Sample Workshop Demo" \
+  --city "Example City" \
+  --date-range "15. června 2026" \
+  --venue-name "Example Campus North" \
+  --room-name Orbit \
+  --address-line "Example Avenue 123" \
+  --location-details "12 participants + facilitator" \
+  --facilitator-label Alex
 ```
 
 Raw API reference zůstává jen jako diagnostická nebo architektonická reference:
@@ -115,17 +115,17 @@ POST {DASHBOARD_URL}/api/workshop/instances
 Content-Type: application/json
 
 {
-  "id": "developer-hackathon-praha-24-4-saturn",
+  "id": "sample-workshop-demo-orbit",
   "templateId": "blueprint-default",
   "contentLang": "cs",
-  "eventTitle": "Developer Hackathon Praha",
-  "city": "Praha",
-  "dateRange": "24. dubna 2026",
-  "venueName": "Seyfor Praha jednička 103",
-  "roomName": "Saturn",
-  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
-  "locationDetails": "17 osob + lektor",
-  "facilitatorLabel": "Ondrej"
+  "eventTitle": "Sample Workshop Demo",
+  "city": "Example City",
+  "dateRange": "15. června 2026",
+  "venueName": "Example Campus North",
+  "roomName": "Orbit",
+  "addressLine": "Example Avenue 123",
+  "locationDetails": "12 participants + facilitator",
+  "facilitatorLabel": "Alex"
 }
 ```
 
@@ -141,15 +141,15 @@ Poznámky pro skill:
 Preferovaný path:
 
 ```bash
-harness workshop update-instance developer-hackathon-praha-24-4-saturn \
+harness workshop update-instance sample-workshop-demo-orbit \
   --content-lang en \
-  --event-title "Developer Hackathon Praha" \
-  --date-range "24. dubna 2026" \
-  --venue-name "Seyfor Praha jednička 103" \
-  --room-name Saturn \
-  --address-line "CZ, Praha 8, Sokolovska 695/115b" \
-  --location-details "17 osob + lektor" \
-  --facilitator-label Ondrej
+  --event-title "Sample Workshop Demo" \
+  --date-range "15. června 2026" \
+  --venue-name "Example Campus North" \
+  --room-name Orbit \
+  --address-line "Example Avenue 123" \
+  --location-details "12 participants + facilitator" \
+  --facilitator-label Alex
 ```
 
 Raw API reference:
@@ -161,13 +161,13 @@ Content-Type: application/json
 {
   "action": "update_metadata",
   "contentLang": "en",
-  "eventTitle": "Developer Hackathon Praha",
-  "dateRange": "24. dubna 2026",
-  "venueName": "Seyfor Praha jednička 103",
-  "roomName": "Saturn",
-  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
-  "locationDetails": "17 osob + lektor",
-  "facilitatorLabel": "Ondrej"
+  "eventTitle": "Sample Workshop Demo",
+  "dateRange": "15. června 2026",
+  "venueName": "Example Campus North",
+  "roomName": "Orbit",
+  "addressLine": "Example Avenue 123",
+  "locationDetails": "12 participants + facilitator",
+  "facilitatorLabel": "Alex"
 }
 ```
 
@@ -181,7 +181,7 @@ Pravidla:
 Preferovaný path:
 
 ```bash
-harness workshop prepare developer-hackathon-praha-24-4-saturn
+harness workshop prepare sample-workshop-demo-orbit
 ```
 
 Raw API reference:
@@ -190,7 +190,7 @@ Raw API reference:
 POST {DASHBOARD_URL}/api/workshop
 Content-Type: application/json
 
-{ "action": "prepare", "instanceId": "developer-hackathon-praha-24-4-saturn" }
+{ "action": "prepare", "instanceId": "sample-workshop-demo-orbit" }
 ```
 
 Nastaví instanci do stavu `prepared`, ověří event code.
@@ -200,7 +200,7 @@ Nastaví instanci do stavu `prepared`, ověří event code.
 Preferovaný path:
 
 ```bash
-harness workshop remove-instance developer-hackathon-praha-24-4-saturn
+harness workshop remove-instance sample-workshop-demo-orbit
 ```
 
 Raw API reference:

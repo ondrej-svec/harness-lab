@@ -227,25 +227,25 @@ test("workshop create-instance sends rich metadata and reports created state", a
     [
       "workshop",
       "create-instance",
-      "developer-hackathon-praha-24-4-saturn",
+      "sample-workshop-demo-orbit",
       "--template-id",
       "blueprint-default",
       "--event-title",
-      "Developer Hackathon Praha",
+      "Sample Workshop Demo",
       "--city",
-      "Praha",
+      "Example City",
       "--date-range",
-      "24. dubna 2026",
+      "15. června 2026",
       "--venue-name",
-      "Seyfor Praha jednicka 103",
+      "Example Campus North",
       "--room-name",
-      "Saturn",
+      "Orbit",
       "--address-line",
-      "CZ, Praha 8, Sokolovska 695/115b",
+      "Example Avenue 123",
       "--location-details",
-      "17 osob + lektor",
+      "12 participants + facilitator",
       "--facilitator-label",
-      "Ondrej",
+      "Alex",
     ],
     io,
     { fetchFn },
@@ -253,19 +253,19 @@ test("workshop create-instance sends rich metadata and reports created state", a
 
   assert.equal(exitCode, 0);
   assert.deepEqual(requestBody, {
-    id: "developer-hackathon-praha-24-4-saturn",
+    id: "sample-workshop-demo-orbit",
     templateId: "blueprint-default",
-    eventTitle: "Developer Hackathon Praha",
-    city: "Praha",
-    dateRange: "24. dubna 2026",
-    venueName: "Seyfor Praha jednicka 103",
-    roomName: "Saturn",
-    addressLine: "CZ, Praha 8, Sokolovska 695/115b",
-    locationDetails: "17 osob + lektor",
-    facilitatorLabel: "Ondrej",
+    eventTitle: "Sample Workshop Demo",
+    city: "Example City",
+    dateRange: "15. června 2026",
+    venueName: "Example Campus North",
+    roomName: "Orbit",
+    addressLine: "Example Avenue 123",
+    locationDetails: "12 participants + facilitator",
+    facilitatorLabel: "Alex",
   });
   assert.match(io.getStdout(), /"created": true/);
-  assert.match(io.getStdout(), /Developer Hackathon Praha/);
+  assert.match(io.getStdout(), /Sample Workshop Demo/);
 });
 
 test("workshop create-instance surfaces validation failures from the API", async () => {
@@ -285,7 +285,7 @@ test("workshop create-instance surfaces validation failures from the API", async
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "create-instance", "Developer Hackathon Praha"], io, { fetchFn });
+  const exitCode = await runCli(["workshop", "create-instance", "Sample Workshop Demo"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Create instance failed: id must be a lowercase slug/);
 });
@@ -309,8 +309,8 @@ test("workshop update-instance patches metadata through the shared instance rout
               id: "sample-studio-a",
               status: "prepared",
               workshopMeta: {
-                eventTitle: "Developer Hackathon Praha",
-                roomName: "Jupiter",
+                eventTitle: "Sample Workshop Demo",
+                roomName: "Nova",
               },
             },
           });
@@ -323,17 +323,17 @@ test("workshop update-instance patches metadata through the shared instance rout
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(
-    ["workshop", "update-instance", "sample-studio-a", "--event-title", "Developer Hackathon Praha", "--room-name", "Jupiter"],
+    ["workshop", "update-instance", "sample-studio-a", "--event-title", "Sample Workshop Demo", "--room-name", "Nova"],
     io,
     { fetchFn },
   );
   assert.equal(exitCode, 0);
   assert.deepEqual(requestBody, {
     action: "update_metadata",
-    eventTitle: "Developer Hackathon Praha",
-    roomName: "Jupiter",
+    eventTitle: "Sample Workshop Demo",
+    roomName: "Nova",
   });
-  assert.match(io.getStdout(), /Jupiter/);
+  assert.match(io.getStdout(), /Nova/);
 });
 
 test("workshop prepare sends the target instance id", async () => {
@@ -354,7 +354,7 @@ test("workshop prepare sends the target instance id", async () => {
             instance: {
               id: "sample-studio-a",
               status: "prepared",
-              workshopMeta: { eventTitle: "Developer Hackathon Praha" },
+              workshopMeta: { eventTitle: "Sample Workshop Demo" },
             },
           });
         },
