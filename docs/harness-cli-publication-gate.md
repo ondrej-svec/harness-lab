@@ -58,6 +58,11 @@ All of the following must be true before public npm publication:
 - the release tag matches the version in `harness-cli/package.json`
 - the publish workflow is initiated intentionally rather than by ordinary branch merges
 
+Note:
+
+- the default `Dashboard CI` workflow may skip `e2e-dashboard` when a change does not touch `dashboard/**`
+- that skip is acceptable for CLI-only publication readiness; the CLI release gate still relies on the dedicated CLI smoke checks and the `Harness CLI Publish` workflow verification
+
 ## Release Smoke Checks
 
 The CLI release smoke checks are:

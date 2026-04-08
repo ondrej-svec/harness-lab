@@ -58,3 +58,17 @@ When GitHub Actions emits a runtime deprecation warning:
 2. prefer upgrading to the newer maintained action
 3. if no safe maintained action exists, prefer a direct CLI or script invocation over a stale wrapper action
 4. document the reason here if the choice is non-obvious
+
+## Why `e2e-dashboard` is conditional
+
+The `Dashboard CI` workflow scopes Playwright E2E to changes that touch:
+
+- `dashboard/**`
+
+That is intentional:
+
+- Playwright is the highest-cost default job in this repository
+- CLI-only, docs-only, and bundle-only changes should not spend the same hosted-runner budget as dashboard UI changes
+- `deploy-ready` should still require E2E when dashboard behavior changed, but should accept a skipped E2E job when no dashboard surface changed
+
+If a future change outside `dashboard/` genuinely needs the E2E suite, expand the scope rule deliberately instead of putting Playwright back on every workflow run by default.
