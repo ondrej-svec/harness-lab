@@ -1,0 +1,2 @@
+ALTER TABLE workshop_instances
+  ADD COLUMN IF NOT EXISTS state_version INTEGER NOT NULL DEFAULT 1;

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { getWorkshopState } from "@/lib/workshop-store";
 import {
   addPresenterScene,
-  isWorkshopStateTargetError,
   movePresenterScene,
   removePresenterScene,
   setDefaultPresenterScene,
@@ -12,11 +12,7 @@ import {
 } from "@/lib/workshop-store";
 
 function sceneMutationErrorResponse(error: unknown) {
-  if (isWorkshopStateTargetError(error)) {
-    return NextResponse.json({ ok: false, error: error.code }, { status: 404 });
-  }
-
-  throw error;
+  return workshopMutationErrorResponse(error);
 }
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {

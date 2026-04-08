@@ -5,6 +5,7 @@ import { getAuditLogRepository } from "./audit-log-repository";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
+import { assertValidNeonAuthConfiguration } from "./runtime-auth-configuration";
 
 /**
  * File-mode facilitator auth: Basic Auth header → password compare → grant check.
@@ -127,7 +128,8 @@ export function getFacilitatorAuthService(): FacilitatorAuthService {
     return overrideService;
   }
 
-  if (getRuntimeStorageMode() === "neon" && process.env.NEON_AUTH_BASE_URL) {
+  if (getRuntimeStorageMode() === "neon") {
+    assertValidNeonAuthConfiguration();
     return new NeonAuthFacilitatorAuthService();
   }
 

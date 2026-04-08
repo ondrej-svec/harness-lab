@@ -40,6 +40,7 @@ describe("workshop-state-repository", () => {
     await repository.saveState("instance-a", updated);
 
     await expect(repository.getState("instance-a")).resolves.toMatchObject({
+      version: 1,
       workshopMeta: { title: "Updated" },
     });
   });
@@ -51,10 +52,41 @@ describe("workshop-state-repository", () => {
     const initial = await repository.getState("sample-studio-a");
 
     expect(initial).toMatchObject({
+      version: 1,
       workshopId: "sample-studio-a",
       teams: seedWorkshopState.teams,
       sprintUpdates: seedWorkshopState.sprintUpdates,
     });
+  });
+
+  it("rejects stale file-mode workshop state saves", async () => {
+    const mod = await import("./workshop-state-repository");
+    const repository = new mod.FileWorkshopStateRepository();
+
+    const initial = await repository.getState("instance-a");
+    await repository.saveState("instance-a", {
+      ...initial,
+      version: initial.version + 1,
+      workshopMeta: {
+        ...initial.workshopMeta,
+        title: "First update",
+      },
+    }, {
+      expectedVersion: initial.version,
+    });
+
+    await expect(
+      repository.saveState("instance-a", {
+        ...initial,
+        version: initial.version + 1,
+        workshopMeta: {
+          ...initial.workshopMeta,
+          title: "Stale update",
+        },
+      }, {
+        expectedVersion: initial.version,
+      }),
+    ).rejects.toBeInstanceOf(mod.WorkshopStateConflictError);
   });
 
   it("prefers an override repository", async () => {
@@ -72,7 +104,7 @@ describe("workshop-state-repository", () => {
     const query = vi
       .fn()
       .mockResolvedValueOnce([])
-      .mockResolvedValueOnce([{ workshop_state: { ...seedWorkshopState, workshopId: "neon-a" } }]);
+      .mockResolvedValueOnce([{ workshop_state: { ...seedWorkshopState, workshopId: "neon-a" }, state_version: 3 }]);
     const sqlTag = vi.fn().mockResolvedValue(undefined);
     const sql = Object.assign(sqlTag, { query });
 
@@ -86,7 +118,7 @@ describe("workshop-state-repository", () => {
       getWorkshopInstanceRepository: () => ({
         getInstance: vi.fn().mockResolvedValue({
           id: "neon-a",
-          templateId: "blueprint-compact",
+          templateId: "blueprint-default",
           workshopMeta: { title: "Harness Lab" },
         }),
       }),
@@ -95,7 +127,7 @@ describe("workshop-state-repository", () => {
     const { NeonWorkshopStateRepository } = await import("./workshop-state-repository");
     const repository = new NeonWorkshopStateRepository();
 
-    await expect(repository.getState("neon-a")).resolves.toMatchObject({ workshopId: "neon-a" });
+    await expect(repository.getState("neon-a")).resolves.toMatchObject({ workshopId: "neon-a", version: 3 });
     expect(query).toHaveBeenCalledTimes(2);
     expect(sqlTag).toHaveBeenCalled();
   });
@@ -123,6 +155,33 @@ describe("workshop-state-repository", () => {
 
     await repository.saveState("neon-a", state);
 
-    expect(sqlTag).toHaveBeenCalled();
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[1]?.[0]).toContain("UPDATE workshop_instances");
+  });
+
+  it("rejects stale neon workshop state saves", async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce([{ id: "neon-a" }])
+      .mockResolvedValueOnce([]);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+    vi.doMock("./workshop-instance-repository", () => ({
+      getWorkshopInstanceRepository: () => ({
+        getInstance: vi.fn(),
+      }),
+    }));
+
+    const mod = await import("./workshop-state-repository");
+    const repository = new mod.NeonWorkshopStateRepository();
+
+    await expect(
+      repository.saveState("neon-a", { ...seedWorkshopState, workshopId: "neon-a", version: 2 }, { expectedVersion: 1 }),
+    ).rejects.toBeInstanceOf(mod.WorkshopStateConflictError);
   });
 });

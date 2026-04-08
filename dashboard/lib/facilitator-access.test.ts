@@ -49,10 +49,12 @@ const facilitatorAccessModulePromise = import("./facilitator-access");
 
 describe("facilitator-access", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
+  const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
 
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.NEON_AUTH_BASE_URL;
+    delete process.env.NEON_AUTH_COOKIE_SECRET;
     getRuntimeStorageMode.mockReturnValue("file");
     headers.mockResolvedValue(new Headers());
     hasValidRequestCredentials.mockResolvedValue(true);
@@ -98,6 +100,7 @@ describe("facilitator-access", () => {
   it("uses cli bearer tokens in neon auth mode", async () => {
     const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
     parseBearerToken.mockReturnValue("cli-token");
     getCliSessionFromBearerToken.mockResolvedValue({ tokenHash: "hash" });
@@ -118,6 +121,7 @@ describe("facilitator-access", () => {
   it("falls back to session auth in neon mode without a cli token", async () => {
     const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
     hasValidSession.mockResolvedValue(false);
 
@@ -168,5 +172,18 @@ describe("facilitator-access", () => {
 
   afterEach(() => {
     process.env.NEON_AUTH_BASE_URL = originalBaseUrl;
+    process.env.NEON_AUTH_COOKIE_SECRET = originalCookieSecret;
   });
 });
+  it("throws when neon mode is selected without a complete auth config", async () => {
+    const { requireFacilitatorRequest } = await facilitatorAccessModulePromise;
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    delete process.env.NEON_AUTH_COOKIE_SECRET;
+    getRuntimeStorageMode.mockReturnValue("neon");
+
+    await expect(
+      requireFacilitatorRequest(new Request("http://localhost/api/admin/facilitators")),
+    ).rejects.toThrow(
+      "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET are required when HARNESS_STORAGE_MODE=neon",
+    );
+  });

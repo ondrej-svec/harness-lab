@@ -9,6 +9,24 @@ import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 
 export type WorkshopStateRepository = RuntimeWorkshopStateRepository;
 
+export class WorkshopStateConflictError extends Error {
+  constructor(instanceId: string) {
+    super(`workshop state changed before save completed for instance '${instanceId}'`);
+    this.name = "WorkshopStateConflictError";
+  }
+}
+
+export function isWorkshopStateConflictError(error: unknown): error is WorkshopStateConflictError {
+  return error instanceof WorkshopStateConflictError;
+}
+
+function withStateVersion(state: WorkshopState, fallbackVersion = 1): WorkshopState {
+  return {
+    ...state,
+    version: state.version ?? fallbackVersion,
+  };
+}
+
 export class FileWorkshopStateRepository implements WorkshopStateRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
@@ -41,15 +59,23 @@ export class FileWorkshopStateRepository implements WorkshopStateRepository {
     const statePath = this.getStatePath(instanceId);
     await this.ensureStateFile(instanceId);
     const raw = await readFile(statePath, "utf8");
-    return JSON.parse(raw) as WorkshopState;
+    return withStateVersion(JSON.parse(raw) as WorkshopState);
   }
 
-  async saveState(instanceId: string, state: WorkshopState) {
+  async saveState(instanceId: string, state: WorkshopState, options?: { expectedVersion?: number }) {
     const statePath = this.getStatePath(instanceId);
     await mkdir(this.dataDir, { recursive: true });
     await mkdir(path.dirname(statePath), { recursive: true });
+    await this.ensureStateFile(instanceId);
+    const current = withStateVersion(JSON.parse(await readFile(statePath, "utf8")) as WorkshopState);
+    if (
+      typeof options?.expectedVersion === "number" &&
+      current.version !== options.expectedVersion
+    ) {
+      throw new WorkshopStateConflictError(instanceId);
+    }
     const tempPath = `${statePath}.${randomUUID()}.tmp`;
-    await writeFile(tempPath, JSON.stringify(state, null, 2));
+    await writeFile(tempPath, JSON.stringify(withStateVersion(state), null, 2));
     await rename(tempPath, statePath);
   }
 }
@@ -69,12 +95,13 @@ export class NeonWorkshopStateRepository implements WorkshopStateRepository {
     const state = instance ? createWorkshopStateFromInstance(instance) : { ...seedWorkshopState, workshopId: instanceId };
 
     await sql`
-      INSERT INTO workshop_instances (id, template_id, workshop_meta, workshop_state)
+      INSERT INTO workshop_instances (id, template_id, workshop_meta, workshop_state, state_version)
       VALUES (
         ${state.workshopId},
         ${instance?.templateId ?? seedWorkshopState.workshopId},
         ${JSON.stringify(state.workshopMeta)}::jsonb,
-        ${JSON.stringify(state)}::jsonb
+        ${JSON.stringify(withStateVersion(state))}::jsonb,
+        1
       )
       ON CONFLICT (id) DO NOTHING
     `;
@@ -84,23 +111,67 @@ export class NeonWorkshopStateRepository implements WorkshopStateRepository {
     const sql = getNeonSql();
     await this.ensureInstance(instanceId);
     const rows = (await sql.query(
-      "SELECT workshop_state FROM workshop_instances WHERE id = $1 LIMIT 1",
+      "SELECT workshop_state, state_version FROM workshop_instances WHERE id = $1 LIMIT 1",
       [instanceId],
-    )) as { workshop_state: WorkshopState }[];
+    )) as { workshop_state: WorkshopState; state_version: number }[];
 
-    return rows[0]?.workshop_state ?? { ...seedWorkshopState, workshopId: instanceId };
+    const row = rows[0];
+    if (!row) {
+      return { ...seedWorkshopState, workshopId: instanceId };
+    }
+
+    return {
+      ...row.workshop_state,
+      version: row.state_version ?? row.workshop_state.version ?? 1,
+    };
   }
 
-  async saveState(instanceId: string, state: WorkshopState) {
+  async saveState(instanceId: string, state: WorkshopState, options?: { expectedVersion?: number }) {
     const sql = getNeonSql();
     await this.ensureInstance(instanceId);
-    await sql`
-      UPDATE workshop_instances
-      SET workshop_meta = ${JSON.stringify(state.workshopMeta)}::jsonb,
-          workshop_state = ${JSON.stringify(state)}::jsonb,
-          updated_at = NOW()
-      WHERE id = ${instanceId}
-    `;
+    if (typeof options?.expectedVersion === "number") {
+      const rows = (await sql.query(
+        `
+          UPDATE workshop_instances
+          SET workshop_meta = $1::jsonb,
+              workshop_state = $2::jsonb,
+              state_version = $3,
+              updated_at = NOW()
+          WHERE id = $4
+            AND state_version = $5
+          RETURNING state_version
+        `,
+        [
+          JSON.stringify(state.workshopMeta),
+          JSON.stringify(withStateVersion(state)),
+          state.version ?? options.expectedVersion + 1,
+          instanceId,
+          options.expectedVersion,
+        ],
+      )) as { state_version: number }[];
+
+      if (rows.length === 0) {
+        throw new WorkshopStateConflictError(instanceId);
+      }
+      return;
+    }
+
+    await sql.query(
+      `
+        UPDATE workshop_instances
+        SET workshop_meta = $1::jsonb,
+            workshop_state = $2::jsonb,
+            state_version = $3,
+            updated_at = NOW()
+        WHERE id = $4
+      `,
+      [
+        JSON.stringify(state.workshopMeta),
+        JSON.stringify(withStateVersion(state)),
+        state.version ?? 1,
+        instanceId,
+      ],
+    );
   }
 }
 

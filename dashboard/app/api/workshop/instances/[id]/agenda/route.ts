@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { addAgendaItem, getWorkshopState, moveAgendaItem, removeAgendaItem, setCurrentAgendaItem, updateAgendaItem } from "@/lib/workshop-store";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -33,16 +34,20 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: false, error: "title, time and description are required" }, { status: 400 });
   }
 
-  const state = await addAgendaItem(
-    {
-      title: body.title,
-      time: body.time,
-      description: body.description,
-      afterItemId: body.afterItemId ?? null,
-    },
-    id,
-  );
-  return NextResponse.json({ ok: true, items: state.agenda });
+  try {
+    const state = await addAgendaItem(
+      {
+        title: body.title,
+        time: body.time,
+        description: body.description,
+        afterItemId: body.afterItemId ?? null,
+      },
+      id,
+    );
+    return NextResponse.json({ ok: true, items: state.agenda });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -62,8 +67,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ ok: false, error: "itemId and direction are required" }, { status: 400 });
     }
 
-    const state = await moveAgendaItem(body.itemId, body.direction, id);
-    return NextResponse.json({ ok: true, items: state.agenda });
+    try {
+      const state = await moveAgendaItem(body.itemId, body.direction, id);
+      return NextResponse.json({ ok: true, items: state.agenda });
+    } catch (error) {
+      return workshopMutationErrorResponse(error);
+    }
   }
 
   if (body.action === "update") {
@@ -71,24 +80,32 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       return NextResponse.json({ ok: false, error: "itemId, title, time and description are required" }, { status: 400 });
     }
 
-    const state = await updateAgendaItem(
-      body.itemId,
-      {
-        title: body.title,
-        time: body.time,
-        description: body.description,
-      },
-      id,
-    );
-    return NextResponse.json({ ok: true, items: state.agenda });
+    try {
+      const state = await updateAgendaItem(
+        body.itemId,
+        {
+          title: body.title,
+          time: body.time,
+          description: body.description,
+        },
+        id,
+      );
+      return NextResponse.json({ ok: true, items: state.agenda });
+    } catch (error) {
+      return workshopMutationErrorResponse(error);
+    }
   }
 
   if (!body.itemId) {
     return NextResponse.json({ ok: false, error: "itemId is required" }, { status: 400 });
   }
 
-  const state = await setCurrentAgendaItem(body.itemId, id);
-  return NextResponse.json({ ok: true, items: state.agenda, phase: state.workshopMeta.currentPhaseLabel });
+  try {
+    const state = await setCurrentAgendaItem(body.itemId, id);
+    return NextResponse.json({ ok: true, items: state.agenda, phase: state.workshopMeta.currentPhaseLabel });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -103,6 +120,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     return NextResponse.json({ ok: false, error: "itemId is required" }, { status: 400 });
   }
 
-  const state = await removeAgendaItem(body.itemId, id);
-  return NextResponse.json({ ok: true, items: state.agenda });
+  try {
+    const state = await removeAgendaItem(body.itemId, id);
+    return NextResponse.json({ ok: true, items: state.agenda });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }

@@ -18,7 +18,7 @@ import {
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../components/theme-switcher";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
-import { getWorkshopTemplateVariantLabel, workshopTemplates, type WorkshopTemplate } from "@/lib/workshop-data";
+import { workshopTemplates } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { createWorkshopInstance, getWorkshopState, removeWorkshopInstance } from "@/lib/workshop-store";
 import {
@@ -51,7 +51,7 @@ async function createInstanceAction(formData: FormData) {
   await requireFacilitatorActionAccess(accessInstanceId);
 
   const id = String(formData.get("newInstanceId") ?? "").trim();
-  const templateId = String(formData.get("templateId") ?? "").trim();
+  const templateId = workshopTemplates[0]?.id ?? "";
   const eventTitle = String(formData.get("eventTitle") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const dateRange = formatWorkshopDateLabel(String(formData.get("dateRange") ?? ""), lang);
@@ -115,10 +115,6 @@ function resolveWorkspaceNextStep(copy: (typeof adminCopy)["cs" | "en"], status:
     return copy.workspaceNextStepPrepared;
   }
   return copy.workspaceNextStepCreated;
-}
-
-function buildTemplateOptionLabel(template: WorkshopTemplate, lang: "cs" | "en") {
-  return getWorkshopTemplateVariantLabel(template, lang);
 }
 
 function formatWorkshopDateLabel(value: string, lang: "cs" | "en") {
@@ -314,20 +310,12 @@ export default async function AdminWorkspacePage({
                       <input name="lang" type="hidden" value={lang} />
                       <input name="accessInstanceId" type="hidden" value={workspaceAccessInstanceId} />
 
-                      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[16rem_minmax(0,1fr)_minmax(0,1fr)]">
-                        <div>
-                          <FieldLabel htmlFor="template-id">{copy.instanceSelectLabel}</FieldLabel>
-                          <select id="template-id" name="templateId" className={`${adminInputClassName} mt-2`} defaultValue={workshopTemplates[0]?.id}>
-                            {workshopTemplates.map((template) => (
-                              <option key={template.id} value={template.id}>
-                                {buildTemplateOptionLabel(template, lang)}
-                              </option>
-                            ))}
-                          </select>
-                          <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{copy.instanceSelectHint}</p>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] sm:col-span-2">
+                          {copy.instanceBlueprintSummary}
                         </div>
 
-                        <div className="xl:col-span-2">
+                        <div className="sm:col-span-2">
                           <FieldLabel htmlFor="event-title">{copy.createInstanceEventTitleLabel}</FieldLabel>
                           <input id="event-title" name="eventTitle" placeholder={copy.createInstanceEventTitlePlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>

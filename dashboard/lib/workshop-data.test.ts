@@ -10,16 +10,16 @@ import {
 
 describe("workshop-data", () => {
   it("creates a clean sample instance from a template", () => {
-    const state = createWorkshopStateFromTemplate("blueprint-compact");
+    const state = createWorkshopStateFromTemplate("blueprint-default");
 
-    expect(state.workshopId).toBe("blueprint-compact");
+    expect(state.workshopId).toBe("blueprint-default");
     expect(state.workshopMeta.city).toBe("Workshop venue");
     expect(state.workshopMeta.dateRange).toBe("Workshop day");
     expect(state.workshopMeta.eventTitle).toBe("Harness Lab workshop");
     expect(state.workshopMeta.venueName).toBe("Workshop venue");
     expect(state.workshopMeta.roomName).toBe("Main room");
     expect(state.rotation.revealed).toBe(false);
-    expect(state.rotation.scenario).toBe("17-participants");
+    expect(state.rotation.scenario).toBe("20-participants");
     expect(state.teams).toEqual([]);
     expect(state.monitoring).toEqual([]);
     expect(state.sprintUpdates).toEqual([]);
@@ -37,7 +37,7 @@ describe("workshop-data", () => {
     expect(state.ticker).toEqual([
       {
         id: "tick-reset",
-        label: "Instance Kompaktní varianta je připravená. Zaregistrujte týmy a spusťte první checkpoint.",
+        label: "Instance Výchozí blueprint je připravená. Zaregistrujte týmy a spusťte první checkpoint.",
         tone: "info",
       },
     ]);
@@ -46,7 +46,7 @@ describe("workshop-data", () => {
   it("falls back to the seed state when a template is unknown", () => {
     const state = createWorkshopStateFromTemplate("missing-template");
 
-    expect(state.workshopId).toBe("blueprint-standard");
+    expect(state.workshopId).toBe("blueprint-default");
     expect(state.workshopMeta.city).toBe("Workshop venue");
     expect(state.workshopMeta.title).toBe(seedWorkshopState.workshopMeta.title);
   });
@@ -54,7 +54,7 @@ describe("workshop-data", () => {
   it("can create workshop state from an instance record", () => {
     const state = createWorkshopStateFromInstance(createWorkshopInstanceRecord({
       id: "client-workshop-001",
-      templateId: "blueprint-standard",
+      templateId: "blueprint-default",
       workshopMeta: {
         title: "Harness Lab",
         subtitle: "Soukromá workshop instance",

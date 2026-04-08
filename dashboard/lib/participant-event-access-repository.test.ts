@@ -117,4 +117,32 @@ describe("participant-event-access-repository", () => {
     });
     expect(query).toHaveBeenCalled();
   });
+
+  it("does not seed a sample event code in neon mode when no bootstrap code is configured", async () => {
+    const query = vi.fn(async (sqlText: string) => {
+      if (sqlText.includes("SELECT id FROM participant_event_access")) {
+        return [];
+      }
+      if (sqlText.includes("SELECT id, instance_id, version, code_hash, expires_at, revoked_at")) {
+        return [];
+      }
+      return undefined;
+    });
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const mod = await import("./participant-event-access-repository");
+    const repository = new mod.NeonParticipantEventAccessRepository();
+
+    await expect(repository.getActiveAccess("instance-a")).resolves.toBeNull();
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(
+      query.mock.calls.some(([sqlText]) => String(sqlText).includes("INSERT INTO participant_event_access")),
+    ).toBe(false);
+  });
 });

@@ -3,15 +3,18 @@ import type { AuditLogRecord, InstanceGrantRecord } from "./runtime-contracts";
 
 describe("facilitator-auth-service (neon mode)", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
+  const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
 
   beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
   });
 
   afterEach(() => {
     process.env.NEON_AUTH_BASE_URL = originalBaseUrl;
+    process.env.NEON_AUTH_COOKIE_SECRET = originalCookieSecret;
   });
 
   it("rejects a missing facilitator session and writes a failure audit log", async () => {

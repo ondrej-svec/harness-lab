@@ -187,14 +187,14 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
     try {
       const created = await createWorkshopInstance({
         id: dynamicInstanceId,
-        templateId: "blueprint-compact",
+        templateId: "blueprint-default",
         city: "Integration Room",
         dateRange: "2026-04-07 • Integration Room",
       });
 
       expect(created).toMatchObject({
         id: dynamicInstanceId,
-        templateId: "blueprint-compact",
+        templateId: "blueprint-default",
         removedAt: null,
         workshopMeta: { city: "Integration Room" },
       });

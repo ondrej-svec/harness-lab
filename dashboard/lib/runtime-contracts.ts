@@ -136,7 +136,11 @@ export interface WorkshopInstanceRepository {
 
 export interface RuntimeWorkshopStateRepository {
   getState(instanceId: WorkshopInstanceId): Promise<WorkshopState>;
-  saveState(instanceId: WorkshopInstanceId, state: WorkshopState): Promise<void>;
+  saveState(
+    instanceId: WorkshopInstanceId,
+    state: WorkshopState,
+    options?: { expectedVersion?: number },
+  ): Promise<void>;
 }
 
 export interface ParticipantSessionRepository {

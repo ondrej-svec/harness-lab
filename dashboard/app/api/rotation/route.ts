@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { getWorkshopState, setRotationReveal } from "@/lib/workshop-store";
 
 export async function GET() {
@@ -18,6 +19,10 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, error: "revealed must be a boolean" }, { status: 400 });
   }
 
-  const state = await setRotationReveal(body.revealed);
-  return NextResponse.json({ ok: true, rotation: state.rotation });
+  try {
+    const state = await setRotationReveal(body.revealed);
+    return NextResponse.json({ ok: true, rotation: state.rotation });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }

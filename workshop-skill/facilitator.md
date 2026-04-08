@@ -93,7 +93,19 @@ Vysvětli, že vytvoření instance má být popsané jako import z blueprintu. 
 POST {DASHBOARD_URL}/api/workshop
 Content-Type: application/json
 
-{ "action": "create", "templateId": "..." }
+{
+  "action": "create",
+  "id": "developer-hackathon-praha-24-4-saturn",
+  "templateId": "blueprint-default",
+  "eventTitle": "Developer Hackathon Praha",
+  "city": "Praha",
+  "dateRange": "24. dubna 2026",
+  "venueName": "Seyfor Praha jednička 103",
+  "roomName": "Saturn",
+  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
+  "locationDetails": "17 osob + lektor",
+  "facilitatorLabel": "Ondrej"
+}
 ```
 
 Nebo explicitně přes instanční route:
@@ -102,8 +114,49 @@ Nebo explicitně přes instanční route:
 POST {DASHBOARD_URL}/api/workshop/instances
 Content-Type: application/json
 
-{ "id": "client-hackathon-2026-05", "templateId": "...", "city": "...", "dateRange": "..." }
+{
+  "id": "developer-hackathon-praha-24-4-saturn",
+  "templateId": "blueprint-default",
+  "eventTitle": "Developer Hackathon Praha",
+  "city": "Praha",
+  "dateRange": "24. dubna 2026",
+  "venueName": "Seyfor Praha jednička 103",
+  "roomName": "Saturn",
+  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
+  "locationDetails": "17 osob + lektor",
+  "facilitatorLabel": "Ondrej"
+}
 ```
+
+Poznámky pro skill:
+- `id` musí být lowercase slug s písmeny, čísly a pomlčkami
+- když skill volá create opakovaně se stejným `id`, route vrací `created: false` a existující instance record
+- nehádej venue metadata zkráceně, když je facilitátor zná; pošli je rovnou při create
+
+### `/workshop facilitator update-instance <instance-id>`
+
+Když facilitátor chce upravit metadata bez resetu instance, použij:
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
+Content-Type: application/json
+
+{
+  "action": "update_metadata",
+  "eventTitle": "Developer Hackathon Praha",
+  "dateRange": "24. dubna 2026",
+  "venueName": "Seyfor Praha jednička 103",
+  "roomName": "Saturn",
+  "addressLine": "CZ, Praha 8, Sokolovska 695/115b",
+  "locationDetails": "17 osob + lektor",
+  "facilitatorLabel": "Ondrej"
+}
+```
+
+Pravidla:
+- pošli jen fieldy, které chceš změnit
+- nepoužívej reset pro obyčejnou opravu názvu, venue nebo room
+- když route vrátí `400`, payload je špatně; když vrátí `404`, instance neexistuje
 
 ### `/workshop facilitator prepare`
 

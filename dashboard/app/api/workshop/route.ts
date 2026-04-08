@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
+import { parseWorkshopInstanceCreateBody } from "@/lib/workshop-instance-api";
+import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { workshopTemplates } from "@/lib/workshop-data";
-import { createWorkshopInstance, getWorkshopInstances, getWorkshopState, prepareWorkshopInstance, resetWorkshopState } from "@/lib/workshop-store";
+import { createWorkshopInstance, getWorkshopState, prepareWorkshopInstance, resetWorkshopState } from "@/lib/workshop-store";
 
 export async function GET() {
   const state = await getWorkshopState();
@@ -10,7 +12,6 @@ export async function GET() {
     workshopId: state.workshopId,
     workshopMeta: state.workshopMeta,
     templates: workshopTemplates,
-    instances: await getWorkshopInstances(),
   });
 }
 
@@ -22,30 +23,28 @@ export async function POST(request: Request) {
 
   const body = (await request.json()) as {
     action?: "create" | "prepare" | "reset";
-    id?: string;
     instanceId?: string;
+    id?: string;
     templateId?: string;
-    city?: string;
-    dateRange?: string;
   };
   const action = body.action ?? "reset";
   const facilitator = await getFacilitatorSession();
 
   if (action === "create") {
-    if (!body.id || !body.templateId) {
-      return NextResponse.json({ ok: false, error: "id and templateId are required" }, { status: 400 });
+    const parsed = parseWorkshopInstanceCreateBody(body);
+    if (!parsed.ok) {
+      return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
     }
 
+    const existing = await getWorkshopInstanceRepository().getInstance(parsed.value.id);
     const instance = await createWorkshopInstance(
       {
-        id: body.id,
-        templateId: body.templateId,
-        city: body.city,
-        dateRange: body.dateRange,
+        ...parsed.value,
+        templateId: parsed.value.templateId ?? workshopTemplates[0]?.id,
       },
       facilitator?.neonUserId ?? null,
     );
-    return NextResponse.json({ ok: true, instance });
+    return NextResponse.json({ ok: true, created: !existing, instance });
   }
 
   if (action === "prepare") {
@@ -58,10 +57,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, instance });
   }
 
-  if (!body.templateId) {
-    return NextResponse.json({ ok: false, error: "templateId is required" }, { status: 400 });
-  }
-
-  const state = await resetWorkshopState(body.templateId);
+  const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id);
   return NextResponse.json({ ok: true, workshopId: state.workshopId, workshopMeta: state.workshopMeta });
 }

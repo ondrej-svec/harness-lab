@@ -26,7 +26,7 @@ Replace custom Basic Auth with Neon Auth for facilitator authentication in produ
 - **Sign-out**: Server action using `auth.signOut()`, replaces the impossible-to-logout Basic Auth
 - **Middleware**: Redirects to `/admin/sign-in` when no session cookie exists, replaces 401 + `WWW-Authenticate` challenge
 - **Identity resolution**: `auth.getSession()` → `findBySubject(userId)` → `getActiveGrant()`, replaces `decodeBasicAuth` → `findByUsername` → password hash compare
-- **Service selection**: `NeonAuthFacilitatorAuthService` auto-selected when `HARNESS_STORAGE_MODE=neon` and `NEON_AUTH_BASE_URL` is set
+- **Service selection**: `NeonAuthFacilitatorAuthService` is the Neon-mode path, and incomplete Neon auth config is treated as a fail-closed misconfiguration instead of a signal to fall back to file-mode Basic Auth
 
 ### What stayed the same
 

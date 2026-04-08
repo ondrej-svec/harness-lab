@@ -35,6 +35,10 @@ Those values must differ between Preview and Production.
 
 In local file mode (`HARNESS_STORAGE_MODE=file`), the legacy Basic Auth fallback remains available and does not require Neon Auth credentials.
 
+In Neon mode (`HARNESS_STORAGE_MODE=neon`), missing `NEON_AUTH_BASE_URL` or `NEON_AUTH_COOKIE_SECRET` is a deployment misconfiguration. The runtime must fail closed rather than silently reusing file-mode auth behavior.
+
+`HARNESS_EVENT_CODE` remains optional in Neon mode, but it is now an explicit bootstrap input only. If it is absent, Neon mode does not auto-seed the sample event code.
+
 ## Preview Rules
 
 - `HARNESS_STORAGE_MODE=neon`

@@ -33,6 +33,15 @@ Cover:
 - participant denial on facilitator routes
 - facilitator denial on missing or revoked grants
 - cross-instance denial paths for both participant and facilitator requests
+- public-route contract tests for anonymous responses that must stay public-safe
+
+### Concurrency and mutation tests
+
+Cover:
+
+- optimistic-lock rejection on shared `workshop_state` writes
+- route-level `409` retryable responses for facilitator mutations that lose the version race
+- explicit review or deferral for adjacent bulk-replace repository patterns
 
 ### Critical e2e flows
 
@@ -75,6 +84,7 @@ Human review must explicitly check:
 - whether any new state belongs in the private runtime layer rather than the repo
 - whether `instance_id` scoping is enforced end to end
 - whether participant and facilitator paths remain separated
+- whether anonymous endpoints expose only public-safe projections
 - whether logs or telemetry risk exposing secrets or private event data
 - whether docs and ADRs were updated when trust boundaries changed
 

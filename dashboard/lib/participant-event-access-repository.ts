@@ -12,6 +12,10 @@ const sampleEventCode = "lantern8-context4-handoff2";
 const eventCodeValidityDays = 14;
 
 function getSeedEventCode() {
+  if (getRuntimeStorageMode() === "neon" && !process.env.HARNESS_EVENT_CODE) {
+    return null;
+  }
+
   const code = process.env.HARNESS_EVENT_CODE ?? sampleEventCode;
   const expiresAt =
     process.env.HARNESS_EVENT_CODE_EXPIRES_AT ??
@@ -41,6 +45,9 @@ export class FileParticipantEventAccessRepository implements ParticipantEventAcc
 
   private buildSeedAccess(instanceId: string): ParticipantEventAccessRecord {
     const seed = getSeedEventCode();
+    if (!seed) {
+      throw new Error("File-mode participant event access requires a seed event code");
+    }
     return {
       id: `pea-${instanceId}`,
       instanceId,
@@ -92,6 +99,9 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     }
 
     const seed = getSeedEventCode();
+    if (!seed) {
+      return;
+    }
     await sql.query(
       `
         INSERT INTO participant_event_access (id, instance_id, version, code_hash, expires_at, revoked_at)

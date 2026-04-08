@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { hasCompleteNeonAuthConfig, isNeonRuntimeMode } from "./lib/runtime-auth-configuration";
 import { resolveUiLanguage, uiLanguageCookieName } from "@/lib/ui-language";
 
 /**
@@ -15,7 +16,11 @@ const NEON_AUTH_SESSION_COOKIES = [
  * Check if Neon Auth is configured (proxy runs before the app, so we check env directly).
  */
 function isNeonAuthEnabled() {
-  return Boolean(process.env.NEON_AUTH_BASE_URL && process.env.NEON_AUTH_COOKIE_SECRET);
+  return isNeonRuntimeMode() && hasCompleteNeonAuthConfig();
+}
+
+function hasBrokenNeonAuthConfiguration() {
+  return isNeonRuntimeMode() && !hasCompleteNeonAuthConfig();
 }
 
 export async function proxy(request: NextRequest) {
@@ -25,6 +30,10 @@ export async function proxy(request: NextRequest) {
 
   // Protect /admin routes (but not /admin/sign-in itself)
   if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/sign-in")) {
+    if (hasBrokenNeonAuthConfiguration()) {
+      return new NextResponse("Neon auth is misconfigured for HARNESS_STORAGE_MODE=neon", { status: 503 });
+    }
+
     if (isNeonAuthEnabled()) {
       // Neon Auth mode: redirect to sign-in if no session cookie
       const hasSession = NEON_AUTH_SESSION_COOKIES.some((name) => request.cookies.has(name));
@@ -43,7 +52,7 @@ export async function proxy(request: NextRequest) {
   requestHeaders.set("x-harness-ui-lang", resolvedLanguage);
 
   // Forward Authorization header for file-mode Basic Auth fallback
-  if (!isNeonAuthEnabled()) {
+  if (!isNeonRuntimeMode()) {
     const authorization = request.headers.get("authorization");
     if (authorization) {
       requestHeaders.set("x-harness-authorization", authorization);

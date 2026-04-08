@@ -12,6 +12,9 @@ vi.mock("@/lib/facilitator-access", () => ({
 vi.mock("@/lib/workshop-store", () => ({
   getWorkshopState,
   setRotationReveal,
+  isWorkshopStateConflictError: (error: unknown) =>
+    error instanceof Error && error.name === "WorkshopStateConflictError",
+  isWorkshopStateTargetError: () => false,
 }));
 
 const routeModulePromise = import("@/app/api/rotation/route");
@@ -87,6 +90,27 @@ describe("rotation route", () => {
     await expect(response.json()).resolves.toEqual({
       ok: true,
       rotation: expect.objectContaining({ revealed: true }),
+    });
+  });
+
+  it("returns a retryable conflict response when the workshop state changes first", async () => {
+    const { PATCH } = await routeModulePromise;
+    requireFacilitatorRequest.mockResolvedValue(null);
+    const conflict = new Error("stale");
+    conflict.name = "WorkshopStateConflictError";
+    setRotationReveal.mockRejectedValue(conflict);
+
+    const response = await PATCH(
+      new Request("http://localhost/api/rotation", {
+        method: "PATCH",
+        body: JSON.stringify({ revealed: true }),
+      }),
+    );
+
+    expect(response.status).toBe(409);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "workshop_state_conflict",
     });
   });
 });

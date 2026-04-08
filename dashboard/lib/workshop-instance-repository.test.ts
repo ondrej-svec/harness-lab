@@ -97,7 +97,7 @@ describe("workshop-instance-repository", () => {
       .mockResolvedValueOnce([
         {
           id: "legacy-a",
-          template_id: "blueprint-standard",
+          template_id: "blueprint-default",
           status: "prepared",
           blueprint_id: null,
           blueprint_version: null,

@@ -12,6 +12,7 @@ import {
   type WorkshopInstanceRecord,
   type WorkshopState,
   seedWorkshopState,
+  workshopTemplates,
 } from "./workshop-data";
 import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
@@ -25,6 +26,7 @@ import { emitRuntimeAlert } from "./runtime-alert";
 import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 import { normalizePresenterScenes } from "./presenter-scenes";
+export { isWorkshopStateConflictError } from "./workshop-state-repository";
 
 export class WorkshopStateTargetError extends Error {
   constructor(
@@ -141,6 +143,7 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
 
   return {
     ...state,
+    version: state.version ?? 1,
     agenda: normalizedAgenda,
     workshopMeta: {
       ...state.workshopMeta,
@@ -197,10 +200,14 @@ export async function updateWorkshopState(
 ): Promise<WorkshopState> {
   const current = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   const next = normalizeStoredWorkshopState(updater(current));
+  const nextVersion = current.version + 1;
   await getWorkshopStateRepository().saveState(instanceId, {
     ...next,
+    version: nextVersion,
     monitoring: current.monitoring,
     sprintUpdates: current.sprintUpdates,
+  }, {
+    expectedVersion: current.version,
   });
   return getWorkshopState(instanceId);
 }
@@ -487,10 +494,13 @@ export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopIns
   const teams = await repository.listTeams(instanceId);
 
   // Keep the workshop-state projection aligned during the migration window.
-  const state = await getBaseWorkshopState(instanceId);
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
+    version: state.version + 1,
     teams,
+  }, {
+    expectedVersion: state.version,
   });
 
   return getWorkshopState(instanceId);
@@ -504,10 +514,13 @@ export async function updateCheckpoint(teamId: string, checkpoint: string, insta
   await repository.replaceTeams(instanceId, nextTeams);
 
   // Keep the workshop-state projection aligned during the migration window.
-  const state = await getBaseWorkshopState(instanceId);
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
+    version: state.version + 1,
     teams: nextTeams,
+  }, {
+    expectedVersion: state.version,
   });
 
   return getWorkshopState(instanceId);
@@ -519,7 +532,7 @@ export async function getWorkshopInstances(options?: { includeRemoved?: boolean 
 
 export async function createWorkshopInstance(input: {
   id: string;
-  templateId: string;
+  templateId?: string;
   eventTitle?: string;
   city?: string;
   dateRange?: string;
@@ -536,9 +549,10 @@ export async function createWorkshopInstance(input: {
   }
 
   const now = new Date().toISOString();
+  const templateId = input.templateId?.trim() || workshopTemplates[0]?.id || "blueprint-default";
   const instance = createWorkshopInstanceRecord({
     id: input.id,
-    templateId: input.templateId,
+    templateId,
     importedAt: now,
   });
   const nextInstance: WorkshopInstanceRecord = {
@@ -571,6 +585,79 @@ export async function createWorkshopInstance(input: {
     metadata: {
       templateId: nextInstance.templateId,
       actorNeonUserId: actorNeonUserId ?? null,
+    },
+  });
+
+  return nextInstance;
+}
+
+export async function updateWorkshopInstanceMetadata(
+  instanceId: string,
+  input: {
+    eventTitle?: string;
+    city?: string;
+    dateRange?: string;
+    venueName?: string;
+    roomName?: string;
+    addressLine?: string;
+    locationDetails?: string;
+    facilitatorLabel?: string;
+  },
+  actorNeonUserId?: string | null,
+) {
+  const repository = getWorkshopInstanceRepository();
+  const current = await repository.getInstance(instanceId);
+  if (!current) {
+    return null;
+  }
+
+  const nextWorkshopMeta = {
+    ...current.workshopMeta,
+    eventTitle: input.eventTitle?.trim() || current.workshopMeta.eventTitle,
+    city: input.city?.trim() || current.workshopMeta.city,
+    dateRange: input.dateRange?.trim() || current.workshopMeta.dateRange,
+    venueName: input.venueName?.trim() || current.workshopMeta.venueName,
+    roomName: input.roomName?.trim() || current.workshopMeta.roomName,
+    addressLine: input.addressLine?.trim() || current.workshopMeta.addressLine,
+    locationDetails: input.locationDetails?.trim() || current.workshopMeta.locationDetails,
+    facilitatorLabel: input.facilitatorLabel?.trim() || current.workshopMeta.facilitatorLabel,
+  };
+  const nextInstance = {
+    ...current,
+    workshopMeta: nextWorkshopMeta,
+  };
+
+  await repository.updateInstance(instanceId, nextInstance);
+
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
+  await getWorkshopStateRepository().saveState(instanceId, {
+    ...state,
+    version: state.version + 1,
+    workshopMeta: {
+      ...state.workshopMeta,
+      ...nextWorkshopMeta,
+    },
+    monitoring: state.monitoring,
+    sprintUpdates: state.sprintUpdates,
+  }, {
+    expectedVersion: state.version,
+  });
+
+  const changedFields = Object.entries(input)
+    .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
+    .map(([key]) => key)
+    .join(",");
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId,
+    actorKind: "facilitator",
+    action: "instance_metadata_updated",
+    result: "success",
+    createdAt: new Date().toISOString(),
+    metadata: {
+      actorNeonUserId: actorNeonUserId ?? null,
+      changedFields,
     },
   });
 
@@ -628,10 +715,13 @@ export async function addSprintUpdate(update: SprintUpdate, instanceId = getCurr
   const checkpoints = await repository.listCheckpoints(instanceId);
 
   // Keep the workshop-state projection aligned during the migration window.
-  const state = await getBaseWorkshopState(instanceId);
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
+    version: state.version + 1,
     sprintUpdates: checkpoints,
+  }, {
+    expectedVersion: state.version,
   });
 
   return getWorkshopState(instanceId);
@@ -642,10 +732,13 @@ export async function replaceMonitoring(items: MonitoringSnapshot[], instanceId 
   await repository.replaceSnapshots(instanceId, items);
 
   // Keep the workshop-state projection aligned during the migration window.
-  const state = await getBaseWorkshopState(instanceId);
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   await getWorkshopStateRepository().saveState(instanceId, {
     ...state,
+    version: state.version + 1,
     monitoring: items,
+  }, {
+    expectedVersion: state.version,
   });
 
   return getWorkshopState(instanceId);
@@ -728,7 +821,7 @@ export async function applyRuntimeRetentionPolicy(instanceId = getCurrentWorksho
   ]);
 }
 
-export async function resetWorkshopState(templateId: string, instanceId = getCurrentWorkshopInstanceId()) {
+export async function resetWorkshopState(templateId = workshopTemplates[0]?.id || "blueprint-default", instanceId = getCurrentWorkshopInstanceId()) {
   await createWorkshopArchive({
     reason: "reset",
     notes: `Automatic pre-reset archive for template ${templateId}`,

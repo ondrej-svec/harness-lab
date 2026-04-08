@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import type { SprintUpdate } from "@/lib/workshop-data";
 import { addSprintUpdate, getWorkshopState } from "@/lib/workshop-store";
 
@@ -29,6 +30,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "id, teamId, text and at are required" }, { status: 400 });
   }
 
-  const state = await addSprintUpdate(body);
-  return NextResponse.json({ ok: true, items: state.sprintUpdates });
+  try {
+    const state = await addSprintUpdate(body);
+    return NextResponse.json({ ok: true, items: state.sprintUpdates });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }

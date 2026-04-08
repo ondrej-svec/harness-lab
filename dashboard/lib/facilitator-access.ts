@@ -3,15 +3,20 @@ import { redirect } from "next/navigation";
 import { getCliSessionFromBearerToken, parseBearerToken } from "./facilitator-cli-auth-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
-import { getRuntimeStorageMode } from "./runtime-storage";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
+import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
 
 function unauthorizedResponse() {
   return new Response("Authentication required", { status: 401 });
 }
 
 function isNeonAuthMode() {
-  return getRuntimeStorageMode() === "neon" && Boolean(process.env.NEON_AUTH_BASE_URL);
+  if (!isNeonRuntimeMode()) {
+    return false;
+  }
+
+  assertValidNeonAuthConfiguration();
+  return true;
 }
 
 /**

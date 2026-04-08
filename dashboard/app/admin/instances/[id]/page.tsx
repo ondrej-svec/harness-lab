@@ -25,7 +25,7 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { getWorkshopTemplateVariantLabel, workshopTemplates } from "@/lib/workshop-data";
+import { workshopTemplates } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addAgendaItem,
@@ -61,13 +61,6 @@ import {
 export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
-
-function buildTemplateResetLabel(
-  template: (typeof workshopTemplates)[number],
-  lang: UiLanguage,
-) {
-  return getWorkshopTemplateVariantLabel(template, lang);
-}
 
 function deriveNextTeamId(existingIds: string[]) {
   const numericIds = existingIds
@@ -302,7 +295,7 @@ async function resetWorkshopAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
-  const templateId = String(formData.get("templateId") ?? "");
+  const templateId = workshopTemplates[0]?.id ?? "";
   if (templateId) {
     await resetWorkshopState(templateId, instanceId);
   }
@@ -822,13 +815,9 @@ export default async function AdminPage({
 
                     <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
                       <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                      <select name="templateId" className={adminInputClassName}>
-                        {workshopTemplates.map((template) => (
-                          <option key={template.id} value={template.id}>
-                            {buildTemplateResetLabel(template, lang)}
-                          </option>
-                        ))}
-                      </select>
+                      <p className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                        {copy.resetBlueprintSummary}
+                      </p>
                       <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
                       <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
                         {copy.resetButton}

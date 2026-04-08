@@ -139,6 +139,7 @@ export type WorkshopMeta = {
 };
 
 export type WorkshopState = {
+  version: number;
   workshopId: string;
   workshopMeta: WorkshopMeta;
   agenda: AgendaItem[];
@@ -252,38 +253,26 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
 }
 
 export function getWorkshopTemplateVariantLabel(template: WorkshopTemplate, lang: "cs" | "en") {
-  if (template.scenario === "20-participants") {
-    return lang === "cs" ? "větší skupina • cca 18-20 lidí" : "larger group • about 18-20 people";
-  }
-
-  return lang === "cs" ? "menší skupina • cca 15-17 lidí" : "smaller group • about 15-17 people";
+  void template;
+  return lang === "cs" ? "střední skupina • cca 15-20 lidí" : "medium group • about 15-20 people";
 }
 
 export const workshopTemplates: WorkshopTemplate[] = [
   {
-    id: "blueprint-standard",
-    label: "Celodenní hackathon",
+    id: "blueprint-default",
+    label: "Výchozí blueprint",
     defaultEventTitle: "Harness Lab workshop",
     city: "Workshop venue",
     dateLabel: "Workshop day",
     room: "Main room",
     scenario: "20-participants",
   },
-  {
-    id: "blueprint-compact",
-    label: "Kompaktní varianta",
-    defaultEventTitle: "Harness Lab workshop",
-    city: "Workshop venue",
-    dateLabel: "Workshop day",
-    room: "Main room",
-    scenario: "17-participants",
-  },
 ];
 
 export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   createWorkshopInstanceRecord({
     id: "sample-studio-a",
-    templateId: "blueprint-standard",
+    templateId: "blueprint-default",
     importedAt: "2026-04-07T09:00:00.000Z",
     workshopMeta: createSampleWorkshopMeta({
       eventTitle: "Ukázková instance A",
@@ -295,7 +284,7 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   }),
   createWorkshopInstanceRecord({
     id: "sample-studio-b",
-    templateId: "blueprint-standard",
+    templateId: "blueprint-default",
     importedAt: "2026-04-07T09:30:00.000Z",
     workshopMeta: createSampleWorkshopMeta({
       eventTitle: "Ukázková instance B",
@@ -307,7 +296,7 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   }),
   createWorkshopInstanceRecord({
     id: "sample-lab-c",
-    templateId: "blueprint-compact",
+    templateId: "blueprint-default",
     importedAt: "2026-04-07T10:00:00.000Z",
     workshopMeta: createSampleWorkshopMeta({
       eventTitle: "Ukázková instance C",
@@ -319,7 +308,7 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   }),
   createWorkshopInstanceRecord({
     id: "sample-lab-d",
-    templateId: "blueprint-compact",
+    templateId: "blueprint-default",
     importedAt: "2026-04-07T10:30:00.000Z",
     workshopMeta: createSampleWorkshopMeta({
       eventTitle: "Ukázková instance D",
@@ -332,6 +321,7 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
 ];
 
 export const seedWorkshopState: WorkshopState = {
+  version: 1,
   workshopId: "sample-studio-a",
   workshopMeta: {
     ...(sampleWorkshopInstances[0]?.workshopMeta ?? createWorkshopMetaFromTemplate(workshopTemplates[0])),
@@ -613,6 +603,7 @@ export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord
 
   return {
     ...seedWorkshopState,
+    version: 1,
     workshopId: instance.id,
     workshopMeta: instance.workshopMeta,
     rotation: {

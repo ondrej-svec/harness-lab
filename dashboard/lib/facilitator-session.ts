@@ -1,8 +1,8 @@
 import { auth } from "./auth/server";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
-import { getRuntimeStorageMode } from "./runtime-storage";
 import type { InstanceGrantRecord } from "./runtime-contracts";
+import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
 
 export type FacilitatorSession = {
   neonUserId: string;
@@ -14,9 +14,11 @@ export type FacilitatorSession = {
  * Returns null if not authenticated or no grant exists.
  */
 export async function getFacilitatorSession(instanceId = getCurrentWorkshopInstanceId()): Promise<FacilitatorSession | null> {
-  if (getRuntimeStorageMode() !== "neon" || !process.env.NEON_AUTH_BASE_URL) {
+  if (!isNeonRuntimeMode()) {
     return null;
   }
+
+  assertValidNeonAuthConfiguration();
 
   if (!auth) return null;
 

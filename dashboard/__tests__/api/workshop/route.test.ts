@@ -185,6 +185,10 @@ class AllowFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials() {
     return true;
   }
+
+  async hasValidSession() {
+    return false;
+  }
 }
 
 describe("workshop route", () => {
@@ -216,13 +220,15 @@ describe("workshop route", () => {
 
   it("returns workshop metadata and available templates", async () => {
     const response = await GET();
+    const payload = await response.json();
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toMatchObject({
+    expect(payload).toMatchObject({
       workshopId: "sample-studio-a",
       workshopMeta: { title: "Harness Lab" },
-      templates: expect.arrayContaining([expect.objectContaining({ id: "blueprint-compact" })]),
+      templates: expect.arrayContaining([expect.objectContaining({ id: "blueprint-default" })]),
     });
+    expect(payload).not.toHaveProperty("instances");
   });
 
   it("resets a workshop runtime while preserving its instance metadata", async () => {
@@ -233,7 +239,7 @@ describe("workshop route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({ templateId: "blueprint-compact" }),
+        body: JSON.stringify({ templateId: "blueprint-default" }),
       }),
     );
 
@@ -254,7 +260,7 @@ describe("workshop route", () => {
     });
   });
 
-  it("rejects reset requests without a template id", async () => {
+  it("falls back to the default blueprint when reset requests omit a template id", async () => {
     const response = await POST(
       new Request("http://localhost/api/workshop", {
         method: "POST",
@@ -266,10 +272,46 @@ describe("workshop route", () => {
       }),
     );
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
-      ok: false,
-      error: "templateId is required",
+      ok: true,
+      workshopId: "sample-studio-a",
+    });
+  });
+
+  it("creates a rich instance record through the legacy workshop action route", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/workshop", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          action: "create",
+          id: "developer-hackathon-praha-24-4-saturn",
+          templateId: "blueprint-default",
+          eventTitle: "Developer Hackathon Praha",
+          city: "Praha",
+          dateRange: "24. dubna 2026",
+          venueName: "Seyfor Praha jednička 103",
+          roomName: "Saturn",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      created: true,
+      instance: {
+        id: "developer-hackathon-praha-24-4-saturn",
+        workshopMeta: {
+          eventTitle: "Developer Hackathon Praha",
+          city: "Praha",
+          venueName: "Seyfor Praha jednička 103",
+        },
+      },
     });
   });
 });

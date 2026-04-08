@@ -172,6 +172,23 @@ Revoke a facilitator's access to the current instance. Requires `owner` role.
 
 Create a new workshop instance from a template. Requires facilitator session.
 
+The skill should support rich event metadata, not just id and city:
+- `id`
+- `templateId`
+- `eventTitle`
+- `city`
+- `dateRange`
+- `venueName`
+- `roomName`
+- `addressLine`
+- `locationDetails`
+- `facilitatorLabel`
+
+### `workshop facilitator update-instance <instance-id>`
+
+Update event metadata for an existing workshop instance. Requires facilitator session.
+Use this when the facilitator wants to correct or refine date, venue, room, address, or event title without resetting the instance.
+
 ### `workshop facilitator remove-instance`
 
 Remove a workshop instance from the active list without deleting its archive history. Requires facilitator session.

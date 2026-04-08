@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { getWorkshopState, setCurrentAgendaItem } from "@/lib/workshop-store";
 
 export async function GET() {
@@ -24,6 +25,10 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, error: "currentId is required" }, { status: 400 });
   }
 
-  const state = await setCurrentAgendaItem(body.currentId);
-  return NextResponse.json({ ok: true, items: state.agenda, phase: state.workshopMeta.currentPhaseLabel });
+  try {
+    const state = await setCurrentAgendaItem(body.currentId);
+    return NextResponse.json({ ok: true, items: state.agenda, phase: state.workshopMeta.currentPhaseLabel });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
+import { parseWorkshopInstanceCreateBody } from "@/lib/workshop-instance-api";
+import { workshopTemplates } from "@/lib/workshop-data";
 import { createWorkshopInstance, getWorkshopInstances } from "@/lib/workshop-store";
+import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 
 export async function GET(request: Request) {
   const denied = await requireFacilitatorRequest(request);
@@ -19,25 +22,19 @@ export async function POST(request: Request) {
     return denied;
   }
 
-  const body = (await request.json()) as {
-    id?: string;
-    templateId?: string;
-    city?: string;
-    dateRange?: string;
-  };
-  if (!body.id || !body.templateId) {
-    return NextResponse.json({ ok: false, error: "id and templateId are required" }, { status: 400 });
+  const parsed = parseWorkshopInstanceCreateBody(await request.json());
+  if (!parsed.ok) {
+    return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
   }
 
+  const existing = await getWorkshopInstanceRepository().getInstance(parsed.value.id);
   const facilitator = await getFacilitatorSession();
   const instance = await createWorkshopInstance(
     {
-      id: body.id,
-      templateId: body.templateId,
-      city: body.city,
-      dateRange: body.dateRange,
+      ...parsed.value,
+      templateId: parsed.value.templateId ?? workshopTemplates[0]?.id,
     },
     facilitator?.neonUserId ?? null,
   );
-  return NextResponse.json({ ok: true, instance });
+  return NextResponse.json({ ok: true, created: !existing, instance });
 }

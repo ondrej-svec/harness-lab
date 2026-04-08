@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { completeChallenge } from "@/lib/workshop-store";
 
 export async function POST(
@@ -24,7 +25,12 @@ export async function POST(
     );
   }
 
-  const state = await completeChallenge(id, body.teamId);
+  let state;
+  try {
+    state = await completeChallenge(id, body.teamId);
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
   const challenge = state.challenges.find((item) => item.id === id);
 
   if (!challenge) {

@@ -54,6 +54,7 @@ For four hackathons under one company, configure each event as a separate privat
 ### 2. Prepare
 
 - verify dashboard deployment
+- verify `HARNESS_STORAGE_MODE=neon` deployments fail closed if Neon Auth env is incomplete; do not accept fallback to file-mode auth
 - verify the target instance is in `prepared` state with the correct blueprint binding
 - verify admin protection
 - verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-env-matrix.md)
@@ -62,6 +63,7 @@ For four hackathons under one company, configure each event as a separate privat
 - verify workshop skill files
 - verify the chosen instance starts in a clean state
 - verify participant access path and QR code
+- verify anonymous `GET /api/workshop` returns only the public-safe projection, not facilitator-grade instance records
 - verify preview or production checks required by [`private-workshop-instance-security-gates.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-security-gates.md) for any recent architecture-sensitive change
 
 ### 3. Run
@@ -95,6 +97,7 @@ After a workshop:
 - keep public repo improvements separate from private event records
 - apply retention and cleanup rules from [`private-workshop-instance-schema.md`](/Users/ondrejsvec/projects/Bobo/harness-lab/docs/private-workshop-instance-schema.md)
 - review structured `HARNESS_RUNTIME_ALERT` log lines for auth failures, redeem throttling, and archive events
+- use platform monitoring or protected surfaces for runtime diagnostics; do not add public instance or DB diagnostics to anonymous endpoints without an explicit review
 
 ## Rule
 

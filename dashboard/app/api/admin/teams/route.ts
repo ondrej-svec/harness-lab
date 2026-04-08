@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import type { Team } from "@/lib/workshop-data";
 import { updateCheckpoint, upsertTeam } from "@/lib/workshop-store";
 
@@ -14,8 +15,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "id, name, repoUrl and projectBriefId are required" }, { status: 400 });
   }
 
-  const state = await upsertTeam(body);
-  return NextResponse.json({ ok: true, items: state.teams });
+  try {
+    const state = await upsertTeam(body);
+    return NextResponse.json({ ok: true, items: state.teams });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }
 
 export async function PATCH(request: Request) {
@@ -29,6 +34,10 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ ok: false, error: "teamId and checkpoint are required" }, { status: 400 });
   }
 
-  const state = await updateCheckpoint(body.teamId, body.checkpoint);
-  return NextResponse.json({ ok: true, items: state.teams });
+  try {
+    const state = await updateCheckpoint(body.teamId, body.checkpoint);
+    return NextResponse.json({ ok: true, items: state.teams });
+  } catch (error) {
+    return workshopMutationErrorResponse(error);
+  }
 }

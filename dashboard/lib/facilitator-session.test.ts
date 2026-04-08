@@ -28,10 +28,12 @@ const facilitatorSessionModulePromise = import("./facilitator-session");
 
 describe("facilitator-session", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
+  const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
 
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
     getRuntimeStorageMode.mockReturnValue("neon");
   });
 
@@ -42,11 +44,13 @@ describe("facilitator-session", () => {
     await expect(getFacilitatorSession()).resolves.toBeNull();
   });
 
-  it("returns null when neon auth is not configured", async () => {
+  it("throws when neon auth is not fully configured", async () => {
     const { getFacilitatorSession } = await facilitatorSessionModulePromise;
     delete process.env.NEON_AUTH_BASE_URL;
 
-    await expect(getFacilitatorSession()).resolves.toBeNull();
+    await expect(getFacilitatorSession()).rejects.toThrow(
+      "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET are required when HARNESS_STORAGE_MODE=neon",
+    );
   });
 
   it("returns null when there is no signed-in user", async () => {
@@ -78,5 +82,6 @@ describe("facilitator-session", () => {
 
   afterEach(() => {
     process.env.NEON_AUTH_BASE_URL = originalBaseUrl;
+    process.env.NEON_AUTH_COOKIE_SECRET = originalCookieSecret;
   });
 });
