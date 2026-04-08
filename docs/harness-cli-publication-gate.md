@@ -45,6 +45,8 @@ All of the following must be true before public npm publication:
 - dashboard-side device auth routes, approval flow, audit logging, and bearer-session validation are covered by tests
 - CLI integration tests cover login, status, logout, and at least one facilitator workshop command
 - cross-platform CI runs the CLI auth/storage test matrix on macOS, Windows, and Linux
+- CLI source paths are included in repository Semgrep scanning
+- release verification runs `npm audit --audit-level=high` for `harness-cli`
 - cross-platform CI proves the packed CLI can install the portable workshop skill bundle into an arbitrary repo path
 - release verification proves `harness skill install` reports the correct state on rerun: installed, refreshed, or already current
 - `npm pack` succeeds in CI
@@ -67,6 +69,7 @@ Note:
 
 The CLI release smoke checks are:
 
+- `cd harness-cli && npm audit --audit-level=high`
 - `cd harness-cli && npm test`
 - `cd harness-cli && npm run verify:workshop-bundle`
 - `cd harness-cli && npm pack`

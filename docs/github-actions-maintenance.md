@@ -50,6 +50,19 @@ That is also intentional:
 
 If the repository ever needs a one-off historical audit, run a dedicated full-history `gitleaks` scan outside the normal merge gate rather than changing the default CI behavior.
 
+## Why `sast-semgrep` covers both dashboard and CLI
+
+The repository now ships two executable public-facing surfaces:
+
+- the hosted dashboard runtime
+- the installable `@harness-lab/cli` participant package
+
+That is intentional:
+
+- the CLI is not just packaging glue; it is executable code that participants install locally
+- dependency audit alone is not enough, because it says nothing about insecure code patterns in the repo-owned CLI sources
+- Semgrep should therefore cover `harness-cli/bin`, `harness-cli/src`, and `harness-cli/scripts` in the default CI gate alongside the dashboard runtime paths
+
 ## Maintenance rule
 
 When GitHub Actions emits a runtime deprecation warning:
@@ -75,7 +88,7 @@ If a future change outside `dashboard/` genuinely needs the E2E suite, expand th
 
 ## Why the macOS CLI leg uses a self-hosted runner
 
-The macOS entry in `verify-harness-cli` uses the repository's self-hosted runner labels:
+The macOS CLI jobs use the repository's self-hosted runner labels:
 
 - `self-hosted`
 - `macOS`
@@ -85,7 +98,18 @@ That is intentional:
 
 - macOS hosted minutes are relatively expensive compared with the rest of this workflow
 - the CLI matrix still needs one real macOS verification leg for packaging and install behavior
+- the dedicated `Harness CLI Publish` workflow should use the same runner so release verification and npm publication do not move back onto hosted minutes
 - the self-hosted leg now also verifies the CLI on a newer Node major so the published `engines` floor does not drift into wishful thinking
 - using explicit labels is safer than bare `self-hosted`, because it avoids accidentally routing the job onto the wrong runner if more self-hosted capacity is added later
 
-If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml) and this note together.
+If the runner labels change, update [`dashboard-ci.yml`](../.github/workflows/dashboard-ci.yml), [`harness-cli-publish.yml`](../.github/workflows/harness-cli-publish.yml), and this note together.
+
+## Why the publish workflow audits the CLI again
+
+The normal `Dashboard CI` workflow already audits `harness-cli`, but the publish workflow now repeats `npm audit --audit-level=high` inside [`harness-cli-publish.yml`](../.github/workflows/harness-cli-publish.yml) before packaging or publication.
+
+That is intentional:
+
+- the CLI is a public install surface, so release-time dependency hygiene should not rely only on a previous branch CI run
+- the extra audit is cheap because the CLI dependency tree is small
+- a release job should fail closed if the resolved CLI dependency graph has high-severity findings at publish time

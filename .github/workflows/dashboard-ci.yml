@@ -242,7 +242,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - run: semgrep scan --config auto --error dashboard/app dashboard/lib dashboard/scripts
+      - run: semgrep scan --config auto --error dashboard/app dashboard/lib dashboard/scripts harness-cli/bin harness-cli/src harness-cli/scripts
 
   dependency-review:
     name: dependency-review

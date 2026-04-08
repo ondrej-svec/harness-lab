@@ -18,7 +18,10 @@ concurrency:
 jobs:
   verify-cli-package:
     name: verify-cli-package
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - macOS
+      - ARM64
     defaults:
       run:
         working-directory: harness-cli
@@ -66,6 +69,9 @@ jobs:
 
       - name: Install CLI dependencies
         run: npm ci
+
+      - name: Audit CLI dependencies
+        run: npm audit --audit-level=high
 
       - run: npm run verify:workshop-bundle
 
@@ -125,7 +131,10 @@ jobs:
     needs:
       - verify-cli-package
     if: github.event_name == 'release'
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - macOS
+      - ARM64
     defaults:
       run:
         working-directory: harness-cli
