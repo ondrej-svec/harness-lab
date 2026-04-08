@@ -1,5 +1,4 @@
 import { cookies } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   getConfiguredEventCode,
@@ -10,19 +9,15 @@ import {
   revokeParticipantSession,
 } from "@/lib/event-access";
 import {
-  buildParticipantPanelState,
-  buildParticipantTeamCards,
   buildPublicAccessPanelState,
   buildPublicFooterLinks,
-  buildSharedRoomNotes,
-  buildSiteHeaderNavLinks,
   deriveHomePageState,
   getBlueprintRepoUrl,
 } from "@/lib/public-page-view-model";
-import type { PresenterBlock } from "@/lib/workshop-data";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
-import { ThemeSwitcher } from "./components/theme-switcher";
+import { ParticipantRoomSurface } from "./components/participant-room-surface";
+import { SiteHeader } from "./components/site-header";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +79,7 @@ export default async function HomePage({
         <SiteHeader isParticipant={!!participantSession} lang={lang} copy={copy} />
 
         {participantSession ? (
-          <ParticipantView
+          <ParticipantRoomSurface
             copy={copy}
             lang={lang}
             currentAgendaItem={currentAgendaItem}
@@ -93,54 +88,13 @@ export default async function HomePage({
             participantTeams={participantTeams}
             publicNotes={participantNotes}
             rotationRevealed={rotationRevealed}
+            logoutAction={logoutEventCodeAction}
           />
         ) : (
           <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
         )}
       </div>
     </main>
-  );
-}
-
-function SiteHeader({
-  isParticipant,
-  lang,
-  copy,
-}: {
-  isParticipant: boolean;
-  lang: UiLanguage;
-  copy: (typeof publicCopy)[UiLanguage];
-}) {
-  const navLinks = buildSiteHeaderNavLinks({ isParticipant, lang, copy });
-  return (
-    <header className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur sm:px-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <Link className="text-sm font-medium lowercase tracking-[0.12em] text-[var(--text-primary)]" href={withLang("/", lang)}>
-          {copy.brand}
-        </Link>
-
-        <div className="flex flex-col gap-3 lg:items-end">
-        <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm lowercase text-[var(--text-secondary)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {navLinks.map((link) => (
-            <a
-              key={`${link.href}-${link.label}`}
-              className="rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-              href={link.href}
-              rel={link.external ? "noreferrer" : undefined}
-              target={link.external ? "_blank" : undefined}
-            >
-              {link.label}
-            </a>
-          ))}
-        </nav>
-        <div className="flex items-center gap-3">
-          <LanguageSwitcher lang={lang} />
-          <span className="text-[var(--text-muted)]">/</span>
-          <ThemeSwitcher />
-        </div>
-        </div>
-      </div>
-    </header>
   );
 }
 
@@ -309,164 +263,6 @@ function PublicView({
   );
 }
 
-function ParticipantView({
-  copy,
-  lang,
-  currentAgendaItem,
-  nextAgendaItem,
-  participantSession,
-  participantTeams,
-  publicNotes,
-  rotationRevealed,
-}: {
-  copy: (typeof publicCopy)[UiLanguage];
-  lang: UiLanguage;
-  currentAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
-  nextAgendaItem: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number] | undefined;
-  participantSession: NonNullable<Awaited<ReturnType<typeof getParticipantSessionFromCookieStore>>>;
-  participantTeams: Awaited<ReturnType<typeof getParticipantTeamLookup>> | null;
-  publicNotes: Awaited<ReturnType<typeof getWorkshopState>>["ticker"];
-  rotationRevealed: boolean;
-}) {
-  const participantPanel = buildParticipantPanelState({
-    copy,
-    lang,
-    currentAgendaItem,
-    nextAgendaItem,
-    participantSession,
-    rotationRevealed,
-  });
-  const teamCards = buildParticipantTeamCards(participantTeams);
-  const sharedNotes = buildSharedRoomNotes(publicNotes);
-  const roomNotesSummary = sharedNotes.length > 0 ? `${sharedNotes.length}` : "0";
-  return (
-    <>
-      <section className="grid gap-8 border-b border-[var(--border)] py-10 lg:grid-cols-[1.12fr_0.88fr]" id="room">
-        <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7">
-          <SectionLabel>{copy.participantEyebrow}</SectionLabel>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-            {participantPanel.title}
-          </h2>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">
-            {participantPanel.body}
-          </p>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
-            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
-              <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
-              {participantPanel.currentPhaseDescription ? (
-                <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{participantPanel.currentPhaseDescription}</p>
-              ) : null}
-              {participantPanel.nextPhaseLabel ? (
-                <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
-              ) : null}
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <MetricCard label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
-              <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
-              <a
-                href="#notes"
-                className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
-              >
-                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
-                <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{roomNotesSummary}</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.navNotes}</p>
-              </a>
-            </div>
-          </div>
-
-	          {participantPanel.guidanceBlocks.length > 0 ? (
-	            <div className="mt-6 space-y-4">
-	              <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
-	              <ParticipantGuidanceBlocks
-	                blocks={participantPanel.guidanceBlocks}
-                copy={copy}
-                participantPanel={participantPanel}
-	              />
-	            </div>
-	          ) : null}
-	          {participantPanel.guidanceCtaLabel ? (
-	            <GuidanceCta
-	              href={participantPanel.guidanceCtaHref}
-	              label={participantPanel.guidanceCtaLabel}
-	              openLabel={copy.openLinkLabel}
-	            />
-	          ) : null}
-	        </div>
-
-        <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur">
-          <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
-          <div className="mt-6 grid gap-3">
-            <MetricCard label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
-            <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
-            <a
-              href="#notes"
-              className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition hover:border-[var(--border-strong)]"
-            >
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {sharedNotes.length > 0 ? sharedNotes[0] : copy.noRoomData}
-              </p>
-            </a>
-          </div>
-          <form action={logoutEventCodeAction} className="mt-6">
-            <input name="lang" type="hidden" value={lang} />
-            <button
-              className="w-full rounded-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              type="submit"
-            >
-              {copy.leaveRoomContext}
-            </button>
-          </form>
-        </aside>
-      </section>
-
-      <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr]">
-        <div id="teams">
-          <SectionLabel>{copy.roomData}</SectionLabel>
-          {teamCards.length > 0 ? (
-            <div className="mt-4 grid gap-4">
-              {teamCards.map((team) => (
-                <article key={team.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-[var(--text-primary)]">{team.name}</h3>
-                      <p className="text-sm text-[var(--text-muted)]">{team.city}</p>
-                    </div>
-                    <span className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{team.id}</span>
-                  </div>
-                  <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
-                  <p className="mt-4 break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
-                    {team.repoUrl}
-                  </p>
-                </article>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">
-              {copy.noRoomData}
-            </p>
-          )}
-        </div>
-
-        <div id="notes">
-          <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
-          <div className="mt-4 grid gap-4">
-            {sharedNotes.map((note) => (
-              <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line">
-                {note}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
-
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--text-muted)]">{children}</p>;
 }
@@ -497,297 +293,6 @@ function SignalTile({
     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)] backdrop-blur">
       <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
       <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
-    </div>
-  );
-}
-
-function MetricCard({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
-function ParticipantGuidanceBlocks({
-  blocks,
-  copy,
-  participantPanel,
-}: {
-  blocks: PresenterBlock[];
-  copy: (typeof publicCopy)[UiLanguage];
-  participantPanel: ReturnType<typeof buildParticipantPanelState>;
-}) {
-  return (
-    <div className="space-y-4">
-      {blocks.map((block) => {
-        if (block.type === "hero") {
-          return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                {block.eyebrow ?? participantPanel.guidanceLabel ?? copy.participantEyebrow}
-              </p>
-              <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-                {block.title}
-              </h3>
-              {block.body ? <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
-            </div>
-          );
-        }
-
-        if (block.type === "participant-preview") {
-          return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
-              {block.body ? <p className="text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
-                <MiniMetric label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
-                <MiniMetric label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
-              </div>
-            </div>
-          );
-        }
-
-        if (block.type === "bullet-list") {
-          return (
-            <ParticipantBlockCard key={block.id} title={block.title}>
-              <ul className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
-                {block.items.map((item) => (
-                  <li key={item}>• {item}</li>
-                ))}
-              </ul>
-            </ParticipantBlockCard>
-          );
-        }
-
-        if (block.type === "checklist") {
-          return (
-            <ParticipantBlockCard key={block.id} title={block.title}>
-              <div className="space-y-3">
-                {block.items.map((item) => (
-                  <div key={item} className="flex gap-3 rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <span className="mt-1 h-3 w-3 rounded-full border border-[var(--border-strong)]" />
-                    <p className="text-sm leading-6 text-[var(--text-secondary)]">{item}</p>
-                  </div>
-                ))}
-              </div>
-            </ParticipantBlockCard>
-          );
-        }
-
-        if (block.type === "steps") {
-          return (
-            <ParticipantBlockCard key={block.id} title={block.title}>
-              <div className="space-y-4">
-                {block.items.map((item, index) => (
-                  <div key={`${item.title}-${index}`} className="grid gap-3 sm:grid-cols-[2rem_minmax(0,1fr)]">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--border)] text-sm text-[var(--text-primary)]">
-                      {index + 1}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-[var(--text-primary)]">{item.title}</p>
-                      {item.body ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{item.body}</p> : null}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </ParticipantBlockCard>
-          );
-        }
-
-        if (block.type === "callout") {
-          const toneClass =
-            block.tone === "warning"
-              ? "border-[var(--border-strong)] bg-[var(--surface-panel)]"
-              : "border-[var(--border)] bg-[var(--surface)]";
-          return (
-            <div key={block.id} className={`rounded-[24px] border p-5 ${toneClass}`}>
-              {block.title ? <p className="text-sm font-medium text-[var(--text-primary)]">{block.title}</p> : null}
-              <p className={block.title ? "mt-2 text-sm leading-7 text-[var(--text-secondary)]" : "text-sm leading-7 text-[var(--text-secondary)]"}>
-                {block.body}
-              </p>
-            </div>
-          );
-        }
-
-        if (block.type === "rich-text") {
-          return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-sm leading-7 text-[var(--text-secondary)] whitespace-pre-line">
-              {block.content}
-            </div>
-          );
-        }
-
-	        if (block.type === "quote") {
-	          const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
-	          return (
-	            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
-	              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">“{block.quote}”</blockquote>
-	              <p className="mt-3 text-sm text-[var(--text-muted)]">{attribution}</p>
-	            </div>
-	          );
-	        }
-
-	        if (block.type === "link-list") {
-          return (
-	            <ParticipantBlockCard key={block.id} title={block.title}>
-	              <div className="space-y-3">
-	                {block.items.map((item) => (
-	                  <ActionablePanelLink
-	                    key={`${item.label}-${item.href ?? ""}`}
-	                    href={item.href ?? null}
-	                    label={item.label}
-	                    description={item.description}
-	                    openLabel={copy.openLinkLabel}
-	                  />
-	                ))}
-	              </div>
-	            </ParticipantBlockCard>
-	          );
-	        }
-
-        return null;
-      })}
-    </div>
-  );
-}
-
-function ParticipantBlockCard({
-  title,
-  children,
-}: {
-  title?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
-      {title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{title}</p> : null}
-      <div className={title ? "mt-4" : ""}>{children}</div>
-    </div>
-	);
-}
-
-function GuidanceCta({
-  href,
-  label,
-  openLabel,
-}: {
-  href: string | null;
-  label: string;
-  openLabel: string;
-}) {
-  return (
-    <div className="mt-5">
-      <ActionablePrimaryLink href={href} label={label} openLabel={openLabel} />
-    </div>
-  );
-}
-
-function ActionablePrimaryLink({
-  href,
-  label,
-  openLabel,
-}: {
-  href: string | null;
-  label: string;
-  openLabel: string;
-}) {
-  if (!href) {
-    return (
-      <div className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)]">
-        {label}
-      </div>
-    );
-  }
-
-  return (
-    <a
-      className="inline-flex w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
-      href={href}
-      rel={isExternalHref(href) ? "noreferrer" : undefined}
-      target={isExternalHref(href) ? "_blank" : undefined}
-    >
-      <span>{label}</span>
-      <span className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span>
-    </a>
-  );
-}
-
-function ActionablePanelLink({
-  href,
-  label,
-  description,
-  openLabel,
-}: {
-  href: string | null;
-  label: string;
-  description?: string;
-  openLabel: string;
-}) {
-  const className =
-    "rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
-  const content = (
-    <>
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-medium text-[var(--text-primary)]">{label}</p>
-        {href ? <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span> : null}
-      </div>
-      {description ? <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{description}</p> : null}
-    </>
-  );
-
-  if (!href) {
-    return <div className={className}>{content}</div>;
-  }
-
-  return (
-    <a
-      className={`block ${className}`}
-      href={href}
-      rel={isExternalHref(href) ? "noreferrer" : undefined}
-      target={isExternalHref(href) ? "_blank" : undefined}
-    >
-      {content}
-    </a>
-  );
-}
-
-function isExternalHref(href: string) {
-  return /^https?:\/\//.test(href);
-}
-
-function MiniMetric({
-  label,
-  value,
-}: {
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
-function LanguageSwitcher({ lang }: { lang: UiLanguage }) {
-  return (
-    <div className="flex items-center gap-2 text-xs lowercase text-[var(--text-muted)]">
-      <Link className={lang === "cs" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/", "cs")}>
-        cz
-      </Link>
-      <span>/</span>
-      <Link className={lang === "en" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={withLang("/", "en")}>
-        en
-      </Link>
     </div>
   );
 }

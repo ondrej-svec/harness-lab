@@ -26,9 +26,10 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { workshopTemplates, type AgendaItem, type PresenterScene, type Team } from "@/lib/workshop-data";
+import { workshopTemplates, type AgendaItem, type PresenterBlock as WorkshopPresenterBlock, type PresenterScene, type Team } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
+  addPresenterScene,
   addAgendaItem,
   addSprintUpdate,
   createWorkshopArchive,
@@ -36,11 +37,16 @@ import {
   getWorkshopState,
   getLatestWorkshopArchive,
   moveAgendaItem,
+  movePresenterScene,
   removeAgendaItem,
+  removePresenterScene,
   resetWorkshopState,
   setCurrentAgendaItem,
+  setDefaultPresenterScene,
+  setPresenterSceneEnabled,
   setRotationReveal,
   updateAgendaItem,
+  updatePresenterScene,
   upsertTeam,
 } from "@/lib/workshop-store";
 import {
@@ -73,7 +79,7 @@ type RichAgendaItem = AgendaItem & Partial<{
   sourceRefs: SourceRef[];
 }>;
 
-type PresenterBlock = {
+type PresenterBlockSummary = {
   id: string;
   type: string;
 };
@@ -81,7 +87,7 @@ type PresenterBlock = {
 type RichPresenterScene = PresenterScene & Partial<{
   intent: string;
   chromePreset: string;
-  blocks: PresenterBlock[];
+  blocks: PresenterBlockSummary[];
   facilitatorNotes: string[];
   sourceRefs: SourceRef[];
 }>;
@@ -168,6 +174,24 @@ function parseTextareaList(value: string) {
     .split("\n")
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function stringifyJson(value: unknown) {
+  return JSON.stringify(value ?? [], null, 2);
+}
+
+function parseJsonArray<T>(value: string): T[] | undefined {
+  const normalized = value.trim();
+  if (!normalized) {
+    return undefined;
+  }
+
+  try {
+    const parsed = JSON.parse(normalized);
+    return Array.isArray(parsed) ? (parsed as T[]) : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function buildRepoSourceHref(path: string) {
@@ -285,6 +309,152 @@ async function removeAgendaItemAction(formData: FormData) {
     await removeAgendaItem(agendaId, instanceId);
   }
   redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+async function addPresenterSceneAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const label = String(formData.get("label") ?? "").trim();
+  const sceneType = String(formData.get("sceneType") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
+  const intent = String(formData.get("intent") ?? "").trim();
+  const chromePreset = String(formData.get("chromePreset") ?? "").trim();
+  const ctaLabel = String(formData.get("ctaLabel") ?? "").trim();
+  const ctaHref = String(formData.get("ctaHref") ?? "").trim();
+  const facilitatorNotes = parseTextareaList(String(formData.get("facilitatorNotes") ?? ""));
+  const sourceRefs = parseJsonArray<SourceRef>(String(formData.get("sourceRefs") ?? ""));
+  const blocks = parseJsonArray<WorkshopPresenterBlock>(String(formData.get("blocks") ?? ""));
+
+  if (!agendaItemId || !label || !sceneType) {
+    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, overlay: "scene-add" }));
+  }
+
+  const state = await addPresenterScene(
+    agendaItemId,
+    {
+      label,
+      sceneType: sceneType as PresenterScene["sceneType"],
+      title,
+      body,
+      intent: (intent || undefined) as PresenterScene["intent"] | undefined,
+      chromePreset: (chromePreset || undefined) as PresenterScene["chromePreset"] | undefined,
+      ctaLabel: ctaLabel || null,
+      ctaHref: ctaHref || null,
+      facilitatorNotes,
+      sourceRefs,
+      blocks,
+    },
+    instanceId,
+  );
+  const agendaItem = state.agenda.find((item) => item.id === agendaItemId);
+  const createdScene = [...(agendaItem?.presenterScenes ?? [])].sort((left, right) => right.order - left.order)[0] ?? null;
+
+  redirect(
+    buildAdminHref({
+      lang,
+      section,
+      instanceId,
+      agendaItemId,
+      sceneId: createdScene?.id ?? null,
+    }),
+  );
+}
+
+async function updatePresenterSceneAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const sceneId = String(formData.get("sceneId") ?? "").trim();
+  const label = String(formData.get("label") ?? "").trim();
+  const sceneType = String(formData.get("sceneType") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim();
+  const body = String(formData.get("body") ?? "").trim();
+  const intent = String(formData.get("intent") ?? "").trim();
+  const chromePreset = String(formData.get("chromePreset") ?? "").trim();
+  const ctaLabel = String(formData.get("ctaLabel") ?? "").trim();
+  const ctaHref = String(formData.get("ctaHref") ?? "").trim();
+  const facilitatorNotes = parseTextareaList(String(formData.get("facilitatorNotes") ?? ""));
+  const sourceRefs = parseJsonArray<SourceRef>(String(formData.get("sourceRefs") ?? ""));
+  const blocks = parseJsonArray<WorkshopPresenterBlock>(String(formData.get("blocks") ?? ""));
+
+  if (!agendaItemId || !sceneId || !label || !sceneType) {
+    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId, overlay: "scene-edit" }));
+  }
+
+  await updatePresenterScene(
+    agendaItemId,
+    sceneId,
+    {
+      label,
+      sceneType: sceneType as PresenterScene["sceneType"],
+      title,
+      body,
+      intent: (intent || undefined) as PresenterScene["intent"] | undefined,
+      chromePreset: (chromePreset || undefined) as PresenterScene["chromePreset"] | undefined,
+      ctaLabel: ctaLabel || null,
+      ctaHref: ctaHref || null,
+      facilitatorNotes,
+      sourceRefs,
+      blocks,
+    },
+    instanceId,
+  );
+
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
+}
+
+async function movePresenterSceneAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const sceneId = String(formData.get("sceneId") ?? "").trim();
+  const direction = String(formData.get("direction") ?? "").trim() as "up" | "down";
+  if (agendaItemId && sceneId && (direction === "up" || direction === "down")) {
+    await movePresenterScene(agendaItemId, sceneId, direction, instanceId);
+  }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
+}
+
+async function setDefaultPresenterSceneAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const sceneId = String(formData.get("sceneId") ?? "").trim();
+  if (agendaItemId && sceneId) {
+    await setDefaultPresenterScene(agendaItemId, sceneId, instanceId);
+  }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
+}
+
+async function togglePresenterSceneEnabledAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const sceneId = String(formData.get("sceneId") ?? "").trim();
+  const enabled = String(formData.get("enabled") ?? "").trim() === "true";
+  if (agendaItemId && sceneId) {
+    await setPresenterSceneEnabled(agendaItemId, sceneId, enabled, instanceId);
+  }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
+}
+
+async function removePresenterSceneAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
+  const sceneId = String(formData.get("sceneId") ?? "").trim();
+  if (agendaItemId && sceneId) {
+    await removePresenterScene(agendaItemId, sceneId, instanceId);
+  }
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId }));
 }
 
 async function toggleRotationAction(formData: FormData) {
@@ -494,6 +664,7 @@ export default async function AdminPage({
     password?: string;
     team?: string;
     agendaItem?: string;
+    scene?: string;
     overlay?: string;
   }>;
 }) {
@@ -538,6 +709,11 @@ export default async function AdminPage({
   );
   const selectedAgendaItem =
     ((state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined) ??
+    null;
+  const selectedScene =
+    selectedAgendaItem?.presenterScenes.find((scene) => scene.id === query?.scene) ??
+    selectedAgendaItem?.presenterScenes.find((scene) => scene.id === selectedAgendaItem.defaultPresenterSceneId) ??
+    selectedAgendaItem?.presenterScenes[0] ??
     null;
   const selectedTeam = state.teams.find((team: Team) => team.id === query?.team) ?? state.teams[0] ?? null;
   const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
@@ -594,6 +770,31 @@ export default async function AdminPage({
     agendaItemId: selectedAgendaItem?.id ?? null,
     overlay: "agenda-add",
   });
+  const sceneBaseHref = buildAdminHref({
+    lang,
+    section: "agenda",
+    instanceId: activeInstanceId,
+    agendaItemId: selectedAgendaItem?.id ?? null,
+    sceneId: selectedScene?.id ?? null,
+  });
+  const sceneAddHref = buildAdminHref({
+    lang,
+    section: "agenda",
+    instanceId: activeInstanceId,
+    agendaItemId: selectedAgendaItem?.id ?? null,
+    overlay: "scene-add",
+  });
+  const sceneEditHref =
+    selectedAgendaItem && selectedScene
+      ? buildAdminHref({
+          lang,
+          section: "agenda",
+          instanceId: activeInstanceId,
+          agendaItemId: selectedAgendaItem.id,
+          sceneId: selectedScene.id,
+          overlay: "scene-edit",
+        })
+      : sceneBaseHref;
   const liveAgendaHref =
     currentAgendaItem
       ? buildAdminHref({
@@ -934,7 +1135,7 @@ export default async function AdminPage({
                       <span className="font-medium text-[var(--text-primary)]">{copy.presenterCurrentSceneLabel}:</span>{" "}
                       {presenterState.currentDefaultScene?.label ?? copy.presenterNoSceneTitle}
                     </div>
-                    <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="grid gap-3 sm:grid-cols-3">
                       <a
                         className={`${adminPrimaryButtonClassName} inline-flex w-full items-center justify-center`}
                         href={presenterState.currentPresenterHref}
@@ -942,6 +1143,14 @@ export default async function AdminPage({
                         rel="noreferrer"
                       >
                         {copy.presenterOpenCurrentButton}
+                      </a>
+                      <a
+                        className={`${adminSecondaryButtonClassName} inline-flex w-full items-center justify-center`}
+                        href={presenterState.participantMirrorHref}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {copy.presenterOpenParticipantSurfaceButton}
                       </a>
                       {presenterState.participantPreviewHref ? (
                         <a
@@ -1060,6 +1269,16 @@ export default async function AdminPage({
                       <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
                         {copy.agendaPresenterGroupTitle}
                       </summary>
+                      <div className="mt-4 flex flex-wrap gap-3">
+                        <Link className={adminSecondaryButtonClassName} href={sceneAddHref}>
+                          {copy.presenterAddSceneButton}
+                        </Link>
+                        {selectedScene ? (
+                          <Link className={adminGhostButtonClassName} href={sceneEditHref}>
+                            {copy.presenterEditSceneButton}
+                          </Link>
+                        ) : null}
+                      </div>
                       <div className="mt-4 space-y-3">
                         {selectedAgendaItem.presenterScenes.length > 0 ? (
                           selectedAgendaItem.presenterScenes.map((scene) => (
@@ -1071,6 +1290,7 @@ export default async function AdminPage({
                               lang={lang}
                               copy={copy}
                               isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
+                              isSelected={selectedScene?.id === scene.id}
                             />
                           ))
                         ) : (
@@ -1558,6 +1778,41 @@ export default async function AdminPage({
           />
         </AdminSheet>
       ) : null}
+      {activeSection === "agenda" && activeOverlay === "scene-edit" && selectedAgendaItem && selectedScene ? (
+        <AdminSheet
+          eyebrow={copy.agendaPresenterGroupTitle}
+          title={copy.sceneEditTitle}
+          description={copy.sceneEditDescription}
+          closeHref={sceneBaseHref}
+          closeLabel={copy.closePanelButton}
+        >
+          <PresenterSceneEditorSheetBody
+            item={selectedAgendaItem}
+            scene={selectedScene}
+            lang={lang}
+            section={activeSection}
+            instanceId={activeInstanceId}
+            copy={copy}
+          />
+        </AdminSheet>
+      ) : null}
+      {activeSection === "agenda" && activeOverlay === "scene-add" && selectedAgendaItem ? (
+        <AdminSheet
+          eyebrow={copy.agendaPresenterGroupTitle}
+          title={copy.sceneAddTitle}
+          description={copy.sceneAddDescription}
+          closeHref={sceneBaseHref}
+          closeLabel={copy.closePanelButton}
+        >
+          <PresenterSceneCreateSheetBody
+            item={selectedAgendaItem}
+            lang={lang}
+            section={activeSection}
+            instanceId={activeInstanceId}
+            copy={copy}
+          />
+        </AdminSheet>
+      ) : null}
     </main>
   );
 }
@@ -1822,6 +2077,232 @@ function AgendaItemCreateSheetBody({
   );
 }
 
+const presenterSceneTypeOptions: PresenterScene["sceneType"][] = [
+  "briefing",
+  "demo",
+  "participant-view",
+  "checkpoint",
+  "reflection",
+  "transition",
+  "custom",
+];
+
+const presenterSceneIntentOptions: PresenterScene["intent"][] = [
+  "framing",
+  "teaching",
+  "demo",
+  "walkthrough",
+  "checkpoint",
+  "transition",
+  "reflection",
+  "custom",
+];
+
+const presenterChromePresetOptions: PresenterScene["chromePreset"][] = [
+  "minimal",
+  "agenda",
+  "checkpoint",
+  "participant",
+];
+
+function PresenterSceneCreateSheetBody({
+  item,
+  lang,
+  section,
+  instanceId,
+  copy,
+}: {
+  item: RichAgendaItem;
+  lang: UiLanguage;
+  section: AdminSection;
+  instanceId: string;
+  copy: (typeof adminCopy)[UiLanguage];
+}) {
+  return (
+    <form action={addPresenterSceneAction} className="space-y-4">
+      <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+      <input name="agendaItemId" type="hidden" value={item.id} />
+      <PresenterSceneFormFields copy={copy} />
+      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>{copy.createSceneButton}</AdminSubmitButton>
+    </form>
+  );
+}
+
+function PresenterSceneEditorSheetBody({
+  item,
+  scene,
+  lang,
+  section,
+  instanceId,
+  copy,
+}: {
+  item: RichAgendaItem;
+  scene: RichPresenterScene;
+  lang: UiLanguage;
+  section: AdminSection;
+  instanceId: string;
+  copy: (typeof adminCopy)[UiLanguage];
+}) {
+  return (
+    <div className="space-y-5">
+      <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{item.time} • {item.title}</p>
+        <p className="mt-2 text-base font-semibold text-[var(--text-primary)]">{scene.label}</p>
+      </div>
+
+      <form action={updatePresenterSceneAction} className="space-y-4">
+        <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+        <input name="agendaItemId" type="hidden" value={item.id} />
+        <input name="sceneId" type="hidden" value={scene.id} />
+        <PresenterSceneFormFields copy={copy} scene={scene} />
+        <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>{copy.saveSceneButton}</AdminSubmitButton>
+      </form>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <form action={movePresenterSceneAction}>
+          <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+          <input name="agendaItemId" type="hidden" value={item.id} />
+          <input name="sceneId" type="hidden" value={scene.id} />
+          <input name="direction" type="hidden" value="up" />
+          <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>{copy.presenterMoveSceneUpButton}</AdminSubmitButton>
+        </form>
+        <form action={movePresenterSceneAction}>
+          <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+          <input name="agendaItemId" type="hidden" value={item.id} />
+          <input name="sceneId" type="hidden" value={scene.id} />
+          <input name="direction" type="hidden" value="down" />
+          <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>{copy.presenterMoveSceneDownButton}</AdminSubmitButton>
+        </form>
+        <form action={setDefaultPresenterSceneAction}>
+          <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+          <input name="agendaItemId" type="hidden" value={item.id} />
+          <input name="sceneId" type="hidden" value={scene.id} />
+          <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>{copy.presenterSetDefaultSceneButton}</AdminSubmitButton>
+        </form>
+        <form action={togglePresenterSceneEnabledAction}>
+          <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+          <input name="agendaItemId" type="hidden" value={item.id} />
+          <input name="sceneId" type="hidden" value={scene.id} />
+          <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
+          <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
+            {scene.enabled ? copy.presenterHideSceneButton : copy.presenterShowSceneButton}
+          </AdminSubmitButton>
+        </form>
+      </div>
+
+      <form action={removePresenterSceneAction}>
+        <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
+        <input name="agendaItemId" type="hidden" value={item.id} />
+        <input name="sceneId" type="hidden" value={scene.id} />
+        <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>{copy.presenterRemoveSceneButton}</AdminSubmitButton>
+      </form>
+    </div>
+  );
+}
+
+function PresenterSceneFormFields({
+  copy,
+  scene,
+}: {
+  copy: (typeof adminCopy)[UiLanguage];
+  scene?: RichPresenterScene;
+}) {
+  return (
+    <>
+      <div>
+        <FieldLabel htmlFor="scene-label">{copy.sceneFieldLabel}</FieldLabel>
+        <input id="scene-label" name="label" defaultValue={scene?.label ?? ""} className={`${adminInputClassName} mt-2`} />
+      </div>
+      <div className="grid gap-3 md:grid-cols-3">
+        <div>
+          <FieldLabel htmlFor="scene-type">{copy.sceneFieldType}</FieldLabel>
+          <select id="scene-type" name="sceneType" defaultValue={scene?.sceneType ?? "briefing"} className={`${adminInputClassName} mt-2`}>
+            {presenterSceneTypeOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <FieldLabel htmlFor="scene-intent">{copy.sceneFieldIntent}</FieldLabel>
+          <select id="scene-intent" name="intent" defaultValue={scene?.intent ?? "framing"} className={`${adminInputClassName} mt-2`}>
+            {presenterSceneIntentOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <FieldLabel htmlFor="scene-preset">{copy.sceneFieldChromePreset}</FieldLabel>
+          <select
+            id="scene-preset"
+            name="chromePreset"
+            defaultValue={scene?.chromePreset ?? "minimal"}
+            className={`${adminInputClassName} mt-2`}
+          >
+            {presenterChromePresetOptions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      <div>
+        <FieldLabel htmlFor="scene-title">{copy.sceneFieldTitle}</FieldLabel>
+        <input id="scene-title" name="title" defaultValue={scene?.title ?? ""} className={`${adminInputClassName} mt-2`} />
+      </div>
+      <div>
+        <FieldLabel htmlFor="scene-body">{copy.sceneFieldBody}</FieldLabel>
+        <textarea id="scene-body" name="body" rows={4} defaultValue={scene?.body ?? ""} className={`${adminInputClassName} mt-2`} />
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <div>
+          <FieldLabel htmlFor="scene-cta-label">{copy.sceneFieldCtaLabel}</FieldLabel>
+          <input id="scene-cta-label" name="ctaLabel" defaultValue={scene?.ctaLabel ?? ""} className={`${adminInputClassName} mt-2`} />
+        </div>
+        <div>
+          <FieldLabel htmlFor="scene-cta-href">{copy.sceneFieldCtaHref}</FieldLabel>
+          <input id="scene-cta-href" name="ctaHref" defaultValue={scene?.ctaHref ?? ""} className={`${adminInputClassName} mt-2`} />
+        </div>
+      </div>
+      <div>
+        <FieldLabel htmlFor="scene-notes">{copy.sceneFieldFacilitatorNotes}</FieldLabel>
+        <textarea
+          id="scene-notes"
+          name="facilitatorNotes"
+          rows={4}
+          defaultValue={listToTextareaValue(scene?.facilitatorNotes)}
+          className={`${adminInputClassName} mt-2`}
+        />
+      </div>
+      <div>
+        <FieldLabel htmlFor="scene-source-refs">{copy.sceneFieldSourceRefs}</FieldLabel>
+        <textarea
+          id="scene-source-refs"
+          name="sourceRefs"
+          rows={6}
+          defaultValue={stringifyJson(scene?.sourceRefs ?? [])}
+          className={`${adminInputClassName} mt-2 font-mono text-xs leading-6`}
+        />
+      </div>
+      <div>
+        <FieldLabel htmlFor="scene-blocks">{copy.sceneFieldBlocks}</FieldLabel>
+        <textarea
+          id="scene-blocks"
+          name="blocks"
+          rows={12}
+          defaultValue={stringifyJson(scene?.blocks ?? [])}
+          className={`${adminInputClassName} mt-2 font-mono text-xs leading-6`}
+        />
+        <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{copy.sceneJsonHint}</p>
+      </div>
+    </>
+  );
+}
+
 function AgendaItemDetail({
   item,
   lang,
@@ -1902,6 +2383,7 @@ function PresenterSceneSummaryCard({
   lang,
   copy,
   isDefault,
+  isSelected,
 }: {
   scene: RichPresenterScene;
   agendaItemId: string;
@@ -1909,12 +2391,25 @@ function PresenterSceneSummaryCard({
   lang: UiLanguage;
   copy: (typeof adminCopy)[UiLanguage];
   isDefault: boolean;
+  isSelected: boolean;
 }) {
   const sceneBlocks = scene.blocks ?? [];
   const sceneMeta = [scene.sceneType, scene.intent, scene.chromePreset].filter(Boolean).join(" • ");
+  const sceneEditorHref = buildAdminHref({
+    lang,
+    section: "agenda",
+    instanceId: activeInstanceId,
+    agendaItemId,
+    sceneId: scene.id,
+    overlay: "scene-edit",
+  });
 
   return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+    <div
+      className={`rounded-[20px] border p-4 ${
+        isSelected ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_14px_28px_rgba(28,25,23,0.08)]" : "border-[var(--border)] bg-[var(--surface-soft)]"
+      }`}
+    >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
@@ -1924,19 +2419,24 @@ function PresenterSceneSummaryCard({
             {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
           </p>
         </div>
-        <a
-          href={buildPresenterRouteHref({
-            lang,
-            instanceId: activeInstanceId,
-            agendaItemId,
-            sceneId: scene.id,
-          })}
-          target="_blank"
-          rel="noreferrer"
-          className={adminGhostButtonClassName}
-        >
-          {copy.presenterOpenSelectedScene}
-        </a>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href={buildPresenterRouteHref({
+              lang,
+              instanceId: activeInstanceId,
+              agendaItemId,
+              sceneId: scene.id,
+            })}
+            target="_blank"
+            rel="noreferrer"
+            className={adminGhostButtonClassName}
+          >
+            {copy.presenterOpenSelectedScene}
+          </a>
+          <Link href={sceneEditorHref} className={adminGhostButtonClassName}>
+            {copy.presenterEditSceneButton}
+          </Link>
+        </div>
       </div>
       <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
       {sceneBlocks.length > 0 ? (

@@ -12,6 +12,7 @@ const getRuntimeStorageMode = vi.fn();
 const listActiveGrants = vi.fn();
 const getSession = vi.fn();
 const listInstances = vi.fn();
+const getInstance = vi.fn();
 const redirect = vi.fn();
 
 vi.mock("next/navigation", () => ({
@@ -61,6 +62,7 @@ vi.mock("@/lib/audit-log-repository", () => ({
 vi.mock("@/lib/workshop-instance-repository", () => ({
   getWorkshopInstanceRepository: () => ({
     listInstances,
+    getInstance,
   }),
 }));
 
@@ -86,6 +88,9 @@ describe("Admin control room page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     listInstances.mockResolvedValue(structuredClone(sampleWorkshopInstances));
+    getInstance.mockImplementation(async (instanceId: string) =>
+      structuredClone(sampleWorkshopInstances.find((instance) => instance.id === instanceId) ?? null),
+    );
     requireFacilitatorPageAccess.mockResolvedValue(undefined);
     getRuntimeStorageMode.mockReturnValue("file");
     getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
@@ -113,6 +118,8 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.navLive);
     expect(html).toContain(adminCopy.en.moveAgendaTitle);
     expect(html).toContain(adminCopy.en.presenterCardTitle);
+    expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
+    expect(html).toContain(adminCopy.en.presenterOpenParticipantButton);
     expect(html).not.toContain(adminCopy.en.archiveResetTitle);
     expect(html).not.toContain(adminCopy.en.continuationTitle);
     expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
@@ -152,6 +159,28 @@ describe("Admin control room page", () => {
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
     expect(html).toContain('value="Context is King"');
+  });
+
+  it("renders the scene editor sheet for the selected presenter scene", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({
+        lang: "en",
+        section: "agenda",
+        agendaItem: "talk",
+        scene: "talk-framing",
+        overlay: "scene-edit",
+      }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.sceneEditTitle);
+    expect(html).toContain(adminCopy.en.sceneFieldBlocks);
+    expect(html).toContain(adminCopy.en.presenterSetDefaultSceneButton);
+    expect(html).toContain('name="sceneId"');
+    expect(html).toContain('value="talk-framing"');
   });
 
   it("keeps persistent runtime context visible outside the live section", async () => {

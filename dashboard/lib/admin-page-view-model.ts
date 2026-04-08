@@ -4,7 +4,7 @@ import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 export const controlRoomSections = ["live", "agenda", "teams", "signals", "access", "settings"] as const;
 export type ControlRoomSection = (typeof controlRoomSections)[number];
 export type AdminSection = ControlRoomSection;
-export const controlRoomOverlays = ["agenda-edit", "agenda-add"] as const;
+export const controlRoomOverlays = ["agenda-edit", "agenda-add", "scene-edit", "scene-add"] as const;
 export type ControlRoomOverlay = (typeof controlRoomOverlays)[number];
 
 export const legacyAdminSectionMap = {
@@ -61,11 +61,12 @@ export function buildAdminInstanceHref(options: {
   section?: ControlRoomSection;
   teamId?: string | null;
   agendaItemId?: string | null;
+  sceneId?: string | null;
   error?: string | null;
   password?: string | null;
   overlay?: ControlRoomOverlay | null;
 }) {
-  const { lang, instanceId, section, teamId, agendaItemId, error, password, overlay } = options;
+  const { lang, instanceId, section, teamId, agendaItemId, sceneId, error, password, overlay } = options;
   const params = new URLSearchParams();
   if (section && section !== "live") {
     params.set("section", section);
@@ -75,6 +76,9 @@ export function buildAdminInstanceHref(options: {
   }
   if (agendaItemId) {
     params.set("agendaItem", agendaItemId);
+  }
+  if (sceneId) {
+    params.set("scene", sceneId);
   }
   if (error) {
     params.set("error", error);
@@ -98,6 +102,7 @@ export function buildAdminHref(options: {
   instanceId?: string;
   teamId?: string | null;
   agendaItemId?: string | null;
+  sceneId?: string | null;
   error?: string | null;
   password?: string | null;
   overlay?: ControlRoomOverlay | null;
@@ -117,6 +122,7 @@ export function buildAdminHref(options: {
     section,
     teamId: options.teamId,
     agendaItemId: options.agendaItemId,
+    sceneId: options.sceneId,
     error: options.error,
     password: options.password,
     overlay: options.overlay,
@@ -129,6 +135,7 @@ export function buildLegacyAdminRedirectHref(options: {
   section?: string;
   teamId?: string | null;
   agendaItemId?: string | null;
+  sceneId?: string | null;
   error?: string | null;
   password?: string | null;
 }) {
@@ -138,6 +145,7 @@ export function buildLegacyAdminRedirectHref(options: {
     section: mapLegacyAdminSectionToControlRoomSection(options.section),
     teamId: options.teamId,
     agendaItemId: options.agendaItemId,
+    sceneId: options.sceneId,
     error: options.error,
     password: options.password,
   });

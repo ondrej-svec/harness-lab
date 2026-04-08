@@ -20,6 +20,15 @@ export function buildPresenterRouteHref(options: {
   return `/admin/instances/${options.instanceId}/presenter?${query}`;
 }
 
+export function buildParticipantMirrorHref(options: {
+  lang: UiLanguage;
+  instanceId: string;
+}) {
+  return options.lang === "en"
+    ? `/admin/instances/${options.instanceId}/participant?lang=en`
+    : `/admin/instances/${options.instanceId}/participant`;
+}
+
 export function buildPresenterControlState(options: {
   state: WorkshopState;
   instanceId: string;
@@ -38,6 +47,10 @@ export function buildPresenterControlState(options: {
       instanceId,
       agendaItemId: currentAgendaItem?.id ?? null,
       sceneId: currentDefaultScene?.id ?? null,
+    }),
+    participantMirrorHref: buildParticipantMirrorHref({
+      lang,
+      instanceId,
     }),
     participantPreviewHref: participantPreviewScene
       ? buildPresenterRouteHref({
