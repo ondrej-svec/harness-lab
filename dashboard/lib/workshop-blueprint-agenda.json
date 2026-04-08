@@ -15,7 +15,19 @@
       "label": "Úvod a naladění",
       "startTime": "09:10",
       "kind": "shared",
-      "goal": "Rámec dne, proč řešíme harness engineering a co účastníky čeká."
+      "goal": "Rámec dne, proč řešíme harness engineering a co účastníky čeká.",
+      "defaultSceneId": "opening-briefing",
+      "scenes": [
+        {
+          "id": "opening-briefing",
+          "label": "Úvodní framing",
+          "sceneType": "briefing",
+          "title": "Dnes nestavíme jen output",
+          "body": "Stavíme pracovní systém pro práci s AI coding agenty. Cílem dne je vytvořit repo a workflow, které přežijí handoff bez ústního dovysvětlování.",
+          "ctaLabel": "Za chvíli: Context is King",
+          "ctaHref": null
+        }
+      ]
     },
     {
       "id": "talk",
@@ -23,7 +35,37 @@
       "label": "Context is King",
       "startTime": "09:40",
       "kind": "shared",
-      "goal": "Krátký talk a porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži."
+      "goal": "Krátký talk a porovnání promptů, aby si tým osahal kvalitu kontextu na vlastní kůži.",
+      "defaultSceneId": "talk-briefing",
+      "scenes": [
+        {
+          "id": "talk-briefing",
+          "label": "Klíčová message",
+          "sceneType": "briefing",
+          "title": "Kontext je páka, ne kosmetika",
+          "body": "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
+          "ctaLabel": "Potom: živý demo flow",
+          "ctaHref": null
+        },
+        {
+          "id": "talk-demo",
+          "label": "Demo flow",
+          "sceneType": "demo",
+          "title": "Jedna příběhová ukázka, ne feature tour",
+          "body": "Ukažte malý úkol bez kontextu, pak přidejte AGENTS.md, plán a review. Pointa není kouzelný output. Pointa je pracovní systém kolem agenta.",
+          "ctaLabel": "Přepnout do participant walkthrough",
+          "ctaHref": null
+        },
+        {
+          "id": "talk-participant-view",
+          "label": "Participant walkthrough",
+          "sceneType": "participant-view",
+          "title": "Participant surface walkthrough",
+          "body": "Přepněte na participant vrstvu a ukažte, jak místnost vidí live fázi, další krok a shared room notes bez facilitátorského chrome.",
+          "ctaLabel": null,
+          "ctaHref": null
+        }
+      ]
     },
     {
       "id": "build-1",
@@ -31,7 +73,19 @@
       "label": "Build Phase 1",
       "startTime": "10:30",
       "kind": "team",
-      "goal": "Repo, AGENTS.md, plán a první reviewed output ještě před obědem."
+      "goal": "Repo, AGENTS.md, plán a první reviewed output ještě před obědem.",
+      "defaultSceneId": "build-1-checkpoint",
+      "scenes": [
+        {
+          "id": "build-1-checkpoint",
+          "label": "Checkpoint prompt",
+          "sceneType": "checkpoint",
+          "title": "Co má být vidět před obědem",
+          "body": "Repo existuje. AGENTS.md je mapa. Existuje plan. Existuje build/test command nebo tracer bullet. Existuje první reviewed output.",
+          "ctaLabel": "Pište evidence, ne dojmy",
+          "ctaHref": null
+        }
+      ]
     },
     {
       "id": "rotation",
@@ -39,7 +93,19 @@
       "label": "Rotace týmů",
       "startTime": "13:30",
       "kind": "team",
-      "goal": "Plný přesun lidí mezi stoly. Pokračuje se jen s tím, co přežilo v repu."
+      "goal": "Plný přesun lidí mezi stoly. Pokračuje se jen s tím, co přežilo v repu.",
+      "defaultSceneId": "rotation-briefing",
+      "scenes": [
+        {
+          "id": "rotation-briefing",
+          "label": "Rotation framing",
+          "sceneType": "briefing",
+          "title": "Bez ústního handoffu",
+          "body": "Prvních deset minut nový tým jen čte repo a mapuje situaci. Frustrace není chyba workshopu. Je to signál kvality kontextu v repu.",
+          "ctaLabel": "Začněte README, AGENTS.md a plánem",
+          "ctaHref": null
+        }
+      ]
     },
     {
       "id": "reveal",
@@ -47,7 +113,19 @@
       "label": "Reveal a reflexe",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Co pomohlo pokračovat, co chybělo, co si odnáším do práce s agenty."
+      "goal": "Co pomohlo pokračovat, co chybělo, co si odnáším do práce s agenty.",
+      "defaultSceneId": "reveal-reflection",
+      "scenes": [
+        {
+          "id": "reveal-reflection",
+          "label": "Reflexe",
+          "sceneType": "reflection",
+          "title": "Co pomohlo pokračovat",
+          "body": "Sbíráme konkrétní příklady. Co vám pomohlo navázat? Co chybělo? Jaký signál v repu vám nejvíc ušetřil čas?",
+          "ctaLabel": "Zakončete přes W3: Co? A co? A teď?",
+          "ctaHref": null
+        }
+      ]
     }
   ],
   "runtimeImport": {

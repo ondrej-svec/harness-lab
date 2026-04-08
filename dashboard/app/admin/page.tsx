@@ -18,7 +18,7 @@ import {
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../components/theme-switcher";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
-import { workshopTemplates, type WorkshopTemplate } from "@/lib/workshop-data";
+import { getWorkshopTemplateVariantLabel, workshopTemplates, type WorkshopTemplate } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { createWorkshopInstance, getWorkshopState, removeWorkshopInstance } from "@/lib/workshop-store";
 import {
@@ -54,7 +54,7 @@ async function createInstanceAction(formData: FormData) {
   const templateId = String(formData.get("templateId") ?? "").trim();
   const eventTitle = String(formData.get("eventTitle") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
-  const dateRange = String(formData.get("dateRange") ?? "").trim();
+  const dateRange = formatWorkshopDateLabel(String(formData.get("dateRange") ?? ""), lang);
   const venueName = String(formData.get("venueName") ?? "").trim();
   const roomName = String(formData.get("roomName") ?? "").trim();
   const addressLine = String(formData.get("addressLine") ?? "").trim();
@@ -118,8 +118,23 @@ function resolveWorkspaceNextStep(copy: (typeof adminCopy)["cs" | "en"], status:
 }
 
 function buildTemplateOptionLabel(template: WorkshopTemplate, lang: "cs" | "en") {
-  const audience = template.scenario === "20-participants" ? (lang === "cs" ? "20 lidí" : "20 participants") : lang === "cs" ? "17 lidí" : "17 participants";
-  return `${template.label} • ${audience}`;
+  return getWorkshopTemplateVariantLabel(template, lang);
+}
+
+function formatWorkshopDateLabel(value: string, lang: "cs" | "en") {
+  const normalized = value.trim();
+  if (!normalized.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return normalized;
+  }
+
+  const [year, month, day] = normalized.split("-").map(Number);
+  const date = new Date(Date.UTC(year ?? 0, (month ?? 1) - 1, day ?? 1));
+  return new Intl.DateTimeFormat(lang === "cs" ? "cs-CZ" : "en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
 }
 
 export default async function AdminWorkspacePage({
@@ -277,7 +292,7 @@ export default async function AdminWorkspacePage({
                   <div className="min-w-0">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.createInstanceTitle}</p>
                     <p className="mt-1 text-sm font-medium leading-5 text-[var(--text-primary)]">{copy.workspaceCreateDescription}</p>
-                    <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{`${copy.createInstanceEventTitleLabel} • ${copy.workspaceWhenLabel} • ${copy.workspaceWhereLabel}`}</p>
+                    <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{`${copy.createInstanceEventTitleLabel} • ${copy.instanceDateLabel} • ${copy.instanceVenueLabel}`}</p>
                   </div>
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-xl leading-none text-[var(--text-secondary)] transition group-open:rotate-45">
                     +
@@ -325,19 +340,19 @@ export default async function AdminWorkspacePage({
 
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
                         <div>
-                          <FieldLabel htmlFor="instance-date">{copy.workspaceWhenLabel}</FieldLabel>
-                          <input id="instance-date" name="dateRange" placeholder={copy.instanceDateRangePlaceholder} className={`${adminInputClassName} mt-2`} />
+                          <FieldLabel htmlFor="instance-date">{copy.instanceDateLabel}</FieldLabel>
+                          <input id="instance-date" name="dateRange" type="date" className={`${adminInputClassName} mt-2`} />
                         </div>
 
                         <div>
-                          <FieldLabel htmlFor="instance-address">{copy.workspaceWhereLabel}</FieldLabel>
+                          <FieldLabel htmlFor="instance-address">{copy.instanceAddressLabel}</FieldLabel>
                           <input id="instance-address" name="addressLine" placeholder={copy.instanceAddressPlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>
                       </div>
 
                       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                         <div>
-                          <FieldLabel htmlFor="instance-venue">{copy.workspaceWhereLabel}</FieldLabel>
+                          <FieldLabel htmlFor="instance-venue">{copy.instanceVenueLabel}</FieldLabel>
                           <input id="instance-venue" name="venueName" placeholder={copy.instanceVenuePlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>
                         <div>
@@ -345,7 +360,7 @@ export default async function AdminWorkspacePage({
                           <input id="instance-room" name="roomName" placeholder={copy.instanceRoomPlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>
                         <div>
-                          <FieldLabel htmlFor="instance-city">{copy.workspaceWhereLabel}</FieldLabel>
+                          <FieldLabel htmlFor="instance-city">{copy.instanceAreaLabel}</FieldLabel>
                           <input id="instance-city" name="city" placeholder={copy.instanceCityPlaceholder} className={`${adminInputClassName} mt-2`} />
                         </div>
                         <div>

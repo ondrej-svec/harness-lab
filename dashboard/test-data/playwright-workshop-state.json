@@ -4,7 +4,7 @@
     "title": "Harness Lab",
     "subtitle": "Workshop operating system pro práci s AI agenty",
     "city": "Studio A",
-    "dateRange": "Ukázkový workshop den • Demo room",
+    "dateRange": "Ukázkový workshop den",
     "currentPhaseLabel": "Build Phase 1",
     "adminHint": "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo."
   },

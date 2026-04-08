@@ -6,10 +6,12 @@ import {
   createWorkshopStateFromTemplate,
   type AgendaItem,
   type MonitoringSnapshot,
+  type PresenterScene,
   type SprintUpdate,
   type Team,
   type WorkshopInstanceRecord,
   type WorkshopState,
+  seedWorkshopState,
 } from "./workshop-data";
 import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
@@ -22,6 +24,21 @@ import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
+import { normalizePresenterScenes } from "./presenter-scenes";
+
+export class WorkshopStateTargetError extends Error {
+  constructor(
+    readonly code: "agenda_item_not_found" | "presenter_scene_not_found",
+    message: string,
+  ) {
+    super(message);
+    this.name = "WorkshopStateTargetError";
+  }
+}
+
+export function isWorkshopStateTargetError(error: unknown): error is WorkshopStateTargetError {
+  return error instanceof WorkshopStateTargetError;
+}
 
 async function getBaseWorkshopState(instanceId = getCurrentWorkshopInstanceId()) {
   return getWorkshopStateRepository().getState(instanceId);
@@ -57,6 +74,105 @@ function resolveCurrentPhaseLabel(agenda: AgendaItem[], currentPhaseLabel: strin
   return agenda.find((item) => item.status === "current")?.title ?? currentPhaseLabel;
 }
 
+function normalizeStoredPresenterScene(
+  scene: Partial<PresenterScene>,
+  fallbackScene: PresenterScene | undefined,
+  agendaItemId: string,
+  sceneIndex: number,
+): PresenterScene {
+  return {
+    id: scene.id ?? fallbackScene?.id ?? `${agendaItemId}-scene-${sceneIndex + 1}`,
+    label: scene.label ?? fallbackScene?.label ?? `Scene ${sceneIndex + 1}`,
+    sceneType: scene.sceneType ?? fallbackScene?.sceneType ?? "custom",
+    title: scene.title ?? fallbackScene?.title ?? scene.label ?? fallbackScene?.label ?? `Scene ${sceneIndex + 1}`,
+    body: scene.body ?? fallbackScene?.body ?? "",
+    ctaLabel: scene.ctaLabel ?? fallbackScene?.ctaLabel ?? null,
+    ctaHref: scene.ctaHref ?? fallbackScene?.ctaHref ?? null,
+    order: scene.order ?? fallbackScene?.order ?? sceneIndex + 1,
+    enabled: scene.enabled ?? fallbackScene?.enabled ?? true,
+    sourceBlueprintSceneId: scene.sourceBlueprintSceneId ?? fallbackScene?.sourceBlueprintSceneId ?? fallbackScene?.id ?? null,
+    kind: scene.kind ?? fallbackScene?.kind ?? (fallbackScene ? "blueprint" : "custom"),
+  };
+}
+
+function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): AgendaItem {
+  const fallbackItem = seedWorkshopState.agenda.find((agendaItem) => agendaItem.id === item.id);
+  const rawScenes =
+    Array.isArray(item.presenterScenes) && item.presenterScenes.length > 0
+      ? item.presenterScenes
+      : fallbackItem?.presenterScenes ?? [];
+  const normalizedScenes = rawScenes.map((scene, sceneIndex) =>
+    normalizeStoredPresenterScene(
+      scene,
+      fallbackItem?.presenterScenes.find((fallbackScene) => fallbackScene.id === scene.id) ?? fallbackItem?.presenterScenes[sceneIndex],
+      item.id ?? fallbackItem?.id ?? `agenda-${index + 1}`,
+      sceneIndex,
+    ),
+  );
+  const normalizedSceneState = normalizePresenterScenes(
+    normalizedScenes,
+    item.defaultPresenterSceneId ?? fallbackItem?.defaultPresenterSceneId ?? null,
+  );
+
+  return {
+    id: item.id ?? fallbackItem?.id ?? `agenda-${index + 1}`,
+    title: item.title ?? fallbackItem?.title ?? `Agenda item ${index + 1}`,
+    time: item.time ?? fallbackItem?.time ?? "",
+    description: item.description ?? fallbackItem?.description ?? "",
+    order: item.order ?? fallbackItem?.order ?? index + 1,
+    sourceBlueprintPhaseId:
+      item.sourceBlueprintPhaseId ?? fallbackItem?.sourceBlueprintPhaseId ?? (fallbackItem ? fallbackItem.id : null),
+    kind: item.kind ?? fallbackItem?.kind ?? (fallbackItem ? "blueprint" : "custom"),
+    status: item.status ?? fallbackItem?.status ?? "upcoming",
+    presenterScenes: normalizedSceneState.scenes,
+    defaultPresenterSceneId: normalizedSceneState.defaultPresenterSceneId,
+  };
+}
+
+function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
+  const agenda = Array.isArray(state.agenda) && state.agenda.length > 0
+    ? state.agenda.map((item, index) => normalizeStoredAgendaItem(item, index))
+    : seedWorkshopState.agenda.map((item, index) => normalizeStoredAgendaItem(item, index));
+  const currentAgendaItemId =
+    state.agenda?.find((item) => item.status === "current")?.id ??
+    agenda.find((item) => item.status === "current")?.id ??
+    agenda[0]?.id;
+  const normalizedAgenda = normalizeAgenda(agenda, currentAgendaItemId);
+
+  return {
+    ...state,
+    agenda: normalizedAgenda,
+    workshopMeta: {
+      ...state.workshopMeta,
+      currentPhaseLabel: resolveCurrentPhaseLabel(normalizedAgenda, state.workshopMeta.currentPhaseLabel),
+    },
+  };
+}
+
+function updateAgendaScenes(
+  state: WorkshopState,
+  agendaItemId: string,
+  updater: (item: AgendaItem) => AgendaItem,
+) {
+  if (!state.agenda.some((item) => item.id === agendaItemId)) {
+    throw new WorkshopStateTargetError("agenda_item_not_found", `agenda item '${agendaItemId}' not found`);
+  }
+
+  return {
+    ...state,
+    agenda: state.agenda.map((item) => (item.id === agendaItemId ? updater(item) : item)),
+  };
+}
+
+function requirePresenterScene(item: AgendaItem, sceneId: string) {
+  const scene = item.presenterScenes.find((candidate) => candidate.id === sceneId);
+  if (!scene) {
+    throw new WorkshopStateTargetError("presenter_scene_not_found", `presenter scene '${sceneId}' not found`);
+  }
+
+  return scene;
+}
+
 export async function getWorkshopState(instanceId = getCurrentWorkshopInstanceId()): Promise<WorkshopState> {
   const [state, teams, monitoring, sprintUpdates] = await Promise.all([
     getBaseWorkshopState(instanceId),
@@ -65,11 +181,13 @@ export async function getWorkshopState(instanceId = getCurrentWorkshopInstanceId
     getCheckpointRepository().listCheckpoints(instanceId),
   ]);
 
+  const normalizedState = normalizeStoredWorkshopState(state);
+
   return {
-    ...state,
-    teams: teams.length > 0 ? teams : state.teams,
-    monitoring: monitoring.length > 0 ? monitoring : state.monitoring,
-    sprintUpdates: sprintUpdates.length > 0 ? sprintUpdates : state.sprintUpdates,
+    ...normalizedState,
+    teams: teams.length > 0 ? teams : normalizedState.teams,
+    monitoring: monitoring.length > 0 ? monitoring : normalizedState.monitoring,
+    sprintUpdates: sprintUpdates.length > 0 ? sprintUpdates : normalizedState.sprintUpdates,
   };
 }
 
@@ -77,8 +195,8 @@ export async function updateWorkshopState(
   updater: (state: WorkshopState) => WorkshopState,
   instanceId = getCurrentWorkshopInstanceId(),
 ): Promise<WorkshopState> {
-  const current = await getBaseWorkshopState(instanceId);
-  const next = updater(current);
+  const current = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
+  const next = normalizeStoredWorkshopState(updater(current));
   await getWorkshopStateRepository().saveState(instanceId, {
     ...next,
     monitoring: current.monitoring,
@@ -133,6 +251,8 @@ export async function addAgendaItem(
       sourceBlueprintPhaseId: null,
       kind: "custom",
       status: "upcoming",
+      defaultPresenterSceneId: null,
+      presenterScenes: [],
     });
     const normalizedAgenda = normalizeAgenda(agenda, state.agenda.find((item) => item.status === "current")?.id);
     return {
@@ -193,6 +313,172 @@ export async function moveAgendaItem(
       },
     };
   }, instanceId);
+}
+
+export async function addPresenterScene(
+  agendaItemId: string,
+  input: Pick<PresenterScene, "label" | "sceneType" | "title" | "body"> & {
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  },
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      const normalized = normalizePresenterScenes(
+        [
+          ...item.presenterScenes,
+          {
+            id: `scene-${randomUUID()}`,
+            label: input.label,
+            sceneType: input.sceneType,
+            title: input.title,
+            body: input.body,
+            ctaLabel: input.ctaLabel ?? null,
+            ctaHref: input.ctaHref ?? null,
+            order: item.presenterScenes.length + 1,
+            enabled: true,
+            sourceBlueprintSceneId: null,
+            kind: "custom",
+          },
+        ],
+        item.defaultPresenterSceneId,
+      );
+
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
+}
+
+export async function updatePresenterScene(
+  agendaItemId: string,
+  sceneId: string,
+  updates: Pick<PresenterScene, "label" | "sceneType" | "title" | "body"> & {
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  },
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      requirePresenterScene(item, sceneId);
+      const normalized = normalizePresenterScenes(
+        item.presenterScenes.map((scene) =>
+          scene.id === sceneId
+            ? {
+                ...scene,
+                label: updates.label,
+                sceneType: updates.sceneType,
+                title: updates.title,
+                body: updates.body,
+                ctaLabel: updates.ctaLabel ?? null,
+                ctaHref: updates.ctaHref ?? null,
+              }
+            : scene,
+        ),
+        item.defaultPresenterSceneId,
+      );
+
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
+}
+
+export async function movePresenterScene(
+  agendaItemId: string,
+  sceneId: string,
+  direction: "up" | "down",
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      requirePresenterScene(item, sceneId);
+      const scenes = [...item.presenterScenes].sort((left, right) => left.order - right.order);
+      const currentIndex = scenes.findIndex((scene) => scene.id === sceneId);
+      const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
+      if (targetIndex < 0 || targetIndex >= scenes.length) {
+        return item;
+      }
+
+      const [moved] = scenes.splice(currentIndex, 1);
+      scenes.splice(targetIndex, 0, moved);
+      const normalized = normalizePresenterScenes(
+        scenes.map((scene, index) => ({ ...scene, order: index + 1 })),
+        item.defaultPresenterSceneId,
+      );
+
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
+}
+
+export async function removePresenterScene(
+  agendaItemId: string,
+  sceneId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      requirePresenterScene(item, sceneId);
+      const normalized = normalizePresenterScenes(
+        item.presenterScenes.filter((scene) => scene.id !== sceneId),
+        item.defaultPresenterSceneId === sceneId ? null : item.defaultPresenterSceneId,
+      );
+
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
+}
+
+export async function setDefaultPresenterScene(
+  agendaItemId: string,
+  sceneId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      requirePresenterScene(item, sceneId);
+      const normalized = normalizePresenterScenes(item.presenterScenes, sceneId);
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
+}
+
+export async function setPresenterSceneEnabled(
+  agendaItemId: string,
+  sceneId: string,
+  enabled: boolean,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) =>
+    updateAgendaScenes(state, agendaItemId, (item) => {
+      requirePresenterScene(item, sceneId);
+      const normalized = normalizePresenterScenes(
+        item.presenterScenes.map((scene) => (scene.id === sceneId ? { ...scene, enabled } : scene)),
+        item.defaultPresenterSceneId,
+      );
+
+      return {
+        ...item,
+        presenterScenes: normalized.scenes,
+        defaultPresenterSceneId: normalized.defaultPresenterSceneId,
+      };
+    }), instanceId);
 }
 
 export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopInstanceId()) {

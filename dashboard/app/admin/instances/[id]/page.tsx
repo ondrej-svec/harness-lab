@@ -24,7 +24,8 @@ import { getNeonSql } from "@/lib/neon-db";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
-import { workshopTemplates } from "@/lib/workshop-data";
+import { buildPresenterControlState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
+import { getWorkshopTemplateVariantLabel, workshopTemplates } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addAgendaItem,
@@ -65,8 +66,7 @@ function buildTemplateResetLabel(
   template: (typeof workshopTemplates)[number],
   lang: UiLanguage,
 ) {
-  const audience = template.scenario === "20-participants" ? (lang === "cs" ? "20 lidí" : "20 participants") : lang === "cs" ? "17 lidí" : "17 participants";
-  return `${template.label} • ${audience}`;
+  return getWorkshopTemplateVariantLabel(template, lang);
 }
 
 function deriveNextTeamId(existingIds: string[]) {
@@ -477,6 +477,11 @@ export default async function AdminPage({
     currentRole: currentFacilitator?.grant.role ?? null,
     latestArchive,
   });
+  const presenterState = buildPresenterControlState({
+    state,
+    instanceId: activeInstanceId,
+    lang,
+  });
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
@@ -770,6 +775,35 @@ export default async function AdminPage({
                   </div>
                 </ControlCard>
 
+                <ControlCard title={copy.presenterCardTitle} description={copy.presenterCardDescription}>
+                  <div className="space-y-4">
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      <span className="font-medium text-[var(--text-primary)]">{copy.presenterCurrentSceneLabel}:</span>{" "}
+                      {presenterState.currentDefaultScene?.label ?? copy.presenterNoSceneTitle}
+                    </div>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <a
+                        className={`${adminPrimaryButtonClassName} inline-flex w-full items-center justify-center`}
+                        href={presenterState.currentPresenterHref}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {copy.presenterOpenCurrentButton}
+                      </a>
+                      {presenterState.participantPreviewHref ? (
+                        <a
+                          className={`${adminSecondaryButtonClassName} inline-flex w-full items-center justify-center`}
+                          href={presenterState.participantPreviewHref}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {copy.presenterOpenParticipantButton}
+                        </a>
+                      ) : null}
+                    </div>
+                  </div>
+                </ControlCard>
+
                 <ControlCard title={copy.archiveResetTitle} description={copy.archiveResetDescription}>
                   <div className="space-y-4">
                     <form action={archiveWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
@@ -937,6 +971,45 @@ export default async function AdminPage({
                     {copy.addAgendaItemButton}
                   </AdminSubmitButton>
                 </form>
+              </AdminPanel>
+
+              <AdminPanel eyebrow={copy.presenterCardTitle} title={copy.presenterScenesLabel} description={copy.presenterCardDescription}>
+                {selectedAgendaItem ? (
+                  <div className="space-y-3">
+                    {selectedAgendaItem.presenterScenes.length > 0 ? (
+                      selectedAgendaItem.presenterScenes.map((scene) => (
+                        <div key={scene.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                              <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
+                              <p className="text-sm leading-6 text-[var(--text-secondary)]">
+                                {scene.sceneType}
+                                {selectedAgendaItem.defaultPresenterSceneId === scene.id ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
+                                {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
+                              </p>
+                            </div>
+                            <a
+                              href={buildPresenterRouteHref({
+                                lang,
+                                instanceId: activeInstanceId,
+                                agendaItemId: selectedAgendaItem.id,
+                                sceneId: scene.id,
+                              })}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                            >
+                              {copy.presenterOpenSelectedScene}
+                            </a>
+                          </div>
+                          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
+                    )}
+                  </div>
+                ) : null}
               </AdminPanel>
 
               <AdminPanel eyebrow={copy.agendaSourceTitle} title={copy.agendaSourceTitle} description={copy.agendaSourceBody}>

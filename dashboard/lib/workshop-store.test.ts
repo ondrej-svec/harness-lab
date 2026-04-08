@@ -20,6 +20,7 @@ import { setWorkshopInstanceRepositoryForTests } from "./workshop-instance-repos
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "./workshop-state-repository";
 import {
   addAgendaItem,
+  addPresenterScene,
   addSprintUpdate,
   applyRuntimeRetentionPolicy,
   createWorkshopInstance,
@@ -29,12 +30,17 @@ import {
   getWorkshopInstances,
   getLatestWorkshopArchive,
   moveAgendaItem,
+  movePresenterScene,
   removeAgendaItem,
+  removePresenterScene,
   removeWorkshopInstance,
   resetWorkshopState,
+  setDefaultPresenterScene,
+  setPresenterSceneEnabled,
   setCurrentAgendaItem,
   setRotationReveal,
   updateAgendaItem,
+  updatePresenterScene,
   updateCheckpoint,
   upsertTeam,
 } from "./workshop-store";
@@ -363,6 +369,101 @@ describe("workshop-store", () => {
     expect(state.agenda.filter((item) => item.status === "current")).toHaveLength(1);
   });
 
+  it("supports presenter-scene creation, editing, ordering, default selection, and removal", async () => {
+    let state = await addPresenterScene("talk", {
+      label: "Custom prompt",
+      sceneType: "custom",
+      title: "Custom room cue",
+      body: "Lokální room-facing prompt pro tuto instanci.",
+    });
+
+    const customScene = state.agenda
+      .find((item) => item.id === "talk")
+      ?.presenterScenes.find((scene) => scene.label === "Custom prompt");
+    expect(customScene).toMatchObject({
+      kind: "custom",
+      sourceBlueprintSceneId: null,
+    });
+    const initialOrder = customScene?.order ?? 0;
+
+    state = await updatePresenterScene("talk", customScene!.id, {
+      label: "Adjusted prompt",
+      sceneType: "checkpoint",
+      title: "Adjusted room cue",
+      body: "Evidence-first prompt.",
+      ctaLabel: "Napište další safe move",
+      ctaHref: null,
+    });
+    expect(
+      state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id),
+    ).toMatchObject({
+      label: "Adjusted prompt",
+      sceneType: "checkpoint",
+    });
+
+    state = await movePresenterScene("talk", customScene!.id, "up");
+    expect(
+      state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id)?.order,
+    ).toBe(initialOrder - 1);
+
+    state = await setDefaultPresenterScene("talk", customScene!.id);
+    expect(state.agenda.find((item) => item.id === "talk")?.defaultPresenterSceneId).toBe(customScene!.id);
+
+    state = await setPresenterSceneEnabled("talk", customScene!.id, false);
+    expect(
+      state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id)?.enabled,
+    ).toBe(false);
+    expect(state.agenda.find((item) => item.id === "talk")?.defaultPresenterSceneId).not.toBe(customScene!.id);
+
+    state = await removePresenterScene("talk", customScene!.id);
+    expect(
+      state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id),
+    ).toBeUndefined();
+  });
+
+  it("rejects stale presenter-scene mutation targets", async () => {
+    await expect(
+      addPresenterScene("missing", {
+        label: "Custom prompt",
+        sceneType: "custom",
+        title: "Custom room cue",
+        body: "Lokální room-facing prompt pro tuto instanci.",
+      }),
+    ).rejects.toMatchObject({ code: "agenda_item_not_found" });
+
+    await expect(setDefaultPresenterScene("talk", "missing-scene")).rejects.toMatchObject({
+      code: "presenter_scene_not_found",
+    });
+  });
+
+  it("normalizes legacy agenda state without presenter scenes on read", async () => {
+    repository = new MemoryWorkshopStateRepository({
+      ...structuredClone(seedWorkshopState),
+      agenda: seedWorkshopState.agenda.map((item) => {
+        const legacyItem = { ...item };
+        delete legacyItem.defaultPresenterSceneId;
+        delete legacyItem.presenterScenes;
+        delete legacyItem.order;
+        delete legacyItem.sourceBlueprintPhaseId;
+        delete legacyItem.kind;
+        return legacyItem;
+      }),
+    } as WorkshopState);
+    setWorkshopStateRepositoryForTests(repository);
+
+    const state = await getWorkshopState();
+    const talkItem = state.agenda.find((item) => item.id === "talk");
+
+    expect(talkItem?.presenterScenes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "talk-briefing", sceneType: "briefing" }),
+        expect.objectContaining({ id: "talk-participant-view", sceneType: "participant-view" }),
+      ]),
+    );
+    expect(talkItem?.defaultPresenterSceneId).toBe("talk-briefing");
+    expect(state.agenda.every((item) => typeof item.order === "number")).toBe(true);
+  });
+
   it("updates facilitator-controlled team and checkpoint state", async () => {
     await updateCheckpoint("t1", "Checkpoint po facilitaci");
     let state = await getWorkshopState();
@@ -434,7 +535,7 @@ describe("workshop-store", () => {
       id: "client-hackathon-2026-05",
       templateId: "blueprint-compact",
       city: "Client HQ",
-      dateRange: "12. května 2026 • Main room",
+      dateRange: "12. května 2026",
     });
 
     expect(created).toMatchObject({

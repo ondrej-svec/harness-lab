@@ -223,6 +223,35 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
   });
 
+  test("launches the room screen from the control room and supports participant walkthrough", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a");
+
+    await expect(page.getByRole("heading", { name: "projekce pro místnost" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "otevřít projekci" })).toBeVisible();
+
+    const [popup] = await Promise.all([
+      page.waitForEvent("popup"),
+      page.getByRole("link", { name: "otevřít projekci" }).click(),
+    ]);
+
+    await expect(popup.getByRole("heading", { name: "Build Phase 1" })).toBeVisible();
+    await expect(popup.getByText("Co má být vidět před obědem")).toBeVisible();
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
+    await expect(page.getByText("náhled participant vrstvy")).toBeVisible();
+    await expect(page.locator("h2").filter({ hasText: "Context is King" })).toBeVisible();
+    await expect(page.getByText(/Krátký talk.*kvalitu kontextu/i)).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tým 1" })).toBeVisible();
+  });
+
+  test("renders the room screen on mobile", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation");
+
+    await expect(page.getByRole("heading", { name: "Rotace týmů" })).toBeVisible();
+    await expect(page.getByText("Bez ústního handoffu")).toBeVisible();
+  });
+
   test("facilitators API returns list with auth", async ({ request }) => {
     const response = await request.get("/api/admin/facilitators");
     expect(response.status()).toBe(200);

@@ -131,7 +131,7 @@ describe("workshop instances route", () => {
           id: "client-hackathon-2026-05",
           templateId: "blueprint-compact",
           city: "Client HQ",
-          dateRange: "12. května 2026 • Main room",
+          dateRange: "12. května 2026",
         }),
       }),
     );

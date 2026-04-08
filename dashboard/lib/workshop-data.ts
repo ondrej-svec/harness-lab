@@ -9,7 +9,44 @@ export type AgendaItem = {
   sourceBlueprintPhaseId: string | null;
   kind: "blueprint" | "custom";
   status: "done" | "current" | "upcoming";
+  defaultPresenterSceneId: string | null;
+  presenterScenes: PresenterScene[];
 };
+
+export type PresenterSceneType =
+  | "briefing"
+  | "demo"
+  | "participant-view"
+  | "checkpoint"
+  | "reflection"
+  | "custom";
+
+export type PresenterScene = {
+  id: string;
+  label: string;
+  sceneType: PresenterSceneType;
+  title: string;
+  body: string;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  order: number;
+  enabled: boolean;
+  sourceBlueprintSceneId: string | null;
+  kind: "blueprint" | "custom";
+};
+
+const presenterSceneTypes = [
+  "briefing",
+  "demo",
+  "participant-view",
+  "checkpoint",
+  "reflection",
+  "custom",
+] as const satisfies PresenterSceneType[];
+
+function normalizePresenterSceneType(value: string): PresenterSceneType {
+  return presenterSceneTypes.includes(value as PresenterSceneType) ? (value as PresenterSceneType) : "custom";
+}
 
 export type Team = {
   id: string;
@@ -151,7 +188,7 @@ function createSampleWorkshopMeta(input: {
     subtitle: blueprintAgenda.subtitle,
     eventTitle: input.eventTitle,
     city: input.city,
-    dateRange: `Ukázkový workshop den • ${input.room}`,
+    dateRange: "Ukázkový workshop den",
     venueName: input.city,
     roomName: input.room,
     addressLine: input.addressLine,
@@ -179,6 +216,20 @@ function createAgendaFromBlueprint(currentPhaseId?: string): AgendaItem[] {
     sourceBlueprintPhaseId: phase.id,
     kind: "blueprint" as const,
     status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
+    defaultPresenterSceneId: phase.defaultSceneId ?? phase.scenes[0]?.id ?? null,
+    presenterScenes: (phase.scenes ?? []).map((scene, sceneIndex) => ({
+      id: scene.id,
+      label: scene.label,
+      sceneType: normalizePresenterSceneType(scene.sceneType),
+      title: scene.title,
+      body: scene.body,
+      ctaLabel: scene.ctaLabel ?? null,
+      ctaHref: scene.ctaHref ?? null,
+      order: sceneIndex + 1,
+      enabled: true,
+      sourceBlueprintSceneId: scene.id,
+      kind: "blueprint" as const,
+    })),
   }));
 }
 
@@ -188,7 +239,7 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
     subtitle: blueprintAgenda.subtitle,
     eventTitle: template.defaultEventTitle,
     city: template.city,
-    dateRange: `${template.dateLabel} • ${template.room}`,
+    dateRange: template.dateLabel,
     venueName: template.city,
     roomName: template.room,
     addressLine: "Adresa nebo orientační bod",
@@ -198,6 +249,14 @@ function createWorkshopMetaFromTemplate(template: WorkshopTemplate): WorkshopMet
     adminHint:
       "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
   };
+}
+
+export function getWorkshopTemplateVariantLabel(template: WorkshopTemplate, lang: "cs" | "en") {
+  if (template.scenario === "20-participants") {
+    return lang === "cs" ? "větší skupina • cca 18-20 lidí" : "larger group • about 18-20 people";
+  }
+
+  return lang === "cs" ? "menší skupina • cca 15-17 lidí" : "smaller group • about 15-17 people";
 }
 
 export const workshopTemplates: WorkshopTemplate[] = [

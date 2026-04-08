@@ -14,7 +14,7 @@ describe("workshop-data", () => {
 
     expect(state.workshopId).toBe("blueprint-compact");
     expect(state.workshopMeta.city).toBe("Workshop venue");
-    expect(state.workshopMeta.dateRange).toBe("Workshop day • Main room");
+    expect(state.workshopMeta.dateRange).toBe("Workshop day");
     expect(state.workshopMeta.eventTitle).toBe("Harness Lab workshop");
     expect(state.workshopMeta.venueName).toBe("Workshop venue");
     expect(state.workshopMeta.roomName).toBe("Main room");
@@ -28,6 +28,12 @@ describe("workshop-data", () => {
 
     expect(state.agenda[0]?.status).toBe("current");
     expect(state.agenda.slice(1).every((item) => item.status === "upcoming")).toBe(true);
+    expect(state.agenda[0]?.presenterScenes[0]).toMatchObject({
+      id: blueprintAgenda.phases[0]?.scenes[0]?.id,
+      kind: "blueprint",
+      sourceBlueprintSceneId: blueprintAgenda.phases[0]?.scenes[0]?.id,
+    });
+    expect(state.agenda[1]?.defaultPresenterSceneId).toBe(blueprintAgenda.phases[1]?.defaultSceneId);
     expect(state.ticker).toEqual([
       {
         id: "tick-reset",
@@ -54,7 +60,7 @@ describe("workshop-data", () => {
         subtitle: "Soukromá workshop instance",
         eventTitle: "Client innovation day",
         city: "Client HQ",
-        dateRange: "12. května 2026 • Main room",
+        dateRange: "12. května 2026",
         venueName: "Client HQ",
         roomName: "Main room",
         addressLine: "Innovation street 12",
@@ -74,7 +80,14 @@ describe("workshop-data", () => {
       order: 1,
       sourceBlueprintPhaseId: blueprintAgenda.phases[0]?.id,
       kind: "blueprint",
+      defaultPresenterSceneId: blueprintAgenda.phases[0]?.defaultSceneId,
     });
+    expect(state.agenda[0]?.presenterScenes).toMatchObject([
+      expect.objectContaining({
+        id: blueprintAgenda.phases[0]?.scenes[0]?.id,
+        title: blueprintAgenda.phases[0]?.scenes[0]?.title,
+      }),
+    ]);
   });
 
   it("returns the team name when present and the id otherwise", () => {

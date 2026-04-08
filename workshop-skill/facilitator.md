@@ -162,6 +162,95 @@ Content-Type: application/json
 { "title": "...", "time": "...", "description": "...", "afterItemId": "build-1" }
 ```
 
+### `/workshop facilitator scenes`
+
+Presenter scenes jsou agenda-linked room-facing výstupy pro facilitátora a projektor. Skill má umět:
+
+- vypsat scény pro celou instanci nebo konkrétní agenda item
+- vytvořit novou scénu
+- upravit obsah, label, scene type a CTA
+- změnit default scénu pro danou agenda položku
+- přeuspořádat scény
+- skrýt nebo znovu povolit scénu
+- smazat lokální scénu
+
+Instanční route:
+
+```http
+GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes?agendaItemId=talk
+POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+DELETE {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+```
+
+Příklady:
+
+```http
+POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{
+  "agendaItemId": "talk",
+  "label": "Prompt blob vs repo context",
+  "sceneType": "demo",
+  "title": "Nejdřív bez kontextu, potom s mapou",
+  "body": "Ukažte rozdíl mezi prompt blobem a krátkou repo-native mapou.",
+  "ctaLabel": "Potom přepnout na participant walkthrough"
+}
+```
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{
+  "action": "update",
+  "agendaItemId": "talk",
+  "sceneId": "scene-123",
+  "label": "Upravený demo flow",
+  "sceneType": "demo",
+  "title": "Jedna story, ne feature tour",
+  "body": "Neukazujte pět režimů práce. Ukažte jeden čitelný workflow."
+}
+```
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{ "action": "set_default", "agendaItemId": "talk", "sceneId": "talk-participant-view" }
+```
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{ "action": "move", "agendaItemId": "talk", "sceneId": "scene-123", "direction": "up" }
+```
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{ "action": "set_enabled", "agendaItemId": "talk", "sceneId": "scene-123", "enabled": false }
+```
+
+```http
+DELETE {DASHBOARD_URL}/api/workshop/instances/{instanceId}/scenes
+Content-Type: application/json
+
+{ "agendaItemId": "talk", "sceneId": "scene-123" }
+```
+
+Když facilitátor chce změnit wording, flow nebo participant walkthrough přes coding agenta, preferuj tuto route místo ručního popisu změn v UI.
+
+Při práci přes API:
+
+- neznámé `agendaItemId` nebo `sceneId` vrací `404`
+- malformed payload pořád vrací `400`
+- skill má stale target ids hlásit explicitně, ne pokračovat jako by se změna povedla
+
 ### `/workshop facilitator archive`
 
 Zavolej:

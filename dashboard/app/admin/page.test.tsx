@@ -107,7 +107,10 @@ describe("AdminWorkspacePage", () => {
     expect(html).toContain(adminCopy.en.workspaceTitle);
     expect(html).toContain(adminCopy.en.workspaceOpenInstance);
     expect(html).toContain(adminCopy.en.createInstanceEventTitleLabel);
+    expect(html).toContain(adminCopy.en.instanceSelectLabel);
+    expect(html).toContain("smaller group • about 15-17 people");
     expect(html).toContain(adminCopy.en.instanceOwnerPlaceholder);
+    expect(html).toContain('type="date"');
     expect(html).toContain("/admin/instances/sample-studio-a?lang=en");
   });
 

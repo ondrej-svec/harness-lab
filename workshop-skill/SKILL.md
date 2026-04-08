@@ -184,6 +184,10 @@ Set the current instance to `prepared` state. Verify event code is ready.
 
 Inspect and edit the local agenda copy for one workshop instance. Requires facilitator session.
 
+### `workshop facilitator scenes`
+
+Inspect and edit presenter scenes for one workshop instance. This includes listing scenes for an agenda item, creating a new scene, editing content, changing default scene, reordering scenes, and enabling or hiding scenes. Requires facilitator session.
+
 ### `workshop facilitator archive`
 
 Archive the current workshop instance with optional notes.
