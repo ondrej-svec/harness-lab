@@ -650,9 +650,17 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(io.getStdout(), /\/skill:workshop/);
   assert.match(io.getStdout(), /\$workshop resources/);
   const installedSkill = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "utf8");
-  assert.match(installedSkill, /best reviewed bundled locale/);
+  assert.match(installedSkill, /resolve to a reviewed fallback locale/);
+  assert.match(installedSkill, /English is the default bundled fallback locale/);
+  assert.doesNotMatch(installedSkill, /Use Czech for explanations\./);
   const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");
   assert.match(installedReference, /Workshop skill je garantovaný výchozí nástroj/);
+  const installedFacilitator = await fs.readFile(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "facilitator.md"),
+    "utf8",
+  );
+  assert.match(installedFacilitator, /Commands for facilitators who manage workshop instances through an AI agent\./);
+  assert.doesNotMatch(installedFacilitator, /Příkazy pro facilitátory/);
   const installedEnglishReference = await fs.readFile(
     path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "reference.md"),
     "utf8",

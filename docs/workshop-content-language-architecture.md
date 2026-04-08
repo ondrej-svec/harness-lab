@@ -98,6 +98,7 @@ That means:
 - command semantics remain language-independent
 - the skill should prefer live runtime content when available
 - fallback bundle content should follow the same content-language model as the dashboard
+- when live runtime `contentLang` is unavailable, the skill should resolve delivery language from the user's language when possible and otherwise default to English rather than inheriting the raw language of a fallback source file
 - the skill must not become a separate authored language stream that drifts from the dashboard/presenter system
 
 ## Review Rule

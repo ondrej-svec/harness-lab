@@ -18,7 +18,7 @@ allowed-tools:
 
 # Workshop
 
-Participant-facing skill for the Harness Lab workshop. Command semantics stay in English, but participant-facing delivery should follow the active workshop `contentLang` when live runtime data is available and fall back to the best reviewed bundled locale otherwise.
+Participant-facing skill for the Harness Lab workshop. Command semantics stay in English, but participant-facing delivery should follow the active workshop `contentLang` when live runtime data is available and otherwise resolve to a reviewed fallback locale instead of inheriting the raw language of whichever supporting doc was opened first.
 
 ## Purpose
 
@@ -27,12 +27,26 @@ This skill is the primary workshop interface for participants in Codex or pi. It
 The portable install path should make this skill usable from the participant's real working repo without requiring a clone of the Harness Lab source repo.
 
 Core mental model:
-- dashboard participant surface = orientace během dne
-- dashboard facilitator surface = řízení workshop instance
-- workshop skill = AI interface ke stejnému workshop systému
-- workshop blueprint = veřejná kanonická definice workshop method
-- `uiLang` = jazyk product chrome
-- `contentLang` = jazyk workshopového obsahu pro participant-facing delivery
+- dashboard participant surface = orientation during the day
+- dashboard facilitator surface = control of the workshop instance
+- workshop skill = AI interface to the same workshop system
+- workshop blueprint = public canonical definition of the workshop method
+- `uiLang` = language of product chrome
+- `contentLang` = language of workshop content for participant-facing delivery
+
+## Language Resolution
+
+Command semantics stay in English. Resolve the response language in this order:
+
+1. If live workshop data provides `contentLang` and the command is participant-facing workshop delivery, use that locale.
+2. Otherwise, match the user's current language when it maps to a reviewed locale in the repo or bundle.
+3. If there is no clear live or user-language signal, default bundled fallback delivery to English (`en`).
+
+Additional rules:
+- facilitator-control commands are operational rather than room-facing delivery, so prefer the user's current language unless the facilitator explicitly asks for another reviewed locale or you are quoting workshop content
+- the authored language of a supporting doc does not decide the reply language by itself
+- if the requested locale has no reviewed variant, fall back to English and say so explicitly
+- do not let a Czech-authored fallback file force a Czech answer when the resolved response locale is English
 
 ## Sources Of Truth
 
@@ -56,8 +70,8 @@ Rule:
 - if runtime is unavailable, fall back to repo material and say explicitly that the answer is fallback rather than live state
 - runtime edits do not imply blueprint edits; reusable changes belong back in the repo deliberately
 - prefer workshop `contentLang` for participant-facing responses in live mode
-- if there is no live workshop context, prefer the best reviewed bundled locale and say when the answer is fallback content rather than live workshop state
-- for bundled fallback docs, resolve `workshop-skill/locales/<locale>/...` first; if a reviewed localized doc does not exist yet, fall back to the best reviewed bundled locale and say so explicitly
+- if there is no live workshop context, resolve the fallback locale using the Language Resolution rules above and say when the answer is fallback content rather than live workshop state
+- for bundled fallback docs, resolve `workshop-skill/locales/<locale>/...` first; if a reviewed localized doc does not exist yet, fall back to English and say so explicitly
 - do not translate workshop copy ad hoc when a reviewed locale exists in the repo or bundle
 
 ## Commands
@@ -297,7 +311,8 @@ Relevant local files:
 ## Style
 
 - Be concise and directive.
-- Use Czech for explanations.
+- Use the resolved response language.
+- English is the default bundled fallback locale when no live or user-language signal overrides it.
 - Keep command names, file names, and code terms in English.
 - Prefer actionable next steps over theory during build phases.
 - Treat tests and executable checks as the default trust boundary once the agent is doing meaningful implementation work.
