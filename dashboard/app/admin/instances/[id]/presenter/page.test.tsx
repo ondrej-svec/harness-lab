@@ -95,7 +95,9 @@ describe("PresenterPage", () => {
     expect(html).toContain("What to do in the first minutes");
     expect(html).toContain("Open install and first commands");
     expect(html).toContain("harness skill install");
+    expect(html).toContain(adminCopy.en.presenterParticipantPreviewLabel);
     expect(html).not.toContain("Participant walkthrough");
+    expect(html).not.toContain("What the room should see now");
   });
 
   it("renders attributed quotes and actionable link-list items in presenter scenes", async () => {
@@ -190,9 +192,30 @@ describe("PresenterPage", () => {
     expect(html).toContain("The main line for today");
     expect(html).toContain("What should change today");
     expect(html).toContain("data-tone=\"info\"");
+    expect(html).not.toContain("What the room should see now");
     expect(html).not.toContain("What the room should hear immediately");
     expect(html).not.toContain("source material");
     expect(html).not.toContain("content/talks/context-is-king.md");
+  });
+
+  it("renders checklist scenes without generic backstage cue labels", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
+    getWorkshopState.mockResolvedValue(state);
+    getInstance.mockResolvedValue({
+      ...structuredClone(sampleWorkshopInstances[0]),
+      workshopMeta: state.workshopMeta,
+    });
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-room-contract" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("By lunch, the repo should visibly contain");
+    expect(html).toContain("A README that explains the project to a new reader.");
+    expect(html).not.toContain("What the room should see now");
   });
 
   it("renders localized English presenter content for an English-content workshop instance", async () => {

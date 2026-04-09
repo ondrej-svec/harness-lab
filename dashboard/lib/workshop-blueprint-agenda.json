@@ -217,12 +217,12 @@
         },
         {
           "id": "opening-room-activation",
-          "label": "Aktivace místnosti",
+          "label": "Kde dnes s AI agenty jste",
           "sceneType": "transition",
           "intent": "walkthrough",
           "chromePreset": "agenda",
           "title": "Postavte se tam, kde dnes s AI agenty opravdu jste",
-          "body": "Chci rychle vidět, jakou máme místnost: jestli jste everyday users, opatrní praktici, zvědaví začátečníci, nebo skeptici. Není to ranking. Je to mapa pro tempo dne.",
+          "body": "Chci rychle vidět, s čím dnes přicházíte: jestli už AI agenty používáte denně, opatrně zkoušíte, nebo teprve hledáte první pracovní model. Není to ranking. Jen si tím nastavíme tempo a míru konkrétnosti.",
           "facilitatorNotes": [
             "Neudělej z toho dlouhé představení. Stačí krátký přesun, dva hlasy a návrat k hlavní lince dne.",
             "Pointa není zjistit senioritu. Pointa je ukázat, že workshop je participativní a že facilitace se přizpůsobuje skutečné místnosti."
@@ -237,7 +237,7 @@
             {
               "id": "opening-activation-steps",
               "type": "steps",
-              "title": "Rychlá mapa místnosti",
+              "title": "Rychlá mapa zkušeností",
               "items": [
                 {
                   "title": "Používám AI agenty skoro denně",
@@ -262,7 +262,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Proč to děláme hned na startu",
-              "body": "Tenhle workshop není jen projekce. Je to práce s konkrétní místností, jejím tempem a jejími návyky."
+              "body": "Tenhle workshop nestavíme pro abstraktní publikum. Stavíme ho podle toho, s čím dnes přicházíte vy."
             }
           ]
         },
@@ -674,7 +674,7 @@
               "id": "demo-point",
               "type": "callout",
               "tone": "info",
-              "title": "Pointa pro místnost",
+              "title": "Co si z dema odnést",
               "body": "Nejde o kouzelný výsledek. Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán a review."
             },
             {
@@ -708,7 +708,7 @@
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Demo jako workflow, ne přehlídka funkcí",
-          "body": "Vrstva pro účastníky během dema drží jednu příběhovou linku: kontext, plán, ověření a review. Nemá z něj dělat nástrojové menu.",
+          "body": "Během dema si držte jednu pracovní linku: odkud přišel kontext, kde vznikl plán, co se ověřilo a jak review vrací důvěru.",
           "facilitatorNotes": [
             "Použij ji, když chceš publiku připomenout, že i demo má mít logiku pro účastníky a jasnou pracovní linku."
           ],
@@ -748,7 +748,7 @@
             {
               "id": "demo-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky u dema ukazuje pracovní linku, ne seznam funkcí."
+              "body": "Sledujte pracovní linku dema, ne seznam funkcí."
             }
           ]
         }
@@ -976,7 +976,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Intermezzo: evidence, ne dojmy",
-          "body": "Každý tým dá jednu větu. Pak shrnutí z místnosti a jedna principová pointa navázaná na to, co se opravdu děje.",
+          "body": "Každý tým dá jednu větu. Pak pojmenujeme společné signály a jednu principovou pointu navázanou na to, co se opravdu děje.",
           "facilitatorNotes": [
             "Drž to krátké. Intermezzo je reset a checkpoint, ne dlouhá prezentace."
           ],
@@ -1002,7 +1002,7 @@
                 },
                 {
                   "title": "Jedna principová pointa",
-                  "body": "Navázaná na reálné dění v místnosti."
+                  "body": "Navázaná na to, co je dnes opravdu vidět v repu a ve workflow."
                 }
               ]
             },
@@ -1672,7 +1672,7 @@
                 },
                 {
                   "title": "All",
-                  "body": "Do místnosti jdou jen konkrétní repo signály a konkrétní chybějící signály."
+                  "body": "Sdílejte jen konkrétní repo signály a konkrétní chybějící signály."
                 }
               ]
             },

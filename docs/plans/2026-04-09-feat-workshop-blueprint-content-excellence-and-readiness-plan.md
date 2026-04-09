@@ -113,6 +113,8 @@ Primary repo references:
 
 - `dashboard/lib/workshop-blueprint-agenda.json`
 - `dashboard/lib/workshop-blueprint-localized-content.ts`
+- `dashboard/lib/ui-language.ts`
+- `dashboard/app/admin/instances/[id]/presenter/page.tsx`
 - `docs/workshop-content-language-architecture.md`
 - `workshop-blueprint/day-structure.md`
 - `workshop-blueprint/teaching-spine.md`
@@ -172,6 +174,7 @@ These rules apply across participant, facilitator, presenter, projection, mobile
 - visible projected or participant-facing copy must not expose backstage labels such as "what the room should hear," internal QA phrasing, or authoring shorthand
 - facilitator intent, delivery cues, and review notes belong in `facilitatorRunner`, facilitator notes, or review artifacts
 - visible slides should read like the thing itself, not like instructions about the thing
+- renderer-owned visible chrome, fallback labels, and auto-generated presenter captions are part of the same contract and must obey the visible-content rule too
 
 ### Participant-first operability
 
@@ -247,6 +250,8 @@ Current canonical review findings from live workshop review:
 
 - the `talk` proof slice is materially stronger, but the adjacent `opening` pack is still leaking facilitator/backstage framing into projected room content
 - visible room slides still contain meta labels such as "co má místnost slyšet" or acceptance-rubric phrasing that belongs in facilitator notes or `facilitatorRunner`, not on participant-facing or room-facing surfaces
+- part of that leak is systemic in the presenter renderer itself: shared UI copy like `co má místnost vidět teď` is being injected into participant preview, hero fallback, and checklist chrome independently of authored scene text
+- this means content-only rewriting is not enough; the presenter layer can currently reintroduce backstage phrasing even after the agenda copy is fixed
 - internal source provenance such as `Talk: Context is King` or `Facilitační průvodce: ...` must not masquerade as authority attribution on visible quote blocks
 - the "first contract" idea is directionally right, but the current opening-room contract still reads more like facilitator QA criteria than a sharp room-facing contract
 - the `talk` micro-exercise currently reads as facilitator-led contrast/demo; if participant action is intended, that instruction and the workshop-skill bridge must be made explicit
@@ -259,6 +264,7 @@ Execution consequence:
 - Phase 2 remains `in_progress`
 - the proof slice remains centered on `talk`
 - but the adjacent `opening` pack now joins the remaining Phase 2 correction scope because it directly affects the same thesis bridge into Build 1 and was shown by review to still violate the content-quality bar
+- the presenter surface itself now joins the remaining correction scope because projection-visible renderer chrome is part of the same user-facing content contract
 - the user later requested a whole-system rewrite before human review, so broader Phase 3 and Phase 4 implementation may proceed ahead of the proof-gate signoff
 - that sequencing change does not relax the review bar: human proof gates still block marking the plan complete
 
@@ -374,6 +380,7 @@ The workshop should use authority as proof, not decoration. Without an explicit 
 | --- | --- | --- |
 | The workshop doctrine itself is strong enough that the next bottleneck is execution quality, not workshop thesis | Verified | `workshop-blueprint/day-structure.md`, `workshop-blueprint/teaching-spine.md`, `content/talks/context-is-king.md` |
 | The current runtime agenda model can support the needed content upgrades without a new presenter architecture | Verified | `dashboard/lib/workshop-blueprint-agenda.json`, `docs/facilitator-agenda-source-of-truth.md` |
+| The presenter surface can be corrected inside the current architecture by changing renderer-owned copy and block chrome rather than replacing the presenter system | Verified | `dashboard/lib/ui-language.ts` and `dashboard/app/admin/instances/[id]/presenter/page.tsx` show the leak comes from shared UI labels reused across visible block types |
 | The current language architecture and runtime authoring model are in tension | Verified | `docs/workshop-content-language-architecture.md` vs. `dashboard/lib/workshop-data.ts` and `dashboard/lib/workshop-blueprint-agenda.json` |
 | Hardcoded upstream links are a real portability defect, not just an aesthetic issue | Verified | `dashboard/lib/workshop-blueprint-agenda.json` contains Ondrej-specific GitHub links |
 | The current 5-phase public summary and 10-phase runtime/canonical day split is misleading enough to require an explicit fix decision | Verified | `workshop-blueprint/agenda.json` vs. `workshop-blueprint/day-structure.md` and `dashboard/lib/workshop-blueprint-agenda.json` |
@@ -422,6 +429,16 @@ Mitigation:
 - include participant usefulness as a separate gate
 - require each participant scene to answer "what should my team do now?"
 - cut participant scenes that do not earn their keep
+
+### Risk: Renderer chrome silently reintroduces backstage language
+
+The team may rewrite agenda scenes successfully while the presenter surface still auto-injects visible labels like `co má místnost vidět teď`, causing projected slides to fail the same review bar for systemic reasons.
+
+Mitigation:
+
+- audit presenter-rendered visible chrome and fallback labels, not only authored scene text
+- replace one-size-fits-all visible cue labels with block-appropriate or neutral presenter chrome
+- add presenter-surface checks so renderer copy changes cannot silently put backstage wording back on projected slides
 
 ### Risk: Localization parity slips during rewrite
 
@@ -502,6 +519,8 @@ This section is a summary view only. The phased implementation section below is 
   - [x] Correct the adjacent `opening` pack where live review showed backstage/meta framing leaking into visible room content.
   - [x] Remove internal-source-style attribution from visible quote treatments unless it is a real external proof-bearing citation.
   - [x] Recast the opening "first contract" moment so the room sees a sharp working contract, not facilitator QA phrasing.
+  - [x] Correct presenter-renderer visible chrome so shared fallback labels and checklist chrome do not inject backstage phrases independent of authored scene content.
+  - [x] Audit presenter-owned visible text and fallback copy against the same visible-content and Czech-quality gates as agenda-authored scene text.
   - [x] Make the micro-exercise contract explicit: facilitator demo/contrast vs. participant action, and align the workshop-skill bridge to that choice.
   - [x] Add one explicit workshop-skill install/use moment to the shared workshop flow so participants do not discover it only through later CTAs or fallbacks.
 
@@ -512,6 +531,7 @@ This section is a summary view only. The phased implementation section below is 
   - [ ] Check participant usefulness in the mirror.
   - [ ] Check mobile glanceability for participant-facing use.
   - [ ] Check projected-room legibility for presenter-facing use.
+  - [x] Verify that presenter-owned visible chrome no longer exposes backstage authoring language on projected slides.
   - [ ] Check English/Czech parity.
   - [ ] Check portability and public-safe references.
   - [x] Confirm opening and talk room-facing slides no longer display facilitator/backstage labels as visible content.
@@ -541,6 +561,7 @@ This section is a summary view only. The phased implementation section below is 
 - The proof slice passes cold-read, spoken-readability, participant-usefulness, mobile-glanceability, projected-room-legibility, locale-parity, and portability checks.
 - Visible Czech room and participant surfaces no longer depend on weak borrowed-English labels such as `launch` or `check` when natural Czech would be clearer.
 - The flagship weak scenes no longer read like operational notes pasted onto a presenter surface.
+- Presenter-owned visible chrome no longer injects generic backstage labels onto hero, checklist, or participant-preview blocks.
 - Participant mirrors become action-oriented and phase-useful.
 - Facilitator support is strengthened in the agenda-owned `facilitatorRunner` layer, not only in adjacent docs.
 - At least one brief pair proves a more distinctive, higher-authority editorial standard without losing workshop discipline.
@@ -549,6 +570,7 @@ This section is a summary view only. The phased implementation section below is 
 - Opening, talk, and the first build bridge feel like one coherent participant journey rather than three locally good but weakly connected surfaces.
 - The moment participants should install or invoke the workshop skill is explicit in the day flow and visible in the participant-facing system.
 - Visible room and participant surfaces no longer expose backstage authoring language, facilitator QA phrasing, or internal-source attribution as if it were audience-facing content.
+- The presenter renderer itself no longer reintroduces backstage phrasing through shared UI copy or fallback block chrome.
 - Every flagship shared moment has a clear owner contract for what is facilitator-led, what participants should do, and where the next safe move lives.
 - The system is runnable end-to-end by another facilitator with normal-path preparation and without hidden author memory.
 
@@ -609,6 +631,8 @@ Tasks:
 - [x] apply and review the authority/citation pattern on the proof slice
 - [x] produce required previews and review notes
 - [x] correct the adjacent `opening` room pack so visible slides stop using facilitator/backstage phrasing
+- [x] correct presenter-renderer visible chrome so shared fallback labels do not leak backstage language onto projected slides
+- [x] audit projection-visible presenter UI copy against the same Czech and visible-content gates as agenda-authored scene text
 - [x] make quote attribution and source-provenance treatment consistent with the authority/citation doctrine
 - [x] clarify the micro-exercise ownership and participant/workshop-skill bridge
 - [x] define the explicit participant install/use moment for the workshop skill in the shared workshop flow
@@ -617,6 +641,7 @@ Exit criteria:
 
 - the proof slice is visibly stronger, cold-readable, locale-correct, mobile-glanceable, and room-legible
 - the `opening` to `talk` bridge no longer leaks facilitator meta language into projected slides
+- projection-visible presenter chrome obeys the same visible-content rule as authored scenes and no longer injects backstage labels by default
 - the visible Czech labels in the proof slice read as natural workshop Czech, not as translated taxonomy
 - source provenance and external authority are clearly separated on visible surfaces
 - participants can tell when the workshop skill enters the day and what the micro-exercise expects from them

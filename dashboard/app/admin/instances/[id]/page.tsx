@@ -113,7 +113,6 @@ const participantAccessFlashCookieName = "harness_participant_access_flash";
 type ParticipantAccessFlash = {
   instanceId: string;
   issuedCode: string;
-  expiresAt: string;
   codeId: string | null;
 };
 
@@ -240,8 +239,7 @@ function parseParticipantAccessFlash(value: string | undefined, instanceId: stri
     if (
       typeof parsed.instanceId === "string" &&
       parsed.instanceId === instanceId &&
-      typeof parsed.issuedCode === "string" &&
-      typeof parsed.expiresAt === "string"
+      typeof parsed.issuedCode === "string"
     ) {
       return parsed;
     }
@@ -638,7 +636,6 @@ async function issueParticipantAccessAction(formData: FormData) {
   cookieStore.set(participantAccessFlashCookieName, JSON.stringify({
     instanceId,
     issuedCode: result.issuedCode,
-    expiresAt: result.access.expiresAt,
     codeId: result.access.codeId,
   } satisfies ParticipantAccessFlash), {
     httpOnly: true,

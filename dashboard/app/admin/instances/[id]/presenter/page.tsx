@@ -128,7 +128,7 @@ function ParticipantPreview({
 }) {
   return (
     <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] px-6 py-6 sm:px-8 sm:py-8">
-      <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterCueLabel}</p>
+      <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterParticipantPreviewLabel}</p>
       <div className="mt-5 max-w-5xl">
         {activeAgendaItem ? (
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -158,7 +158,7 @@ function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
       {
         id: "participant-preview-hero",
         type: "hero",
-        eyebrow: "Participant surface",
+        eyebrow: undefined,
         title: scene.title,
       },
       { id: "participant-preview", type: "participant-preview", body: scene.body },
@@ -212,11 +212,7 @@ function SceneBlocks({
           const heroBody = hasParticipantPreview ? null : block.body ?? null;
           return (
             <div key={block.id}>
-              {block.eyebrow ? (
-                <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{block.eyebrow}</p>
-              ) : (
-                <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.presenterCueLabel}</p>
-              )}
+              {block.eyebrow ? <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{block.eyebrow}</p> : null}
               <h2 className="mt-4 max-w-5xl text-4xl font-semibold leading-[0.95] tracking-[-0.05em] text-[var(--text-primary)] sm:text-6xl">
                 {block.title}
               </h2>
@@ -281,12 +277,9 @@ function SceneBlocks({
           return (
             <BlockCard key={block.id} title={block.title}>
               <div className="space-y-3">
-                {block.items.map((item, index) => (
+                {block.items.map((item) => (
                   <div key={item} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                      {copy.presenterCueLabel} {index + 1}
-                    </p>
-                    <p className="mt-2 text-base leading-7 text-[var(--text-secondary)]">{item}</p>
+                    <p className="text-base leading-7 text-[var(--text-secondary)]">{item}</p>
                   </div>
                 ))}
               </div>

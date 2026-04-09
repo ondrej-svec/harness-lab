@@ -655,7 +655,7 @@ export const workshopBlueprintLocalizedContent = {
                 ],
               },
               "demo-point": {
-                title: "Point for the room",
+                title: "What to take from the demo",
                 body:
                   "The point is not a magical result. The point is how fast quality rises once you add context, planning, and review.",
               },
@@ -673,7 +673,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Participant demo board",
             title: "Treat the demo as workflow, not a feature tour",
             body:
-              "During the demo, the participant view should hold one clean story line: where context came from, where planning happened, what got checked, and how trust was restored.",
+              "During the demo, keep one working thread in view: where context came from, where planning happened, what got checked, and how review restored trust.",
             facilitatorNotes: [
               "Use this when you want to remind the audience that the demo also needs learner-facing logic and a clear working line.",
             ],
@@ -694,7 +694,7 @@ export const workshopBlueprintLocalizedContent = {
                 ],
               },
               "demo-participant-preview": {
-                body: "During the demo, the participant layer should show a workflow cue, not a feature checklist.",
+                body: "Follow the working thread of the demo, not a feature checklist.",
               },
             },
           },
@@ -848,7 +848,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Checkpoint board",
             title: "Intermezzo: evidence, not impressions",
             body:
-              "Keep the intermezzo disciplined: one sentence from each team, then a room summary, then one principle point tied to real evidence rather than facilitator vibes.",
+              "Keep the intermezzo disciplined: one sentence from each team, then the shared signals, then one principle point tied to real evidence rather than facilitator vibes.",
             facilitatorNotes: ["Keep it short. The intermezzo is a reset and checkpoint, not a long presentation."],
             sourceRefs: [{ label: "Facilitation guide: Intermezzos", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -857,7 +857,7 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   { title: "Teams: one sentence", body: "What we changed and why." },
                   { title: "Shared signal summary", body: "What is visible at the tables, in the repo, and in monitoring." },
-                  { title: "One principle point", body: "Tied to real room behavior." },
+                  { title: "One principle point", body: "Tied to what is actually visible in the repo and the workflow today." },
                 ],
               },
               "intermezzo-1-questions": {
@@ -1301,7 +1301,7 @@ export const workshopBlueprintLocalizedContent = {
                   },
                   {
                     title: "All",
-                    body: "Only concrete repo signals and concrete missing signals go back to the room.",
+                    body: "Share only concrete repo signals and concrete missing signals.",
                   },
                 ],
               },
