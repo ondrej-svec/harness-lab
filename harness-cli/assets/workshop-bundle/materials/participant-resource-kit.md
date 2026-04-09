@@ -1,6 +1,6 @@
 # Participant Resource Kit
 
-Krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu.
+Krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu.
 
 ## 1. Začněte `AGENTS.md`
 
@@ -28,16 +28,16 @@ Checklist pro handoff:
 ## 3. Používejte malý workflow, ne chaos
 
 Doporučený základ:
-- `workshop` pro orientaci a další bezpečný krok
+- `workshop` pro orientaci a další bezpečný krok
 - `/brainstorm`, když ještě není jasný scope nebo první slice
 - `/plan` před větší implementací
 - `/work` nebo jiný úzký implementační loop, když už víte co stavíte
 - test nebo jiné spustitelné ověření před důležitou změnou
 - `/review` po větším kusu práce
-- `/compound` nebo krátká poznámka zapsaná přímo v repu, když objev udělá další práci levnější
-- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
+- `/compound` nebo krátká poznámka zapsaná přímo v repu, když objev udělá další práci levnější
+- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
 
-## 4. Přesuňte jedno pravidlo z chatu do repa
+## 4. Přesuňte jedno pravidlo z chatu do repa
 
 Typické kandidáty:
 - build/test příkazy
@@ -52,7 +52,7 @@ Výchozí pattern:
 - `Playwright regression`
 - `human review`
 
-Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
+Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
 
 ## 6. Co si projít po workshopu
 
@@ -64,21 +64,21 @@ Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený 
 
 Poznámka:
 - `workshop` skill je garantovaný výchozí nástroj workshopu
-- další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
+- další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
 
 ## Výzva na příští týden
 
 1. Přidejte `AGENTS.md` do jednoho reálného projektu.
-2. Přesuňte jedno trvalé pravidlo z promptu do repa.
+2. Přesuňte jedno trvalé pravidlo z promptu do repa.
 3. Přidejte jeden review nebo handoff checklist.
 
 ## Co číst po workshopu, abyste zůstali aktuální
 
-Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
+Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
 
-- **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
-- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — jeden z nejhustších praktických zdrojů o Codexu, Claude Code a dalších agentech. Denně pracuje s těmito nástroji a zapisuje si to.
+- **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — jeden z nejhustších praktických zdrojů o Codexu, Claude Code a dalších agentech. Denně pracuje s těmito nástroji a zapisuje si to.
 - **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
-- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
+- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
 - **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si je znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
-- **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.
+- **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.

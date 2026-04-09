@@ -68,6 +68,15 @@ paths:
     # Generated bundle mirror — review the canonical source instead.
     - "harness-cli/assets/workshop-bundle/**"
 
+    # Teaching files — these DOCUMENT the rules and contain illustrative
+    # "Don't" examples that would be "fixed" into the "Do" versions by
+    # --fix mode, silently destroying the lesson. They are rule sources,
+    # not content the rules apply to.
+    - "content/style-guide.md"
+    - "content/style-examples.md"
+    - "content/czech-reject-list.md"
+    - "content/czech-editorial-review-checklist.md"
+
     # Tests and generated artifacts.
     - "**/*.test.*"
     - "**/node_modules/**"

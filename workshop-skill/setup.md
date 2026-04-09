@@ -18,7 +18,7 @@ Garantovaný výchozí nástroj pro dnešek je `workshop` skill. Další workflo
 - terminálový, hackovatelný multi-model setup: `pi`
 - macOS / Linux: `Codex CLI`
 - Windows nebo macOS: `Codex App`
-- Když se zaseknete: web fallback nebo pairing s někým, komu už setup běží
+- Když se zaseknete: web fallback nebo pairing s někým, komu už setup běží
 
 ## pi
 
@@ -31,7 +31,7 @@ npm install -g @mariozechner/pi-coding-agent
 2. Přihlaste provider nebo účet, který chcete používat.
 3. Otevřete repozitář.
 4. Spusťte `pi`.
-5. Načtěte workshop skill přes `/skill:workshop` a řekněte si o `setup`, `reference` nebo `brief`.
+5. Načtěte workshop skill přes `/skill:workshop` a řekněte si o `setup`, `reference` nebo `brief`.
 
 ## Codex CLI
 
@@ -39,7 +39,7 @@ npm install -g @mariozechner/pi-coding-agent
 2. Nainstalujte CLI podle interního setup flow vaší organizace.
 3. Přihlaste se.
 4. Otevřete repozitář.
-5. Pošlete první smysluplný prompt a ověřte, že dostáváte odpověď.
+5. Pošlete první smysluplný prompt a ověřte, že dostáváte odpověď.
 
 ## Codex App
 
@@ -53,8 +53,8 @@ npm install -g @mariozechner/pi-coding-agent
 
 - Neztrácejte 20 minut sólo debugováním setupu.
 - Po 7 minutách blokace přepněte na App, web fallback nebo pairing.
-- Když nefunguje autentizace, pokračujte s někým od stolu a vraťte se k vlastnímu setupu později.
-- Když si nejste jistí dalším krokem, použijte v Codexu `$workshop setup`. V pi načtěte `/skill:workshop` a řekněte si o setup pomoc. Nebo si zavolejte facilitátora.
+- Když nefunguje autentizace, pokračujte s někým od stolu a vraťte se k vlastnímu setupu později.
+- Když si nejste jistí dalším krokem, použijte v Codexu `$workshop setup`. V pi načtěte `/skill:workshop` a řekněte si o setup pomoc. Nebo si zavolejte facilitátora.
 
 ## Prvních 15 minut po setupu
 
@@ -71,7 +71,7 @@ npm install -g @mariozechner/pi-coding-agent
    - ideálně přes `$plan`, případně `brainstorm`, když scope ještě není jasný
 5. Přidejte jedno spustitelné ověření:
    - unit test, tracer bullet nebo aspoň jasný review/checklist krok
-6. Když chcete materiály i po workshopu:
+6. Když chcete materiály i po workshopu:
    - `Codex: $workshop resources`
    - `Codex: $workshop gallery`
    - `Codex: $workshop follow-up`
@@ -80,5 +80,5 @@ npm install -g @mariozechner/pi-coding-agent
 
 - Umíte otevřít repo.
 - Umíte poslat prompt.
-- Máte jednu funkční cestu, jak během workshopu pracovat s agentem.
-- Víte, jaký je první bezpečný krok v repu po setupu.
+- Máte jednu funkční cestu, jak během workshopu pracovat s agentem.
+- Víte, jaký je první bezpečný krok v repu po setupu.

@@ -2,11 +2,11 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.2.9",
-  "contentHash": "a0eb905d370ba02c761d09fa7b894a839c6877835e49f474553e2c8d6c4809c2",
+  "contentHash": "140b06cfa2916b56f19edfea1cecc749dbc51d2e5fdaf1e09d50cd7c864a23a1",
   "files": [
     {
       "path": ".copy-editor.yaml",
-      "sha256": "0856781e5d4706b3ed813e65ff2efc23139ee8b73ccc88ee5d871e700b0a1988"
+      "sha256": "24d90fa819f04d995ad0f99a57cea60d48e0f3e5267cc053b72592864f881c11"
     },
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -14,7 +14,7 @@
     },
     {
       "path": "content/challenge-cards/deck.md",
-      "sha256": "a95742ff66d5d7463082968bf3e35e51632c31cbd6a1c04e9202f41814f4cafd"
+      "sha256": "1c8b4e3a6ab987dc2e9e5418a32a84b8dd3485b8ee0d7d5dc9dc01394f57e3cc"
     },
     {
       "path": "content/challenge-cards/locales/en/deck.md",
@@ -42,11 +42,11 @@
     },
     {
       "path": "content/facilitation/codex-setup-verification.md",
-      "sha256": "0d7e36a8f2b8c68939997b117f1b5cf1538a5b9e27f2d18948a1ac407543de8e"
+      "sha256": "d137a5e729a1d443713a9e8431bffe169a1058d3e64c298688a6b7924fbdf3a8"
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "fb877a24f745f995083844faa0a186d40ed4f2af3abd5222a21d00ecc36f4879"
+      "sha256": "2c8033a43459dad42a88c1c842e5e915e6bb7d6dbdea38412d4a9c06b93544d7"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -54,15 +54,15 @@
     },
     {
       "path": "content/project-briefs/code-review-helper.md",
-      "sha256": "3e174ff0d097fe132088774042f9db58c9c2494613d66950bdd423116bd7986d"
+      "sha256": "96bbbef60ab0ff93ad4aa3858852886329139a25ce9f375bc4cc57ad706b7c98"
     },
     {
       "path": "content/project-briefs/devtoolbox-cli.md",
-      "sha256": "40a4f2090c1304b8553e428c860ce7af839681f9448ab01578a2d63a395359bc"
+      "sha256": "ce0b09a5e77be19f8ddb2ba6a43137c3cc2a415512d247971186e846dd018888"
     },
     {
       "path": "content/project-briefs/doc-generator.md",
-      "sha256": "22e1adbcd566b410b4d08eaa2b4257764425c8bc408866f5b7bb007e7e12647d"
+      "sha256": "48b8298be1e14e962055ac6d157be2728aa96fc71109e7ee833a6c56dab64731"
     },
     {
       "path": "content/project-briefs/locales/en/code-review-helper.md",
@@ -86,11 +86,11 @@
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
-      "sha256": "8d36b815f13ab43db6bbc4cc0d5c407e9c05449f02914eb7de8afe4d0ca1251e"
+      "sha256": "40c0d09c02fb20c97c0f99088641de20fa966b17089f6f7701a7808814b31c55"
     },
     {
       "path": "content/project-briefs/standup-bot.md",
-      "sha256": "0faf4df36280eb459034f4fb2acb6fc09bd262354b89c744b93a955b95430744"
+      "sha256": "df9abc9d7bc8283d30d1c09fb412f9e072a980782c0b622747b13744b2a81c84"
     },
     {
       "path": "content/style-examples.md",
@@ -106,11 +106,11 @@
     },
     {
       "path": "content/talks/codex-demo-script.md",
-      "sha256": "88c78df95025db83ac4b71c3a5216685e6d07bd5306eb8b4ecac3f7911f22352"
+      "sha256": "d5ff639fde21e47606a81aeae6e2b135d2063c073a8dd5717a0386546b9b77cc"
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "748550d4ac44feaa0115b56df89f3ecf298dba7d29098847a78f9f6eede8938e"
+      "sha256": "33583f7982dd8f2d4d1bcbb637c0408562d6e0e20825eea06f897b34fe5efe16"
     },
     {
       "path": "docs/harness-cli-foundation.md",
@@ -138,7 +138,7 @@
     },
     {
       "path": "materials/coaching-codex.md",
-      "sha256": "2390be079acde89b16380cdd0904fac2cbefcb9aa11c1fe256330b2dc2362ba9"
+      "sha256": "0b0487154476a61f4e3d36b04b1a05f843125a3e98c31c2f19aad5abb7a25708"
     },
     {
       "path": "materials/locales/en/participant-resource-kit.md",
@@ -146,11 +146,11 @@
     },
     {
       "path": "materials/participant-resource-kit.md",
-      "sha256": "82c23fbb651b150a03be0052c5cbf497db4d0b2e548772c9b93d7ed9e071929d"
+      "sha256": "d7cd7db05429faf7af570e33401cb5788d663e06c984f193596c14d2d8a12a5b"
     },
     {
       "path": "SKILL.md",
-      "sha256": "a8b8f76f8eeef2a7e7cd0d2906f33a7ab7a146a14383f5f679fddc6b3bdf8242"
+      "sha256": "38798d231667749cd68e88e216085c1bbb1ab7919a6b3751239d6f5fadba5759"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -186,27 +186,27 @@
     },
     {
       "path": "workshop-skill/analyze-checklist.md",
-      "sha256": "6602e2199c9213a6c02cb1db80d56035a509ddfed429a0a783ff327b596753df"
+      "sha256": "b1b5af58fc18f8400677a964eb3c1970015284d63101683fc8232bbea6cf8871"
     },
     {
       "path": "workshop-skill/closing-skill.md",
-      "sha256": "e83e381216fad93356b94da89ca2525e01978d13005f2b0f11cf5ed32382971a"
+      "sha256": "7019aa2afe4ac68869f0ec0c4bf9509f35695d171b66292d874e41355da178e0"
     },
     {
       "path": "workshop-skill/commands.md",
-      "sha256": "fb062e889d723630389e0f4796c8e46e21ae5af60e7e1a0cec5c2d83150041fe"
+      "sha256": "837c795baf133f220d3badf329c2484028f87209fb4e39cc729df54754b9a0a3"
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "b8c9e1c01ddb314e45d8d2c3a7460bac53a48ba2321eaf6518e4b08436d88895"
+      "sha256": "fdff468a3202fb6020fcc332c74199cef51c85e6e0387b7ff5b5d62e27d91fbe"
     },
     {
       "path": "workshop-skill/follow-up-package.md",
-      "sha256": "6a9d38fe6a15160d35bd5f2c604f4aa466d87347afd7b45f920f86a515980a89"
+      "sha256": "74b8232f54b663d8ba9a97485c898ef0e8cffd5b5423831627ee7fe94d1cca44"
     },
     {
       "path": "workshop-skill/install.md",
-      "sha256": "d91a2c92888f070ff527996f892d1a1fab7dba2360bba994df1badb71de0682a"
+      "sha256": "4e356194b0dbe114f71ec3661e1b4a4c323cdaa5efedac977f28629b4db66772"
     },
     {
       "path": "workshop-skill/locales/en/commands.md",
@@ -230,19 +230,19 @@
     },
     {
       "path": "workshop-skill/recap.md",
-      "sha256": "8bc5b05caa02c1d4a9f9944ad13febfc1d807cefb93371d815b7cd2f2d75c81d"
+      "sha256": "fa242bbb17d5305fda2b3c08a8da14744f60f6895985bbbbb1604c4c1ad4c8b4"
     },
     {
       "path": "workshop-skill/reference.md",
-      "sha256": "5130bf4e39423fd193cdf9c255b9296bc5aabca690ee6d433994db98c6b4fb12"
+      "sha256": "89ef69ce4380468557a2f43576286937baf891bb0dc19035f0f06da69a3d0e38"
     },
     {
       "path": "workshop-skill/setup.md",
-      "sha256": "4d43b1dac557076a63424af55946d0cdc84a2879389d3c573c1a1e3ff603b97d"
+      "sha256": "8a9a66372b49d504b5df45e0df3eac2835ef02ce79b7db1078fc85a928a36d5d"
     },
     {
       "path": "workshop-skill/template-agents.md",
-      "sha256": "07dd6ee5a017a0af01bf3bdcc465f06a9d8701851a413e805d29cbb22a7d991a"
+      "sha256": "a8647455ac66b79107d120258591e5e96cef394ed1b2acdb8a2ec4669469c5fe"
     }
   ]
 }

@@ -13,14 +13,14 @@ export const workshopBlueprintLocalizedContent = {
           problem:
             "Developers lose time on repeated small utilities that are scattered across wiki pages, shell history, and private notes.",
           userStories: [
-            "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
-            "As a developer, I want a fast way to list the last problematic commits or branches.",
-            "As a team, I want the commands documented clearly so another team can continue after the handoff.",
+            "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
+            "As a developer, I want a fast way to list the last problematic commits or branches.",
+            "As a team, I want the commands documented clearly so another team can continue after the handoff.",
           ],
           architectureNotes: [
             "The CLI can be written in any language, but commands must stay easy to discover.",
             "AGENTS.md must explain the build and test flow and the expected output style.",
-            "A handoff runbook matters more than a wide feature set.",
+            "A handoff runbook matters more than a wide feature set.",
           ],
           acceptanceCriteria: [
             "There are at least 3 useful commands.",
@@ -28,7 +28,7 @@ export const workshopBlueprintLocalizedContent = {
             "A new team can add or fix another command within 10 minutes.",
           ],
           firstAgentPrompt:
-            "Design a minimal CLI architecture that survives handoff. Start with AGENTS.md, then a plan, and only then implementation.",
+            "Design a minimal CLI architecture that survives handoff. Start with AGENTS.md, then a plan, and only then implementation.",
         },
         {
           id: "standup-bot",
@@ -36,18 +36,18 @@ export const workshopBlueprintLocalizedContent = {
           problem:
             "Daily standups in chat often become long, inconsistent, and hard to review later.",
           userStories: [
-            "As a team lead, I want standup replies collected into one overview.",
-            "As a developer, I want blockers and dependencies visible in one place.",
-            "As the next team after rotation, I want to understand the data flow and integration points quickly.",
+            "As a team lead, I want standup replies collected into one overview.",
+            "As a developer, I want blockers and dependencies visible in one place.",
+            "As the next team after rotation, I want to understand the data flow and integration points quickly.",
           ],
           architectureNotes: [
-            "Prefer a clear data model over a complicated integration.",
+            "Prefer a clear data model over a complicated integration.",
             "Mock data is fine if the workflow still feels realistic.",
-            "Prompts and runbooks must be part of the solution, not a side note.",
+            "Prompts and runbooks must be part of the solution, not a side note.",
           ],
           acceptanceCriteria: [
-            "The bot can ingest at least seed data and produce a summary.",
-            "The repo explains how to extend the solution to a real chat channel.",
+            "The bot can ingest at least seed data and produce a summary.",
+            "The repo explains how to extend the solution to a real chat channel.",
             "After rotation, another team can continue without verbal explanation.",
           ],
           firstAgentPrompt:
@@ -57,21 +57,21 @@ export const workshopBlueprintLocalizedContent = {
           id: "code-review-helper",
           title: "Code Review Helper",
           problem:
-            "Code review often depends on who looked at the diff, which means risky changes slip through without a shared language for certainty, heuristics, and required follow-up.",
+            "Code review often depends on who looked at the diff, which means risky changes slip through without a shared language for certainty, heuristics, and required follow-up.",
           userStories: [
-            "As a reviewer, I want a checklist of changed boundaries, risks, and follow-up questions extracted from a diff.",
-            "As the author of a change, I want to know what I should verify before I ask for review.",
-            "As the inheriting team, I want the first team’s review heuristics recorded so I can extend them instead of rediscovering them.",
+            "As a reviewer, I want a checklist of changed boundaries, risks, and follow-up questions extracted from a diff.",
+            "As the author of a change, I want to know what I should verify before I ask for review.",
+            "As the inheriting team, I want the first team’s review heuristics recorded so I can extend them instead of rediscovering them.",
           ],
           architectureNotes: [
-            "This can be a CLI, a web tool, or a simple script. The key is a clean diff -> rubric -> checklist flow.",
+            "This can be a CLI, a web tool, or a simple script. The key is a clean diff -> rubric -> checklist flow.",
             "Make the output separate certainty from heuristic suspicion.",
-            "Add a seed diff or examples folder so another team can test new rules quickly.",
+            "Add a seed diff or examples folder so another team can test new rules quickly.",
           ],
           acceptanceCriteria: [
-            "The tool produces a review checklist from a seed diff.",
+            "The tool produces a review checklist from a seed diff.",
             "It explains what is certain, what is heuristic, and what still needs human judgment.",
-            "Another team can add a new rule without a long onboarding call.",
+            "Another team can add a new rule without a long onboarding call.",
           ],
           firstAgentPrompt:
             "Do not start by generating code. First define the review rubric, the certainty model, and the seed diff flow another team should open first.",
@@ -80,15 +80,15 @@ export const workshopBlueprintLocalizedContent = {
           id: "metrics-dashboard",
           title: "Metrics Dashboard",
           problem:
-            "Teams have data but struggle to turn it into a shared view that actually supports decisions.",
+            "Teams have data but struggle to turn it into a shared view that actually supports decisions.",
           userStories: [
-            "As a team, I want several metrics on one screen.",
-            "As a facilitator, I want to change seed data without touching UI logic.",
-            "As the next team after rotation, I want to understand the screen and data structure within minutes.",
+            "As a team, I want several metrics on one screen.",
+            "As a facilitator, I want to change seed data without touching UI logic.",
+            "As the next team after rotation, I want to understand the screen and data structure within minutes.",
           ],
           architectureNotes: [
             "Separate seed data from UI from the first commit.",
-            "Mobile-first is a plus, but projected desktop view still needs to stay readable.",
+            "Mobile-first is a plus, but projected desktop view still needs to stay readable.",
             "Monitoring and README should explain what already works and what does not.",
           ],
           acceptanceCriteria: [
@@ -97,13 +97,13 @@ export const workshopBlueprintLocalizedContent = {
             "A new team can add another metric without breaking the layout.",
           ],
           firstAgentPrompt:
-            "Design a dashboard that survives handoff. First describe the data model, components, and done criteria, and only then write the UI.",
+            "Design a dashboard that survives handoff. First describe the data model, components, and done criteria, and only then write the UI.",
         },
       ],
       challenges: [
         {
           id: "agents-md",
-          title: "Create AGENTS.md as a map",
+          title: "Create AGENTS.md as a map",
           category: "Context Engineering",
           phaseHint: "before-lunch",
           description: "Write down the goal, build and test flow, durable rules, and where the next team should look first.",
@@ -111,11 +111,11 @@ export const workshopBlueprintLocalizedContent = {
         },
         {
           id: "review-skill",
-          title: "Write a code review skill",
+          title: "Write a code review skill",
           category: "Context Engineering",
           phaseHint: "before-lunch",
           description:
-            "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt.",
+            "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt.",
           completedBy: [],
         },
         {
@@ -133,7 +133,7 @@ export const workshopBlueprintLocalizedContent = {
           category: "Workflow",
           phaseHint: "before-lunch",
           description:
-            "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy.",
+            "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy.",
           completedBy: [],
         },
         {
@@ -151,7 +151,7 @@ export const workshopBlueprintLocalizedContent = {
           category: "Meta",
           phaseHint: "anytime",
           description:
-            "Every important task needs an explicit completion criterion and a link to verification.",
+            "Every important task needs an explicit completion criterion and a link to verification.",
           completedBy: ["t4"],
         },
       ],
@@ -189,18 +189,18 @@ export const workshopBlueprintLocalizedContent = {
       opening: {
         label: "Opening and orientation",
         goal:
-          "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
+          "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
         roomSummary:
-          "The room should feel immediately that this is not a prompting hackathon. It is a day of steering agents, building with them in a real repo, and later testing what survives without us.",
+          "The room should feel immediately that this is not a prompting hackathon. It is a day of steering agents, building with them in a real repo, and later testing what survives without us.",
         facilitatorPrompts: [
-          "We are not starting with a tool demo or a prompting contest. We are starting a day of steering work with coding agents so something durable stays behind.",
+          "We are not starting with a tool demo or a prompting contest. We are starting a day of steering work with coding agents so something durable stays behind.",
           "You will learn, build, hand off, and inherit. That day arc is the point, not workshop logistics.",
-          "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
+          "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
           "Whatever stays only in table talk will not survive the afternoon.",
         ],
         watchFors: [
-          "The opening slips into rules before it offers ambition and a reason to care.",
-          "The room reads the day as a prompting contest or a feature race.",
+          "The opening slips into rules before it offers ambition and a reason to care.",
+          "The room reads the day as a prompting contest or a feature race.",
           "The facilitator explains the continuation mechanic too early instead of simply setting the bar for continuation.",
         ],
         checkpointQuestions: [
@@ -210,18 +210,18 @@ export const workshopBlueprintLocalizedContent = {
         ],
         sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
         facilitatorRunner: {
-          goal: "Open the day as a shared room start, not as an operating brief.",
+          goal: "Open the day as a shared room start, not as an operating brief.",
           say: [
-            "We are not starting with a tool demo or a prompting contest.",
+            "We are not starting with a tool demo or a prompting contest.",
             "You will learn, build, hand off, and inherit. That arc is the point of the day.",
-            "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
+            "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
           ],
           show: [
             "Run the launch arc from framing through analogy and room activation into the first working contract.",
             "Show the participant surface only briefly at the end of opening or in the talk bridge.",
           ],
           do: [
-            "Do a fast room grouping by current experience with AI agents and let two short voices land.",
+            "Do a fast room grouping by current experience with AI agents and let two short voices land.",
             "Keep the launch brisk: each beat should change the room state, not explain the whole workshop.",
           ],
           watch: [
@@ -229,18 +229,18 @@ export const workshopBlueprintLocalizedContent = {
             "The room should feel the ambition of the day before it gets the first rule.",
           ],
           fallback: [
-            "If time slips, keep the framing, the analogy, and the first contract. Shorten the activation to a quick show of hands.",
+            "If time slips, keep the framing, the analogy, and the first contract. Shorten the activation to a quick show of hands.",
             "If energy drops, return to the line that the afternoon will test what remains without rescue.",
           ],
         },
         scenes: {
           "opening-framing": {
             label: "Opening promise",
-            title: "Today we are building a working system, not prompt theatre",
+            title: "Today we are building a working system, not prompt theatre",
             body:
               "The goal today is not one impressive answer. The goal is to learn how to steer work with coding agents so the repo, workflow, and instructions still hold without your running commentary.",
             facilitatorNotes: [
-              "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session.",
+              "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session.",
               "Say harness engineering explicitly, but do not stay inside the definition. Move quickly into the day arc: learn, build, hand off, continue.",
               "After the main line, pause briefly and let it land before you move into the day arc.",
             ],
@@ -248,26 +248,26 @@ export const workshopBlueprintLocalizedContent = {
             blocks: {
               "opening-hero": {
                 eyebrow: "Harness Lab",
-                title: "Today we are building a working system, not prompt theatre",
+                title: "Today we are building a working system, not prompt theatre",
                 body:
                   "Harness engineering means shaping instructions, context, verification, and workflow so the agent and the next team can continue safely. Today we are not just describing that system. We are building it.",
               },
               "opening-framing-callout": {
                 title: "The main line for today",
                 body:
-                  "We are not learning to prompt better. We are learning to build a working system that carries the next move without table-side explanation.",
+                  "We are not learning to prompt better. We are learning to build a working system that carries the next move without table-side explanation.",
               },
               "opening-framing-shift": {
                 title: "What should change today",
                 body:
-                  "This is not prompt theatre and not a feature race. It is a day that should change how you work with coding agents after the workshop too.",
+                  "This is not prompt theatre and not a feature race. It is a day that should change how you work with coding agents after the workshop too.",
               },
             },
           },
           "opening-handoff-loop": {
             label: "Day arc",
             title: "The day has one arc: learn, build, hand off, continue",
-            body: "The morning does not begin with a rules card. It begins with a promise that you will experience the full arc of agent work in one day.",
+            body: "The morning does not begin with a rules card. It begins with a promise that you will experience the full arc of agent work in one day.",
             facilitatorNotes: [
               "Keep this as the promise of the day, not as workshop logistics.",
               "Give each step one sentence. The room should feel that everything ahead has one direction.",
@@ -283,11 +283,11 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   {
                     title: "Learn to steer the agent",
-                    body: "Not as a trick, but as a working discipline around context, boundaries, and verification.",
+                    body: "Not as a trick, but as a working discipline around context, boundaries, and verification.",
                   },
                   {
                     title: "Build something real",
-                    body: "In a repo, with a plan, verification, and first artifacts another team can actually continue.",
+                    body: "In a repo, with a plan, verification, and first artifacts another team can actually continue.",
                   },
                   {
                     title: "Hand it off",
@@ -301,17 +301,17 @@ export const workshopBlueprintLocalizedContent = {
               },
               "opening-loop-callout": {
                 title: "Why the launch matters",
-                body: "We are not opening a process. We are opening a day that should change how the room works with coding agents after today.",
+                body: "We are not opening a process. We are opening a day that should change how the room works with coding agents after today.",
               },
             },
           },
           "opening-context-analogy": {
             label: "Lego duck analogy",
-            title: "The same bricks, a different duck",
+            title: "The same bricks, a different duck",
             body:
               "Give people the same bricks and you still will not get one correct duck. The same is true here: the model alone does not determine the quality of the work. Context, boundaries, and team imagination do.",
             facilitatorNotes: [
-              "Use the Lego-duck analogy briefly and concretely. This is not a cute detour. It explains why harness engineering is a creative discipline.",
+              "Use the Lego-duck analogy briefly and concretely. This is not a cute detour. It explains why harness engineering is a creative discipline.",
               "Do not ask who is right. Ask what produced the more useful working result and why.",
             ],
             sourceRefs: [
@@ -346,9 +346,9 @@ export const workshopBlueprintLocalizedContent = {
             label: "Room activation",
             title: "Stand where you honestly are with AI agents today",
             body:
-              "I want a quick map of the room: daily users, careful practitioners, curious beginners, or sceptics. This is not a ranking. It is a facilitation map for the day.",
+              "I want a quick map of the room: daily users, careful practitioners, curious beginners, or sceptics. This is not a ranking. It is a facilitation map for the day.",
             facilitatorNotes: [
-              "Do not turn this into long self-introductions. A quick move, two short voices, and then back to the main line.",
+              "Do not turn this into long self-introductions. A quick move, two short voices, and then back to the main line.",
               "The point is not seniority. The point is to make the workshop participatory and to calibrate the room in public.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
@@ -366,17 +366,17 @@ export const workshopBlueprintLocalizedContent = {
                   },
                   {
                     title: "I am still near the start",
-                    body: "I want a clear working model, not only a tour of possibilities.",
+                    body: "I want a clear working model, not only a tour of possibilities.",
                   },
                   {
-                    title: "I am sceptical, but I want evidence",
+                    title: "I am sceptical, but I want evidence",
                     body: "I am watching for what survives handoff and verification.",
                   },
                 ],
               },
               "opening-activation-callout": {
                 title: "Why do this at the start",
-                body: "This workshop is not only projection. It is work with a real room, its current habits, and its current pace.",
+                body: "This workshop is not only projection. It is work with a real room, its current habits, and its current pace.",
               },
             },
           },
@@ -387,21 +387,21 @@ export const workshopBlueprintLocalizedContent = {
               "After the launch, the room does not need another principle. It needs to know what must be visible in the repo after the first build block, not only promised aloud.",
             facilitatorNotes: [
               "This is the first concrete rule of the day. It comes after ambition, analogy, and activation.",
-              "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact.",
+              "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Build Phase 1", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "opening-contract-checklist": {
                 title: "By lunch, the repo should visibly contain",
                 items: [
-                  "A README that explains the project to a new reader.",
+                  "A README that explains the project to a new reader.",
                   "An AGENTS.md that shows where to start and where to reach next.",
                   "A plan or guided implementation trail that makes the next useful move legible.",
                   "A first check that stops blind generation.",
                 ],
               },
               "opening-contract-callout": {
-                title: "Without a check, you are still guessing",
+                title: "Without a check, you are still guessing",
                 body:
                   "If verification is missing, another prompt will not save the team. Push the smallest test or tracer bullet that puts the work back on the ground.",
               },
@@ -426,7 +426,7 @@ export const workshopBlueprintLocalizedContent = {
               },
               "opening-participant-preview": {
                 body:
-                  "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, first steps, and a first runnable check.",
+                  "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, first steps, and a first runnable check.",
               },
               "opening-participant-callout": {
                 title: "What to write down immediately",
@@ -439,17 +439,17 @@ export const workshopBlueprintLocalizedContent = {
       },
       talk: {
         goal:
-          "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
+          "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
         roomSummary:
           "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit verification as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
         facilitatorPrompts: [
-          "We are not learning to prompt better. We are learning to build a repo and workflow where an agent and another team can continue safely.",
+          "We are not learning to prompt better. We are learning to build a repo and workflow where an agent and another team can continue safely.",
           "If it is not in the repo, it does not exist.",
           "When the agent does more, you need to verify better.",
-          "After this talk, teams should return to the repo with a concrete operating system, not with a search for a smarter prompt.",
+          "After this talk, teams should return to the repo with a concrete operating system, not with a search for a smarter prompt.",
         ],
         watchFors: [
-          "The talk turns into a tool feature tour.",
+          "The talk turns into a tool feature tour.",
           "Teams hear prompting tips instead of workflow discipline.",
           "There is no clean bridge into the first build phase.",
         ],
@@ -460,18 +460,18 @@ export const workshopBlueprintLocalizedContent = {
         ],
         sourceRefs: [{ label: "Talk: Context is King", path: "content/talks/context-is-king.md" }],
         facilitatorRunner: {
-          goal: "Make harness engineering precise, memorable, and immediately actionable so the room returns to the repo with a concrete first working contract.",
+          goal: "Make harness engineering precise, memorable, and immediately actionable so the room returns to the repo with a concrete first working contract.",
           say: [
             "Context is leverage, not cosmetics.",
             "A team lead does not stand behind the model and dictate another sentence every thirty seconds.",
-            "After this talk, you go back to the repo with a working system, not with a hunt for a smarter prompt.",
+            "After this talk, you go back to the repo with a working system, not with a hunt for a smarter prompt.",
           ],
           show: [
-            "Show the core thesis, the micro-exercise contrast, and a short bridge back into the participant and repo layers.",
+            "Show the core thesis, the micro-exercise contrast, and a short bridge back into the participant and repo layers.",
             "Use the participant surface only as proof that the room, dashboard, and repo still describe the same moment.",
           ],
           do: [
-            "Compare the same task in two conditions: prompt blob versus a short brief with Goal, Context, Constraints, and Done When.",
+            "Compare the same task in two conditions: prompt blob versus a short brief with Goal, Context, Constraints, and Done When.",
             "Send the room into Build Phase 1 with one expectation: map and verification first, feature motion second.",
           ],
           watch: [
@@ -488,10 +488,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Core line",
             title: "Context is leverage, not cosmetics",
             body:
-              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can carry the intent without verbal rescue and so the first build move does not begin in chaos.",
+              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can carry the intent without verbal rescue and so the first build move does not begin in chaos.",
             facilitatorNotes: [
-              "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
-              "Let the short authority quote land and move on. Do not turn it into a reading break.",
+              "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
+              "Let the short authority quote land and move on. Do not turn it into a reading break.",
               "After the callout, remind the room of the team-lead analogy and then turn it directly into what teams should do next in the repo.",
             ],
             sourceRefs: [{ label: "Talk: Core line", path: "content/talks/context-is-king.md" }],
@@ -500,12 +500,12 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Context is King",
                 title: "We are not learning to prompt better",
                 body:
-                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next useful move is.",
+                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next useful move is.",
               },
               "talk-reframe": {
                 title: "A team lead does not stand behind the model",
                 body:
-                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside, a review path they can trust, and a next move that is not a guessing game.",
+                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside, a review path they can trust, and a next move that is not a guessing game.",
               },
               "talk-authority-quote": {
                 quote: "Humans steer. Agents execute.",
@@ -514,10 +514,10 @@ export const workshopBlueprintLocalizedContent = {
               "talk-adopt": {
                 title: "What the team should carry out of the room",
                 items: [
-                  "Before generating the next feature, make the repo a place people can actually navigate.",
+                  "Before generating the next feature, make the repo a place people can actually navigate.",
                   "When the agent does more, review and checks need to become sharper, not looser.",
-                  "Handoff is a design condition throughout the day, not an ending.",
-                  "After the talk, return to the repo with a map and one explicit check instead of one more prompt idea.",
+                  "Handoff is a design condition throughout the day, not an ending.",
+                  "After the talk, return to the repo with a map and one explicit check instead of one more prompt idea.",
                 ],
               },
             },
@@ -526,10 +526,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Short contrast",
             title: "The facilitator shows the same task in two conditions",
             body:
-              "This is a short facilitator-led contrast, not a team exercise yet. Watch what changes between a prompt blob and a short brief with four elements in AGENTS.md.",
+              "This is a short facilitator-led contrast, not a team exercise yet. Watch what changes between a prompt blob and a short brief with four elements in AGENTS.md.",
             facilitatorNotes: [
-              "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
-              "Say explicitly that this is a short facilitator-led contrast, not a room-wide exercise for every team.",
+              "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
+              "Say explicitly that this is a short facilitator-led contrast, not a room-wide exercise for every team.",
               "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second.",
             ],
             sourceRefs: [{ label: "Talk: Micro-exercise", path: "content/talks/context-is-king.md" }],
@@ -539,13 +539,13 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   { title: "The same task for everyone", body: "Short and clear so the working-system difference is obvious." },
                   { title: "Variant A: prompt blob", body: "No structure, no repo-native context, no explicit done criteria." },
-                  { title: "Variant B: 4 context elements", body: "Goal, Context, Constraints, Done When plus a repo-native map." },
+                  { title: "Variant B: 4 context elements", body: "Goal, Context, Constraints, Done When plus a repo-native map." },
                 ],
               },
               "talk-callout": {
                 title: "What to carry out of this contrast",
                 body:
-                  "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn, the review pass, and the next team.",
+                  "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn, the review pass, and the next team.",
               },
             },
           },
@@ -556,8 +556,8 @@ export const workshopBlueprintLocalizedContent = {
               "After the talk, the team should not leave with theory. It should align on the goal, write down the repo map, narrow the first slice, and name the first verifiable step. If the workshop skill is not installed yet, this is the moment.",
             ctaLabel: "Open install and first commands",
             facilitatorNotes: [
-              "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1.",
-              "Name the expectation clearly: the team now returns to the repo for a map, a first slice, and one explicit check instead of more prompt debate.",
+              "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1.",
+              "Name the expectation clearly: the team now returns to the repo for a map, a first slice, and one explicit check instead of more prompt debate.",
               "Say explicitly: if the team does not have the workshop skill yet, now is the time for `harness skill install` and the first workshop command.",
             ],
             sourceRefs: [{ label: "Talk: Opening move", path: "content/talks/context-is-king.md" }],
@@ -574,7 +574,7 @@ export const workshopBlueprintLocalizedContent = {
                   "Open README, AGENTS.md, and the brief. Align on goal, context, and constraints.",
                   "If the workshop skill is not installed yet, install it now: `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`.",
                   "Write or tighten Goal, Context, Constraints, and Done When.",
-                  "Pick the first slice that can actually be verified and add a check or tracer bullet immediately.",
+                  "Pick the first slice that can actually be verified and add a check or tracer bullet immediately.",
                 ],
               },
               "talk-participant-preview": {
@@ -584,7 +584,7 @@ export const workshopBlueprintLocalizedContent = {
               "talk-participant-bridge": {
                 title: "Bridge into Build 1",
                 body:
-                  "This is where theory ends. The team now needs to move the core line of the talk back into the repo as a map, a first decision log, and one verifiable step.",
+                  "This is where theory ends. The team now needs to move the core line of the talk back into the repo as a map, a first decision log, and one verifiable step.",
               },
             },
           },
@@ -592,11 +592,11 @@ export const workshopBlueprintLocalizedContent = {
       },
       demo: {
         goal:
-          "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong.",
+          "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong.",
         roomSummary:
-          "The room should see quality rise as context, bounded next steps, and change control enter the flow. The point is not magic output, model mystique, or a feature parade.",
+          "The room should see quality rise as context, bounded next steps, and change control enter the flow. The point is not magic output, model mystique, or a feature parade.",
         facilitatorPrompts: [
-          "One story-driven example, not a feature list.",
+          "One story-driven example, not a feature list.",
           "The tool alone is not enough. The working system around it is what matters.",
           "Review is not an emergency brake at the end. It is part of the workflow.",
         ],
@@ -614,9 +614,9 @@ export const workshopBlueprintLocalizedContent = {
         scenes: {
           "demo-story": {
             label: "Demo story",
-            title: "Not another prompt. A working system.",
+            title: "Not another prompt. A working system.",
             body:
-              "The demo story is intentionally ordinary: a developer gets a small task and chooses not to keep nudging the model blindly, but to make the repo show the goal, the next step, and how the change will be checked.",
+              "The demo story is intentionally ordinary: a developer gets a small task and chooses not to keep nudging the model blindly, but to make the repo show the goal, the next step, and how the change will be checked.",
             facilitatorNotes: [
               "Stay with one line. After 15 minutes, the audience should understand the workflow, not the tool menu.",
             ],
@@ -624,7 +624,7 @@ export const workshopBlueprintLocalizedContent = {
             blocks: {
               "demo-hero": {
                 eyebrow: "Codex demo",
-                title: "Not another prompt. A working system.",
+                title: "Not another prompt. A working system.",
                 body: "One compact story where you can watch context, bounded next steps, implementation, and change control reinforce each other.",
               },
               "demo-story-quote": {
@@ -637,10 +637,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Workflow steps",
             title: "From AGENTS.md to review",
             body:
-              "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, bounded next steps, and change control it becomes a working system instead of another prompt.",
+              "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, bounded next steps, and change control it becomes a working system instead of another prompt.",
             facilitatorNotes: [
               "Have snapshots ready as fallbacks. Do not wait on generation for long.",
-              "Do not drift into a feature tour or five different modalities.",
+              "Do not drift into a feature tour or five different modalities.",
               "After the callout, say the room-level point explicitly: quality rises fast when you add context, bounded next steps, and change control.",
             ],
             sourceRefs: [{ label: "Codex Demo Script: Flow", path: "content/talks/codex-demo-script.md" }],
@@ -648,34 +648,34 @@ export const workshopBlueprintLocalizedContent = {
               "demo-steps": {
                 title: "The workflow you want people to repeat",
                 items: [
-                  { title: "Without context the agent drifts", body: "Briefly show a weak start without guardrails." },
+                  { title: "Without context the agent drifts", body: "Briefly show a weak start without guardrails." },
                   { title: "AGENTS.md with 4 elements", body: "Goal, Context, Constraints, Done When." },
-                  { title: "Turn the work into bounded steps", body: "Use `/plan` or a short step list to make the next move legible." },
+                  { title: "Turn the work into bounded steps", body: "Use `/plan` or a short step list to make the next move legible." },
                   { title: "Small implementation slice + change control", body: "Checks and review belong inside the workflow, not as panic recovery at the end." },
                 ],
               },
               "demo-point": {
                 title: "What to take from the demo",
                 body:
-                  "The point is not a magical result. The point is that the repo makes clear why the work matters, what comes next, and how the change will be checked.",
+                  "The point is not a magical result. The point is that the repo makes clear why the work matters, what comes next, and how the change will be checked.",
               },
               "demo-fallbacks": {
                 title: "Fallbacks",
                 items: [
                   { label: "CLI is not working", href: "workshop-skill/install.md", description: "Switch to the Codex App." },
                   { label: "The app is not working", href: "README.md", description: "Use the web fallback." },
-                  { label: "The demo is slow", href: "docs/agent-ui-testing.md", description: "Have a repo snapshot after each step." },
+                  { label: "The demo is slow", href: "docs/agent-ui-testing.md", description: "Have a repo snapshot after each step." },
                 ],
               },
             },
           },
           "demo-participant-view": {
             label: "Participant demo board",
-            title: "Treat the demo as workflow, not a feature tour",
+            title: "Treat the demo as workflow, not a feature tour",
             body:
               "During the demo, keep one working thread in view: where context came from, how the work was broken into steps, what got checked, and how the change came back under control.",
             facilitatorNotes: [
-              "Use this when you want to remind the audience that the demo also needs a clear working line and a concrete learner payoff.",
+              "Use this when you want to remind the audience that the demo also needs a clear working line and a concrete learner payoff.",
             ],
             sourceRefs: [{ label: "Talk: Codex Demo Script", path: "content/talks/codex-demo-script.md" }],
             blocks: {
@@ -688,13 +688,13 @@ export const workshopBlueprintLocalizedContent = {
               "demo-participant-steps": {
                 title: "Pay attention to",
                 items: [
-                  { title: "Where context comes from", body: "AGENTS.md and the brief, not only a prompt blob." },
+                  { title: "Where context comes from", body: "AGENTS.md and the brief, not only a prompt blob." },
                   { title: "Where the next step becomes clear", body: "A short plan or step list should be visible before implementation starts." },
                   { title: "Where the change is checked", body: "Review and checks are part of the workflow, not an extra." },
                 ],
               },
               "demo-participant-preview": {
-                body: "Watch how a small task turns into work another person could safely continue.",
+                body: "Watch how a small task turns into work another person could safely continue.",
               },
             },
           },
@@ -702,18 +702,18 @@ export const workshopBlueprintLocalizedContent = {
       },
       "build-1": {
         goal:
-          "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work.",
+          "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work.",
         roomSummary:
           "The facilitator should keep the milestone board visible, coach through questions, and keep pushing teams away from unbounded generation and toward explicit verification.",
         facilitatorPrompts: [
-          "Coach first, mentor second, teach only as a last resort.",
+          "Coach first, mentor second, teach only as a last resort.",
           "If the team has no verification at all, push for the smallest useful test or tracer bullet.",
           "Return learner-facing artifacts to participants, not the whole backstage of Harness Lab.",
         ],
         watchFors: [
           "The team keeps generating text, but verifies nothing.",
-          "AGENTS.md grows into a warehouse for everything.",
-          "It is unclear what is done, what is in progress, and what is only a hypothesis.",
+          "AGENTS.md grows into a warehouse for everything.",
+          "It is unclear what is done, what is in progress, and what is only a hypothesis.",
         ],
         checkpointQuestions: [
           "Does the team have one shared understanding of the goal?",
@@ -725,7 +725,7 @@ export const workshopBlueprintLocalizedContent = {
           "build-1-milestones": {
             label: "Milestone board",
             title: "What should be in the repo before lunch",
-            body: "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, and a first verified move. If one of those is missing, the team is not building a working system yet.",
+            body: "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, and a first verified move. If one of those is missing, the team is not building a working system yet.",
             facilitatorNotes: ["This is the main room cue for Build Phase 1. Keep it on the projector often."],
             sourceRefs: [
               { label: "Facilitation guide: Visible milestone board", path: "content/facilitation/master-guide.md" },
@@ -734,11 +734,11 @@ export const workshopBlueprintLocalizedContent = {
               "build-1-checklist": {
                 title: "Five things before lunch",
                 items: [
-                  "A README explains the project to a new reader.",
+                  "A README explains the project to a new reader.",
                   "AGENTS.md shows where to start and where to reach next.",
                   "A plan holds the line instead of improvisation.",
                   "A build/test command or tracer bullet puts the work back on the ground.",
-                  "The repo shows a first actually verified move.",
+                  "The repo shows a first actually verified move.",
                 ],
               },
               "build-1-callout": {
@@ -748,12 +748,12 @@ export const workshopBlueprintLocalizedContent = {
             },
           },
           "build-1-coaching": {
-            label: "When a team gets stuck",
-            title: "When a team gets stuck, return to the proof",
+            label: "When a team gets stuck",
+            title: "When a team gets stuck, return to the proof",
             body:
-              "First aid is not a longer prompt or a longer explanation. It is a return to the goal, the missing repo artifact, and the smallest check that anchors the work back in reality.",
+              "First aid is not a longer prompt or a longer explanation. It is a return to the goal, the missing repo artifact, and the smallest check that anchors the work back in reality.",
             facilitatorNotes: [
-              "Good help is not a verbal handoff. It is returning the team to the repo, checks, and the next safe move.",
+              "Good help is not a verbal handoff. It is returning the team to the repo, checks, and the next safe move.",
               "Keep the order coach -> mentor -> teacher. If you explain for too long, return the team to work quickly.",
             ],
             sourceRefs: [{ label: "Facilitation guide: What to look for while circulating", path: "content/facilitation/master-guide.md" }],
@@ -778,7 +778,7 @@ export const workshopBlueprintLocalizedContent = {
               "build-1-rescue": {
                 title: "An answer is not the same thing as help",
                 body:
-                  "If the team gets a spoken answer without artifacts and without a check, the problem only goes underground. Return the work to the repo and to a verifiable next move.",
+                  "If the team gets a spoken answer without artifacts and without a check, the problem only goes underground. Return the work to the repo and to a verifiable next move.",
               },
             },
           },
@@ -789,15 +789,15 @@ export const workshopBlueprintLocalizedContent = {
               "This is not the moment for another clever prompt. This is the moment to make sure your repo setup can carry the next move without table-side improvisation.",
             ctaLabel: "Open install and setup flow",
             facilitatorNotes: [
-              "Use this when you want to return a learner-facing view to the team instead of facilitator backstage.",
+              "Use this when you want to return a learner-facing view to the team instead of facilitator backstage.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Build Phase 1", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "build-1-participant-hero": {
                 eyebrow: "Build Phase 1",
-                title: "By lunch, you need a repo map, step plan, runnable check, and first move",
+                title: "By lunch, you need a repo map, step plan, runnable check, and first move",
                 body:
-                  "Keep a short AGENTS.md as a map, a short step plan, an executable check, and a first verified move in view. If you lose orientation, come back to those four things first.",
+                  "Keep a short AGENTS.md as a map, a short step plan, an executable check, and a first verified move in view. If you lose orientation, come back to those four things first.",
               },
               "build-1-participant-focus": {
                 title: "Keep in frame now",
@@ -810,7 +810,7 @@ export const workshopBlueprintLocalizedContent = {
               },
               "build-1-participant-preview": {
                 body:
-                  "The next shared beat is a short intermezzo. Arrive with one sentence: what you changed and why.",
+                  "The next shared beat is a short intermezzo. Arrive with one sentence: what you changed and why.",
               },
               "build-1-participant-callout": {
                 title: "If you get stuck",
@@ -833,7 +833,7 @@ export const workshopBlueprintLocalizedContent = {
           "What are you verifying today with an executable check?",
         ],
         watchFors: [
-          "The intermezzo slips into reporting without a principle point.",
+          "The intermezzo slips into reporting without a principle point.",
           "Only the loudest team speaks while the others stay passive.",
           "The facilitator summarizes impressions instead of evidence.",
         ],
@@ -849,7 +849,7 @@ export const workshopBlueprintLocalizedContent = {
             title: "Intermezzo: evidence, not impressions",
             body:
               "Keep the intermezzo disciplined: one sentence from each team, then the shared signals, then one principle point tied to real evidence rather than facilitator vibes.",
-            facilitatorNotes: ["Keep it short. The intermezzo is a reset and checkpoint, not a long presentation."],
+            facilitatorNotes: ["Keep it short. The intermezzo is a reset and checkpoint, not a long presentation."],
             sourceRefs: [{ label: "Facilitation guide: Intermezzos", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "intermezzo-1-steps": {
@@ -874,8 +874,8 @@ export const workshopBlueprintLocalizedContent = {
             label: "Participant intermezzo board",
             title: "In the intermezzo, listen for three signals",
             body:
-              "This is not a status report. It is a short checkpoint that should show what is actually changing in the repo and what is still only talk.",
-            facilitatorNotes: ["This scene keeps the intermezzo as a short checkpoint for the whole room."],
+              "This is not a status report. It is a short checkpoint that should show what is actually changing in the repo and what is still only talk.",
+            facilitatorNotes: ["This scene keeps the intermezzo as a short checkpoint for the whole room."],
             sourceRefs: [{ label: "Facilitation guide: Intermezzos", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "intermezzo-1-participant-hero": {
@@ -902,45 +902,45 @@ export const workshopBlueprintLocalizedContent = {
       "lunch-reset": {
         label: "Lunch and handoff prep",
         goal:
-          "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read.",
+          "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read.",
         roomSummary:
-          "Before lunch, teams need to clean up context, record the next safe move, and leave the repo in a state that does not rely on their memory. Lunch is not a pause in the handoff constraint.",
+          "Before lunch, teams need to clean up context, record the next safe move, and leave the repo in a state that does not rely on their memory. Lunch is not a pause in the handoff constraint.",
         facilitatorPrompts: [
-          "Handoff is not the end of the day. It is a design constraint throughout the day.",
+          "Handoff is not the end of the day. It is a design constraint throughout the day.",
           "Write down what the next team should read first.",
           "If the same rule was said aloud twice, it belongs in the repo.",
         ],
         watchFors: [
-          "Teams leave for lunch without a clear next step and without cleaned-up context.",
+          "Teams leave for lunch without a clear next step and without cleaned-up context.",
           "A key decision is still only in people’s heads.",
           "The repo does not explain the midday state.",
         ],
         checkpointQuestions: [
           "What should the next team read first?",
-          "Does the repo show what is done, what is a hypothesis, and what the next safe move is?",
+          "Does the repo show what is done, what is a hypothesis, and what the next safe move is?",
           "What still lives only in conversation and must go into the repo?",
         ],
         sourceRefs: [
-          { label: "Talk: What I want them to adopt", path: "content/talks/context-is-king.md" },
+          { label: "Talk: What I want them to adopt", path: "content/talks/context-is-king.md" },
           { label: "Facilitation guide: What to normalize", path: "content/facilitation/master-guide.md" },
         ],
         scenes: {
           "lunch-reset-transition": {
             label: "Lunch reset",
-            title: "Lunch is not a break from handoff",
+            title: "Lunch is not a break from handoff",
             body:
               "Before anyone leaves for lunch, the repo has to show what changed, what verifies it, and what the next safe move is for the incoming team.",
             facilitatorNotes: [
               "This is quiet handoff prep. Explain it as part of the work, not as admin overhead.",
             ],
-            sourceRefs: [{ label: "Talk: What I want them to adopt", path: "content/talks/context-is-king.md" }],
+            sourceRefs: [{ label: "Talk: What I want them to adopt", path: "content/talks/context-is-king.md" }],
             blocks: {
               "lunch-reset-checklist": {
                 title: "Before you step away",
                 items: [
                   "The next safe move is written down.",
                   "Key rules and decisions are in the repo.",
-                  "It is clear what is done and what is only a hypothesis.",
+                  "It is clear what is done and what is only a hypothesis.",
                   "The next team knows what to read first.",
                 ],
               },
@@ -950,28 +950,28 @@ export const workshopBlueprintLocalizedContent = {
             label: "Participant lunch reset board",
             title: "Do not leave without the next safe move",
             body:
-              "Before lunch, you are preparing the repo for a different team. What happens next, what is done, and what is still only a hypothesis should all be readable without you.",
-            facilitatorNotes: ["Use this when you want to remind teams that lunch is not a break from handoff."],
+              "Before lunch, you are preparing the repo for a different team. What happens next, what is done, and what is still only a hypothesis should all be readable without you.",
+            facilitatorNotes: ["Use this when you want to remind teams that lunch is not a break from handoff."],
             sourceRefs: [{ label: "Facilitation guide: What to normalize", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "lunch-reset-participant-hero": {
                 eyebrow: "Lunch reset",
                 title: "Prepare the repo for the afternoon handoff",
                 body:
-                  "Before lunch, the repo has to make four things obvious: what changed, what is done, what is still only a hypothesis, and how the next team should continue.",
+                  "Before lunch, the repo has to make four things obvious: what changed, what is done, what is still only a hypothesis, and how the next team should continue.",
               },
               "lunch-reset-participant-checklist": {
                 title: "Before you step away",
                 items: [
                   "The next safe move is written down.",
                   "Key decisions are in the repo.",
-                  "It is clear what is done and what is still a hypothesis.",
+                  "It is clear what is done and what is still a hypothesis.",
                   "The next team knows what to open first.",
                 ],
               },
               "lunch-reset-participant-preview": {
                 body:
-                  "The afternoon starts with a quiet handoff. If something still lives only in conversation now, it will come back as friction soon.",
+                  "The afternoon starts with a quiet handoff. If something still lives only in conversation now, it will come back as friction soon.",
               },
             },
           },
@@ -980,18 +980,18 @@ export const workshopBlueprintLocalizedContent = {
       rotation: {
         label: "Team rotation",
         goal:
-          "Force a quiet start after rotation and let repo quality reveal what is genuinely legible.",
+          "Force a quiet start after rotation and let repo quality reveal what is genuinely legible.",
         roomSummary:
-          "For the first ten minutes, the incoming team only reads the repo and maps the situation. Any confusion is diagnostic data about the quality of the context, not a workshop bug to be patched with talk.",
+          "For the first ten minutes, the incoming team only reads the repo and maps the situation. Any confusion is diagnostic data about the quality of the context, not a workshop bug to be patched with talk.",
         facilitatorPrompts: [
           "The first 10 minutes are quiet. No improvised explanation.",
           "For the first 10 minutes, the new team only reads the repo and maps the situation.",
-          "Frustration is not a workshop bug. It is a signal of context quality in the repository.",
+          "Frustration is not a workshop bug. It is a signal of context quality in the repository.",
         ],
         watchFors: [
           "The original team starts explaining things verbally.",
-          "The new team edits the first file they open without a situation map.",
-          "The facilitator rescues a weak repo signal with spoken handoff.",
+          "The new team edits the first file they open without a situation map.",
+          "The facilitator rescues a weak repo signal with spoken handoff.",
         ],
         checkpointQuestions: [
           "What helps, what is missing, what is risky, and what is the next safe move?",
@@ -1023,10 +1023,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Instructions for the new team",
             title: "After rotation, the first job is not coding",
             body:
-              "Start with the README, AGENTS.md, and the plan. First make a map: what helps, what is missing, what is risky, and what the next safe move is.",
+              "Start with the README, AGENTS.md, and the plan. First make a map: what helps, what is missing, what is risky, and what the next safe move is.",
             facilitatorNotes: [
               "If the team does not know what to reach for, return them to learner kit artifacts.",
-              "Make sure the team's own diagnosis appears before the first edit.",
+              "Make sure the team's own diagnosis appears before the first edit.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Instructions for the new team", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -1045,7 +1045,7 @@ export const workshopBlueprintLocalizedContent = {
               "rotation-toolkit": {
                 title: "If you do not know where to start",
                 body:
-                  "Return to the learner kit and to the guiding artifacts in the repo. A weak signal should not be rescued by an improvised briefing.",
+                  "Return to the learner kit and to the guiding artifacts in the repo. A weak signal should not be rescued by an improvised briefing.",
               },
             },
           },
@@ -1063,7 +1063,7 @@ export const workshopBlueprintLocalizedContent = {
             blocks: {
               "rotation-participant-hero": {
                 eyebrow: "Continuation shift",
-                title: "The new team starts with a map, not improvisation",
+                title: "The new team starts with a map, not improvisation",
                 body:
                   "Read the README, AGENTS.md, and the plan first. Then write what helps, what is missing, what is risky, and what the next safe move is.",
               },
@@ -1072,7 +1072,7 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   { title: "Read the repo map", body: "Start with the README, AGENTS.md, and the plan." },
                   { title: "Write your own diagnosis", body: "What helps, what is missing, what is risky, and what is the next safe move?" },
-                  { title: "Only then change things", body: "Do not start editing without a shared situation map." },
+                  { title: "Only then change things", body: "Do not start editing without a shared situation map." },
                 ],
               },
               "rotation-participant-preview": {
@@ -1087,11 +1087,11 @@ export const workshopBlueprintLocalizedContent = {
         goal:
           "Continue from repo-native signals only, then turn the friction of the handoff into stronger maps, stronger checks, and stronger continuation guidance.",
         roomSummary:
-          "The second build phase is not simply more implementation. It is the test of whether the repo and the agent workflow can carry a genuinely new team.",
+          "The second build phase is not simply more implementation. It is the test of whether the repo and the agent workflow can carry a genuinely new team.",
         facilitatorPrompts: [
-          "Do not let teams replace a weak repo signal with verbal handoff.",
+          "Do not let teams replace a weak repo signal with verbal handoff.",
           "Name what needs to be written, clarified, or verified after rotation.",
-          "Every repeated pain is a candidate for a better template, check, or runbook.",
+          "Every repeated pain is a candidate for a better template, check, or runbook.",
         ],
         watchFors: [
           "The team only cleans up chaos, but does not turn it into better guidance.",
@@ -1112,9 +1112,9 @@ export const workshopBlueprintLocalizedContent = {
             label: "After rotation: keep building",
             title: "After rotation, fix the signal as well as the feature",
             body:
-              "Build Phase 2 should turn handoff friction into a better repo map, stronger checks, and a clearer next safe move. Do not continue as if nothing happened.",
+              "Build Phase 2 should turn handoff friction into a better repo map, stronger checks, and a clearer next safe move. Do not continue as if nothing happened.",
             facilitatorNotes: [
-              "Help the team see frustration as a diagnostic signal, not a failure.",
+              "Help the team see frustration as a diagnostic signal, not a failure.",
               "Ask what genuinely helped after rotation, what had to be written down, and which next check now keeps the work grounded.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Facilitation point for rotation", path: "content/facilitation/master-guide.md" }],
@@ -1128,7 +1128,7 @@ export const workshopBlueprintLocalizedContent = {
                 title: "What to do after rotation",
                 items: [
                   { title: "Name what truly helped continuation", body: "Capture the signal in the repo, not just the feeling." },
-                  { title: "Write what is missing or unclear", body: "Tighten the map, a decision, or the handoff artifact." },
+                  { title: "Write what is missing or unclear", body: "Tighten the map, a decision, or the handoff artifact." },
                   { title: "Add the next explicit check", body: "Before the next bigger move, put the work back on verification rails." },
                 ],
               },
@@ -1150,19 +1150,19 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Build Phase 2",
                 title: "Continue only from what is traceable",
                 body:
-                  "Name what helped you continue, write down the missing signal, and add the next explicit check before you make a larger change.",
+                  "Name what helped you continue, write down the missing signal, and add the next explicit check before you make a larger change.",
               },
               "build-2-participant-bullets": {
                 title: "Do this now",
                 items: [
                   "Name what in the repo helped you continue.",
                   "Write down what is still unclear or missing after rotation.",
-                  "Add the next explicit verification before a larger change.",
+                  "Add the next explicit verification before a larger change.",
                 ],
               },
               "build-2-participant-preview": {
                 body:
-                  "Every repeated afternoon pain is a candidate for a better map, rule, challenge card, or runbook.",
+                  "Every repeated afternoon pain is a candidate for a better map, rule, challenge card, or runbook.",
               },
             },
           },
@@ -1171,7 +1171,7 @@ export const workshopBlueprintLocalizedContent = {
       "intermezzo-2": {
         label: "Intermezzo 2",
         goal:
-          "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
+          "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
         roomSummary:
           "The second intermezzo should pull concrete continuation signals into the open and prepare the room for reveal and reflection without drifting into vague retrospectives.",
         facilitatorPrompts: [
@@ -1198,7 +1198,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Continuation signals",
             title: "What really helped people continue after rotation",
             body:
-              "Use this moment to pull out hard continuation signals: what sped the new team up, what slowed it down, and what now deserves to become a better template, runbook, or rule.",
+              "Use this moment to pull out hard continuation signals: what sped the new team up, what slowed it down, and what now deserves to become a better template, runbook, or rule.",
             facilitatorNotes: [
               "Ask for concrete repo examples, not general impressions.",
               "Prepare the room for reveal by separating genuinely useful signals from good vibes.",
@@ -1210,13 +1210,13 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   { title: "The signal that truly helped", body: "What saved time or reduced risk for the incoming team." },
                   { title: "The signal that was missing", body: "What stayed hidden in heads, chat, or an unverified state." },
-                  { title: "The candidate for codification", body: "What should become a better template, check, or rule after today." },
+                  { title: "The candidate for codification", body: "What should become a better template, check, or rule after today." },
                 ],
               },
               "intermezzo-2-evidence": {
                 title: "Evidence, not impressions",
                 body:
-                  "Every answer should point to something traceable in the repo or to a clearly missing signal that should have been there.",
+                  "Every answer should point to something traceable in the repo or to a clearly missing signal that should have been there.",
               },
             },
           },
@@ -1224,7 +1224,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Participant continuation signals board",
             title: "Prepare one thing that really helped after rotation",
             body:
-              "This is not a broad mood check about the afternoon. It is a search for what saved time for the incoming team and what still blocked it.",
+              "This is not a broad mood check about the afternoon. It is a search for what saved time for the incoming team and what still blocked it.",
             facilitatorNotes: ["This scene helps pull the afternoon back to concrete continuation signals before reveal."],
             sourceRefs: [{ label: "Facilitation guide: Reveal and reflection", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -1253,9 +1253,9 @@ export const workshopBlueprintLocalizedContent = {
       reveal: {
         label: "Reveal and reflection",
         goal:
-          "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
+          "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
         roomSummary:
-          "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals helped work survive handoff and which ones repeatedly failed.",
+          "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals helped work survive handoff and which ones repeatedly failed.",
         facilitatorPrompts: [
           "We are not judging which team was better.",
           "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
@@ -1279,7 +1279,7 @@ export const workshopBlueprintLocalizedContent = {
             body:
               "Use the final 1-2-4-All to surface the concrete signals that helped work survive handoff, and to separate them from general feelings about the day.",
             facilitatorNotes: [
-              "Keep the questions concrete. Every example should point to a signal in the repo or to a missing signal.",
+              "Keep the questions concrete. Every example should point to a signal in the repo or to a missing signal.",
               "During the group share, keep steering away from team scoring and back toward system signals.",
             ],
             sourceRefs: [{ label: "Facilitation guide: 1-2-4-All", path: "content/facilitation/master-guide.md" }],
@@ -1332,13 +1332,13 @@ export const workshopBlueprintLocalizedContent = {
               "reveal-system": {
                 title: "Turn pain into an artifact",
                 body:
-                  "Every repeated pain point is a candidate for a better template, challenge card, runbook, or piece of blueprint guidance.",
+                  "Every repeated pain point is a candidate for a better template, challenge card, runbook, or piece of blueprint guidance.",
               },
             },
           },
           "reveal-participant-view": {
             label: "Participant closeout board",
-            title: "Leave with three things, not only a good feeling",
+            title: "Leave with three things, not only a good feeling",
             body:
               "At the end of the day, take one signal you want to keep, one weakness you do not want to repeat, and one move for next week.",
             ctaLabel: "Open recap and follow-up",
@@ -1363,7 +1363,7 @@ export const workshopBlueprintLocalizedContent = {
                 ],
               },
               "reveal-participant-preview": {
-                body: "The recap and follow-up package should continue this right after the workshop. Do not leave the commitment only on a sticky note.",
+                body: "The recap and follow-up package should continue this right after the workshop. Do not leave the commitment only on a sticky note.",
               },
             },
           },

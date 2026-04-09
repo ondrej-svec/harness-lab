@@ -6,15 +6,15 @@ Nejdůležitější pravidlo:
 - napište, kam má agent sáhnout jako první
 - napište, co je zdroj pravdy
 - napište, jak se práce ověří
-- když se text nafukuje, přidejte navazující dokument a odkažte na něj
+- když se text nafukuje, přidejte navazující dokument a odkažte na něj
 
 ## Goal
 
-Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
+Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
 
 ## Context
 
-- Klíčové soubory a složky
+- Klíčové soubory a složky
 - Rozhodnutí, která už padla
 - Systémy nebo integrace, na které se navazuje
 - Kam má agent sáhnout jako první
@@ -23,7 +23,7 @@ Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
 ## Constraints
 
 - Build/test/lint příkazy
-- Jazykové, architektonické a bezpečnostní standardy
+- Jazykové, architektonické a bezpečnostní standardy
 - Co agent nesmí dělat bez explicitního souhlasu
 - Public/private nebo auth boundary, pokud existuje
 
