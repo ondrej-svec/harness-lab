@@ -1,0 +1,109 @@
+# Harness Lab copy-editor configuration.
+#
+# Consumed by the marvin:copy-editor skill from the Heart of Gold toolkit.
+# Layer 1 is the deterministic typography engine (invoked via Bash).
+# Layer 2 is judgment work the skill performs using the repo-local rule
+# files pointed at below, composed with the baked-in Czech profile.
+#
+# Schema reference:
+#   heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/knowledge/config-schema.md
+#
+# Running:
+#   bun ../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts --config .copy-editor.yaml
+#   or (from an agent): invoke /marvin:copy-editor
+#
+# Verification boundary:
+#   Layer 1 (deterministic) auto-closeable by the script.
+#   Layer 2 (judgment) surfaces suggestions only. Czech visible-surface
+#   signoff always requires a Czech-fluent human reviewer, per
+#   docs/workshop-content-qa.md.
+
+extends:
+  - czech
+
+language: cs
+
+# Repo-local rule sources. Composed with the baked-in Czech profile.
+rules:
+  style_guide: ./content/style-guide.md
+  reject_list: ./content/czech-reject-list.md
+  examples: ./content/style-examples.md
+  approved_terms: ./content/style-examples.md#approved-english-terms
+
+# Voice doctrine — directive guidance injected into Layer 2 Pass D.
+# Written in Czech because that is the working language of the review.
+voice_doctrine: |
+  Piš jako zkušený peer. Klidně, věcně, akčně.
+  Žádný hype, žádný korporát, žádná škola.
+  Krátké věty. Slovesa před podstatná jména.
+  Na viditelných surfaces žádný anglický shorthand, pokud není
+  skutečně ustálený technický termín.
+
+paths:
+  include:
+    # Canonical runtime-facing source pair — highest priority.
+    - dashboard/lib/workshop-blueprint-agenda.json
+    - dashboard/lib/workshop-blueprint-localized-content.ts
+
+    # Participant-facing authored content.
+    - content/project-briefs/**/*.md
+    - content/challenge-cards/**/*.md
+    - content/facilitation/**/*.md
+    - content/talks/**/*.md
+    - content/style-guide.md
+    - content/style-examples.md
+    - content/czech-editorial-review-checklist.md
+    - content/czech-reject-list.md
+
+    # Workshop skill (participant-facing text).
+    - workshop-skill/**/*.md
+
+    # Participant materials.
+    - materials/**/*.md
+
+  exclude:
+    # English fallback locales — reviewed separately, not by the Czech profile.
+    - "**/locales/en/**"
+
+    # Generated bundle mirror — review the canonical source instead.
+    - "harness-cli/assets/workshop-bundle/**"
+
+    # Tests and generated artifacts.
+    - "**/*.test.*"
+    - "**/node_modules/**"
+    - "**/.next/**"
+    - "**/dist/**"
+
+  # Surface profile classification for Layer 2 Pass C (clarity/ambiguity).
+  # participant = strict clarity bar (self-contained, no vague directives)
+  # presenter   = outline tone allowed (facilitator explains live)
+  # hybrid      = default, judgment applies leniently
+  #
+  # Rule: if a participant reads it alone without a facilitator present,
+  # it is participant-facing. If a facilitator uses it as an outline and
+  # speaks around it, it is presenter-facing. When in doubt, default to
+  # hybrid and let the human reviewer decide.
+  surface_profile:
+    # Participant-facing (strict clarity)
+    "content/project-briefs/**": participant
+    "content/challenge-cards/**": participant
+    "workshop-skill/**": participant
+    "materials/**": participant
+
+    # Presenter-facing (outline tone OK)
+    "content/talks/**": presenter
+    "content/facilitation/**": presenter
+
+    # Hybrid — runtime source pair is consumed by both room projection
+    # (presenter-ish) and participant mirrors (participant-ish).
+    # Clarity pass applies with judgment.
+    "dashboard/lib/workshop-blueprint-agenda.json": hybrid
+    "dashboard/lib/workshop-blueprint-localized-content.ts": hybrid
+
+# Output conventions.
+output:
+  review_notes_dir: ./docs/reviews/workshop-content/
+
+# Suppress findings on the same line or the line immediately below when
+# this marker is present in a comment.
+ignore_marker: "copy-editor: ignore"

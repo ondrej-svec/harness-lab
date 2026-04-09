@@ -53,6 +53,7 @@ If you touch these areas, read these files first:
   - [`content/style-examples.md`](content/style-examples.md)
   - [`content/czech-reject-list.md`](content/czech-reject-list.md)
   - [`content/czech-editorial-review-checklist.md`](content/czech-editorial-review-checklist.md)
+  - [`.copy-editor.yaml`](.copy-editor.yaml) — config for the `marvin:copy-editor` skill (HoG-provided two-layer review)
 
 ## Repo Map
 
@@ -112,6 +113,7 @@ Additional repo-specific checks:
 - if you change the portable workshop bundle, sync the packaged artifact with `node harness-cli/scripts/sync-workshop-bundle.mjs`
 - if you need a disposable repo-local discovery copy under `.agents/skills/`, generate it explicitly with `node harness-cli/scripts/sync-workshop-bundle.mjs --with-repo-bundle`
 - if you change authored participant-facing workshop sources in `workshop-skill/`, `content/`, or `workshop-blueprint/`, treat the portable bundle as stale until you resync it and run `cd harness-cli && npm run verify:workshop-bundle`
+- if you change Czech visible-surface content, run the copy-editor Layer 1 typography audit before committing: `bun ../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts --config .copy-editor.yaml` — must return zero error-severity findings. Layer 2 judgment suggestions are advisory and always require a human Czech reviewer for signoff.
 - if you rely on the repo-local `.agents/skills/harness-lab-workshop` copy during development, refresh that generated copy in the same slice of work instead of editing it independently
 - if those content changes must appear in already-created workshop instances, reset the affected instances from the current blueprint with `harness workshop reset-instance <instance-id> [--template-id blueprint-default]`
 - if you change architecture or trust boundaries, update the relevant ADR or boundary doc in the same slice of work

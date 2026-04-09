@@ -12,6 +12,25 @@ Tento checklist doplňuje [`content/style-guide.md`](./style-guide.md), [`conten
 
 Pro mechanický pass nad typografií (nezlomitelné mezery, uvozovky, pomlčky, trojtečky, sentence case) použijte `marvin:copy-editor` skill (Layer 1, deterministický). Tenhle checklist řeší to, co skript neumí – voice, rytmus, spoken readability a visible-surface judgment.
 
+## 0. Typografický pass (deterministický, blocking)
+
+**Tohle je jediný gate, který může uzavřít skript.** Všechno ostatní v checklistu zůstává lidskou odpovědností.
+
+Než začnete s dalšími sekcemi, spusťte `marvin:copy-editor` skill nebo přímo jeho engine:
+
+```bash
+bun ../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts \
+  --config .copy-editor.yaml
+```
+
+Musí platit:
+
+- **Layer 1 error count = 0** na relevantním scope před tím, než reviewer začne řešit voice a spoken readability.
+- Warning-level findings (R1b konjunkce `a`/`i`, R6 pomlčky, R7 sentence case) si reviewer projde, ale nemusí je všechny řešit – jsou to hints, ne gates.
+- Pokud je Layer 1 červený, vraťte text do editace a opravte typografii (nebo spusťte `/marvin:work` na výstup skriptu). Teprve pak pokračujte na Sekci 1.
+
+Konfigurace je v [`.copy-editor.yaml`](../.copy-editor.yaml).
+
 ## 1. Přirozenost češtiny
 
 - Zní text jako přirozená čeština, ne jako překlad?

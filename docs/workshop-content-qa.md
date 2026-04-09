@@ -10,14 +10,16 @@ Every meaningful content slice should be reviewed for:
 - portability and public-safe references
 - authority and citation handling
 - scene or artifact quality
-- visible-surface Czech idiom quality when Czech delivery changed
+- **Czech deterministic typography audit clean** (Layer 1 of `marvin:copy-editor`, driven by `.copy-editor.yaml`) — this is the only editorial gate scripted tooling is allowed to close on its own
+- visible-surface Czech idiom quality when Czech delivery changed (human judgment, Layer 2 suggestions from the copy-editor skill assist but do not decide)
+- clarity / ambiguity pass for participant-facing content (strict: `surface_profile: participant` in `.copy-editor.yaml`)
 - `facilitatorRunner` alignment where agenda-owned guidance is involved
 - participant usefulness
 - mobile glanceability for participant-facing surfaces
 - projected-room legibility for room-facing surfaces
 - locale parity
 
-AI-assisted review is allowed as a detection aid, but it does not satisfy blocking Czech language gates on its own. Spoken-readability and visible-surface Czech signoff require a Czech-fluent human reviewer.
+AI-assisted review is allowed as a detection aid, but it does not satisfy blocking Czech language gates on its own **except for the deterministic typography layer**, which is by design the one layer scripted tooling can close. Spoken-readability, visible-surface Czech signoff, and Layer 2 judgment suggestions all require a Czech-fluent human reviewer.
 
 ## Required Artifacts
 
@@ -32,6 +34,10 @@ Each review note should include:
 - what passed
 - what failed
 - the next safe move
+- `typography audit: clean | N findings` line for Layer 1 deterministic pass
+- `layer-2 suggestions considered: yes | partial | no` line for Layer 2 judgment pass
+
+The `marvin:copy-editor` skill drafts a review note skeleton automatically when invoked with `output.review_notes_dir` configured in `.copy-editor.yaml`. The reviewer fills in the human signoff line and any freeform notes — the skill never fills those in.
 
 When previews matter, attach or link:
 
