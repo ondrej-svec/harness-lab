@@ -24,6 +24,7 @@ const FILE_COPIES = [
   ["docs/locales/en/learner-resource-kit.md", "docs/locales/en/learner-resource-kit.md"],
   ["docs/learner-reference-gallery.md", "docs/learner-reference-gallery.md"],
   ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
+  [".copy-editor.yaml", ".copy-editor.yaml"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
   ["materials/locales/en/participant-resource-kit.md", "materials/locales/en/participant-resource-kit.md"],
   ["materials/coaching-codex.md", "materials/coaching-codex.md"],

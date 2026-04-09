@@ -2,8 +2,12 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.2.9",
-  "contentHash": "3efafad1e3a16f1f73d4588397aa1e7752c61f81a04f0b63a423717345af54bf",
+  "contentHash": "a0eb905d370ba02c761d09fa7b894a839c6877835e49f474553e2c8d6c4809c2",
   "files": [
+    {
+      "path": ".copy-editor.yaml",
+      "sha256": "0856781e5d4706b3ed813e65ff2efc23139ee8b73ccc88ee5d871e700b0a1988"
+    },
     {
       "path": "content/challenge-cards/.gitkeep",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
