@@ -103,6 +103,7 @@ async function readRequiredCommandValue(io, flags, keys, promptLabel, fallbackVa
 
 function buildWorkshopMetadataInput(flags) {
   const input = {
+    contentLang: readStringFlag(flags, "content-lang", "content-language"),
     eventTitle: readStringFlag(flags, "event-title", "title"),
     city: readStringFlag(flags, "city"),
     dateRange: readStringFlag(flags, "date-range", "date"),
@@ -122,6 +123,7 @@ function hasWorkshopMetadataInput(input) {
 
 async function promptWorkshopMetadataInput(io) {
   const prompts = [
+    ["contentLang", "Content language (cs/en, leave blank to skip): "],
     ["eventTitle", "Event title (leave blank to skip): "],
     ["city", "City (leave blank to skip): "],
     ["dateRange", "Date range (leave blank to skip): "],
@@ -148,7 +150,9 @@ function summarizeWorkshopInstance(instance) {
 
   return {
     instanceId: instance?.id ?? null,
+    templateId: instance?.templateId ?? null,
     status: instance?.status ?? null,
+    contentLang: workshopMeta.contentLang ?? null,
     eventTitle: workshopMeta.eventTitle ?? null,
     city: workshopMeta.city ?? null,
     dateRange: workshopMeta.dateRange ?? null,
@@ -175,9 +179,11 @@ function printUsage(io, ui) {
     "harness auth status",
     "harness skill install [--target PATH] [--force]",
     "harness workshop status",
+    "harness workshop list-instances",
+    "harness workshop show-instance <instance-id>",
     "harness workshop archive [--notes TEXT]",
-    "harness workshop create-instance [<instance-id>] [--template-id ID] [--event-title TEXT] [--city CITY]",
-    "harness workshop update-instance <instance-id> [--event-title TEXT] [--city CITY]",
+    "harness workshop create-instance [<instance-id>] [--template-id ID] [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
+    "harness workshop update-instance <instance-id> [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
     "harness workshop reset-instance <instance-id> [--template-id ID]",
     "harness workshop prepare <instance-id>",
     "harness workshop remove-instance <instance-id>",
@@ -583,6 +589,67 @@ async function handleWorkshopStatus(io, ui, env, deps) {
   }
 }
 
+async function handleWorkshopListInstances(io, ui, env, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listWorkshopInstances();
+    const items = Array.isArray(result?.items) ? result.items.map((instance) => summarizeWorkshopInstance(instance)) : [];
+    ui.json("Workshop Instances", {
+      ok: true,
+      count: items.length,
+      items,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `List instances failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopInstance(instanceId);
+    ui.json("Workshop Instance", {
+      ok: true,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Show instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopArchive(io, ui, env, flags, deps) {
   const session = await requireSession(io, ui, env);
   if (!session) {
@@ -878,6 +945,14 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "status") {
     return handleWorkshopStatus(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "list-instances") {
+    return handleWorkshopListInstances(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "show-instance") {
+    return handleWorkshopShowInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "archive") {

@@ -215,6 +215,18 @@ This is a facilitator-only command — do not surface to participants.
 Show the current instance state, agenda phase, facilitator list, and team count.
 Requires active facilitator session.
 
+### `workshop facilitator list-instances`
+
+List the facilitator-visible workshop instance registry.
+Prefer invoking `harness workshop list-instances` over raw API scripts or local session-file inspection.
+Use this when the facilitator needs to discover what currently exists on a shared dashboard before choosing an explicit instance for reset, update, or agenda work.
+
+### `workshop facilitator show-instance <instance-id>`
+
+Inspect one explicit workshop instance.
+Prefer invoking `harness workshop show-instance <instance-id>` over raw API scripts.
+Use this when the facilitator needs the full record for one instance rather than the deployment-default runtime status returned by `workshop facilitator status`.
+
 ### `workshop facilitator grant <email> <role>`
 
 Grant a Neon Auth user access to the current workshop instance.
@@ -248,6 +260,10 @@ Update event metadata for an existing workshop instance. Requires facilitator se
 Prefer invoking `harness workshop update-instance` over raw API scripts.
 Use this when the facilitator wants to correct or refine date, venue, room, address, or event title without resetting the instance.
 Support `contentLang` changes explicitly so facilitators can choose workshop delivery language per instance without changing admin UI language.
+
+Facilitator discovery rule:
+- for routine discovery, use `harness workshop list-instances` and `harness workshop show-instance`
+- do not read local CLI session files or improvise authenticated `node -e` fetch scripts unless you are diagnosing the CLI itself
 
 ### `workshop facilitator reset-instance <instance-id>`
 

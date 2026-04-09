@@ -9,6 +9,8 @@ test("facilitator skill routes privileged operations through the harness CLI wit
 
   assert.match(skillText, /harness auth login/);
   assert.match(skillText, /harness workshop status/);
+  assert.match(skillText, /harness workshop list-instances/);
+  assert.match(skillText, /harness workshop show-instance/);
   assert.match(skillText, /harness workshop create-instance/);
   assert.match(skillText, /harness workshop update-instance/);
   assert.match(skillText, /harness workshop reset-instance/);

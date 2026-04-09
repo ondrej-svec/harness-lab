@@ -90,6 +90,12 @@ export function createHarnessClient({ fetchFn, session }) {
     getWorkshopStatus() {
       return request("/api/workshop");
     },
+    listWorkshopInstances() {
+      return request("/api/workshop/instances");
+    },
+    getWorkshopInstance(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}`);
+    },
     getAgenda() {
       return request("/api/agenda");
     },

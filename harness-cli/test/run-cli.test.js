@@ -141,6 +141,112 @@ test("workshop status combines workshop and agenda endpoints", async () => {
   assert.match(io.getStdout(), /Build Phase 1/);
 });
 
+test("workshop list-instances returns the facilitator-visible instance registry", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "GET http://localhost:3000/api/workshop/instances",
+        async () =>
+          jsonResponse(200, {
+            items: [
+              {
+                id: "sample-studio-a",
+                templateId: "blueprint-default",
+                status: "prepared",
+                workshopMeta: {
+                  contentLang: "cs",
+                  eventTitle: "Brno Hackathon",
+                  city: "Brno",
+                },
+              },
+              {
+                id: "sample-studio-b",
+                templateId: "blueprint-default",
+                status: "created",
+                workshopMeta: {
+                  contentLang: "en",
+                  eventTitle: "Prague Hackathon",
+                  city: "Prague",
+                },
+              },
+            ],
+          }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "list-instances"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /"count": 2/);
+  assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
+  assert.match(io.getStdout(), /"contentLang": "en"/);
+});
+
+test("workshop show-instance returns one explicit instance", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-b",
+        async () =>
+          jsonResponse(200, {
+            instance: {
+              id: "sample-studio-b",
+              templateId: "blueprint-default",
+              status: "prepared",
+              workshopMeta: {
+                contentLang: "en",
+                eventTitle: "Prague Hackathon",
+                roomName: "Saturn",
+              },
+            },
+          }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "show-instance", "sample-studio-b"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /"instanceId": "sample-studio-b"/);
+  assert.match(io.getStdout(), /"templateId": "blueprint-default"/);
+  assert.match(io.getStdout(), /"roomName": "Saturn"/);
+});
+
+test("workshop show-instance reports missing instances clearly", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "GET http://localhost:3000/api/workshop/instances/missing-instance",
+        async () => jsonResponse(404, { ok: false, error: "instance not found" }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "show-instance", "missing-instance"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /Show instance failed: instance not found/);
+});
+
 test("workshop phase set sends the selected phase id", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
@@ -205,8 +311,10 @@ test("workshop create-instance sends rich metadata and reports created state", a
             created: true,
             instance: {
               id: requestBody.id,
+              templateId: requestBody.templateId,
               status: "created",
               workshopMeta: {
+                contentLang: requestBody.contentLang,
                 eventTitle: requestBody.eventTitle,
                 dateRange: requestBody.dateRange,
                 venueName: requestBody.venueName,
@@ -230,6 +338,8 @@ test("workshop create-instance sends rich metadata and reports created state", a
       "sample-workshop-demo-orbit",
       "--template-id",
       "blueprint-default",
+      "--content-lang",
+      "en",
       "--event-title",
       "Sample Workshop Demo",
       "--city",
@@ -255,6 +365,7 @@ test("workshop create-instance sends rich metadata and reports created state", a
   assert.deepEqual(requestBody, {
     id: "sample-workshop-demo-orbit",
     templateId: "blueprint-default",
+    contentLang: "en",
     eventTitle: "Sample Workshop Demo",
     city: "Example City",
     dateRange: "15. června 2026",
@@ -307,8 +418,10 @@ test("workshop update-instance patches metadata through the shared instance rout
             ok: true,
             instance: {
               id: "sample-studio-a",
+              templateId: "blueprint-default",
               status: "prepared",
               workshopMeta: {
+                contentLang: "en",
                 eventTitle: "Sample Workshop Demo",
                 roomName: "Nova",
               },
@@ -323,13 +436,24 @@ test("workshop update-instance patches metadata through the shared instance rout
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(
-    ["workshop", "update-instance", "sample-studio-a", "--event-title", "Sample Workshop Demo", "--room-name", "Nova"],
+    [
+      "workshop",
+      "update-instance",
+      "sample-studio-a",
+      "--content-lang",
+      "en",
+      "--event-title",
+      "Sample Workshop Demo",
+      "--room-name",
+      "Nova",
+    ],
     io,
     { fetchFn },
   );
   assert.equal(exitCode, 0);
   assert.deepEqual(requestBody, {
     action: "update_metadata",
+    contentLang: "en",
     eventTitle: "Sample Workshop Demo",
     roomName: "Nova",
   });

@@ -65,6 +65,59 @@ Show:
 - facilitator list with roles
 - team count
 
+Use this for the current default or selected workshop context.
+If the facilitator needs the full workspace registry first, use `list-instances` instead of probing local session files or writing raw authenticated fetch scripts.
+
+### `/workshop facilitator list-instances`
+
+Preferred path:
+
+```bash
+harness workshop list-instances
+```
+
+Show:
+- facilitator-visible instance ids
+- template id
+- status
+- content language
+- event title and room metadata when present
+
+Raw API reference:
+
+```http
+GET {DASHBOARD_URL}/api/workshop/instances
+```
+
+Rules:
+- prefer this over inspecting local session files or composing one-off authenticated scripts
+- use it when the facilitator needs to discover which live instances exist before reset, update, or scene work
+- keep raw API usage as a diagnostic fallback, not the default operator workflow
+
+### `/workshop facilitator show-instance <instance-id>`
+
+Preferred path:
+
+```bash
+harness workshop show-instance sample-workshop-demo-orbit
+```
+
+Show:
+- one explicit instance record
+- summary metadata for quick operator inspection
+- the full instance payload when the facilitator needs exact values before a mutation
+
+Raw API reference:
+
+```http
+GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}
+```
+
+Rules:
+- use this when the facilitator needs one specific instance, not the deployment-default `workshop status`
+- if the route returns `404`, the instance does not exist or is not visible to the facilitator
+- prefer this over ad hoc authenticated scripts for routine discovery
+
 ### `/workshop facilitator grant <email> <role>`
 
 Use the CLI-backed privileged request path. The skill should not handle auth bootstrap itself.
@@ -176,6 +229,7 @@ Rules:
 - send only the fields you want to change
 - do not use reset for an ordinary title, venue, or room correction
 - if the route returns `400`, the payload is wrong; if it returns `404`, the instance does not exist
+- use `--content-lang cs|en` when the facilitator intends to change the workshop delivery language for that instance
 
 ### `/workshop facilitator reset-instance <instance-id>`
 
