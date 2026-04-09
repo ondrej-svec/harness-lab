@@ -41,6 +41,20 @@ Note:
 - if the facilitator wants OS-native storage, they can use `HARNESS_SESSION_STORAGE=keychain`, `credential-manager`, or `secret-service`
 - `--auth basic` and `--auth neon` remain explicit fallbacks for local dev/bootstrap
 
+Preferred operator flow after login:
+
+```bash
+harness workshop list-instances
+harness workshop select-instance sample-workshop-demo-orbit
+harness workshop current-instance
+harness workshop status
+```
+
+Rules:
+- prefer this flow over reading local CLI session files or composing ad hoc authenticated `node -e` scripts
+- once a local selection exists, the CLI may use it as the default target for subsequent facilitator operations
+- when an agent needs machine-readable output, prefer `harness --json ...`
+
 ### `/workshop facilitator logout`
 
 Ask the facilitator to run:
@@ -68,6 +82,48 @@ Show:
 Use this for the current default or selected workshop context.
 If the facilitator needs the full workspace registry first, use `list-instances` instead of probing local session files or writing raw authenticated fetch scripts.
 
+Targeting behavior:
+- if the facilitator previously ran `harness workshop select-instance <instance-id>`, `status` reports that selected instance
+- if no local selection exists, `status` falls back to the deployment-default workshop context
+- for exact machine parsing, prefer `harness --json workshop status`
+
+### `/workshop facilitator current-instance`
+
+Preferred path:
+
+```bash
+harness workshop current-instance
+```
+
+Show:
+- the locally selected instance id when one exists
+- whether the current target came from persisted selection or `HARNESS_WORKSHOP_INSTANCE_ID`
+- the resolved instance summary and full record for operator verification
+
+Rules:
+- use this after `select-instance` when the facilitator wants to confirm the CLI target before update, reset, or remove
+- if nothing is selected, the command should say so clearly instead of forcing the facilitator into session-file inspection
+
+### `/workshop facilitator select-instance <instance-id>`
+
+Preferred path:
+
+```bash
+harness workshop select-instance sample-workshop-demo-orbit
+```
+
+Clear the stored selection:
+
+```bash
+harness workshop select-instance --clear
+```
+
+Rules:
+- use this when a facilitator will perform several operations against the same live workshop instance
+- the CLI should validate the instance through the server before persisting the selection
+- after selection, `status` and `phase set` should target that instance instead of the deployment default
+- `show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` may omit `<instance-id>` when a valid selection already exists
+
 ### `/workshop facilitator list-instances`
 
 Preferred path:
@@ -93,6 +149,7 @@ Rules:
 - prefer this over inspecting local session files or composing one-off authenticated scripts
 - use it when the facilitator needs to discover which live instances exist before reset, update, or scene work
 - keep raw API usage as a diagnostic fallback, not the default operator workflow
+- when an agent needs to parse the output, prefer `harness --json workshop list-instances`
 
 ### `/workshop facilitator show-instance <instance-id>`
 
@@ -117,6 +174,7 @@ Rules:
 - use this when the facilitator needs one specific instance, not the deployment-default `workshop status`
 - if the route returns `404`, the instance does not exist or is not visible to the facilitator
 - prefer this over ad hoc authenticated scripts for routine discovery
+- if a local selection already exists, the facilitator may omit `<instance-id>` and let the CLI use the stored target
 
 ### `/workshop facilitator grant <email> <role>`
 
@@ -230,6 +288,7 @@ Rules:
 - do not use reset for an ordinary title, venue, or room correction
 - if the route returns `400`, the payload is wrong; if it returns `404`, the instance does not exist
 - use `--content-lang cs|en` when the facilitator intends to change the workshop delivery language for that instance
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator reset-instance <instance-id>`
 
@@ -256,6 +315,7 @@ Rules:
 - warn that reset archives current runtime state first and then clears live runtime state for the instance
 - prefer `update-instance` for ordinary metadata corrections; reset is the high-impact operation
 - if the facilitator does not specify a template, keep the current template unless there is a clear reason to switch
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator prepare`
 
@@ -275,6 +335,7 @@ Content-Type: application/json
 ```
 
 This sets the instance to `prepared` state and verifies the event code.
+If a local current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
 ### `/workshop facilitator remove-instance <instance-id>`
 
@@ -296,6 +357,7 @@ Content-Type: application/json
 Rules:
 - remove remains an owner-only operation
 - the skill should warn the facilitator that this is destructive removal from the active list, not routine metadata editing
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator agenda`
 

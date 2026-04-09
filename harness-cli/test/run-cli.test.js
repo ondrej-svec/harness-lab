@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { runCli } from "../src/run-cli.js";
-import { readSession, setSessionStoreDepsForTests } from "../src/session-store.js";
+import { readSession, setSessionStoreDepsForTests, writeSession } from "../src/session-store.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
@@ -141,6 +141,130 @@ test("workshop status combines workshop and agenda endpoints", async () => {
   assert.match(io.getStdout(), /Build Phase 1/);
 });
 
+test("workshop select-instance stores a validated local target and current-instance reports it", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-b",
+        async () =>
+          jsonResponse(200, {
+            instance: {
+              id: "sample-studio-b",
+              templateId: "blueprint-default",
+              status: "prepared",
+              workshopMeta: {
+                contentLang: "en",
+                eventTitle: "Prague Hackathon",
+              },
+            },
+          }),
+      ],
+    ]),
+  );
+
+  const selectIo = createMemoryIo(env);
+  const selectExitCode = await runCli(["workshop", "select-instance", "sample-studio-b"], selectIo, { fetchFn });
+  assert.equal(selectExitCode, 0);
+  assert.match(selectIo.getStdout(), /"selectedInstanceId": "sample-studio-b"/);
+
+  const persisted = await readSession(env);
+  assert.equal(persisted.selectedInstanceId, "sample-studio-b");
+
+  const currentIo = createMemoryIo(env);
+  const currentExitCode = await runCli(["workshop", "current-instance"], currentIo, { fetchFn });
+  assert.equal(currentExitCode, 0);
+  assert.match(currentIo.getStdout(), /"source": "session"/);
+  assert.match(currentIo.getStdout(), /"eventTitle": "Prague Hackathon"/);
+});
+
+test("workshop current-instance falls back to HARNESS_WORKSHOP_INSTANCE_ID when no local selection exists", async () => {
+  const env = await createEnv();
+  env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async () =>
+          jsonResponse(200, {
+            instance: {
+              id: "sample-studio-a",
+              templateId: "blueprint-default",
+              status: "prepared",
+              workshopMeta: {
+                contentLang: "cs",
+                eventTitle: "Brno Hackathon",
+              },
+            },
+          }),
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "current-instance"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /"source": "env"/);
+  assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
+});
+
+test("workshop status uses the selected local instance instead of the deployment default routes", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-b",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-b",
+        async () =>
+          jsonResponse(200, {
+            instance: {
+              id: "sample-studio-b",
+              templateId: "blueprint-default",
+              status: "running",
+              workshopMeta: {
+                contentLang: "en",
+                eventTitle: "Prague Hackathon",
+              },
+            },
+          }),
+      ],
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-b/agenda",
+        async () =>
+          jsonResponse(200, {
+            phase: { id: "talk", title: "Opening Talk" },
+            items: [{ id: "talk" }],
+          }),
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "status"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /"targetSource": "session"/);
+  assert.match(io.getStdout(), /"targetInstanceId": "sample-studio-b"/);
+  assert.match(io.getStdout(), /"agendaItems": 1/);
+});
+
 test("workshop list-instances returns the facilitator-visible instance registry", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
@@ -187,6 +311,30 @@ test("workshop list-instances returns the facilitator-visible instance registry"
   assert.match(io.getStdout(), /"count": 2/);
   assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
   assert.match(io.getStdout(), /"contentLang": "en"/);
+});
+
+test("workshop list-instances supports strict json output without headings", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances",
+        async () => jsonResponse(200, { items: [{ id: "sample-studio-a", status: "prepared", workshopMeta: {} }] }),
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["--json", "workshop", "list-instances"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.doesNotMatch(io.getStdout(), /Workshop Instances/);
+  assert.match(io.getStdout(), /^\{\n/);
 });
 
 test("workshop show-instance returns one explicit instance", async () => {
@@ -268,6 +416,34 @@ test("workshop phase set sends the selected phase id", async () => {
   const exitCode = await runCli(["workshop", "phase", "set", "rotation"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.deepEqual(requestBody, { currentId: "rotation" });
+});
+
+test("workshop phase set uses the selected local instance when present", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-b",
+  });
+
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-b/agenda",
+        async (_url, options) => {
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, { ok: true, phase: "Opening Talk" });
+        },
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "phase", "set", "talk"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, { itemId: "talk" });
 });
 
 test("workshop archive forwards optional notes", async () => {
@@ -458,6 +634,47 @@ test("workshop update-instance patches metadata through the shared instance rout
     roomName: "Nova",
   });
   assert.match(io.getStdout(), /Nova/);
+});
+
+test("workshop update-instance falls back to the selected local instance id", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-b",
+  });
+
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-b",
+        async (_url, options) => {
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            instance: {
+              id: "sample-studio-b",
+              status: "prepared",
+              workshopMeta: {
+                contentLang: "cs",
+                roomName: "Dakar",
+              },
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "update-instance", "--room-name", "Dakar"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, {
+    action: "update_metadata",
+    roomName: "Dakar",
+  });
 });
 
 test("workshop reset-instance patches the shared instance route with reset semantics", async () => {

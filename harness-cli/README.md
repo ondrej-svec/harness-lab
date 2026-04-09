@@ -9,9 +9,14 @@ Current shipped scope:
 - `harness auth login`
 - `harness auth logout`
 - `harness auth status`
+- `harness workshop current-instance`
+- `harness workshop select-instance`
 - `harness workshop status`
+- `harness workshop list-instances`
+- `harness workshop show-instance`
 - `harness workshop create-instance`
 - `harness workshop update-instance`
+- `harness workshop reset-instance`
 - `harness workshop prepare`
 - `harness workshop remove-instance`
 - `harness workshop archive`
@@ -120,15 +125,36 @@ Workshop commands:
 ```bash
 harness auth status
 harness skill install
+harness workshop list-instances
+harness workshop select-instance sample-workshop-demo-orbit
+harness workshop current-instance
 harness workshop status
+harness workshop show-instance sample-workshop-demo-orbit
 harness workshop create-instance sample-workshop-demo-orbit --event-title "Sample Workshop Demo"
-harness workshop update-instance sample-workshop-demo-orbit --room-name Orbit
-harness workshop prepare sample-workshop-demo-orbit
-harness workshop remove-instance sample-workshop-demo-orbit
+harness workshop update-instance --room-name Orbit
+harness workshop reset-instance --template-id blueprint-default
+harness workshop prepare
+harness workshop remove-instance
 harness workshop phase set rotation
 harness workshop archive --notes "Manual archive"
+harness workshop select-instance --clear
 harness auth logout
 ```
+
+Targeting model:
+
+- `harness workshop list-instances` is the discovery entrypoint for facilitator-visible workshops
+- `harness workshop select-instance <instance-id>` stores a local current target for later workshop commands
+- `harness workshop current-instance` reports the stored target and resolves its current server state
+- `harness workshop status` and `harness workshop phase set <phase-id>` use the selected instance when present, otherwise they fall back to deployment default behavior
+- `harness workshop show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` accept an explicit `<instance-id>` but may also use the stored selection as a fallback
+- `harness workshop select-instance --clear` removes the stored selection
+- `HARNESS_WORKSHOP_INSTANCE_ID` remains an environment fallback when no local selection is stored
+
+Machine-readable output:
+
+- `harness --json ...` prints strict JSON output without headings
+- prefer this for agent or script consumption instead of parsing human-oriented terminal copy
 
 Facilitator lifecycle commands are intentionally CLI-first:
 

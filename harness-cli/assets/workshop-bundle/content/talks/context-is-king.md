@@ -30,7 +30,9 @@ Pointa analogie:
 
 ## Mikro-cvičení
 
-Všichni dostanou stejný malý task. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a done criteria i do dalšího kroku.
+Tohle je krátká facilitátorova ukázka, ne práce pro celý room.
+
+Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a done criteria i do dalšího kroku.
 
 4 prvky pro druhou variantu:
 
@@ -64,6 +66,7 @@ Všichni dostanou stejný malý task. Jedna varianta bude prompt blob. Druhá va
 
 Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytřejší prompt. Má se vracet s jedním jasným očekáváním:
 
+- pokud ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
 - nejdřív krátká mapa v repu
 - potom plan
 - potom první explicitní check

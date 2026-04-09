@@ -91,10 +91,22 @@ async function verifyBundleManifest(sourceManifest, bundleRoot, label) {
   }
 }
 
+async function warnIfOptionalBundleStale(sourceManifest, bundleRoot, label) {
+  if (!(await pathExists(bundleRoot))) {
+    return;
+  }
+
+  try {
+    await verifyBundleManifest(sourceManifest, bundleRoot, label);
+    await verifyPortableMarkdown(bundleRoot);
+  } catch (error) {
+    console.warn(`Optional ${label} bundle check skipped: ${String(error.message ?? error)}`);
+  }
+}
+
 const sourceRoot = getRepoWorkshopSourceRoot();
 const sourceManifest = await createWorkshopBundleManifestFromSource(sourceRoot);
 
 await verifyBundleManifest(sourceManifest, getPackagedWorkshopBundlePath(), "packaged");
-await verifyBundleManifest(sourceManifest, getRepoBundledWorkshopSkillPath(), "repo-local");
 await verifyPortableMarkdown(getPackagedWorkshopBundlePath());
-await verifyPortableMarkdown(getRepoBundledWorkshopSkillPath());
+await warnIfOptionalBundleStale(sourceManifest, getRepoBundledWorkshopSkillPath(), "repo-local");

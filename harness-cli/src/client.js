@@ -99,8 +99,17 @@ export function createHarnessClient({ fetchFn, session }) {
     getAgenda() {
       return request("/api/agenda");
     },
+    getWorkshopAgenda(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`);
+    },
     setCurrentPhase(currentId) {
       return request("/api/agenda", { method: "PATCH", body: { currentId } });
+    },
+    setCurrentPhaseForInstance(instanceId, currentId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "PATCH",
+        body: { itemId: currentId },
+      });
     },
     archiveWorkshop(notes) {
       return request("/api/workshop/archive", { method: "POST", body: notes ? { notes } : {} });

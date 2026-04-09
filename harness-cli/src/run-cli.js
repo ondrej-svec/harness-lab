@@ -16,6 +16,7 @@ function sleep(ms) {
 function parseArgs(argv) {
   const positionals = [];
   const flags = {};
+  const booleanFlags = new Set(["json", "help", "version", "force", "no-open", "clear"]);
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
@@ -29,6 +30,10 @@ function parseArgs(argv) {
     }
     if (value.startsWith("--")) {
       const key = value.slice(2);
+      if (booleanFlags.has(key)) {
+        flags[key] = true;
+        continue;
+      }
       const next = argv[index + 1];
       if (!next || next.startsWith("--")) {
         flags[key] = true;
@@ -161,12 +166,34 @@ function summarizeWorkshopInstance(instance) {
   };
 }
 
+function resolveCurrentInstanceTarget(session, env) {
+  if (typeof session?.selectedInstanceId === "string" && session.selectedInstanceId.trim().length > 0) {
+    return {
+      instanceId: session.selectedInstanceId.trim(),
+      source: "session",
+    };
+  }
+
+  if (typeof env?.HARNESS_WORKSHOP_INSTANCE_ID === "string" && env.HARNESS_WORKSHOP_INSTANCE_ID.trim().length > 0) {
+    return {
+      instanceId: env.HARNESS_WORKSHOP_INSTANCE_ID.trim(),
+      source: "env",
+    };
+  }
+
+  return {
+    instanceId: null,
+    source: "none",
+  };
+}
+
 function printUsage(io, ui) {
   ui.heading("Harness CLI");
   ui.paragraph(`Version ${version}`);
   ui.blank();
   ui.section("Usage");
   ui.commandList([
+    "harness [--json] <command>",
     "harness --help",
     "harness --version",
     "harness version",
@@ -178,6 +205,8 @@ function printUsage(io, ui) {
     "harness auth logout",
     "harness auth status",
     "harness skill install [--target PATH] [--force]",
+    "harness workshop current-instance",
+    "harness workshop select-instance <instance-id> [--clear]",
     "harness workshop status",
     "harness workshop list-instances",
     "harness workshop show-instance <instance-id>",
@@ -571,9 +600,30 @@ async function handleWorkshopStatus(io, ui, env, deps) {
 
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const target = resolveCurrentInstanceTarget(session, env);
+
+    if (target.source === "session" && target.instanceId) {
+      const [instanceResult, agenda] = await Promise.all([
+        client.getWorkshopInstance(target.instanceId),
+        client.getWorkshopAgenda(target.instanceId),
+      ]);
+      ui.json("Workshop Status", {
+        ok: true,
+        targetInstanceId: target.instanceId,
+        targetSource: target.source,
+        ...summarizeWorkshopInstance(instanceResult.instance),
+        workshopMeta: instanceResult.instance?.workshopMeta ?? null,
+        currentPhase: agenda.phase,
+        agendaItems: Array.isArray(agenda.items) ? agenda.items.length : null,
+      });
+      return 0;
+    }
+
     const [workshop, agenda] = await Promise.all([client.getWorkshopStatus(), client.getAgenda()]);
     ui.json("Workshop Status", {
       ok: true,
+      targetInstanceId: target.instanceId,
+      targetSource: target.source,
       workshopId: workshop.workshopId,
       workshopMeta: workshop.workshopMeta,
       currentPhase: agenda.phase,
@@ -583,6 +633,107 @@ async function handleWorkshopStatus(io, ui, env, deps) {
   } catch (error) {
     if (error instanceof HarnessApiError) {
       ui.status("error", `Workshop status failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopCurrentInstance(io, ui, env, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const target = resolveCurrentInstanceTarget(session, env);
+  if (!target.instanceId) {
+    ui.json("Workshop Current Instance", {
+      ok: true,
+      instanceId: null,
+      source: target.source,
+      selectedInstanceId: session.selectedInstanceId ?? null,
+    });
+    return 0;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopInstance(target.instanceId);
+    ui.json("Workshop Current Instance", {
+      ok: true,
+      source: target.source,
+      selectedInstanceId: session.selectedInstanceId ?? null,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Current instance lookup failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopSelectInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  if (flags.clear === true) {
+    const nextSession = { ...session };
+    delete nextSession.selectedInstanceId;
+    if (!(await persistSession(io, ui, env, nextSession))) {
+      return 1;
+    }
+
+    const target = resolveCurrentInstanceTarget(nextSession, env);
+    ui.json("Workshop Select Instance", {
+      ok: true,
+      selectedInstanceId: null,
+      currentInstanceId: target.instanceId,
+      source: target.source,
+      cleared: true,
+    });
+    return 0;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopInstance(instanceId);
+    const nextSession = {
+      ...session,
+      selectedInstanceId: result.instance?.id ?? instanceId,
+    };
+    if (!(await persistSession(io, ui, env, nextSession))) {
+      return 1;
+    }
+
+    ui.json("Workshop Select Instance", {
+      ok: true,
+      source: "session",
+      selectedInstanceId: nextSession.selectedInstanceId,
+      ...summarizeWorkshopInstance(result.instance),
+      instance: result.instance,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Select instance failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
@@ -625,7 +776,7 @@ async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps)
     flags,
     ["id", "instance-id"],
     "Instance id: ",
-    readOptionalPositional(positionals, 2),
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
   );
   if (!instanceId) {
     ui.status("error", "Instance id is required.", { stream: "stderr" });
@@ -724,7 +875,7 @@ async function handleWorkshopUpdateInstance(io, ui, env, positionals, flags, dep
     flags,
     ["id"],
     "Instance id: ",
-    readOptionalPositional(positionals, 2),
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
   );
   if (!instanceId) {
     ui.status("error", "Instance id is required.", { stream: "stderr" });
@@ -739,7 +890,7 @@ async function handleWorkshopUpdateInstance(io, ui, env, positionals, flags, dep
   if (!hasWorkshopMetadataInput(payload)) {
     ui.status(
       "error",
-      "At least one metadata field is required. Use flags such as --event-title, --date-range, --venue-name, or --room-name.",
+      "At least one metadata field is required. Use flags such as --content-lang, --event-title, --date-range, --venue-name, or --room-name.",
       { stream: "stderr" },
     );
     return 1;
@@ -774,7 +925,7 @@ async function handleWorkshopPrepare(io, ui, env, positionals, flags, deps) {
     flags,
     ["id", "instance-id"],
     "Instance id: ",
-    readOptionalPositional(positionals, 2),
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
   );
   if (!instanceId) {
     ui.status("error", "Instance id is required.", { stream: "stderr" });
@@ -810,7 +961,7 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
     flags,
     ["id", "instance-id"],
     "Instance id: ",
-    readOptionalPositional(positionals, 2),
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
   );
   if (!instanceId) {
     ui.status("error", "Instance id is required.", { stream: "stderr" });
@@ -845,7 +996,7 @@ async function handleWorkshopRemoveInstance(io, ui, env, positionals, flags, dep
     flags,
     ["id", "instance-id"],
     "Instance id: ",
-    readOptionalPositional(positionals, 2),
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
   );
   if (!instanceId) {
     ui.status("error", "Instance id is required.", { stream: "stderr" });
@@ -884,7 +1035,11 @@ async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
 
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
-    const result = await client.setCurrentPhase(phaseId);
+    const target = resolveCurrentInstanceTarget(session, env);
+    const result =
+      target.source === "session" && target.instanceId
+        ? await client.setCurrentPhaseForInstance(target.instanceId, phaseId)
+        : await client.setCurrentPhase(phaseId);
     ui.json("Workshop Phase", result);
     return 0;
   } catch (error) {
@@ -899,8 +1054,8 @@ async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
   const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
-  const ui = createCliUi(io);
   const { positionals, flags } = parseArgs(argv);
+  const ui = createCliUi(io, { jsonMode: flags.json === true || flags.output === "json" });
   const [scope, action, subaction] = positionals;
 
   if (flags.help === true) {
@@ -941,6 +1096,14 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "skill" && action === "install") {
     return handleSkillInstall(io, ui, mergedDeps, flags);
+  }
+
+  if (scope === "workshop" && action === "current-instance") {
+    return handleWorkshopCurrentInstance(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "select-instance") {
+    return handleWorkshopSelectInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "status") {

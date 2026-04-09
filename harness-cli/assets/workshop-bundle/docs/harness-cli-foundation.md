@@ -8,7 +8,7 @@ Current implementation in this repo:
 
 - lives in the repository `harness-cli/` package and ships publicly as `@harness-lab/cli`
 - distributes a portable participant workshop skill bundle through `harness skill install`
-- covers `auth login/logout/status` plus `workshop status/list-instances/show-instance/create-instance/update-instance/reset-instance/prepare/remove-instance/archive/phase set`
+- covers `auth login/logout/status` plus `workshop current-instance/select-instance/status/list-instances/show-instance/create-instance/update-instance/reset-instance/prepare/remove-instance/archive/phase set`
 - targets the existing shared dashboard facilitator APIs
 - is tested for browser/device auth, local-dev Basic Auth fallback, and cookie-backed Neon bootstrap fallback
 - stores sessions in a local file under `HARNESS_CLI_HOME` or `~/.harness` by default
@@ -38,6 +38,8 @@ Required commands:
 - `harness auth login`
 - `harness auth logout`
 - `harness auth status`
+- `harness workshop current-instance`
+- `harness workshop select-instance <instance-id>`
 - `harness workshop status`
 - `harness workshop list-instances`
 - `harness workshop show-instance <instance-id>`
@@ -85,33 +87,41 @@ Current auth layering:
 Current target-selection order:
 
 1. an explicit command or route instance id
-2. the selected control-room instance in the dashboard
+2. the CLI-local persisted selection set by `harness workshop select-instance`
 3. the deployment default `HARNESS_WORKSHOP_INSTANCE_ID`
 4. a repository fallback only on surfaces that intentionally present a workspace-level default
 
 Current command posture:
 
 - explicit workspace-discovery commands:
+  - `harness workshop current-instance`
+  - `harness workshop select-instance <instance-id>`
   - `harness workshop list-instances`
-- explicit target required:
-  - `harness workshop show-instance <instance-id>`
-- explicit target required:
-  - `harness workshop update-instance <instance-id>`
-  - `harness workshop reset-instance <instance-id>`
-  - `harness workshop prepare <instance-id>`
-  - `harness workshop remove-instance <instance-id>`
+- explicit target preferred but selected-instance fallback allowed:
+  - `harness workshop show-instance [<instance-id>]`
+  - `harness workshop update-instance [<instance-id>]`
+  - `harness workshop reset-instance [<instance-id>]`
+  - `harness workshop prepare [<instance-id>]`
+  - `harness workshop remove-instance [<instance-id>]`
 - explicit target is the created resource:
   - `harness workshop create-instance [<instance-id>]`
-- deployment-default target:
+- selected-instance target first, otherwise deployment-default target:
   - `harness workshop status`
-  - `harness workshop archive`
   - `harness workshop phase set <phase-id>`
+- deployment-default target:
+  - `harness workshop archive`
 
 Current discoverability path:
 
 - facilitators can inspect available workshop instances through the dashboard workspace view
 - the same platform-scoped list lives behind the authenticated instances API surface at `/api/workshop/instances`
 - the CLI should expose that list directly so facilitator skills do not need session-file inspection or raw authenticated scripts for routine discovery
+- the CLI should also expose a local current-target selector so repeated facilitator work does not depend on ambient dashboard selection or deployment-default routing
+
+Machine-readable posture:
+
+- facilitator commands should support `--json` for strict machine parsing without headings or prose wrappers
+- skills and agents should prefer `harness --json ...` over scraping human-oriented terminal formatting
 
 For the current facilitator lifecycle slice:
 

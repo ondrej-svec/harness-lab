@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.2.8",
-  "contentHash": "6194a59089ff94131b647282c1b5e7574a6a9d112c48b4b9d58b600f5775736a",
+  "bundleVersion": "0.2.9",
+  "contentHash": "671837951cf6679bea1d517c900927aab5d457806695e1a6da25574b8573f325",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -34,7 +34,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "f0edc5eef8c7bc0efc67672e184edecce46fa5fd5e9820cfda0b28fbb8cb1a8f"
+      "sha256": "845adbcf9284cedd589d461b40ae1cd336d816b92bcc239df4574148a57b263a"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -98,11 +98,11 @@
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "4d0972fefac067de0b8803698b44bdf8ab0bee64b181d50d1ac5e26a92eb7089"
+      "sha256": "0bb48497b458474a546c351118ad455c00ad997c9efc0e227b388f81dd0b55e3"
     },
     {
       "path": "docs/harness-cli-foundation.md",
-      "sha256": "f3b6125a4575c27dcb7b88474003f2a9b189a4b1b25bfaa462861571b69f7a51"
+      "sha256": "cff448e5c1ee4e7129724e4f8294add35cd1efb621c83182b341a1b7e5a16b86"
     },
     {
       "path": "docs/learner-reference-gallery.md",
@@ -134,7 +134,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "de24b73c431855143630f6d312d9bb2af0a16178c2c70f928c5c3a426e569777"
+      "sha256": "d1e242a857f61bc2fae29c74a9e0efbd1ba0ed5beb25087dbaeffabc5f53b4a5"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -182,7 +182,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "f0e977df5979d0d218eabad026b66ecefa90802c71dc8a9468959334570f1c1c"
+      "sha256": "525fc9fdad22cf42b47854ff9ad90579d728daf2c4ac484aba13f93193eb56d3"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

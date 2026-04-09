@@ -84,7 +84,9 @@ function writeWrapped(stream, text, options = {}) {
   }
 }
 
-export function createCliUi(io) {
+export function createCliUi(io, options = {}) {
+  const jsonMode = options.jsonMode === true;
+
   function streamFor(target) {
     return target === "stderr" ? io.stderr : io.stdout;
   }
@@ -115,6 +117,10 @@ export function createCliUi(io) {
   function status(kind, text, options = {}) {
     const target = options.stream ?? (kind === "error" ? "stderr" : "stdout");
     const stream = streamFor(target);
+    if (jsonMode) {
+      writeLine(stream, JSON.stringify({ ok: kind !== "error", level: kind, message: text }));
+      return;
+    }
     const chalk = createStyler(stream, io.env);
     const prefixMap = {
       ok: chalk.green.bold("[ok]"),
@@ -178,7 +184,9 @@ export function createCliUi(io) {
 
   function json(title, value, options = {}) {
     const target = options.stream ?? "stdout";
-    heading(title, { stream: target });
+    if (!jsonMode) {
+      heading(title, { stream: target });
+    }
     writeLine(streamFor(target), JSON.stringify(value, null, 2));
   }
 

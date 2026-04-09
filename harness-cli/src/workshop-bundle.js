@@ -225,6 +225,20 @@ async function writeWorkshopBundleManifest(bundleRoot, manifest) {
   );
 }
 
+async function pruneBundleFiles(bundleRoot, manifest) {
+  const expectedFiles = new Set([
+    WORKSHOP_BUNDLE_MANIFEST,
+    ...manifest.files.map((file) => file.path),
+  ]);
+  const currentFiles = await listFilesRecursive(bundleRoot);
+
+  for (const file of currentFiles) {
+    if (!expectedFiles.has(file.relativePath)) {
+      await fs.rm(file.absolutePath, { force: true });
+    }
+  }
+}
+
 export async function createWorkshopBundleFromSource(sourceRoot, targetRoot, options = {}) {
   if (options.clean === true) {
     await fs.rm(targetRoot, { recursive: true, force: true });
@@ -234,6 +248,9 @@ export async function createWorkshopBundleFromSource(sourceRoot, targetRoot, opt
   await fs.rm(path.join(targetRoot, "workshop-skill", "SKILL.md"), { force: true });
   await copyBundleFiles(sourceRoot, targetRoot);
   const manifest = await createWorkshopBundleManifestFromSource(sourceRoot);
+  if (options.prune === true) {
+    await pruneBundleFiles(targetRoot, manifest);
+  }
   await writeWorkshopBundleManifest(targetRoot, manifest);
 }
 
@@ -250,7 +267,7 @@ export async function syncPackagedWorkshopBundle() {
 export async function syncRepoBundledWorkshopSkill() {
   const sourceRoot = getRepoWorkshopSourceRoot();
   const bundleRoot = getRepoBundledWorkshopSkillPath();
-  await createWorkshopBundleFromSource(sourceRoot, bundleRoot, { clean: true });
+  await createWorkshopBundleFromSource(sourceRoot, bundleRoot, { prune: true });
   return {
     sourceRoot,
     bundleRoot,
