@@ -161,7 +161,7 @@ export function buildParticipantPanelState(options: {
   const { copy, lang, currentAgendaItem, nextAgendaItem, participantSession, rotationRevealed } = options;
   const currentTitle = currentAgendaItem?.title ?? copy.participantTitleFallback;
   const participantScene = currentAgendaItem?.presenterScenes.find(
-    (scene) => scene.enabled && scene.sceneType === "participant-view",
+    (scene) => scene.enabled && scene.surface === "participant",
   );
   const fallbackGuidance = buildFallbackParticipantGuidance({ currentAgendaItem, copy });
   const sessionUntilValue = formatDateTime(participantSession.expiresAt, lang);

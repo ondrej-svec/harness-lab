@@ -29,6 +29,7 @@ type WorkshopBlueprintScene = {
   id: string;
   label: string;
   sceneType: string;
+  surface?: string;
   intent?: string;
   chromePreset?: string;
   title: string;
@@ -177,6 +178,8 @@ export type PresenterSceneType =
   | "transition"
   | "custom";
 
+export type PresenterSceneSurface = "room" | "participant";
+
 export type PresenterSceneIntent =
   | "framing"
   | "teaching"
@@ -263,6 +266,7 @@ export type PresenterScene = {
   id: string;
   label: string;
   sceneType: PresenterSceneType;
+  surface: PresenterSceneSurface;
   intent: PresenterSceneIntent;
   chromePreset: PresenterChromePreset;
   title: string;
@@ -301,6 +305,11 @@ const presenterSceneTypes = [
   "transition",
   "custom",
 ] as const satisfies PresenterSceneType[];
+
+const presenterSceneSurfaces = [
+  "room",
+  "participant",
+] as const satisfies PresenterSceneSurface[];
 
 const presenterSceneIntents = [
   "framing",
@@ -365,6 +374,18 @@ function normalizeAgendaItemIntent(value: string): AgendaItemIntent {
 
 function normalizePresenterSceneType(value: string): PresenterSceneType {
   return presenterSceneTypes.includes(value as PresenterSceneType) ? (value as PresenterSceneType) : "custom";
+}
+
+function derivePresenterSceneSurface(sceneType: PresenterSceneType): PresenterSceneSurface {
+  return sceneType === "participant-view" ? "participant" : "room";
+}
+
+function normalizePresenterSceneSurface(value: string | undefined, sceneType: PresenterSceneType): PresenterSceneSurface {
+  if (value && presenterSceneSurfaces.includes(value as PresenterSceneSurface)) {
+    return value as PresenterSceneSurface;
+  }
+
+  return derivePresenterSceneSurface(sceneType);
 }
 
 function normalizePresenterSceneIntent(value: string): PresenterSceneIntent {
@@ -614,6 +635,7 @@ export function createAgendaFromBlueprint(
           id: scene.id,
           label: localizedScene?.label ?? scene.label,
           sceneType: normalizedSceneType,
+          surface: normalizePresenterSceneSurface(scene.surface, normalizedSceneType),
           intent: normalizePresenterSceneIntent(scene.intent ?? scene.sceneType ?? "custom"),
           chromePreset: normalizePresenterChromePreset(scene.chromePreset ?? "minimal"),
           title: localizedTitle,

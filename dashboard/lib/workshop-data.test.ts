@@ -32,6 +32,7 @@ describe("workshop-data", () => {
     expect(state.agenda[0]?.presenterScenes[0]).toMatchObject({
       id: blueprintAgenda.phases[0]?.scenes[0]?.id,
       kind: "blueprint",
+      surface: "room",
       sourceBlueprintSceneId: blueprintAgenda.phases[0]?.scenes[0]?.id,
     });
     expect(state.agenda[1]?.defaultPresenterSceneId).toBe(blueprintAgenda.phases[1]?.defaultSceneId);
@@ -54,12 +55,14 @@ describe("workshop-data", () => {
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(opening?.title).toBe("Opening and orientation");
     expect(opening?.goal).toContain("Set the tone for the day");
-    expect(handoffScene?.title).toBe("The repo has to survive inheritance");
+    expect(handoffScene?.title).toBe("A good harness keeps four things connected");
     expect(handoffScene?.blocks[0]).toMatchObject({
-      id: "opening-loop-image",
-      src: "/blueprint/opening/opening-continuation-loop.svg",
+      id: "opening-loop-steps",
+      title: "Four things that should be readable immediately",
     });
+    expect(handoffScene?.surface).toBe("room");
     expect(participantScene?.title).toBe("How to read the start of the day");
+    expect(participantScene?.surface).toBe("participant");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",
       title: "Today is not prompt theatre",
@@ -115,7 +118,7 @@ describe("workshop-data", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: blueprintAgenda.phases[0]?.scenes[0]?.id,
-          title: "Today we are not building a demo for today",
+          title: "Today we are building a working system, not prompt theatre",
         }),
       ]),
     );
@@ -124,8 +127,17 @@ describe("workshop-data", () => {
   it("includes an explicit participant-view scene for every blueprint phase", () => {
     expect(
       seedWorkshopState.agenda.every((item) =>
-        item.presenterScenes.some((scene) => scene.sceneType === "participant-view"),
+        item.presenterScenes.some((scene) => scene.surface === "participant"),
       ),
+    ).toBe(true);
+  });
+
+  it("keeps default presenter scenes on the room-facing surface", () => {
+    expect(
+      seedWorkshopState.agenda.every((item) => {
+        const defaultScene = item.presenterScenes.find((scene) => scene.id === item.defaultPresenterSceneId);
+        return defaultScene?.surface === "room";
+      }),
     ).toBe(true);
   });
 

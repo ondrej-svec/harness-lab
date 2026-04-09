@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import type { UiLanguage } from "@/lib/ui-language";
 
 export const adminPanelSurfaceClassName =
@@ -174,7 +175,9 @@ export function AdminSheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
       <div className="absolute inset-0">
-        <Link aria-label={closeLabel} className="block h-full w-full" href={closeHref} />
+        <AdminRouteLink aria-label={closeLabel} className="block h-full w-full" href={closeHref}>
+          <span className="sr-only">{closeLabel}</span>
+        </AdminRouteLink>
       </div>
       <section className="relative flex h-full w-full max-w-[42rem] flex-col overflow-hidden rounded-[30px] border border-[var(--border-strong)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[var(--shadow-overlay)] backdrop-blur">
         <div className="border-b border-[var(--border)] px-5 py-4 sm:px-6">
@@ -184,9 +187,9 @@ export function AdminSheet({
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
             </div>
-            <Link className={adminGhostButtonClassName} href={closeHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref}>
               {closeLabel}
-            </Link>
+            </AdminRouteLink>
           </div>
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
@@ -213,7 +216,9 @@ export function AdminDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
       <div className="absolute inset-0">
-        <Link aria-label={closeLabel} className="block h-full w-full" href={closeHref} />
+        <AdminRouteLink aria-label={closeLabel} className="block h-full w-full" href={closeHref}>
+          <span className="sr-only">{closeLabel}</span>
+        </AdminRouteLink>
       </div>
       <section className="relative w-full max-w-[36rem] overflow-hidden rounded-[30px] border border-[var(--border-strong)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[var(--shadow-overlay)] backdrop-blur">
         <div className="border-b border-[var(--border)] px-5 py-4 sm:px-6">
@@ -223,9 +228,9 @@ export function AdminDialog({
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
             </div>
-            <Link className={adminGhostButtonClassName} href={closeHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref}>
               {closeLabel}
-            </Link>
+            </AdminRouteLink>
           </div>
         </div>
         <div className="px-5 py-5 sm:px-6">{children}</div>

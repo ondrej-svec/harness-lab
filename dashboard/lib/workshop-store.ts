@@ -14,6 +14,7 @@ import {
   type PresenterChromePreset,
   type PresenterScene,
   type PresenterSceneIntent,
+  type PresenterSceneSurface,
   type SprintUpdate,
   type Team,
   type WorkshopContentLanguage,
@@ -101,6 +102,10 @@ function deriveSceneChromePreset(sceneType: PresenterScene["sceneType"]): Presen
     default:
       return "minimal";
   }
+}
+
+function deriveSceneSurface(sceneType: PresenterScene["sceneType"]): PresenterSceneSurface {
+  return sceneType === "participant-view" ? "participant" : "room";
 }
 
 function buildFallbackPresenterBlocks(scene: {
@@ -349,6 +354,7 @@ function normalizeStoredPresenterScene(
     id: scene.id ?? fallbackScene?.id ?? `${agendaItemId}-scene-${sceneIndex + 1}`,
     label,
     sceneType,
+    surface: scene.surface ?? fallbackScene?.surface ?? deriveSceneSurface(sceneType),
     intent: scene.intent ?? fallbackScene?.intent ?? deriveSceneIntent(sceneType),
     chromePreset: scene.chromePreset ?? fallbackScene?.chromePreset ?? deriveSceneChromePreset(sceneType),
     title,
@@ -657,6 +663,7 @@ export async function addPresenterScene(
             id: `scene-${randomUUID()}`,
             label: input.label,
             sceneType: input.sceneType,
+            surface: deriveSceneSurface(input.sceneType),
             intent: input.intent ?? deriveSceneIntent(input.sceneType),
             chromePreset: input.chromePreset ?? deriveSceneChromePreset(input.sceneType),
             title,
@@ -716,6 +723,7 @@ export async function updatePresenterScene(
             ...scene,
             label: updates.label,
             sceneType: updates.sceneType,
+            surface: deriveSceneSurface(updates.sceneType),
             intent:
               updates.intent ??
               (scene.intent === "custom" ? deriveSceneIntent(updates.sceneType) : scene.intent ?? deriveSceneIntent(updates.sceneType)),

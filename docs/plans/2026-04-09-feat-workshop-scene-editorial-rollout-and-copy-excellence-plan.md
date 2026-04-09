@@ -13,11 +13,12 @@ Finish the rich-scene rollout by treating the remaining work as an editorial and
 
 ## Problem Statement
 
-The presenter system is no longer the main bottleneck.
+The presenter shell is no longer the only bottleneck, but the scene contract still needs one correction.
 
 The control-room and projector shell work is complete, the blueprint already contains explicit scene packs across all 10 workshop phases, and the `opening` pack established a stronger proof slice. But the day is still uneven:
 
 - the previous rich-presenter plan still describes a mostly-thin blueprint, which is no longer true
+- the current scene model still mixes room projection, participant mirror, and facilitator support more than it should
 - the remaining quality gap is editorial: narrative arc, scene usefulness, copy precision, and voice discipline
 - several important scenes are still structurally present but editorially weak
 - the current block mix is still dominated by `hero` and `bullet-list`, which is a smell when the workshop is supposed to feel premium and self-sufficient
@@ -29,6 +30,8 @@ The continuation therefore should not ask “how do we make the scenes richer?�
 - does each scene earn its place?
 - can another facilitator run it without reading Ondrej’s mind?
 - does the Czech copy sound natural, sharp, and workshop-grade?
+
+This plan assumes the room-safe separation fix in [`2026-04-09-fix-room-safe-presenter-scene-separation-and-opening-reset-plan.md`](./2026-04-09-fix-room-safe-presenter-scene-separation-and-opening-reset-plan.md) lands first or alongside any further `opening` propagation.
 
 ## Current State Review
 

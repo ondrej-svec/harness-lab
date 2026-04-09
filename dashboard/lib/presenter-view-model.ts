@@ -1,6 +1,6 @@
 import type { UiLanguage } from "./ui-language";
 import type { WorkshopState } from "./workshop-data";
-import { getDefaultPresenterScene, getPresenterSceneByType, resolvePresenterSelection } from "./presenter-scenes";
+import { getDefaultPresenterScene, getPresenterScenesBySurface, resolvePresenterSelection } from "./presenter-scenes";
 
 export function buildPresenterRouteHref(options: {
   lang: UiLanguage;
@@ -37,7 +37,7 @@ export function buildPresenterControlState(options: {
   const { state, instanceId, lang } = options;
   const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0] ?? null;
   const currentDefaultScene = getDefaultPresenterScene(currentAgendaItem);
-  const participantPreviewScene = getPresenterSceneByType(currentAgendaItem, "participant-view");
+  const participantPreviewScene = getPresenterScenesBySurface(currentAgendaItem, "participant")[0] ?? null;
 
   return {
     currentAgendaItem,

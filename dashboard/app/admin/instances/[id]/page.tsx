@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { auth } from "@/lib/auth/server";
@@ -104,6 +104,14 @@ export const dynamic = "force-dynamic";
 
 const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
 const repoBlobBaseUrl = "https://github.com/ondrej-svec/harness-lab/blob/main";
+
+function getRoomPresenterScenes(item: RichAgendaItem | null | undefined) {
+  return (item?.presenterScenes ?? []).filter((scene) => scene.surface === "room");
+}
+
+function getParticipantPresenterScenes(item: RichAgendaItem | null | undefined) {
+  return (item?.presenterScenes ?? []).filter((scene) => scene.surface === "participant");
+}
 
 function deriveNextTeamId(existingIds: string[]) {
   const numericIds = existingIds
@@ -224,10 +232,11 @@ async function setAgendaAction(formData: FormData) {
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
   const agendaId = String(formData.get("agendaId") ?? "");
+  const returnTo = String(formData.get("returnTo") ?? "").trim();
   if (agendaId) {
     await setCurrentAgendaItem(agendaId, instanceId);
   }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: returnTo === "detail" ? agendaId || null : null }));
 }
 
 async function saveAgendaDetailsAction(formData: FormData) {
@@ -722,10 +731,21 @@ export default async function AdminPage({
   );
   const requestedAgendaItem = state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) as RichAgendaItem | undefined;
   const selectedAgendaItem = (requestedAgendaItem ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined;
+  const roomScenes = getRoomPresenterScenes(selectedAgendaItem);
+  const participantScenes = getParticipantPresenterScenes(selectedAgendaItem);
   const selectedScene =
     selectedAgendaItem?.presenterScenes.find((scene) => scene.id === query?.scene) ??
     selectedAgendaItem?.presenterScenes.find((scene) => scene.id === selectedAgendaItem.defaultPresenterSceneId) ??
     selectedAgendaItem?.presenterScenes[0] ??
+    null;
+  const selectedRoomScene =
+    roomScenes.find((scene) => scene.id === query?.scene) ??
+    roomScenes.find((scene) => scene.id === selectedAgendaItem?.defaultPresenterSceneId) ??
+    roomScenes[0] ??
+    null;
+  const selectedParticipantScene =
+    participantScenes.find((scene) => scene.id === query?.scene) ??
+    participantScenes[0] ??
     null;
   const selectedTeam = state.teams.find((team: Team) => team.id === query?.team) ?? state.teams[0] ?? null;
   const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
@@ -756,8 +776,8 @@ export default async function AdminPage({
   });
   const showAgendaDetail = visibleSection === "agenda" && Boolean(requestedAgendaItem);
   const selectedDefaultScene =
-    selectedAgendaItem?.presenterScenes.find((scene) => scene.id === selectedAgendaItem.defaultPresenterSceneId) ??
-    selectedAgendaItem?.presenterScenes[0] ??
+    roomScenes.find((scene) => scene.id === selectedAgendaItem?.defaultPresenterSceneId) ??
+    roomScenes[0] ??
     null;
   const selectedAgendaProjectionHref = selectedAgendaItem
     ? buildPresenterRouteHref({
@@ -814,14 +834,25 @@ export default async function AdminPage({
     agendaItemId: selectedAgendaItem?.id ?? null,
     overlay: "scene-add",
   });
-  const sceneEditHref =
-    selectedAgendaItem && selectedScene
+  const roomSceneEditHref =
+    selectedAgendaItem && selectedRoomScene
       ? buildAdminHref({
           lang,
           section: "agenda",
           instanceId: activeInstanceId,
           agendaItemId: selectedAgendaItem.id,
-          sceneId: selectedScene.id,
+          sceneId: selectedRoomScene.id,
+          overlay: "scene-edit",
+        })
+      : sceneBaseHref;
+  const participantSceneEditHref =
+    selectedAgendaItem && selectedParticipantScene
+      ? buildAdminHref({
+          lang,
+          section: "agenda",
+          instanceId: activeInstanceId,
+          agendaItemId: selectedAgendaItem.id,
+          sceneId: selectedParticipantScene.id,
           overlay: "scene-edit",
         })
       : sceneBaseHref;
@@ -862,12 +893,12 @@ export default async function AdminPage({
           <div className="relative space-y-5 p-6 sm:p-7">
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div className="max-w-3xl">
-                <Link
+                <AdminRouteLink
                   href={buildAdminWorkspaceHref({ lang })}
                   className="inline-flex text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
                 >
                   {copy.controlRoomBack}
-                </Link>
+                </AdminRouteLink>
                 <p className="mt-4 text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{copy.deskEyebrow}</p>
                 <div className="mt-3 flex flex-wrap items-center gap-3">
                   {selectedInstance ? (
@@ -1032,10 +1063,18 @@ export default async function AdminPage({
             <div className="space-y-6">
               {showAgendaDetail && selectedAgendaItem ? (
                 <>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <Link className={adminGhostButtonClassName} href={agendaIndexHref}>
-                      {copy.agendaBackToTimelineButton}
-                    </Link>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <nav aria-label="breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-[var(--text-secondary)]">
+                      <span>{copy.agendaSectionTitle}</span>
+                      <span aria-hidden="true">/</span>
+                      <AdminRouteLink className="text-sm font-medium text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]" href={agendaIndexHref}>
+                        {copy.agendaTimelineTitle}
+                      </AdminRouteLink>
+                      <span aria-hidden="true">/</span>
+                      <span className="text-sm text-[var(--text-primary)]">
+                        {selectedAgendaItem.time} • {selectedAgendaItem.title}
+                      </span>
+                    </nav>
                     <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.phaseControlHint}</p>
                   </div>
 
@@ -1071,6 +1110,7 @@ export default async function AdminPage({
                         <form action={setAgendaAction}>
                           <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
                           <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                          <input name="returnTo" type="hidden" value="detail" />
                           <AdminSubmitButton className={adminPrimaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
                         </form>
                       ) : selectedAgendaProjectionHref ? (
@@ -1104,13 +1144,13 @@ export default async function AdminPage({
                     </div>
 
                     <div className="mt-3 flex flex-wrap gap-3">
-                      <Link className={adminGhostButtonClassName} href={agendaEditHref}>
+                      <AdminRouteLink className={adminGhostButtonClassName} href={agendaEditHref}>
                         {copy.openEditSheetButton}
-                      </Link>
+                      </AdminRouteLink>
                       {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
-                        <Link className={adminGhostButtonClassName} href={liveAgendaHref}>
+                        <AdminRouteLink className={adminGhostButtonClassName} href={liveAgendaHref}>
                           {copy.agendaJumpToLiveButton}
-                        </Link>
+                        </AdminRouteLink>
                       ) : null}
                     </div>
 
@@ -1145,19 +1185,19 @@ export default async function AdminPage({
                         <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterCardDescription}</p>
                       </div>
                       <div className="flex flex-wrap gap-3">
-                        <Link className={adminSecondaryButtonClassName} href={sceneAddHref}>
+                        <AdminRouteLink className={adminSecondaryButtonClassName} href={sceneAddHref}>
                           {copy.presenterAddSceneButton}
-                        </Link>
+                        </AdminRouteLink>
                         {selectedScene ? (
-                          <Link className={adminGhostButtonClassName} href={sceneEditHref}>
+                          <AdminRouteLink className={adminGhostButtonClassName} href={roomSceneEditHref}>
                             {copy.presenterEditSceneButton}
-                          </Link>
+                          </AdminRouteLink>
                         ) : null}
                       </div>
                     </div>
                     <div className="mt-4 space-y-3">
-                      {selectedAgendaItem.presenterScenes.length > 0 ? (
-                        selectedAgendaItem.presenterScenes.map((scene) => (
+                      {roomScenes.length > 0 ? (
+                        roomScenes.map((scene) => (
                           <PresenterSceneSummaryCard
                             key={scene.id}
                             scene={scene}
@@ -1166,11 +1206,57 @@ export default async function AdminPage({
                             lang={lang}
                             copy={copy}
                             isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
-                            isSelected={selectedScene?.id === scene.id}
+                            isSelected={selectedRoomScene?.id === scene.id}
                           />
                         ))
                       ) : (
                         <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
+                      )}
+                    </div>
+                  </section>
+
+                  <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.participantSurfaceCardTitle}</p>
+                        <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">
+                          {selectedParticipantScene?.label ?? copy.participantSurfaceCardDescription}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceCardDescription}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-3">
+                        <a
+                          href={selectedAgendaParticipantMirrorHref}
+                          target="_blank"
+                          className={adminSecondaryButtonClassName}
+                          rel="noreferrer"
+                        >
+                          {copy.presenterOpenParticipantSurfaceButton}
+                        </a>
+                        {selectedParticipantScene ? (
+                          <AdminRouteLink className={adminGhostButtonClassName} href={participantSceneEditHref}>
+                            {copy.presenterEditSceneButton}
+                          </AdminRouteLink>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-3">
+                      {participantScenes.length > 0 ? (
+                        participantScenes.map((scene) => (
+                          <PresenterSceneSummaryCard
+                            key={scene.id}
+                            scene={scene}
+                            agendaItemId={selectedAgendaItem.id}
+                            activeInstanceId={activeInstanceId}
+                            lang={lang}
+                            copy={copy}
+                            isDefault={false}
+                            isSelected={selectedParticipantScene?.id === scene.id}
+                            participantOnly
+                          />
+                        ))
+                      ) : (
+                        <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceRecoveryHint}</p>
                       )}
                     </div>
                   </section>
@@ -1242,9 +1328,9 @@ export default async function AdminPage({
                         <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
                         <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaIndexDescription}</p>
                       </div>
-                      <Link className={adminSecondaryButtonClassName} href={agendaAddHref}>
+                      <AdminRouteLink className={adminSecondaryButtonClassName} href={agendaAddHref}>
                         {copy.openAddAgendaItemButton}
-                      </Link>
+                      </AdminRouteLink>
                     </div>
                     <div className="space-y-3">
                       {state.agenda.map((item) => {
@@ -1256,14 +1342,15 @@ export default async function AdminPage({
                         });
 
                         return (
-                          <Link key={item.id} href={detailHref} className="group block">
-                            <div className="relative">
-                              <TimelineRow item={item} copy={copy} detailed />
-                              <span className="pointer-events-none absolute right-4 top-4 text-xs font-medium lowercase text-[var(--text-secondary)] transition group-hover:text-[var(--text-primary)]">
-                                {copy.openAgendaDetailButton}
-                              </span>
-                            </div>
-                          </Link>
+                          <TimelineRow
+                            key={item.id}
+                            item={item}
+                            copy={copy}
+                            detailed
+                            detailHref={detailHref}
+                            lang={lang}
+                            instanceId={activeInstanceId}
+                          />
                         );
                       })}
                     </div>
@@ -1289,12 +1376,12 @@ export default async function AdminPage({
                         <p className="font-semibold text-[var(--text-primary)]">{selectedTeam.name}</p>
                         <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{selectedTeam.id}</p>
                       </div>
-                      <Link
-                        href={buildAdminHref({ lang, section: activeSection, instanceId: activeInstanceId })}
-                        className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                      >
-                        {copy.createAnotherTeamLabel}
-                      </Link>
+                        <AdminRouteLink
+                          href={buildAdminHref({ lang, section: activeSection, instanceId: activeInstanceId })}
+                          className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                        >
+                          {copy.createAnotherTeamLabel}
+                        </AdminRouteLink>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{selectedTeam.repoUrl}</p>
                   </div>
@@ -1383,7 +1470,7 @@ export default async function AdminPage({
                       </div>
                       <div className="text-right">
                         <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
-                        <Link
+                        <AdminRouteLink
                           href={buildAdminHref({
                             lang,
                             section: activeSection,
@@ -1393,7 +1480,7 @@ export default async function AdminPage({
                           className="mt-2 inline-flex text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
                         >
                           {copy.editActionLabel}
-                        </Link>
+                        </AdminRouteLink>
                       </div>
                     </div>
                     <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
@@ -1829,9 +1916,9 @@ function HandoffMomentCard({
       <div className="space-y-4">
         {jumpHref ? (
           <div className="flex flex-wrap justify-end gap-3">
-            <Link className={adminGhostButtonClassName} href={jumpHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={jumpHref}>
               {copy.handoffMomentJumpButton}
-            </Link>
+            </AdminRouteLink>
           </div>
         ) : null}
 
@@ -1972,6 +2059,7 @@ function AgendaItemEditorSheetBody({
         <form action={setAgendaAction}>
           <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
           <input name="agendaId" type="hidden" value={item.id} />
+          <input name="returnTo" type="hidden" value="detail" />
           <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>{copy.setCurrentPhase}</AdminSubmitButton>
         </form>
         <form action={removeAgendaItemAction}>
@@ -2383,6 +2471,7 @@ function PresenterSceneSummaryCard({
   copy,
   isDefault,
   isSelected,
+  participantOnly = false,
 }: {
   scene: RichPresenterScene;
   agendaItemId: string;
@@ -2391,10 +2480,11 @@ function PresenterSceneSummaryCard({
   copy: (typeof adminCopy)[UiLanguage];
   isDefault: boolean;
   isSelected: boolean;
+  participantOnly?: boolean;
 }) {
   const sceneBlocks = scene.blocks ?? [];
-  const sceneMeta = [scene.sceneType, scene.intent, scene.chromePreset].filter(Boolean).join(" • ");
-  const sceneLaunchLabel = scene.sceneType === "participant-view" ? copy.presenterOpenParticipantButton : copy.presenterOpenSelectedScene;
+  const surfaceLabel = participantOnly ? copy.participantSurfaceCardTitle : copy.presenterCardTitle;
+  const sceneMeta = [surfaceLabel, scene.sceneType, scene.intent, scene.chromePreset].filter(Boolean).join(" • ");
   const sceneEditorHref = buildAdminHref({
     lang,
     section: "agenda",
@@ -2420,22 +2510,38 @@ function PresenterSceneSummaryCard({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <a
-            href={buildPresenterRouteHref({
-              lang,
-              instanceId: activeInstanceId,
-              agendaItemId,
-              sceneId: scene.id,
-            })}
-            target="_blank"
-            rel="noreferrer"
-            className={adminGhostButtonClassName}
-          >
-            {sceneLaunchLabel}
-          </a>
-          <Link href={sceneEditorHref} className={adminGhostButtonClassName}>
+          {participantOnly ? (
+            <a
+              href={buildPresenterRouteHref({
+                lang,
+                instanceId: activeInstanceId,
+                agendaItemId,
+                sceneId: scene.id,
+              })}
+              target="_blank"
+              rel="noreferrer"
+              className={adminGhostButtonClassName}
+            >
+              {copy.presenterOpenParticipantButton}
+            </a>
+          ) : (
+            <a
+              href={buildPresenterRouteHref({
+                lang,
+                instanceId: activeInstanceId,
+                agendaItemId,
+                sceneId: scene.id,
+              })}
+              target="_blank"
+              rel="noreferrer"
+              className={adminGhostButtonClassName}
+            >
+              {copy.presenterOpenSelectedScene}
+            </a>
+          )}
+          <AdminRouteLink href={sceneEditorHref} className={adminGhostButtonClassName}>
             {copy.presenterEditSceneButton}
-          </Link>
+          </AdminRouteLink>
         </div>
       </div>
       <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
@@ -2465,7 +2571,9 @@ function PresenterSceneSummaryCard({
         </div>
       ) : null}
       {(scene.sourceRefs ?? []).length > 0 ? (
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
           {(scene.sourceRefs ?? []).map((ref: SourceRef) => (
             <a
               key={`${ref.path}-${ref.label}`}
@@ -2478,6 +2586,7 @@ function PresenterSceneSummaryCard({
               <span className="text-xs text-[var(--text-muted)]">{copy.openLinkLabel}</span>
             </a>
           ))}
+          </div>
         </div>
       ) : null}
     </div>
@@ -2487,10 +2596,16 @@ function PresenterSceneSummaryCard({
 function TimelineRow({
   item,
   copy,
+  lang,
+  instanceId,
+  detailHref,
   detailed = false,
 }: {
   item: Awaited<ReturnType<typeof getWorkshopState>>["agenda"][number];
   copy: (typeof adminCopy)[UiLanguage];
+  lang: UiLanguage;
+  instanceId: string;
+  detailHref: string;
   detailed?: boolean;
 }) {
   const detailItem = item as RichAgendaItem;
@@ -2514,22 +2629,42 @@ function TimelineRow({
         : "border-[var(--border)] bg-transparent";
 
   return (
-    <div className={`rounded-[22px] border px-4 py-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] ${rowClassName}`}>
+    <div
+      data-agenda-item={item.id}
+      className={`rounded-[22px] border px-4 py-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] ${rowClassName}`}
+    >
       <div className="flex gap-4">
         <div className="flex flex-col items-center">
           <span className={`mt-1 h-3 w-3 rounded-full ${markerClassName}`} />
           <span className="mt-2 h-full w-px bg-[var(--border)]" />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="font-semibold text-[var(--text-primary)]">
-              {item.time} • {item.title}
-            </p>
-            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{statusLabel}</span>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold text-[var(--text-primary)]">
+                {item.time} • {item.title}
+              </p>
+              {detailed || item.status === "current" ? (
+                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{detailItem.roomSummary || item.description}</p>
+              ) : null}
+            </div>
+            <div className="flex shrink-0 flex-col items-start gap-3 lg:items-end">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{statusLabel}</span>
+              <div className="flex flex-wrap gap-2 lg:justify-end">
+                {item.status !== "current" ? (
+                  <form action={setAgendaAction}>
+                    <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                    <input name="agendaId" type="hidden" value={item.id} />
+                    <input name="returnTo" type="hidden" value="index" />
+                    <AdminSubmitButton className={adminSecondaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
+                  </form>
+                ) : null}
+                <AdminRouteLink className={adminGhostButtonClassName} href={detailHref}>
+                  {copy.openAgendaDetailButton}
+                </AdminRouteLink>
+              </div>
+            </div>
           </div>
-          {detailed || item.status === "current" ? (
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{detailItem.roomSummary || item.description}</p>
-          ) : null}
         </div>
       </div>
     </div>
@@ -2556,7 +2691,7 @@ function AdminSectionLink({
   const dark = tone === "dark";
 
   return (
-    <Link
+    <AdminRouteLink
       href={href}
       className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-center text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
         dark
@@ -2569,6 +2704,6 @@ function AdminSectionLink({
       }`}
     >
       {label}
-    </Link>
+    </AdminRouteLink>
   );
 }

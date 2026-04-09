@@ -1,5 +1,12 @@
 import type { AgendaItem, PresenterScene, WorkshopState } from "./workshop-data";
 
+export function getPresenterScenesBySurface(
+  item: AgendaItem | null | undefined,
+  surface: PresenterScene["surface"],
+) {
+  return item?.presenterScenes.filter((scene) => scene.enabled && scene.surface === surface) ?? [];
+}
+
 export function normalizePresenterScenes(
   scenes: PresenterScene[],
   requestedDefaultSceneId?: string | null,
@@ -25,7 +32,7 @@ export function getDefaultPresenterScene(item: AgendaItem | null | undefined) {
     return null;
   }
 
-  const enabledScenes = item.presenterScenes.filter((scene) => scene.enabled);
+  const enabledScenes = getPresenterScenesBySurface(item, "room");
   if (item.defaultPresenterSceneId) {
     const explicitScene = enabledScenes.find((scene) => scene.id === item.defaultPresenterSceneId);
     if (explicitScene) {
@@ -33,7 +40,7 @@ export function getDefaultPresenterScene(item: AgendaItem | null | undefined) {
     }
   }
 
-  return enabledScenes[0] ?? item.presenterScenes[0] ?? null;
+  return enabledScenes[0] ?? item.presenterScenes.find((scene) => scene.surface === "room") ?? null;
 }
 
 export function getPresenterSceneByType(
@@ -54,13 +61,12 @@ export function resolvePresenterSelection(options: {
     state.agenda.find((item) => item.status === "current") ??
     state.agenda[0] ??
     null;
-  const selectedScene =
-    activeAgendaItem?.presenterScenes.find((scene) => scene.id === requestedSceneId && scene.enabled) ??
-    getDefaultPresenterScene(activeAgendaItem);
+  const roomScenes = getPresenterScenesBySurface(activeAgendaItem, "room");
+  const selectedScene = roomScenes.find((scene) => scene.id === requestedSceneId) ?? getDefaultPresenterScene(activeAgendaItem);
 
   return {
     activeAgendaItem,
     selectedScene,
-    agendaItems: state.agenda.filter((item) => item.presenterScenes.some((scene) => scene.enabled)),
+    agendaItems: state.agenda.filter((item) => getPresenterScenesBySurface(item, "room").length > 0),
   };
 }

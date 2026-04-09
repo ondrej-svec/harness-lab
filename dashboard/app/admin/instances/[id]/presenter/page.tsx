@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
+import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
+import { getPresenterScenesBySurface } from "@/lib/presenter-scenes";
 import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
@@ -8,7 +10,6 @@ import type { AgendaItem, PresenterBlock, PresenterScene } from "@/lib/workshop-
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
-const repoBlobBaseUrl = "https://github.com/ondrej-svec/harness-lab/blob/main";
 
 export default async function PresenterPage({
   params,
@@ -36,16 +37,13 @@ export default async function PresenterPage({
     requestedAgendaItemId: query?.agendaItem ?? null,
     requestedSceneId: query?.scene ?? null,
   });
-  const presenterScenePack = [...(presenterState.activeAgendaItem?.presenterScenes ?? [])]
+  const presenterSceneSurface = presenterState.selectedScene?.surface ?? "room";
+  const presenterScenePack = [...getPresenterScenesBySurface(presenterState.activeAgendaItem, presenterSceneSurface)]
     .filter((scene) => scene.enabled !== false || scene.id === presenterState.selectedScene?.id)
     .sort((left, right) => left.order - right.order);
   const selectedSceneIndex = presenterScenePack.findIndex((scene) => scene.id === presenterState.selectedScene?.id);
   const previousScene = selectedSceneIndex > 0 ? presenterScenePack[selectedSceneIndex - 1] ?? null : null;
   const nextScene = selectedSceneIndex >= 0 ? presenterScenePack[selectedSceneIndex + 1] ?? null : null;
-  const presenterAgendaIndex = presenterState.activeAgendaItem
-    ? state.agenda.findIndex((item) => item.id === presenterState.activeAgendaItem?.id)
-    : -1;
-  const presenterNextAgendaItem = presenterAgendaIndex >= 0 ? state.agenda[presenterAgendaIndex + 1] ?? null : null;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] text-[var(--text-primary)]">
@@ -54,7 +52,6 @@ export default async function PresenterPage({
           <RoomScene
             copy={copy}
             agendaItem={presenterState.activeAgendaItem}
-            nextAgendaItem={presenterNextAgendaItem}
             scene={presenterState.selectedScene}
             lang={lang}
             instanceId={instanceId}
@@ -74,7 +71,6 @@ export default async function PresenterPage({
 function RoomScene({
   copy,
   agendaItem,
-  nextAgendaItem,
   scene,
   lang,
   instanceId,
@@ -85,7 +81,6 @@ function RoomScene({
 }: {
   copy: (typeof adminCopy)["cs" | "en"];
   agendaItem: AgendaItem | null;
-  nextAgendaItem: AgendaItem | null;
   scene: PresenterScene;
   lang: UiLanguage;
   instanceId: string;
@@ -98,24 +93,12 @@ function RoomScene({
 
   return (
     <div className="space-y-10">
-      {scene.chromePreset === "participant" ? (
-        <ParticipantSceneContext
-          copy={copy}
-          agendaItem={agendaItem}
-          nextAgendaItem={nextAgendaItem}
-        />
-      ) : null}
-
       <SceneBlocks
         blocks={blocks}
         copy={copy}
         activeAgendaItem={agendaItem}
         participantCueFirst={scene.chromePreset === "participant"}
       />
-
-      {scene.sourceRefs.length > 0 ? (
-        <SceneSourceRefs refs={scene.sourceRefs} label={copy.presenterSourceMaterialTitle} openLabel={copy.openLinkLabel} />
-      ) : null}
 
       {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
 
@@ -374,43 +357,6 @@ function SceneBlocks({
   );
 }
 
-function ParticipantSceneContext({
-  copy,
-  agendaItem,
-  nextAgendaItem,
-}: {
-  copy: (typeof adminCopy)["cs" | "en"];
-  agendaItem: AgendaItem | null;
-  nextAgendaItem: AgendaItem | null;
-}) {
-  return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(18rem,0.95fr)]">
-      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.currentPhase}</p>
-        <p className="mt-3 text-2xl font-semibold text-[var(--text-primary)]">
-          {agendaItem ? `${agendaItem.time} • ${agendaItem.title}` : copy.presenterNoSceneTitle}
-        </p>
-        {agendaItem?.roomSummary ? (
-          <p className="mt-3 text-base leading-7 text-[var(--text-secondary)]">{agendaItem.roomSummary}</p>
-        ) : null}
-      </div>
-      <MiniSceneMetric
-        label={copy.nextUp}
-        value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-      />
-    </div>
-  );
-}
-
-function MiniSceneMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-3 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
 function BlockCard({
   title,
   children,
@@ -521,43 +467,6 @@ function ImageSourceAttribution({
   );
 }
 
-function SceneSourceRefs({
-  refs,
-  label,
-  openLabel,
-}: {
-  refs: Array<{ label: string; path: string }>;
-  label: string;
-  openLabel: string;
-}) {
-  return (
-    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        {refs.map((ref) => {
-          const href = isExternalHref(ref.path) ? ref.path : `${repoBlobBaseUrl}/${ref.path}`;
-
-          return (
-            <a
-              key={`${ref.path}-${ref.label}`}
-              className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
-              href={href}
-              rel={isExternalHref(href) ? "noreferrer" : undefined}
-              target="_blank"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm font-medium text-[var(--text-primary)]">{ref.label}</p>
-                <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span>
-              </div>
-              <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{ref.path}</p>
-            </a>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function ScenePager({
   copy,
   lang,
@@ -593,7 +502,7 @@ function ScenePager({
       </div>
       <div className="flex flex-wrap gap-2">
         {previousScene ? (
-          <a
+          <AdminRouteLink
             className="inline-flex items-center justify-center rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
             href={buildPresenterRouteHref({
               lang,
@@ -603,10 +512,10 @@ function ScenePager({
             })}
           >
             {copy.presenterPreviousSceneButton}
-          </a>
+          </AdminRouteLink>
         ) : null}
         {nextScene ? (
-          <a
+          <AdminRouteLink
             className="inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface)]"
             href={buildPresenterRouteHref({
               lang,
@@ -616,7 +525,7 @@ function ScenePager({
             })}
           >
             {copy.presenterNextSceneButton}
-          </a>
+          </AdminRouteLink>
         ) : null}
       </div>
     </div>

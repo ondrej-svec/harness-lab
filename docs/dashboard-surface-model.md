@@ -53,12 +53,11 @@ Design rules:
 Purpose:
 - give the room one clear shared screen for the current workshop moment
 - let the facilitator launch a presenter-safe output from admin without maintaining a separate deck
-- support agenda-linked framing, live demo cues, participant walkthroughs, checkpoints, and reflection beats
+- support agenda-linked framing, live demo cues, checkpoints, and reflection beats
 
 Responsibilities:
-- render the default presenter scene for the current agenda item
+- render the default room-facing scene for the current agenda item
 - allow facilitator-triggered jumps to another scene or agenda item without changing the live agenda phase
-- show participant walkthrough scenes without facilitator controls
 - stay projection-friendly and room-safe even when launched from protected admin routes
 
 Design rules:
@@ -66,10 +65,11 @@ Design rules:
 - presenter scenes are agenda-linked web pages, not a general slide authoring system
 - presenter content belongs to the same blueprint/runtime model as agenda content
 - room-facing rendering may use facilitator auth, but must not expose facilitator controls or privileged operational state by default
+- room-facing rendering must not show facilitator support material such as source strips, source refs, or coaching notes by default
 - low-chrome previous / next scene navigation is acceptable when it stays visually subordinate to the scene itself and does not read like an admin shell
-- participant walkthrough scenes should stay cue-first and must not default to facilitator-monitoring chrome such as team checkpoint dashboards or room-pulse metrics
+- participant mirror is a separate output surface and should not be sequenced as part of the room projection deck
 - attributed quotes must show visible attribution on the room-facing page
-- image-backed scenes should carry explicit caption/source context when they rely on internal reference material
+- image-backed scenes may carry room-safe caption context, but raw source-material references belong in the facilitator workbench
 
 ## Facilitator Auth Model
 

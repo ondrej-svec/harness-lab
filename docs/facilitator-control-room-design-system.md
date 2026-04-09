@@ -251,13 +251,25 @@ Use this structure:
 1. Agenda index
    - top summary for live now, next up, and participant signal
    - timeline as the primary navigation model
+   - each timeline row should expose explicit actions for `moment detail` and, when applicable, `move live here`
    - no duplicated selected-item detail below the timeline
 2. Agenda moment detail
    - dedicated page state for one selected moment
+   - breadcrumb-style location back to the timeline instead of an ambiguous lone back label
    - top hero with the moment summary and its primary action
    - scene pack and source/storage detail below
 3. Editing
    - edit the agenda moment in a side sheet
+
+## Route Feedback
+
+Route-changing controls inside the control room must acknowledge input immediately.
+
+Required pattern:
+
+- internal links that open a moment detail, sheet, or adjacent page state should show a pending spinner or busy state on click
+- the same applies to breadcrumb navigation back to the timeline and scene-to-scene navigation on the presenter surface
+- do not rely on the eventual route paint alone as the only confirmation that the click worked
    - edit scenes in side sheets
    - do not turn the index into a long mixed read/edit canvas
 

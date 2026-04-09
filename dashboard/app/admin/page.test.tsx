@@ -12,9 +12,15 @@ const getRuntimeStorageMode = vi.fn();
 const getSession = vi.fn();
 const listInstances = vi.fn();
 const getDefaultInstanceId = vi.fn();
+const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect,
+  useRouter: () => ({
+    push,
+    replace,
+  }),
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({

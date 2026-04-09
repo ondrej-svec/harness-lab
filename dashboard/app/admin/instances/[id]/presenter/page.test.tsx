@@ -7,9 +7,15 @@ const redirect = vi.fn();
 const requireFacilitatorPageAccess = vi.fn();
 const getWorkshopState = vi.fn();
 const getInstance = vi.fn();
+const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect,
+  useRouter: () => ({
+    push,
+    replace,
+  }),
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({
@@ -48,7 +54,7 @@ describe("PresenterPage", () => {
     expect(getInstance).toHaveBeenCalledWith("sample-studio-a");
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain("Bez ústního handoffu");
+    expect(html).toContain("Tichý start po rotaci");
     expect(html).not.toContain(adminCopy.en.presenterBack);
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
   });
@@ -64,14 +70,19 @@ describe("PresenterPage", () => {
 
     expect(html).toContain(adminCopy.en.presenterScenePagerLabel);
     expect(html).toContain(adminCopy.en.presenterPreviousSceneButton);
-    expect(html).toContain(adminCopy.en.presenterNextSceneButton);
-    expect(html).toContain("scene 2/3");
+    expect(html).not.toContain(adminCopy.en.presenterNextSceneButton);
+    expect(html).toContain("scene 2/2");
     expect(html).toContain("scene=rotation-framing");
-    expect(html).toContain("scene=rotation-participant-view");
   });
 
-  it("renders participant walkthrough scenes when requested explicitly", async () => {
+  it("falls back to the default room scene when a participant scene is requested on the room projector", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
+    getWorkshopState.mockResolvedValue(state);
+    getInstance.mockResolvedValue({
+      ...structuredClone(sampleWorkshopInstances[0]),
+      workshopMeta: state.workshopMeta,
+    });
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
@@ -79,30 +90,11 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Co má tým vidět bez facilitátorského šumu");
-    expect(html).toContain("Aktuální fáze a nejbližší další krok.");
+    expect(html).toContain("We are not learning to prompt better");
     expect(html).toContain("Context is King");
-    expect(html).toContain("09:40 • Context is King");
-    expect(html).not.toContain("Vrstva pro účastníky nemá být dekorace.");
-    expect(html.split("Aktuální fáze a nejbližší další krok.")).toHaveLength(2);
-    expect(html).not.toContain(adminCopy.en.presenterRoomPulseLabel);
-    expect(html).not.toContain("Tým 1");
-    expect(html).toContain("href=\"https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md\"");
-    expect(html).toContain(adminCopy.en.openLinkLabel);
-  });
-
-  it("keeps authored participant walkthrough scenes cue-first across rotation scenes too", async () => {
-    const { default: PresenterPage } = await presenterPageModulePromise;
-
-    const view = await PresenterPage({
-      params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-participant-view" }),
-    });
-    const html = renderToStaticMarkup(view);
-
-    expect(html).toContain("Nový tým začíná mapou, ne improvizací");
-    expect(html).toContain("Vrstva pro účastníky nemá zachraňovat slabý signál v repu.");
-    expect(html).not.toContain("Nejdřív čtěte README, AGENTS.md a plan.");
+    expect(html).not.toContain("What the team should see without facilitator noise");
+    expect(html).not.toContain("Participant walkthrough");
+    expect(html).not.toContain("href=\"https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md\"");
   });
 
   it("renders attributed quotes and actionable link-list items in presenter scenes", async () => {
@@ -177,7 +169,7 @@ describe("PresenterPage", () => {
     expect(html).toContain(adminCopy.en.openLinkLabel);
   });
 
-  it("renders the richer opening proof scene with tone-aware callouts and source refs", async () => {
+  it("renders the opening room scene as room-safe content without facilitator source strips", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     state.teams = structuredClone(seedWorkshopState.teams.slice(0, 1));
@@ -193,11 +185,13 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Four nodes that have to stay connected");
-    expect(html).toContain("/blueprint/opening/opening-continuation-loop.svg");
+    expect(html).toContain("Four things that should be readable immediately");
+    expect(html).toContain("Clear goal");
     expect(html).toContain("data-tone=\"info\"");
-    expect(html).toContain("content/talks/context-is-king.md");
-    expect(html).toContain("Harness Lab blueprint asset");
+    expect(html).toContain("What the working system has to hold");
+    expect(html).toContain("Harness engineering in one sentence");
+    expect(html).not.toContain("source material");
+    expect(html).not.toContain("content/talks/context-is-king.md");
   });
 
   it("renders localized English presenter content for an English-content workshop instance", async () => {

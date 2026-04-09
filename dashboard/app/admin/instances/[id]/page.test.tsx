@@ -14,9 +14,15 @@ const getSession = vi.fn();
 const listInstances = vi.fn();
 const getInstance = vi.fn();
 const redirect = vi.fn();
+const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect,
+  useRouter: () => ({
+    push,
+    replace,
+  }),
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({
@@ -119,6 +125,7 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.agendaSectionTitle);
     expect(html).toContain(adminCopy.en.agendaTimelineTitle);
     expect(html).toContain(adminCopy.en.openAgendaDetailButton);
+    expect(html).toContain(adminCopy.en.agendaMoveLiveHereButton);
     expect(html).not.toContain(adminCopy.en.archiveResetTitle);
     expect(html).not.toContain(adminCopy.en.continuationTitle);
     expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
@@ -164,6 +171,8 @@ describe("Admin control room page", () => {
     expect(html).toContain('fixed inset-0 z-50');
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
+    expect(html).toContain('name="returnTo"');
+    expect(html).toContain('value="detail"');
     expect(html).toContain('value="Context is King"');
   });
 
@@ -176,9 +185,12 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.agendaBackToTimelineButton);
+    expect(html).toContain(adminCopy.en.agendaTimelineTitle);
     expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
     expect(html).toContain(adminCopy.en.openEditSheetButton);
+    expect(html).toContain(adminCopy.en.agendaDetailSourceMaterialTitle);
+    expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
+    expect(html).toContain(adminCopy.en.presenterOpenParticipantButton);
     expect(html).toContain("Context is King");
     expect(html).not.toContain(adminCopy.en.openAgendaDetailButton);
   });
