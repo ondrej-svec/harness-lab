@@ -1,0 +1,30 @@
+HARNESS LAB HOMEPAGE PROOF SLICE
+================================
+
+[ workshop pro týmy, které pracují s ai coding agenty ]
+
+Software s agenty, na který se dá navázat.
+
+Harness Lab je celodenní workshop o tom, jak v týmu pracovat s
+AI coding agenty na skutečném softwaru tak, aby po nich nezůstal chaos.
+
+Nejde o prompt show. Jde o kontext, rozhodnutí, ověřování a způsob
+práce, který zůstane čitelný i pro dalšího člověka nebo dalšího agenta.
+
+----------------------------------------------------------------------
+
+Tři pravidla, díky kterým agenti zrychlují práci a nerozbíjejí návaznost.
+
++---------------------------+ +---------------------------+ +---------------------------+
+| 01                        | | 02                        | | 03                        |
+| Mapa před dalším během    | | Ověřujte dřív, než       | | Práce musí přežít         |
+|                           | | škálujete                | | předání                   |
+| Repo musí být čitelné     | | Důležitý krok má mít     | | Další člověk ani agent    |
+| dřív, než agent dostane   | | důkaz co nejdřív.        | | nemá hádat, co platí.     |
+| další prompt.             | |                           | |                           |
++---------------------------+ +---------------------------+ +---------------------------+
+
+Preview gate:
+- Hero owns the frame.
+- Principles reinforce the hero.
+- Mobile stack stays legible.

@@ -7,12 +7,19 @@ Harness Lab should be developed with the same harness-engineering discipline it 
 Before high-autonomy implementation starts, the repo should already contain:
 
 - clear context in `AGENTS.md`
+- a plan strong enough to authorize autonomous `work` on non-trivial tasks
 - architecture decisions written down when boundaries change
 - explicit security rules
 - explicit testing and deployment rules
 - how-to guidance where contributors would otherwise guess
 
 These are guides. They increase the chance the agent gets it right the first time.
+
+For the current planning gate, see:
+
+- [`autonomous-planning-standard.md`](autonomous-planning-standard.md)
+- [`planning-rubrics.md`](planning-rubrics.md)
+- [`hybrid-harness-split.md`](hybrid-harness-split.md)
 
 ## Sensors Second
 

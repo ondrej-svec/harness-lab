@@ -29,6 +29,9 @@ Start here to understand how work should be done in this repo.
 - [`AGENTS.md`](../AGENTS.md)
 - [`docs/agents-md-standard.md`](agents-md-standard.md)
 - [`docs/harness-doctrine.md`](harness-doctrine.md)
+- [`docs/autonomous-planning-standard.md`](autonomous-planning-standard.md)
+- [`docs/planning-rubrics.md`](planning-rubrics.md)
+- [`docs/hybrid-harness-split.md`](hybrid-harness-split.md)
 - [`docs/contributing.md`](contributing.md)
 
 ### 2. Public/Private Boundaries

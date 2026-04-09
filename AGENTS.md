@@ -22,7 +22,8 @@ Before making meaningful changes:
 1. Read [`README.md`](README.md) for repo orientation.
 2. Read [`docs/internal-harness.md`](docs/internal-harness.md) for the maintainer-facing map.
 3. Read the current plan in [`docs/plans/`](docs/plans/) if the task is non-trivial or already in flight.
-4. Read the task-specific sources of truth below before editing code or workshop behavior.
+4. For non-trivial work that should authorize autonomous execution, read [`docs/autonomous-planning-standard.md`](docs/autonomous-planning-standard.md) and [`docs/planning-rubrics.md`](docs/planning-rubrics.md).
+5. Read the task-specific sources of truth below before editing code or workshop behavior.
 
 ## Task Routing
 

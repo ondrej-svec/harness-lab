@@ -56,10 +56,12 @@ When in doubt, keep event-specific state in the private runtime layer, not in tr
 ## Expected Workflow
 
 1. define the intended behavior
-2. write the smallest useful failing test, tracer bullet, or other executable check
-3. implement the change
-4. run the relevant tests, lint, and build before considering the work done
-5. update the relevant ADR, runbook, or boundary doc when behavior or trust boundaries change
+2. if the work is non-trivial, create or tighten a plan that is strong enough to authorize autonomous `work`
+3. if the task is design-heavy, copy-heavy, or boundary-sensitive, require preview artifacts and explicit rejection criteria before implementation starts
+4. write the smallest useful failing test, tracer bullet, or other executable check
+5. implement the change
+6. run the relevant tests, lint, and build before considering the work done
+7. update the relevant ADR, runbook, or boundary doc when behavior or trust boundaries change
 
 ## Verification Standard
 
