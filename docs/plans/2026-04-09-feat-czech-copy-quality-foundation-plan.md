@@ -2,7 +2,7 @@
 title: "feat: Czech copy quality foundation + copy-editor harness"
 type: plan
 date: 2026-04-09
-status: in_progress
+status: complete
 brainstorm: null
 confidence: medium
 repos:
@@ -360,7 +360,7 @@ Exit: current Czech visible-surface content is typographically clean, reviewed a
 
 ### Phase 7 (optional) — English language profile + narrow English baseline
 
-**Repo:** both. **Depends on:** Phases 2–6 landing cleanly.
+**Repo:** both. **Depends on:** Phases 2–6 landing cleanly. **Status:** deferred to a follow-up plan.
 
 - [ ] In Heart of Gold: expand `rules/english.ts` with an initial rule set (sentence-case headings, no corporate filler blacklist, smart quotes, serial comma policy decision, space-em-dash vs en-dash choice).
 - [ ] In Heart of Gold: add English fixtures and extend `self-test.ts` to cover the English rules.
@@ -369,6 +369,8 @@ Exit: current Czech visible-surface content is typographically clean, reviewed a
 - [ ] Commit to both repos.
 
 Exit: English copy quality has a minimum enforceable baseline. The language-profile architecture is proven to work for more than one language.
+
+**Why deferred:** A proper English rule set requires opinionated style choices (Oxford comma yes/no, em-dash vs en-dash, smart quotes yes/no) that the workshop has not yet documented. Shipping arbitrary rules here would impose a style the team never chose. Phase 7 should be its own slice with an English copy brainstorm first, then a narrow rule set landed once the style choices are recorded. The English profile stub at `plugins/marvin/skills/copy-editor/rules/english.ts` is in place and proves the registry architecture works — the Czech profile is not alone.
 
 ## Acceptance Criteria
 
