@@ -66,6 +66,80 @@ Vzory, které se v LLM-generované nebo strojově překládané češtině kupí
 | víceúrovňové vnořené vedlejší věty (4+ úrovní) | Syntaktická hustota, kterou lidský autor záměrně rozdělí. | rozdělit na dvě až tři věty |
 | nadměrný výskyt `se` (`se zdá, že se jedná o systém, který se používá`) | Reflexivní řetěz je otisk pasivního překladu. | přepsat do aktiva |
 
+## Nejasnost a dvojznačnost (participant-facing content)
+
+Tahle sekce se uplatňuje **přísně na participant-facing content** – na to, co vidí účastníci v participant view, na kartách, v briefs, v setup dokumentech, v recapu a v learner kit materiálech. Participant-facing content musí být bez zaváhání srozumitelný – nikdo ho před účastníkem nevysvětluje, nikdo nedopisuje kontext. Účastník text čte a hned ví, co má dělat nebo pochopit.
+
+Pro **presenter/facilitator-facing content** (presenter scenes, room-facing slides, facilitátorské poznámky, agenda hints) platí mírnější pravidla: tam je `next steps` nebo `první validace` v pořádku, protože facilitátor to **říká nahlas** a doplní kontext živě. Slide je nápověda, ne finální text.
+
+### Vágní směrová podstatná jména bez upřesnění
+
+| Vyhnout se (pro participant-facing) | Preferovat |
+|---|---|
+| `další kroky` bez upřesnění, co jsou | `další tři kroky:`, nebo konkrétní výčet |
+| `první validace` / `první kontrola` | „prvně ověřte, že X funguje", nebo „udělejte první kontrolu: Y" |
+| `validace kódu` / `validace výstupu` | „ověřte, že kód splňuje Z" / „ověřte výstup proti Y" |
+| `provést kontrolu` | „zkontrolujte X", konkrétní věc |
+| `dokončit přípravu` | „připravte X, Y a Z" |
+| `zmapovat situaci` | „zjistěte, co už je v\u00A0repu" / „projděte si Z" |
+| `nastavit prostředí` bez kontextu | „nainstalujte Codex a spusťte `/plan`" |
+| `připravit workshop` | konkrétní věc: „přečtěte si `AGENTS.md`" |
+
+**Test:** Když si v hlavě musíte doplnit „čeho?" nebo „jakého?" nebo „kterého?" – věta je pro participant-facing vrstvu nedostatečná. Vraťte ji do editace.
+
+### Imperativy s chybějícím objektem
+
+| Vyhnout se | Preferovat |
+|---|---|
+| „Validujte." | „Validujte, že `build` prošel a testy jsou zelené." |
+| „Zkontrolujte." | „Zkontrolujte `README.md` a `AGENTS.md`." |
+| „Zmapujte." | „Projděte si strukturu repa a poznamenejte, kde jsou hlavní moduly." |
+| „Připravte." | „Připravte `AGENTS.md` s popisem vašeho projektu." |
+
+Imperativ bez objektu má účastník problém. Přidejte co, nebo dokonce čím.
+
+### Neurčité kvantifikátory
+
+| Vyhnout se | Preferovat |
+|---|---|
+| „několik věcí" | „tři věci:" nebo vyjmenovat |
+| „některé kroky" | „tyto kroky:" + výčet |
+| „různé možnosti" | konkrétní možnosti |
+| „nějaký čas" | „10 minut", „do 11:30" |
+| „pár informací" | jaké informace |
+
+### Pronominální odkazy bez jasného antecedentu
+
+Participant-facing content čte účastník zpravidla rychle a přes QR kód na mobilu. Dlouhé pronominální řetězce (`to`, `tohle`, `ono`, `takové`, `tímto způsobem`) ho nutí skrolovat zpátky.
+
+Špatně:
+
+> „Nejdřív si projděte setup dokument. Pak se podle něj podívejte, co máte v repozitáři. Pokud to nebude odpovídat, vraťte se k tomu a doplňte to."
+
+Lépe:
+
+> „Nejdřív si projděte `setup.md`. Pak zkontrolujte strukturu vašeho repa proti sekci *Repo layout*. Pokud se liší, doplňte do `AGENTS.md` vysvětlení, proč."
+
+Pravidlo: v participant-facing větě by se pronomen `to` / `tohle` / `tímto` neměl odkazovat na nic, co je ve větě před dvěma tečkami. Ideálně se neobjevuje vůbec – konkrétní pojmenování věci je vždy bezpečnější.
+
+### Abstraktní slovesa bez ukotvení
+
+| Vyhnout se | Preferovat |
+|---|---|
+| „zvažte", „promyslete" bez specifikace, **co** | „zvažte, jestli X nebo Y", „promyslete, který přístup je pro váš use case lepší" |
+| „prozkoumejte možnosti" | „projděte si `options.md` a vyberte jednu" |
+| „prodiskutujte s týmem" | „s týmem se rozhodněte, kdo bude co dělat" |
+| „získejte přehled" | „přečtěte si `README.md` a `AGENTS.md`" |
+
+### Pravidlo pro participant vs. presenter surface
+
+- **Participant-facing:** účastník text čte sám a nemá ho kdo vysvětlit. Platí tato sekce **přísně**. Každé vágní podstatné jméno, každá nespecifikovaná akce je rozbité.
+- **Presenter/facilitator-facing:** text je podpůrný pro někoho, kdo ho doplní živě. Může být stručnější, heslovitější, s vyšší mírou abstrakce. `„Klíčová linka"`, `„Další kroky"` jako nadpis slide je v pořádku – facilitátor na něm staví ústní projev. Checklist pravidel této sekce se uplatňuje mírněji.
+
+**Jak rozlišit:** v `.copy-editor.yaml` se dá pro každou část repa nastavit `surface_profile: participant | presenter | hybrid`. Layer 2 copy-editoru pak uplatňuje strict clarity pass jen na `participant` paths. Bez configu default je `hybrid`.
+
+**Why:** Nejčastější reálný problém, který reviewer v participant-facing contentu vidí, není překlepy ani špatná interpunkce – je to věta typu *„Until launch you need to map next steps and first validation"*. Účastník se ptá: „První validace čeho? Mapování čeho? Kam?" Takový text je nepoužitelný, i když je jazykově čistý.
+
 ## Výplňová slovesa (nadužívaná)
 
 Slovesa, která se v AI/překladovém textu objevují jako univerzální náhrada za konkrétní činnost. Samy o sobě nejsou špatná, ale když je reviewer vidí opakovaně, je to signál, že text je abstraktní tam, kde má být konkrétní.

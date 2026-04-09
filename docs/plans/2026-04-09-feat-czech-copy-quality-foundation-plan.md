@@ -37,6 +37,10 @@ Secondary gap:
 
 - **Style guide lacks code-switching rules and authoritative sources.** Gender assignment to English loanwords (`ten commit`, `to repo`), when verbified anglicisms are acceptable (`commitnout`, `mergovat`, `deployovat`), and links to canonical Czech references (ÚJČ Internetová jazyková příručka, Mozilla and Microsoft Czech localization guides) are missing.
 
+Third gap (added during execution, 2026-04-09):
+
+- **No clarity / unambiguity doctrine for participant-facing content.** Observed pattern: AI-generated Czech copy produces grammatically clean sentences like *"Until launch you need to map next steps and first validation"* which are still unusable because a participant on mobile cannot answer "first validation of what?". Participant-facing content must pass a stricter clarity bar than presenter or facilitator-facing content, which can tolerate outline-style hints because a facilitator explains them live. The style guide and reject list need to make this distinction explicit, and the copy-editor skill's Layer 2 needs a dedicated clarity/ambiguity pass that applies strictly to paths declared `surface_profile: participant` in `.copy-editor.yaml`.
+
 If this lands only as style-guide expansion, the mechanical layer still drifts. If it lands only as an audit script in Harness Lab, the reusable harness gap stays open and Codex/OpenCode/Pi users get nothing. Both repos have to move together.
 
 ## Target End State
@@ -147,7 +151,25 @@ Engine behavior:
 - Supports ignore markers (`<!-- copy-editor: ignore -->` for one line or a block).
 - Supports `--self-test` that runs fixture strings through each rule and asserts each rule fires on its known-bad case.
 
-### Layer 2 — Copy-editor role (judgment)
+### Layer 2 judgment passes (including clarity/ambiguity)
+
+The copy-editor skill's Layer 2 runs these judgment passes in order on reviewable text:
+
+1. **Reject-list hit detection** — grep the repo-local reject list and surface hits with proposed rewrites.
+2. **Nominal-style detection** — find sentences dominated by `-ní`/`-ost`/`-ace` nouns and propose verbal restructuring.
+3. **Clarity / ambiguity pass (participant-facing only)** — applied **strictly** to paths whose `surface_profile: participant`, applied **loosely or skipped** on `presenter` paths. Checks for:
+   - directional nouns without upřesnění (`další kroky`, `první validace` with no referent)
+   - imperatives without object (`validujte`, `zkontrolujte` hanging alone)
+   - vague quantifiers (`několik`, `pár`, `různé`)
+   - pronominal chains across 2+ sentences (`to`, `tohle`, `tímto způsobem` with distant antecedent)
+   - abstract verbs without anchoring (`zvažte`, `promyslete`, `prozkoumejte` with no specified what)
+   - failure mode: "when the reader must mentally ask *čeho?* or *kterého?*, the sentence failed."
+4. **Voice/register check** against injected voice doctrine.
+5. **Rhythm / spoken-readability read** — flag uniform-metronomic sentence length and structurally dense paragraphs.
+
+Each pass produces suggestions with rationale and a source reference (which rule, guide section, or reject-list entry triggered it). No pass closes a gate. The human reviewer is always the final judgment.
+
+### Copy-editor role (judgment)
 
 Lives in Heart of Gold at `plugins/marvin/skills/copy-editor/SKILL.md` plus `knowledge/ROLE.md`. The SKILL.md is the agent-facing contract; ROLE.md is the deeper operating document the skill references.
 
