@@ -10,11 +10,14 @@ Every meaningful content slice should be reviewed for:
 - portability and public-safe references
 - authority and citation handling
 - scene or artifact quality
+- visible-surface Czech idiom quality when Czech delivery changed
 - `facilitatorRunner` alignment where agenda-owned guidance is involved
 - participant usefulness
 - mobile glanceability for participant-facing surfaces
 - projected-room legibility for room-facing surfaces
 - locale parity
+
+AI-assisted review is allowed as a detection aid, but it does not satisfy blocking Czech language gates on its own. Spoken-readability and visible-surface Czech signoff require a Czech-fluent human reviewer.
 
 ## Required Artifacts
 
@@ -35,6 +38,7 @@ When previews matter, attach or link:
 - mobile participant capture
 - projected-room or presenter capture
 - side-by-side locale note when both English and Czech changed
+- short Czech visible-surface/spoken-readability note when visible Czech changed
 
 ## Minimum Review Pack By Change Type
 
@@ -51,12 +55,14 @@ When previews matter, attach or link:
 - participant mirror usefulness note
 - facilitator runner note
 - locale parity note
+- visible-Czech note when the proof slice changed Czech delivery
 
 ### Broad rollout
 
 - proof-slice note linked
 - unchanged gate results referenced or re-run where needed
 - drift check against this QA list
+- spot-check note that visible Czech still clears the headline/idiom bar on the propagated scenes
 
 ## Completion Recording
 

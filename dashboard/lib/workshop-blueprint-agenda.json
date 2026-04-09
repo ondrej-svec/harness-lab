@@ -16,7 +16,7 @@
       "startTime": "09:10",
       "kind": "shared",
       "intent": "framing",
-      "goal": "Otevřít den jako společný launch: proč harness engineering matters právě teď, co dnes budeme dělat od prvního beatu až po reveal a jak poznáme, že práce stojí na nohách i bez improvizovaného rescue.",
+      "goal": "Otevřít den jako společný start: proč harness engineering dává smysl právě teď, co dnes budeme dělat od prvního beatu až po reveal a jak poznáme, že práce stojí na nohách i bez improvizované záchrany.",
       "roomSummary": "Místnost má hned cítit, že tohle není promptovací hackathon. Je to den, ve kterém se budeme učit řídit agenty, stavět s nimi v reálném repu a odpoledne ověřit, co z práce přežije bez nás.",
       "facilitatorPrompts": [
         "Dnes nezačínáme tool demo ani soutěž v promptování. Začínáme den, ve kterém budeme řídit práci s coding agenty tak, aby po nás zůstalo něco použitelného.",
@@ -41,19 +41,19 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Spustit den jako room-facing launch, ne jako provozní brief.",
+        "goal": "Spustit den jako společný start pro místnost, ne jako provozní brief.",
         "say": [
           "Dnes nezačínáme tool demo ani soutěž v promptování.",
           "Budete se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.",
           "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat."
         ],
         "show": [
-          "Promítni launch oblouk od framingu přes analogii a aktivaci až po první pracovní kontrakt.",
+          "Promítni oblouk úvodu od dnešního slibu přes analogii a aktivaci až po první pracovní kontrakt.",
           "Participant plochu ukaž až krátce na závěr openingu nebo v navazujícím talk bridge."
         ],
         "do": [
           "Udělej rychlé rozdělení místnosti podle zkušenosti s AI agenty a nech zaznít dva krátké hlasy.",
-          "Drž launch svižný: každý beat má změnit stav místnosti, ne vysvětlit celý workshop."
+          "Drž úvod svižný: každý krok má změnit stav místnosti, ne vysvětlit celý workshop."
         ],
         "watch": [
           "Opening se nesmí proměnit v interní operating memo.",
@@ -159,7 +159,7 @@
               "id": "opening-loop-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Proto je launch důležitý",
+              "title": "Proč tímhle začínáme",
               "body": "Neotvíráme proces. Otvíráme den, který má změnit, jak budete s coding agenty pracovat i po workshopu."
             }
           ]
@@ -273,7 +273,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Do prvního buildu mají být v repu čtyři důkazy",
-          "body": "Po launchi nepotřebujete další princip. Potřebujete vědět, co má být po prvním build bloku opravdu vidět v repu, ne jen slíbeno nahlas.",
+          "body": "Po úvodu nepotřebujete další princip. Potřebujete vědět, co má být po prvním build bloku opravdu vidět v repu, ne jen slíbeno nahlas.",
           "facilitatorNotes": [
             "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci.",
             "Když některý řádek chybí, nepřeskakuj ho ústním mentoringem. Pomoz týmu vytvořit nejmenší verzi artefaktu."
@@ -292,16 +292,16 @@
               "items": [
                 "README vysvětlí projekt cizímu člověku.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
-                "Plan nebo vedená implementace řekne další safe move.",
-                "Existuje první check, který zastaví slepé generování."
+                "Plan nebo vedená implementace ukáže další bezpečný krok.",
+                "Existuje první ověření, které zastaví slepé generování."
               ]
             },
             {
               "id": "opening-contract-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Bez checku jen tipujete",
-              "body": "Když chybí ověření, nepomůže další prompt. Nejmenší test nebo tracer bullet vrací práci zpátky na zem."
+              "title": "Bez ověření jen hádáte",
+              "body": "Když chybí ověření, další prompt to nezachrání. Nejmenší test nebo tracer bullet vrací práci zpátky na zem."
             }
           ]
         },
@@ -334,7 +334,7 @@
             {
               "id": "opening-participant-preview",
               "type": "participant-preview",
-              "body": "Teď běží opening. Za chvíli přijde Context is King talk. Po něm se vracíte k repu pro mapu, plan a první check."
+              "body": "Teď běží úvod. Za chvíli přijde blok Context is King. Po něm se vracíte k repu pro mapu, plan a první ověření."
             },
             {
               "id": "opening-participant-callout",
@@ -355,7 +355,7 @@
       "kind": "shared",
       "intent": "teaching",
       "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a důkazem, ne dalším promptem.",
-      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní checks nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu handoffu i review.",
+      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní ověření nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu handoffu i review.",
       "facilitatorPrompts": [
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
         "Co není v repu, neexistuje.",
@@ -370,7 +370,7 @@
       "checkpointQuestions": [
         "Co dnes přesunete z hlavy nebo z chatu do repa?",
         "Který signál v repu by pomohl cizímu týmu navázat?",
-        "Jaký explicitní check dnes bude vaší hranicí důvěry?"
+        "Jaké explicitní ověření dnes bude vaší hranicí důvěry?"
       ],
       "sourceRefs": [
         {
@@ -517,7 +517,7 @@
           "ctaHref": "README.md",
           "facilitatorNotes": [
             "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut Build Phase 1.",
-            "Pojmenuj konkrétně, že tým teď potřebuje mapu repa, první slice a jeden check, ne další brainstorming o promptu.",
+            "Pojmenuj konkrétně, že tým teď potřebuje mapu repa, první slice a jedno ověření, ne další brainstorming o promptu.",
             "Řekni explicitně: pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install` a první workshop command."
           ],
           "sourceRefs": [
@@ -532,7 +532,7 @@
               "type": "hero",
               "eyebrow": "Build 1 kontrakt",
               "title": "Vraťte se k repu se třemi věcmi",
-              "body": "Krátká mapa repa, první pracovní slice a nejmenší užitečný check. Pokud po talku nemáte tyhle tři věci, ještě nezačala skutečná build práce."
+              "body": "Krátká mapa repa, první pracovní slice a nejmenší užitečné ověření. Pokud po talku nemáte tyhle tři věci, ještě nezačala skutečná build práce."
             },
             {
               "id": "talk-participant-cues",
@@ -542,13 +542,13 @@
                 "Otevřete README, AGENTS.md a brief. Srovnejte si, co je cíl, kontext a mantinely.",
                 "Pokud ještě nemáte workshop skill, teď ho nainstalujte: `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`.",
                 "Dopište nebo zpřesněte Goal, Context, Constraints a Done When.",
-                "Vyberte první slice, který jde opravdu ověřit, a hned k němu napište check nebo tracer bullet."
+                "Vyberte první slice, který jde opravdu ověřit, a hned k němu přidejte ověření nebo tracer bullet."
               ]
             },
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Teď začíná Build 1. Participant vrstva má držet v záběru právě tohle: co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
+              "body": "Teď začíná Build 1. Pohled pro účastníky má držet v záběru právě tohle: co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
             },
             {
               "id": "talk-participant-bridge",
@@ -620,9 +620,10 @@
             },
             {
               "id": "demo-story-quote",
-              "type": "quote",
-              "quote": "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj.",
-              "attribution": "Harness Lab demo framing"
+              "type": "callout",
+              "tone": "info",
+              "title": "Pointa dema",
+              "body": "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj."
             }
           ]
         },
@@ -820,7 +821,7 @@
               "type": "callout",
               "tone": "warning",
               "title": "Více autonomie, více důkazů",
-              "body": "Když agent dělá víc práce sám, tým musí zvednout kvalitu checků a průběžného úklidu v repu."
+              "body": "Když agent dělá víc práce sám, tým musí zvednout kvalitu ověřování a průběžného úklidu v repu."
             }
           ]
         },
@@ -831,9 +832,9 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Když se zaseknete, vraťte se k důkazu",
-          "body": "První pomoc není delší prompt ani delší vysvětlování. Je to návrat k cíli, chybějícímu artefaktu v repu a nejmenšímu checku, který znovu ukotví práci v realitě.",
+          "body": "První pomoc není delší prompt ani delší vysvětlování. Je to návrat k cíli, chybějícímu artefaktu v repu a nejmenšímu ověření, které znovu ukotví práci v realitě.",
           "facilitatorNotes": [
-            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu bezpečnému kroku.",
+            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, ověřování a dalšímu bezpečnému kroku.",
             "Drž pořadí coach -> mentor -> učitel. Jakmile začneš dlouze vysvětlovat princip, vrať tým zpět do práce."
           ],
           "sourceRefs": [
@@ -857,7 +858,7 @@
                   "body": "Je problém v README, AGENTS.md, plánu, runbooku nebo v nečitelné struktuře projektu?"
                 },
                 {
-                  "title": "Přidejte nejmenší check",
+                  "title": "Přidejte nejmenší ověření",
                   "body": "Test, tracer bullet nebo jiný spustitelný signál vrátí práci z domněnek zpátky na zem."
                 }
               ]
@@ -869,7 +870,7 @@
               "items": [
                 "Tým má jednu společnou představu o cíli.",
                 "Kontext přibývá v repu, ne jen v hovoru.",
-                "Existuje test, tracer bullet nebo jiný explicitní check.",
+                "Existuje test, tracer bullet nebo jiné explicitní ověření.",
                 "Je z repa poznat, co je hotové a jaký je další bezpečný krok."
               ]
             },
@@ -878,7 +879,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Hotové řešení není totéž co pomoc",
-              "body": "Když tým dostane ústní answer bez artefaktů a bez checku, problém se jen schová. Vracejte práci k repu a k ověřitelnému dalšímu kroku."
+              "body": "Když tým dostane ústní odpověď bez artefaktů a bez ověření, problém se jen schová. Vracejte práci k repu a k ověřitelnému dalšímu kroku."
             }
           ]
         },
@@ -907,7 +908,7 @@
               "type": "hero",
               "eyebrow": "Build fáze 1",
               "title": "Do oběda potřebujete mapu, plán a první důkaz",
-              "body": "Krátké AGENTS.md jako mapu, plan, spustitelný check a první ověřený posun. Když se ztratíte, vraťte se právě k těmhle čtyřem věcem."
+              "body": "Krátké AGENTS.md jako mapu, plan, spustitelné ověření a první ověřený posun. Když se ztratíte, vraťte se právě k těmhle čtyřem věcem."
             },
             {
               "id": "build-1-participant-focus",
@@ -916,7 +917,7 @@
               "items": [
                 "README a AGENTS.md, ze kterých se dá orientovat.",
                 "Plan a nejbližší bezpečný krok.",
-                "První check, který odliší realitu od dojmu.",
+                "První ověření, které odliší realitu od dojmu.",
                 "Poznámku, ze které naváže i cizí tým."
               ]
             },
@@ -948,7 +949,7 @@
       "facilitatorPrompts": [
         "Co jste změnili a proč?",
         "Co jste přesunuli z chatu nebo z hlavy do repa?",
-        "Co dnes ověřujete pomocí spustitelného checku?"
+        "Co dnes ověřujete pomocí spustitelného ověření?"
       ],
       "watchFors": [
         "Intermezzo sklouzne do reportingu bez principové pointy.",
@@ -957,7 +958,7 @@
       ],
       "checkpointQuestions": [
         "Co jste přesunuli z hlavy nebo chatu do repa?",
-        "Co dnes ověřujete pomocí spustitelného checku?",
+        "Co dnes ověřujete pomocí spustitelného ověření?",
         "Co by měl číst další tým jako první?"
       ],
       "sourceRefs": [
@@ -1011,7 +1012,7 @@
               "title": "Checkpoint otázky",
               "items": [
                 "Co jste přesunuli z chatu nebo z hlavy do repa?",
-                "Co dnes ověřujete pomocí spustitelného checku?",
+                "Co dnes ověřujete pomocí spustitelného ověření?",
                 "Co by měl číst další tým jako první?"
               ]
             }
@@ -1352,7 +1353,7 @@
       "startTime": "13:45",
       "kind": "team",
       "intent": "build",
-      "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepších checků a lepšího handoffu.",
+      "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepšího ověřování a lepšího handoffu.",
       "roomSummary": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli systém kolem agenta a repa opravdu unese nový tým.",
       "facilitatorPrompts": [
         "Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.",
@@ -1388,7 +1389,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Po rotaci neopravujte jen feature, opravujte i signál",
-          "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějších checků a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
+          "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějšího ověřování a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
           "facilitatorNotes": [
             "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání.",
             "Ptej se, co po rotaci opravdu pomohlo, co bylo nutné dopsat a jaký další check teď drží práci při zemi."
@@ -1517,7 +1518,7 @@
           "intent": "reflection",
           "chromePreset": "checkpoint",
           "title": "Co po rotaci opravdu pomohlo pokračovat",
-          "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co nový tým zrychlilo, co ho brzdilo a co už si říká o lepší template, runbook nebo pravidlo.",
+          "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co novému týmu ušetřilo čas, co ho brzdilo a co už si říká o lepší template, runbook nebo pravidlo.",
           "facilitatorNotes": [
             "Vyžaduj konkrétní příklady z repa, ne obecné dojmy.",
             "Připrav místnost na reveal tím, že oddělíš skutečně užitečné signály od dobrých pocitů."
@@ -1690,7 +1691,7 @@
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "agenda",
-          "title": "Co si zítřka odnesete do skutečné práce",
+          "title": "Co si z dneška odnesete do skutečné práce",
           "body": "Zakončení přes W3 převádí den do konkrétní další praxe s AI agenty.",
           "facilitatorNotes": [
             "Na závěr to stoč do příštího týdne i do zlepšení blueprintu a workshopového systému."

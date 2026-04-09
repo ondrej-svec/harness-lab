@@ -120,11 +120,22 @@ Questions:
 3. Does the wording sound like a calm peer, not system scaffolding?
 4. Would the same workshop moment sound coherent in dashboard, presenter, and skill form?
 
+For visible Czech room or participant surfaces, also confirm:
+
+- a Czech facilitator could say the line aloud without mentally rewriting it
+- titles, callouts, and participant prompts sound like workshop language for people, not internal content taxonomy
+- borrowed English is limited to literal commands, file/tool names, and genuinely established developer terms
+- if a cleaner Czech phrasing exists, internal shorthand such as `launch` or `check` does not survive onto the visible surface by inertia
+- the blocking review is owned by a Czech-fluent human reviewer; AI review may assist, but it does not replace signoff
+
+Treat visible Czech copy as failed if it is structurally correct but still reads like translated workshop shorthand.
+
 ## Maintenance Rule
 
 When changing shared workshop content:
 
 1. update the maintained blueprint source pair
 2. update reviewed localized variants affected by the change
-3. verify dashboard, presenter, and skill consumers still render the same workshop moment coherently
-4. update any docs that describe the source-of-truth path if the ownership model changes
+3. if visible Czech delivery changed, run the Czech checklist plus a short visible-surface/spoken-readability note under `docs/reviews/workshop-content/`
+4. verify dashboard, presenter, and skill consumers still render the same workshop moment coherently
+5. update any docs that describe the source-of-truth path if the ownership model changes

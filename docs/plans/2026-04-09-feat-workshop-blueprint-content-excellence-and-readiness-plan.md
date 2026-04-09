@@ -199,6 +199,15 @@ These rules apply across participant, facilitator, presenter, projection, mobile
 - external references earn trust, contrast, or memory and must attribute the real speaker or source
 - never use internal source labels as if they were authority attributions on visible slides
 
+### Czech visible-surface discipline
+
+- visible Czech copy must sound like something a Czech facilitator can say aloud or a Czech participant can absorb without mentally rewriting it
+- English belongs on visible Czech surfaces only for literal commands, file names, tool names, or genuinely established developer terms
+- headline and callout labels must not preserve workshop-internal shorthand such as `launch`, `checkpoint`, or `check` when a cleaner Czech phrasing exists
+- if a fluent Czech reviewer would immediately rewrite a visible phrase in their head, the phrase is not done
+- spoken-readability is not enough on its own; room and participant labels also need headline quality and natural workshop voice
+- AI review may help find weak Czech, but it does not satisfy the blocking Czech gates; visible-Czech and spoken-readability signoff require a Czech-fluent human reviewer
+
 ### Flow-contract clarity
 
 - transitions between opening, talk, demo, build, rotation, and reveal must make the next contract explicit
@@ -242,6 +251,8 @@ Current canonical review findings from live workshop review:
 - the "first contract" idea is directionally right, but the current opening-room contract still reads more like facilitator QA criteria than a sharp room-facing contract
 - the `talk` micro-exercise currently reads as facilitator-led contrast/demo; if participant action is intended, that instruction and the workshop-skill bridge must be made explicit
 - the workshop-skill install/use moment is still not explicit enough in the shared workshop flow and should not be discoverable only through later CTAs or fallback links
+- the broader rewrite exposed a systemic Czech-quality problem on visible surfaces: some headings and callouts still read like half-translated workshop shorthand rather than natural Czech for a developer room
+- visible Czech labels that borrow internal English terms such as `launch` or `check` without a strong reason should be treated as release failures, not as late polish
 
 Execution consequence:
 
@@ -272,6 +283,7 @@ Do not propagate a new content pattern across the whole day until the proof slic
 
 - cold-read facilitator check
 - spoken-readability check in Czech
+- visible-Czech idiom and headline check
 - participant usefulness check
 - mobile glanceability check for participant-facing use
 - projected-room legibility check for presenter-facing use
@@ -287,7 +299,8 @@ All proof-slice rollout gates are blocking.
 | Gate | Primary reviewer | Required artifact | Blocking rule |
 | --- | --- | --- | --- |
 | Cold-read facilitator check | A non-Ondrej facilitator or maintainer | Short written note covering clarity, missing context, and runnable gaps | Must pass |
-| Spoken-readability check in Czech | Czech-fluent reviewer | Short written note covering awkward phrasing, spoken flow, and delivery risk | Must pass |
+| Spoken-readability check in Czech | Czech-fluent human reviewer | Short written note covering awkward phrasing, spoken flow, and delivery risk | Must pass |
+| Visible-Czech idiom and headline check | Czech-fluent human reviewer | Short written note covering borrowed English, headline quality, and phrases a fluent reader would instinctively rewrite on visible surfaces | Must pass |
 | Participant usefulness check | Workshop maintainer using participant surface preview | Short note confirming the scene answers "what do I do now?" | Must pass |
 | Mobile glanceability check | Workshop maintainer using mobile preview capture | Mobile preview capture plus short legibility note | Must pass |
 | Projected-room legibility check | Workshop maintainer using presenter preview | Presenter preview plus short room-legibility note | Must pass |
@@ -314,6 +327,7 @@ Before autonomous implementation beyond the proof slice, require:
 - preview renders or screenshots for the proof-slice participant mirror
 - proof-slice facilitator runner review against agenda-owned fields
 - a side-by-side English/Czech content review for the proof slice
+- a visible-Czech review note for the proof slice when Czech delivery changed
 - a short cold-read review note from a non-Ondrej reader
 - a mobile participant-preview capture for the proof slice
 - a projected-room legibility review note for the proof slice
@@ -419,6 +433,16 @@ Mitigation:
 - keep English and Czech changes linked in the same slice of work
 - reject translation-only polish on weak source content
 
+### Risk: Czech quality remains a last-minute cleanup task
+
+If Czech review stays checklist-shaped but optional in practice, weak visible phrasing will keep shipping even when the workshop structure improves.
+
+Mitigation:
+
+- make visible-Czech review a blocking gate for visible Czech delivery
+- require a short written artifact, not only an implicit "sounds fine"
+- reject borrowed English in visible Czech labels unless it is clearly justified by real developer usage
+
 ### Risk: Authority cues become decorative or inconsistent
 
 The team may add quotes, citations, or expert anchors in a way that feels premium but teaches little and varies by author.
@@ -484,6 +508,7 @@ This section is a summary view only. The phased implementation section below is 
 - [ ] Run the proof gates before propagation.
   - [ ] Cold-read the proof slice with a non-Ondrej reader.
   - [ ] Run spoken-readability review in Czech.
+  - [ ] Run visible-Czech idiom and headline review for room and participant surfaces.
   - [ ] Check participant usefulness in the mirror.
   - [ ] Check mobile glanceability for participant-facing use.
   - [ ] Check projected-room legibility for presenter-facing use.
@@ -514,6 +539,7 @@ This section is a summary view only. The phased implementation section below is 
 - The public blueprint no longer leaves the day-model summary in tension with the runtime/canonical structure.
 - The public-safe template no longer contains known Ondrej-specific content references in blueprint-driven participant or room-facing paths.
 - The proof slice passes cold-read, spoken-readability, participant-usefulness, mobile-glanceability, projected-room-legibility, locale-parity, and portability checks.
+- Visible Czech room and participant surfaces no longer depend on weak borrowed-English labels such as `launch` or `check` when natural Czech would be clearer.
 - The flagship weak scenes no longer read like operational notes pasted onto a presenter surface.
 - Participant mirrors become action-oriented and phase-useful.
 - Facilitator support is strengthened in the agenda-owned `facilitatorRunner` layer, not only in adjacent docs.
@@ -591,6 +617,7 @@ Exit criteria:
 
 - the proof slice is visibly stronger, cold-readable, locale-correct, mobile-glanceable, and room-legible
 - the `opening` to `talk` bridge no longer leaks facilitator meta language into projected slides
+- the visible Czech labels in the proof slice read as natural workshop Czech, not as translated taxonomy
 - source provenance and external authority are clearly separated on visible surfaces
 - participants can tell when the workshop skill enters the day and what the micro-exercise expects from them
 - the team has evidence that the new pattern works before broad rollout

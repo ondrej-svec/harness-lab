@@ -26,6 +26,8 @@ Preferujeme porozumění před doslovným překladem.
 - Nepřekládej násilně výrazy jako `prompt`, `review`, `workflow`, `skill`, `runbook`, `deploy`, `build`, `checkpoint`, `handoff`, `fallback`, `CLI`, `App`.
 - Slash commands, file names, paths a config keys vždy nech v originále.
 - Když je anglický termín méně samozřejmý, při prvním výskytu ho krátce ukotvi česky.
+- Na viditelných slidech a participant surfaces nenechávej anglický loanword jen proto, že ho měl source draft.
+- Výrazy jako `launch` nebo `check` nejsou automaticky vhodné jako české headline. Pokud nejde o skutečně ustálený technický termín, preferuj přirozenou češtinu.
 
 ## Sentence Style
 

@@ -189,7 +189,7 @@ export const workshopBlueprintLocalizedContent = {
       opening: {
         label: "Opening and orientation",
         goal:
-          "Open the day as a shared launch: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
+          "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
         roomSummary:
           "The room should feel immediately that this is not a prompting hackathon. It is a day of steering agents, building with them in a real repo, and later testing what survives without us.",
         facilitatorPrompts: [
@@ -210,7 +210,7 @@ export const workshopBlueprintLocalizedContent = {
         ],
         sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
         facilitatorRunner: {
-          goal: "Launch the day as a room-facing start, not as an operating brief.",
+          goal: "Open the day as a shared room start, not as an operating brief.",
           say: [
             "We are not starting with a tool demo or a prompting contest.",
             "You will learn, build, hand off, and inherit. That arc is the point of the day.",
@@ -396,7 +396,7 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   "A README that explains the project to a new reader.",
                   "An AGENTS.md that shows where to start and where to reach next.",
-                  "A plan or guided implementation trail that makes the next safe move legible.",
+                  "A plan or guided implementation trail that makes the next useful move legible.",
                   "A first check that stops blind generation.",
                 ],
               },
@@ -441,7 +441,7 @@ export const workshopBlueprintLocalizedContent = {
         goal:
           "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
         roomSummary:
-          "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit checks as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
+          "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit verification as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
         facilitatorPrompts: [
           "We are not learning to prompt better. We are learning to build a repo and workflow where an agent and another team can continue safely.",
           "If it is not in the repo, it does not exist.",
@@ -500,7 +500,7 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Context is King",
                 title: "We are not learning to prompt better",
                 body:
-                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next safe move is.",
+                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next useful move is.",
               },
               "talk-reframe": {
                 title: "A team lead does not stand behind the model",
@@ -579,7 +579,7 @@ export const workshopBlueprintLocalizedContent = {
               },
               "talk-participant-preview": {
                 body:
-                  "Build Phase 1 starts now. The participant surface should keep in view what is live, what comes next, and what the team should verify before it asks the agent for more motion.",
+                  "Build Phase 1 starts now. The participant view should keep in view what is live, what comes next, and what the team should verify before it asks the agent for more motion.",
               },
               "talk-participant-bridge": {
                 title: "Bridge into Build 1",
@@ -628,8 +628,8 @@ export const workshopBlueprintLocalizedContent = {
                 body: "One compact story where you can watch context, planning, implementation, and review reinforce each other.",
               },
               "demo-story-quote": {
-                quote: "The tool alone is not enough. The working system around it is what matters.",
-                attribution: "Harness Lab demo framing",
+                title: "The point of the demo",
+                body: "The tool alone is not enough. The working system around it is what matters.",
               },
             },
           },
