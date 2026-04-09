@@ -185,11 +185,10 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Four things that should be readable immediately");
-    expect(html).toContain("Clear goal");
+    expect(html).toContain("What you are actually going to experience today");
+    expect(html).toContain("Learn to steer the agent");
     expect(html).toContain("data-tone=\"info\"");
-    expect(html).toContain("What the working system has to hold");
-    expect(html).toContain("Harness engineering in one sentence");
+    expect(html).toContain("Why the launch matters");
     expect(html).not.toContain("source material");
     expect(html).not.toContain("content/talks/context-is-king.md");
   });
