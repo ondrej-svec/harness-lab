@@ -54,8 +54,8 @@ describe("workshop-data", () => {
     expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(opening?.title).toBe("Opening and orientation");
-    expect(opening?.goal).toContain("Open the day as a shared launch");
-    expect(opening?.facilitatorRunner.goal).toBe("Launch the day as a room-facing start, not as an operating brief.");
+    expect(opening?.goal).toContain("Open the day as a shared start");
+    expect(opening?.facilitatorRunner.goal).toBe("Open the day as a shared room start, not as an operating brief.");
     expect(handoffScene?.title).toBe("The day has one arc: learn, build, hand off, continue");
     expect(handoffScene?.blocks[0]).toMatchObject({
       id: "opening-loop-steps",
