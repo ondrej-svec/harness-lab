@@ -4,6 +4,8 @@ Open-source workshop template for teams working with AI coding agents on real so
 
 Harness Lab teaches **harness engineering**: the discipline of engineering context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into disposable output.
 
+If you are a **participant** arriving at a workshop, you do not need to clone or fork this repo. Install the CLI in your own project and run `harness skill install` — that is the entire participant path. If you are a **facilitator** or **workshop operator**, start with [harness-cli/README.md](harness-cli/README.md) and [workshop-blueprint/control-surfaces.md](workshop-blueprint/control-surfaces.md).
+
 ## Table of Contents
 
 - [What You Can Do Here](#what-you-can-do-here)

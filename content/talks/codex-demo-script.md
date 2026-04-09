@@ -18,7 +18,7 @@ Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut poc
    - Constraints
    - Done When
 4. Spusť `/plan`, aby agent rozpadl práci na kroky.
-5. Krátce ukaž, jak se v repu propisuje záměr: kde je mapa, kde je další safe move a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
+5. Krátce ukaž, jak se v repu propisuje záměr: kde je mapa, kde je další bezpečný krok a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
 6. Nech agenta implementovat malý kus.
 7. Spusť `/review` a ukaž, že kontrola je součást workflow, ne nouzová brzda na konci.
 8. Krátce ukaž workshop skill:

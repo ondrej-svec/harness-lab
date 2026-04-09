@@ -13,6 +13,20 @@ Participants should leave with two things:
 
 The workshop does not optimize for maximum feature count. It optimizes for continuation quality.
 
+## The Question This Day Answers
+
+One framing question runs through every phase:
+
+> **Does the repo speak for itself?**
+
+- The opening asks it.
+- The `Context is King` talk explains why the answer matters.
+- Build Phase 1 is the team's first chance to make the answer yes.
+- The continuation shift checks whether the answer actually is yes.
+- The reveal turns whatever was learned into next-week practice and into blueprint updates.
+
+Every phase should deepen this one question, not add a new habit on top of it. Facilitators should be able to ask it aloud at any moment in the day and have the room understand exactly what it means.
+
 ## Design Rule
 
 Harness Lab teaches by forcing the useful behavior:

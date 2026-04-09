@@ -53,7 +53,7 @@
 - `Codex: $brainstorm` when the scope is still unclear
 - `Codex: $plan` before larger implementation
 - `Codex: $work` once you have a plan and want to keep implementation in one line
-- `Codex: $test-writer` or your own RED test before implementation when you need to keep the agent inside real boundaries
+- `Codex: $test-writer` or your own executable check before implementation when you need to keep the agent inside real boundaries
 - `Codex: $review` after a larger slice of work
 - `Codex: $compound` when a learning, fix, or workflow rule is worth preserving as a durable repo-native artifact
 - `Codex: $workshop` for orientation during the day
@@ -73,7 +73,7 @@
 
 - The more work the agent does independently, the less “I skimmed it quickly” is enough.
 - If you let the agent write without tests, you often just accelerate unverified complexity.
-- A RED test, tracer bullet, or simple end-to-end check is often the fastest way to tell the agent what must actually be true.
+- An executable check (unit test, tracer bullet, or simple end-to-end probe) is often the fastest way to tell the agent what must actually be true.
 
 ## Safe UI workflow
 
@@ -90,5 +90,7 @@ A good prompt is not enough. If the work should survive handoff, the context mus
 ## Where to go after the workshop
 
 - Official docs, the OpenAI Harness Engineering article, and verified public skill repos are collected in [`docs/learner-reference-gallery.md`](../../../docs/learner-reference-gallery.md).
+- Codex-specific craft (approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough) lives in [`content/codex-craft.md`](../../../content/codex-craft.md).
+- The one-page pocket card of conversational moves for coaching an agent is [`materials/coaching-codex.md`](../../../materials/coaching-codex.md).
 - If you already use another workflow pack or toolkit, treat it as an extension on top of this foundation, not as a replacement for `AGENTS.md`, verification, and repo-native handoff.
 - If you do not want to search the repo, use `workshop resources`, `workshop gallery`, or `workshop follow-up` directly.

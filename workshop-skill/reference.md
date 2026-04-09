@@ -26,15 +26,15 @@
 
 ## 3 otázky, ke kterým se vraťte, když se zaseknete
 
-- Co se právě snažíme dokázat?
+- Čeho se právě snažíme dosáhnout?
 - Který artefakt nebo signál v repu nám chybí?
-- Jaký je nejmenší check, který vrátí práci z dojmu do reality?
+- Jaké je nejmenší ověření, které vrátí práci z dojmu do reality?
 
 ## Kdy po čem sáhnout během dne
 
 - Po openingu a talku: `workshop setup` nebo `workshop reference`
-- V prvním buildu: `template-agents`, brief, plán a první check
-- Před obědem: dopsat další safe move a použít `workshop analyze`, když si nejste jistí handoffem
+- V prvním buildu: `template-agents`, brief, plán a první ověření
+- Před obědem: dopsat další bezpečný krok a použít `workshop analyze`, když si nejste jistí handoffem
 - Po rotaci: `workshop analyze`, learner kit a challenge cards místo ústního rescue
 - Na konci dne: `workshop recap` a `workshop follow-up`
 
@@ -53,7 +53,7 @@
 - `Codex: $brainstorm` když ještě není jasné, co je nejrozumnější scope nebo slice
 - `Codex: $plan` před větší implementací
 - `Codex: $work` když už máte plán a chcete držet implementaci v jedné linii
-- `Codex: $test-writer` nebo vlastní spustitelný check před implementací, když potřebujete držet agenta v mezích
+- `Codex: $test-writer` nebo vlastní spustitelné ověření před implementací, když potřebujete držet agenta v mezích
 - `Codex: $review` po větším kusu práce
 - `Codex: $compound` když chcete převést nové zjištění, fix nebo workflow pravidlo do trvalého artefaktu v repu
 - `Codex: $workshop` pro orientaci během dne
@@ -73,7 +73,7 @@
 
 - Čím víc práce dělá agent samostatně, tím méně stačí „já jsem to rychle projel očima“.
 - Když necháte agenta psát bez testů, často jen urychlíte vznik neověřené složitosti.
-- Spustitelný check (unit test, tracer bullet nebo jednoduché e2e ověření) je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
+- Spustitelné ověření (unit test, tracer bullet nebo jednoduché e2e ověření) je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
 
 ## Bezpečný UI workflow
 
@@ -85,7 +85,7 @@
 
 ## Rychlá připomínka
 
-Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu, další safe move musí být dohledatelný a ověření musí zůstat čitelné i pro cizí tým.
+Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu, další bezpečný krok musí být dohledatelný a ověření musí zůstat čitelné i pro cizí tým.
 
 ## Kam dál po workshopu
 

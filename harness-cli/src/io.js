@@ -200,5 +200,6 @@ export function createCliUi(io, options = {}) {
     numberedList,
     commandList,
     json,
+    jsonMode,
   };
 }

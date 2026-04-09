@@ -25,7 +25,7 @@
 - `workshop reference` - krátká karta pracovních výchozích bodů pro dnešek
 - `workshop help` - coaching podle fáze dne nebo podle problému, na kterém jste zaseknutí
 - `workshop template` - starter `AGENTS.md`
-- `workshop analyze` - rychlý handoff check repa
+- `workshop analyze` - rychlá kontrola handoffu v repu
 - `workshop resources` - účastnický kit, learner kit a další navazující materiály
 - `workshop follow-up` - co si odnést a co udělat 48 hodin až 1 týden po workshopu
 - `workshop gallery` - ověřené externí docs a veřejné repozitáře pro další učení

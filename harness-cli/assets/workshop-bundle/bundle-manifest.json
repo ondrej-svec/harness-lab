@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.2.9",
-  "contentHash": "6128dd044b483a3429d7ba9823a43dc65898d718ee44f68f100f2138ad399578",
+  "contentHash": "3efafad1e3a16f1f73d4588397aa1e7752c61f81a04f0b63a423717345af54bf",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -26,7 +26,7 @@
     },
     {
       "path": "content/czech-editorial-review-checklist.md",
-      "sha256": "3dbfebdd4ce9ff22aeda54b0f5cb461a17956073dc0739377b8248fdbfcb811c"
+      "sha256": "b97006eb8a14cedcb02c162d1c88ffcb6c8a4f5839e586fdba44c533f99aff6e"
     },
     {
       "path": "content/czech-reject-list.md",
@@ -42,7 +42,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "eec27a96957c75cb50b14b929d57d184c7ccbb11d74189b0fb5d4516a6f41927"
+      "sha256": "fb877a24f745f995083844faa0a186d40ed4f2af3abd5222a21d00ecc36f4879"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -102,11 +102,11 @@
     },
     {
       "path": "content/talks/codex-demo-script.md",
-      "sha256": "fb6084c23ac8aba5db6eff8a272f98bf3a98e84035750be85d1cec06c6bda0f3"
+      "sha256": "88c78df95025db83ac4b71c3a5216685e6d07bd5306eb8b4ecac3f7911f22352"
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "98b30de8282148ad732681402a89afb9e8cf5f4e919abcc9a461a4a039bd15a8"
+      "sha256": "748550d4ac44feaa0115b56df89f3ecf298dba7d29098847a78f9f6eede8938e"
     },
     {
       "path": "docs/harness-cli-foundation.md",
@@ -142,7 +142,7 @@
     },
     {
       "path": "materials/participant-resource-kit.md",
-      "sha256": "80f4d136f1735402af999817645cbbec22bde50a8c1ad4eb87814c40bd7e4371"
+      "sha256": "82c23fbb651b150a03be0052c5cbf497db4d0b2e548772c9b93d7ed9e071929d"
     },
     {
       "path": "SKILL.md",
@@ -190,7 +190,7 @@
     },
     {
       "path": "workshop-skill/commands.md",
-      "sha256": "57404fd6dc8f491b58a101bd7312e428fafbb4ca46bc410c0e7690b46e709b7f"
+      "sha256": "fb062e889d723630389e0f4796c8e46e21ae5af60e7e1a0cec5c2d83150041fe"
     },
     {
       "path": "workshop-skill/facilitator.md",
@@ -230,11 +230,11 @@
     },
     {
       "path": "workshop-skill/reference.md",
-      "sha256": "6bc2f0702f29ebbaad0b813be438d194ac5c882477fba365a93b7f04770cc97f"
+      "sha256": "5130bf4e39423fd193cdf9c255b9296bc5aabca690ee6d433994db98c6b4fb12"
     },
     {
       "path": "workshop-skill/setup.md",
-      "sha256": "c4a6606c1f9d65cd53146652a303b28f522bfd59447c48ab421b5afab180c230"
+      "sha256": "4d43b1dac557076a63424af55946d0cdc84a2879389d3c573c1a1e3ff603b97d"
     },
     {
       "path": "workshop-skill/template-agents.md",

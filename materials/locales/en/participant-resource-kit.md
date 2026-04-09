@@ -17,8 +17,7 @@ Default template:
 
 Choose at least one:
 - build/test commands
-- a RED test
-- a tracer bullet
+- an executable check (unit test or tracer bullet)
 - a review checklist
 
 When the agent handles a larger slice of work, “I skimmed it quickly” is not enough.
@@ -60,6 +59,8 @@ Do not let the model drive your normal signed-in browser by default without sand
 - [`workshop-skill/locales/en/reference.md`](../../../workshop-skill/locales/en/reference.md)
 - [`workshop-skill/locales/en/recap.md`](../../../workshop-skill/locales/en/recap.md)
 - [`docs/locales/en/learner-reference-gallery.md`](../../../docs/locales/en/learner-reference-gallery.md)
+- [`content/codex-craft.md`](../../../content/codex-craft.md) — Codex-specific craft: approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough
+- [`materials/coaching-codex.md`](../../coaching-codex.md) — the one-page pocket card of conversational moves for coaching an agent
 
 Note:
 - the `workshop` skill is the guaranteed workshop default
@@ -70,3 +71,14 @@ Note:
 1. Add `AGENTS.md` to one real project.
 2. Move one durable rule from a prompt into the repo.
 3. Add one review or handoff checklist.
+
+## What to read after the workshop to stay current
+
+Codex and other coding agents ship new capabilities monthly. This kit is not a frozen reference — it is a starting harness for your own reading practice.
+
+- **Codex CLI release notes** — read them on every release. The approval-mode and sandboxing changes are the ones that matter most.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — one of the densest practical sources on Codex, Claude Code, and other coding agents. He works with these tools daily and writes it down.
+- **OpenAI Harness Engineering articles** — see `docs/learner-reference-gallery.md` for links.
+- **Anthropic engineering blog** — if you use Claude Code, follow the official posts.
+- **Your own `AGENTS.md` as a living document** — re-read them every quarter with a skeptical eye. Delete anything that is no longer load-bearing. Simplicity is part of the harness.
+- **Your own `docs/solutions/` or runbook** — when you find a failure mode in your own work, write it down. Your team should learn from your team's mistakes, not just from this kit.

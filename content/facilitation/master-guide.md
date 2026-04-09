@@ -4,7 +4,7 @@
 
 ### Cíl
 
-Spustit den jako room-facing launch pro celý workshop, ne jako provozní brief k dopoledni.
+Spustit den jako společný start pro celý workshop, ne jako provozní brief k dopoledni.
 
 ### Klíčová message
 
@@ -45,7 +45,7 @@ Použijte krátké rozdělení místnosti podle aktuální zkušenosti s AI agen
 - používám skoro denně
 - používám, ale opatrně
 - jsem spíš na startu
-- jsem skeptický, ale chci důkaz
+- jsem skeptický, ale chci vidět, že to funguje
 
 Pravidla:
 
@@ -62,7 +62,7 @@ Pravidla:
 
 ### První pracovní kontrakt
 
-Po launchi potřebuje místnost ještě jednu konkrétní věc:
+Po otevření dne potřebuje místnost ještě jednu konkrétní věc:
 
 - co má být po prvním build bloku opravdu vidět v repu
 - co nestačí jen slíbit nebo dovysvětlit u stolu
@@ -71,8 +71,8 @@ Do oběda má být vidět:
 
 - `README`, které dává smysl cizímu člověku
 - `AGENTS.md` jako krátká mapa, ne sklad všeho
-- plán nebo jasně vedená implementační stopa, ze které je poznat další safe move
-- první explicitní check před dalším generováním
+- plán kroků nebo jasně vedená implementační stopa, ze které je poznat další bezpečný krok
+- první explicitní ověření před dalším generováním
 
 ## Context is King talk
 
@@ -87,9 +87,9 @@ Proměnit energii z openingu v přesnou tezi a čistý most do Build fáze 1.
 ### Co potřebuje zaznít
 
 - Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
-- `AGENTS.md`, skills, runbooky a checks jsou týmová infrastruktura, ne polish navíc.
+- `AGENTS.md`, skills, runbooky a ověřovací kroky jsou týmová infrastruktura, ne polish navíc.
 - Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.
-- Po talku se tým vrací k repu s mapou, planem a prvním checkem, ne s lovem na chytřejší prompt.
+- Po talku se tým vrací k repu s mapou, plánem kroků a prvním ověřením, ne s lovem na chytřejší prompt.
 
 ### Mikro-cvičení
 
@@ -115,7 +115,7 @@ Na konci talku má být jasné:
 - teorie tím končí
 - tým se vrací k repu
 - pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
-- nejdřív vzniká mapa a první explicitní check
+- nejdřív vzniká mapa a první explicitní ověření
 - teprve potom dává smysl další feature motion
 
 ## Build fáze 1
@@ -126,7 +126,7 @@ Do oběda má být v repu vidět pět základních věcí:
 
 1. `README`, které dává smysl cizímu člověku
 2. `AGENTS.md` jako krátká mapa
-3. plán, ze kterého je poznat další safe move
+3. plán, ze kterého je poznat další bezpečný krok
 4. build/test command nebo tracer bullet
 5. první opravdu ověřený posun
 
@@ -136,7 +136,7 @@ Do oběda má být v repu vidět pět základních věcí:
 - pak mentor — pomozte s workflow nebo s nástrojem
 - učitel až jako poslední možnost — krátce vysvětlete princip a vraťte tým do práce
 - vracejte týmům hlavně artefakty, ze kterých se dá opravdu pracovat, ne celý backstage Harness Lab
-- když se tým zasekne, vraťte ho k důkazu, ne k delšímu promptu
+- když se tým zasekne, vraťte ho k ověření, ne k delšímu promptu
 
 ### Na co se při obcházení dívat
 
@@ -173,7 +173,7 @@ Ukázat Codex jako součást pracovního systému, ne jako samostatné kouzlo. D
 
 - jedna příběhová linka, ne přehlídka funkcí
 - repozitář, ve kterém je vidět `README`, `AGENTS.md`, rozpad práce do kroků a způsob, jak změnu zkontrolujete
-- kontrast mezi slabým startem bez kontextu a prací, která má mapu a další safe move
+- kontrast mezi slabým startem bez kontextu a prací, která má mapu a další bezpečný krok
 - krátké ukotvení workshop skillu: `harness skill install`, první command a proč to šetří ústní rescue
 
 ### Co explicitně říct
@@ -199,7 +199,7 @@ Každé intermezzo má tři kroky:
 Preferované checkpoint otázky:
 
 - Co jste přesunuli z chatu nebo z hlavy do repa?
-- Co dnes ověřujete pomocí spustitelného checku?
+- Co dnes ověřujete pomocí spustitelného ověření?
 - Co by měl číst další tým jako první?
 
 ### Smysl intermezz
@@ -245,7 +245,7 @@ Vést ho jako krátký checkpoint, ze kterého si týmy odnesou jednu věc, kter
 ## Build fáze 2
 
 - Po rotaci neopravujeme jen feature. Opravujeme i signál, který převzetí zbrzdil.
-- Každá opakující se bolest je kandidát na lepší mapu, pravidlo, runbook nebo check.
+- Každá opakující se bolest je kandidát na lepší mapu, pravidlo, runbook nebo ověření.
 - Další větší změna má přijít až po nové explicitní verifikaci.
 
 ## Reveal a reflexe

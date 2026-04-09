@@ -252,7 +252,7 @@
                   "body": "Chci si odnést jasný pracovní model, ne jen přehled možností."
                 },
                 {
-                  "title": "Jsem skeptický, ale chci důkaz",
+                  "title": "Jsem skeptický, ale chci vidět, že to funguje",
                   "body": "Dívám se hlavně na to, co obstojí pod handoffem a ověřením."
                 }
               ]
@@ -272,7 +272,7 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Do prvního buildu mají být v repu čtyři důkazy",
+          "title": "Do prvního buildu mají být v repu čtyři jasné signály",
           "body": "Po úvodu nepotřebujete další princip. Potřebujete vědět, co má být po prvním build bloku opravdu vidět v repu, ne jen slíbeno nahlas.",
           "facilitatorNotes": [
             "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci.",
@@ -292,7 +292,7 @@
               "items": [
                 "README vysvětlí projekt cizímu člověku.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
-                "Plan nebo vedená implementace ukáže další bezpečný krok.",
+                "Plán kroků nebo vedená implementace ukáže další bezpečný krok.",
                 "Existuje první ověření, které zastaví slepé generování."
               ]
             },
@@ -354,7 +354,7 @@
       "startTime": "09:40",
       "kind": "shared",
       "intent": "teaching",
-      "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a důkazem, ne dalším promptem.",
+      "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a ověřením, ne dalším promptem.",
       "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní ověření nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu handoffu i review.",
       "facilitatorPrompts": [
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
@@ -387,11 +387,11 @@
         ],
         "show": [
           "Promítni hlavní tezi, mikro-cvičení a krátký bridge zpátky do participant a repo vrstvy.",
-          "Participant pohled ukaž jen jako důkaz, že room, dashboard a repo drží stejný moment."
+          "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
         ],
         "do": [
           "Porovnej stejný task ve dvou podmínkách: prompt blob vs. krátké zadání s Goal, Context, Constraints a Done When.",
-          "Po pointě pošli místnost rovnou do Build 1 s jedním očekáváním: nejdřív mapa a check, teprve potom feature motion."
+          "Po pointě pošli místnost rovnou do Build 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom feature motion."
         ],
         "watch": [
           "Talk nesmí sklouznout k tipům na promptování nebo feature tour nástroje.",
@@ -450,9 +450,9 @@
               "title": "Co si má tým odnést hned teď",
               "items": [
                 "Než začnu generovat další feature, udělám z repa místo, kde se dá orientovat.",
-                "Když agent dělá víc, review a check musí být přesnější, ne volnější.",
+                "Když agent dělá víc, review i ověřování musí být přesnější, ne volnější.",
                 "Handoff je průběžná podmínka práce, ne závěr dne.",
-                "Po talku se vracím k repu s mapou a prvním checkem, ne s nápadem na chytřejší prompt."
+                "Po talku se vracím k repu s mapou a prvním ověřením, ne s nápadem na chytřejší prompt."
               ]
             }
           ]
@@ -741,7 +741,7 @@
                 },
                 {
                   "title": "Kde se změna kontroluje",
-                  "body": "Check a review patří do workflow, ne jako dodatek na konec."
+                  "body": "Ověření a review patří do workflow, ne jako dodatek na konec."
                 }
               ]
             },
@@ -811,7 +811,7 @@
               "items": [
                 "README řekne cizímu člověku, co tenhle projekt dělá.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
-                "Plan drží společný směr místo improvizace.",
+                "Plán drží společný směr místo improvizace.",
                 "Build/test příkaz nebo tracer bullet umí vrátit práci na zem.",
                 "V repu je vidět první opravdu ověřený posun."
               ]
@@ -820,7 +820,7 @@
               "id": "build-1-callout",
               "type": "callout",
               "tone": "warning",
-              "title": "Více autonomie, více důkazů",
+              "title": "Více autonomie, více ověřování",
               "body": "Když agent dělá víc práce sám, tým musí zvednout kvalitu ověřování a průběžného úklidu v repu."
             }
           ]
@@ -831,7 +831,7 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Když se zaseknete, vraťte se k důkazu",
+          "title": "Když se zaseknete, vraťte se k ověření",
           "body": "První pomoc není delší prompt ani delší vysvětlování. Je to návrat k cíli, chybějícímu artefaktu v repu a nejmenšímu ověření, které znovu ukotví práci v realitě.",
           "facilitatorNotes": [
             "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, ověřování a dalšímu bezpečnému kroku.",
@@ -850,7 +850,7 @@
               "title": "Než zkusíte další generování",
               "items": [
                 {
-                  "title": "Řekněte, co se snažíte dokázat",
+                  "title": "Řekněte, čeho se snažíte dosáhnout",
                   "body": "Musí být jasné, co tým právě zkouší udělat a podle čeho pozná, že se opravdu posunul."
                 },
                 {
@@ -1340,7 +1340,7 @@
             {
               "id": "rotation-participant-preview",
               "type": "participant-preview",
-              "body": "Když je signál slabý, nezachraňujte ho hovorem. Zapište diagnózu a opravte mapu, pravidlo nebo check."
+              "body": "Když je signál slabý, nezachraňujte ho hovorem. Zapište diagnózu a opravte mapu, pravidlo nebo ověření."
             }
           ]
         }
@@ -1358,7 +1358,7 @@
       "facilitatorPrompts": [
         "Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.",
         "Pojmenujte, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.",
-        "Každá opakující se bolest je kandidát na lepší template, check nebo runbook."
+        "Každá opakující se bolest je kandidát na lepší template, ověření nebo runbook."
       ],
       "watchFors": [
         "Tým jen opravuje chaos, ale neproměňuje ho v lepší návod pro další práci.",
@@ -1368,7 +1368,7 @@
       "checkpointQuestions": [
         "Jaký signál v repu vám nejvíc pomohl navázat?",
         "Co po rotaci musíte dopsat nebo zpřesnit?",
-        "Jaký další check teď potřebujete, abyste mohli bezpečně pokračovat?"
+        "Jaké další ověření teď potřebujete, abyste mohli bezpečně pokračovat?"
       ],
       "sourceRefs": [
         {
@@ -1392,7 +1392,7 @@
           "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějšího ověřování a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
           "facilitatorNotes": [
             "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání.",
-            "Ptej se, co po rotaci opravdu pomohlo, co bylo nutné dopsat a jaký další check teď drží práci při zemi."
+            "Ptej se, co po rotaci opravdu pomohlo, co bylo nutné dopsat a jaké další ověření teď drží práci při zemi."
           ],
           "sourceRefs": [
             {
@@ -1422,7 +1422,7 @@
                   "body": "Zpřesněte mapu, rozhodnutí nebo handoff artefakt."
                 },
                 {
-                  "title": "Přidejte další explicitní check",
+                  "title": "Přidejte další explicitní ověření",
                   "body": "Než uděláte větší změnu, vraťte práci k ověření."
                 }
               ]
@@ -1440,7 +1440,7 @@
           "ctaLabel": "Otevřít challenge cards",
           "ctaHref": "content/challenge-cards/deck.md",
           "facilitatorNotes": [
-            "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další check."
+            "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další ověření."
           ],
           "sourceRefs": [
             {
@@ -1454,7 +1454,7 @@
               "type": "hero",
               "eyebrow": "Build fáze 2",
               "title": "Pokračujte jen z toho, co je dohledatelné",
-              "body": "Pojmenujte, co vám pomohlo navázat, dopište chybějící signál a přidejte další explicitní check dřív, než uděláte větší změnu."
+              "body": "Pojmenujte, co vám pomohlo navázat, dopište chybějící signál a přidejte další explicitní ověření dřív, než uděláte větší změnu."
             },
             {
               "id": "build-2-participant-bullets",
@@ -1545,7 +1545,7 @@
                 },
                 {
                   "title": "Kandidát na codifikaci",
-                  "body": "Co má po dnešku vzniknout jako lepší template, check nebo pravidlo."
+                  "body": "Co má po dnešku vzniknout jako lepší template, ověření nebo pravidlo."
                 }
               ]
             },
@@ -1553,7 +1553,7 @@
               "id": "intermezzo-2-evidence",
               "type": "callout",
               "tone": "info",
-              "title": "Bereme důkazy, ne dojmy",
+              "title": "Bereme signály, ne dojmy",
               "body": "Každá odpověď má mířit k něčemu dohledatelnému v repu nebo k jasně chybějícímu signálu."
             }
           ]

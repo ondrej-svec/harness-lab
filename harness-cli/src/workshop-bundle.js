@@ -26,6 +26,7 @@ const FILE_COPIES = [
   ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
   ["materials/locales/en/participant-resource-kit.md", "materials/locales/en/participant-resource-kit.md"],
+  ["materials/coaching-codex.md", "materials/coaching-codex.md"],
 ];
 
 export function getPackageRoot() {

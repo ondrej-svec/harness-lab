@@ -4,7 +4,7 @@
 
 Tenhle workshop skill i dashboard vznikly stejným způsobem, jakým dnes budeme pracovat my: s AI agentem, ale s důrazem na kontext. Nejde mi o prodej nástroje. Jde mi o to ukázat disciplínu, která z nástroje dělá použitelného spolupracovníka.
 
-Rámec pro room launch:
+Rámec pro otevření dne:
 
 - dnes nezačínáme tool demo ani soutěž v promptování
 - budeme se učit, stavět, předávat i přebírat
@@ -30,7 +30,7 @@ Pointa analogie:
 
 ## Mikro-cvičení
 
-Tohle je krátká facilitátorova ukázka, ne práce pro celý room.
+Tohle je krátká facilitátorova ukázka, ne práce pro celou místnost.
 
 Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a done criteria i do dalšího kroku.
 
@@ -52,7 +52,7 @@ Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob
 - U UI práce je výchozí pattern: agent exploration, potom repeatable browser test, potom lidské review.
 - „Nech model jezdit v mém běžném přihlášeném browseru“ není výchozí doporučení. Bezpečnější je izolované lokální prostředí a jasné mantinely.
 - Ověření napsané dřív, než pustíte agenta do většího kusu práce, není test-first dogma. Je to zápis done criteria do formy, kterou agent i další tým umí zkontrolovat. Iteraci to zrychluje, protože agent dostane přesné mantinely, ne další prompt.
-- Úklid není bonus po workshopu. Když narazíte na opakující se chaos, je čas ho proměnit v lepší template, check nebo runbook.
+- Úklid není bonus po workshopu. Když narazíte na opakující se chaos, je čas ho proměnit v lepší template, ověření nebo runbook.
 - Odpolední návaznost prověří, jestli váš kontext funguje i bez vás.
 
 ## Co chci, aby si adoptovali
@@ -69,7 +69,7 @@ Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytř
 - pokud ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
 - nejdřív krátká mapa v repu
 - potom krátký plán kroků
-- potom první explicitní check
+- potom první explicitní ověření
 - teprve potom další feature motion
 
 ## Závěr

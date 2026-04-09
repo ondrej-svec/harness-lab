@@ -14,7 +14,7 @@ These cards are not bonus points. They are small interventions that improve both
 - `Use /plan before coding` - show which plan the team is working from, what is actually being executed, and what the next safe move is.
 - `Split the work into multiple threads` - try two independent work streams and one person on integration.
 - `Delegate a task and come back to check it in 10 minutes` - do not jump into every agent step; inspect the outcome instead.
-- `Add the smallest useful verification` - create a RED test, tracer bullet, or simple browser check before the agent gets more autonomy.
+- `Add the smallest useful verification` - write the done criteria as an executable check (unit test, tracer bullet, or simple browser check) before the agent gets more autonomy.
 - `Write the post-handoff diagnosis` - name what helped, what was missing, and what the next safe move is.
 - `Fix one weak repo signal` - README, AGENTS.md, plan, runbook, or check.
 

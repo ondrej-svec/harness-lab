@@ -43,10 +43,10 @@ export const publicCopy = {
     principlesTitle: "tři pravidla, díky kterým je práce s agenty čitelná, ověřitelná a udržitelná.",
     principleOneTitle: "mapa před pohybem",
     principleOneBody:
-      "Než pustíte další generování, udělejte z repa místo, kde se dá orientovat. Krátké `AGENTS.md`, jasný vstupní bod a viditelný další safe move jsou lepší než další prompt navíc.",
+      "Než pustíte další generování, udělejte z repa místo, kde se dá orientovat. Krátké `AGENTS.md`, jasný vstupní bod a viditelný další bezpečný krok jsou lepší než další prompt navíc.",
     principleTwoTitle: "ověřujte dřív, než jdete dál",
     principleTwoBody:
-      "Každý důležitý posun co nejdřív opřete o důkaz. Menší ověřený krok je cennější než rychlý postup, který se později rozpadne.",
+      "Každý důležitý posun co nejdřív opřete o ověření. Menší ověřený krok je cennější než rychlý postup, který se později rozpadne.",
     principleThreeTitle: "pracujte tak, aby se dalo navázat",
     principleThreeBody:
       "Další člověk ani další agent nemá hádat, co se stalo. V repu má být jasné, co platí, co je skutečně ověřené a jaký je bezpečný další krok.",
@@ -69,7 +69,7 @@ export const publicCopy = {
     participantEyebrow: "participant plocha",
     participantTitleFallback: "workshop běží",
     participantBodyRevealed:
-      "Continuation shift je odemčený. Nejdřív čtěte README, `AGENTS.md` a plán. Sepište si, co pomáhá, co chybí a jaký je další safe move, pak teprve měňte kód.",
+      "Continuation shift je odemčený. Nejdřív čtěte README, `AGENTS.md` a plán. Sepište si, co pomáhá, co chybí a jaký je další bezpečný krok, pak teprve měňte kód.",
     participantBodyHidden:
       "Soustřeďte se na krátké `AGENTS.md`, plán, build/test flow a první ověřený krok. Continuation shift se odemkne později.",
     participantGuidanceFallbackLabel: "agenda pro tým",
@@ -436,13 +436,13 @@ export const adminCopy = {
     registerTeamTitle: "registrovat nebo upravit tým",
     editTeamTitle: "upravit vybraný tým",
     editTeamDescription: "Editace je navázaná na zvolený tým, takže nemusíte ručně párovat id a jméno.",
-    checkpointFormHint: "Checkpointy zapisujte jako evidence: co se změnilo, co to ověřuje a jaký je další safe move.",
+    checkpointFormHint: "Checkpointy zapisujte jako evidenci: co se změnilo, co to ověřuje a jaký je další bezpečný krok.",
     checkpointChangedLabel: "co se změnilo",
     checkpointVerifiedLabel: "co to ověřuje",
-    checkpointNextStepLabel: "další safe move",
+    checkpointNextStepLabel: "další bezpečný krok",
     checkpointAtLabel: "čas",
     teamNamePlaceholder: "Tým 5",
-    teamCheckpointPlaceholder: "co se změnilo / co to ověřuje / další safe move",
+    teamCheckpointPlaceholder: "co se změnilo / co to ověřuje / další bezpečný krok",
     createTeamButton: "vytvořit tým",
     updateTeamButton: "uložit změny týmu",
     createAnotherTeamLabel: "nový tým",

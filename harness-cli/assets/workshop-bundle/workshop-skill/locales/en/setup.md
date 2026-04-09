@@ -70,7 +70,7 @@ npm install -g @mariozechner/pi-coding-agent
 4. Name the first safe move:
    - ideally through `plan`, or `brainstorm` if the scope is still unclear
 5. Add one executable check:
-   - a RED test, tracer bullet, or at least a clear review or checklist step
+   - an executable check (unit test, tracer bullet), or at least a clear review or checklist step
 6. If you want materials for later too:
    - `Codex: $workshop resources`
    - `Codex: $workshop gallery`

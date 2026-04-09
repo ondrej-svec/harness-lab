@@ -606,6 +606,22 @@ async function handleAuthLogout(io, ui, env, deps) {
   return 0;
 }
 
+function renderSelectedInstanceBanner(ui, target) {
+  if (ui.jsonMode) {
+    return;
+  }
+  const instanceId = target.instanceId ?? "none";
+  const label = target.source === "session"
+    ? "Selected instance (locally selected)"
+    : target.instanceId
+      ? `Selected instance (from ${target.source})`
+      : "Selected instance";
+  ui.keyValue(label, instanceId);
+  if (!target.instanceId) {
+    ui.keyValue("", "no instance is currently selected — run `harness workshop select-instance <id>` to pin one");
+  }
+}
+
 async function handleWorkshopStatus(io, ui, env, deps) {
   const session = await requireSession(io, ui, env);
   if (!session) {
@@ -616,6 +632,8 @@ async function handleWorkshopStatus(io, ui, env, deps) {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const target = resolveCurrentInstanceTarget(session, env);
 
+    renderSelectedInstanceBanner(ui, target);
+
     if (target.source === "session" && target.instanceId) {
       const [instanceResult, agenda] = await Promise.all([
         client.getWorkshopInstance(target.instanceId),
@@ -623,6 +641,11 @@ async function handleWorkshopStatus(io, ui, env, deps) {
       ]);
       ui.json("Workshop Status", {
         ok: true,
+        selectedInstance: {
+          instanceId: target.instanceId,
+          source: target.source,
+          selected: true,
+        },
         targetInstanceId: target.instanceId,
         targetSource: target.source,
         ...summarizeWorkshopInstance(instanceResult.instance),
@@ -636,6 +659,11 @@ async function handleWorkshopStatus(io, ui, env, deps) {
     const [workshop, agenda] = await Promise.all([client.getWorkshopStatus(), client.getAgenda()]);
     ui.json("Workshop Status", {
       ok: true,
+      selectedInstance: {
+        instanceId: target.instanceId ?? null,
+        source: target.source,
+        selected: Boolean(target.instanceId),
+      },
       targetInstanceId: target.instanceId,
       targetSource: target.source,
       workshopId: workshop.workshopId,

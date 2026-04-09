@@ -355,10 +355,12 @@ Relevant local files:
 - `workshop-skill/follow-up-package.md`
 - `workshop-skill/facilitator.md`
 - `materials/participant-resource-kit.md`
+- `materials/coaching-codex.md`
 - `docs/learner-resource-kit.md`
 - `docs/learner-reference-gallery.md`
 - `content/project-briefs/*.md`
 - `content/challenge-cards/deck.md`
+- `content/codex-craft.md`
 - `workshop-blueprint/*`
 - `docs/workshop-event-context-contract.md`
 - `docs/harness-cli-foundation.md`

@@ -69,8 +69,8 @@ npm install -g @mariozechner/pi-coding-agent
    - Codex: `$workshop template`
 4. Pojmenujte první bezpečný krok:
    - ideálně přes `$plan`, případně `brainstorm`, když scope ještě není jasný
-5. Přidejte jeden executable check:
-   - spustitelný check (unit test, tracer bullet) nebo aspoň jasný review/checklist krok
+5. Přidejte jedno spustitelné ověření:
+   - unit test, tracer bullet nebo aspoň jasný review/checklist krok
 6. Když chcete materiály i po workshopu:
    - `Codex: $workshop resources`
    - `Codex: $workshop gallery`

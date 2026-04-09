@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import process from "node:process";
 import {
   createWorkshopBundleManifestFromDirectory,
   createWorkshopBundleManifestFromSource,
@@ -12,11 +13,88 @@ import {
   WORKSHOP_SKILL_NAME,
 } from "./workshop-bundle.js";
 
+const MIN_NODE_MAJOR = 22;
+
 export class SkillInstallError extends Error {
   constructor(message, options = {}) {
     super(message);
     this.name = "SkillInstallError";
     this.code = options.code ?? "skill_install_failed";
+  }
+}
+
+function assertSupportedNodeVersion() {
+  const raw = process.versions?.node;
+  if (!raw) {
+    return;
+  }
+  const major = Number.parseInt(raw.split(".")[0], 10);
+  if (Number.isFinite(major) && major < MIN_NODE_MAJOR) {
+    throw new SkillInstallError(
+      `Harness CLI requires Node.js ${MIN_NODE_MAJOR} or newer. This process is running Node.js ${raw}. Upgrade with your version manager (for example \`nvm install --lts\`) and re-run \`harness skill install\`.`,
+      { code: "unsupported_node_version" },
+    );
+  }
+}
+
+function translateFileSystemError(error, context) {
+  if (!error || typeof error !== "object" || !("code" in error)) {
+    return null;
+  }
+
+  const targetPath = error.path ? ` (${error.path})` : "";
+
+  if (error.code === "EACCES" || error.code === "EPERM") {
+    return new SkillInstallError(
+      `Harness CLI could not ${context}${targetPath} because the current user does not have write permission. Try running from a directory you own, or adjust the directory permissions. On macOS and Linux, that usually means avoiding system paths like /usr. On Windows, avoid running from a protected location such as C:\\Program Files.`,
+      { code: "install_permission_denied" },
+    );
+  }
+
+  if (error.code === "ENOSPC") {
+    return new SkillInstallError(
+      `Harness CLI could not ${context}${targetPath} because the disk is full. Free some space and re-run \`harness skill install\`.`,
+      { code: "install_no_space" },
+    );
+  }
+
+  if (error.code === "ENAMETOOLONG" || error.code === "ENOTDIR") {
+    return new SkillInstallError(
+      `Harness CLI could not ${context}${targetPath}. The target path is too long or part of it is not a directory. On Windows, this often happens when the repository lives in a deeply nested folder — move the repo closer to the drive root (for example C:\\repos\\your-project) and try again.`,
+      { code: "install_path_invalid" },
+    );
+  }
+
+  if (error.code === "EROFS") {
+    return new SkillInstallError(
+      `Harness CLI could not ${context}${targetPath} because the file system is read-only. Re-run \`harness skill install\` from a writable directory.`,
+      { code: "install_read_only" },
+    );
+  }
+
+  if (error.code === "EBUSY") {
+    return new SkillInstallError(
+      `Harness CLI could not ${context}${targetPath} because the target is busy (another process may hold it open). Close editors or agents pointing at \`.agents/skills/\` and re-run \`harness skill install\`.`,
+      { code: "install_target_busy" },
+    );
+  }
+
+  return null;
+}
+
+async function fsWithActionableError(operation, context) {
+  try {
+    return await operation();
+  } catch (error) {
+    if (error instanceof SkillInstallError) {
+      throw error;
+    }
+    const translated = translateFileSystemError(error, context);
+    if (translated) {
+      translated.cause = error;
+      throw translated;
+    }
+    throw error;
   }
 }
 
@@ -43,8 +121,14 @@ async function resolveBundleSource() {
 }
 
 async function ensureDirectory(targetPath) {
-  await fs.mkdir(targetPath, { recursive: true });
-  const stat = await fs.stat(targetPath);
+  await fsWithActionableError(
+    () => fs.mkdir(targetPath, { recursive: true }),
+    `create the install target directory`,
+  );
+  const stat = await fsWithActionableError(
+    () => fs.stat(targetPath),
+    `inspect the install target directory`,
+  );
   if (!stat.isDirectory()) {
     throw new SkillInstallError(`Install target is not a directory: ${targetPath}`, {
       code: "invalid_target",
@@ -71,14 +155,22 @@ async function getSourceBundleManifest(resolvedBundle) {
 
 async function installFromResolvedBundle(resolvedBundle, installPath) {
   if (resolvedBundle.mode === "packaged_bundle") {
-    await fs.cp(resolvedBundle.sourcePath, installPath, { recursive: true });
+    await fsWithActionableError(
+      () => fs.cp(resolvedBundle.sourcePath, installPath, { recursive: true }),
+      `copy the workshop bundle into the install target`,
+    );
     return;
   }
 
-  await createWorkshopBundleFromSource(resolvedBundle.sourceRoot, installPath);
+  await fsWithActionableError(
+    () => createWorkshopBundleFromSource(resolvedBundle.sourceRoot, installPath),
+    `build the workshop bundle from source into the install target`,
+  );
 }
 
 export async function installWorkshopSkill(startDir, options = {}) {
+  assertSupportedNodeVersion();
+
   const resolvedBundle = await resolveBundleSource();
   if (!resolvedBundle) {
     throw new SkillInstallError(
@@ -106,7 +198,10 @@ export async function installWorkshopSkill(startDir, options = {}) {
       };
     }
 
-    await fs.rm(installPath, { recursive: true, force: true });
+    await fsWithActionableError(
+      () => fs.rm(installPath, { recursive: true, force: true }),
+      `remove the previous workshop bundle before refreshing it`,
+    );
 
     return {
       ...(await installFreshBundle(resolvedBundle, installPath, targetRoot)),
@@ -115,7 +210,10 @@ export async function installWorkshopSkill(startDir, options = {}) {
   }
 
   if (existingInstall && options.force === true) {
-    await fs.rm(installPath, { recursive: true, force: true });
+    await fsWithActionableError(
+      () => fs.rm(installPath, { recursive: true, force: true }),
+      `remove the previous workshop bundle before reinstalling`,
+    );
   }
 
   const result = await installFreshBundle(resolvedBundle, installPath, targetRoot);
@@ -130,7 +228,10 @@ export async function installWorkshopSkill(startDir, options = {}) {
 }
 
 async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
-  await fs.mkdir(path.dirname(installPath), { recursive: true });
+  await fsWithActionableError(
+    () => fs.mkdir(path.dirname(installPath), { recursive: true }),
+    `create the parent directory for the installed skill`,
+  );
   await installFromResolvedBundle(resolvedBundle, installPath);
 
   return {

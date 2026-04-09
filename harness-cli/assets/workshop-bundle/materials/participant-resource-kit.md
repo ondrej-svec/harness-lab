@@ -17,8 +17,7 @@ Výchozí šablona:
 
 Vyberte si alespoň jeden:
 - build/test příkazy
-- RED test
-- tracer bullet
+- spustitelné ověření (unit test nebo tracer bullet)
 - review checklist
 
 Když agent dělá větší kus práce, nestačí „rychle jsem to projel očima“.
@@ -33,7 +32,7 @@ Doporučený základ:
 - `/brainstorm`, když ještě není jasný scope nebo první slice
 - `/plan` před větší implementací
 - `/work` nebo jiný úzký implementační loop, když už víte co stavíte
-- test nebo jiný executable check před důležitou změnou
+- test nebo jiné spustitelné ověření před důležitou změnou
 - `/review` po větším kusu práce
 - `/compound` nebo krátká poznámka zapsaná přímo v repu, když objev udělá další práci levnější
 - průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
@@ -60,6 +59,8 @@ Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený 
 - [`workshop-skill/reference.md`](../workshop-skill/reference.md)
 - [`workshop-skill/recap.md`](../workshop-skill/recap.md)
 - [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md)
+- [`content/codex-craft.md`](../content/codex-craft.md) — Codex-specific craft (approval módy, sandboxing, long-horizon drift, před/po příklad, failure recovery)
+- [`materials/coaching-codex.md`](coaching-codex.md) — jednostránkový pocket card konverzačních tahů pro coaching agenta
 
 Poznámka:
 - `workshop` skill je garantovaný výchozí nástroj workshopu
@@ -70,3 +71,14 @@ Poznámka:
 1. Přidejte `AGENTS.md` do jednoho reálného projektu.
 2. Přesuňte jedno trvalé pravidlo z promptu do repa.
 3. Přidejte jeden review nebo handoff checklist.
+
+## Co číst po workshopu, abyste zůstali aktuální
+
+Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
+
+- **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — jeden z nejhustších praktických zdrojů o Codexu, Claude Code a dalších agentech. Denně pracuje s těmito nástroji a zapisuje si to.
+- **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
+- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
+- **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si je znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
+- **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.
