@@ -397,9 +397,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Core line",
             title: "Context is leverage, not cosmetics",
             body:
-              "Harness engineering is the discipline of shaping context, instructions, and workflow so the model behaves predictably across more than one lucky attempt.",
+              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can continue predictably.",
             facilitatorNotes: [
               "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
+              "After the callout, briefly remind the room that a team lead does not spend the day feeding one developer another instruction every thirty seconds.",
             ],
             sourceRefs: [{ label: "Talk: Core line", path: "content/talks/context-is-king.md" }],
             blocks: {
@@ -407,15 +408,19 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Context is King",
                 title: "We are not learning to prompt better",
                 body:
-                  "We are learning to build a repo and workflow where the model can work safely and the next team can continue without folklore.",
+                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore and without verbal rescue.",
               },
-              "talk-theses": {
-                title: "Main theses",
+              "talk-reframe": {
+                title: "A team lead does not stand behind the model",
+                body:
+                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside.",
+              },
+              "talk-adopt": {
+                title: "What to adopt today",
                 items: [
-                  "AGENTS.md, skills, and runbooks are team infrastructure.",
-                  "If it is not in the repo, it does not exist.",
-                  "Tests are the trust boundary.",
-                  "Handoff is a design constraint throughout the day, not an ending.",
+                  "Before generating the next feature, make the repo a place people can actually navigate.",
+                  "When the agent does more, you need to verify better.",
+                  "Handoff is a design condition throughout the day, not an ending.",
                 ],
               },
             },
@@ -530,21 +535,27 @@ export const workshopBlueprintLocalizedContent = {
             label: "Workflow steps",
             title: "From AGENTS.md to review",
             body:
-              "The sequence should be simple enough for every table to repeat: anchor the context, let the agent plan, implement one small slice, review it, and keep one fallback ready.",
+              "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, /plan, and /review it becomes a working system instead of another prompt.",
             facilitatorNotes: [
               "Have snapshots ready as fallbacks. Do not wait on generation for long.",
               "Do not drift into a feature tour or five different modalities.",
+              "After the callout, say the room-level point explicitly: quality rises fast when you add context, planning, and review.",
             ],
             sourceRefs: [{ label: "Codex Demo Script: Flow", path: "content/talks/codex-demo-script.md" }],
             blocks: {
               "demo-steps": {
-                title: "Flow",
+                title: "The workflow you want people to repeat",
                 items: [
                   { title: "Without context the agent drifts", body: "Briefly show a weak start without guardrails." },
                   { title: "AGENTS.md with 4 elements", body: "Goal, Context, Constraints, Done When." },
                   { title: "Let the agent plan", body: "/plan turns one vague task into bounded moves." },
                   { title: "Small implementation slice + review", body: "Review belongs inside the workflow, not as panic recovery at the end." },
                 ],
+              },
+              "demo-point": {
+                title: "Point for the room",
+                body:
+                  "The point is not a magical result. The point is how fast quality rises once you add context, planning, and review.",
               },
               "demo-fallbacks": {
                 title: "Fallbacks",
@@ -638,20 +649,34 @@ export const workshopBlueprintLocalizedContent = {
             label: "Coaching cues",
             title: "What to look for while walking the room",
             body:
-              "Coach by returning teams to learner-facing artifacts, repo evidence, and the next verifiable move instead of solving the task for them.",
+              "While circulating, keep returning teams to the repo, explicit checks, and the nearest safe move. Do not take diagnosis and orientation out of their hands.",
             facilitatorNotes: [
               "Good help is not a verbal handoff. It is returning the team to the repo, checks, and the next safe move.",
+              "Keep the order coach -> mentor -> teacher. If you explain for too long, return the team to work quickly.",
             ],
             sourceRefs: [{ label: "Facilitation guide: What to look for while circulating", path: "content/facilitation/master-guide.md" }],
             blocks: {
-              "build-1-watch": {
-                title: "Look for at the tables",
+              "build-1-roles": {
+                title: "Order of help at the table",
                 items: [
-                  "One shared understanding of the goal.",
+                  { title: "Coach first", body: "Ask what the team needs and where it is stuck." },
+                  { title: "Then mentor", body: "Help with workflow or tooling, but do not skip the team's own diagnosis." },
+                  { title: "Teach only as a last resort", body: "Explain the principle briefly, then put the team back into motion." },
+                ],
+              },
+              "build-1-watch": {
+                title: "What should be visible in the repo",
+                items: [
+                  "The team has one shared understanding of the goal.",
                   "Context grows in the repo, not only in conversation.",
                   "A test, tracer bullet, or another explicit check exists.",
                   "From the repo, you can tell what is done and what the next safe move is.",
                 ],
+              },
+              "build-1-rescue": {
+                title: "Good help is not verbal handoff",
+                body:
+                  "If you immediately tell the team the answer, you lose the signal of what is missing in the repo. Return them to the artifacts they can actually work from.",
               },
             },
           },
@@ -894,8 +919,12 @@ export const workshopBlueprintLocalizedContent = {
           "rotation-instructions": {
             label: "Instructions for the new team",
             title: "How to start after rotation",
-            body: "Start with the README, AGENTS.md, and the plan. Build the map first. Earn the right to change things second.",
-            facilitatorNotes: ["If the team does not know what to reach for, return them to learner kit artifacts."],
+            body:
+              "Start with the README, AGENTS.md, and the plan. The first job is not coding. It is making a map: what helps, what is missing, what is risky, and what the next safe move is.",
+            facilitatorNotes: [
+              "If the team does not know what to reach for, return them to learner kit artifacts.",
+              "Make sure the team's own diagnosis appears before the first edit.",
+            ],
             sourceRefs: [{ label: "Facilitation guide: Instructions for the new team", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "rotation-steps": {
@@ -904,7 +933,16 @@ export const workshopBlueprintLocalizedContent = {
                   { title: "Start with the README, AGENTS.md, and the plan", body: "Do not skip the repo map." },
                   { title: "Write your own diagnosis", body: "What helps, what is missing, what is risky, and what is the next safe move?" },
                   { title: "Only then change code", body: "Do not reward confusion by editing the first file you see." },
+                  {
+                    title: "When unsure, return to the learner kit",
+                    body: "Template-agents, reference, analyze-checklist, and challenge cards should be the first support, not verbal rescue.",
+                  },
                 ],
+              },
+              "rotation-toolkit": {
+                title: "If you do not know where to start",
+                body:
+                  "Return to the learner kit and to the guiding artifacts in the repo. A weak signal should not be rescued by an improvised briefing.",
               },
             },
           },
@@ -969,16 +1007,24 @@ export const workshopBlueprintLocalizedContent = {
             label: "After rotation: keep building",
             title: "Continue only from what survived",
             body:
-              "The handoff friction is useful only if the team turns it into better repo guidance, clearer checks, or stronger runbooks instead of quietly working around it.",
-            facilitatorNotes: ["Help the team see frustration as a diagnostic signal, not a failure."],
+              "Build Phase 2 should turn handoff friction into a better repo map, stronger checks, and a clearer next safe move. Do not continue as if nothing happened.",
+            facilitatorNotes: [
+              "Help the team see frustration as a diagnostic signal, not a failure.",
+              "Ask what genuinely helped after rotation, what had to be written down, and which next check now keeps the work grounded.",
+            ],
             sourceRefs: [{ label: "Facilitation guide: Facilitation point for rotation", path: "content/facilitation/master-guide.md" }],
             blocks: {
-              "build-2-bullets": {
-                title: "After rotation",
+              "build-2-friction": {
+                title: "Friction is diagnostics",
+                body:
+                  "When the new team struggles, look for hidden context or missing verification. Do not fix the problem by talking around the repo.",
+              },
+              "build-2-steps": {
+                title: "What to do after rotation",
                 items: [
-                  "Do not rescue a weak repo signal with verbal handoff.",
-                  "Write what needs to be clarified or verified after rotation.",
-                  "Turn repeated pain into a better template, check, or runbook.",
+                  { title: "Name what truly helped continuation", body: "Capture the signal in the repo, not just the feeling." },
+                  { title: "Write what is missing or unclear", body: "Tighten the map, a decision, or the handoff artifact." },
+                  { title: "Add the next explicit check", body: "Before the next bigger move, put the work back on verification rails." },
                 ],
               },
             },
@@ -1045,17 +1091,25 @@ export const workshopBlueprintLocalizedContent = {
             label: "Continuation signals",
             title: "What really helped after rotation",
             body:
-              "Use this moment to collect hard continuation signals: what saved time, what created drag, and what now deserves to become a better template or rule.",
-            facilitatorNotes: ["Ask for concrete repo examples, not general impressions."],
+              "Use this moment to pull out hard continuation signals: what sped the new team up, what slowed it down, and what now deserves to become a better template or rule.",
+            facilitatorNotes: [
+              "Ask for concrete repo examples, not general impressions.",
+              "Prepare the room for reveal by separating genuinely useful signals from good vibes.",
+            ],
             sourceRefs: [{ label: "Facilitation guide: Reveal and reflection", path: "content/facilitation/master-guide.md" }],
             blocks: {
-              "intermezzo-2-questions": {
-                title: "We collect",
+              "intermezzo-2-steps": {
+                title: "What we are collecting now",
                 items: [
-                  "What helped you continue after rotation?",
-                  "What was missing?",
-                  "Which repo signal saved you the most time?",
+                  { title: "The signal that truly helped", body: "What saved time or reduced risk for the incoming team." },
+                  { title: "The signal that was missing", body: "What stayed hidden in heads, chat, or an unverified state." },
+                  { title: "The candidate for codification", body: "What should become a better template, check, or rule after today." },
                 ],
+              },
+              "intermezzo-2-evidence": {
+                title: "Examples, not impressions",
+                body:
+                  "Every answer should point to something traceable in the repo or to a clearly missing signal that should have been there.",
               },
             },
           },
@@ -1116,19 +1170,38 @@ export const workshopBlueprintLocalizedContent = {
             label: "1-2-4-All",
             title: "What helped people continue",
             body:
-              "Collect concrete examples rather than general lessons: what helped the next team continue, what was missing, and which repo signal saved the most time.",
+              "Use the final 1-2-4-All to surface the concrete signals that helped work survive handoff, and to separate them from general feelings about the day.",
             facilitatorNotes: [
               "Keep the questions concrete. Every example should point to a signal in the repo or to a missing signal.",
+              "During the group share, keep steering away from team scoring and back toward system signals.",
             ],
             sourceRefs: [{ label: "Facilitation guide: 1-2-4-All", path: "content/facilitation/master-guide.md" }],
             blocks: {
-              "reveal-questions": {
-                title: "Questions",
+              "reveal-steps": {
+                title: "1-2-4-All rhythm",
                 items: [
-                  "What helped you continue?",
-                  "What was missing?",
-                  "Which repo signal saved you the most time?",
+                  {
+                    title: "1 minute solo",
+                    body: "Write what helped continuation, what was missing, and which signal saved the most time.",
+                  },
+                  {
+                    title: "2 minutes in pairs",
+                    body: "Compare examples and choose one that is really worth sharing.",
+                  },
+                  {
+                    title: "4 minutes in fours",
+                    body: "Look for repeated signals, not for better or worse teams.",
+                  },
+                  {
+                    title: "All",
+                    body: "Only concrete repo signals and concrete missing signals go back to the room.",
+                  },
                 ],
+              },
+              "reveal-system-frame": {
+                title: "We are not judging winners",
+                body:
+                  "We are not asking who was better. We are asking which signals help work survive handoff and which ones still break under pressure.",
               },
             },
           },

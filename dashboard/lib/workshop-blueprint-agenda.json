@@ -306,9 +306,10 @@
           "intent": "teaching",
           "chromePreset": "minimal",
           "title": "Kontext je páka, ne kosmetika",
-          "body": "Harness engineering je práce s instrukcemi, kontextem a workflow tak, aby agent dělal správné věci opakovaně a předvídatelně.",
+          "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali pokračovat předvídatelně.",
           "facilitatorNotes": [
-            "Použij reframing větu a explicitně kontrastuj 'lepší prompt' versus 'lepší pracovní systém'."
+            "Použij reframing větu a explicitně kontrastuj 'lepší prompt' versus 'lepší pracovní systém'.",
+            "Po calloutu krátce připomeň, že team lead také netráví den tím, že jednomu vývojáři co půl minuty doplňuje další instrukci."
           ],
           "sourceRefs": [
             {
@@ -322,16 +323,22 @@
               "type": "hero",
               "eyebrow": "Context is King",
               "title": "Neučíme se lépe promptovat",
-              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat."
+              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru a bez ústního rescue."
             },
             {
-              "id": "talk-theses",
-              "type": "bullet-list",
-              "title": "Hlavní teze",
+              "id": "talk-reframe",
+              "type": "callout",
+              "tone": "info",
+              "title": "Team lead nestojí modelu za zády",
+              "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat."
+            },
+            {
+              "id": "talk-adopt",
+              "type": "checklist",
+              "title": "Co si z toho dnes adoptovat",
               "items": [
-                "AGENTS.md, skills a runbooky jsou týmová infrastruktura.",
-                "Co není v repu, neexistuje.",
-                "Testy jsou hranice důvěry.",
+                "Než začnu generovat další funkci, udělám z repa místo, kde se dá orientovat.",
+                "Když agent dělá víc, musím lépe ověřovat.",
                 "Handoff je průběžná podmínka práce, ne závěr dne."
               ]
             }
@@ -508,10 +515,11 @@
           "intent": "walkthrough",
           "chromePreset": "agenda",
           "title": "Od AGENTS.md k review",
-          "body": "Krátký sled kroků, který jde zopakovat i u stolu: kontext, `/plan`, malý kus implementace, `/review` a krátké použití skillu.",
+          "body": "Krátký sled kroků, který jde zopakovat i u stolu: bez kontextu to drhne, s `AGENTS.md`, `/plan` a `/review` vzniká pracovní systém, ne jen další prompt.",
           "facilitatorNotes": [
             "Měj připravené snapshoty pro fallbacky. Nečekej dlouho na generování.",
-            "Neukazuj přehlídku funkcí ani pět různých režimů práce."
+            "Neukazuj přehlídku funkcí ani pět různých režimů práce.",
+            "Po calloutu explicitně řekni pointu pro místnost: sledujeme, jak rychle roste kvalita, když přidáme kontext, plán a review."
           ],
           "sourceRefs": [
             {
@@ -523,7 +531,7 @@
             {
               "id": "demo-steps",
               "type": "steps",
-              "title": "Flow",
+              "title": "Workflow, který chcete zopakovat",
               "items": [
                 {
                   "title": "Bez kontextu agent tápe",
@@ -539,9 +547,16 @@
                 },
                 {
                   "title": "Malý kus implementace + review",
-                  "body": "Review je součást workflow, ne nouzová brzda."
+                  "body": "Review je součást workflow, ne nouzová brzda na konci."
                 }
               ]
+            },
+            {
+              "id": "demo-point",
+              "type": "callout",
+              "tone": "info",
+              "title": "Pointa pro místnost",
+              "body": "Nejde o kouzelný výsledek. Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán a review."
             },
             {
               "id": "demo-fallbacks",
@@ -698,9 +713,10 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Na co se při obcházení dívat",
-          "body": "Pracujte krátkými coaching otázkami a vracejte tým k artefaktům, ze kterých se dá opravdu pracovat, a k explicitnímu ověření.",
+          "body": "Při obcházení vracejte týmy k repu, explicitním checkům a nejbližšímu bezpečnému kroku. Neberte jim z ruky diagnostiku ani orientaci.",
           "facilitatorNotes": [
-            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu bezpečnému kroku."
+            "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu bezpečnému kroku.",
+            "Drž pořadí coach -> mentor -> učitel. Jakmile začneš dlouze vysvětlovat princip, vrať tým zpět do práce."
           ],
           "sourceRefs": [
             {
@@ -710,15 +726,41 @@
           ],
           "blocks": [
             {
-              "id": "build-1-watch",
-              "type": "bullet-list",
-              "title": "Sleduj u stolů",
+              "id": "build-1-roles",
+              "type": "steps",
+              "title": "Pořadí pomoci u stolu",
               "items": [
-                "Jedna společná představa o cíli.",
+                {
+                  "title": "Nejdřív coach",
+                  "body": "Ptej se, co tým potřebuje a kde je zaseknutý."
+                },
+                {
+                  "title": "Pak mentor",
+                  "body": "Pomoz s workflow nebo s nástrojem, ale nenech tým přeskočit vlastní diagnostiku."
+                },
+                {
+                  "title": "Učitel až jako poslední možnost",
+                  "body": "Krátce vysvětli princip a vrať tým do práce."
+                }
+              ]
+            },
+            {
+              "id": "build-1-watch",
+              "type": "checklist",
+              "title": "Co má být vidět v repu",
+              "items": [
+                "Tým má jednu společnou představu o cíli.",
                 "Kontext přibývá v repu, ne jen v hovoru.",
                 "Existuje test, tracer bullet nebo jiný explicitní check.",
-                "Je z repa vidět, co je hotové a jaký je další bezpečný krok."
+                "Je z repa poznat, co je hotové a jaký je další bezpečný krok."
               ]
+            },
+            {
+              "id": "build-1-rescue",
+              "type": "callout",
+              "tone": "info",
+              "title": "Dobrá pomoc není ústní handoff",
+              "body": "Když týmu rovnou řeknete řešení, ztratí se signál, co v repu chybí. Vracejte ho k artefaktům, ze kterých se dá opravdu pracovat."
             }
           ]
         },
@@ -1085,9 +1127,10 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Jak začít po rotaci",
-          "body": "Začněte README, AGENTS.md a planem. Nejdřív mapa, pak teprve změny.",
+          "body": "Začněte README, AGENTS.md a planem. První úkol není kódovat, ale udělat si mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
           "facilitatorNotes": [
-            "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu."
+            "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu.",
+            "Dohlédni, aby se vlastní diagnóza objevila dřív než první editace."
           ],
           "sourceRefs": [
             {
@@ -1112,8 +1155,19 @@
                 {
                   "title": "Teprve potom měňte kód",
                   "body": "Needitujte první soubor, který otevřete."
+                },
+                {
+                  "title": "Když nevíte, vraťte se k learner kitu",
+                  "body": "Template-agents, reference, analyze-checklist a challenge cards mají být první opora, ne ústní rescue."
                 }
               ]
+            },
+            {
+              "id": "rotation-toolkit",
+              "type": "callout",
+              "tone": "info",
+              "title": "Když nevíte, po čem sáhnout",
+              "body": "Vraťte se k learner kitu a k vodicím artefaktům v repu. Slabý signál se nemá zachraňovat improvizovaným briefingem."
             }
           ]
         },
@@ -1213,9 +1267,10 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Pokračujte jen z toho, co přežilo",
-          "body": "Frustrace je užitečný signál, pokud ukazuje na skrytý kontext nebo chybějící verifikaci. Proměňte ji v lepší mapu repa, check nebo runbook.",
+          "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějších checků a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
           "facilitatorNotes": [
-            "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání."
+            "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání.",
+            "Ptej se, co po rotaci opravdu pomohlo, co bylo nutné dopsat a jaký další check teď drží práci při zemi."
           ],
           "sourceRefs": [
             {
@@ -1225,13 +1280,29 @@
           ],
           "blocks": [
             {
-              "id": "build-2-bullets",
-              "type": "bullet-list",
-              "title": "Po rotaci",
+              "id": "build-2-friction",
+              "type": "callout",
+              "tone": "warning",
+              "title": "Frustrace je diagnostika",
+              "body": "Když nový tým tápe, hledejte skrytý kontext nebo chybějící verifikaci. Nespravujte to hovorem."
+            },
+            {
+              "id": "build-2-steps",
+              "type": "steps",
+              "title": "Co udělat po rotaci",
               "items": [
-                "Nezachraňujte slabý signál v repu ústním handoffem.",
-                "Dopište, co musí být po rotaci zpřesněno nebo ověřeno.",
-                "Proměňte opakující se bolest v lepší template, check nebo runbook."
+                {
+                  "title": "Pojmenujte, co opravdu pomohlo navázat",
+                  "body": "Zachyťte signál v repu, ne jen obecný pocit."
+                },
+                {
+                  "title": "Dopište, co chybí nebo je nejasné",
+                  "body": "Zpřesněte mapu, rozhodnutí nebo handoff artefakt."
+                },
+                {
+                  "title": "Přidejte další explicitní check",
+                  "body": "Než uděláte větší změnu, vraťte práci k ověření."
+                }
               ]
             }
           ]
@@ -1263,7 +1334,7 @@
             },
             {
               "id": "build-2-participant-bullets",
-              "type": "bullet-list",
+              "type": "checklist",
               "title": "Teď dělejte",
               "items": [
                 "Pojmenujte, co vám v repu pomohlo navázat.",
@@ -1323,9 +1394,10 @@
           "intent": "reflection",
           "chromePreset": "checkpoint",
           "title": "Co po rotaci opravdu pomohlo",
-          "body": "Sbíráme konkrétní signály z návazné části dne a připravujeme místnost na reveal: co pomohlo, co chybělo a co je kandidát na lepší template.",
+          "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co nový tým zrychlilo, co ho brzdilo a co už si říká o lepší template nebo pravidlo.",
           "facilitatorNotes": [
-            "Vyžaduj konkrétní příklady z repa, ne obecné dojmy."
+            "Vyžaduj konkrétní příklady z repa, ne obecné dojmy.",
+            "Připrav místnost na reveal tím, že oddělíš skutečně užitečné signály od dobrých pocitů."
           ],
           "sourceRefs": [
             {
@@ -1335,14 +1407,30 @@
           ],
           "blocks": [
             {
-              "id": "intermezzo-2-questions",
-              "type": "bullet-list",
-              "title": "Sbíráme",
+              "id": "intermezzo-2-steps",
+              "type": "steps",
+              "title": "Co teď sbíráme",
               "items": [
-                "Co vám po rotaci pomohlo pokračovat?",
-                "Co chybělo?",
-                "Jaký signál v repu vám nejvíc ušetřil čas?"
+                {
+                  "title": "Signál, který opravdu pomohl",
+                  "body": "Co novému týmu ušetřilo čas nebo zmenšilo riziko."
+                },
+                {
+                  "title": "Signál, který chyběl",
+                  "body": "Co zůstalo skryté v hlavách, v chatu nebo v neověřeném stavu."
+                },
+                {
+                  "title": "Kandidát na codifikaci",
+                  "body": "Co má po dnešku vzniknout jako lepší template, check nebo pravidlo."
+                }
               ]
+            },
+            {
+              "id": "intermezzo-2-evidence",
+              "type": "callout",
+              "tone": "info",
+              "title": "Bereme příklady, ne dojmy",
+              "body": "Každá odpověď má mířit k něčemu dohledatelnému v repu nebo k jasně chybějícímu signálu."
             }
           ]
         },
@@ -1429,9 +1517,10 @@
           "intent": "reflection",
           "chromePreset": "minimal",
           "title": "Co pomohlo pokračovat",
-          "body": "Sbíráme konkrétní příklady toho, co pomohlo navázat, co chybělo a jaký signál v repu nejvíc ušetřil čas.",
+          "body": "Závěrečné 1-2-4-All má vytáhnout konkrétní signály, které pomohly práci přežít handoff, a oddělit je od obecných pocitů.",
           "facilitatorNotes": [
-            "Drž otázky konkrétní. Každý příklad by měl mířit k signálu v repu nebo k chybějícímu signálu."
+            "Drž otázky konkrétní. Každý příklad by měl mířit k signálu v repu nebo k chybějícímu signálu.",
+            "Ve skupinové části hlídej, aby se nehodnotily týmy, ale systém a jeho signály."
           ],
           "sourceRefs": [
             {
@@ -1441,14 +1530,34 @@
           ],
           "blocks": [
             {
-              "id": "reveal-questions",
-              "type": "bullet-list",
-              "title": "Otázky",
+              "id": "reveal-steps",
+              "type": "steps",
+              "title": "1-2-4-All rytmus",
               "items": [
-                "Co vám pomohlo pokračovat?",
-                "Co chybělo?",
-                "Jaký signál v repu vám nejvíc ušetřil čas?"
+                {
+                  "title": "1 minuta sám",
+                  "body": "Napište, co pomohlo pokračovat, co chybělo a který signál nejvíc šetřil čas."
+                },
+                {
+                  "title": "2 minuty ve dvojici",
+                  "body": "Porovnejte příklady a vyberte jeden, který opravdu stojí za sdílení."
+                },
+                {
+                  "title": "4 minuty ve čtveřici",
+                  "body": "Hledejte opakující se signály, ne hodnocení týmů."
+                },
+                {
+                  "title": "All",
+                  "body": "Do místnosti jdou jen konkrétní repo signály a konkrétní chybějící signály."
+                }
               ]
+            },
+            {
+              "id": "reveal-system-frame",
+              "type": "callout",
+              "tone": "info",
+              "title": "Nehodnotíme vítěze",
+              "body": "Nedíváme se, kdo byl lepší. Díváme se, které signály pomáhají práci přežít handoff a které ji brzdí."
             }
           ]
         },

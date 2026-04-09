@@ -46,6 +46,7 @@ Design rules:
 - optimized for speed and safety, not public polish
 - writes go through explicit admin actions
 - instance lifecycle belongs in the dashboard too: create, switch, reset, and safe remove should be visible product operations rather than script-only paths
+- agenda timeline index and agenda-moment detail may be separate page states when that reduces duplication and keeps editing off the default canvas
 
 ## Presenter Surface
 

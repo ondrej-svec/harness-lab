@@ -244,20 +244,29 @@ Avoid:
 
 ## Agenda View Pattern
 
-The main control room should use this structure:
+The control room should separate the agenda index from the agenda-moment workbench.
 
-1. Left column: agenda timeline as selectable items
-2. Main detail panel: selected item summary, primary projection actions, and operational detail
-3. Action row: `Open room screen`, `Open participant 1:1`, `Move live marker`, `Edit this item`
-4. Secondary disclosures below:
-   - room screen scene pack
-   - source and storage model
+Use this structure:
+
+1. Agenda index
+   - top summary for live now, next up, and participant signal
+   - timeline as the primary navigation model
+   - no duplicated selected-item detail below the timeline
+2. Agenda moment detail
+   - dedicated page state for one selected moment
+   - top hero with the moment summary and its primary action
+   - scene pack and source/storage detail below
+3. Editing
+   - edit the agenda moment in a side sheet
+   - edit scenes in side sheets
+   - do not turn the index into a long mixed read/edit canvas
 
 This keeps the reading order obvious:
 
-- select
-- inspect
+- browse
+- open detail
 - act
+- edit only when needed
 - reveal secondary detail only when needed
 
 ## Presenter Paging Pattern

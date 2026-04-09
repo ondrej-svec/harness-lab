@@ -129,6 +129,27 @@ describe("workshop-data", () => {
     ).toBe(true);
   });
 
+  it("keeps the rewritten talk and reveal flagship scenes structurally richer in English content", () => {
+    const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
+    const talk = state.agenda.find((item) => item.id === "talk");
+    const reveal = state.agenda.find((item) => item.id === "reveal");
+    const talkScene = talk?.presenterScenes.find((scene) => scene.id === "talk-framing");
+    const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
+
+    expect(talkScene?.blocks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "talk-reframe", type: "callout" }),
+        expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
+      ]),
+    );
+    expect(revealScene?.blocks).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "reveal-steps", type: "steps" }),
+        expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
+      ]),
+    );
+  });
+
   it("returns the team name when present and the id otherwise", () => {
     expect(getTeamName("t2", seedWorkshopState.teams)).toBe("Tým 2");
     expect(getTeamName("unknown-team", seedWorkshopState.teams)).toBe("unknown-team");

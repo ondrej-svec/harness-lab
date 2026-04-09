@@ -157,7 +157,8 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
 
     await page.getByRole("link", { name: /13:30 • Rotace týmů/i }).click();
-    await page.getByRole("button", { name: "posunout live marker" }).click();
+    await expect(page).toHaveURL(/agendaItem=rotation/);
+    await page.getByRole("button", { name: "posunout live sem" }).click();
 
     await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
     await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
@@ -165,13 +166,19 @@ test.describe("facilitator admin (file mode)", () => {
     await page.getByRole("button", { name: "Odemknout" }).click();
     await expect(page.getByText(/předání je odemčeno/i).first()).toBeVisible();
     await page.goto("/admin/instances/sample-studio-a");
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
+    await page.getByRole("link", { name: /13:30 • Rotace týmů/i }).click();
     await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
 
-    await page.getByRole("link", { name: /13:45 • Build Phase 2/i }).click();
-    await page.getByRole("button", { name: "posunout live marker" }).click();
+    await page.goto("/admin/instances/sample-studio-a");
+    await page.getByRole("link").filter({ hasText: "13:45 • Build Phase 2" }).first().click();
+    await expect(page).toHaveURL(/agendaItem=build-2/);
+    await page.getByRole("button", { name: "posunout live sem" }).click();
+    await expect(page.getByText("13:45 • Build Phase 2").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
+    await page.goto("/admin/instances/sample-studio-a");
     await expect(page.getByText("13:45 • Build Phase 2").first()).toBeVisible();
     await expect(page.getByText("14:45 • Intermezzo 2").first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
 
     await page.goto("/admin/instances/sample-studio-a?section=settings");
     await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
@@ -249,6 +256,8 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=agenda");
 
     await expect(page.getByRole("heading", { name: "control room" })).toBeVisible();
+    await page.getByRole("link").filter({ hasText: "Context is King" }).first().click();
+    await expect(page).toHaveURL(/agendaItem=talk/);
     await page.getByText("zdroj a ukládání").click();
     await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();
     await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();

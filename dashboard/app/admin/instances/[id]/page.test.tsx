@@ -117,9 +117,8 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.controlRoomBack);
     expect(html).toContain(adminCopy.en.navAgenda);
     expect(html).toContain(adminCopy.en.agendaSectionTitle);
-    expect(html).toContain(adminCopy.en.agendaCurrentTitle);
-    expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
-    expect(html).toContain(adminCopy.en.presenterOpenCurrentButton);
+    expect(html).toContain(adminCopy.en.agendaTimelineTitle);
+    expect(html).toContain(adminCopy.en.openAgendaDetailButton);
     expect(html).not.toContain(adminCopy.en.archiveResetTitle);
     expect(html).not.toContain(adminCopy.en.continuationTitle);
     expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
@@ -146,7 +145,7 @@ describe("Admin control room page", () => {
     expect(html).toContain("13:30 • Rotace týmů");
   });
 
-  it("renders the inline agenda editor for the selected agenda item", async () => {
+  it("renders the agenda editor in a side sheet for the selected agenda item", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
@@ -157,10 +156,26 @@ describe("Admin control room page", () => {
 
     expect(html).toContain(adminCopy.en.agendaEditTitle);
     expect(html).toContain(adminCopy.en.closePanelButton);
-    expect(html).not.toContain('fixed inset-0 z-50');
+    expect(html).toContain('fixed inset-0 z-50');
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
     expect(html).toContain('value="Context is King"');
+  });
+
+  it("renders the selected agenda moment as a dedicated detail workbench", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.agendaBackToTimelineButton);
+    expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
+    expect(html).toContain(adminCopy.en.openEditSheetButton);
+    expect(html).toContain("Context is King");
+    expect(html).not.toContain(adminCopy.en.openAgendaDetailButton);
   });
 
   it("renders the scene editor sheet for the selected presenter scene", async () => {

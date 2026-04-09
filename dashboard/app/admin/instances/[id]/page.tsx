@@ -709,9 +709,8 @@ export default async function AdminPage({
     availableInstances,
     activeInstanceId,
   );
-  const selectedAgendaItem =
-    ((state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined) ??
-    null;
+  const requestedAgendaItem = state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) as RichAgendaItem | undefined;
+  const selectedAgendaItem = (requestedAgendaItem ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined;
   const selectedScene =
     selectedAgendaItem?.presenterScenes.find((scene) => scene.id === query?.scene) ??
     selectedAgendaItem?.presenterScenes.find((scene) => scene.id === selectedAgendaItem.defaultPresenterSceneId) ??
@@ -744,6 +743,7 @@ export default async function AdminPage({
     selectedInstance,
     currentAgendaItem,
   });
+  const showAgendaDetail = visibleSection === "agenda" && Boolean(requestedAgendaItem);
   const selectedDefaultScene =
     selectedAgendaItem?.presenterScenes.find((scene) => scene.id === selectedAgendaItem.defaultPresenterSceneId) ??
     selectedAgendaItem?.presenterScenes[0] ??
@@ -760,12 +760,18 @@ export default async function AdminPage({
     lang,
     instanceId: activeInstanceId,
   });
-  const agendaBaseHref = buildAdminHref({
+  const agendaIndexHref = buildAdminHref({
+    lang,
+    section: "agenda",
+    instanceId: activeInstanceId,
+  });
+  const agendaDetailHref = buildAdminHref({
     lang,
     section: "agenda",
     instanceId: activeInstanceId,
     agendaItemId: selectedAgendaItem?.id ?? null,
   });
+  const agendaBaseHref = showAgendaDetail ? agendaDetailHref : agendaIndexHref;
   const agendaEditHref =
     selectedAgendaItem
       ? buildAdminHref({
@@ -825,7 +831,6 @@ export default async function AdminPage({
         : null) ?? null;
   const handoffIsLive = contextualHandoffItem?.id === currentAgendaItem?.id;
   const selectedAgendaOwnsHandoffControls = contextualHandoffItem?.id === selectedAgendaItem?.id;
-  const showAgendaInlineEditor = visibleSection === "agenda" && activeOverlay === "agenda-edit" && selectedAgendaItem;
   const instanceWhenLabel = selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange;
   const instanceWhereLabel = (selectedInstance ? getWorkshopLocationLines(selectedInstance).join(" / ") : "") || state.workshopMeta.city;
   const instanceOwnerLabel = selectedInstance?.workshopMeta.facilitatorLabel ?? "n/a";
@@ -868,8 +873,24 @@ export default async function AdminPage({
               <div className="flex flex-wrap items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:justify-end">
                 <AdminLanguageSwitcher
                   lang={lang}
-                  csHref={buildAdminHref({ lang: "cs", section: visibleSection, instanceId: activeInstanceId })}
-                  enHref={buildAdminHref({ lang: "en", section: visibleSection, instanceId: activeInstanceId })}
+                  csHref={buildAdminHref({
+                    lang: "cs",
+                    section: visibleSection,
+                    instanceId: activeInstanceId,
+                    teamId: query?.team ?? null,
+                    agendaItemId: showAgendaDetail ? selectedAgendaItem?.id ?? null : null,
+                    sceneId: showAgendaDetail ? selectedScene?.id ?? null : null,
+                    overlay: visibleSection === "agenda" ? activeOverlay : null,
+                  })}
+                  enHref={buildAdminHref({
+                    lang: "en",
+                    section: visibleSection,
+                    instanceId: activeInstanceId,
+                    teamId: query?.team ?? null,
+                    agendaItemId: showAgendaDetail ? selectedAgendaItem?.id ?? null : null,
+                    sceneId: showAgendaDetail ? selectedScene?.id ?? null : null,
+                    overlay: visibleSection === "agenda" ? activeOverlay : null,
+                  })}
                 />
                 <span>/</span>
                 <ThemeSwitcher />
@@ -990,265 +1011,258 @@ export default async function AdminPage({
             description={copy.agendaSectionDescription}
           >
             <div className="space-y-6">
-              <div className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
-                <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
-                      {copy.liveNow}
-                    </span>
-                    <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
-                      {state.workshopMeta.currentPhaseLabel}
-                    </span>
-                  </div>
-                  <h2 className="mt-4 text-[1.85rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-3xl">
-                    {overviewState.liveNowTitle}
-                  </h2>
-                  <p className="mt-3 max-w-3xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-                  <ControlRoomPersistentSummary
-                    label={copy.currentPhase}
-                    value={currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
-                  />
-                  <ControlRoomPersistentSummary
-                    label={copy.nextUp}
-                    value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-                  />
-                  <ControlRoomPersistentSummary label={copy.workspaceSignalLabel} value={overviewState.participantState} hint={state.rotation.scenario} />
-                </div>
-              </div>
-
-              <div className="grid gap-6 xl:grid-cols-[minmax(20rem,24rem)_minmax(0,1fr)]">
-                <section className="space-y-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
-                      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.phaseControlHint}</p>
-                    </div>
-                    <Link className={adminSecondaryButtonClassName} href={agendaAddHref}>
-                      {copy.openAddAgendaItemButton}
+              {showAgendaDetail && selectedAgendaItem ? (
+                <>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <Link className={adminGhostButtonClassName} href={agendaIndexHref}>
+                      {copy.agendaBackToTimelineButton}
                     </Link>
+                    <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.phaseControlHint}</p>
                   </div>
-                  <div className="space-y-3">
-                    {state.agenda.map((item) => (
-                      <Link
-                        key={item.id}
-                        href={buildAdminHref({
+
+                  <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <StatusPill
+                        label={
+                          selectedAgendaItem.status === "current"
+                            ? copy.liveNow
+                            : selectedAgendaItem.status === "done"
+                              ? copy.agendaStatusDone
+                              : copy.agendaStatusUpcoming
+                        }
+                        tone={selectedAgendaItem.status === "current" ? "live" : "neutral"}
+                      />
+                      <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
+                        {copy.runtimeCopyBadge}
+                      </span>
+                      <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
+                        {selectedAgendaItem.kind === "custom" ? copy.customItemBadge : copy.blueprintItemBadge}
+                      </span>
+                    </div>
+                    <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[var(--hero-muted)]">{copy.agendaCurrentTitle}</p>
+                    <h2 className="mt-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
+                      {selectedAgendaItem.time} • {selectedAgendaItem.title}
+                    </h2>
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
+                      {selectedAgendaItem.roomSummary || selectedAgendaItem.description}
+                    </p>
+
+                    <div className="mt-5 flex flex-wrap gap-3">
+                      {selectedAgendaItem.id !== currentAgendaItem?.id ? (
+                        <form action={setAgendaAction}>
+                          <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                          <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
+                          <AdminSubmitButton className={adminPrimaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
+                        </form>
+                      ) : selectedAgendaProjectionHref ? (
+                        <a
+                          className={`${adminPrimaryButtonClassName} inline-flex`}
+                          href={selectedAgendaProjectionHref}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {copy.presenterOpenCurrentButton}
+                        </a>
+                      ) : null}
+                      {selectedAgendaProjectionHref && selectedAgendaItem.id !== currentAgendaItem?.id ? (
+                        <a
+                          className={`${adminGhostButtonClassName} inline-flex`}
+                          href={selectedAgendaProjectionHref}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {copy.presenterOpenCurrentButton}
+                        </a>
+                      ) : null}
+                      <a
+                        className={`${adminSecondaryButtonClassName} inline-flex`}
+                        href={selectedAgendaParticipantMirrorHref}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {copy.presenterOpenParticipantSurfaceButton}
+                      </a>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <Link className={adminGhostButtonClassName} href={agendaEditHref}>
+                        {copy.openEditSheetButton}
+                      </Link>
+                      {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
+                        <Link className={adminGhostButtonClassName} href={liveAgendaHref}>
+                          {copy.agendaJumpToLiveButton}
+                        </Link>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-5 rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{copy.presenterCurrentSceneLabel}</p>
+                      <p className="mt-2 text-sm font-semibold text-[var(--hero-text)]">
+                        {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {selectedAgendaOwnsHandoffControls ? (
+                    <ControlCard
+                      title={copy.handoffMomentTitle}
+                      description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
+                    >
+                      <div className="space-y-4">
+                        <form action={toggleRotationAction} className="space-y-4">
+                          <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                          <div className="grid grid-cols-2 gap-3">
+                            <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
+                              {copy.unlockButton}
+                            </AdminSubmitButton>
+                            <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
+                              {copy.hideAgainButton}
+                            </AdminSubmitButton>
+                          </div>
+                          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                            {copy.participantStatePrefix} {overviewState.participantState}.
+                          </div>
+                        </form>
+
+                        <div className="space-y-2 border-t border-[var(--border)] pt-4">
+                          {state.rotation.slots.map((slot) => (
+                            <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                              <p className="font-medium text-[var(--text-primary)]">
+                                {slot.fromTeam} → {slot.toTeam}
+                              </p>
+                              <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </ControlCard>
+                  ) : null}
+
+                  <AgendaItemDetail item={selectedAgendaItem} lang={lang} copy={copy} />
+
+                  <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaPresenterGroupTitle}</p>
+                        <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">
+                          {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterCardDescription}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-3">
+                        <Link className={adminSecondaryButtonClassName} href={sceneAddHref}>
+                          {copy.presenterAddSceneButton}
+                        </Link>
+                        {selectedScene ? (
+                          <Link className={adminGhostButtonClassName} href={sceneEditHref}>
+                            {copy.presenterEditSceneButton}
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="mt-4 space-y-3">
+                      {selectedAgendaItem.presenterScenes.length > 0 ? (
+                        selectedAgendaItem.presenterScenes.map((scene) => (
+                          <PresenterSceneSummaryCard
+                            key={scene.id}
+                            scene={scene}
+                            agendaItemId={selectedAgendaItem.id}
+                            activeInstanceId={activeInstanceId}
+                            lang={lang}
+                            copy={copy}
+                            isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
+                            isSelected={selectedScene?.id === scene.id}
+                          />
+                        ))
+                      ) : (
+                        <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
+                      )}
+                    </div>
+                  </section>
+
+                  <details className="rounded-[22px] border border-[var(--border)] bg-[var(--card-top)] p-4">
+                    <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
+                      {copy.agendaStorageGroupTitle}
+                    </summary>
+                    <div className="mt-4 space-y-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      <p>{copy.agendaSourceBody}</p>
+                      <p>
+                        Repo seed: <code>dashboard/lib/workshop-data.ts</code>
+                      </p>
+                      <p>
+                        File-mode runtime copy: <code>dashboard/data/&lt;instance&gt;/workshop-state.json</code>
+                      </p>
+                      <p>
+                        Neon-mode runtime copy: <code>workshop_instances.workshop_state</code>
+                      </p>
+                    </div>
+                  </details>
+                </>
+              ) : (
+                <>
+                  <div className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
+                    <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
+                          {copy.liveNow}
+                        </span>
+                        <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
+                          {state.workshopMeta.currentPhaseLabel}
+                        </span>
+                      </div>
+                      <h2 className="mt-4 text-[1.85rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-3xl">
+                        {overviewState.liveNowTitle}
+                      </h2>
+                      <p className="mt-3 max-w-3xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
+                      <ControlRoomPersistentSummary
+                        label={copy.currentPhase}
+                        value={currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
+                      />
+                      <ControlRoomPersistentSummary
+                        label={copy.nextUp}
+                        value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
+                      />
+                      <ControlRoomPersistentSummary label={copy.workspaceSignalLabel} value={overviewState.participantState} hint={state.rotation.scenario} />
+                    </div>
+                  </div>
+
+                  <section className="space-y-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
+                        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaIndexDescription}</p>
+                      </div>
+                      <Link className={adminSecondaryButtonClassName} href={agendaAddHref}>
+                        {copy.openAddAgendaItemButton}
+                      </Link>
+                    </div>
+                    <div className="space-y-3">
+                      {state.agenda.map((item) => {
+                        const detailHref = buildAdminHref({
                           lang,
                           section: "agenda",
                           instanceId: activeInstanceId,
                           agendaItemId: item.id,
-                        })}
-                        className={`block rounded-[20px] border p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[var(--border-strong)] ${
-                          selectedAgendaItem?.id === item.id
-                            ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_14px_28px_rgba(28,25,23,0.08)]"
-                            : "border-[var(--border)] bg-[var(--surface-soft)]"
-                        }`}
-                      >
-                        <TimelineRow item={item} copy={copy} detailed />
-                      </Link>
-                    ))}
-                  </div>
-                </section>
+                        });
 
-                <section className="space-y-5">
-                  {selectedAgendaItem ? (
-                    <>
-                      <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
-                        <div className="flex flex-wrap items-center gap-2">
-                          <StatusPill
-                            label={
-                              selectedAgendaItem.status === "current"
-                                ? copy.liveNow
-                                : selectedAgendaItem.status === "done"
-                                  ? copy.agendaStatusDone
-                                  : copy.agendaStatusUpcoming
-                            }
-                            tone={selectedAgendaItem.status === "current" ? "live" : "neutral"}
-                          />
-                          <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
-                            {copy.runtimeCopyBadge}
-                          </span>
-                          <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
-                            {selectedAgendaItem.kind === "custom" ? copy.customItemBadge : copy.blueprintItemBadge}
-                          </span>
-                        </div>
-                        <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[var(--hero-muted)]">{copy.agendaCurrentTitle}</p>
-                        <h2 className="mt-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
-                          {selectedAgendaItem.time} • {selectedAgendaItem.title}
-                        </h2>
-                        <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
-                          {selectedAgendaItem.roomSummary || selectedAgendaItem.description}
-                        </p>
-
-                        <div className="mt-5 flex flex-wrap gap-3">
-                          {selectedAgendaProjectionHref ? (
-                            <a
-                              className={`${adminPrimaryButtonClassName} inline-flex`}
-                              href={selectedAgendaProjectionHref}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {copy.presenterOpenCurrentButton}
-                            </a>
-                          ) : null}
-                          <a
-                            className={`${adminSecondaryButtonClassName} inline-flex`}
-                            href={selectedAgendaParticipantMirrorHref}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            {copy.presenterOpenParticipantSurfaceButton}
-                          </a>
-                          {selectedAgendaItem.id !== currentAgendaItem?.id ? (
-                            <form action={setAgendaAction}>
-                              <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                              <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
-                              <AdminSubmitButton className={adminSecondaryButtonClassName}>{copy.setCurrentPhase}</AdminSubmitButton>
-                            </form>
-                          ) : null}
-                        </div>
-
-                        <div className="mt-3 flex flex-wrap gap-3">
-                          <Link className={adminGhostButtonClassName} href={agendaEditHref}>
-                            {copy.openEditSheetButton}
+                        return (
+                          <Link key={item.id} href={detailHref} className="group block">
+                            <div className="relative">
+                              <TimelineRow item={item} copy={copy} detailed />
+                              <span className="pointer-events-none absolute right-4 top-4 text-xs font-medium lowercase text-[var(--text-secondary)] transition group-hover:text-[var(--text-primary)]">
+                                {copy.openAgendaDetailButton}
+                              </span>
+                            </div>
                           </Link>
-                          {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
-                            <Link className={adminGhostButtonClassName} href={liveAgendaHref}>
-                              {copy.agendaJumpToLiveButton}
-                            </Link>
-                          ) : null}
-                        </div>
-
-                        <div className="mt-5 rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3">
-                          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{copy.presenterCurrentSceneLabel}</p>
-                          <p className="mt-2 text-sm font-semibold text-[var(--hero-text)]">
-                            {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
-                          </p>
-                        </div>
-                      </div>
-
-                      {selectedAgendaOwnsHandoffControls ? (
-                        <ControlCard
-                          title={copy.handoffMomentTitle}
-                          description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
-                        >
-                          <div className="space-y-4">
-                            <form action={toggleRotationAction} className="space-y-4">
-                              <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                              <div className="grid grid-cols-2 gap-3">
-                                <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
-                                  {copy.unlockButton}
-                                </AdminSubmitButton>
-                                <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
-                                  {copy.hideAgainButton}
-                                </AdminSubmitButton>
-                              </div>
-                              <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                                {copy.participantStatePrefix} {overviewState.participantState}.
-                              </div>
-                            </form>
-
-                            <div className="space-y-2 border-t border-[var(--border)] pt-4">
-                              {state.rotation.slots.map((slot) => (
-                                <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
-                                  <p className="font-medium text-[var(--text-primary)]">
-                                    {slot.fromTeam} → {slot.toTeam}
-                                  </p>
-                                  <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </ControlCard>
-                      ) : null}
-
-                      <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                        {copy.agendaRuntimeNotice}
-                      </div>
-
-                      {showAgendaInlineEditor ? (
-                        <section className="rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[0_18px_36px_rgba(28,25,23,0.06)]">
-                          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-[var(--border)] px-5 py-4 sm:px-6">
-                            <div className="min-w-0">
-                              <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{copy.agendaEditEyebrow}</p>
-                              <h3 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{copy.agendaEditTitle}</h3>
-                              <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaEditDescription}</p>
-                            </div>
-                            <Link className={adminGhostButtonClassName} href={agendaBaseHref}>
-                              {copy.closePanelButton}
-                            </Link>
-                          </div>
-                          <div className="px-5 py-5 sm:px-6">
-                            <AgendaItemEditorSheetBody item={selectedAgendaItem} lang={lang} section="agenda" instanceId={activeInstanceId} copy={copy} />
-                          </div>
-                        </section>
-                      ) : null}
-
-                      <AgendaItemDetail item={selectedAgendaItem} lang={lang} copy={copy} />
-
-                      <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div>
-                            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaPresenterGroupTitle}</p>
-                            <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">
-                              {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
-                            </h3>
-                            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterCardDescription}</p>
-                          </div>
-                          <div className="flex flex-wrap gap-3">
-                            <Link className={adminSecondaryButtonClassName} href={sceneAddHref}>
-                              {copy.presenterAddSceneButton}
-                            </Link>
-                            {selectedScene ? (
-                              <Link className={adminGhostButtonClassName} href={sceneEditHref}>
-                                {copy.presenterEditSceneButton}
-                              </Link>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div className="mt-4 space-y-3">
-                          {selectedAgendaItem.presenterScenes.length > 0 ? (
-                            selectedAgendaItem.presenterScenes.map((scene) => (
-                              <PresenterSceneSummaryCard
-                                key={scene.id}
-                                scene={scene}
-                                agendaItemId={selectedAgendaItem.id}
-                                activeInstanceId={activeInstanceId}
-                                lang={lang}
-                                copy={copy}
-                                isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
-                                isSelected={selectedScene?.id === scene.id}
-                              />
-                            ))
-                          ) : (
-                            <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
-                          )}
-                        </div>
-                      </section>
-
-                      <details className="rounded-[22px] border border-[var(--border)] bg-[var(--card-top)] p-4">
-                        <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
-                          {copy.agendaStorageGroupTitle}
-                        </summary>
-                        <div className="mt-4 space-y-3 text-sm leading-6 text-[var(--text-secondary)]">
-                          <p>{copy.agendaSourceBody}</p>
-                          <p>
-                            Repo seed: <code>dashboard/lib/workshop-data.ts</code>
-                          </p>
-                          <p>
-                            File-mode runtime copy: <code>dashboard/data/&lt;instance&gt;/workshop-state.json</code>
-                          </p>
-                          <p>
-                            Neon-mode runtime copy: <code>workshop_instances.workshop_state</code>
-                          </p>
-                        </div>
-                      </details>
-                    </>
-                  ) : null}
-                </section>
-              </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                </>
+              )}
             </div>
           </AdminPanel>
         ) : null}
@@ -1673,6 +1687,17 @@ export default async function AdminPage({
           </div>
         </div>
       </div>
+      {visibleSection === "agenda" && activeOverlay === "agenda-edit" && showAgendaDetail && selectedAgendaItem ? (
+        <AdminSheet
+          eyebrow={copy.agendaEditEyebrow}
+          title={copy.agendaEditTitle}
+          description={copy.agendaEditDescription}
+          closeHref={agendaBaseHref}
+          closeLabel={copy.closePanelButton}
+        >
+          <AgendaItemEditorSheetBody item={selectedAgendaItem} lang={lang} section="agenda" instanceId={activeInstanceId} copy={copy} />
+        </AdminSheet>
+      ) : null}
       {visibleSection === "agenda" && activeOverlay === "agenda-add" ? (
         <AdminSheet
           eyebrow={copy.agendaEditEyebrow}
