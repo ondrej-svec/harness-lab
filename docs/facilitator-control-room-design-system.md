@@ -66,28 +66,30 @@ That means:
 
 If a desktop composition only feels good because it adds more simultaneous panels, the structure is probably wrong.
 
-## Live Canvas Contract
+## Agenda-Centered Canvas Contract
 
-The default `live` section is the run-the-room surface.
+The default control room is one agenda-centered workshop surface. Treat `live` as a compatibility alias, not as a separate product.
 
 It may show:
 
-- the current workshop moment
-- the next transition
+- current workshop position
+- next transition
 - participant surface signal
-- one room-facing launch action
-- one contextual runtime action group when the agenda moment requires it
+- the agenda spine as the primary navigation model
+- one selected agenda item as the current operating object
+- contextual handoff controls only when the selected moment genuinely owns them
 
 It must not show by default:
 
 - archive and reset controls
 - blueprint-edit references
+- a detached “presenter card” outside the selected agenda item
 - permanent global continuation controls detached from the actual handoff moment
-- authoring panels or explanatory storage notes
+- a second canvas that restates the same workshop state with a different IA
 
-Continuation belongs with the handoff / rotation moment. If that moment is not current or next, the control should not dominate the `live` canvas.
+Continuation belongs with the handoff / rotation moment. If that moment is not current or next, the control should not dominate the main control-room canvas.
 
-If the facilitator still needs to correct participant reveal later, provide that as a secondary recovery control on another layer such as `settings`, not as a co-primary card on `live`.
+If the facilitator still needs to correct participant reveal later, provide that as a secondary recovery control on another layer such as `settings`, not as a co-primary workshop action.
 
 ## Layout Rules
 
@@ -156,11 +158,11 @@ Do not keep fallback override controls on the default canvas once the relevant m
 
 Use a side sheet for:
 
-- editing one agenda item
 - creating a new local agenda item
+- scene creation and scene editing
 - medium-complexity forms where the facilitator should keep context from the underlying page
 
-This is the default authoring pattern for the facilitator desk.
+For agenda items themselves, prefer progressive in-place editing inside the selected-item workbench unless the form grows past the bounds of a calm operating view.
 
 ### 3. Modal dialog
 
@@ -242,13 +244,13 @@ Avoid:
 
 ## Agenda View Pattern
 
-The agenda view should use this structure:
+The main control room should use this structure:
 
 1. Left column: agenda timeline as selectable items
-2. Main detail panel: selected item summary and operational detail
-3. Action row: `Open item editor`, `Move live marker`, `Add local item`
+2. Main detail panel: selected item summary, primary projection actions, and operational detail
+3. Action row: `Open room screen`, `Open participant 1:1`, `Move live marker`, `Edit this item`
 4. Secondary disclosures below:
-   - room screen and scenes
+   - room screen scene pack
    - source and storage model
 
 This keeps the reading order obvious:
@@ -258,19 +260,16 @@ This keeps the reading order obvious:
 - act
 - reveal secondary detail only when needed
 
-## Live View Pattern
+## Presenter Paging Pattern
 
-The `live` section should use this structure:
+The presenter surface should stay scene-first, but scene packs may expose low-chrome paging when the facilitator needs to move from one room scene to the next without bouncing back to the control room.
 
-1. Primary status panel: what is live now, what comes next, and what the participant surface currently exposes
-2. Compact runtime snapshots belong to the shared shell; the `live` canvas should not restate the same strip unless a moment-specific card genuinely needs it
-3. Timeline context below the fold
-4. Secondary action column:
-   - phase control
-   - contextual handoff / rotation control when relevant
-   - room-screen launch
+Rules:
 
-Safety actions belong in `settings`, not in the default `live` stack.
+- scene content remains visually dominant
+- previous / next scene controls stay subordinate to the scene
+- scene paging must not reintroduce facilitator metadata, top nav, or room-pulse chrome
+- participant walkthrough stays available at the scene level, not in the main launcher row
 
 ## Copy Rules
 

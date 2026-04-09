@@ -8,7 +8,7 @@ export const controlRoomOverlays = ["agenda-edit", "agenda-add", "scene-edit", "
 export type ControlRoomOverlay = (typeof controlRoomOverlays)[number];
 
 export const legacyAdminSectionMap = {
-  overview: "live",
+  overview: "agenda",
   agenda: "agenda",
   teams: "teams",
   signals: "signals",
@@ -23,7 +23,7 @@ type AdminCopy = Record<string, string>;
 type AgendaItem = WorkshopState["agenda"][number];
 
 export function resolveControlRoomSection(value: string | undefined): ControlRoomSection {
-  return controlRoomSections.find((section) => section === value) ?? "live";
+  return controlRoomSections.find((section) => section === value) ?? "agenda";
 }
 
 export function resolveLegacyAdminSection(value: string | undefined): LegacyAdminSection {
@@ -68,7 +68,7 @@ export function buildAdminInstanceHref(options: {
 }) {
   const { lang, instanceId, section, teamId, agendaItemId, sceneId, error, password, overlay } = options;
   const params = new URLSearchParams();
-  if (section && section !== "live") {
+  if (section && section !== "agenda") {
     params.set("section", section);
   }
   if (teamId) {

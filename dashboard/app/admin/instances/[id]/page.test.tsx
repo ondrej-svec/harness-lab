@@ -103,23 +103,23 @@ describe("Admin control room page", () => {
     getSession.mockResolvedValue({ data: null });
   });
 
-  it("loads the live control room for the requested instance", async () => {
+  it("loads the agenda-centered control room for the requested instance", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-b" }),
-      searchParams: Promise.resolve({ lang: "en", section: "live" }),
+      searchParams: Promise.resolve({ lang: "en" }),
     });
     const html = renderToStaticMarkup(view);
 
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-b");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-b");
     expect(html).toContain(adminCopy.en.controlRoomBack);
-    expect(html).toContain(adminCopy.en.navLive);
-    expect(html).toContain(adminCopy.en.moveAgendaTitle);
-    expect(html).toContain(adminCopy.en.presenterCardTitle);
+    expect(html).toContain(adminCopy.en.navAgenda);
+    expect(html).toContain(adminCopy.en.agendaSectionTitle);
+    expect(html).toContain(adminCopy.en.agendaCurrentTitle);
     expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
-    expect(html).toContain(adminCopy.en.presenterOpenParticipantButton);
+    expect(html).toContain(adminCopy.en.presenterOpenCurrentButton);
     expect(html).not.toContain(adminCopy.en.archiveResetTitle);
     expect(html).not.toContain(adminCopy.en.continuationTitle);
     expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
@@ -136,16 +136,17 @@ describe("Admin control room page", () => {
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "live" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation" }),
     });
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain(adminCopy.en.handoffMomentTitle);
-    expect(html).toContain(adminCopy.en.handoffMomentJumpButton);
+    expect(html).toContain(adminCopy.en.unlockButton);
+    expect(html).toContain(adminCopy.en.hideAgainButton);
     expect(html).toContain("13:30 • Rotace týmů");
   });
 
-  it("renders the agenda editor sheet for the selected agenda item", async () => {
+  it("renders the inline agenda editor for the selected agenda item", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
@@ -156,6 +157,7 @@ describe("Admin control room page", () => {
 
     expect(html).toContain(adminCopy.en.agendaEditTitle);
     expect(html).toContain(adminCopy.en.closePanelButton);
+    expect(html).not.toContain('fixed inset-0 z-50');
     expect(html).toContain('name="agendaId"');
     expect(html).toContain('value="talk"');
     expect(html).toContain('value="Context is King"');

@@ -65,6 +65,7 @@ Design rules:
 - presenter scenes are agenda-linked web pages, not a general slide authoring system
 - presenter content belongs to the same blueprint/runtime model as agenda content
 - room-facing rendering may use facilitator auth, but must not expose facilitator controls or privileged operational state by default
+- low-chrome previous / next scene navigation is acceptable when it stays visually subordinate to the scene itself and does not read like an admin shell
 - participant walkthrough scenes should stay cue-first and must not default to facilitator-monitoring chrome such as team checkpoint dashboards or room-pulse metrics
 - attributed quotes must show visible attribution on the room-facing page
 - image-backed scenes should carry explicit caption/source context when they rely on internal reference material

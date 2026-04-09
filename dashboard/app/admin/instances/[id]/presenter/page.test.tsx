@@ -48,11 +48,26 @@ describe("PresenterPage", () => {
     expect(getInstance).toHaveBeenCalledWith("sample-studio-a");
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain(adminCopy.en.presenterPageEyebrow);
-    expect(html).toContain("Rotace týmů");
     expect(html).toContain("Bez ústního handoffu");
     expect(html).not.toContain(adminCopy.en.presenterBack);
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
+  });
+
+  it("keeps low-chrome previous and next scene navigation on the presenter surface", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-instructions" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.presenterScenePagerLabel);
+    expect(html).toContain(adminCopy.en.presenterPreviousSceneButton);
+    expect(html).toContain(adminCopy.en.presenterNextSceneButton);
+    expect(html).toContain("scene 2/3");
+    expect(html).toContain("scene=rotation-framing");
+    expect(html).toContain("scene=rotation-participant-view");
   });
 
   it("renders participant walkthrough scenes when requested explicitly", async () => {
@@ -178,7 +193,7 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("What must remain after a team");
+    expect(html).toContain("Four nodes that have to stay connected");
     expect(html).toContain("/blueprint/opening/opening-continuation-loop.svg");
     expect(html).toContain("data-tone=\"info\"");
     expect(html).toContain("content/talks/context-is-king.md");
@@ -201,7 +216,6 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Team rotation");
     expect(html).toContain("Instructions for the new team");
     expect(html).toContain("Start with the README, AGENTS.md, and the plan");
   });

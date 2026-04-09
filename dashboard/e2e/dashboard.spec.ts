@@ -153,26 +153,24 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
     await expect(page.getByRole("link", { name: "zpět na workspace" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" }).first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "řízení fáze" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "control room" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
-    const phaseControlSummary = page.locator('select[name="agendaId"]').locator("xpath=ancestor::form/preceding-sibling::*[1]");
 
-    await page.locator('select[name="agendaId"]').selectOption("rotation");
+    await page.getByRole("link", { name: /13:30 • Rotace týmů/i }).click();
     await page.getByRole("button", { name: "posunout live marker" }).click();
 
     await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
-    await expect(phaseControlSummary).toContainText("13:30 • Rotace týmů");
+    await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
 
     await page.getByRole("button", { name: "Odemknout" }).click();
     await expect(page.getByText(/předání je odemčeno/i).first()).toBeVisible();
     await page.goto("/admin/instances/sample-studio-a");
     await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
 
-    await page.locator('select[name="agendaId"]').selectOption("build-2");
+    await page.getByRole("link", { name: /13:45 • Build Phase 2/i }).click();
     await page.getByRole("button", { name: "posunout live marker" }).click();
-    await expect(phaseControlSummary).toContainText("13:45 • Build Phase 2");
-    await expect(phaseControlSummary).toContainText("14:45 • Intermezzo 2");
-    await expect(phaseControlSummary).not.toContainText("13:30 • Rotace týmů");
+    await expect(page.getByText("13:45 • Build Phase 2").first()).toBeVisible();
+    await expect(page.getByText("14:45 • Intermezzo 2").first()).toBeVisible();
     await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
 
     await page.goto("/admin/instances/sample-studio-a?section=settings");
@@ -250,7 +248,7 @@ test.describe("facilitator admin (file mode)", () => {
   test("shows agenda source information on the agenda section", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a?section=agenda");
 
-    await expect(page.getByRole("heading", { name: "agenda a fáze" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "control room" })).toBeVisible();
     await page.getByText("zdroj a ukládání").click();
     await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();
     await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
@@ -259,7 +257,8 @@ test.describe("facilitator admin (file mode)", () => {
   test("launches the room screen from the control room and supports participant walkthrough", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a");
 
-    await expect(page.getByRole("heading", { name: "projekce pro místnost" })).toBeVisible();
+    await page.getByRole("link", { name: /13:30 • Rotace týmů/i }).click();
+    await expect(page.getByText("Bez ústního handoffu")).toBeVisible();
     await expect(page.getByRole("link", { name: "otevřít projekci" })).toBeVisible();
 
     const [popup] = await Promise.all([
@@ -267,25 +266,30 @@ test.describe("facilitator admin (file mode)", () => {
       page.getByRole("link", { name: "otevřít projekci" }).click(),
     ]);
 
-    await expect(popup.getByText("projekce pro místnost").first()).toBeVisible();
-    await expect(popup.locator("main h1").first()).toBeVisible();
+    await expect(popup.getByText("Bez ústního handoffu")).toBeVisible();
+    await expect(popup.getByText("projekce pro místnost")).toHaveCount(0);
     await expect(popup.getByRole("link", { name: "zpět do režie" })).toHaveCount(0);
     await expect(popup.getByRole("navigation")).toHaveCount(0);
+    await expect(popup.getByRole("link", { name: "další scéna" })).toBeVisible();
 
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
-    await expect(page.getByRole("heading", { name: "Context is King" })).toBeVisible();
-    await expect(page.getByText("Co má tým vidět bez facilitátorského šumu")).toBeVisible();
-    await expect(page.getByText("Aktuální fáze a nejbližší další krok.")).toBeVisible();
-    await expect(page.getByText("Vrstva pro účastníky nemá být dekorace.")).toHaveCount(0);
-    await expect(page.getByText("signál z místnosti")).toHaveCount(0);
-    await expect(page.getByRole("heading", { name: "Tým 1" })).toHaveCount(0);
+    await popup.getByRole("link", { name: "další scéna" }).click();
+    await expect(popup).toHaveURL(/scene=rotation-instructions/);
+    await expect(popup.getByRole("link", { name: "předchozí scéna" })).toBeVisible();
+
+    const [walkthroughPopup] = await Promise.all([
+      page.waitForEvent("popup"),
+      page.getByRole("link", { name: "průchod participant vrstvou" }).click(),
+    ]);
+
+    await expect(walkthroughPopup.getByText("Nový tým začíná mapou, ne improvizací")).toBeVisible();
+    await expect(walkthroughPopup.getByText("Vrstva pro účastníky nemá zachraňovat slabý signál v repu.")).toBeVisible();
+    await expect(walkthroughPopup.getByText("signál z místnosti")).toHaveCount(0);
   });
 
   test("renders the room screen on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation");
 
-    await expect(page.getByRole("heading", { name: "Rotace týmů" })).toBeVisible();
     await expect(page.getByText("Bez ústního handoffu")).toBeVisible();
   });
 
@@ -311,8 +315,7 @@ test.describe("facilitator admin (file mode)", () => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-handoff-loop&lang=en");
 
-    await expect(page.getByRole("heading", { name: "Úvod a naladění" })).toBeVisible();
-    await expect(page.getByText("Co musí po týmu zůstat")).toBeVisible();
+    await expect(page.getByText("Čtyři uzly, které musí držet pohromadě")).toBeVisible();
     await expect(page.getByText("Harness Lab blueprint asset")).toBeVisible();
     await expect(page.getByText("source material")).toBeVisible();
     await expect(page.locator('img[src="/blueprint/opening/opening-continuation-loop.svg"]')).toBeVisible();

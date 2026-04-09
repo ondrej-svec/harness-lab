@@ -64,7 +64,7 @@ describe("workspace admin helpers", () => {
     } = await adminPageViewModelPromise;
 
     expect(resolveAdminSection("teams")).toBe("teams");
-    expect(resolveAdminSection("unknown")).toBe("live");
+    expect(resolveAdminSection("unknown")).toBe("agenda");
     expect(buildAdminWorkspaceHref({ lang: "cs" })).toBe("/admin");
     expect(buildAdminWorkspaceHref({ lang: "en", query: "studio", status: "running" })).toBe(
       "/admin?q=studio&status=running&lang=en",
