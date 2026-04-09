@@ -124,24 +124,29 @@ describe("Admin control room page", () => {
     expect(html).not.toContain(adminCopy.en.participantSurfaceRecoveryHint);
   });
 
-  it("shows the handoff control only when the live moment is at rotation", async () => {
+  it("shows the handoff control on the default agenda index when rotation is live", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
     const state = structuredClone(seedWorkshopState);
     state.agenda = state.agenda.map((item) => ({
       ...item,
       status: item.id === "rotation" ? "current" : "done",
     }));
+    const rotation = state.agenda.find((item) => item.id === "rotation");
+    if (rotation) {
+      delete (rotation as { intent?: string }).intent;
+    }
     getWorkshopState.mockResolvedValue(state);
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation" }),
+      searchParams: Promise.resolve({ lang: "en" }),
     });
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain(adminCopy.en.handoffMomentTitle);
     expect(html).toContain(adminCopy.en.unlockButton);
     expect(html).toContain(adminCopy.en.hideAgainButton);
+    expect(html).toContain(adminCopy.en.handoffMomentJumpButton);
     expect(html).toContain("13:30 • Rotace týmů");
   });
 

@@ -26,7 +26,14 @@ import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
-import { workshopTemplates, type AgendaItem, type PresenterBlock as WorkshopPresenterBlock, type PresenterScene, type Team } from "@/lib/workshop-data";
+import {
+  workshopTemplates,
+  type AgendaItem,
+  type PresenterBlock as WorkshopPresenterBlock,
+  type PresenterScene,
+  type RotationPlan,
+  type Team,
+} from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addPresenterScene,
@@ -197,6 +204,10 @@ function parseJsonArray<T>(value: string): T[] | undefined {
 
 function buildRepoSourceHref(path: string) {
   return `${repoBlobBaseUrl}/${path}`;
+}
+
+function isHandoffAgendaItem(item: Partial<AgendaItem> | null | undefined) {
+  return item?.intent === "handoff" || item?.id === "rotation";
 }
 
 async function signOutAction(formData: FormData) {
@@ -824,13 +835,21 @@ export default async function AdminPage({
         })
       : agendaBaseHref;
   const contextualHandoffItem =
-    (currentAgendaItem && (currentAgendaItem as RichAgendaItem).intent === "handoff"
+    (currentAgendaItem && isHandoffAgendaItem(currentAgendaItem as RichAgendaItem)
       ? (currentAgendaItem as RichAgendaItem)
-      : nextAgendaItem && (nextAgendaItem as RichAgendaItem).intent === "handoff"
+      : nextAgendaItem && isHandoffAgendaItem(nextAgendaItem as RichAgendaItem)
         ? (nextAgendaItem as RichAgendaItem)
         : null) ?? null;
   const handoffIsLive = contextualHandoffItem?.id === currentAgendaItem?.id;
   const selectedAgendaOwnsHandoffControls = contextualHandoffItem?.id === selectedAgendaItem?.id;
+  const handoffAgendaHref = contextualHandoffItem
+    ? buildAdminHref({
+        lang,
+        section: "agenda",
+        instanceId: activeInstanceId,
+        agendaItemId: contextualHandoffItem.id,
+      })
+    : null;
   const instanceWhenLabel = selectedInstance?.workshopMeta.dateRange ?? state.workshopMeta.dateRange;
   const instanceWhereLabel = (selectedInstance ? getWorkshopLocationLines(selectedInstance).join(" / ") : "") || state.workshopMeta.city;
   const instanceOwnerLabel = selectedInstance?.workshopMeta.facilitatorLabel ?? "n/a";
@@ -1104,38 +1123,14 @@ export default async function AdminPage({
                   </div>
 
                   {selectedAgendaOwnsHandoffControls ? (
-                    <ControlCard
-                      title={copy.handoffMomentTitle}
+                    <HandoffMomentCard
+                      copy={copy}
+                      lang={lang}
+                      instanceId={activeInstanceId}
                       description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
-                    >
-                      <div className="space-y-4">
-                        <form action={toggleRotationAction} className="space-y-4">
-                          <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                          <div className="grid grid-cols-2 gap-3">
-                            <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
-                              {copy.unlockButton}
-                            </AdminSubmitButton>
-                            <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
-                              {copy.hideAgainButton}
-                            </AdminSubmitButton>
-                          </div>
-                          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                            {copy.participantStatePrefix} {overviewState.participantState}.
-                          </div>
-                        </form>
-
-                        <div className="space-y-2 border-t border-[var(--border)] pt-4">
-                          {state.rotation.slots.map((slot) => (
-                            <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
-                              <p className="font-medium text-[var(--text-primary)]">
-                                {slot.fromTeam} → {slot.toTeam}
-                              </p>
-                              <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </ControlCard>
+                      participantState={overviewState.participantState}
+                      slots={state.rotation.slots}
+                    />
                   ) : null}
 
                   <AgendaItemDetail item={selectedAgendaItem} lang={lang} copy={copy} />
@@ -1228,6 +1223,18 @@ export default async function AdminPage({
                       <ControlRoomPersistentSummary label={copy.workspaceSignalLabel} value={overviewState.participantState} hint={state.rotation.scenario} />
                     </div>
                   </div>
+
+                  {contextualHandoffItem ? (
+                    <HandoffMomentCard
+                      copy={copy}
+                      lang={lang}
+                      instanceId={activeInstanceId}
+                      description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
+                      participantState={overviewState.participantState}
+                      slots={state.rotation.slots}
+                      jumpHref={handoffAgendaHref}
+                    />
+                  ) : null}
 
                   <section className="space-y-4">
                     <div className="flex items-start justify-between gap-3">
@@ -1797,6 +1804,64 @@ function ControlRoomPersistentSummary({
       <p className="mt-2 text-sm font-semibold leading-6 text-[var(--text-primary)]">{value}</p>
       {hint ? <p className="mt-1 text-xs leading-5 text-[var(--text-muted)]">{hint}</p> : null}
     </div>
+  );
+}
+
+function HandoffMomentCard({
+  copy,
+  lang,
+  instanceId,
+  description,
+  participantState,
+  slots,
+  jumpHref,
+}: {
+  copy: (typeof adminCopy)[UiLanguage];
+  lang: UiLanguage;
+  instanceId: string;
+  description: string;
+  participantState: string;
+  slots: RotationPlan["slots"];
+  jumpHref?: string | null;
+}) {
+  return (
+    <ControlCard title={copy.handoffMomentTitle} description={description}>
+      <div className="space-y-4">
+        {jumpHref ? (
+          <div className="flex flex-wrap justify-end gap-3">
+            <Link className={adminGhostButtonClassName} href={jumpHref}>
+              {copy.handoffMomentJumpButton}
+            </Link>
+          </div>
+        ) : null}
+
+        <form action={toggleRotationAction} className="space-y-4">
+          <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+          <div className="grid grid-cols-2 gap-3">
+            <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
+              {copy.unlockButton}
+            </AdminSubmitButton>
+            <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
+              {copy.hideAgainButton}
+            </AdminSubmitButton>
+          </div>
+          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+            {copy.participantStatePrefix} {participantState}.
+          </div>
+        </form>
+
+        <div className="space-y-2 border-t border-[var(--border)] pt-4">
+          {slots.map((slot) => (
+            <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+              <p className="font-medium text-[var(--text-primary)]">
+                {slot.fromTeam} → {slot.toTeam}
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{slot.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </ControlCard>
   );
 }
 

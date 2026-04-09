@@ -166,8 +166,6 @@ test.describe("facilitator admin (file mode)", () => {
     await page.getByRole("button", { name: "Odemknout" }).click();
     await expect(page.getByText(/předání je odemčeno/i).first()).toBeVisible();
     await page.goto("/admin/instances/sample-studio-a");
-    await expect(page.getByRole("heading", { name: "handoff moment" })).toHaveCount(0);
-    await page.getByRole("link", { name: /13:30 • Rotace týmů/i }).click();
     await expect(page.getByRole("heading", { name: "handoff moment" })).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a");
