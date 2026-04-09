@@ -299,13 +299,13 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
-  test("renders the opening room scene without backstage source strips and keeps a stable ipad layout", async ({ page }) => {
+  test("renders the opening promise scene without backstage labels and keeps a stable ipad layout", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-handoff-loop&lang=en");
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing&lang=en");
 
-    await expect(page.getByText("Co dnes opravdu zažijete")).toBeVisible();
-    await expect(page.getByText("Naučit se řídit agenta")).toBeVisible();
-    await expect(page.getByText("Proto je launch důležitý")).toBeVisible();
+    await expect(page.getByText("Dnes stavíme pracovní systém, ne prompt show")).toBeVisible();
+    await expect(page.getByText("Hlavní věta pro dnešek")).toBeVisible();
+    await expect(page.getByText("Co se dnes má změnit")).toBeVisible();
     await expect(page.getByText("source material")).toHaveCount(0);
     await expect(page.locator('img[src="/blueprint/opening/opening-continuation-loop.svg"]')).toHaveCount(0);
 
@@ -335,6 +335,7 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByText("Vraťte se k repu se třemi věcmi")).toBeVisible();
     await expect(page.getByText("Co udělat v prvních minutách")).toBeVisible();
     await expect(page.getByText("Otevřete README, AGENTS.md a brief. Srovnejte si, co je cíl, kontext a mantinely.")).toBeVisible();
+    await expect(page.getByText(/harness skill install/)).toBeVisible();
     await expect(page.getByText("zdrojový materiál")).toHaveCount(0);
 
     await expect(page).toHaveScreenshot("presenter-talk-participant-proof-mobile.png", {

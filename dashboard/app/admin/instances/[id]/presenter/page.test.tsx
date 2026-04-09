@@ -93,7 +93,8 @@ describe("PresenterPage", () => {
     expect(html).toContain("Go back to the repo with three things");
     expect(html).toContain("Build 1 contract");
     expect(html).toContain("What to do in the first minutes");
-    expect(html).toContain("Open the workshop skill reference");
+    expect(html).toContain("Open install and first commands");
+    expect(html).toContain("harness skill install");
     expect(html).not.toContain("Participant walkthrough");
   });
 
@@ -169,7 +170,7 @@ describe("PresenterPage", () => {
     expect(html).toContain(adminCopy.en.openLinkLabel);
   });
 
-  it("renders the opening room scene as room-safe content without facilitator source strips", async () => {
+  it("renders the opening promise scene as room-safe content without backstage labels or facilitator source strips", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     state.teams = structuredClone(seedWorkshopState.teams.slice(0, 1));
@@ -181,14 +182,15 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-handoff-loop" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-framing" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("What you are actually going to experience today");
-    expect(html).toContain("Learn to steer the agent");
+    expect(html).toContain("Today we are building a working system, not prompt theatre");
+    expect(html).toContain("The main line for today");
+    expect(html).toContain("What should change today");
     expect(html).toContain("data-tone=\"info\"");
-    expect(html).toContain("Why the launch matters");
+    expect(html).not.toContain("What the room should hear immediately");
     expect(html).not.toContain("source material");
     expect(html).not.toContain("content/talks/context-is-king.md");
   });

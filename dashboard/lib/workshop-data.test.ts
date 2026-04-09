@@ -62,7 +62,7 @@ describe("workshop-data", () => {
       title: "What you are actually going to experience today",
     });
     expect(handoffScene?.surface).toBe("room");
-    expect(participantScene?.title).toBe("What the team should see right after the launch");
+    expect(participantScene?.title).toBe("At the start of the day, keep the purpose, next block, and first proof in view");
     expect(participantScene?.surface).toBe("participant");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",
@@ -147,6 +147,7 @@ describe("workshop-data", () => {
     const talk = state.agenda.find((item) => item.id === "talk");
     const reveal = state.agenda.find((item) => item.id === "reveal");
     const talkScene = talk?.presenterScenes.find((scene) => scene.id === "talk-framing");
+    const talkParticipantScene = talk?.presenterScenes.find((scene) => scene.id === "talk-participant-view");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
 
     expect(talkScene?.blocks).toEqual(
@@ -156,6 +157,7 @@ describe("workshop-data", () => {
       ]),
     );
     expect(talk?.facilitatorRunner.say[0]).toBe("Context is leverage, not cosmetics.");
+    expect(talkParticipantScene?.ctaLabel).toBe("Open install and first commands");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),
@@ -169,6 +171,7 @@ describe("workshop-data", () => {
     const talk = state.agenda.find((item) => item.id === "talk");
     const reveal = state.agenda.find((item) => item.id === "reveal");
     const talkScene = talk?.presenterScenes.find((scene) => scene.id === "talk-framing");
+    const talkParticipantScene = talk?.presenterScenes.find((scene) => scene.id === "talk-participant-view");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
 
     expect(talkScene?.blocks).toEqual(
@@ -178,6 +181,7 @@ describe("workshop-data", () => {
       ]),
     );
     expect(talk?.facilitatorRunner.say[0]).toBe("Kontext je páka, ne kosmetika.");
+    expect(talkParticipantScene?.ctaLabel).toBe("Otevřít install a první příkazy");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),

@@ -155,7 +155,7 @@ describe("public page helpers", () => {
       rotationRevealed: false,
     });
     expect(buildPhasePanel.guidanceLabel).toBe("Týmová tabule");
-    expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install flow");
+    expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install a setup flow");
     expect(buildPhasePanel.guidanceCtaHref).toBe("https://github.com/example/harness-lab/blob/main/workshop-skill/install.md");
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "hero")).toBe(true);
@@ -272,7 +272,7 @@ describe("HomePage", () => {
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain("Opening and orientation");
-    expect(html).toContain("Participant welcome board");
+    expect(html).toContain("Team start board");
     expect(html).toContain("Today is not prompt theatre");
   });
 });

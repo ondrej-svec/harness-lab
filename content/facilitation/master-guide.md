@@ -64,14 +64,14 @@ Pravidla:
 
 Po launchi potřebuje místnost ještě jednu konkrétní věc:
 
-- co má být po prvním build bloku opravdu vidět
-- co nestačí jen slíbit
+- co má být po prvním build bloku opravdu vidět v repu
+- co nestačí jen slíbit nebo dovysvětlit u stolu
 
 Do oběda má být vidět:
 
-- repo a `README`, které dávají smysl cizímu člověku
-- `AGENTS.md` jako krátká mapa
-- plan nebo jasně vedená implementační stopa
+- `README`, které dává smysl cizímu člověku
+- `AGENTS.md` jako krátká mapa, ne sklad všeho
+- plan nebo jasně vedená implementační stopa, ze které je poznat další safe move
 - první explicitní check před dalším generováním
 
 ## Context is King talk
@@ -93,6 +93,8 @@ Proměnit energii z openingu v přesnou tezi a čistý most do Build fáze 1.
 
 ### Mikro-cvičení
 
+Tohle je krátká facilitátorova ukázka, ne zadání pro celý room.
+
 Použijte stejný malý task ve dvou podmínkách:
 
 1. prompt blob
@@ -112,6 +114,7 @@ Na konci talku má být jasné:
 
 - teorie tím končí
 - tým se vrací k repu
+- pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
 - nejdřív vzniká mapa a první explicitní check
 - teprve potom dává smysl další feature motion
 

@@ -235,14 +235,14 @@ export const workshopBlueprintLocalizedContent = {
         },
         scenes: {
           "opening-framing": {
-            label: "Opening framing",
+            label: "Opening promise",
             title: "Today we are building a working system, not prompt theatre",
             body:
               "The goal today is not one impressive answer. The goal is to learn how to steer work with coding agents so the repo, workflow, and instructions still hold without your running commentary.",
             facilitatorNotes: [
               "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session.",
               "Say harness engineering explicitly, but do not stay inside the definition. Move quickly into the day arc: learn, build, hand off, continue.",
-              "After the quote, pause briefly and let the line land before you move into the day arc.",
+              "After the main line, pause briefly and let it land before you move into the day arc.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -252,13 +252,13 @@ export const workshopBlueprintLocalizedContent = {
                 body:
                   "Harness engineering means shaping instructions, context, verification, and workflow so the agent and the next team can continue safely. Today we are not just describing that system. We are building it.",
               },
-              "opening-quote": {
-                quote:
-                  "We are not learning to prompt better. We are learning to build a working system that carries the next move without table-side explanation.",
-                attribution: "Talk: Context is King",
-              },
               "opening-framing-callout": {
-                title: "What the room should hear immediately",
+                title: "The main line for today",
+                body:
+                  "We are not learning to prompt better. We are learning to build a working system that carries the next move without table-side explanation.",
+              },
+              "opening-framing-shift": {
+                title: "What should change today",
                 body:
                   "This is not prompt theatre and not a feature race. It is a day that should change how you work with coding agents after the workshop too.",
               },
@@ -306,8 +306,8 @@ export const workshopBlueprintLocalizedContent = {
             },
           },
           "opening-context-analogy": {
-            label: "Analogy beat",
-            title: "The same agent can still produce different outcomes",
+            label: "Lego duck analogy",
+            title: "The same bricks, a different duck",
             body:
               "Give people the same bricks and you still will not get one correct duck. The same is true here: the model alone does not determine the quality of the work. Context, boundaries, and team imagination do.",
             facilitatorNotes: [
@@ -381,10 +381,10 @@ export const workshopBlueprintLocalizedContent = {
             },
           },
           "opening-room-contract": {
-            label: "Contract for today",
-            title: "The first working contract",
+            label: "What must be visible before lunch",
+            title: "By the first build, the repo should carry four visible proofs",
             body:
-              "After the launch, the room still needs one concrete rule: what must be visible after the first build block, not just promised.",
+              "After the launch, the room does not need another principle. It needs to know what must be visible in the repo after the first build block, not only promised aloud.",
             facilitatorNotes: [
               "This is the first concrete rule of the day. It comes after ambition, analogy, and activation.",
               "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact.",
@@ -392,26 +392,26 @@ export const workshopBlueprintLocalizedContent = {
             sourceRefs: [{ label: "Facilitation guide: Build Phase 1", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "opening-contract-checklist": {
-                title: "After the first build block, you should be able to see",
+                title: "By lunch, the repo should visibly contain",
                 items: [
-                  "A repo and README that make sense to a new reader.",
-                  "An AGENTS.md that is a map, not a warehouse dump.",
-                  "A plan that makes the next safe move legible.",
-                  "The smallest useful check before more generation.",
+                  "A README that explains the project to a new reader.",
+                  "An AGENTS.md that shows where to start and where to reach next.",
+                  "A plan or guided implementation trail that makes the next safe move legible.",
+                  "A first check that stops blind generation.",
                 ],
               },
               "opening-contract-callout": {
-                title: "One practical rule",
+                title: "Without a check, you are still guessing",
                 body:
                   "If verification is missing, another prompt will not save the team. Push the smallest test or tracer bullet that puts the work back on the ground.",
               },
             },
           },
           "opening-participant-view": {
-            label: "Participant welcome board",
-            title: "What the team should see right after the launch",
+            label: "Team start board",
+            title: "At the start of the day, keep the purpose, next block, and first proof in view",
             body:
-              "At the start of the day, the participant view should hold the workshop meaning, the live moment, and the signal that important things belong in the repo, not only in spoken explanations.",
+              "At the start of the day, the team does not need a promo banner. It needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
             facilitatorNotes: [
               "Use this scene when you want to show the room that the participant layer is not a promo banner, but working orientation.",
               "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo.",
@@ -422,16 +422,16 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Harness Lab",
                 title: "Today is not prompt theatre",
                 body:
-                  "From the first minute, the participant view should carry the same discipline as the facilitator view: the live phase, the next step, and the rule that if it is not in the repo, it is not reliable yet.",
+                  "Today you are building so another team can continue without rescue. If it is not in the repo, it is not reliable yet.",
               },
               "opening-participant-preview": {
                 body:
-                  "The start of the day should read in one glance: what is live now, what comes next, and why durable context belongs in files instead of side conversations.",
+                  "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, a plan, and a first check.",
               },
               "opening-participant-callout": {
-                title: "What should land even without a facilitator",
+                title: "What to write down immediately",
                 body:
-                  "Repo-native context is part of the work. The next step should be safe and traceable. The afternoon continuation will test what actually survives handoff.",
+                  "Important things belong in files, not only in conversation. The afternoon continuation will test what really survives handoff.",
               },
             },
           },
@@ -523,18 +523,19 @@ export const workshopBlueprintLocalizedContent = {
             },
           },
           "talk-micro-exercise": {
-            label: "Micro-exercise",
-            title: "The same task, two working environments",
+            label: "Short contrast",
+            title: "The facilitator shows the same task in two conditions",
             body:
-              "Run the same small task twice: once with a prompt blob, once with a short brief and four elements in AGENTS.md. The point is not to crown the better prompt. The point is to show which setup survives review and handoff.",
+              "This is a short facilitator-led contrast, not a team exercise yet. Watch what changes between a prompt blob and a short brief with four elements in AGENTS.md.",
             facilitatorNotes: [
               "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
+              "Say explicitly that this is a short facilitator-led contrast, not a room-wide exercise for every team.",
               "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second.",
             ],
             sourceRefs: [{ label: "Talk: Micro-exercise", path: "content/talks/context-is-king.md" }],
             blocks: {
               "talk-steps": {
-                title: "How to show the contrast",
+                title: "What to compare during the contrast",
                 items: [
                   { title: "The same task for everyone", body: "Short and clear so the working-system difference is obvious." },
                   { title: "Variant A: prompt blob", body: "No structure, no repo-native context, no explicit done criteria." },
@@ -542,7 +543,7 @@ export const workshopBlueprintLocalizedContent = {
                 ],
               },
               "talk-callout": {
-                title: "The point",
+                title: "What to carry out of this contrast",
                 body:
                   "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn, the review pass, and the next team.",
               },
@@ -550,13 +551,14 @@ export const workshopBlueprintLocalizedContent = {
           },
           "talk-participant-view": {
             label: "Bridge into Build 1",
-            title: "What the team should do before it goes back to generation",
+            title: "After the talk, go back to the repo, not to more prompting",
             body:
-              "After the talk, the team should not leave with theory. It should align on the goal, write down the repo map, narrow the first slice, and add the smallest useful check before more generation.",
-            ctaLabel: "Open the workshop skill reference",
+              "After the talk, the team should not leave with theory. It should align on the goal, write down the repo map, narrow the first slice, and name the first verifiable step. If the workshop skill is not installed yet, this is the moment.",
+            ctaLabel: "Open install and first commands",
             facilitatorNotes: [
               "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1.",
               "Name the expectation clearly: the team now returns to the repo for a map, a first slice, and one explicit check instead of more prompt debate.",
+              "Say explicitly: if the team does not have the workshop skill yet, now is the time for `harness skill install` and the first workshop command.",
             ],
             sourceRefs: [{ label: "Talk: Opening move", path: "content/talks/context-is-king.md" }],
             blocks: {
@@ -570,13 +572,14 @@ export const workshopBlueprintLocalizedContent = {
                 title: "What to do in the first minutes",
                 items: [
                   "Open README, AGENTS.md, and the brief. Align on goal, context, and constraints.",
+                  "If the workshop skill is not installed yet, install it now: `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`.",
                   "Write or tighten Goal, Context, Constraints, and Done When.",
                   "Pick the first slice that can actually be verified and add a check or tracer bullet immediately.",
                 ],
               },
               "talk-participant-preview": {
                 body:
-                  "The participant surface should now keep exactly this in view: where you are in the day, what comes next, and what the team should verify before it asks the agent for more motion.",
+                  "Build Phase 1 starts now. The participant surface should keep in view what is live, what comes next, and what the team should verify before it asks the agent for more motion.",
               },
               "talk-participant-bridge": {
                 title: "Bridge into Build 1",
@@ -784,7 +787,7 @@ export const workshopBlueprintLocalizedContent = {
             title: "Build Phase 1 for the team",
             body:
               "During Build Phase 1, the participant view should not dump the whole backstage. It should hold the live moment, the next step, and the room-wide signal so the team can keep moving without noise.",
-            ctaLabel: "Open the install flow",
+            ctaLabel: "Open install and setup flow",
             facilitatorNotes: [
               "Use this when you want to return a learner-facing view to the team instead of facilitator backstage.",
             ],
@@ -811,7 +814,7 @@ export const workshopBlueprintLocalizedContent = {
               "build-1-participant-callout": {
                 title: "If you get stuck",
                 body:
-                  "Return to the README, AGENTS.md, the plan, and the smallest useful verification instead of another round of unbounded generation.",
+                  "Return to the README, AGENTS.md, the workshop skill, the plan, and the smallest useful verification instead of another round of unbounded generation.",
               },
             },
           },

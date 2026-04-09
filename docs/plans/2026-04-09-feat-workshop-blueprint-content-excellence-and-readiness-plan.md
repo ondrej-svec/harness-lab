@@ -154,6 +154,63 @@ Avoid these patterns even if they are fluent:
 - Prefer cuts over smoothing
 - If a sentence would not survive being spoken aloud to developers, it does not belong
 
+## Cross-Cutting Execution Rules
+
+These rules apply across participant, facilitator, presenter, projection, mobile, public-safe, and workshop-skill surfaces while this plan is active.
+
+### Surface-job discipline
+
+- every surface must have one primary job per moment
+- room/projection surfaces shape shared attention and memory
+- participant surfaces answer "what should our team do now?"
+- facilitator surfaces carry backstage guidance and recovery logic
+- source provenance belongs in source/reference affordances, not in visible authority treatment unless the source itself is the point
+- if a surface starts explaining another surface instead of doing its own job, rewrite or cut it
+
+### Visible-content rule
+
+- visible projected or participant-facing copy must not expose backstage labels such as "what the room should hear," internal QA phrasing, or authoring shorthand
+- facilitator intent, delivery cues, and review notes belong in `facilitatorRunner`, facilitator notes, or review artifacts
+- visible slides should read like the thing itself, not like instructions about the thing
+
+### Participant-first operability
+
+- at every shared workshop moment, a participant should be able to tell the current moment, next useful action, and nearest safe move without asking the facilitator
+- participant mirrors should bias toward imperative action, short orientation, and explicit next-step cues
+- if a participant scene cannot change team behavior in the next few minutes, it is probably too meta
+
+### Facilitator self-sufficiency
+
+- a normal-path facilitator should be able to run a flagship beat from agenda-owned content plus source materials without relying on Ondrej-specific memory
+- recovery guidance should exist for likely failure modes: low energy, slow demo, broken install path, confused teams, projection mismatch
+- if a live moment only works when explained orally from memory, the system is not done
+
+### Projection and mobile reality
+
+- projected content must survive distance, partial attention, and spoken delivery
+- mobile participant content must survive scanning, interruption, and quick return-to-task use
+- every flagship moment should be reviewable both as a projected room scene and as a participant glance surface
+- when projection and mobile needs conflict, author separate surfaces rather than one compromised surface
+
+### Internal vs external authority
+
+- internal source lineage and external proof must be treated differently
+- internal references explain where the workshop content came from
+- external references earn trust, contrast, or memory and must attribute the real speaker or source
+- never use internal source labels as if they were authority attributions on visible slides
+
+### Flow-contract clarity
+
+- transitions between opening, talk, demo, build, rotation, and reveal must make the next contract explicit
+- if the workshop skill, install flow, or a participant action becomes relevant, the moment it enters the day must be clearly authored
+- demos, micro-exercises, and participant actions must have unambiguous ownership: facilitator-led, team-led, or mixed
+
+### End-to-end finish bias
+
+- do not treat a slice as done only because its local copy improved
+- a slice is only really done when its adjacent moments, action bridges, links, and review artifacts also make the day easier to run
+- when a live review exposes a neighboring weak moment that breaks the same user journey, fold it into the active phase instead of deferring it mechanically
+
 ## Representative Proof Slice
 
 Before broad propagation, prove the pattern on one cross-surface slice:
@@ -172,6 +229,25 @@ Why this slice:
 - it reveals whether the English-source/Czech-delivery model is operational, not just doctrinal
 
 This is intentionally a full-stack proof slice rather than a thin probe. If the slice fails twice for structural reasons, or if propagating the validated pattern to the next flagship phase requires major rework, revisit the proof-slice scope before continuing.
+
+## Canonical Review Notes
+
+The plan is the canonical tracker for review findings that materially change scope or sequencing. Do not leave those corrections only in chat or ad hoc review notes.
+
+Current canonical review findings from live workshop review:
+
+- the `talk` proof slice is materially stronger, but the adjacent `opening` pack is still leaking facilitator/backstage framing into projected room content
+- visible room slides still contain meta labels such as "co má místnost slyšet" or acceptance-rubric phrasing that belongs in facilitator notes or `facilitatorRunner`, not on participant-facing or room-facing surfaces
+- internal source provenance such as `Talk: Context is King` or `Facilitační průvodce: ...` must not masquerade as authority attribution on visible quote blocks
+- the "first contract" idea is directionally right, but the current opening-room contract still reads more like facilitator QA criteria than a sharp room-facing contract
+- the `talk` micro-exercise currently reads as facilitator-led contrast/demo; if participant action is intended, that instruction and the workshop-skill bridge must be made explicit
+- the workshop-skill install/use moment is still not explicit enough in the shared workshop flow and should not be discoverable only through later CTAs or fallback links
+
+Execution consequence:
+
+- Phase 2 remains `in_progress`
+- the proof slice remains centered on `talk`
+- but the adjacent `opening` pack now joins the remaining Phase 2 correction scope because it directly affects the same thesis bridge into Build 1 and was shown by review to still violate the content-quality bar
 
 ## Rollout Rule
 
@@ -225,6 +301,8 @@ Before autonomous implementation beyond the proof slice, require:
 - a mobile participant-preview capture for the proof slice
 - a projected-room legibility review note for the proof slice
 - a portability review list for blueprint/public references
+- a short flow note for where the workshop skill/install path enters the participant journey
+- a short ownership note for every demo or micro-exercise in the proof slice, stating whether it is facilitator-led, participant-led, or mixed
 
 ## Constraints And Boundaries
 
@@ -249,7 +327,7 @@ The language/source-of-truth split is currently the highest-leverage correctness
 
 ### Why the proof slice is centered on `talk`
 
-`opening` already has stronger investment. `talk` is still a flagged weak moment and carries the workshop's core intellectual move. If `talk` becomes excellent, the rest of the day has a stronger center of gravity.
+`talk` remains the center of the workshop thesis and the best place to prove the editorial system first. However, live review showed that the adjacent `opening` pack is still weaker than previously assumed in its room-facing execution. The plan therefore keeps `talk` as the proof center while treating `opening` corrections as part of the same pre-propagation quality bar.
 
 ### Why briefs and learner materials are included
 
@@ -380,6 +458,11 @@ This section is a summary view only. The phased implementation section below is 
   - [x] Rewrite `code-review-helper` as the first elevated brief pair.
   - [x] Apply the authority/citation pattern where it improves proof and trust.
   - [x] Produce the required preview artifacts for both locales.
+  - [x] Correct the adjacent `opening` pack where live review showed backstage/meta framing leaking into visible room content.
+  - [x] Remove internal-source-style attribution from visible quote treatments unless it is a real external proof-bearing citation.
+  - [x] Recast the opening "first contract" moment so the room sees a sharp working contract, not facilitator QA phrasing.
+  - [x] Make the micro-exercise contract explicit: facilitator demo/contrast vs. participant action, and align the workshop-skill bridge to that choice.
+  - [x] Add one explicit workshop-skill install/use moment to the shared workshop flow so participants do not discover it only through later CTAs or fallbacks.
 
 - [ ] Run the proof gates before propagation.
   - [ ] Cold-read the proof slice with a non-Ondrej reader.
@@ -389,6 +472,7 @@ This section is a summary view only. The phased implementation section below is 
   - [ ] Check projected-room legibility for presenter-facing use.
   - [ ] Check English/Czech parity.
   - [ ] Check portability and public-safe references.
+  - [x] Confirm opening and talk room-facing slides no longer display facilitator/backstage labels as visible content.
 
 - [ ] Propagate the validated pattern to the other flagged flagship moments.
   - `build-1-coaching`
@@ -419,6 +503,11 @@ This section is a summary view only. The phased implementation section below is 
 - At least one brief pair proves a more distinctive, higher-authority editorial standard without losing workshop discipline.
 - Learner/takeaway materials align with the same voice and trust model as the workshop day.
 - Future content work has an explicit review gate that catches drift before it propagates.
+- Opening, talk, and the first build bridge feel like one coherent participant journey rather than three locally good but weakly connected surfaces.
+- The moment participants should install or invoke the workshop skill is explicit in the day flow and visible in the participant-facing system.
+- Visible room and participant surfaces no longer expose backstage authoring language, facilitator QA phrasing, or internal-source attribution as if it were audience-facing content.
+- Every flagship shared moment has a clear owner contract for what is facilitator-led, what participants should do, and where the next safe move lives.
+- The system is runnable end-to-end by another facilitator with normal-path preparation and without hidden author memory.
 
 ## Phased Implementation
 
@@ -476,10 +565,17 @@ Tasks:
 - [x] elevate one associated brief pair
 - [x] apply and review the authority/citation pattern on the proof slice
 - [x] produce required previews and review notes
+- [x] correct the adjacent `opening` room pack so visible slides stop using facilitator/backstage phrasing
+- [x] make quote attribution and source-provenance treatment consistent with the authority/citation doctrine
+- [x] clarify the micro-exercise ownership and participant/workshop-skill bridge
+- [x] define the explicit participant install/use moment for the workshop skill in the shared workshop flow
 
 Exit criteria:
 
 - the proof slice is visibly stronger, cold-readable, locale-correct, mobile-glanceable, and room-legible
+- the `opening` to `talk` bridge no longer leaks facilitator meta language into projected slides
+- source provenance and external authority are clearly separated on visible surfaces
+- participants can tell when the workshop skill enters the day and what the micro-exercise expects from them
 - the team has evidence that the new pattern works before broad rollout
 - if the slice fails twice for structural reasons, or if propagation to the next flagship phase requires major rework, the proof-slice model must be reconsidered before continuing
 
@@ -526,10 +622,14 @@ Tasks:
 - [x] define reusable preview and approval expectations
 - [x] define where review artifacts live and how completion is recorded
 - [x] leave explicit guidance for future blueprint/content continuation
+- [ ] add a lightweight cross-surface readiness checklist for "nearly finished" workshop quality
+- [ ] record explicit rules for visible-content vs backstage-content separation
+- [ ] record explicit rules for install/use-moment clarity and demo/micro-exercise ownership
 
 Exit criteria:
 
 - future maintainers can continue the content system without re-deriving the editorial bar
+- future maintainers can tell whether the system is locally polished or genuinely ready to run end-to-end
 
 ## References
 
