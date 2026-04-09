@@ -1,13 +1,9 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.2.9",
-  "contentHash": "140b06cfa2916b56f19edfea1cecc749dbc51d2e5fdaf1e09d50cd7c864a23a1",
+  "bundleVersion": "0.3.0",
+  "contentHash": "b0fd5ae303c75a44d04b923e25f7a28584c8fc63940b142fdfbba4f2f8ff255c",
   "files": [
-    {
-      "path": ".copy-editor.yaml",
-      "sha256": "24d90fa819f04d995ad0f99a57cea60d48e0f3e5267cc053b72592864f881c11"
-    },
     {
       "path": "content/challenge-cards/.gitkeep",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -27,14 +23,6 @@
     {
       "path": "content/codex-craft.md",
       "sha256": "d75b15cf97c4ab7f4918e09fff0efbe204d141f7127ca09d9a446a128c8efaaf"
-    },
-    {
-      "path": "content/czech-editorial-review-checklist.md",
-      "sha256": "b97006eb8a14cedcb02c162d1c88ffcb6c8a4f5839e586fdba44c533f99aff6e"
-    },
-    {
-      "path": "content/czech-reject-list.md",
-      "sha256": "1893fe1271f45ec75193f881d18c4ba867b96f913a7abf49798337cbb20664e1"
     },
     {
       "path": "content/facilitation/.gitkeep",
@@ -93,14 +81,6 @@
       "sha256": "df9abc9d7bc8283d30d1c09fb412f9e072a980782c0b622747b13744b2a81c84"
     },
     {
-      "path": "content/style-examples.md",
-      "sha256": "a5ff428caf688ede89a8c1877f719d943e4092e83f3376768a842c7675611970"
-    },
-    {
-      "path": "content/style-guide.md",
-      "sha256": "f438fb33723dfc46f662dd2beaa0cd9a12c44c2ceb64c4f29e0085154f5def90"
-    },
-    {
       "path": "content/talks/.gitkeep",
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -138,7 +118,7 @@
     },
     {
       "path": "materials/coaching-codex.md",
-      "sha256": "0b0487154476a61f4e3d36b04b1a05f843125a3e98c31c2f19aad5abb7a25708"
+      "sha256": "2390be079acde89b16380cdd0904fac2cbefcb9aa11c1fe256330b2dc2362ba9"
     },
     {
       "path": "materials/locales/en/participant-resource-kit.md",
@@ -150,7 +130,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "38798d231667749cd68e88e216085c1bbb1ab7919a6b3751239d6f5fadba5759"
+      "sha256": "a8b8f76f8eeef2a7e7cd0d2906f33a7ab7a146a14383f5f679fddc6b3bdf8242"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -165,16 +145,12 @@
       "sha256": "22d6fec0422751439bd10049028ee12d140599707dbc6df248b4ff8517ee0c15"
     },
     {
-      "path": "workshop-blueprint/edit-boundaries.md",
-      "sha256": "d5a2b6039ff9d3acc5b3a58698289817a29d52af4058034f00bc188db6f5d84d"
-    },
-    {
       "path": "workshop-blueprint/operator-guide.md",
       "sha256": "c1cc4d64bfeed153e6b37d9e9fe8b270d052cd98fca17793891e04b37008149d"
     },
     {
       "path": "workshop-blueprint/README.md",
-      "sha256": "badb477ecfef7df163ec41c72c39e04bcde2a5a723c1b01bf2e91ed38924e903"
+      "sha256": "e5cc8a87576988ce724b7ffacd86a4276aa6733bd4b9037d1f560a58da048308"
     },
     {
       "path": "workshop-blueprint/teaching-spine.md",
@@ -198,7 +174,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "fdff468a3202fb6020fcc332c74199cef51c85e6e0387b7ff5b5d62e27d91fbe"
+      "sha256": "b8c9e1c01ddb314e45d8d2c3a7460bac53a48ba2321eaf6518e4b08436d88895"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

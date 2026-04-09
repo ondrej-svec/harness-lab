@@ -24,11 +24,27 @@ const FILE_COPIES = [
   ["docs/locales/en/learner-resource-kit.md", "docs/locales/en/learner-resource-kit.md"],
   ["docs/learner-reference-gallery.md", "docs/learner-reference-gallery.md"],
   ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
-  [".copy-editor.yaml", ".copy-editor.yaml"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
   ["materials/locales/en/participant-resource-kit.md", "materials/locales/en/participant-resource-kit.md"],
   ["materials/coaching-codex.md", "materials/coaching-codex.md"],
 ];
+
+// Files that live inside DIRECTORY_COPIES source trees but must not ship to
+// participants. These are author/maintainer/copy-editor artifacts that have no
+// runtime purpose inside the installed workshop skill. Keep the set minimal —
+// every entry should be a file that (a) has no workshop-skill reference and
+// (b) is clearly authoring/governance content rather than participant-facing.
+const EXCLUDED_BUNDLE_PATHS = new Set([
+  "content/style-guide.md",
+  "content/style-examples.md",
+  "content/czech-reject-list.md",
+  "content/czech-editorial-review-checklist.md",
+  "workshop-blueprint/edit-boundaries.md",
+]);
+
+function isExcludedBundlePath(bundleRelativePath) {
+  return EXCLUDED_BUNDLE_PATHS.has(normalizePathForManifest(bundleRelativePath));
+}
 
 export function getPackageRoot() {
   return packageRoot;
@@ -68,24 +84,31 @@ async function copyDirectoryTree(sourceRoot, targetRoot) {
     await copyDirectoryRecursive(
       path.join(sourceRoot, sourceRelativePath),
       path.join(targetRoot, targetRelativePath),
+      targetRelativePath,
     );
   }
 }
 
-async function copyDirectoryRecursive(sourcePath, targetPath) {
+async function copyDirectoryRecursive(sourcePath, targetPath, bundleRelativePrefix) {
   const entries = await fs.readdir(sourcePath, { withFileTypes: true });
   await fs.mkdir(targetPath, { recursive: true });
 
   for (const entry of entries) {
     const sourceEntryPath = path.join(sourcePath, entry.name);
     const targetEntryPath = path.join(targetPath, entry.name);
+    const entryBundleRelativePath = bundleRelativePrefix
+      ? path.join(bundleRelativePrefix, entry.name)
+      : entry.name;
 
     if (entry.isDirectory()) {
-      await copyDirectoryRecursive(sourceEntryPath, targetEntryPath);
+      await copyDirectoryRecursive(sourceEntryPath, targetEntryPath, entryBundleRelativePath);
       continue;
     }
 
     if (entry.isFile()) {
+      if (isExcludedBundlePath(entryBundleRelativePath)) {
+        continue;
+      }
       await fs.copyFile(sourceEntryPath, targetEntryPath);
     }
   }
@@ -187,6 +210,9 @@ export async function createWorkshopBundleManifestFromSource(sourceRoot) {
     for (const file of sourceFiles) {
       const targetRelative = normalizePathForManifest(path.join(targetRelativePath, file.relativePath));
       if (targetRelative === "workshop-skill/SKILL.md") {
+        continue;
+      }
+      if (isExcludedBundlePath(targetRelative)) {
         continue;
       }
 

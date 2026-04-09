@@ -1133,7 +1133,13 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(io.getStdout(), /\/skill:workshop/);
   assert.match(io.getStdout(), /\$workshop resources/);
   const installedSkill = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "utf8");
-  assert.match(installedSkill, /resolve to a reviewed fallback locale/);
+  // Whitespace in these assertions is intentionally tolerant: the copy-editor
+  // baseline Czech typography pass has historically inserted non-breaking
+  // spaces (U+00A0) between single-letter words and the next word. The
+  // English dev-facing files are now excluded from that pass (see
+  // .copy-editor.yaml), but accept either normal space or NBSP so a stray
+  // re-run does not wedge the test suite.
+  assert.match(installedSkill, /resolve to a[\s\u00a0]+reviewed fallback locale/);
   assert.match(installedSkill, /English is the default bundled fallback locale/);
   assert.doesNotMatch(installedSkill, /Use Czech for explanations\./);
   const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");

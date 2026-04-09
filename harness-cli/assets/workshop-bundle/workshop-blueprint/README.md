@@ -18,8 +18,7 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 2. [`teaching-spine.md`](teaching-spine.md)
 3. [`operator-guide.md`](operator-guide.md)
 4. [`control-surfaces.md`](control-surfaces.md)
-5. [`edit-boundaries.md`](edit-boundaries.md)
-6. [`agenda.json`](agenda.json)
+5. [`agenda.json`](agenda.json)
 
 ## Blueprint Contents
 
@@ -33,8 +32,6 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
   Explains how a facilitator prepares, runs, and closes a workshop.
 - [`control-surfaces.md`](control-surfaces.md)
   Defines participant surface, facilitator dashboard, facilitator skill, and the `harness` CLI as equal clients of one runtime model.
-- [`edit-boundaries.md`](edit-boundaries.md)
-  Explains what changes in the public repo, what changes only in runtime, and how learnings are published back deliberately.
 
 ### Structured data
 
@@ -45,7 +42,7 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 
 - [`harness-cli-foundation.md`](../docs/harness-cli-foundation.md)
 
-The deeper runtime and maintainer docs such as blueprint import, publish-back flow, and workshop-instance runbooks remain part of the source repository and maintainer path. They are intentionally not part of the portable participant bundle.
+The deeper runtime and maintainer docs such as blueprint import, publish-back flow, workshop-instance runbooks, and the governance rules in `edit-boundaries.md` remain part of the source repository and maintainer path. They are intentionally not part of the portable participant bundle. Read them directly from the [Harness Lab source repository](https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint) when you need them as a maintainer.
 
 For maintainers working in the source repository, the runtime-facing structured agenda sources are:
 

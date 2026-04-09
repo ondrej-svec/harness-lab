@@ -77,6 +77,20 @@ paths:
     - "content/czech-reject-list.md"
     - "content/czech-editorial-review-checklist.md"
 
+    # English dev-facing files under include patterns. These are authored
+    # in English regardless of the workshop content language and must not
+    # receive Czech typography rules (non-breaking space binding around
+    # single-letter words, Czech quote marks, en-dash conventions, etc.).
+    # Czech rules applied to English prose produce subtly broken text:
+    # greps, regex matches, and exact string searches fail, and CI tests
+    # that assert on specific phrases break in ways that are hard to
+    # diagnose. Keep this list tight — only add files here that are truly
+    # English-only.
+    - "workshop-skill/SKILL.md"
+    - "workshop-skill/facilitator.md"
+    - "materials/coaching-codex.md"
+    - "content/codex-craft.md"
+
     # Tests and generated artifacts.
     - "**/*.test.*"
     - "**/node_modules/**"

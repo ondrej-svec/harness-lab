@@ -19,7 +19,7 @@ The CLI performs the browser/device auth flow, stores the session in local file 
 Model:
 - `harness auth login` authenticates the facilitator with the platform
 - the specific workshop instance is selected later per operation or via default context
-- the instance grant is evaluated when accessing a specific action, not during login itself
+- the instance grant is evaluated when accessing a specific action, not during login itself
 
 Current practical paths in this repo:
 
@@ -52,7 +52,7 @@ harness workshop status
 
 Rules:
 - prefer this flow over reading local CLI session files or composing ad hoc authenticated `node -e` scripts
-- once a local selection exists, the CLI may use it as the default target for subsequent facilitator operations
+- once a local selection exists, the CLI may use it as the default target for subsequent facilitator operations
 - when an agent needs machine-readable output, prefer `harness --json ...`
 
 ### `/workshop facilitator logout`
@@ -119,10 +119,10 @@ harness workshop select-instance --clear
 ```
 
 Rules:
-- use this when a facilitator will perform several operations against the same live workshop instance
+- use this when a facilitator will perform several operations against the same live workshop instance
 - the CLI should validate the instance through the server before persisting the selection
 - after selection, `status` and `phase set` should target that instance instead of the deployment default
-- `show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` may omit `<instance-id>` when a valid selection already exists
+- `show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` may omit `<instance-id>` when a valid selection already exists
 
 ### `/workshop facilitator list-instances`
 
@@ -148,7 +148,7 @@ GET {DASHBOARD_URL}/api/workshop/instances
 Rules:
 - prefer this over inspecting local session files or composing one-off authenticated scripts
 - use it when the facilitator needs to discover which live instances exist before reset, update, or scene work
-- keep raw API usage as a diagnostic fallback, not the default operator workflow
+- keep raw API usage as a diagnostic fallback, not the default operator workflow
 - when an agent needs to parse the output, prefer `harness --json workshop list-instances`
 
 ### `/workshop facilitator show-instance <instance-id>`
@@ -162,7 +162,7 @@ harness workshop show-instance sample-workshop-demo-orbit
 Show:
 - one explicit instance record
 - summary metadata for quick operator inspection
-- the full instance payload when the facilitator needs exact values before a mutation
+- the full instance payload when the facilitator needs exact values before a mutation
 
 Raw API reference:
 
@@ -174,7 +174,7 @@ Rules:
 - use this when the facilitator needs one specific instance, not the deployment-default `workshop status`
 - if the route returns `404`, the instance does not exist or is not visible to the facilitator
 - prefer this over ad hoc authenticated scripts for routine discovery
-- if a local selection already exists, the facilitator may omit `<instance-id>` and let the CLI use the stored target
+- if a local selection already exists, the facilitator may omit `<instance-id>` and let the CLI use the stored target
 
 ### `/workshop facilitator participant-access`
 
@@ -203,9 +203,9 @@ Show:
 - the newly issued raw code in the rotation response
 
 Rules:
-- treat the runtime store as hash-only after rotation; if the current raw code is unavailable, issue a new one instead of trying to recover it
+- treat the runtime store as hash-only after rotation; if the current raw code is unavailable, issue a new one instead of trying to recover it
 - prefer this command over inspecting env vars, deployment config, or database rows directly
-- if a local selection already exists, the CLI may omit `<instance-id>` and use the stored target
+- if a local selection already exists, the CLI may omit `<instance-id>` and use the stored target
 - use `--json` for agent consumption so the skill can quote the issued code exactly without scraping prose
 - keep the participant event code separate from facilitator credentials and do not present it as an admin password
 
@@ -237,7 +237,7 @@ Requires `owner` role.
 
 ### `/workshop facilitator create-instance`
 
-The preferred path is a CLI command over the shared runtime API:
+The preferred path is a CLI command over the shared runtime API:
 
 ```bash
 harness workshop create-instance sample-workshop-demo-orbit \
@@ -276,7 +276,7 @@ Content-Type: application/json
 
 Notes for the skill:
 - prefer the CLI, not hand-written `fetch` scripts
-- `id` must be a lowercase slug with letters, numbers, and hyphens
+- `id` must be a lowercase slug with letters, numbers, and hyphens
 - `contentLang` controls workshop-content language for dashboard, presenter, and skill delivery; it is not the same as UI language
 - when the skill calls create repeatedly with the same `id`, the route returns `created: false` and the existing instance record
 - do not guess venue metadata in abbreviated form if the facilitator already knows it; send it during create
@@ -321,7 +321,7 @@ Rules:
 - do not use reset for an ordinary title, venue, or room correction
 - if the route returns `400`, the payload is wrong; if it returns `404`, the instance does not exist
 - use `--content-lang cs|en` when the facilitator intends to change the workshop delivery language for that instance
-- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator reset-instance <instance-id>`
 
@@ -347,8 +347,8 @@ Rules:
 - use this when the goal is to re-import fresh blueprint-owned workshop content into an existing instance
 - warn that reset archives current runtime state first and then clears live runtime state for the instance
 - prefer `update-instance` for ordinary metadata corrections; reset is the high-impact operation
-- if the facilitator does not specify a template, keep the current template unless there is a clear reason to switch
-- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
+- if the facilitator does not specify a template, keep the current template unless there is a clear reason to switch
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator prepare`
 
@@ -368,7 +368,7 @@ Content-Type: application/json
 ```
 
 This sets the instance to `prepared` state and verifies the event code.
-If a local current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
+If a local current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
 ### `/workshop facilitator remove-instance <instance-id>`
 
@@ -390,11 +390,11 @@ Content-Type: application/json
 Rules:
 - remove remains an owner-only operation
 - the skill should warn the facilitator that this is destructive removal from the active list, not routine metadata editing
-- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
+- if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
 
 ### `/workshop facilitator agenda`
 
-Local agenda editing for a specific instance uses the per-instance route:
+Local agenda editing for a specific instance uses the per-instance route:
 
 ```http
 GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}/agenda
@@ -447,9 +447,9 @@ Content-Type: application/json
 
 Rules:
 
-- an agenda item is a facilitator pack, not just `title/time/description`
+- an agenda item is a facilitator pack, not just `title/time/description`
 - preferred fields are `goal`, `roomSummary`, `facilitatorPrompts`, `watchFors`, and `checkpointQuestions`
-- `description` remains a compatibility field for older surfaces; prefer `roomSummary` for room-facing summaries
+- `description` remains a compatibility field for older surfaces; prefer `roomSummary` for room-facing summaries
 - use canonical agenda ids such as `opening`, `talk`, `demo`, `build-1`, `intermezzo-1`, `rotation`, `build-2`, `intermezzo-2`, and `reveal`
 - the skill should not invent custom workshop moment names outside this skeleton
 
@@ -457,21 +457,21 @@ Rules:
 
 Presenter scenes are agenda-linked, room-facing outputs for the facilitator and projector. The skill should be able to:
 
-- list scenes for the whole instance or a specific agenda item
-- create a new scene
+- list scenes for the whole instance or a specific agenda item
+- create a new scene
 - edit content, label, scene type, and CTA
-- change the default scene for a given agenda item
+- change the default scene for a given agenda item
 - reorder scenes
-- hide or re-enable a scene
-- delete a local scene
+- hide or re-enable a scene
+- delete a local scene
 - read and optionally edit `facilitatorNotes`, `sourceRefs`, and `blocks`
 
 Rich-scene rules:
 
-- keep presenter scenes agenda-linked; do not invent a separate slide-deck source of truth
+- keep presenter scenes agenda-linked; do not invent a separate slide-deck source of truth
 - prefer one dominant voice and one main idea per scene
 - for reusable visuals, prefer reviewed local blueprint assets and metadata over ad hoc remote image URLs
-- runtime edits remain instance-local until a maintainer deliberately publishes them back into the repo
+- runtime edits remain instance-local until a maintainer deliberately publishes them back into the repo
 - when working in the source repo, use the maintainer playbook in `docs/presenter-rich-scene-authoring.md` for drafting, refinement, and publish-back
 
 Per-instance route:
@@ -573,7 +573,7 @@ Content-Type: application/json
 { "agendaItemId": "talk", "sceneId": "scene-123" }
 ```
 
-When the facilitator wants to change wording, flow, or participant walkthrough through a coding agent, prefer this route instead of manually describing UI edits.
+When the facilitator wants to change wording, flow, or participant walkthrough through a coding agent, prefer this route instead of manually describing UI edits.
 
 During API work:
 
