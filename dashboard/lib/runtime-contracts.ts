@@ -102,6 +102,35 @@ export type RedeemAttemptRecord = {
   createdAt: string;
 };
 
+/**
+ * RotationSignal — a single facilitator observation captured during the
+ * continuation shift. Schema is deliberately loose for v1; see
+ * `docs/continuation-shift-eval-design.md` for the rationale and the
+ * rollout plan for a future rubric.
+ */
+export type RotationSignal = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  capturedAt: string;
+  capturedBy: "facilitator" | "participant" | "auto";
+  teamId?: string;
+  tags: string[];
+  freeText: string;
+  artifactPaths?: string[];
+};
+
+/**
+ * LearningsLogEntry — the cross-cohort append-only wrapper around a
+ * RotationSignal. Lives outside any instance directory so it survives
+ * instance teardown. See ADR 2026-04-09 continuation-shift-as-eval.
+ */
+export type LearningsLogEntry = {
+  cohort: string;
+  instanceId: WorkshopInstanceId;
+  loggedAt: string;
+  signal: RotationSignal;
+};
+
 export type WorkshopArchivePayload = {
   archivedAt: string;
   reason: "manual" | "reset";
@@ -181,6 +210,25 @@ export interface RedeemAttemptRepository {
 export interface AuditLogRepository {
   append(record: AuditLogRecord): Promise<void>;
   deleteOlderThan(instanceId: WorkshopInstanceId, olderThan: string): Promise<void>;
+}
+
+/**
+ * RotationSignalRepository — instance-local persistence for rotation
+ * signals. Scoped to one workshop instance. Deleted with the instance.
+ */
+export interface RotationSignalRepository {
+  list(instanceId: WorkshopInstanceId): Promise<RotationSignal[]>;
+  append(instanceId: WorkshopInstanceId, signal: RotationSignal): Promise<void>;
+}
+
+/**
+ * LearningsLogRepository — cross-cohort append-only sink for rotation
+ * signals. Lives at the root of the data directory (file mode) or in a
+ * dedicated table (Neon mode), outside any instance scope so entries
+ * survive instance teardown.
+ */
+export interface LearningsLogRepository {
+  append(entry: LearningsLogEntry): Promise<void>;
 }
 
 export interface InstanceArchiveRepository {

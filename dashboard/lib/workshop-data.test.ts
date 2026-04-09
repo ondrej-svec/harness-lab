@@ -189,7 +189,9 @@ describe("workshop-data", () => {
       ]),
     );
     expect(talk?.facilitatorRunner.say[0]).toBe("Kontext je páka, ne kosmetika.");
-    expect(talkParticipantScene?.ctaLabel).toBe("Otevřít install a první příkazy");
+    // Czech typography baseline pass binds single-letter "a" to the next
+    // word with a non-breaking space. Match the blueprint source exactly.
+    expect(talkParticipantScene?.ctaLabel).toBe("Otevřít install a\u00a0první příkazy");
     expect(rotationParticipantScene?.ctaLabel).toBe("Otevřít analyze checklist");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
@@ -197,7 +199,7 @@ describe("workshop-data", () => {
         expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
       ]),
     );
-    expect(revealParticipantScene?.ctaLabel).toBe("Otevřít recap a follow-up");
+    expect(revealParticipantScene?.ctaLabel).toBe("Otevřít recap a\u00a0follow-up");
   });
 
   it("returns the team name when present and the id otherwise", () => {

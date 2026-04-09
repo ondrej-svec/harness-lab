@@ -90,6 +90,12 @@ paths:
     - "workshop-skill/facilitator.md"
     - "materials/coaching-codex.md"
     - "content/codex-craft.md"
+    # The English overlay for the runtime blueprint agenda. This file is
+    # included above as part of the canonical runtime-facing source pair
+    # for the Czech review, but the overlay object only has an `en:` key
+    # and contains no Czech content. Excluding it from the Czech pass
+    # keeps English prose assertions in dashboard tests stable.
+    - "dashboard/lib/workshop-blueprint-localized-content.ts"
 
     # Tests and generated artifacts.
     - "**/*.test.*"

@@ -13,9 +13,22 @@ import {
   type ParticipantEventAccessRepository,
 } from "./participant-event-access-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "./redeem-attempt-repository";
+import { setRotationSignalRepositoryForTests } from "./rotation-signal-repository";
+import { setLearningsLogRepositoryForTests } from "./learnings-log-repository";
 import { setTeamRepositoryForTests, type TeamRepository } from "./team-repository";
 import { sampleWorkshopInstances, seedWorkshopState, type WorkshopState } from "./workshop-data";
-import type { AuditLogRecord, InstanceArchiveRecord, ParticipantEventAccessRecord, ParticipantSessionRecord, RedeemAttemptRecord, WorkshopInstanceRepository } from "./runtime-contracts";
+import type {
+  AuditLogRecord,
+  InstanceArchiveRecord,
+  LearningsLogEntry,
+  LearningsLogRepository,
+  ParticipantEventAccessRecord,
+  ParticipantSessionRecord,
+  RedeemAttemptRecord,
+  RotationSignal,
+  RotationSignalRepository,
+  WorkshopInstanceRepository,
+} from "./runtime-contracts";
 import { setWorkshopInstanceRepositoryForTests } from "./workshop-instance-repository";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "./workshop-state-repository";
 import {
@@ -23,12 +36,14 @@ import {
   addPresenterScene,
   addSprintUpdate,
   applyRuntimeRetentionPolicy,
+  captureRotationSignal,
   createWorkshopInstance,
   createWorkshopArchive,
   completeChallenge,
   getWorkshopState,
   getWorkshopInstances,
   getLatestWorkshopArchive,
+  listRotationSignals,
   moveAgendaItem,
   movePresenterScene,
   removeAgendaItem,
@@ -223,6 +238,27 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   }
 }
 
+class MemoryRotationSignalRepository implements RotationSignalRepository {
+  private readonly store = new Map<string, RotationSignal[]>();
+
+  async list(instanceId: string) {
+    return structuredClone(this.store.get(instanceId) ?? []);
+  }
+
+  async append(instanceId: string, signal: RotationSignal) {
+    const existing = this.store.get(instanceId) ?? [];
+    this.store.set(instanceId, [...existing, structuredClone(signal)]);
+  }
+}
+
+class MemoryLearningsLogRepository implements LearningsLogRepository {
+  entries: LearningsLogEntry[] = [];
+
+  async append(entry: LearningsLogEntry) {
+    this.entries.push(structuredClone(entry));
+  }
+}
+
 class MemoryWorkshopInstanceRepository implements WorkshopInstanceRepository {
   constructor(private items = structuredClone(sampleWorkshopInstances)) {}
 
@@ -267,6 +303,8 @@ describe("workshop-store", () => {
   let redeemAttemptRepository: MemoryRedeemAttemptRepository;
   let auditLogRepository: MemoryAuditLogRepository;
   let instanceRepository: MemoryWorkshopInstanceRepository;
+  let rotationSignalRepository: MemoryRotationSignalRepository;
+  let learningsLogRepository: MemoryLearningsLogRepository;
 
   beforeEach(() => {
     repository = new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState));
@@ -303,6 +341,8 @@ describe("workshop-store", () => {
       },
     ]);
     auditLogRepository = new MemoryAuditLogRepository();
+    rotationSignalRepository = new MemoryRotationSignalRepository();
+    learningsLogRepository = new MemoryLearningsLogRepository();
     setWorkshopStateRepositoryForTests(repository);
     setCheckpointRepositoryForTests(checkpointRepository);
     setTeamRepositoryForTests(teamRepository);
@@ -313,6 +353,8 @@ describe("workshop-store", () => {
     setRedeemAttemptRepositoryForTests(redeemAttemptRepository);
     setAuditLogRepositoryForTests(auditLogRepository);
     setWorkshopInstanceRepositoryForTests(instanceRepository);
+    setRotationSignalRepositoryForTests(rotationSignalRepository);
+    setLearningsLogRepositoryForTests(learningsLogRepository);
   });
 
   afterEach(() => {
@@ -326,6 +368,8 @@ describe("workshop-store", () => {
     setRedeemAttemptRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
     setWorkshopInstanceRepositoryForTests(null);
+    setRotationSignalRepositoryForTests(null);
+    setLearningsLogRepositoryForTests(null);
   });
 
   it("moves the agenda and updates the phase label", async () => {
@@ -509,6 +553,37 @@ describe("workshop-store", () => {
         expect.objectContaining({ id: "t9", name: "Tým 9" }),
       ]),
     );
+  });
+
+  it("captures a rotation signal to both instance-local and learnings log", async () => {
+    const signal = await captureRotationSignal({
+      freeText: "Receiving team found AGENTS.md in 40 seconds.",
+      tags: ["agents_md_helped", " plan_out_of_date "],
+      teamId: "t2",
+      artifactPaths: ["AGENTS.md", "docs/plan.md"],
+    });
+
+    expect(signal.id).toMatch(/^[0-9a-f-]{36}$/);
+    expect(signal.instanceId).toBe("sample-studio-a");
+    expect(signal.capturedBy).toBe("facilitator");
+    expect(signal.tags).toEqual(["agents_md_helped", "plan_out_of_date"]);
+    expect(signal.freeText).toBe("Receiving team found AGENTS.md in 40 seconds.");
+    expect(signal.teamId).toBe("t2");
+    expect(signal.artifactPaths).toEqual(["AGENTS.md", "docs/plan.md"]);
+
+    await expect(listRotationSignals()).resolves.toEqual([expect.objectContaining({ id: signal.id })]);
+
+    expect(learningsLogRepository.entries).toHaveLength(1);
+    const [entry] = learningsLogRepository.entries;
+    expect(entry?.instanceId).toBe("sample-studio-a");
+    expect(entry?.signal.id).toBe(signal.id);
+    expect(entry?.loggedAt).toBe(signal.capturedAt);
+    expect(entry?.cohort).toMatch(/^\d{4}-Q[1-4]$/);
+  });
+
+  it("rejects rotation signals with empty freeText and does not log them", async () => {
+    await expect(captureRotationSignal({ freeText: "   " })).rejects.toThrow(/freeText is required/);
+    expect(learningsLogRepository.entries).toHaveLength(0);
   });
 
   it("records challenge completion, sprint updates, and rotation reveal", async () => {

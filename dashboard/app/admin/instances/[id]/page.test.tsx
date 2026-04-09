@@ -87,10 +87,12 @@ vi.mock("@/lib/workshop-instance-repository", () => ({
 vi.mock("@/lib/workshop-store", () => ({
   addAgendaItem: vi.fn(),
   addSprintUpdate: vi.fn(),
+  captureRotationSignal: vi.fn(),
   createWorkshopArchive: vi.fn(),
   completeChallenge: vi.fn(),
   getLatestWorkshopArchive,
   getWorkshopState,
+  listRotationSignals: vi.fn().mockResolvedValue([]),
   moveAgendaItem: vi.fn(),
   removeAgendaItem: vi.fn(),
   resetWorkshopState: vi.fn(),

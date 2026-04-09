@@ -29,9 +29,12 @@ import { getEventAccessRepository } from "./event-access-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
+import { getLearningsLogRepository } from "./learnings-log-repository";
 import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
 import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
+import { getRotationSignalRepository } from "./rotation-signal-repository";
+import type { RotationSignal } from "./runtime-contracts";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
@@ -1119,6 +1122,93 @@ export async function setRotationReveal(revealed: boolean, instanceId = getCurre
     ...state,
     rotation: { ...state.rotation, revealed },
   }), instanceId);
+}
+
+export type RotationSignalInput = {
+  freeText: string;
+  tags?: string[];
+  teamId?: string;
+  artifactPaths?: string[];
+  capturedBy?: RotationSignal["capturedBy"];
+};
+
+/**
+ * Derive a cohort identifier for the learnings log entry. Prefers an
+ * explicit `cohort` hint carried on the workshop instance metadata; if
+ * absent, falls back to the ISO year-quarter of the capture timestamp.
+ * The fallback is deterministic but fuzzy across year and quarter
+ * boundaries — see ADR 2026-04-09 continuation-shift-as-eval for the
+ * deferred tightening.
+ */
+function resolveCohort(cohortHint: string | null | undefined, capturedAt: string): string {
+  if (cohortHint && cohortHint.trim().length > 0) {
+    return cohortHint.trim();
+  }
+  const date = new Date(capturedAt);
+  if (Number.isNaN(date.getTime())) {
+    return "unknown";
+  }
+  const year = date.getUTCFullYear();
+  const quarter = Math.floor(date.getUTCMonth() / 3) + 1;
+  return `${year}-Q${quarter}`;
+}
+
+/**
+ * captureRotationSignal — persist one facilitator observation to both
+ * the instance-local store and the cross-cohort learnings log.
+ *
+ * Deliberately does NOT call updateWorkshopState. Rotation signals are
+ * orthogonal to WorkshopState and live in their own repositories so
+ * that the signal stream does not inflate the hot path of state reads
+ * and so that signal writes do not contend with state writes for
+ * optimistic concurrency.
+ */
+export async function captureRotationSignal(
+  input: RotationSignalInput,
+  instanceId = getCurrentWorkshopInstanceId(),
+): Promise<RotationSignal> {
+  const trimmedText = input.freeText.trim();
+  if (trimmedText.length === 0) {
+    throw new Error("captureRotationSignal: freeText is required");
+  }
+
+  const tags = (input.tags ?? [])
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length > 0);
+
+  const signal: RotationSignal = {
+    id: randomUUID(),
+    instanceId,
+    capturedAt: new Date().toISOString(),
+    capturedBy: input.capturedBy ?? "facilitator",
+    ...(input.teamId ? { teamId: input.teamId } : {}),
+    tags,
+    freeText: trimmedText,
+    ...(input.artifactPaths && input.artifactPaths.length > 0
+      ? { artifactPaths: input.artifactPaths }
+      : {}),
+  };
+
+  await getRotationSignalRepository().append(instanceId, signal);
+
+  // Cohort identifier is derived from the ISO year-quarter of the capture
+  // timestamp. The ADR deferred tightening this to an explicit cohort
+  // field on the workshop instance record — see `docs/adr/2026-04-09-
+  // continuation-shift-as-eval.md` "Consequences" for the rationale.
+  await getLearningsLogRepository().append({
+    cohort: resolveCohort(null, signal.capturedAt),
+    instanceId,
+    loggedAt: signal.capturedAt,
+    signal,
+  });
+
+  return signal;
+}
+
+export async function listRotationSignals(
+  instanceId = getCurrentWorkshopInstanceId(),
+): Promise<RotationSignal[]> {
+  return getRotationSignalRepository().list(instanceId);
 }
 
 export async function addSprintUpdate(update: SprintUpdate, instanceId = getCurrentWorkshopInstanceId()) {

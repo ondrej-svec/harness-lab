@@ -249,14 +249,14 @@ describe("workshop route", () => {
       workshopId: "sample-studio-a",
       workshopMeta: {
         city: "Studio A",
-        currentPhaseLabel: "Úvod a naladění",
+        currentPhaseLabel: "Úvod a\u00a0naladění",
       },
     });
 
     const current = await GET();
     await expect(current.json()).resolves.toMatchObject({
       workshopId: "sample-studio-a",
-      workshopMeta: { currentPhaseLabel: "Úvod a naladění" },
+      workshopMeta: { currentPhaseLabel: "Úvod a\u00a0naladění" },
     });
   });
 

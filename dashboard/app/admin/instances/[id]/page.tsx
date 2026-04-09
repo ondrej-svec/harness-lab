@@ -52,6 +52,8 @@ import {
   moveAgendaItem,
   movePresenterScene,
   removeAgendaItem,
+  captureRotationSignal,
+  listRotationSignals,
   removePresenterScene,
   resetWorkshopState,
   setCurrentAgendaItem,
@@ -62,6 +64,7 @@ import {
   updatePresenterScene,
   upsertTeam,
 } from "@/lib/workshop-store";
+import type { RotationSignal } from "@/lib/runtime-contracts";
 import {
   AdminLanguageSwitcher,
   AdminPanel,
@@ -518,6 +521,32 @@ async function toggleRotationAction(formData: FormData) {
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
+async function captureRotationSignalAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const freeText = String(formData.get("freeText") ?? "").trim();
+  if (freeText.length === 0) {
+    // The rendered form already enforces required on freeText. This guard is
+    // the defense-in-depth layer for clients that bypass the HTML required
+    // attribute. Silent redirect is intentional — the user retains their
+    // unsubmitted value because the form POSTs via a full page reload.
+    redirect(buildAdminHref({ lang, section, instanceId }));
+  }
+
+  const tagsRaw = String(formData.get("tags") ?? "").trim();
+  const tags = tagsRaw.length > 0
+    ? tagsRaw.split(",").map((tag) => tag.trim()).filter((tag) => tag.length > 0)
+    : [];
+
+  const teamIdRaw = String(formData.get("teamId") ?? "").trim();
+  const teamId = teamIdRaw.length > 0 ? teamIdRaw : undefined;
+
+  await captureRotationSignal({ freeText, tags, teamId }, instanceId);
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
 async function addCheckpointFeedAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
@@ -775,16 +804,25 @@ export default async function AdminPage({
 
   const isNeonMode = getRuntimeStorageMode() === "neon";
   const cookieStore = await cookies();
-  const [loadedState, loadedLatestArchive, loadedFacilitatorGrants, loadedCurrentFacilitator, loadedAuthSession, loadedParticipantAccess] =
-    await Promise.all([
-      getWorkshopState(activeInstanceId),
-      getLatestWorkshopArchive(activeInstanceId),
-      isNeonMode ? getInstanceGrantRepository().listActiveGrants(activeInstanceId) : Promise.resolve([]),
-      isNeonMode ? getFacilitatorSession(activeInstanceId) : Promise.resolve(null),
-      isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
-      getFacilitatorParticipantAccessState(activeInstanceId),
-    ]);
+  const [
+    loadedState,
+    loadedLatestArchive,
+    loadedFacilitatorGrants,
+    loadedCurrentFacilitator,
+    loadedAuthSession,
+    loadedParticipantAccess,
+    loadedRotationSignals,
+  ] = await Promise.all([
+    getWorkshopState(activeInstanceId),
+    getLatestWorkshopArchive(activeInstanceId),
+    isNeonMode ? getInstanceGrantRepository().listActiveGrants(activeInstanceId) : Promise.resolve([]),
+    isNeonMode ? getFacilitatorSession(activeInstanceId) : Promise.resolve(null),
+    isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
+    getFacilitatorParticipantAccessState(activeInstanceId),
+    listRotationSignals(activeInstanceId).catch(() => [] as RotationSignal[]),
+  ]);
   const state: Awaited<ReturnType<typeof getWorkshopState>> = loadedState;
+  const rotationSignals = loadedRotationSignals;
   const latestArchive: Awaited<ReturnType<typeof getLatestWorkshopArchive>> = loadedLatestArchive;
   const facilitatorGrants: Awaited<ReturnType<ReturnType<typeof getInstanceGrantRepository>["listActiveGrants"]>> =
     loadedFacilitatorGrants;
@@ -1248,6 +1286,8 @@ export default async function AdminPage({
                       description={handoffIsLive ? copy.handoffMomentLiveDescription : copy.handoffMomentNextDescription}
                       participantState={overviewState.participantState}
                       slots={state.rotation.slots}
+                      rotationSignals={rotationSignals}
+                      teamChoices={state.teams.map((team) => ({ id: team.id, label: team.name }))}
                     />
                   ) : null}
 
@@ -1397,6 +1437,8 @@ export default async function AdminPage({
                       participantState={overviewState.participantState}
                       slots={state.rotation.slots}
                       jumpHref={handoffAgendaHref}
+                      rotationSignals={rotationSignals}
+                      teamChoices={state.teams.map((team) => ({ id: team.id, label: team.name }))}
                     />
                   ) : null}
 
@@ -2045,6 +2087,8 @@ function HandoffMomentCard({
   participantState,
   slots,
   jumpHref,
+  rotationSignals,
+  teamChoices,
 }: {
   copy: (typeof adminCopy)[UiLanguage];
   lang: UiLanguage;
@@ -2053,7 +2097,14 @@ function HandoffMomentCard({
   participantState: string;
   slots: RotationPlan["slots"];
   jumpHref?: string | null;
+  rotationSignals: RotationSignal[];
+  teamChoices: Array<{ id: string; label: string }>;
 }) {
+  // Show the three most recent signals (newest first) to keep the card tight.
+  const recentSignals = [...rotationSignals]
+    .sort((left, right) => right.capturedAt.localeCompare(left.capturedAt))
+    .slice(0, 3);
+
   return (
     <ControlCard title={copy.handoffMomentTitle} description={description}>
       <div className="space-y-4">
@@ -2090,6 +2141,121 @@ function HandoffMomentCard({
             </div>
           ))}
         </div>
+
+        <details className="group space-y-3 border-t border-[var(--border)] pt-4">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
+                {copy.rotationSignalTitle}
+                <span className="ml-2 inline-flex min-w-[1.75rem] justify-center rounded-full bg-[var(--surface-soft)] px-2 py-0.5 text-xs font-medium text-[var(--text-secondary)]">
+                  {rotationSignals.length}
+                </span>
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[var(--text-muted)]">{copy.rotationSignalDescription}</p>
+            </div>
+            <span
+              aria-hidden="true"
+              className="text-lg text-[var(--text-muted)] transition-transform group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+
+          <form action={captureRotationSignalAction} className="space-y-3 pt-1">
+            <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+            <div>
+              <FieldLabel htmlFor="rotation-signal-free-text">{copy.rotationSignalFreeTextLabel}</FieldLabel>
+              <textarea
+                id="rotation-signal-free-text"
+                name="freeText"
+                required
+                rows={4}
+                placeholder={copy.rotationSignalFreeTextPlaceholder}
+                className={`${adminInputClassName} mt-2`}
+              />
+            </div>
+            <div className="grid gap-3 lg:grid-cols-2">
+              <div>
+                <FieldLabel htmlFor="rotation-signal-tags">{copy.rotationSignalTagsLabel}</FieldLabel>
+                <input
+                  id="rotation-signal-tags"
+                  name="tags"
+                  placeholder={copy.rotationSignalTagsPlaceholder}
+                  className={`${adminInputClassName} mt-2`}
+                />
+              </div>
+              <div>
+                <FieldLabel htmlFor="rotation-signal-team">{copy.rotationSignalTeamLabel}</FieldLabel>
+                <select
+                  id="rotation-signal-team"
+                  name="teamId"
+                  defaultValue=""
+                  className={`${adminInputClassName} mt-2`}
+                >
+                  <option value="">{copy.rotationSignalTeamNone}</option>
+                  {teamChoices.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                {copy.rotationSignalSubmit}
+              </AdminSubmitButton>
+            </div>
+          </form>
+
+          <div className="space-y-2">
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              {copy.rotationSignalListTitle}
+            </p>
+            {recentSignals.length === 0 ? (
+              <p className="text-sm text-[var(--text-muted)]">{copy.rotationSignalListEmpty}</p>
+            ) : (
+              <ul className="space-y-2">
+                {recentSignals.map((signal) => {
+                  const teamLabel = signal.teamId
+                    ? teamChoices.find((team) => team.id === signal.teamId)?.label ?? signal.teamId
+                    : null;
+                  const preview =
+                    signal.freeText.length > 140 ? `${signal.freeText.slice(0, 137)}…` : signal.freeText;
+                  return (
+                    <li
+                      key={signal.id}
+                      className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-[var(--text-primary)]">{preview}</p>
+                        <time className="shrink-0 text-xs text-[var(--text-muted)]" dateTime={signal.capturedAt}>
+                          {new Date(signal.capturedAt).toLocaleTimeString(lang === "cs" ? "cs-CZ" : "en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </time>
+                      </div>
+                      {(teamLabel || signal.tags.length > 0) && (
+                        <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                          {teamLabel ? <span>{teamLabel}</span> : null}
+                          {signal.tags.map((tag) => (
+                            <span
+                              key={tag}
+                              className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[var(--text-secondary)]"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        </details>
       </div>
     </ControlCard>
   );

@@ -155,7 +155,9 @@ describe("public page helpers", () => {
       rotationRevealed: false,
     });
     expect(buildPhasePanel.guidanceLabel).toBe("Týmová tabule");
-    expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install a setup flow");
+    // Czech typography baseline pass binds single-letter words like "a" to
+    // the next word with a non-breaking space. Match the source exactly.
+    expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install a\u00a0setup flow");
     expect(buildPhasePanel.guidanceCtaHref).toBe("https://github.com/example/harness-lab/blob/main/workshop-skill/install.md");
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "hero")).toBe(true);
