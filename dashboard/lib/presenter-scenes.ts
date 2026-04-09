@@ -61,8 +61,11 @@ export function resolvePresenterSelection(options: {
     state.agenda.find((item) => item.status === "current") ??
     state.agenda[0] ??
     null;
-  const roomScenes = getPresenterScenesBySurface(activeAgendaItem, "room");
-  const selectedScene = roomScenes.find((scene) => scene.id === requestedSceneId) ?? getDefaultPresenterScene(activeAgendaItem);
+  const requestedScene =
+    requestedSceneId && activeAgendaItem
+      ? activeAgendaItem.presenterScenes.find((scene) => scene.enabled && scene.id === requestedSceneId) ?? null
+      : null;
+  const selectedScene = requestedScene ?? getDefaultPresenterScene(activeAgendaItem);
 
   return {
     activeAgendaItem,

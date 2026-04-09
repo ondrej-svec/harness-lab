@@ -84,8 +84,8 @@ Design rules:
 There are now two explicit layers:
 
 - public blueprint layer
-  - canonical runtime-facing structured agenda blueprint lives in [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json)
-  - public-readable workshop-method summary remains in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
+  - runtime-facing structured agenda source pair lives in [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json) and [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts)
+  - public-readable workshop-method mirror remains in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)
   - supporting human-readable workshop method docs live in [`workshop-blueprint/`](../workshop-blueprint/)
 - runtime instance layer
   - instance create/reset imports blueprint-owned fields into the active workshop instance
@@ -100,6 +100,7 @@ Important consequence:
 - reusable blueprint edits still belong in the repo, but instance-local agenda wording/order/time changes may be authored in runtime
 - presenter scenes follow the same rule: blueprint defines reusable defaults, runtime owns per-instance overrides
 - dashboard copy should describe reset as blueprint import, not as an opaque seed reset
+- participant and public repo links should use repo-relative blueprint references resolved by deployment config, not hardcoded upstream URLs
 
 ## Workshop Context Sources
 

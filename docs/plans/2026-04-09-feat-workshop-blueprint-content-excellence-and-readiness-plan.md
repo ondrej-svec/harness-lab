@@ -1,0 +1,543 @@
+---
+title: "feat: workshop blueprint content excellence and readiness"
+type: plan
+date: 2026-04-09
+status: in_progress
+brainstorm: ../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md
+confidence: medium
+---
+
+# Workshop Blueprint Content Excellence And Readiness Plan
+
+Active execution tracker for April 9 content-readiness work.
+
+This plan supersedes [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md) and [`2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md`](./2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md) as execution trackers. Keep those plans as historical input only.
+
+Create one integrated content-quality plan for Harness Lab that takes the public blueprint, structured runtime agenda, participant/facilitator materials, and localization model from "good and promising" to "coherent, premium, portable, and ready to run without hidden author knowledge."
+
+## Problem Statement
+
+Harness Lab already has the right doctrine, a strong workshop thesis, a real scene system, and better-than-average participant content. The remaining problem is no longer "does the system exist?" It is "does the content feel intentional, memorable, self-sufficient, and production-grade across all surfaces?"
+
+The current gap has five parts:
+
+- the doctrine is stronger than several of the current room-facing scenes
+- the runtime content architecture still conflicts with the canonical-English language rule
+- participant mirrors and some public surfaces still explain the system instead of operating the system
+- the workshop briefs and learner materials are disciplined but not yet high-authority or high-distinction
+- portability is weakened by upstream-specific links and split blueprint summaries
+
+If this lands only as a copy polish pass, the system will still drift. If it lands only as a source-of-truth cleanup, the workshop will still feel flatter than it should. The work has to integrate both.
+
+## Target End State
+
+When this plan lands:
+
+- the canonical structured content model is unambiguous and does not fight the localization architecture
+- every flagship workshop phase has room-facing scenes that are cold-readable, narratively distinct, and memorable
+- participant-facing mirrors answer "what should my team do now?" instead of describing the dashboard itself
+- facilitator-facing guidance is strong enough that another facilitator can run the normal path without reading Ondrej's mind
+- project briefs, challenge cards, learner kit, and follow-up materials feel like one editorial system rather than adjacent artifacts
+- public-safe template users can fork, localize, and run the system without inheriting broken upstream references
+- the workshop feels premium because of clarity, authority, restraint, and proof, not because of density
+
+## Scope
+
+This plan covers:
+
+- the structured workshop blueprint and its runtime-backed agenda content
+- room-facing presenter scenes
+- participant mirrors and participant-facing workshop guidance
+- facilitator runner/support content where it affects self-sufficiency
+- project briefs, challenge cards, learner kit, and reference surfaces
+- localization/source-of-truth alignment for shared workshop content
+- content portability issues in blueprint-linked URLs and public-safe references
+- a reusable authority/citation layer for proof-bearing workshop content
+
+## Non-Goals
+
+- building a new slide system or reopening the bounded scene/block model
+- general UI redesign of the dashboard shell
+- arbitrary expansion of the block taxonomy
+- machine-translating workshop content at runtime
+- introducing live-event private data into the public repo
+- polishing every copy surface equally before proving the strongest pattern
+- optimizing for speed over editorial quality
+
+## Proposed Solution
+
+Treat the next content wave as one integrated readiness program with four linked tracks:
+
+1. **Content architecture correctness**
+   Fix the source-of-truth, localization, and portability mismatches that currently make drift likely.
+
+2. **Flagship scene excellence**
+   Rewrite the room-facing moments that define the day so the narrative arc, facilitator support, and participant mirrors all become stronger together.
+
+3. **Supporting content elevation**
+   Raise the briefs, learner kit, challenge cards, and follow-up materials from disciplined workshop content to distinctive workshop content.
+
+4. **Proof and rollout discipline**
+   Use preview artifacts, cold-read checks, spoken-readability checks, and surface-specific review gates before propagating patterns across the whole system.
+
+This plan intentionally treats content as a system, not as isolated documents.
+
+## Detailed Plan Level
+
+This is a **detailed** plan because it changes canonical workshop content across multiple surfaces, includes subjective quality gates, and depends on source-of-truth correctness as much as editorial quality.
+
+## Target Outcome
+
+The workshop should feel like a serious, modern operating system for AI-agent work:
+
+- clear enough for a new facilitator
+- sharp enough for experienced developers
+- restrained enough to avoid generic AI polish
+- memorable enough that participants can recall the core ideas a week later
+- portable enough that forks and workshop variants do not depend on Ondrej-specific knowledge
+
+## Anti-Goals
+
+The result must not become:
+
+- a prettier but still generic slide deck
+- an overproduced "AI innovation" keynote
+- a Czech translation layer over weak source content
+- a content system that only Ondrej can run well
+- a public template that quietly points users back to one specific upstream repo
+- a blueprint that looks canonical while the real system lives somewhere else
+
+## References
+
+Primary repo references:
+
+- `dashboard/lib/workshop-blueprint-agenda.json`
+- `dashboard/lib/workshop-blueprint-localized-content.ts`
+- `docs/workshop-content-language-architecture.md`
+- `workshop-blueprint/day-structure.md`
+- `workshop-blueprint/teaching-spine.md`
+- `workshop-blueprint/control-surfaces.md`
+- `content/talks/context-is-king.md`
+- `content/talks/codex-demo-script.md`
+- `content/facilitation/master-guide.md`
+- `content/style-guide.md`
+- `content/czech-editorial-review-checklist.md`
+- `content/project-briefs/*.md`
+- `materials/participant-resource-kit.md`
+
+External positive references:
+
+- OpenAI: [Customization - Codex](https://developers.openai.com/codex/concepts/customization)
+- OpenAI: [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
+- Anthropic: [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- GitHub: [How to write a great agents.md: lessons from over 2,500 repositories](https://github.blog/ai-and-ml/github-copilot/how-to-write-a-great-agents-md-lessons-from-over-2500-repositories/)
+
+## Anti-References
+
+Avoid these patterns even if they are fluent:
+
+- bullet-heavy conference-slide filler
+- scenes that restate doctrine without changing the room's understanding
+- participant surfaces that narrate the product instead of directing action
+- "premium" content that is just denser content
+- expert-quote decoration without teaching value
+- mixed-language drift caused by authoring shortcuts
+
+## Tone And Taste Rules
+
+- Default voice: experienced peer, calm, practical, no hype
+- The workshop teaches discipline, not wizardry
+- Room-facing scenes need one dominant idea and one memorable anchor
+- Participant copy should be shorter, more imperative, and more operational than presenter copy
+- Facilitator content should be decisive and runnable, not literary, and should align with the `facilitatorRunner` contract where applicable
+- Use expert authority sparingly and only where it materially sharpens trust, contrast, or memory
+- Prefer cuts over smoothing
+- If a sentence would not survive being spoken aloud to developers, it does not belong
+
+## Representative Proof Slice
+
+Before broad propagation, prove the pattern on one cross-surface slice:
+
+- one flagship room-facing phase pack: `talk`
+- its participant mirror
+- its facilitator runner/support beat
+- one associated learner-facing artifact: `code-review-helper` brief
+- one locale pair: English canonical source plus reviewed Czech delivery
+
+Why this slice:
+
+- `talk` sits at the center of the workshop thesis
+- it stress-tests voice, authority, narrative, and localization
+- it exposes whether participant and facilitator surfaces are actually aligned
+- it reveals whether the English-source/Czech-delivery model is operational, not just doctrinal
+
+This is intentionally a full-stack proof slice rather than a thin probe. If the slice fails twice for structural reasons, or if propagating the validated pattern to the next flagship phase requires major rework, revisit the proof-slice scope before continuing.
+
+## Rollout Rule
+
+Do not propagate a new content pattern across the whole day until the proof slice passes:
+
+- cold-read facilitator check
+- spoken-readability check in Czech
+- participant usefulness check
+- mobile glanceability check for participant-facing use
+- projected-room legibility check for presenter-facing use
+- localization parity check
+- portability/reference check
+
+If the proof slice fails any of those gates, revise the system before scaling it.
+
+All proof-slice rollout gates are blocking.
+
+## Review Gate Protocol
+
+| Gate | Primary reviewer | Required artifact | Blocking rule |
+| --- | --- | --- | --- |
+| Cold-read facilitator check | A non-Ondrej facilitator or maintainer | Short written note covering clarity, missing context, and runnable gaps | Must pass |
+| Spoken-readability check in Czech | Czech-fluent reviewer | Short written note covering awkward phrasing, spoken flow, and delivery risk | Must pass |
+| Participant usefulness check | Workshop maintainer using participant surface preview | Short note confirming the scene answers "what do I do now?" | Must pass |
+| Mobile glanceability check | Workshop maintainer using mobile preview capture | Mobile preview capture plus short legibility note | Must pass |
+| Projected-room legibility check | Workshop maintainer using presenter preview | Presenter preview plus short room-legibility note | Must pass |
+| Localization parity check | English-source editor plus Czech reviewer | Side-by-side parity review note | Must pass |
+| Portability/reference check | Maintainer doing public-safe review | Short checklist of links and upstream assumptions | Must pass |
+
+## Rejection Criteria
+
+The work is wrong even if it compiles when:
+
+- the canonical structured source is still ambiguous
+- a room scene sounds smoother but less grounded in workshop method
+- a participant scene still answers "what is this surface?" instead of "what do I do now?"
+- a facilitator still needs out-of-band explanation for a flagship beat
+- localization remains overlay-first instead of source-true and reviewed
+- public-safe content still contains Ondrej/upstream-specific runtime assumptions
+
+## Required Preview Artifacts
+
+Before autonomous implementation beyond the proof slice, require:
+
+- a scene audit table classifying every flagship scene as `keep`, `tighten`, `rewrite`, `split`, or `cut`
+- preview renders or screenshots for the proof-slice room scenes
+- preview renders or screenshots for the proof-slice participant mirror
+- proof-slice facilitator runner review against agenda-owned fields
+- a side-by-side English/Czech content review for the proof slice
+- a short cold-read review note from a non-Ondrej reader
+- a mobile participant-preview capture for the proof slice
+- a projected-room legibility review note for the proof slice
+- a portability review list for blueprint/public references
+
+## Constraints And Boundaries
+
+- `docs/workshop-content-language-architecture.md` remains the language architecture authority
+- the runtime-backed agenda model remains the shared backbone across dashboard, presenter, and facilitator skill
+- facilitator-facing rewrite work must stay aligned with `docs/facilitator-agenda-source-of-truth.md` and the `facilitatorRunner` ownership model
+- public template files must remain public-safe
+- facilitator/private runtime state must stay out of tracked public files
+- the scene/block model stays bounded unless the proof slice demonstrates a real deficiency
+- runtime edits do not become canonical automatically
+- the `AGENTS.md` / repo-native knowledge model remains central to the workshop thesis
+
+## Decision Rationale
+
+### Why this must be one integrated plan
+
+The current issue is not one-dimensional. If the team rewrites copy without fixing content architecture, drift returns. If the team fixes source-of-truth issues without raising scene quality, the workshop still feels flatter than it should. One plan keeps the dependency order honest.
+
+### Why architecture correctness comes before broad editorial rollout
+
+The language/source-of-truth split is currently the highest-leverage correctness issue. It affects every downstream surface. Rewriting lots of content against the wrong authoring contract creates avoidable rework.
+
+### Why the proof slice is centered on `talk`
+
+`opening` already has stronger investment. `talk` is still a flagged weak moment and carries the workshop's core intellectual move. If `talk` becomes excellent, the rest of the day has a stronger center of gravity.
+
+### Why briefs and learner materials are included
+
+Participants do not experience the workshop only through presenter scenes. If the room feels premium but the briefs and take-home kit feel templated, the system still feels uneven.
+
+### Why authority handling needs to be explicit
+
+The workshop should use authority as proof, not decoration. Without an explicit citation layer, expert references will become inconsistent, hard to review, and easy to overuse.
+
+## Assumptions
+
+| Assumption | Status | Evidence |
+| --- | --- | --- |
+| The workshop doctrine itself is strong enough that the next bottleneck is execution quality, not workshop thesis | Verified | `workshop-blueprint/day-structure.md`, `workshop-blueprint/teaching-spine.md`, `content/talks/context-is-king.md` |
+| The current runtime agenda model can support the needed content upgrades without a new presenter architecture | Verified | `dashboard/lib/workshop-blueprint-agenda.json`, `docs/facilitator-agenda-source-of-truth.md` |
+| The current language architecture and runtime authoring model are in tension | Verified | `docs/workshop-content-language-architecture.md` vs. `dashboard/lib/workshop-data.ts` and `dashboard/lib/workshop-blueprint-agenda.json` |
+| Hardcoded upstream links are a real portability defect, not just an aesthetic issue | Verified | `dashboard/lib/workshop-blueprint-agenda.json` contains Ondrej-specific GitHub links |
+| The current 5-phase public summary and 10-phase runtime/canonical day split is misleading enough to require an explicit fix decision | Verified | `workshop-blueprint/agenda.json` vs. `workshop-blueprint/day-structure.md` and `dashboard/lib/workshop-blueprint-agenda.json` |
+| The repo already contains enough source material to produce world-class flagship content without inventing a new workshop method | Verified | `content/talks/*`, `content/facilitation/master-guide.md`, existing editorial plans |
+| One proof slice can reliably validate the broader editorial system | Unverified | Needs actual cold-read, localization, and participant-utility proof |
+| The briefs and learner kit can be raised substantially without changing their structural format | Mostly verified | The current format is disciplined, but distinction and stakes still need proof in rewrite |
+
+## Risk Analysis
+
+### Risk: The plan becomes another parallel content thread
+
+If this plan sits beside the April 9 plans without clearly superseding their decision scope, execution fragments again.
+
+Mitigation:
+
+- state explicitly which earlier plans remain active assumptions
+- use this plan as the integrated tracker for content readiness
+- link back to prior plans as history, not competing execution lanes
+
+### Risk: Canonical-English cleanup turns into a migration project
+
+The architecture correction could balloon into a large refactor before any content quality improves.
+
+Mitigation:
+
+- constrain the first correction to shared workshop content only
+- prove the proof slice under the corrected model before wider migration
+- avoid unrelated UI chrome or runtime schema work
+
+### Risk: Premium aspirations create bloated scenes
+
+Trying to make everything memorable can make everything crowded.
+
+Mitigation:
+
+- enforce one dominant idea per scene
+- require a reason for every quote, image, or extra block
+- cut aggressively when a scene already lands without more material
+
+### Risk: Participant surfaces remain meta
+
+The team may improve presenter copy and still leave participant mirrors as explanatory paraphrases.
+
+Mitigation:
+
+- include participant usefulness as a separate gate
+- require each participant scene to answer "what should my team do now?"
+- cut participant scenes that do not earn their keep
+
+### Risk: Localization parity slips during rewrite
+
+Strong Czech delivery may hide a weak source model, or strong English source may ship without equally reviewed Czech delivery.
+
+Mitigation:
+
+- require locale-pair review in the proof slice
+- keep English and Czech changes linked in the same slice of work
+- reject translation-only polish on weak source content
+
+### Risk: Authority cues become decorative or inconsistent
+
+The team may add quotes, citations, or expert anchors in a way that feels premium but teaches little and varies by author.
+
+Mitigation:
+
+- define a reusable citation/authority pattern before broad insertion
+- require every authority cue to earn its place through contrast, proof, or memory value
+- keep authority review inside the proof-slice gate before scaling it
+
+### Risk: The workshop gets more polished but less transferable
+
+The content could become too tied to one speaker persona or one upstream repo.
+
+Mitigation:
+
+- fix portability issues early
+- prefer repo-role descriptions over person-specific assumptions
+- keep the method transferable across agents and forks
+
+## Implementation Tasks
+
+This section is a summary view only. The phased implementation section below is the canonical execution order. Later phases are blocked on the previous phase's exit criteria unless a phase explicitly says otherwise.
+
+- [x] Establish this plan as the integrated successor for content-readiness work.
+  - Link it from the active April 9 content plans.
+  - Clarify which earlier plans remain assumptions versus open execution trackers.
+
+- [x] Correct the shared content architecture before broad rewrite.
+  - Decide and document the true canonical structured source for workshop content.
+  - Align `dashboard/lib/workshop-blueprint-agenda.json`, `dashboard/lib/workshop-blueprint-localized-content.ts`, and `docs/workshop-content-language-architecture.md`.
+  - Make an explicit decision on the 5-phase public summary versus 10-phase runtime/canonical day model, then update the public blueprint accordingly.
+
+- [x] Fix portability defects in blueprint/public content references.
+  - Remove Ondrej-specific hardcoded GitHub links from blueprint scene CTAs and related public surfaces.
+  - Replace them with portable repo-relative or instance-appropriate references.
+  - Add a review check for future upstream-specific leaks.
+
+- [ ] Audit the full workshop content system against the target outcome.
+  - Classify flagship room scenes.
+  - Classify participant mirrors.
+  - Classify facilitator support beats, including `facilitatorRunner` coverage and quality.
+  - Classify briefs, challenge cards, learner kit, and follow-up materials as `keep`, `tighten`, `rewrite`, `split`, or `cut`.
+
+- [x] Define a reusable authority/citation layer before broad editorial rollout.
+  - Specify when expert authority is allowed and what teaching job it must do.
+  - Define how citations, quotes, and proof anchors should appear across room, participant, and learner surfaces.
+  - Make the pattern reviewable in both English source and Czech delivery.
+
+- [ ] Build and approve the proof slice.
+  - [x] Rewrite the `talk` phase pack from source materials first.
+  - [x] Rewrite its participant mirror to be operational.
+  - [x] Tighten the facilitator support for that phase, including agenda-owned `facilitatorRunner` fields.
+  - [x] Rewrite `code-review-helper` as the first elevated brief pair.
+  - [x] Apply the authority/citation pattern where it improves proof and trust.
+  - [x] Produce the required preview artifacts for both locales.
+
+- [ ] Run the proof gates before propagation.
+  - [ ] Cold-read the proof slice with a non-Ondrej reader.
+  - [ ] Run spoken-readability review in Czech.
+  - [ ] Check participant usefulness in the mirror.
+  - [ ] Check mobile glanceability for participant-facing use.
+  - [ ] Check projected-room legibility for presenter-facing use.
+  - [ ] Check English/Czech parity.
+  - [ ] Check portability and public-safe references.
+
+- [ ] Propagate the validated pattern to the other flagged flagship moments.
+  - `build-1-coaching`
+  - `build-2-handoff-work`
+  - `intermezzo-2-reflection`
+  - `reveal-1-2-4-all`
+  - any other scene reclassified as structurally present but editorially weak
+
+- [ ] Elevate the participant and learner layer after the flagship scenes hold.
+  - Tighten challenge-card wording only where it improves action and distinction.
+  - Raise project briefs from disciplined templates to sharper challenge narratives.
+  - Rework learner kit and follow-up surfaces so they feel like premium takeaways, not appendix material.
+
+- [x] Add durable review gates for future content work.
+  - Define a content QA checklist for architecture correctness, portability, authority handling, scene quality, `facilitatorRunner` alignment, participant usefulness, mobile/projection legibility, and locale parity.
+  - Add lightweight automated or reviewable checks where possible.
+  - Make the next safe editorial move obvious for future maintainers and agents.
+
+## Acceptance Criteria
+
+- There is one unambiguous canonical model for shared structured workshop content, and the docs match reality.
+- The public blueprint no longer leaves the day-model summary in tension with the runtime/canonical structure.
+- The public-safe template no longer contains known Ondrej-specific content references in blueprint-driven participant or room-facing paths.
+- The proof slice passes cold-read, spoken-readability, participant-usefulness, mobile-glanceability, projected-room-legibility, locale-parity, and portability checks.
+- The flagship weak scenes no longer read like operational notes pasted onto a presenter surface.
+- Participant mirrors become action-oriented and phase-useful.
+- Facilitator support is strengthened in the agenda-owned `facilitatorRunner` layer, not only in adjacent docs.
+- At least one brief pair proves a more distinctive, higher-authority editorial standard without losing workshop discipline.
+- Learner/takeaway materials align with the same voice and trust model as the workshop day.
+- Future content work has an explicit review gate that catches drift before it propagates.
+
+## Phased Implementation
+
+### Phase 0: Plan Consolidation
+
+Goal: stop parallel planning and establish one integrated readiness tracker.
+
+Blocking: this phase must complete before Phase 1.
+
+Supersession status:
+
+| Plan | Status | Rule |
+| --- | --- | --- |
+| `2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md` | Superseded as execution tracker | Keep as historical input and reference only |
+| `2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md` | Superseded as execution tracker | Keep as historical input and reference only |
+
+Tasks:
+
+- [x] Link this plan from the active April 9 content plans
+- [x] Add a supersession note to each sibling plan so future readers do not treat them as active execution trackers
+
+Exit criteria:
+
+- the content program has one primary plan
+- execution will not split across duplicate planning threads
+
+### Phase 1: Architecture And Portability Corrections
+
+Goal: make the content system correct before making it beautiful at scale.
+
+Blocking: Phase 2 is blocked on this phase's exit criteria.
+
+Tasks:
+
+- [x] align canonical structured source and localization ownership
+- [x] remove hardcoded upstream references from blueprint/public surfaces
+- [x] decide whether the public summary blueprint should match the 10-phase canonical day or intentionally summarize it, then update it so it cannot mislead readers
+
+Exit criteria:
+
+- source-of-truth drift risk is materially reduced
+- portability defects are removed or explicitly tracked as blocking issues
+
+### Phase 2: Proof Slice
+
+Goal: prove the editorial system on one flagship cross-surface slice.
+
+Blocking: Phase 3 is blocked on this phase's exit criteria.
+
+Tasks:
+
+- [x] rewrite the `talk` room scenes
+- [x] rewrite the `talk` participant mirror
+- [x] tighten facilitator support for the same beat, including `facilitatorRunner` fields
+- [x] elevate one associated brief pair
+- [x] apply and review the authority/citation pattern on the proof slice
+- [x] produce required previews and review notes
+
+Exit criteria:
+
+- the proof slice is visibly stronger, cold-readable, locale-correct, mobile-glanceable, and room-legible
+- the team has evidence that the new pattern works before broad rollout
+- if the slice fails twice for structural reasons, or if propagation to the next flagship phase requires major rework, the proof-slice model must be reconsidered before continuing
+
+### Phase 3: Flagship Phase Propagation
+
+Goal: spread the validated pattern to the most important weak moments.
+
+Blocking: Phase 4 is blocked on this phase's exit criteria.
+
+Tasks:
+
+- [ ] rewrite the remaining flagged flagship scenes
+- [ ] ensure narrative transitions across the day remain distinct
+- [ ] remove or split scenes that repeat rather than advance the story
+
+Exit criteria:
+
+- the day-wide workshop arc feels coherent
+- no obvious flagship phase remains structurally present but editorially weak
+
+### Phase 4: Supporting Content Elevation
+
+Goal: bring learner-facing and supporting materials up to the same standard.
+
+Blocking: Phase 5 is blocked on this phase's exit criteria.
+
+Tasks:
+
+- [ ] elevate project briefs
+- [ ] tighten challenge cards where needed
+- [ ] upgrade learner kit, recap, follow-up, and reference surfaces
+
+Exit criteria:
+
+- participant-facing support artifacts feel like part of the same premium workshop system
+
+### Phase 5: Durable Content QA
+
+Goal: make future drift harder.
+
+Tasks:
+
+- [x] codify review gates and ownership rules
+- [x] define reusable preview and approval expectations
+- [x] define where review artifacts live and how completion is recorded
+- [x] leave explicit guidance for future blueprint/content continuation
+
+Exit criteria:
+
+- future maintainers can continue the content system without re-deriving the editorial bar
+
+## References
+
+- [`2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md`](../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md)
+- [`2026-04-09-presenter-blueprint-rich-content-direction-brainstorm.md`](../brainstorms/2026-04-09-presenter-blueprint-rich-content-direction-brainstorm.md)
+- [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
+- [`2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md`](./2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md)
+- [`facilitator-agenda-source-of-truth.md`](../facilitator-agenda-source-of-truth.md)
+- [`workshop-content-language-architecture.md`](../workshop-content-language-architecture.md)
+- [`workshop-content-authority-and-citation.md`](../workshop-content-authority-and-citation.md)
+- [`workshop-content-qa.md`](../workshop-content-qa.md)

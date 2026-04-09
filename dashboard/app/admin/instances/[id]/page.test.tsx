@@ -93,6 +93,8 @@ const controlRoomPageModulePromise = import("./page");
 describe("Admin control room page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_URL;
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_BRANCH;
     listInstances.mockResolvedValue(structuredClone(sampleWorkshopInstances));
     getInstance.mockImplementation(async (instanceId: string) =>
       structuredClone(sampleWorkshopInstances.find((instance) => instance.id === instanceId) ?? null),
@@ -276,6 +278,7 @@ describe("Admin control room page", () => {
   });
 
   it("keeps safety actions in settings instead of the live canvas", async () => {
+    process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({

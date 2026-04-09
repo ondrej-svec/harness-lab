@@ -25,6 +25,7 @@ Copied from the public repo into a new or reset instance:
 
 Primary source:
 - [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json)
+- [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts)
 
 Human-readable public workshop-method summary:
 - [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json)

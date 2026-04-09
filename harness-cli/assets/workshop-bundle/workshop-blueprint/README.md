@@ -39,7 +39,7 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 ### Structured data
 
 - [`agenda.json`](agenda.json)
-  Public-readable workshop agenda summary and workshop metadata.
+  Public-readable 10-phase mirror of the workshop day and workshop metadata.
 
 ## Related Runtime Documents
 
@@ -51,5 +51,6 @@ For maintainers working in the source repository, the runtime-facing structured 
 
 - `docs/workshop-content-language-architecture.md`
 - `dashboard/lib/workshop-blueprint-agenda.json`
+- `dashboard/lib/workshop-blueprint-localized-content.ts`
 
-Treat those as maintainer/source-repo references, not as portable participant-bundle docs.
+Treat those as maintainer/source-repo references, not as portable participant-bundle docs. The public `agenda.json` file should stay aligned with the same phase structure, but it is not the runtime import source.

@@ -138,14 +138,16 @@ function PublicView({
             <SignalTile title={copy.principleThreeTitle} body={copy.principleThreeBody} />
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]">
-            <a
-              className="rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
-              href={blueprintRepoUrl}
-              rel="noreferrer"
-              target="_blank"
-            >
-              {copy.blueprintLink}
-            </a>
+            {blueprintRepoUrl ? (
+              <a
+                className="rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                href={blueprintRepoUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {copy.blueprintLink}
+              </a>
+            ) : null}
             <p className="max-w-xl leading-6 text-[var(--text-muted)]">{copy.blueprintHint}</p>
           </div>
         </div>

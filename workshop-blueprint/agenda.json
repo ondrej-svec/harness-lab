@@ -1,21 +1,23 @@
 {
-  "version": 1,
+  "version": 2,
   "blueprintId": "harness-lab-core-day",
   "title": "Harness Lab",
-  "subtitle": "Workshop operating system pro práci s AI agenty",
+  "subtitle": "Public-readable 10-phase mirror of the Harness Lab workshop day",
+  "presentationMode": "public-readable-mirror",
+  "sourceNote": "Runtime imports come from dashboard/lib/workshop-blueprint-agenda.json plus dashboard/lib/workshop-blueprint-localized-content.ts.",
   "principles": [
-    "Mapa před pohybem",
-    "Ověření je hranice důvěry",
-    "Pište tak, aby další tým mohl pokračovat"
+    "Context before generation",
+    "Verification is the trust boundary",
+    "Work so another team can continue"
   ],
   "phases": [
     {
       "id": "opening",
       "order": 1,
-      "label": "Úvod a naladění",
+      "label": "Opening and framing",
       "startTime": "09:10",
       "kind": "shared",
-      "goal": "Rámec dne: nejde o promptování, ale o repo a workflow, které přežijí handoff."
+      "goal": "Shift the room from prompt-hackathon expectations to continuation-quality discipline."
     },
     {
       "id": "talk",
@@ -23,31 +25,71 @@
       "label": "Context is King",
       "startTime": "09:40",
       "kind": "shared",
-      "goal": "Krátký talk a porovnání přístupů. Krátká mapa v repu je silnější než prompt blob."
+      "goal": "Turn context into a precise thesis: AGENTS.md, plans, and checks are working infrastructure, not polish."
+    },
+    {
+      "id": "demo",
+      "order": 3,
+      "label": "Demo",
+      "startTime": "10:05",
+      "kind": "shared",
+      "goal": "Show one compact workflow story: context, planning, implementation, review, and safe fallback moves."
     },
     {
       "id": "build-1",
-      "order": 3,
+      "order": 4,
       "label": "Build Phase 1",
       "startTime": "10:30",
       "kind": "team",
-      "goal": "Nejdřív udělejte z repa operating surface: krátké AGENTS.md, plán, build/test flow, první ověření a první reviewed output."
+      "goal": "Before lunch, get every team to a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice."
+    },
+    {
+      "id": "intermezzo-1",
+      "order": 5,
+      "label": "Intermezzo 1",
+      "startTime": "11:40",
+      "kind": "shared",
+      "goal": "Surface one change, one proof, and one next move from the room before lunch momentum slips."
+    },
+    {
+      "id": "lunch-reset",
+      "order": 6,
+      "label": "Lunch Reset",
+      "startTime": "12:15",
+      "kind": "shared",
+      "goal": "Frame lunch as a handoff preparation point, not as a pause between unrelated workshop blocks."
     },
     {
       "id": "rotation",
-      "order": 4,
-      "label": "Rotace týmů",
+      "order": 7,
+      "label": "Continuation Shift",
       "startTime": "13:30",
       "kind": "team",
-      "goal": "Plný přesun lidí mezi stoly. Nejdřív čtěte a napište diagnózu, až pak měňte kód."
+      "goal": "Force silent repo reading, diagnosis, and explicit continuation before anyone edits code."
+    },
+    {
+      "id": "build-2",
+      "order": 8,
+      "label": "Build Phase 2",
+      "startTime": "14:05",
+      "kind": "team",
+      "goal": "Turn continuation friction into better repo guidance, stronger checks, and clearer next moves."
+    },
+    {
+      "id": "intermezzo-2",
+      "order": 9,
+      "label": "Intermezzo 2",
+      "startTime": "15:05",
+      "kind": "shared",
+      "goal": "Name which repo signals actually saved time during continuation and which failures repeated."
     },
     {
       "id": "reveal",
-      "order": 5,
-      "label": "Reveal a reflexe",
+      "order": 10,
+      "label": "Reveal and reflection",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Co pomohlo pokračovat, co chybělo, a kterou bolest teď proměníme v lepší harness."
+      "goal": "Turn the day into reusable practice: what helped continuation, what failed, and what should change next week."
     }
   ],
   "runtimeImport": {

@@ -2,7 +2,7 @@
 
 Harness Lab now treats the workshop day as one shared backbone across:
 
-- the canonical blueprint in `dashboard/lib/workshop-blueprint-agenda.json`
+- the maintained blueprint source pair in `dashboard/lib/workshop-blueprint-agenda.json` and `dashboard/lib/workshop-blueprint-localized-content.ts`
 - the control-room agenda in `dashboard/app/admin/instances/[id]/page.tsx`
 - the presenter surface in `dashboard/app/admin/instances/[id]/presenter/page.tsx`
 - the facilitator skill in `workshop-skill/facilitator.md`
@@ -23,6 +23,12 @@ The top-level unit is the agenda item. Each agenda item owns:
 - `checkpointQuestions`
 - `sourceRefs`
 - `presenterScenes`
+
+Ownership inside the maintained source pair is split deliberately:
+
+- structure, stable ids, and Czech delivery currently live in `dashboard/lib/workshop-blueprint-agenda.json`
+- reviewed English delivery currently lives in `dashboard/lib/workshop-blueprint-localized-content.ts`
+- the public-readable mirror in `workshop-blueprint/agenda.json` must stay aligned with the same phase structure but is not the runtime import source
 
 Agenda-owned presenter content is split across three outputs:
 

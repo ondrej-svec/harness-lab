@@ -1,10 +1,8 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
+import { getBlueprintRepoUrl, getPublicRepoUrl } from "./repo-links";
 import type { PresenterBlock, TickerItem, WorkshopState } from "./workshop-data";
 import { publicCopy, type UiLanguage, withLang } from "./ui-language";
-
-const publicRepoUrl = "https://github.com/ondrej-svec/harness-lab";
-const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
 
 type PublicCopy = (typeof publicCopy)[UiLanguage];
 type AgendaItem = WorkshopState["agenda"][number];
@@ -115,13 +113,17 @@ export function buildSiteHeaderNavLinks(options: {
     ];
   }
 
+  const repoLinks = [
+    getBlueprintRepoUrl() ? { href: getBlueprintRepoUrl()!, label: copy.navBlueprint, external: true } : null,
+    getPublicRepoUrl() ? { href: getPublicRepoUrl()!, label: copy.navRepo, external: true } : null,
+  ].filter(Boolean) as HeaderNavLink[];
+
   return [
     { href: "#overview", label: copy.navOverview },
     { href: "#principles", label: copy.navPrinciples },
     { href: "#details", label: copy.navDetails },
-    { href: blueprintRepoUrl, label: copy.navBlueprint, external: true },
     { href: "#access", label: copy.navParticipantAccess },
-    { href: publicRepoUrl, label: copy.navRepo, external: true },
+    ...repoLinks,
     { href: withLang("/admin", lang), label: copy.navFacilitatorLogin },
   ];
 }
@@ -130,8 +132,8 @@ export function buildPublicFooterLinks(lang: UiLanguage, copy: PublicCopy): Head
   return [
     { href: "#overview", label: copy.footerTop },
     { href: "#access", label: copy.footerParticipantAccess },
-    { href: blueprintRepoUrl, label: copy.footerBlueprint, external: true },
-    { href: publicRepoUrl, label: copy.navRepo, external: true },
+    ...(getBlueprintRepoUrl() ? [{ href: getBlueprintRepoUrl()!, label: copy.footerBlueprint, external: true }] : []),
+    ...(getPublicRepoUrl() ? [{ href: getPublicRepoUrl()!, label: copy.navRepo, external: true }] : []),
     { href: withLang("/admin", lang), label: copy.facilitatorLogin },
   ];
 }
@@ -215,10 +217,4 @@ export function formatEventAccessError(value: string, copy: PublicCopy) {
   }
 }
 
-export function getPublicRepoUrl() {
-  return publicRepoUrl;
-}
-
-export function getBlueprintRepoUrl() {
-  return blueprintRepoUrl;
-}
+export { getBlueprintRepoUrl, getPublicRepoUrl };

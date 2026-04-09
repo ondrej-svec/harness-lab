@@ -8,7 +8,7 @@ Current implementation in this repo:
 
 - lives in the repository `harness-cli/` package and ships publicly as `@harness-lab/cli`
 - distributes a portable participant workshop skill bundle through `harness skill install`
-- covers `auth login/logout/status` plus `workshop status/create-instance/update-instance/prepare/remove-instance/archive/phase set`
+- covers `auth login/logout/status` plus `workshop status/create-instance/update-instance/reset-instance/prepare/remove-instance/archive/phase set`
 - targets the existing shared dashboard facilitator APIs
 - is tested for browser/device auth, local-dev Basic Auth fallback, and cookie-backed Neon bootstrap fallback
 - stores sessions in a local file under `HARNESS_CLI_HOME` or `~/.harness` by default
@@ -41,6 +41,7 @@ Required commands:
 - `harness workshop status`
 - `harness workshop create-instance`
 - `harness workshop update-instance`
+- `harness workshop reset-instance <instance-id>`
 - `harness workshop archive`
 - `harness workshop prepare`
 - `harness workshop remove-instance`
@@ -90,6 +91,7 @@ Current command posture:
 
 - explicit target required:
   - `harness workshop update-instance <instance-id>`
+  - `harness workshop reset-instance <instance-id>`
   - `harness workshop prepare <instance-id>`
   - `harness workshop remove-instance <instance-id>`
 - explicit target is the created resource:
@@ -114,6 +116,11 @@ Current step-up posture:
 
 - the existing CLI command set (`workshop status/archive/phase set`) may run on a valid brokered device session
 - future higher-risk commands such as facilitator grant/revoke or destructive instance mutations should require a fresh browser approval window rather than silently reusing an older CLI session
+
+Content refresh posture:
+
+- after changing authored participant-facing sources in `workshop-skill/`, `content/`, or `workshop-blueprint/`, refresh the portable bundle and verify it before shipping facilitator or participant guidance
+- when those changes must land in already-created workshop instances, `workshop reset-instance` is the intended re-import path
 
 ## Session Storage Posture
 

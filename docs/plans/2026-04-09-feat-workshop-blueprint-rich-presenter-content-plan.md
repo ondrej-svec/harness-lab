@@ -2,12 +2,16 @@
 title: "feat: workshop blueprint rich presenter content"
 type: plan
 date: 2026-04-09
-status: in_progress
+status: superseded
 brainstorm: ../brainstorms/2026-04-09-workshop-scene-richness-and-presentation-system-brainstorm.md
 confidence: medium
 ---
 
 # Workshop Blueprint Rich Presenter Content Plan
+
+Superseded as an execution tracker by [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](./2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
+
+Keep this plan as historical input for renderer, asset, and authoring workflow rationale only.
 
 Upgrade Harness Lab's blueprint, presenter model, and authoring workflow so every new workshop instance imports high-quality room-facing content by default instead of thin text cards, with the first proof delivered through one flagship phase pack before broader rollout.
 

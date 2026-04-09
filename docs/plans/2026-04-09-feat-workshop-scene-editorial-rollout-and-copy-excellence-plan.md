@@ -2,12 +2,16 @@
 title: "feat: workshop scene editorial rollout and copy excellence"
 type: plan
 date: 2026-04-09
-status: in_progress
+status: superseded
 brainstorm: ../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md
 confidence: medium
 ---
 
 # Workshop Scene Editorial Rollout And Copy Excellence Plan
+
+Superseded as an execution tracker by [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](./2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
+
+Keep this plan as historical input for scene-audit and editorial rationale only.
 
 Finish the rich-scene rollout by treating the remaining work as an editorial and narrative sweep across the whole workshop day, not as a block-expansion exercise. The next slice should make every important room-facing scene clear, memorable, cold-readable, and workshop-voice correct in Czech.
 

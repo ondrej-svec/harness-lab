@@ -103,6 +103,31 @@ Habit installed:
 - cleanup and codification are part of delivery
 - repeated pain should become a better template, check, or runbook
 
+## Narrative Spine
+
+The day should not feel like separate agenda cards. Each phase should change what the room now understands and what it is ready to do next.
+
+- `opening`:
+  Shift the room from "AI hackathon energy" to "continuation-quality discipline." The key belief is that handoff without verbal rescue is part of the assignment from the first hour.
+- `talk`:
+  Shift the room from a vague sense that context matters to a precise thesis: harness engineering is team infrastructure, not prompt cosmetics.
+- `demo`:
+  Shift the room from abstract agreement to an observable workflow. The room should see context, plan, implementation, and review as one repeatable system.
+- `build-1`:
+  Shift teams from listening to evidence. Before lunch, the repo needs to show map, plan, one executable check, and one verified step.
+- `intermezzo-1`:
+  Shift from isolated table work to shared learning. The room should hear concrete repo signals, not generic progress reporting.
+- `lunch-reset`:
+  Shift from local progress to handoff readiness. Going to lunch without a readable next safe step should feel unfinished.
+- `rotation`:
+  Shift from authorship to inheritance. The receiving team must read first, diagnose second, and edit only after it can explain the state.
+- `build-2`:
+  Shift from frustration to codification. Weak continuation signals should turn into clearer repo guidance, stronger checks, and better runbooks.
+- `intermezzo-2`:
+  Shift from anecdotes about the afternoon to concrete continuation evidence. The room should identify which repo signals actually saved time.
+- `reveal`:
+  Shift from reflection to adoption. The close should turn signals from the day into next-week practice and into improvements to the reusable workshop blueprint.
+
 ## What Must Survive In The Repo
 
 - goal and constraints
@@ -122,8 +147,8 @@ Habit installed:
 - `AGENTS.md` as a table of contents that points to deeper sources of truth
 - small, continuous garbage collection before bad patterns spread
 
-## Canonical Agenda Source
+## Agenda Mirror
 
-The reusable agenda lives in [`agenda.json`](agenda.json).
+The public-readable 10-phase mirror lives in [`agenda.json`](agenda.json).
 
-Runtime workshop instances import from that blueprint and then track live phase position, reveal state, teams, and checkpoints locally in the private runtime layer.
+Runtime workshop instances import from the maintained dashboard blueprint source pair and then track live phase position, reveal state, teams, and checkpoints locally in the private runtime layer.

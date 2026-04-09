@@ -54,29 +54,34 @@ Examples:
 
 ## Authoring Rule
 
-Shared structured workshop content should be authored canonically in English and localized deliberately for delivery locales such as Czech.
+Target model:
 
-Implications:
-
-- English is the reusable source language for the shared workshop-content system
-- Czech remains a first-class reviewed locale for actual workshop delivery
+- English is the long-term reusable source language for shared workshop content
+- Czech remains a first-class reviewed delivery locale
 - runtime machine translation is not the default path for workshop-copy delivery
-- translations belong in the repo and should be reviewed like product copy, not generated ad hoc in the room
 
-## Current Canonical Blueprint Path
+Current maintained contract for agenda-backed workshop content:
 
-For the structured dashboard/presenter agenda model, the canonical source currently lives in:
+- [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json) is the structural backbone and the currently maintained Czech delivery source
+- [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts) stores the reviewed English locale keyed by the same phase, scene, and block ids
+
+Until a full single-locale canonical migration lands, treat those two files as one maintained source pair. Do not edit one without checking the other.
+
+## Current Blueprint Source Pair
+
+For the structured dashboard/presenter agenda model, the maintained source pair currently lives in:
 
 - [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json)
+- [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts)
 
-This file is the runtime-facing workshop blueprint backbone used by:
+Together these files are the runtime-facing workshop blueprint backbone used by:
 
 - workshop-state creation and reset
 - control-room agenda rendering
 - presenter scene defaults
 - participant fallback guidance derived from agenda content
 
-The public-readable workshop-method summary in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json) should be treated as a public blueprint artifact, not the runtime-facing canonical structured agenda source.
+The public-readable workshop-method mirror in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json) is a human-readable blueprint artifact. It is not the runtime-facing structured agenda source.
 
 ## Delivery Rule
 
@@ -119,7 +124,7 @@ Questions:
 
 When changing shared workshop content:
 
-1. update the canonical structured blueprint source
-2. update reviewed localized variants
-3. verify dashboard/presenter/skill consumers still render the same workshop moment coherently
+1. update the maintained blueprint source pair
+2. update reviewed localized variants affected by the change
+3. verify dashboard, presenter, and skill consumers still render the same workshop moment coherently
 4. update any docs that describe the source-of-truth path if the ownership model changes

@@ -57,24 +57,24 @@ export const workshopBlueprintLocalizedContent = {
           id: "code-review-helper",
           title: "Code Review Helper",
           problem:
-            "Code review is often inconsistent, and some changes pass without a checklist or a clear view of risk.",
+            "Code review often depends on who looked at the diff, which means risky changes slip through without a shared language for certainty, heuristics, and required follow-up.",
           userStories: [
-            "As a reviewer, I want a checklist of risks and questions extracted from a diff.",
-            "As the author of a change, I want to see what I should test before I ask for review.",
-            "As the inheriting team, I want to continue from the heuristics the first team discovered.",
+            "As a reviewer, I want a checklist of changed boundaries, risks, and follow-up questions extracted from a diff.",
+            "As the author of a change, I want to know what I should verify before I ask for review.",
+            "As the inheriting team, I want the first team’s review heuristics recorded so I can extend them instead of rediscovering them.",
           ],
           architectureNotes: [
-            "This can be a CLI, a web tool, or a simple script. The key is the diff-to-checklist flow.",
-            "State clearly which inputs the tool expects.",
-            "Add an examples folder or a seed diff for local testing.",
+            "This can be a CLI, a web tool, or a simple script. The key is a clean diff -> rubric -> checklist flow.",
+            "Make the output separate certainty from heuristic suspicion.",
+            "Add a seed diff or examples folder so another team can test new rules quickly.",
           ],
           acceptanceCriteria: [
             "The tool produces a review checklist from a seed diff.",
-            "It explains what is heuristic and what is certain.",
+            "It explains what is certain, what is heuristic, and what still needs human judgment.",
             "Another team can add a new rule without a long onboarding call.",
           ],
           firstAgentPrompt:
-            "Do not start by generating code. First define the review rules, the input flow, and what a good checklist actually means.",
+            "Do not start by generating code. First define the review rubric, the certainty model, and the seed diff flow another team should open first.",
         },
         {
           id: "metrics-dashboard",
@@ -439,7 +439,7 @@ export const workshopBlueprintLocalizedContent = {
       },
       talk: {
         goal:
-          "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, not a bag of prompt tricks.",
+          "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
         roomSummary:
           "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit checks as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
         facilitatorPrompts: [
@@ -460,7 +460,7 @@ export const workshopBlueprintLocalizedContent = {
         ],
         sourceRefs: [{ label: "Talk: Context is King", path: "content/talks/context-is-king.md" }],
         facilitatorRunner: {
-          goal: "Make harness engineering precise, memorable, and immediately actionable for the first build phase.",
+          goal: "Make harness engineering precise, memorable, and immediately actionable so the room returns to the repo with a concrete first working contract.",
           say: [
             "Context is leverage, not cosmetics.",
             "A team lead does not stand behind the model and dictate another sentence every thirty seconds.",
@@ -488,9 +488,10 @@ export const workshopBlueprintLocalizedContent = {
             label: "Core line",
             title: "Context is leverage, not cosmetics",
             body:
-              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can continue predictably and so Build Phase 1 does not begin in chaos.",
+              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can carry the intent without verbal rescue and so the first build move does not begin in chaos.",
             facilitatorNotes: [
               "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
+              "Let the short authority quote land and move on. Do not turn it into a reading break.",
               "After the callout, remind the room of the team-lead analogy and then turn it directly into what teams should do next in the repo.",
             ],
             sourceRefs: [{ label: "Talk: Core line", path: "content/talks/context-is-king.md" }],
@@ -499,20 +500,24 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Context is King",
                 title: "We are not learning to prompt better",
                 body:
-                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without chaos in the first build move.",
+                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next safe move is.",
               },
               "talk-reframe": {
                 title: "A team lead does not stand behind the model",
                 body:
-                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside and a next move that is not a guessing game.",
+                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside, a review path they can trust, and a next move that is not a guessing game.",
+              },
+              "talk-authority-quote": {
+                quote: "Humans steer. Agents execute.",
+                attribution: "Ryan Lopopolo, OpenAI, Harness engineering (2026)",
               },
               "talk-adopt": {
-                title: "What to adopt today",
+                title: "What the team should carry out of the room",
                 items: [
                   "Before generating the next feature, make the repo a place people can actually navigate.",
-                  "When the agent does more, you need to verify better.",
+                  "When the agent does more, review and checks need to become sharper, not looser.",
                   "Handoff is a design condition throughout the day, not an ending.",
-                  "After the talk, return to the repo with one explicit check instead of one more prompt idea.",
+                  "After the talk, return to the repo with a map and one explicit check instead of one more prompt idea.",
                 ],
               },
             },
@@ -521,7 +526,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Micro-exercise",
             title: "The same task, two working environments",
             body:
-              "Run the same small task twice: once with a prompt blob, once with a short brief and four elements in AGENTS.md. The point is not to crown the better prompt. The point is to show which setup produces reusable work.",
+              "Run the same small task twice: once with a prompt blob, once with a short brief and four elements in AGENTS.md. The point is not to crown the better prompt. The point is to show which setup survives review and handoff.",
             facilitatorNotes: [
               "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
               "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second.",
@@ -529,54 +534,54 @@ export const workshopBlueprintLocalizedContent = {
             sourceRefs: [{ label: "Talk: Micro-exercise", path: "content/talks/context-is-king.md" }],
             blocks: {
               "talk-steps": {
-                title: "How to show it",
+                title: "How to show the contrast",
                 items: [
-                  { title: "The same task for everyone", body: "Short, clear, and free of unnecessary scenario." },
-                  { title: "Variant A: prompt blob", body: "No structure, no repo-native context." },
-                  { title: "Variant B: 4 context elements", body: "Goal, Context, Constraints, Done When." },
+                  { title: "The same task for everyone", body: "Short and clear so the working-system difference is obvious." },
+                  { title: "Variant A: prompt blob", body: "No structure, no repo-native context, no explicit done criteria." },
+                  { title: "Variant B: 4 context elements", body: "Goal, Context, Constraints, Done When plus a repo-native map." },
                 ],
               },
               "talk-callout": {
                 title: "The point",
                 body:
-                  "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn.",
+                  "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn, the review pass, and the next team.",
               },
             },
           },
           "talk-participant-view": {
             label: "Bridge into Build 1",
-            title: "What the team should see before it returns to the repo",
+            title: "What the team should do before it goes back to generation",
             body:
-              "After the talk, the team should not leave with theory. It should see the live moment, the nearest next step, and confidence that the participant layer, dashboard, and repo still describe the same workshop story.",
+              "After the talk, the team should not leave with theory. It should align on the goal, write down the repo map, narrow the first slice, and add the smallest useful check before more generation.",
             ctaLabel: "Open the workshop skill reference",
             facilitatorNotes: [
-              "Use this briefly. This is not a dashboard tour. It is a bridge back into Build Phase 1.",
-              "Name the one expectation clearly: the team now returns to the repo to create a map and the first explicit check.",
+              "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1.",
+              "Name the expectation clearly: the team now returns to the repo for a map, a first slice, and one explicit check instead of more prompt debate.",
             ],
             sourceRefs: [{ label: "Talk: Opening move", path: "content/talks/context-is-king.md" }],
             blocks: {
               "talk-participant-hero": {
-                eyebrow: "Participant surface",
-                title: "What the team should see without facilitator noise",
+                eyebrow: "Build 1 contract",
+                title: "Go back to the repo with three things",
                 body:
-                  "The participant surface should not be decoration. In one screen it should give the team the live phase, the next step, and confidence that the room framing, dashboard, and repo are still speaking the same language.",
+                  "A short repo map, the first working slice, and the smallest useful check. If the team does not have these three things after the talk, the real build work has not started yet.",
               },
               "talk-participant-cues": {
-                title: "What they should carry back into the repo",
+                title: "What to do in the first minutes",
                 items: [
-                  "The live phase and the nearest next step.",
-                  "Shared room notes that help every table equally.",
-                  "The same workshop moment on the participant layer, in the control room, and in the repo.",
+                  "Open README, AGENTS.md, and the brief. Align on goal, context, and constraints.",
+                  "Write or tighten Goal, Context, Constraints, and Done When.",
+                  "Pick the first slice that can actually be verified and add a check or tracer bullet immediately.",
                 ],
               },
               "talk-participant-preview": {
                 body:
-                  "By now, both the participant layer and the repo should make the first move obvious: a short map, a plan, and the first explicit check.",
+                  "The participant surface should now keep exactly this in view: where you are in the day, what comes next, and what the team should verify before it asks the agent for more motion.",
               },
               "talk-participant-bridge": {
                 title: "Bridge into Build 1",
                 body:
-                  "This is where theory ends. The team now needs to move the core line of the talk back into the repo as a map, boundaries, and a first verifiable step.",
+                  "This is where theory ends. The team now needs to move the core line of the talk back into the repo as a map, a first decision log, and one verifiable step.",
               },
             },
           },
@@ -654,9 +659,9 @@ export const workshopBlueprintLocalizedContent = {
               "demo-fallbacks": {
                 title: "Fallbacks",
                 items: [
-                  { label: "CLI is not working", href: "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md", description: "Switch to the Codex App." },
-                  { label: "The app is not working", href: "https://github.com/ondrej-svec/harness-lab/blob/main/README.md", description: "Use the web fallback." },
-                  { label: "The demo is slow", href: "https://github.com/ondrej-svec/harness-lab/blob/main/docs/agent-ui-testing.md", description: "Have a repo snapshot after each step." },
+                  { label: "CLI is not working", href: "workshop-skill/install.md", description: "Switch to the Codex App." },
+                  { label: "The app is not working", href: "README.md", description: "Use the web fallback." },
+                  { label: "The demo is slow", href: "docs/agent-ui-testing.md", description: "Have a repo snapshot after each step." },
                 ],
               },
             },

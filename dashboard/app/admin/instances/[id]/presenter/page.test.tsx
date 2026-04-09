@@ -75,7 +75,7 @@ describe("PresenterPage", () => {
     expect(html).toContain("scene=rotation-framing");
   });
 
-  it("falls back to the default room scene when a participant scene is requested on the room projector", async () => {
+  it("renders an explicitly requested participant walkthrough scene without backstage chrome", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     getWorkshopState.mockResolvedValue(state);
@@ -90,11 +90,11 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("We are not learning to prompt better");
-    expect(html).toContain("Context is King");
-    expect(html).not.toContain("What the team should see without facilitator noise");
+    expect(html).toContain("Go back to the repo with three things");
+    expect(html).toContain("Build 1 contract");
+    expect(html).toContain("What to do in the first minutes");
+    expect(html).toContain("Open the workshop skill reference");
     expect(html).not.toContain("Participant walkthrough");
-    expect(html).not.toContain("href=\"https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md\"");
   });
 
   it("renders attributed quotes and actionable link-list items in presenter scenes", async () => {

@@ -353,8 +353,8 @@
       "startTime": "09:40",
       "kind": "shared",
       "intent": "teaching",
-      "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty, ne sada prompt triků.",
-      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní checks nejsou doplněk. Jsou to mantinely, které dělají z agenta použitelného spolupracovníka a z build fáze bezpečný další krok.",
+      "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a důkazem, ne dalším promptem.",
+      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní checks nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu handoffu i review.",
       "facilitatorPrompts": [
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
         "Co není v repu, neexistuje.",
@@ -378,7 +378,7 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a překlápět ji rovnou do první build práce.",
+        "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a poslat místnost zpátky do repa s konkrétním prvním pracovním kontraktem.",
         "say": [
           "Kontext je páka, ne kosmetika.",
           "Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.",
@@ -410,9 +410,10 @@
           "intent": "teaching",
           "chromePreset": "minimal",
           "title": "Kontext je páka, ne kosmetika",
-          "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali pokračovat předvídatelně a aby Build Phase 1 nezačínala z chaosu.",
+          "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali převzít záměr bez doplňujícího rescue a aby první build krok nezačínal z chaosu.",
           "facilitatorNotes": [
             "Použij reframing větu a explicitně kontrastuj 'lepší prompt' versus 'lepší pracovní systém'.",
+            "Krátkou authority quote nech jen dosednout. Nevykládej ji dlouho.",
             "Po calloutu připomeň team lead analogii a hned ji převeď do toho, co teď mají týmy udělat v repu."
           ],
           "sourceRefs": [
@@ -427,24 +428,30 @@
               "type": "hero",
               "eyebrow": "Context is King",
               "title": "Neučíme se lépe promptovat",
-              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru, bez ústního rescue a bez chaosu v prvním build kroku."
+              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru, bez ústního rescue a bez hádání, co je teď vlastně další bezpečný krok."
+            },
+            {
+              "id": "talk-authority-quote",
+              "type": "quote",
+              "quote": "Humans steer. Agents execute.",
+              "attribution": "Ryan Lopopolo, OpenAI, Harness engineering (2026)"
             },
             {
               "id": "talk-reframe",
               "type": "callout",
               "tone": "info",
               "title": "Team lead nestojí modelu za zády",
-              "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat a ve kterém další krok není hádanka."
+              "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat, review má oporu a další krok není hádanka."
             },
             {
               "id": "talk-adopt",
               "type": "checklist",
-              "title": "Co si z toho dnes adoptovat",
+              "title": "Co si má tým odnést hned teď",
               "items": [
-                "Než začnu generovat další funkci, udělám z repa místo, kde se dá orientovat.",
-                "Když agent dělá víc, musím lépe ověřovat.",
+                "Než začnu generovat další feature, udělám z repa místo, kde se dá orientovat.",
+                "Když agent dělá víc, review a check musí být přesnější, ne volnější.",
                 "Handoff je průběžná podmínka práce, ne závěr dne.",
-                "Po talku se vracím k repu s jasným prvním checkem, ne s nápadem na chytřejší prompt."
+                "Po talku se vracím k repu s mapou a prvním checkem, ne s nápadem na chytřejší prompt."
               ]
             }
           ]
@@ -456,7 +463,7 @@
           "intent": "walkthrough",
           "chromePreset": "agenda",
           "title": "Stejný task, dvě pracovní prostředí",
-          "body": "Stejný malý task. Jednou prompt blob bez opory, podruhé krátké zadání a 4 prvky v AGENTS.md. Nehledáme nejhezčí prompt. Hledáme přenositelný pracovní systém.",
+          "body": "Stejný malý task. Jednou prompt blob bez opory, podruhé krátké zadání a 4 prvky v AGENTS.md. Nehledáme nejhezčí prompt. Hledáme setup, který přenese záměr i do review a do dalšího handoffu.",
           "facilitatorNotes": [
             "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru, mantinelů a done criteria.",
             "Uzavři to větou, že Build Phase 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
@@ -471,19 +478,19 @@
             {
               "id": "talk-steps",
               "type": "steps",
-              "title": "Jak to ukázat",
+              "title": "Jak ten kontrast ukázat",
               "items": [
                 {
                   "title": "Stejný úkol pro všechny",
-                  "body": "Krátký, srozumitelný task bez zbytečného scénáře."
+                  "body": "Krátký task bez zbytečného scénáře, aby vynikl rozdíl v pracovním systému."
                 },
                 {
                   "title": "Varianta A: prompt blob",
-                  "body": "Bez struktury a bez kontextu zapsaného v repu."
+                  "body": "Bez struktury, bez kontextu v repu a bez jasného done criteria."
                 },
                 {
                   "title": "Varianta B: 4 prvky kontextu",
-                  "body": "Goal, Context, Constraints, Done When."
+                  "body": "Goal, Context, Constraints, Done When plus odkaz na repo-native mapu."
                 }
               ]
             },
@@ -492,7 +499,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Pointa",
-              "body": "Nehledáme nejhezčí prompt. Hledáme způsob práce, který přenese záměr, omezení a done criteria do dalšího kroku."
+              "body": "Nehledáme nejhezčí prompt. Hledáme způsob práce, který přenese záměr, omezení a done criteria do dalšího kroku, do review a k dalšímu týmu."
             }
           ]
         },
@@ -502,13 +509,13 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Co má tým vidět, než se vrátí k repu",
-          "body": "Po talku nemá tým odcházet s teorií. Má vidět aktuální moment, nejbližší next step a jistotu, že participant vrstva, dashboard i repo drží stejný workshopový příběh.",
+          "title": "Co má tým udělat, než se vrátí ke generování",
+          "body": "Po talku nepotřebujete další teorii. Potřebujete rychle srovnat cíl, zapsat mapu repa, zúžit první slice a přidat nejmenší užitečný check, který udrží další krok v mezích.",
           "ctaLabel": "Otevřít workshop skill reference",
-          "ctaHref": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md",
+          "ctaHref": "workshop-skill/reference.md",
           "facilitatorNotes": [
-            "Použij ji krátce. Tohle není tour dashboardu, ale most zpátky do Build Phase 1.",
-            "Pojmenuj, že tým se teď vrací k repu s jedním úkolem: udělat mapu a první explicitní check."
+            "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut Build Phase 1.",
+            "Pojmenuj konkrétně, že tým teď potřebuje mapu repa, první slice a jeden check, ne další brainstorming o promptu."
           ],
           "sourceRefs": [
             {
@@ -520,31 +527,31 @@
             {
               "id": "talk-participant-hero",
               "type": "hero",
-              "eyebrow": "Vrstva pro účastníky",
-              "title": "Co má tým vidět bez facilitátorského šumu",
-              "body": "Participant vrstva nemá být dekorace. Má dát týmu v jednom pohledu aktuální fázi, další krok a jistotu, že room framing, dashboard i repo mluví jedním jazykem."
+              "eyebrow": "Build 1 kontrakt",
+              "title": "Vraťte se k repu se třemi věcmi",
+              "body": "Krátká mapa repa, první pracovní slice a nejmenší užitečný check. Pokud po talku nemáte tyhle tři věci, ještě nezačala skutečná build práce."
             },
             {
               "id": "talk-participant-cues",
               "type": "bullet-list",
-              "title": "S čím se mají vrátit k repu",
+              "title": "Co udělat v prvních minutách",
               "items": [
-                "Aktuální fáze a nejbližší další krok.",
-                "Sdílené poznámky pro celou místnost, které pomáhají všem stolům stejně.",
-                "Stejný workshopový moment ve vrstvě pro účastníky, na facilitátorském dashboardu i v repu."
+                "Otevřete README, AGENTS.md a brief. Srovnejte si, co je cíl, kontext a mantinely.",
+                "Dopište nebo zpřesněte Goal, Context, Constraints a Done When.",
+                "Vyberte první slice, který jde opravdu ověřit, a hned k němu napište check nebo tracer bullet."
               ]
             },
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Teď už má být z participant vrstvy i z repa jasné, co tým udělá jako první: krátká mapa, plan a první explicitní check."
+              "body": "Participant vrstva má držet v záběru právě tohle: kde jste v programu, co je další blok a jaký je teď nejbližší bezpečný krok pro tým."
             },
             {
               "id": "talk-participant-bridge",
               "type": "callout",
               "tone": "info",
               "title": "Most do Build 1",
-              "body": "Teorie tím končí. Teď má tým vrátit hlavní větu talku do repa jako mapu, mantinely a první ověřitelný krok."
+              "body": "Teorie tím končí. Teď má tým vrátit hlavní větu talku do repa jako mapu, první explicitní decision log a jeden ověřitelný krok."
             }
           ]
         }
@@ -672,17 +679,17 @@
               "items": [
                 {
                   "label": "CLI nejede",
-                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md",
+                  "href": "workshop-skill/install.md",
                   "description": "Přejdi na Codex App."
                 },
                 {
                   "label": "App nejede",
-                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/README.md",
+                  "href": "README.md",
                   "description": "Použij web fallback."
                 },
                 {
                   "label": "Demo je pomalé",
-                  "href": "https://github.com/ondrej-svec/harness-lab/blob/main/docs/agent-ui-testing.md",
+                  "href": "docs/agent-ui-testing.md",
                   "description": "Měj repo snapshot po každém kroku."
                 }
               ]
@@ -880,7 +887,7 @@
           "title": "První build fáze pro tým",
           "body": "Vrstva pro účastníky během první build fáze nemá ukazovat celý backstage. Má držet aktuální moment, další krok a signál z místnosti, aby tým věděl, co je teď podstatné.",
           "ctaLabel": "Otevřít install flow",
-          "ctaHref": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md",
+          "ctaHref": "workshop-skill/install.md",
           "facilitatorNotes": [
             "Použij ji ve chvíli, kdy chceš týmu vrátit pohled pro účastníky místo facilitátorského backstage."
           ],

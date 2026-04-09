@@ -21,10 +21,6 @@ test.describe("participant dashboard", () => {
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
     await expect(page.locator("#overview").getByText(/Nejde o demo promptů ani o jednorázové hacky/i)).toBeVisible();
     await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru/i)).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "repo" })).toHaveAttribute(
-      "href",
-      "https://github.com/ondrej-svec/harness-lab",
-    );
     await expect(page.getByRole("navigation").getByRole("link", { name: "vstup pro facilitátora" })).toBeVisible();
 
     expect(pageErrors).toEqual([]);
@@ -314,6 +310,34 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.locator('img[src="/blueprint/opening/opening-continuation-loop.svg"]')).toHaveCount(0);
 
     await expect(page).toHaveScreenshot("presenter-opening-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+  });
+
+  test("renders the talk room proof slice with the authority cue and keeps a stable ipad layout", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-framing");
+
+    await expect(page.getByText("Neučíme se lépe promptovat")).toBeVisible();
+    await expect(page.getByText("Humans steer. Agents execute.")).toBeVisible();
+    await expect(page.getByText("Co si má tým odnést hned teď")).toBeVisible();
+    await expect(page.getByText("source material")).toHaveCount(0);
+
+    await expect(page).toHaveScreenshot("presenter-talk-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+  });
+
+  test("renders the talk participant proof slice on mobile without drifting into backstage copy", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
+
+    await expect(page.getByText("Vraťte se k repu se třemi věcmi")).toBeVisible();
+    await expect(page.getByText("Co udělat v prvních minutách")).toBeVisible();
+    await expect(page.getByText("Otevřete README, AGENTS.md a brief. Srovnejte si, co je cíl, kontext a mantinely.")).toBeVisible();
+    await expect(page.getByText("zdrojový materiál")).toHaveCount(0);
+
+    await expect(page).toHaveScreenshot("presenter-talk-participant-proof-mobile.png", {
       maxDiffPixelRatio: 0.08,
     });
   });

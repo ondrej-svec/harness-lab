@@ -34,6 +34,8 @@ const publicPageViewModelPromise = import("@/lib/public-page-view-model");
 describe("public page helpers", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_URL;
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_BRANCH;
   });
 
   it("derives the current and next agenda items with only the first three public notes", async () => {
@@ -98,6 +100,7 @@ describe("public page helpers", () => {
       getBlueprintRepoUrl,
       getPublicRepoUrl,
     } = await publicPageViewModelPromise;
+    process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
 
     expect(buildSiteHeaderNavLinks({ isParticipant: true, lang: "en", copy: publicCopy.en }).map((item) => item.label)).toEqual([
       publicCopy.en.navRoom,
@@ -137,11 +140,12 @@ describe("public page helpers", () => {
         rotationRevealed: false,
       }).body,
     ).toBe(publicCopy.en.participantBodyHidden);
+    const repoLinkedState = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "cs");
     const buildPhasePanel = buildParticipantPanelState({
       copy: publicCopy.cs,
       lang: "cs",
-      currentAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "build-1"),
-      nextAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "intermezzo-1"),
+      currentAgendaItem: repoLinkedState.agenda.find((item) => item.id === "build-1"),
+      nextAgendaItem: repoLinkedState.agenda.find((item) => item.id === "intermezzo-1"),
       participantSession: {
         token: "session-token",
         instanceId: "sample-studio-a",
@@ -152,7 +156,7 @@ describe("public page helpers", () => {
     });
     expect(buildPhasePanel.guidanceLabel).toBe("Týmová tabule");
     expect(buildPhasePanel.guidanceCtaLabel).toBe("Otevřít install flow");
-    expect(buildPhasePanel.guidanceCtaHref).toContain("workshop-skill/install.md");
+    expect(buildPhasePanel.guidanceCtaHref).toBe("https://github.com/example/harness-lab/blob/main/workshop-skill/install.md");
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
     expect(buildPhasePanel.guidanceBlocks.some((block) => block.type === "hero")).toBe(true);
     const customFallbackAgendaItem = {
@@ -185,6 +189,8 @@ describe("public page helpers", () => {
 describe("HomePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_URL;
+    delete process.env.NEXT_PUBLIC_HARNESS_REPO_BRANCH;
     getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
     getConfiguredEventCode.mockResolvedValue({
       isSample: true,
@@ -209,8 +215,13 @@ describe("HomePage", () => {
   });
 
   it("returns the participant room view when a participant session exists", async () => {
+    process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
     const { default: HomePage } = await import("./page");
-    const state = structuredClone(seedWorkshopState);
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "cs");
+    state.agenda = state.agenda.map((item, index) => ({
+      ...item,
+      status: item.id === "build-1" ? "current" : index < 3 ? "done" : "upcoming",
+    }));
     const buildPhase = state.agenda.find((item) => item.id === "build-1");
     const participantScene = buildPhase?.presenterScenes.find((scene) => scene.id === "build-1-participant-view");
     if (participantScene) {
@@ -243,7 +254,7 @@ describe("HomePage", () => {
     expect(html).not.toContain(publicCopy.cs.navFacilitatorLogin);
     expect(html).toContain("href=\"https://example.com/reference\"");
     expect(html).toContain(publicCopy.cs.openLinkLabel);
-    expect(html).toContain("href=\"https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/install.md\"");
+    expect(html).toContain("href=\"https://github.com/example/harness-lab/blob/main/workshop-skill/install.md\"");
   });
 
   it("renders English participant guidance for an English-content workshop instance", async () => {

@@ -147,8 +147,8 @@ The day should not feel like separate agenda cards. Each phase should change wha
 - `AGENTS.md` as a table of contents that points to deeper sources of truth
 - small, continuous garbage collection before bad patterns spread
 
-## Canonical Agenda Source
+## Agenda Mirror
 
-The reusable agenda lives in [`agenda.json`](agenda.json).
+The public-readable 10-phase mirror lives in [`agenda.json`](agenda.json).
 
-Runtime workshop instances import from that blueprint and then track live phase position, reveal state, teams, and checkpoints locally in the private runtime layer.
+Runtime workshop instances import from the maintained dashboard blueprint source pair and then track live phase position, reveal state, teams, and checkpoints locally in the private runtime layer.

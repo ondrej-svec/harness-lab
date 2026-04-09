@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.2.6",
-  "contentHash": "bb0f9dd94c129793c67f87be8489e89fedc76d2356d48f4d83d74dd05884212b",
+  "bundleVersion": "0.2.7",
+  "contentHash": "61721849420d8d55189dbb0961c262765f9775495d132156093a5f469200727c",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -34,7 +34,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "e22f4a811459be1fe23412e7d85c02fe20170e6e6c8534fc97c1616f65b2cfd8"
+      "sha256": "f0edc5eef8c7bc0efc67672e184edecce46fa5fd5e9820cfda0b28fbb8cb1a8f"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -42,7 +42,7 @@
     },
     {
       "path": "content/project-briefs/code-review-helper.md",
-      "sha256": "0d70c455d000ec8bc01337db5feee2174be8359730b5c278cccee9c3e6b0f2f7"
+      "sha256": "3e174ff0d097fe132088774042f9db58c9c2494613d66950bdd423116bd7986d"
     },
     {
       "path": "content/project-briefs/devtoolbox-cli.md",
@@ -98,11 +98,11 @@
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "c380947051f4a66cdf47e846d5cc5d60ace0487f75dbc718b03fb7164cb94ef1"
+      "sha256": "4d0972fefac067de0b8803698b44bdf8ab0bee64b181d50d1ac5e26a92eb7089"
     },
     {
       "path": "docs/harness-cli-foundation.md",
-      "sha256": "65b0b2cee7be792ad03f9be794230298d3efe8283e8e73acb033ef401d204e51"
+      "sha256": "80b321da32d110f141e1bd6a089ccc84f2a04066d76ba0258f530cc333dbaae4"
     },
     {
       "path": "docs/learner-reference-gallery.md",
@@ -134,11 +134,11 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "f70d5c210eb20cb1fe3b9d3785406b1984963d29f27be02c2c4b6cc1e5e00371"
+      "sha256": "64ddc1bf36265ea8321b2634d34499e83a8c1692e5cb10c6f30b1b07f1d51975"
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "6b8e1925e20fabccfd3cd9e9d79839855f51b2b7fd449efbb336bf3edd4eadce"
+      "sha256": "91b4037578ce61d172e09941089b97180322552cb42bb52de87b3956e60b1ed0"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
@@ -146,7 +146,7 @@
     },
     {
       "path": "workshop-blueprint/day-structure.md",
-      "sha256": "2d2c7a43e959059fe5d3dbb2aae20e6828fee40c700729080677c2c7b6feb0dc"
+      "sha256": "ffecae258211cef2430112ca25e1ff59658cac729ea2a07b9cac48e9a2a6244e"
     },
     {
       "path": "workshop-blueprint/edit-boundaries.md",
@@ -158,7 +158,7 @@
     },
     {
       "path": "workshop-blueprint/README.md",
-      "sha256": "ae809a473bbc88411891044de7609fa053e66e370a8d4063e5d7b9e68179a98c"
+      "sha256": "badb477ecfef7df163ec41c72c39e04bcde2a5a723c1b01bf2e91ed38924e903"
     },
     {
       "path": "workshop-blueprint/teaching-spine.md",
@@ -182,7 +182,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "e432ab42c8e120ebd0012bd0caaa054548f2682d46bf577a1ca8dfa22511e15f"
+      "sha256": "ab4721564c1dee2a24c7d4dfda229c2cfa56f5bec89a8b3580b541d9baa13e7f"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

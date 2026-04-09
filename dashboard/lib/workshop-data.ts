@@ -1,5 +1,6 @@
 import blueprintAgenda from "./workshop-blueprint-agenda.json";
 import { workshopBlueprintLocalizedContent } from "./workshop-blueprint-localized-content";
+import { resolveRepoLinkedHref } from "./repo-links";
 
 export type WorkshopContentLanguage = "cs" | "en";
 
@@ -46,6 +47,7 @@ type LocalizedBlueprintScene = {
   title?: string;
   body?: string;
   ctaLabel?: string | null;
+  ctaHref?: string | null;
   facilitatorNotes?: readonly string[];
   sourceRefs?: readonly WorkshopSourceRef[];
   blocks?: Record<string, Partial<PresenterBlock>>;
@@ -105,14 +107,14 @@ function getLocalizedPresenterBlocks(
   localizedScene: LocalizedBlueprintScene | null,
 ) {
   const localizedBlocks = localizedScene?.blocks;
-  if (localizedBlocks) {
-    return blocks.map((block) => ({
-      ...block,
-      ...(localizedBlocks[block.id as keyof typeof localizedBlocks] ?? {}),
-    })) as PresenterBlock[];
-  }
+  const mergedBlocks = localizedBlocks
+    ? (blocks.map((block) => ({
+        ...block,
+        ...(localizedBlocks[block.id as keyof typeof localizedBlocks] ?? {}),
+      })) as PresenterBlock[])
+    : blocks;
 
-  return blocks;
+  return resolvePresenterBlockLinks(mergedBlocks);
 }
 
 type WorkshopBlueprintPhase = {
@@ -506,6 +508,29 @@ function normalizePresenterBlocks(value: unknown, fallback: PresenterBlock[] = [
   return Array.isArray(value) ? (value as PresenterBlock[]) : fallback;
 }
 
+function resolvePresenterBlockLinks(blocks: PresenterBlock[]) {
+  return blocks.map((block) => {
+    if (block.type === "link-list") {
+      return {
+        ...block,
+        items: block.items.map((item) => ({
+          ...item,
+          href: resolveRepoLinkedHref(item.href ?? null),
+        })),
+      } satisfies PresenterBlock;
+    }
+
+    if (block.type === "image") {
+      return {
+        ...block,
+        sourceHref: resolveRepoLinkedHref(block.sourceHref ?? null),
+      } satisfies PresenterBlock;
+    }
+
+    return block;
+  });
+}
+
 function normalizeAgendaItemIntent(value: string): AgendaItemIntent {
   return agendaItemIntents.includes(value as AgendaItemIntent) ? (value as AgendaItemIntent) : "custom";
 }
@@ -798,10 +823,10 @@ export function createAgendaFromBlueprint(
           title: localizedTitle,
           body: localizedBody,
           ctaLabel: localizedScene?.ctaLabel ?? scene.ctaLabel ?? null,
-          ctaHref: scene.ctaHref ?? null,
+          ctaHref: resolveRepoLinkedHref(localizedScene?.ctaHref ?? scene.ctaHref ?? null),
           facilitatorNotes: localizedScene?.facilitatorNotes ? [...localizedScene.facilitatorNotes] : scene.facilitatorNotes ?? [],
           sourceRefs: getLocalizedSourceRefs(scene.sourceRefs, localizedScene?.sourceRefs),
-          blocks: resolvedBlocks,
+          blocks: resolvePresenterBlockLinks(resolvedBlocks),
           order: sceneIndex + 1,
           enabled: true,
           sourceBlueprintSceneId: scene.id,
@@ -860,24 +885,25 @@ const seedWorkshopBriefs: ProjectBrief[] = [
   {
     id: "code-review-helper",
     title: "Code Review Helper",
-    problem: "Review bývá nekonzistentní, některé změny projdou bez checklistu a bez znalosti rizik.",
+    problem:
+      "Code review často závisí na tom, kdo se zrovna dívá do diffu. Rizikové změny pak procházejí bez společného jazyka pro jistotu, heuristiku a nutný follow-up.",
     userStories: [
-      "Jako reviewer chci z diffu získat checklist rizik a otázek.",
-      "Jako autor změny chci vidět, co mám otestovat před requestem na review.",
-      "Jako inheriting tým chci rychle navázat na heuristiky, které původní tým objevil.",
+      "Jako reviewer chci z diffu získat checklist změněných hranic, rizik a follow-up otázek.",
+      "Jako autor změny chci vědět, co mám ověřit před requestem na review.",
+      "Jako inheriting tým chci navázat na heuristiky prvního týmu místo toho, abych je znovu vymýšlel.",
     ],
     architectureNotes: [
-      "Může jít o CLI, web nebo jednoduchý script, hlavní je tok diff -> checklist.",
-      "Uveďte jasně, jaké vstupy nástroj očekává.",
-      "Doplňte examples folder nebo seed diff pro lokální testování.",
+      "Může jít o CLI, web nebo jednoduchý script, hlavní je čistý tok diff -> rubric -> checklist.",
+      "Výstup musí oddělit jistotu od heuristického podezření.",
+      "Doplňte seed diff nebo examples folder, aby další tým rychle otestoval nové pravidlo.",
     ],
     acceptanceCriteria: [
       "Nástroj vytvoří review checklist ze seed diffu.",
-      "Je popsáno, co je heuristika a co jistota.",
+      "Je popsáno, co je jistota, co je heuristika a co pořád potřebuje lidský úsudek.",
       "Další tým může přidat nové pravidlo bez dlouhého onboarding callu.",
     ],
     firstAgentPrompt:
-      "Nezačínej generováním kódu. Nejprve napiš pravidla review, tok vstupů a co přesně znamená 'dobrý checklist'.",
+      "Nezačínej generováním kódu. Nejdřív navrhni review rubric, ukaž kde je jistota versus heuristika a definuj seed diff flow, na který může po rotaci navázat další tým.",
   },
   {
     id: "metrics-dashboard",

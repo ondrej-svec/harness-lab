@@ -23,6 +23,7 @@ import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 import { getNeonSql } from "@/lib/neon-db";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
+import { buildRepoBlobUrl, getBlueprintRepoUrl } from "@/lib/repo-links";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
@@ -101,9 +102,6 @@ type RichPresenterScene = PresenterScene & Partial<{
 }>;
 
 export const dynamic = "force-dynamic";
-
-const blueprintRepoUrl = "https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint";
-const repoBlobBaseUrl = "https://github.com/ondrej-svec/harness-lab/blob/main";
 
 function getRoomPresenterScenes(item: RichAgendaItem | null | undefined) {
   return (item?.presenterScenes ?? []).filter((scene) => scene.surface === "room");
@@ -211,7 +209,7 @@ function parseJsonArray<T>(value: string): T[] | undefined {
 }
 
 function buildRepoSourceHref(path: string) {
-  return `${repoBlobBaseUrl}/${path}`;
+  return buildRepoBlobUrl(path);
 }
 
 function isHandoffAgendaItem(item: Partial<AgendaItem> | null | undefined) {
@@ -1764,14 +1762,16 @@ export default async function AdminPage({
 
                   <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
                     <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.blueprintLinkHint}</p>
-                    <a
-                      href={blueprintRepoUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="mt-3 inline-flex text-sm font-medium lowercase text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
-                    >
-                      {copy.blueprintLinkLabel}
-                    </a>
+                    {getBlueprintRepoUrl() ? (
+                      <a
+                        href={getBlueprintRepoUrl() ?? undefined}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-3 inline-flex text-sm font-medium lowercase text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
+                      >
+                        {copy.blueprintLinkLabel}
+                      </a>
+                    ) : null}
                   </div>
                 </div>
               </AdminPanel>
@@ -2478,18 +2478,27 @@ function AgendaItemDetail({
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            {(item.sourceRefs ?? []).map((ref) => (
-              <a
-                key={`${ref.path}-${ref.label}`}
-                href={buildRepoSourceHref(ref.path)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
-              >
-                <span className="font-medium">{ref.label}</span>
-                <span className="text-xs text-[var(--text-muted)]">{copy.openRepoLabel}</span>
-              </a>
-            ))}
+            {(item.sourceRefs ?? []).map((ref) => {
+              const href = buildRepoSourceHref(ref.path);
+              const className =
+                "flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
+
+              if (!href) {
+                return (
+                  <div key={`${ref.path}-${ref.label}`} className={className}>
+                    <span className="font-medium">{ref.label}</span>
+                    <span className="text-xs text-[var(--text-muted)]">{ref.path}</span>
+                  </div>
+                );
+              }
+
+              return (
+                <a key={`${ref.path}-${ref.label}`} href={href} target="_blank" rel="noreferrer" className={className}>
+                  <span className="font-medium">{ref.label}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{copy.openRepoLabel}</span>
+                </a>
+              );
+            })}
           </div>
           {!compact ? (
             <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
@@ -2613,18 +2622,27 @@ function PresenterSceneSummaryCard({
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {(scene.sourceRefs ?? []).map((ref: SourceRef) => (
-            <a
-              key={`${ref.path}-${ref.label}`}
-              href={buildRepoSourceHref(ref.path)}
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--card-top)]"
-            >
-              <span className="font-medium">{ref.label}</span>
-              <span className="text-xs text-[var(--text-muted)]">{copy.openLinkLabel}</span>
-            </a>
-          ))}
+          {(scene.sourceRefs ?? []).map((ref: SourceRef) => {
+            const href = buildRepoSourceHref(ref.path);
+            const className =
+              "flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--card-top)]";
+
+            if (!href) {
+              return (
+                <div key={`${ref.path}-${ref.label}`} className={className}>
+                  <span className="font-medium">{ref.label}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{ref.path}</span>
+                </div>
+              );
+            }
+
+            return (
+              <a key={`${ref.path}-${ref.label}`} href={href} target="_blank" rel="noreferrer" className={className}>
+                <span className="font-medium">{ref.label}</span>
+                <span className="text-xs text-[var(--text-muted)]">{copy.openLinkLabel}</span>
+              </a>
+            );
+          })}
           </div>
         </div>
       ) : null}
