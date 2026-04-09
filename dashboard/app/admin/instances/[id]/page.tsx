@@ -2406,9 +2406,48 @@ function AgendaItemDetail({
     { title: copy.agendaFieldWatchFors, items: item.watchFors ?? [] },
     { title: copy.agendaFieldCheckpointQuestions, items: item.checkpointQuestions ?? [] },
   ].filter((section) => section.items.length > 0);
+  const runnerSections: Array<{ title: string; items: string[] }> = [
+    { title: copy.agendaRunnerSayTitle, items: item.facilitatorRunner.say ?? [] },
+    { title: copy.agendaRunnerShowTitle, items: item.facilitatorRunner.show ?? [] },
+    { title: copy.agendaRunnerDoTitle, items: item.facilitatorRunner.do ?? [] },
+    { title: copy.agendaRunnerWatchTitle, items: item.facilitatorRunner.watch ?? [] },
+    { title: copy.agendaRunnerFallbackTitle, items: item.facilitatorRunner.fallback ?? [] },
+  ].filter((section) => section.items.length > 0);
 
   return (
     <div className={`${compact ? "mt-4 space-y-4" : "space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4"}`}>
+      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="max-w-2xl">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaRunnerTitle}</p>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaRunnerDescription}</p>
+          </div>
+          <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs text-[var(--text-secondary)]">
+            {copy.runtimeCopyBadge}
+          </span>
+        </div>
+
+        <div className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
+          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaRunnerGoalTitle}</p>
+          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.facilitatorRunner.goal}</p>
+        </div>
+
+        {runnerSections.length > 0 ? (
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {runnerSections.map((section) => (
+              <div key={section.title} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
+                <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-primary)]">
+                  {section.items.map((value) => (
+                    <li key={value}>• {value}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailGoalTitle}</p>

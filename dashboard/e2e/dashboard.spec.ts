@@ -307,15 +307,26 @@ test.describe("facilitator admin (file mode)", () => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-handoff-loop&lang=en");
 
-    await expect(page.getByText("Čtyři věci, které musí být čitelné hned")).toBeVisible();
-    await expect(page.getByText("Jasný cíl")).toBeVisible();
-    await expect(page.getByText("Harness engineering v jedné větě")).toBeVisible();
+    await expect(page.getByText("Co dnes opravdu zažijete")).toBeVisible();
+    await expect(page.getByText("Naučit se řídit agenta")).toBeVisible();
+    await expect(page.getByText("Proto je launch důležitý")).toBeVisible();
     await expect(page.getByText("source material")).toHaveCount(0);
     await expect(page.locator('img[src="/blueprint/opening/opening-continuation-loop.svg"]')).toHaveCount(0);
 
     await expect(page).toHaveScreenshot("presenter-opening-proof-ipad.png", {
       maxDiffPixelRatio: 0.08,
     });
+  });
+
+  test("shows the facilitator runner on a phone-sized agenda detail", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+    await page.goto("/admin/instances/sample-studio-a?lang=en&section=agenda&agendaItem=talk");
+
+    await expect(page.getByText("facilitator runner")).toBeVisible();
+    await expect(page.getByText("runner goal")).toBeVisible();
+    await expect(page.getByText("Kontext je páka, ne kosmetika.")).toBeVisible();
+    await expect(page.getByText("show")).toBeVisible();
+    await expect(page.getByText("Promítni hlavní tezi, mikro-cvičení a krátký bridge zpátky do participant a repo vrstvy.")).toBeVisible();
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {

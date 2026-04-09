@@ -54,14 +54,15 @@ describe("workshop-data", () => {
     expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(opening?.title).toBe("Opening and orientation");
-    expect(opening?.goal).toContain("Set the tone for the day");
-    expect(handoffScene?.title).toBe("A good harness keeps four things connected");
+    expect(opening?.goal).toContain("Open the day as a shared launch");
+    expect(opening?.facilitatorRunner.goal).toBe("Launch the day as a room-facing start, not as an operating brief.");
+    expect(handoffScene?.title).toBe("The day has one arc: learn, build, hand off, continue");
     expect(handoffScene?.blocks[0]).toMatchObject({
       id: "opening-loop-steps",
-      title: "Four things that should be readable immediately",
+      title: "What you are actually going to experience today",
     });
     expect(handoffScene?.surface).toBe("room");
-    expect(participantScene?.title).toBe("How to read the start of the day");
+    expect(participantScene?.title).toBe("What the team should see right after the launch");
     expect(participantScene?.surface).toBe("participant");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",
@@ -154,6 +155,7 @@ describe("workshop-data", () => {
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
+    expect(talk?.facilitatorRunner.say[0]).toBe("Context is leverage, not cosmetics.");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),
@@ -175,6 +177,7 @@ describe("workshop-data", () => {
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
+    expect(talk?.facilitatorRunner.say[0]).toBe("Kontext je páka, ne kosmetika.");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),

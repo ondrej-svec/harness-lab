@@ -70,6 +70,11 @@ Rules:
 5. Keep facilitator notes separate from room content.
 6. Add or update regression tests for the scene structure or rendering behavior you changed.
 
+Visual grammar rule for room-facing principle scenes:
+
+- do not render non-interactive principles like faux checkboxes or admin controls
+- checklist-style room content should read like commitments or operating signals, not unfinished form UI
+
 ## Cold-Read Gate
 
 A flagship scene pack is not done until a non-Ondrej facilitator can read the scene plus notes and run the moment coherently.

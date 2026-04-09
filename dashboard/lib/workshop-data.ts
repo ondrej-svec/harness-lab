@@ -58,6 +58,7 @@ type LocalizedBlueprintPhase = {
   facilitatorPrompts?: readonly string[];
   watchFors?: readonly string[];
   checkpointQuestions?: readonly string[];
+  facilitatorRunner?: Partial<FacilitatorRunner>;
   sourceRefs?: readonly WorkshopSourceRef[];
   scenes?: Record<string, LocalizedBlueprintScene>;
 };
@@ -126,9 +127,19 @@ type WorkshopBlueprintPhase = {
   facilitatorPrompts?: string[];
   watchFors?: string[];
   checkpointQuestions?: string[];
+  facilitatorRunner?: Partial<FacilitatorRunner>;
   sourceRefs?: WorkshopSourceRef[];
   defaultSceneId?: string | null;
   scenes?: WorkshopBlueprintScene[];
+};
+
+export type FacilitatorRunner = {
+  goal: string;
+  say: string[];
+  show: string[];
+  do: string[];
+  watch: string[];
+  fallback: string[];
 };
 
 export type AgendaItem = {
@@ -142,6 +153,7 @@ export type AgendaItem = {
   facilitatorPrompts: string[];
   watchFors: string[];
   checkpointQuestions: string[];
+  facilitatorRunner: FacilitatorRunner;
   sourceRefs: WorkshopSourceRef[];
   order: number;
   sourceBlueprintPhaseId: string | null;
@@ -195,6 +207,132 @@ export type PresenterChromePreset =
   | "agenda"
   | "checkpoint"
   | "participant";
+
+function getDefaultRunnerDoSteps(intent: AgendaItemIntent, contentLang: WorkshopContentLanguage) {
+  if (contentLang === "en") {
+    switch (intent) {
+      case "framing":
+        return ["Keep the pace crisp and tie each beat back to what the room will build today."];
+      case "teaching":
+        return ["Land the main contrast, then bridge immediately into the first build move."];
+      case "demo":
+        return ["Narrate the workflow, not feature trivia, and stop only where context or review changes the outcome."];
+      case "build":
+        return ["Send teams back to the repo with one explicit next move and one concrete verification target."];
+      case "checkpoint":
+        return ["Collect one short room signal, then name the one pattern every table should keep."];
+      case "transition":
+      case "break":
+        return ["State clearly what changes now and what should be true when the room comes back together."];
+      case "handoff":
+        return ["Start with silent repo reading. Diagnosis comes before editing."];
+      case "reflection":
+      case "closeout":
+        return ["Pull concrete examples from the room and turn them into one reusable practice to carry forward."];
+      default:
+        return [];
+    }
+  }
+
+  switch (intent) {
+    case "framing":
+      return ["Drž krátké tempo a po každém beatu vrať místnost k tomu, co dnes bude skutečně stavět."];
+    case "teaching":
+      return ["Usaď hlavní kontrast a hned ho převeď do prvního build kroku."];
+    case "demo":
+      return ["Komentuj workflow, ne fígle nástroje, a zastavuj se jen tam, kde kontext nebo review mění výsledek."];
+    case "build":
+      return ["Pošli týmy zpátky do repa s jedním explicitním next step a jedním konkrétním checkem."];
+    case "checkpoint":
+      return ["Sesbírej jeden krátký signál z místnosti a pojmenuj pattern, který si mají odnést všechny stoly."];
+    case "transition":
+    case "break":
+      return ["Řekni jasně, co se teď mění a co má být pravda, až se místnost znovu potká."];
+    case "handoff":
+      return ["Začni tichým čtením repa. Diagnóza má přijít dřív než první editace."];
+    case "reflection":
+    case "closeout":
+      return ["Táhni z místnosti konkrétní příklady a překlop je do jedné přenositelné praxe."];
+    default:
+      return [];
+  }
+}
+
+function getDefaultRunnerFallbackSteps(intent: AgendaItemIntent, contentLang: WorkshopContentLanguage) {
+  if (contentLang === "en") {
+    switch (intent) {
+      case "framing":
+      case "teaching":
+      case "demo":
+        return ["If time slips, keep the main line, one supporting beat, and move the room forward."];
+      case "build":
+        return ["If the room is scattered, reduce the ask to one next move and one proof check before more generation."];
+      case "checkpoint":
+        return ["If reporting gets fluffy, ask for one change, one proof, and one next step."];
+      case "handoff":
+        return ["If teams ask for oral rescue, send them back to the repo and ask what is still missing there."];
+      case "reflection":
+      case "closeout":
+        return ["If energy drops, collect one example that saved time and one signal that failed."];
+      default:
+        return ["Return to the goal, name the next move, and keep the room moving."];
+    }
+  }
+
+  switch (intent) {
+    case "framing":
+    case "teaching":
+    case "demo":
+      return ["Když čas klouže, nech hlavní větu, jeden podpůrný beat a pošli místnost dál."];
+    case "build":
+      return ["Když se místnost rozpadá, zmenši zadání na jeden next step a jeden proof check před dalším generováním."];
+    case "checkpoint":
+      return ["Když report sklouzává do mlhy, vrať ho na jednu změnu, jedno ověření a jeden další krok."];
+    case "handoff":
+      return ["Když si týmy říkají o ústní rescue, vrať je k repu a k tomu, co tam ještě chybí."];
+    case "reflection":
+    case "closeout":
+      return ["Když energie padá, vytáhni jeden signál, který šetřil čas, a jeden, který selhal."];
+    default:
+      return ["Vrať se k cíli, pojmenuj další krok a drž místnost v pohybu."];
+  }
+}
+
+function buildFacilitatorRunner(args: {
+  contentLang: WorkshopContentLanguage;
+  intent: AgendaItemIntent;
+  goal: string;
+  facilitatorPrompts: string[];
+  watchFors: string[];
+  checkpointQuestions: string[];
+  roomSceneLabels: string[];
+  runner?: Partial<FacilitatorRunner> | null;
+}) {
+  const {
+    contentLang,
+    intent,
+    goal,
+    facilitatorPrompts,
+    watchFors,
+    checkpointQuestions,
+    roomSceneLabels,
+    runner,
+  } = args;
+
+  return {
+    goal: runner?.goal?.trim() || goal,
+    say: runner?.say ? [...runner.say] : facilitatorPrompts.slice(0, 3),
+    show: runner?.show ? [...runner.show] : roomSceneLabels.slice(0, 3),
+    do: runner?.do ? [...runner.do] : getDefaultRunnerDoSteps(intent, contentLang),
+    watch: runner?.watch ? [...runner.watch] : watchFors.slice(0, 3),
+    fallback:
+      runner?.fallback
+        ? [...runner.fallback]
+        : checkpointQuestions.length > 0
+          ? checkpointQuestions.slice(0, 1).concat(getDefaultRunnerFallbackSteps(intent, contentLang))
+          : getDefaultRunnerFallbackSteps(intent, contentLang),
+  } satisfies FacilitatorRunner;
+}
 
 type PresenterBlockBase = {
   id: string;
@@ -598,18 +736,37 @@ export function createAgendaFromBlueprint(
 
   return phases.map((phase, index) => {
     const localizedPhase = getLocalizedBlueprintPhase(phase.id, contentLang);
+    const localizedGoal = localizedPhase?.goal ?? phase.goal;
+    const localizedRoomSummary = localizedPhase?.roomSummary ?? phase.roomSummary ?? localizedGoal;
+    const localizedFacilitatorPrompts = localizedPhase?.facilitatorPrompts ? [...localizedPhase.facilitatorPrompts] : phase.facilitatorPrompts ?? [];
+    const localizedWatchFors = localizedPhase?.watchFors ? [...localizedPhase.watchFors] : phase.watchFors ?? [];
+    const localizedCheckpointQuestions =
+      localizedPhase?.checkpointQuestions ? [...localizedPhase.checkpointQuestions] : phase.checkpointQuestions ?? [];
+    const roomSceneLabels = (phase.scenes ?? [])
+      .filter((scene) => normalizePresenterSceneSurface(scene.surface, normalizePresenterSceneType(scene.sceneType)) === "room")
+      .map((scene) => localizedPhase?.scenes?.[scene.id]?.label ?? scene.label);
 
     return {
       id: phase.id,
       title: localizedPhase?.label ?? phase.label,
       time: phase.startTime,
-      description: localizedPhase?.roomSummary ?? phase.roomSummary ?? localizedPhase?.goal ?? phase.goal,
+      description: localizedRoomSummary,
       intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
-      goal: localizedPhase?.goal ?? phase.goal,
-      roomSummary: localizedPhase?.roomSummary ?? phase.roomSummary ?? localizedPhase?.goal ?? phase.goal,
-      facilitatorPrompts: localizedPhase?.facilitatorPrompts ? [...localizedPhase.facilitatorPrompts] : phase.facilitatorPrompts ?? [],
-      watchFors: localizedPhase?.watchFors ? [...localizedPhase.watchFors] : phase.watchFors ?? [],
-      checkpointQuestions: localizedPhase?.checkpointQuestions ? [...localizedPhase.checkpointQuestions] : phase.checkpointQuestions ?? [],
+      goal: localizedGoal,
+      roomSummary: localizedRoomSummary,
+      facilitatorPrompts: localizedFacilitatorPrompts,
+      watchFors: localizedWatchFors,
+      checkpointQuestions: localizedCheckpointQuestions,
+      facilitatorRunner: buildFacilitatorRunner({
+        contentLang,
+        intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
+        goal: localizedGoal,
+        facilitatorPrompts: localizedFacilitatorPrompts,
+        watchFors: localizedWatchFors,
+        checkpointQuestions: localizedCheckpointQuestions,
+        roomSceneLabels,
+        runner: localizedPhase?.facilitatorRunner ?? phase.facilitatorRunner ?? null,
+      }),
       sourceRefs: getLocalizedSourceRefs(phase.sourceRefs, localizedPhase?.sourceRefs),
       order: phase.order,
       sourceBlueprintPhaseId: phase.id,

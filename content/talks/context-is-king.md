@@ -1,8 +1,14 @@
 # Context is King
 
-## Otevírací moment
+## Otevírací modul
 
-Tento workshop skill i dashboard vznikly stejným způsobem, jakým dnes budeme pracovat my: s AI agentem, ale s důrazem na kontext. Nejde mi o prodej nástroje. Jde mi o to ukázat disciplínu, která z nástroje dělá použitelného spolupracovníka.
+Tenhle workshop skill i dashboard vznikly stejným způsobem, jakým dnes budeme pracovat my: s AI agentem, ale s důrazem na kontext. Nejde mi o prodej nástroje. Jde mi o to ukázat disciplínu, která z nástroje dělá použitelného spolupracovníka.
+
+Rámec pro room launch:
+
+- dnes nezačínáme tool demo ani soutěž v promptování
+- budeme se učit, stavět, předávat i přebírat
+- odpoledne se ukáže, co z práce přežije bez nás
 
 ## Klíčová linka
 
@@ -12,9 +18,26 @@ Moje hlavní věta pro dnešek:
 
 > Neučíme se "lépe promptovat". Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
 
+## Analogický beat
+
+Když dáte lidem stejné kostky, nevznikne jedna správná kachna. Stejně tak ze stejného modelu nevzniká jedna správná práce. Rozdíl nedělá jen model. Rozdíl dělá kontext, mantinely, ověřování a představivost týmu.
+
+Pointa analogie:
+
+- stejný agent neznamená stejný výsledek
+- kvalitu neurčuje samotný model
+- pracovní systém kolem agenta je součást výsledku
+
 ## Mikro-cvičení
 
-Všichni dostanou stejný malý úkol. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a kritéria hotovo i do dalšího kroku.
+Všichni dostanou stejný malý task. Jedna varianta bude prompt blob. Druhá varianta bude krátké zadání se 4 prvky a s odkazem na kontext zapsaný v repu. Pak porovnáme výsledky. Nehledáme „nejhezčí prompt“. Hledáme způsob práce, který přenese záměr, omezení a done criteria i do dalšího kroku.
+
+4 prvky pro druhou variantu:
+
+- Goal
+- Context
+- Constraints
+- Done When
 
 ## Hlavní teze
 
@@ -36,6 +59,15 @@ Všichni dostanou stejný malý úkol. Jedna varianta bude prompt blob. Druhá v
 - Když řekneme nějaké pravidlo dvakrát nahlas, patří do repa.
 - Když agent dělá víc, já musím lépe ověřovat.
 - Handoff není závěr dne. Je to průběžná podmínka celé práce.
+
+## Most do Build fáze 1
+
+Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytřejší prompt. Má se vracet s jedním jasným očekáváním:
+
+- nejdřív krátká mapa v repu
+- potom plan
+- potom první explicitní check
+- teprve potom další feature motion
 
 ## Závěr
 

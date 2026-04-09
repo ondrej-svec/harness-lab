@@ -281,10 +281,12 @@ function SceneBlocks({
           return (
             <BlockCard key={block.id} title={block.title}>
               <div className="space-y-3">
-                {block.items.map((item) => (
-                  <div key={item} className="flex gap-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <span className="mt-1 h-3 w-3 rounded-full border border-[var(--border-strong)]" />
-                    <p className="text-base leading-7 text-[var(--text-secondary)]">{item}</p>
+                {block.items.map((item, index) => (
+                  <div key={item} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                      {copy.presenterCueLabel} {index + 1}
+                    </p>
+                    <p className="mt-2 text-base leading-7 text-[var(--text-secondary)]">{item}</p>
                   </div>
                 ))}
               </div>

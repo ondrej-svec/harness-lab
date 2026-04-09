@@ -9,6 +9,7 @@ import {
   createWorkshopStateFromTemplate,
   getBlueprintWorkshopMetaCopy,
   type AgendaItem,
+  type FacilitatorRunner,
   type MonitoringSnapshot,
   type PresenterBlock,
   type PresenterChromePreset,
@@ -196,6 +197,25 @@ function normalizeAgenda(agenda: AgendaItem[], currentItemId?: string) {
   }));
 }
 
+function buildRuntimeAgendaRunner(args: {
+  goal: string;
+  facilitatorPrompts: string[];
+  watchFors: string[];
+  checkpointQuestions: string[];
+  previous?: FacilitatorRunner;
+}) {
+  const { goal, facilitatorPrompts, watchFors, checkpointQuestions, previous } = args;
+
+  return {
+    goal,
+    say: previous?.say ?? facilitatorPrompts.slice(0, 3),
+    show: previous?.show ?? [],
+    do: previous?.do ?? [],
+    watch: previous?.watch ?? watchFors.slice(0, 3),
+    fallback: previous?.fallback ?? checkpointQuestions.slice(0, 1),
+  } satisfies FacilitatorRunner;
+}
+
 function resolveCurrentPhaseLabel(agenda: AgendaItem[], currentPhaseLabel: string) {
   return agenda.find((item) => item.status === "current")?.title ?? currentPhaseLabel;
 }
@@ -265,6 +285,14 @@ function mergeLocalizedAgenda(existingAgenda: AgendaItem[], localizedAgenda: Age
       facilitatorPrompts: [...localizedItem.facilitatorPrompts],
       watchFors: [...localizedItem.watchFors],
       checkpointQuestions: [...localizedItem.checkpointQuestions],
+      facilitatorRunner: {
+        ...localizedItem.facilitatorRunner,
+        say: [...localizedItem.facilitatorRunner.say],
+        show: [...localizedItem.facilitatorRunner.show],
+        do: [...localizedItem.facilitatorRunner.do],
+        watch: [...localizedItem.facilitatorRunner.watch],
+        fallback: [...localizedItem.facilitatorRunner.fallback],
+      },
       sourceRefs: [...localizedItem.sourceRefs],
       presenterScenes: normalizedSceneState.scenes,
       defaultPresenterSceneId: normalizedSceneState.defaultPresenterSceneId,
@@ -401,6 +429,17 @@ function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): Ag
     facilitatorPrompts: normalizeStringArray(item.facilitatorPrompts, fallbackItem?.facilitatorPrompts ?? []),
     watchFors: normalizeStringArray(item.watchFors, fallbackItem?.watchFors ?? []),
     checkpointQuestions: normalizeStringArray(item.checkpointQuestions, fallbackItem?.checkpointQuestions ?? []),
+    facilitatorRunner: {
+      goal:
+        typeof item.facilitatorRunner?.goal === "string" && item.facilitatorRunner.goal.trim().length > 0
+          ? item.facilitatorRunner.goal
+          : fallbackItem?.facilitatorRunner.goal ?? item.goal ?? item.description ?? fallbackItem?.goal ?? fallbackItem?.description ?? "",
+      say: normalizeStringArray(item.facilitatorRunner?.say, fallbackItem?.facilitatorRunner.say ?? []),
+      show: normalizeStringArray(item.facilitatorRunner?.show, fallbackItem?.facilitatorRunner.show ?? []),
+      do: normalizeStringArray(item.facilitatorRunner?.do, fallbackItem?.facilitatorRunner.do ?? []),
+      watch: normalizeStringArray(item.facilitatorRunner?.watch, fallbackItem?.facilitatorRunner.watch ?? []),
+      fallback: normalizeStringArray(item.facilitatorRunner?.fallback, fallbackItem?.facilitatorRunner.fallback ?? []),
+    },
     sourceRefs: Array.isArray(item.sourceRefs) ? item.sourceRefs : fallbackItem?.sourceRefs ?? [],
     order: item.order ?? fallbackItem?.order ?? index + 1,
     sourceBlueprintPhaseId:
@@ -527,6 +566,13 @@ export async function updateAgendaItem(
               facilitatorPrompts: updates.facilitatorPrompts ?? item.facilitatorPrompts,
               watchFors: updates.watchFors ?? item.watchFors,
               checkpointQuestions: updates.checkpointQuestions ?? item.checkpointQuestions,
+              facilitatorRunner: buildRuntimeAgendaRunner({
+                goal: updates.goal ?? item.goal,
+                facilitatorPrompts: updates.facilitatorPrompts ?? item.facilitatorPrompts,
+                watchFors: updates.watchFors ?? item.watchFors,
+                checkpointQuestions: updates.checkpointQuestions ?? item.checkpointQuestions,
+                previous: item.facilitatorRunner,
+              }),
               sourceRefs: updates.sourceRefs ?? item.sourceRefs,
             }
           : item,
@@ -567,6 +613,12 @@ export async function addAgendaItem(
       facilitatorPrompts: input.facilitatorPrompts ?? [],
       watchFors: input.watchFors ?? [],
       checkpointQuestions: input.checkpointQuestions ?? [],
+      facilitatorRunner: buildRuntimeAgendaRunner({
+        goal: input.goal ?? input.description,
+        facilitatorPrompts: input.facilitatorPrompts ?? [],
+        watchFors: input.watchFors ?? [],
+        checkpointQuestions: input.checkpointQuestions ?? [],
+      }),
       sourceRefs: [],
       order: insertAt + 1,
       sourceBlueprintPhaseId: null,

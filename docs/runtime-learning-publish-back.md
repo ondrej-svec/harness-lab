@@ -9,6 +9,7 @@ Runtime state never auto-promotes back into the public blueprint.
 Reusable improvements are published through deliberate repo edits.
 
 For richer presenter scene work, use [`presenter-rich-scene-authoring.md`](presenter-rich-scene-authoring.md) for the proof gate, asset model, and promotion checklist.
+For agenda-owned facilitator runner guidance, use [`facilitator-agenda-source-of-truth.md`](facilitator-agenda-source-of-truth.md).
 
 ## Workflow
 
@@ -19,6 +20,11 @@ For richer presenter scene work, use [`presenter-rich-scene-authoring.md`](prese
    - a reusable blueprint improvement
 4. For reusable improvements, open a normal GitHub edit or pull request against the public repo.
 5. Update the relevant blueprint, docs, dashboard copy, or skill guidance intentionally.
+
+Facilitator runner rule:
+
+- runtime edits may help one live workshop
+- reusable `say / show / do / watch / fallback` guidance belongs back in the repo only through a deliberate publish-back edit
 
 ## Examples
 

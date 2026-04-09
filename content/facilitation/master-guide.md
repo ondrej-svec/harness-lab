@@ -4,18 +4,54 @@
 
 ### Cíl
 
-Nastavit energii dne a jasně pojmenovat, o čem workshop je.
+Spustit den jako room-facing launch pro celý workshop, ne jako provozní brief k dopoledni.
 
 ### Klíčová message
 
-> „Dnes nejde o to být nejrychlejší. Jde o to předat práci tak, aby ji cizí tým dokázal převzít a posunout dál.“
+> „Dnes nejde o to být nejrychlejší. Jde o to postavit práci tak, aby ji cizí tým dokázal převzít a posunout dál.“
 
 ### Co potřebuje zaznít
 
-- Nejde o soutěž v promptování.
+- Nezačínáme tool demo ani soutěž v promptování.
+- Budeme se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.
 - Jde o práci s agentem tak, aby po vás zůstával použitelný kontext.
 - Odpolední část prověří, jestli repo opravdu unese převzetí dalším týmem.
 - Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.
+
+### Doporučený sled beatů
+
+1. day-opening promise
+2. proč na tom záleží právě teď
+3. analogie typu Lego duck: stejné ingredience, různé použitelné výsledky
+4. krátká pohybová aktivace podle zkušenosti s AI agenty
+5. první pracovní kontrakt pro Build fázi 1
+
+### Lego-duck analogie
+
+Použijte ji krátce a věcně.
+
+Pointa:
+
+- stejný agent neznamená stejný výsledek
+- kvalitu neurčuje samotný model
+- kontext, mantinely a ověřování jsou součást výsledku
+
+Nevést jako zábavnou odbočku. Vést jako vysvětlení, proč je harness engineering tvůrčí a inženýrská disciplína zároveň.
+
+### Pohybová aktivace
+
+Použijte krátké rozdělení místnosti podle aktuální zkušenosti s AI agenty:
+
+- používám skoro denně
+- používám, ale opatrně
+- jsem spíš na startu
+- jsem skeptický, ale chci důkaz
+
+Pravidla:
+
+- ne dělat z toho networking kolo
+- stačí přesun a 2 krátké hlasy
+- pointa není seniorita, ale kalibrace místnosti a signál, že den je participativní
 
 ### Co má facilitátor průběžně vracet
 
@@ -23,6 +59,61 @@ Nastavit energii dne a jasně pojmenovat, o čem workshop je.
 - „Co je tady skutečně ověřené?“
 - „Je `AGENTS.md` mapa, nebo už se z něj stává dump?“
 - „Jaký je další bezpečný krok pro cizího člověka nebo agenta?“
+
+### První pracovní kontrakt
+
+Po launchi potřebuje místnost ještě jednu konkrétní věc:
+
+- co má být po prvním build bloku opravdu vidět
+- co nestačí jen slíbit
+
+Do oběda má být vidět:
+
+- repo a `README`, které dávají smysl cizímu člověku
+- `AGENTS.md` jako krátká mapa
+- plan nebo jasně vedená implementační stopa
+- první explicitní check před dalším generováním
+
+## Context is King talk
+
+### Cíl
+
+Proměnit energii z openingu v přesnou tezi a čistý most do Build fáze 1.
+
+### Klíčová message
+
+> „Kontext je páka, ne kosmetika.“
+
+### Co potřebuje zaznít
+
+- Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
+- `AGENTS.md`, skills, runbooky a checks jsou týmová infrastruktura, ne polish navíc.
+- Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.
+- Po talku se tým vrací k repu s mapou, planem a prvním checkem, ne s lovem na chytřejší prompt.
+
+### Mikro-cvičení
+
+Použijte stejný malý task ve dvou podmínkách:
+
+1. prompt blob
+2. krátké zadání s `Goal`, `Context`, `Constraints`, `Done When`
+
+Nenechte to sklouznout do debaty o tom, který model je chytřejší.
+
+Pointa:
+
+- přenos záměru
+- přenos mantinelů
+- přenos done criteria
+
+### Most do Build fáze 1
+
+Na konci talku má být jasné:
+
+- teorie tím končí
+- tým se vrací k repu
+- nejdřív vzniká mapa a první explicitní check
+- teprve potom dává smysl další feature motion
 
 ## Build fáze 1
 

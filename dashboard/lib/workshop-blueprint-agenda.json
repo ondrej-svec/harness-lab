@@ -16,23 +16,23 @@
       "startTime": "09:10",
       "kind": "shared",
       "intent": "framing",
-      "goal": "Nastavit tón dne a jasně pojmenovat, že se učíme harness engineering: práci s instrukcemi, kontextem a workflow tak, aby agent i cizí tým dokázali bezpečně pokračovat.",
-      "roomSummary": "Místnost má hned pochopit, že nejde o soutěž v promptování. Cílem dne je postavit pracovní systém, ve kterém agent i další tým najdou záměr, kontext, ověření a další bezpečný krok bez improvizovaného rescue.",
+      "goal": "Otevřít den jako společný launch: proč harness engineering matters právě teď, co dnes budeme dělat od prvního beatu až po reveal a jak poznáme, že práce stojí na nohách i bez improvizovaného rescue.",
+      "roomSummary": "Místnost má hned cítit, že tohle není promptovací hackathon. Je to den, ve kterém se budeme učit řídit agenty, stavět s nimi v reálném repu a odpoledne ověřit, co z práce přežije bez nás.",
       "facilitatorPrompts": [
+        "Dnes nezačínáme tool demo ani soutěž v promptování. Začínáme den, ve kterém budeme řídit práci s coding agenty tak, aby po nás zůstalo něco použitelného.",
+        "Budete se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr, ne logistika.",
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
-        "Harness engineering je práce s instrukcemi, kontextem a workflow tak, aby agent dělal správné věci opakovaně a předvídatelně.",
-        "Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.",
-        "Pozdější bloky prověří, jestli repo opravdu unese další krok bez záchrany hlasem."
+        "Co zůstane jen v hovoru u stolu, odpoledne nevydrží."
       ],
       "watchFors": [
-        "Někdo to rámuje jako soutěž v promptování nebo feature race.",
-        "Týmy čekají na nástrojové demo místo toho, aby pochopily pracovní disciplínu.",
-        "Facilitátor mluví jen o výstupu a neukáže, že čitelnost bez dovysvětlování je součást zadání."
+        "Úvod sklouzne do pravidel dřív, než nabídne ambici a smysl dne.",
+        "Místnost to čte jako promptovací contest nebo feature race.",
+        "Facilitátor příliš brzy vysvětlí continuation mechaniku místo toho, aby jen nastavil laťku pro pokračování."
       ],
       "checkpointQuestions": [
         "Kde by to našel další tým bez vás?",
         "Co je tady skutečně ověřené?",
-        "Jaký je další bezpečný krok pro cizího člověka nebo agenta?"
+        "Co si má místnost odnést do první build fáze?"
       ],
       "sourceRefs": [
         {
@@ -40,6 +40,30 @@
           "path": "content/facilitation/master-guide.md"
         }
       ],
+      "facilitatorRunner": {
+        "goal": "Spustit den jako room-facing launch, ne jako provozní brief.",
+        "say": [
+          "Dnes nezačínáme tool demo ani soutěž v promptování.",
+          "Budete se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.",
+          "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat."
+        ],
+        "show": [
+          "Promítni launch oblouk od framingu přes analogii a aktivaci až po první pracovní kontrakt.",
+          "Participant plochu ukaž až krátce na závěr openingu nebo v navazujícím talk bridge."
+        ],
+        "do": [
+          "Udělej rychlé rozdělení místnosti podle zkušenosti s AI agenty a nech zaznít dva krátké hlasy.",
+          "Drž launch svižný: každý beat má změnit stav místnosti, ne vysvětlit celý workshop."
+        ],
+        "watch": [
+          "Opening se nesmí proměnit v interní operating memo.",
+          "Lidé mají cítit ambici dne dřív, než dostanou první pravidlo."
+        ],
+        "fallback": [
+          "Když čas klouže, nech framing, analogii a první kontrakt. Aktivaci zkrať na show of hands.",
+          "Když energie padá, vrať se k větě, že odpoledne prověří, co po nás zůstane bez rescue."
+        ]
+      },
       "defaultSceneId": "opening-framing",
       "scenes": [
         {
@@ -49,11 +73,11 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Dnes stavíme pracovní systém, ne prompt show",
-          "body": "Cílem dne není vyrobit jeden efektní výstup. Cílem je postavit repo, workflow a instrukce, ve kterých se agent i další tým zorientují bez improvizovaného voice-overu.",
+          "body": "Cílem dne není vyrobit jeden efektní výstup. Cílem je naučit se řídit práci s coding agenty tak, aby repo, workflow a instrukce unesly další krok i bez improvizovaného voice-overu.",
           "facilitatorNotes": [
-            "Začni klidně, ale ostře. Hlavní beat: dnes neprodáváme nástroj, ale disciplínu práce kolem něj.",
-            "Vyslov harness engineering explicitně. Lidé mají odejít s tím, že staví systém, ne promptovací trik.",
-            "Po citátu udělej krátkou pauzu a nech větu dosednout dřív, než přejdeš k pracovnímu kontraktu."
+            "Začni klidně, ale s ambicí. První beat má říct, že tohle je build day s coding agenty, ne provozní onboarding k nástroji.",
+            "Vyslov harness engineering explicitně, ale nezůstávej v definici. Hned ukaž, že tenhle den má oblouk: učit se, stavět, předat, pokračovat.",
+            "Po citátu udělej krátkou pauzu a nech větu dosednout dřív, než přejdeš k oblouku dne."
           ],
           "sourceRefs": [
             {
@@ -67,7 +91,7 @@
               "type": "hero",
               "eyebrow": "Harness Lab",
               "title": "Dnes stavíme pracovní systém, ne prompt show",
-              "body": "Harness engineering je práce s instrukcemi, kontextem, ověřením a workflow tak, aby agent i další tým uměli bezpečně pokračovat. Dnes stavíme právě tenhle systém."
+              "body": "Harness engineering je práce s instrukcemi, kontextem, ověřením a workflow tak, aby agent i další tým uměli bezpečně pokračovat. Dnes si tenhle systém nejen popíšeme. Dnes ho budeme opravdu stavět."
             },
             {
               "id": "opening-quote",
@@ -79,22 +103,22 @@
               "id": "opening-framing-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Co dnes opravdu testujeme",
-              "body": "Ne rychlost ani show. Testujeme, jestli je z repa poznat záměr, mantinely, ověření i další bezpečný krok."
+              "title": "Co má místnost slyšet hned",
+              "body": "Nejde o promptovací show ani o feature race. Jde o den, který má změnit, jak budete s coding agenty pracovat i po workshopu."
             }
           ]
         },
         {
           "id": "opening-handoff-loop",
-          "label": "Z čeho se skládá pracovní systém",
+          "label": "Oblouk dne",
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "agenda",
-          "title": "Dobrý harness drží čtyři věci pohromadě",
-          "body": "Silný workshopový repo není skladiště promptů. Je to pracovní mapa, ze které je čitelný cíl, kontext, ověření i další krok.",
+          "title": "Dnešek má jeden oblouk: naučit se, postavit, předat, pokračovat",
+          "body": "Dopoledne nezačíná seznamem pravidel. Začíná příslibem, že si celý tenhle oblouk zažijete na vlastní kůži v jednom dni.",
           "facilitatorNotes": [
-            "Nepotřebuješ diagram. Tady je silnější jednoduchá pracovní mapa a jasná analogie k team leadovi.",
-            "Nezacházej do nástrojových detailů. Pointa je, že systém musí nést rozhodování i orientaci."
+            "Tuhle scénu drž jako příslib dne, ne jako logistický harmonogram.",
+            "Každou položku pojmenuj jednou větou. Místnost má cítit, že všechno, co přijde, má společný směr."
           ],
           "sourceRefs": [
             {
@@ -110,23 +134,23 @@
             {
               "id": "opening-loop-steps",
               "type": "steps",
-              "title": "Čtyři věci, které musí být čitelné hned",
+              "title": "Co dnes opravdu zažijete",
               "items": [
                 {
-                  "title": "Jasný cíl",
-                  "body": "Co přesně dnes děláte, pro koho a proč právě tohle teď stojí za práci."
+                  "title": "Naučit se řídit agenta",
+                  "body": "Ne jako trik, ale jako pracovní disciplínu kolem kontextu, mantinelů a ověřování."
                 },
                 {
-                  "title": "Mapa v repu",
-                  "body": "README, AGENTS.md, plan, runbook nebo skill. Ne jen chat, call a něčí hlava."
+                  "title": "Postavit něco reálného",
+                  "body": "V repu, s plánem, ověřením a prvními artefakty, na které se dá opravdu navázat."
                 },
                 {
-                  "title": "Explicitní ověření",
-                  "body": "Test, tracer bullet nebo jiný spustitelný check, který drží realitu silnější než nadšení."
+                  "title": "Předat to dál",
+                  "body": "Odpoledne jinému týmu bez ústního handoffu a bez rescue od autorů."
                 },
                 {
-                  "title": "Další bezpečný krok",
-                  "body": "Další člověk nebo agent ví, odkud pokračovat bez improvizovaného dovysvětlování."
+                  "title": "Odnést si to do práce",
+                  "body": "V reveal pojmenujete, co má zůstat ve vašem skutečném workflow i příští týden."
                 }
               ]
             },
@@ -134,8 +158,110 @@
               "id": "opening-loop-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Harness engineering v jedné větě",
-              "body": "Nelepíte další instrukci na další instrukci. Stavíte pracovní prostředí, ve kterém je správný další krok čitelný a ověřitelný."
+              "title": "Proto je launch důležitý",
+              "body": "Neotvíráme proces. Otvíráme den, který má změnit, jak budete s coding agenty pracovat i po workshopu."
+            }
+          ]
+        },
+        {
+          "id": "opening-context-analogy",
+          "label": "Analogický beat",
+          "sceneType": "briefing",
+          "intent": "teaching",
+          "chromePreset": "minimal",
+          "title": "Stejný agent, jiné výsledky",
+          "body": "Když dáte lidem stejné kostky, nevznikne jedna správná kachna. Stejně tak ze stejného modelu nevzniká jedna správná práce. Rozdíl dělá kontext, mantinely a představivost týmu.",
+          "facilitatorNotes": [
+            "Použij Lego-duck analogii krátce a konkrétně. Nemá to být roztomilá odbočka, ale vysvětlení, proč je harness engineering tvůrčí disciplína.",
+            "Neptej se, kdo má pravdu. Ptej se, co vedlo k lepšímu pracovnímu výsledku a proč."
+          ],
+          "sourceRefs": [
+            {
+              "label": "Talk: Context is King",
+              "path": "content/talks/context-is-king.md"
+            },
+            {
+              "label": "Facilitační průvodce: Otevření a welcome",
+              "path": "content/facilitation/master-guide.md"
+            }
+          ],
+          "blocks": [
+            {
+              "id": "opening-analogy-steps",
+              "type": "steps",
+              "title": "Co je stejné a co mění výsledek",
+              "items": [
+                {
+                  "title": "Stejný model",
+                  "body": "Ingredience jsou podobné, ale samy o sobě ještě nezaručí kvalitní práci."
+                },
+                {
+                  "title": "Stejný úkol",
+                  "body": "Bez rámce a mantinelů lidé i agenti postaví rozdílně použitelné výsledky."
+                },
+                {
+                  "title": "Jiný harness",
+                  "body": "Rozhodující rozdíl dělá kontext, ověřování a to, jak čitelně navrhnete další krok."
+                }
+              ]
+            },
+            {
+              "id": "opening-analogy-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Kontext není dekorace",
+              "body": "Kvalitu neurčuje samotný agent. Určuje ji pracovní systém, který kolem něj postavíte."
+            }
+          ]
+        },
+        {
+          "id": "opening-room-activation",
+          "label": "Aktivace místnosti",
+          "sceneType": "transition",
+          "intent": "walkthrough",
+          "chromePreset": "agenda",
+          "title": "Postavte se tam, kde dnes s AI agenty opravdu jste",
+          "body": "Chci rychle vidět, jakou máme místnost: jestli jste everyday users, opatrní praktici, zvědaví začátečníci, nebo skeptici. Není to ranking. Je to mapa pro tempo dne.",
+          "facilitatorNotes": [
+            "Neudělej z toho dlouhé představení. Stačí krátký přesun, dva hlasy a návrat k hlavní lince dne.",
+            "Pointa není zjistit senioritu. Pointa je ukázat, že workshop je participativní a že facilitace se přizpůsobuje skutečné místnosti."
+          ],
+          "sourceRefs": [
+            {
+              "label": "Facilitační průvodce: Otevření a welcome",
+              "path": "content/facilitation/master-guide.md"
+            }
+          ],
+          "blocks": [
+            {
+              "id": "opening-activation-steps",
+              "type": "steps",
+              "title": "Rychlá mapa místnosti",
+              "items": [
+                {
+                  "title": "Používám AI agenty skoro denně",
+                  "body": "Chci si ověřit, co z toho je skutečně přenositelné do týmového workflow."
+                },
+                {
+                  "title": "Používám je, ale opatrně",
+                  "body": "Zajímá mě, kde jim věřit a kde postavit silnější mantinely."
+                },
+                {
+                  "title": "Jsem spíš na startu",
+                  "body": "Chci si odnést jasný pracovní model, ne jen přehled možností."
+                },
+                {
+                  "title": "Jsem skeptický, ale chci důkaz",
+                  "body": "Dívám se hlavně na to, co obstojí pod handoffem a ověřením."
+                }
+              ]
+            },
+            {
+              "id": "opening-activation-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Proč to děláme hned na startu",
+              "body": "Tenhle workshop není jen projekce. Je to práce s konkrétní místností, jejím tempem a jejími návyky."
             }
           ]
         },
@@ -145,10 +271,10 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Co má být do oběda vidět",
-          "body": "Po prvním bloku nemá být vidět hype. Má být vidět pracovní základ, který drží orientaci, omezuje improvizaci a dovolí dalšímu kroku navázat bez mlhy.",
+          "title": "První pracovní kontrakt",
+          "body": "Po launchi potřebuje místnost ještě jednu věc: vědět, co má být po prvním build bloku opravdu vidět, ne jen slíbeno.",
           "facilitatorNotes": [
-            "Tohle není motivační slide. Je to pracovní kontrakt, ke kterému se dopoledne vracíš.",
+            "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci.",
             "Když některý řádek chybí, nepřeskakuj ho ústním mentoringem. Pomoz týmu vytvořit nejmenší verzi artefaktu."
           ],
           "sourceRefs": [
@@ -161,7 +287,7 @@
             {
               "id": "opening-contract-checklist",
               "type": "checklist",
-              "title": "Do oběda má být vidět",
+              "title": "Po prvním build bloku má být vidět",
               "items": [
                 "Repo a README dávají smysl cizímu člověku.",
                 "AGENTS.md je krátká mapa, ne skladiště všeho.",
@@ -184,8 +310,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Jak číst začátek dne",
-          "body": "Vrstva pro účastníky na startu dne drží smysl workshopu, to, co právě běží, a signál, že důležité věci mají být zapsané v repu, ne jen vyřčené u stolu.",
+          "title": "Co má tým vidět hned po launchi",
+          "body": "Vrstva pro účastníky na startu dne drží smysl workshopu, aktuální moment a signál, že důležité věci mají být zapsané v repu, ne jen vyřčené u stolu.",
           "facilitatorNotes": [
             "Tuhle scénu použij, když chceš místnosti ukázat, že vrstva pro účastníky není promo banner, ale pracovní orientace.",
             "Pojmenuj tři věci, které mají účastníci vidět v jednom pohledu: co běží teď, co přijde dál a co má vzniknout v repu."
@@ -227,17 +353,18 @@
       "startTime": "09:40",
       "kind": "shared",
       "intent": "teaching",
-      "goal": "Ukázat, že harness engineering je práce s instrukcemi, kontextem a workflow, ne soutěž o nejhezčí prompt.",
-      "roomSummary": "Místnost má odnést, že AGENTS.md, skills, runbooky a testy nejsou doplněk. Jsou to mantinely, které dělají z agenta použitelného spolupracovníka.",
+      "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty, ne sada prompt triků.",
+      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní checks nejsou doplněk. Jsou to mantinely, které dělají z agenta použitelného spolupracovníka a z build fáze bezpečný další krok.",
       "facilitatorPrompts": [
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
         "Co není v repu, neexistuje.",
-        "Když agent dělá víc, vy musíte lépe ověřovat."
+        "Když agent dělá víc, vy musíte lépe ověřovat.",
+        "Po tomhle talku se vracíte k repu s konkrétním pracovním systémem, ne s pocitem, že potřebujete jen chytřejší prompt."
       ],
       "watchFors": [
         "Talk sklouzává k předvádění funkcí nástroje.",
         "Týmy slyší hlavně tipy k promptování místo workflow disciplíny.",
-        "Chybí vazba na odpolední návaznost."
+        "Chybí čistý most do první build fáze."
       ],
       "checkpointQuestions": [
         "Co dnes přesunete z hlavy nebo z chatu do repa?",
@@ -250,6 +377,30 @@
           "path": "content/talks/context-is-king.md"
         }
       ],
+      "facilitatorRunner": {
+        "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a překlápět ji rovnou do první build práce.",
+        "say": [
+          "Kontext je páka, ne kosmetika.",
+          "Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.",
+          "Po tomhle talku se vracíte k repu s konkrétním systémem práce, ne s lovem na lepší prompt."
+        ],
+        "show": [
+          "Promítni hlavní tezi, mikro-cvičení a krátký bridge zpátky do participant a repo vrstvy.",
+          "Participant pohled ukaž jen jako důkaz, že room, dashboard a repo drží stejný moment."
+        ],
+        "do": [
+          "Porovnej stejný task ve dvou podmínkách: prompt blob vs. krátké zadání s Goal, Context, Constraints a Done When.",
+          "Po pointě pošli místnost rovnou do Build 1 s jedním očekáváním: nejdřív mapa a check, teprve potom feature motion."
+        ],
+        "watch": [
+          "Talk nesmí sklouznout k tipům na promptování nebo feature tour nástroje.",
+          "Místnost má po talku vědět, co má udělat v repu během příštích minut."
+        ],
+        "fallback": [
+          "Když se demo vleče, nespouštěj další live ukázku. Řekni kontrast prompt blob vs. repo-native map přímo.",
+          "Když je pozornost nízko, nech hlavní větu, team-lead analogii a jeden konkrétní build expectation."
+        ]
+      },
       "defaultSceneId": "talk-framing",
       "scenes": [
         {
@@ -259,10 +410,10 @@
           "intent": "teaching",
           "chromePreset": "minimal",
           "title": "Kontext je páka, ne kosmetika",
-          "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali pokračovat předvídatelně.",
+          "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali pokračovat předvídatelně a aby Build Phase 1 nezačínala z chaosu.",
           "facilitatorNotes": [
             "Použij reframing větu a explicitně kontrastuj 'lepší prompt' versus 'lepší pracovní systém'.",
-            "Po calloutu krátce připomeň, že team lead také netráví den tím, že jednomu vývojáři co půl minuty doplňuje další instrukci."
+            "Po calloutu připomeň team lead analogii a hned ji převeď do toho, co teď mají týmy udělat v repu."
           ],
           "sourceRefs": [
             {
@@ -276,14 +427,14 @@
               "type": "hero",
               "eyebrow": "Context is King",
               "title": "Neučíme se lépe promptovat",
-              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru a bez ústního rescue."
+              "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru, bez ústního rescue a bez chaosu v prvním build kroku."
             },
             {
               "id": "talk-reframe",
               "type": "callout",
               "tone": "info",
               "title": "Team lead nestojí modelu za zády",
-              "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat."
+              "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat a ve kterém další krok není hádanka."
             },
             {
               "id": "talk-adopt",
@@ -292,7 +443,8 @@
               "items": [
                 "Než začnu generovat další funkci, udělám z repa místo, kde se dá orientovat.",
                 "Když agent dělá víc, musím lépe ověřovat.",
-                "Handoff je průběžná podmínka práce, ne závěr dne."
+                "Handoff je průběžná podmínka práce, ne závěr dne.",
+                "Po talku se vracím k repu s jasným prvním checkem, ne s nápadem na chytřejší prompt."
               ]
             }
           ]
@@ -303,10 +455,11 @@
           "sceneType": "demo",
           "intent": "walkthrough",
           "chromePreset": "agenda",
-          "title": "Prompt bez opory vs. kontext v repu",
-          "body": "Stejný malý úkol. Jednou bez kontextu, podruhé s krátkým zadáním a 4 prvky v AGENTS.md. Nehledáme nejhezčí prompt. Hledáme přenositelný pracovní systém.",
+          "title": "Stejný task, dvě pracovní prostředí",
+          "body": "Stejný malý task. Jednou prompt blob bez opory, podruhé krátké zadání a 4 prvky v AGENTS.md. Nehledáme nejhezčí prompt. Hledáme přenositelný pracovní systém.",
           "facilitatorNotes": [
-            "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru a hranic."
+            "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru, mantinelů a done criteria.",
+            "Uzavři to větou, že Build Phase 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
           ],
           "sourceRefs": [
             {
@@ -339,22 +492,23 @@
               "type": "callout",
               "tone": "info",
               "title": "Pointa",
-              "body": "Nehledáme nejhezčí prompt. Hledáme způsob práce, který přenese záměr, omezení a kritéria hotovo do dalšího kroku."
+              "body": "Nehledáme nejhezčí prompt. Hledáme způsob práce, který přenese záměr, omezení a done criteria do dalšího kroku."
             }
           ]
         },
         {
           "id": "talk-participant-view",
-          "label": "Průchod vrstvou pro účastníky",
+          "label": "Most do Build 1",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Jak vypadá vrstva pro účastníky",
-          "body": "Ukažte vrstvu pro účastníky jako skutečný pracovní povrch pro tým: aktuální moment, nejbližší další krok, sdílené poznámky pro celou místnost a signál, že dashboard i týmový pohled drží stejný workshopový moment.",
+          "title": "Co má tým vidět, než se vrátí k repu",
+          "body": "Po talku nemá tým odcházet s teorií. Má vidět aktuální moment, nejbližší next step a jistotu, že participant vrstva, dashboard i repo drží stejný workshopový příběh.",
           "ctaLabel": "Otevřít workshop skill reference",
           "ctaHref": "https://github.com/ondrej-svec/harness-lab/blob/main/workshop-skill/reference.md",
           "facilitatorNotes": [
-            "Použij ji jen krátce. Je to most k tomu, že vrstva pro účastníky i facilitátorský dashboard musí být konzistentní."
+            "Použij ji krátce. Tohle není tour dashboardu, ale most zpátky do Build Phase 1.",
+            "Pojmenuj, že tým se teď vrací k repu s jedním úkolem: udělat mapu a první explicitní check."
           ],
           "sourceRefs": [
             {
@@ -368,29 +522,29 @@
               "type": "hero",
               "eyebrow": "Vrstva pro účastníky",
               "title": "Co má tým vidět bez facilitátorského šumu",
-              "body": "Vrstva pro účastníky nemá být dekorace. Má dát týmu v jednom pohledu aktuální fázi, další krok, sdílené poznámky pro celou místnost a jistotu, že dashboard i týmový pohled mluví jedním jazykem."
+              "body": "Participant vrstva nemá být dekorace. Má dát týmu v jednom pohledu aktuální fázi, další krok a jistotu, že room framing, dashboard i repo mluví jedním jazykem."
             },
             {
               "id": "talk-participant-cues",
               "type": "bullet-list",
-              "title": "Na co upozornit místnost",
+              "title": "S čím se mají vrátit k repu",
               "items": [
                 "Aktuální fáze a nejbližší další krok.",
                 "Sdílené poznámky pro celou místnost, které pomáhají všem stolům stejně.",
-                "Stejný workshopový moment ve vrstvě pro účastníky i na facilitátorském dashboardu."
+                "Stejný workshopový moment ve vrstvě pro účastníky, na facilitátorském dashboardu i v repu."
               ]
             },
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky má ukazovat jen to, co tým opravdu potřebuje teď: aktuální moment, další krok a sdílené poznámky z místnosti."
+              "body": "Teď už má být z participant vrstvy i z repa jasné, co tým udělá jako první: krátká mapa, plan a první explicitní check."
             },
             {
               "id": "talk-participant-bridge",
               "type": "callout",
               "tone": "info",
-              "title": "Most do dne",
-              "body": "Tahle vrstva je účastnický ekvivalent facilitátorského balíčku. Každý důležitý workshopový moment má mít konzistentní podobu na obou stranách."
+              "title": "Most do Build 1",
+              "body": "Teorie tím končí. Teď má tým vrátit hlavní větu talku do repa jako mapu, mantinely a první ověřitelný krok."
             }
           ]
         }

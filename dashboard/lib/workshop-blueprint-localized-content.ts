@@ -189,35 +189,60 @@ export const workshopBlueprintLocalizedContent = {
       opening: {
         label: "Opening and orientation",
         goal:
-          "Set the tone for the day and make the operating constraint unmistakable: the work has to stay legible, verifiable, and ready for the next move, not just look good in the moment.",
+          "Open the day as a shared launch: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
         roomSummary:
-          "The room should understand, early and without ambiguity, that this is not a prompting contest. The job today is to build a repo, workflow, and instruction set that still holds without improvised explanation.",
+          "The room should feel immediately that this is not a prompting hackathon. It is a day of steering agents, building with them in a real repo, and later testing what survives without us.",
         facilitatorPrompts: [
-          "Today is not about being the fastest. It is about making the work legible, verifiable, and ready for the next move.",
-          "If an important rule lives only in table talk, it does not exist yet.",
-          "Later blocks will test whether the repo can carry the work without spoken rescue.",
+          "We are not starting with a tool demo or a prompting contest. We are starting a day of steering work with coding agents so something durable stays behind.",
+          "You will learn, build, hand off, and inherit. That day arc is the point, not workshop logistics.",
+          "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
+          "Whatever stays only in table talk will not survive the afternoon.",
         ],
         watchFors: [
-          "Someone frames the day as a prompting contest or a feature race.",
-          "Teams wait for a tool demo instead of understanding the working discipline.",
-          "The facilitator talks only about output and never makes the legibility constraint explicit.",
+          "The opening slips into rules before it offers ambition and a reason to care.",
+          "The room reads the day as a prompting contest or a feature race.",
+          "The facilitator explains the continuation mechanic too early instead of simply setting the bar for continuation.",
         ],
         checkpointQuestions: [
           "Where would the next team find this without you?",
           "What is actually verified here?",
-          "What is the next safe move for a new person or agent?",
+          "What should the room carry into Build Phase 1?",
         ],
         sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
+        facilitatorRunner: {
+          goal: "Launch the day as a room-facing start, not as an operating brief.",
+          say: [
+            "We are not starting with a tool demo or a prompting contest.",
+            "You will learn, build, hand off, and inherit. That arc is the point of the day.",
+            "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and the next team can continue safely.",
+          ],
+          show: [
+            "Run the launch arc from framing through analogy and room activation into the first working contract.",
+            "Show the participant surface only briefly at the end of opening or in the talk bridge.",
+          ],
+          do: [
+            "Do a fast room grouping by current experience with AI agents and let two short voices land.",
+            "Keep the launch brisk: each beat should change the room state, not explain the whole workshop.",
+          ],
+          watch: [
+            "The opening must not turn into an internal operating memo.",
+            "The room should feel the ambition of the day before it gets the first rule.",
+          ],
+          fallback: [
+            "If time slips, keep the framing, the analogy, and the first contract. Shorten the activation to a quick show of hands.",
+            "If energy drops, return to the line that the afternoon will test what remains without rescue.",
+          ],
+        },
         scenes: {
           "opening-framing": {
             label: "Opening framing",
             title: "Today we are building a working system, not prompt theatre",
             body:
-              "The goal today is not one impressive answer. The goal is a repo, workflow, and instruction set that still makes sense to an agent or a new team without your running commentary.",
+              "The goal today is not one impressive answer. The goal is to learn how to steer work with coding agents so the repo, workflow, and instructions still hold without your running commentary.",
             facilitatorNotes: [
-              "Start calm, but sharp. The key beat is that the work must stay legible without improvised rescue.",
-              "Do not drift into tool marketing. Frame the working discipline: what is not written into the repo will not survive the next move.",
-              "After the quote, pause briefly and let the line land before you move into the room contract.",
+              "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session.",
+              "Say harness engineering explicitly, but do not stay inside the definition. Move quickly into the day arc: learn, build, hand off, continue.",
+              "After the quote, pause briefly and let the line land before you move into the day arc.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -225,7 +250,7 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Harness Lab",
                 title: "Today we are building a working system, not prompt theatre",
                 body:
-                  "Harness engineering means shaping instructions, context, verification, and workflow so the agent and the next team can continue safely. That is the system we are building today.",
+                  "Harness engineering means shaping instructions, context, verification, and workflow so the agent and the next team can continue safely. Today we are not just describing that system. We are building it.",
               },
               "opening-quote": {
                 quote:
@@ -233,20 +258,20 @@ export const workshopBlueprintLocalizedContent = {
                 attribution: "Talk: Context is King",
               },
               "opening-framing-callout": {
-                title: "What we are really testing today",
+                title: "What the room should hear immediately",
                 body:
-                  "Not speed and not showmanship. We are testing whether the repo makes the intent, boundaries, verification, and next safe move legible.",
+                  "This is not prompt theatre and not a feature race. It is a day that should change how you work with coding agents after the workshop too.",
               },
             },
           },
           "opening-handoff-loop": {
-            label: "What the working system has to hold",
-            title: "A good harness keeps four things connected",
-            body: "A strong workshop repo is not a pile of prompts. It is a working map where the goal, context, verification, and next step stay readable together.",
+            label: "Day arc",
+            title: "The day has one arc: learn, build, hand off, continue",
+            body: "The morning does not begin with a rules card. It begins with a promise that you will experience the full arc of agent work in one day.",
             facilitatorNotes: [
-              "Use this as a working map, not as abstract theory. Give one tight sentence to each element.",
-              "Do not get lost in tooling detail. The point is that intent, repo context, verification, and the next safe move must stay connected.",
-              "Close with the line that harness engineering is about making the right next move readable and verifiable.",
+              "Keep this as the promise of the day, not as workshop logistics.",
+              "Give each step one sentence. The room should feel that everything ahead has one direction.",
+              "Close by naming that the afternoon tests what the morning actually encoded in the repo.",
             ],
             sourceRefs: [
               { label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" },
@@ -254,45 +279,120 @@ export const workshopBlueprintLocalizedContent = {
             ],
             blocks: {
               "opening-loop-steps": {
-                title: "Four things that should be readable immediately",
+                title: "What you are actually going to experience today",
                 items: [
                   {
-                    title: "Clear goal",
-                    body: "What exactly are you building today, for whom, and why this matters right now.",
+                    title: "Learn to steer the agent",
+                    body: "Not as a trick, but as a working discipline around context, boundaries, and verification.",
                   },
                   {
-                    title: "Repo-native map",
-                    body: "README, AGENTS.md, a plan, a runbook, or a skill. Not just chat, memory, and table talk.",
+                    title: "Build something real",
+                    body: "In a repo, with a plan, verification, and first artifacts another team can actually continue.",
                   },
                   {
-                    title: "Explicit verification",
-                    body: "A test, tracer bullet, or another executable check that keeps reality stronger than enthusiasm.",
+                    title: "Hand it off",
+                    body: "In the afternoon, to another team without oral rescue from the authors.",
                   },
                   {
-                    title: "Next safe move",
-                    body: "Another person or agent knows where to continue without improvised rescue.",
+                    title: "Carry it back to work",
+                    body: "In the reveal, you name what belongs in your real workflow next week.",
                   },
                 ],
               },
               "opening-loop-callout": {
-                title: "Harness engineering in one sentence",
-                body: "Do not patch one more instruction onto one more instruction. Build a working environment where the correct next move is legible and verifiable.",
+                title: "Why the launch matters",
+                body: "We are not opening a process. We are opening a day that should change how the room works with coding agents after today.",
+              },
+            },
+          },
+          "opening-context-analogy": {
+            label: "Analogy beat",
+            title: "The same agent can still produce different outcomes",
+            body:
+              "Give people the same bricks and you still will not get one correct duck. The same is true here: the model alone does not determine the quality of the work. Context, boundaries, and team imagination do.",
+            facilitatorNotes: [
+              "Use the Lego-duck analogy briefly and concretely. This is not a cute detour. It explains why harness engineering is a creative discipline.",
+              "Do not ask who is right. Ask what produced the more useful working result and why.",
+            ],
+            sourceRefs: [
+              { label: "Talk: Context is King", path: "content/talks/context-is-king.md" },
+              { label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" },
+            ],
+            blocks: {
+              "opening-analogy-steps": {
+                title: "What stays the same and what changes the result",
+                items: [
+                  {
+                    title: "The same model",
+                    body: "The ingredients may be similar, but that alone does not guarantee useful work.",
+                  },
+                  {
+                    title: "The same task",
+                    body: "Without framing and boundaries, people and agents still build results with very different continuation value.",
+                  },
+                  {
+                    title: "A different harness",
+                    body: "The deciding difference is context, verification, and how legibly you design the next move.",
+                  },
+                ],
+              },
+              "opening-analogy-callout": {
+                title: "Context is not decoration",
+                body: "The agent does not determine the quality on its own. The working system around it does.",
+              },
+            },
+          },
+          "opening-room-activation": {
+            label: "Room activation",
+            title: "Stand where you honestly are with AI agents today",
+            body:
+              "I want a quick map of the room: daily users, careful practitioners, curious beginners, or sceptics. This is not a ranking. It is a facilitation map for the day.",
+            facilitatorNotes: [
+              "Do not turn this into long self-introductions. A quick move, two short voices, and then back to the main line.",
+              "The point is not seniority. The point is to make the workshop participatory and to calibrate the room in public.",
+            ],
+            sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
+            blocks: {
+              "opening-activation-steps": {
+                title: "Fast room map",
+                items: [
+                  {
+                    title: "I use AI agents almost daily",
+                    body: "I want to test what here is actually transferable into team workflow.",
+                  },
+                  {
+                    title: "I use them, but carefully",
+                    body: "I care about where to trust them and where to build stronger boundaries.",
+                  },
+                  {
+                    title: "I am still near the start",
+                    body: "I want a clear working model, not only a tour of possibilities.",
+                  },
+                  {
+                    title: "I am sceptical, but I want evidence",
+                    body: "I am watching for what survives handoff and verification.",
+                  },
+                ],
+              },
+              "opening-activation-callout": {
+                title: "Why do this at the start",
+                body: "This workshop is not only projection. It is work with a real room, its current habits, and its current pace.",
               },
             },
           },
           "opening-room-contract": {
             label: "Contract for today",
-            title: "What should be visible before lunch",
+            title: "The first working contract",
             body:
-              "After the first block, a team should not leave behind hype. It should leave behind the working foundation that keeps direction clear and reduces improvisation.",
+              "After the launch, the room still needs one concrete rule: what must be visible after the first build block, not just promised.",
             facilitatorNotes: [
-              "This is not a motivational slide. It is the operating contract you return to all morning.",
+              "This is the first concrete rule of the day. It comes after ambition, analogy, and activation.",
               "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Build Phase 1", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "opening-contract-checklist": {
-                title: "Before lunch, you should be able to see",
+                title: "After the first build block, you should be able to see",
                 items: [
                   "A repo and README that make sense to a new reader.",
                   "An AGENTS.md that is a map, not a warehouse dump.",
@@ -309,12 +409,12 @@ export const workshopBlueprintLocalizedContent = {
           },
           "opening-participant-view": {
             label: "Participant welcome board",
-            title: "How to read the start of the day",
+            title: "What the team should see right after the launch",
             body:
-              "At the start of the day, the participant view should answer three things cleanly: what is happening now, what comes next, and why the important rules have to live in the repo.",
+              "At the start of the day, the participant view should hold the workshop meaning, the live moment, and the signal that important things belong in the repo, not only in spoken explanations.",
             facilitatorNotes: [
               "Use this scene when you want to show the room that the participant layer is not a promo banner, but working orientation.",
-              "Name the three things participants should get in one glance: what is live now, what comes next, and what has to exist in the repo.",
+              "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -339,18 +439,19 @@ export const workshopBlueprintLocalizedContent = {
       },
       talk: {
         goal:
-          "Show that harness engineering is the work of shaping instructions, context, and workflow so a model becomes a reliable collaborator instead of a roulette wheel.",
+          "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, not a bag of prompt tricks.",
         roomSummary:
-          "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and checks as working infrastructure rather than optional polish.",
+          "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit checks as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
         facilitatorPrompts: [
           "We are not learning to prompt better. We are learning to build a repo and workflow where an agent and another team can continue safely.",
           "If it is not in the repo, it does not exist.",
           "When the agent does more, you need to verify better.",
+          "After this talk, teams should return to the repo with a concrete operating system, not with a search for a smarter prompt.",
         ],
         watchFors: [
           "The talk turns into a tool feature tour.",
           "Teams hear prompting tips instead of workflow discipline.",
-          "There is no link to the afternoon continuation.",
+          "There is no clean bridge into the first build phase.",
         ],
         checkpointQuestions: [
           "What will you move from your head or from chat into the repo today?",
@@ -358,15 +459,39 @@ export const workshopBlueprintLocalizedContent = {
           "Which explicit check will be your trust boundary today?",
         ],
         sourceRefs: [{ label: "Talk: Context is King", path: "content/talks/context-is-king.md" }],
+        facilitatorRunner: {
+          goal: "Make harness engineering precise, memorable, and immediately actionable for the first build phase.",
+          say: [
+            "Context is leverage, not cosmetics.",
+            "A team lead does not stand behind the model and dictate another sentence every thirty seconds.",
+            "After this talk, you go back to the repo with a working system, not with a hunt for a smarter prompt.",
+          ],
+          show: [
+            "Show the core thesis, the micro-exercise contrast, and a short bridge back into the participant and repo layers.",
+            "Use the participant surface only as proof that the room, dashboard, and repo still describe the same moment.",
+          ],
+          do: [
+            "Compare the same task in two conditions: prompt blob versus a short brief with Goal, Context, Constraints, and Done When.",
+            "Send the room into Build Phase 1 with one expectation: map and verification first, feature motion second.",
+          ],
+          watch: [
+            "The talk must not collapse into prompt tips or tool theatrics.",
+            "By the end, the room should know what to do in the repo in the next few minutes.",
+          ],
+          fallback: [
+            "If the demo starts dragging, do not open another live example. State the contrast between prompt blob and repo-native map directly.",
+            "If attention drops, keep the core line, the team-lead analogy, and one concrete build expectation.",
+          ],
+        },
         scenes: {
           "talk-framing": {
             label: "Core line",
             title: "Context is leverage, not cosmetics",
             body:
-              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can continue predictably.",
+              "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can continue predictably and so Build Phase 1 does not begin in chaos.",
             facilitatorNotes: [
               "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
-              "After the callout, briefly remind the room that a team lead does not spend the day feeding one developer another instruction every thirty seconds.",
+              "After the callout, remind the room of the team-lead analogy and then turn it directly into what teams should do next in the repo.",
             ],
             sourceRefs: [{ label: "Talk: Core line", path: "content/talks/context-is-king.md" }],
             blocks: {
@@ -374,12 +499,12 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Context is King",
                 title: "We are not learning to prompt better",
                 body:
-                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore and without verbal rescue.",
+                  "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without chaos in the first build move.",
               },
               "talk-reframe": {
                 title: "A team lead does not stand behind the model",
                 body:
-                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside.",
+                  "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside and a next move that is not a guessing game.",
               },
               "talk-adopt": {
                 title: "What to adopt today",
@@ -387,17 +512,19 @@ export const workshopBlueprintLocalizedContent = {
                   "Before generating the next feature, make the repo a place people can actually navigate.",
                   "When the agent does more, you need to verify better.",
                   "Handoff is a design condition throughout the day, not an ending.",
+                  "After the talk, return to the repo with one explicit check instead of one more prompt idea.",
                 ],
               },
             },
           },
           "talk-micro-exercise": {
             label: "Micro-exercise",
-            title: "Prompt blob vs. repo-native context",
+            title: "The same task, two working environments",
             body:
               "Run the same small task twice: once with a prompt blob, once with a short brief and four elements in AGENTS.md. The point is not to crown the better prompt. The point is to show which setup produces reusable work.",
             facilitatorNotes: [
-              "Do not let this drift into a debate about which model is smarter. The point is transferring intent and boundaries.",
+              "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
+              "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second.",
             ],
             sourceRefs: [{ label: "Talk: Micro-exercise", path: "content/talks/context-is-king.md" }],
             blocks: {
@@ -417,13 +544,14 @@ export const workshopBlueprintLocalizedContent = {
             },
           },
           "talk-participant-view": {
-            label: "Participant walkthrough",
-            title: "Participant surface walkthrough",
+            label: "Bridge into Build 1",
+            title: "What the team should see before it returns to the repo",
             body:
-              "Show the participant view as a real working surface for the team: live moment, nearest next step, room-wide notes, and confidence that the room and the repo still describe the same reality.",
+              "After the talk, the team should not leave with theory. It should see the live moment, the nearest next step, and confidence that the participant layer, dashboard, and repo still describe the same workshop story.",
             ctaLabel: "Open the workshop skill reference",
             facilitatorNotes: [
-              "Use this briefly. It is the bridge into the idea that the participant layer and facilitator dashboard both need to stay consistent.",
+              "Use this briefly. This is not a dashboard tour. It is a bridge back into Build Phase 1.",
+              "Name the one expectation clearly: the team now returns to the repo to create a map and the first explicit check.",
             ],
             sourceRefs: [{ label: "Talk: Opening move", path: "content/talks/context-is-king.md" }],
             blocks: {
@@ -431,24 +559,24 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Participant surface",
                 title: "What the team should see without facilitator noise",
                 body:
-                  "The participant view should not be decoration. In one screen it should give the team the live phase, the next step, room-wide notes, and confidence that the control room is not telling a different story.",
+                  "The participant surface should not be decoration. In one screen it should give the team the live phase, the next step, and confidence that the room framing, dashboard, and repo are still speaking the same language.",
               },
               "talk-participant-cues": {
-                title: "What to point out to the room",
+                title: "What they should carry back into the repo",
                 items: [
                   "The live phase and the nearest next step.",
                   "Shared room notes that help every table equally.",
-                  "The same workshop moment on the participant layer and in the control room.",
+                  "The same workshop moment on the participant layer, in the control room, and in the repo.",
                 ],
               },
               "talk-participant-preview": {
                 body:
-                  "The participant layer should show only what the team needs right now: the live moment, the next step, and shared notes from the room.",
+                  "By now, both the participant layer and the repo should make the first move obvious: a short map, a plan, and the first explicit check.",
               },
               "talk-participant-bridge": {
-                title: "Bridge into the day",
+                title: "Bridge into Build 1",
                 body:
-                  "This is the participant-side equivalent of the facilitator pack. Important workshop moments should stay legible from both sides without drifting into two separate realities.",
+                  "This is where theory ends. The team now needs to move the core line of the talk back into the repo as a map, boundaries, and a first verifiable step.",
               },
             },
           },

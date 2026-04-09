@@ -84,6 +84,11 @@ The continuation should explicitly avoid two failure modes:
 - blind “block inflation” where every weak scene gets more blocks but not better meaning
 - generic AI polish where the prose becomes smoother but less grounded in the workshop method
 
+Execution note:
+
+- the launch reset tracked in [`2026-04-09-feat-opening-talk-reset-and-facilitator-runner-plan.md`](./2026-04-09-feat-opening-talk-reset-and-facilitator-runner-plan.md) is now the front edge of the editorial continuation
+- broader editorial propagation should follow the launch module proof, not run ahead of it
+
 ## Detailed Plan Level
 
 This is a **detailed** plan because it affects the canonical workshop blueprint across the whole day, relies on multiple source documents, and carries subjective quality risk around narrative, voice, and facilitation self-sufficiency.

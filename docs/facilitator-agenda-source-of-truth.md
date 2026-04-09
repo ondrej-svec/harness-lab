@@ -16,6 +16,7 @@ The top-level unit is the agenda item. Each agenda item owns:
 - `title`
 - `intent`
 - `goal`
+- `facilitatorRunner`
 - `roomSummary`
 - `facilitatorPrompts`
 - `watchFors`
@@ -32,6 +33,12 @@ Agenda-owned presenter content is split across three outputs:
   - participant-oriented scene content for the participant surface
   - still agenda-owned, but not part of the room projection sequence
 - facilitator support
+  - `facilitatorRunner.goal`
+  - `facilitatorRunner.say`
+  - `facilitatorRunner.show`
+  - `facilitatorRunner.do`
+  - `facilitatorRunner.watch`
+  - `facilitatorRunner.fallback`
   - `facilitatorNotes`
   - `sourceRefs` back to the originating workshop materials
   - visible in the control room, not on the room projection
@@ -57,6 +64,7 @@ What belongs in the structured blueprint:
 - room-safe presenter content
 - participant mirror content that teams genuinely need
 - short facilitator guidance needed in the normal path
+- concise runner guidance for what to say, show, do, watch, and how to recover if the beat slips
 - explicit source references back to long-form materials
 
 What stays in long-form docs:
@@ -65,6 +73,13 @@ What stays in long-form docs:
 - full talk scripts
 - deeper facilitation rationale
 - brainstorm or design context
+
+## Runner Publish Rule
+
+- Git-authored agenda content remains canonical for facilitator runner guidance.
+- The control room displays agenda-owned runner content for the current runtime item.
+- Runtime item edits stay instance-local until a maintainer deliberately promotes them back into the repo.
+- The control room must not become a silent second authoring system for reusable facilitation method.
 
 ## Editing Rule
 
