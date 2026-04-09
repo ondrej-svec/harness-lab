@@ -51,7 +51,14 @@ Read these before changing participant or facilitator behavior.
 - [`docs/deployment-strategy.md`](deployment-strategy.md)
 - [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)
 
-### 4. Testing And Trust Boundaries
+### 4. Packaging And Facilitator Tooling
+
+Read these before changing participant-facing content, bundle outputs, or facilitator CLI flows.
+
+- [`docs/resource-packaging-model.md`](resource-packaging-model.md)
+- [`docs/harness-cli-foundation.md`](harness-cli-foundation.md)
+
+### 5. Testing And Trust Boundaries
 
 Read these before changing UI flows, auth, or agent-facing behavior.
 
@@ -59,7 +66,7 @@ Read these before changing UI flows, auth, or agent-facing behavior.
 - [`docs/agent-ui-testing.md`](agent-ui-testing.md)
 - [`docs/private-workshop-instance-security-gates.md`](private-workshop-instance-security-gates.md)
 
-### 5. Architecture Decisions
+### 6. Architecture Decisions
 
 Read the ADRs when changing topology, auth, or workshop-instance responsibilities.
 

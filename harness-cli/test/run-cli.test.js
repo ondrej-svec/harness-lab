@@ -336,6 +336,69 @@ test("workshop update-instance patches metadata through the shared instance rout
   assert.match(io.getStdout(), /Nova/);
 });
 
+test("workshop reset-instance patches the shared instance route with reset semantics", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  let requestBody = null;
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            workshopId: "sample-studio-a",
+            workshopMeta: {
+              currentPhaseLabel: "Úvod a naladění",
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(
+    ["workshop", "reset-instance", "sample-studio-a", "--template-id", "blueprint-default"],
+    io,
+    { fetchFn },
+  );
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, {
+    action: "reset",
+    templateId: "blueprint-default",
+  });
+  assert.match(io.getStdout(), /"workshopId": "sample-studio-a"/);
+});
+
+test("workshop reset-instance reports API failures from the shared instance route", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async () => jsonResponse(403, { ok: false, error: "owner role required" }),
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "reset-instance", "sample-studio-a"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /Reset instance failed: owner role required/);
+});
+
 test("workshop prepare sends the target instance id", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";

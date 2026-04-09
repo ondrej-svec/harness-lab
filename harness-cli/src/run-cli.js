@@ -178,6 +178,7 @@ function printUsage(io, ui) {
     "harness workshop archive [--notes TEXT]",
     "harness workshop create-instance [<instance-id>] [--template-id ID] [--event-title TEXT] [--city CITY]",
     "harness workshop update-instance <instance-id> [--event-title TEXT] [--city CITY]",
+    "harness workshop reset-instance <instance-id> [--template-id ID]",
     "harness workshop prepare <instance-id>",
     "harness workshop remove-instance <instance-id>",
     "harness workshop phase set <phase-id>",
@@ -731,6 +732,41 @@ async function handleWorkshopPrepare(io, ui, env, positionals, flags, deps) {
   }
 }
 
+async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2),
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.resetWorkshopInstance(
+      instanceId,
+      readStringFlag(flags, "template-id", "template"),
+    );
+    ui.json("Workshop Reset Instance", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reset instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopRemoveInstance(io, ui, env, positionals, flags, deps) {
   const session = await requireSession(io, ui, env);
   if (!session) {
@@ -854,6 +890,10 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "update-instance") {
     return handleWorkshopUpdateInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reset-instance") {
+    return handleWorkshopResetInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "prepare") {

@@ -155,3 +155,25 @@ For participant-facing workshop guidance:
 - generated bundle outputs must stay portable: no author-machine absolute paths and no links to bundle-local files that are not actually shipped
 - the repo-local `.agents/skills/harness-lab-workshop` copy is also generated output and should be kept in sync with the authored source rather than edited independently
 - live participant runtime context still belongs behind the dashboard/event-access APIs rather than inside the portable bundle
+
+## Refresh Discipline
+
+Treat these directories as authored participant-facing sources:
+
+- [`workshop-skill/`](../workshop-skill/)
+- [`content/`](../content/)
+- [`workshop-blueprint/`](../workshop-blueprint/)
+
+If a change lands in any of those sources, assume the portable participant bundle is stale until you refresh it.
+
+Required maintainer response:
+
+1. regenerate the bundle with `node harness-cli/scripts/sync-workshop-bundle.mjs`
+2. if you depend on the repo-local discovery copy, refresh `.agents/skills/harness-lab-workshop/` in the same slice
+3. run `cd harness-cli && npm run verify:workshop-bundle`
+
+Instance follow-through:
+
+- existing workshop instances do not automatically reread blueprint-owned agenda or presenter content from the repo
+- if a content change must reach already-created live instances, re-import the affected instance from the current blueprint with `harness workshop reset-instance <instance-id> [--template-id blueprint-default]`
+- if the change is dashboard-only and does not alter imported blueprint-owned content, instance reset is usually not required

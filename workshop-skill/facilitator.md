@@ -177,6 +177,32 @@ Rules:
 - do not use reset for an ordinary title, venue, or room correction
 - if the route returns `400`, the payload is wrong; if it returns `404`, the instance does not exist
 
+### `/workshop facilitator reset-instance <instance-id>`
+
+Preferred path:
+
+```bash
+harness workshop reset-instance sample-workshop-demo-orbit --template-id blueprint-default
+```
+
+Raw API reference:
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
+Content-Type: application/json
+
+{
+  "action": "reset",
+  "templateId": "blueprint-default"
+}
+```
+
+Rules:
+- use this when the goal is to re-import fresh blueprint-owned workshop content into an existing instance
+- warn that reset archives current runtime state first and then clears live runtime state for the instance
+- prefer `update-instance` for ordinary metadata corrections; reset is the high-impact operation
+- if the facilitator does not specify a template, keep the current template unless there is a clear reason to switch
+
 ### `/workshop facilitator prepare`
 
 Preferred path:

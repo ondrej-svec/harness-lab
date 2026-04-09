@@ -249,6 +249,12 @@ Prefer invoking `harness workshop update-instance` over raw API scripts.
 Use this when the facilitator wants to correct or refine date, venue, room, address, or event title without resetting the instance.
 Support `contentLang` changes explicitly so facilitators can choose workshop delivery language per instance without changing admin UI language.
 
+### `workshop facilitator reset-instance <instance-id>`
+
+Reset one existing workshop instance from the selected blueprint template. Requires facilitator session.
+Prefer invoking `harness workshop reset-instance` over raw API scripts.
+Use this when the facilitator wants fresh canonical agenda, runner, and presenter content for a live instance and accepts that local runtime state will be reinitialized.
+
 ### `workshop facilitator remove-instance`
 
 Remove a workshop instance from the active list without deleting its archive history. Requires facilitator session.
