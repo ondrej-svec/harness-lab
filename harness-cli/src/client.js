@@ -96,6 +96,15 @@ export function createHarnessClient({ fetchFn, session }) {
     getWorkshopInstance(instanceId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}`);
     },
+    getWorkshopParticipantAccess(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/participant-access`);
+    },
+    issueWorkshopParticipantAccess(instanceId, input = {}) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/participant-access`, {
+        method: "POST",
+        body: { action: "rotate", ...input },
+      });
+    },
     getAgenda() {
       return request("/api/agenda");
     },

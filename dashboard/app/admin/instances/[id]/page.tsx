@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
@@ -24,6 +25,10 @@ import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 import { getNeonSql } from "@/lib/neon-db";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { buildRepoBlobUrl, getBlueprintRepoUrl } from "@/lib/repo-links";
+import {
+  getFacilitatorParticipantAccessState,
+  issueParticipantEventAccess,
+} from "@/lib/participant-access-management";
 import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
@@ -102,6 +107,15 @@ type RichPresenterScene = PresenterScene & Partial<{
 }>;
 
 export const dynamic = "force-dynamic";
+
+const participantAccessFlashCookieName = "harness_participant_access_flash";
+
+type ParticipantAccessFlash = {
+  instanceId: string;
+  issuedCode: string;
+  expiresAt: string;
+  codeId: string | null;
+};
 
 function getRoomPresenterScenes(item: RichAgendaItem | null | undefined) {
   return (item?.presenterScenes ?? []).filter((scene) => scene.surface === "room");
@@ -214,6 +228,28 @@ function buildRepoSourceHref(path: string) {
 
 function isHandoffAgendaItem(item: Partial<AgendaItem> | null | undefined) {
   return item?.intent === "handoff" || item?.id === "rotation";
+}
+
+function parseParticipantAccessFlash(value: string | undefined, instanceId: string): ParticipantAccessFlash | null {
+  if (!value) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(value) as ParticipantAccessFlash;
+    if (
+      typeof parsed.instanceId === "string" &&
+      parsed.instanceId === instanceId &&
+      typeof parsed.issuedCode === "string" &&
+      typeof parsed.expiresAt === "string"
+    ) {
+      return parsed;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
 }
 
 async function signOutAction(formData: FormData) {
@@ -580,6 +616,40 @@ async function archiveWorkshopAction(formData: FormData) {
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
+async function issueParticipantAccessAction(formData: FormData) {
+  "use server";
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const facilitator = await getFacilitatorSession(instanceId);
+  const codeInput = String(formData.get("code") ?? "").trim();
+  const result = await issueParticipantEventAccess(
+    {
+      code: codeInput || undefined,
+      actorNeonUserId: facilitator?.neonUserId ?? null,
+    },
+    instanceId,
+  );
+
+  if (!result.ok) {
+    redirect(buildAdminHref({ lang, section, instanceId, error: result.error }));
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.set(participantAccessFlashCookieName, JSON.stringify({
+    instanceId,
+    issuedCode: result.issuedCode,
+    expiresAt: result.access.expiresAt,
+    codeId: result.access.codeId,
+  } satisfies ParticipantAccessFlash), {
+    httpOnly: true,
+    sameSite: "lax",
+    path: `/admin/instances/${instanceId}`,
+    expires: new Date(Date.now() + 10 * 60 * 1000),
+  });
+
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
 async function addFacilitatorAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
@@ -707,13 +777,15 @@ export default async function AdminPage({
   await requireFacilitatorPageAccess(activeInstanceId);
 
   const isNeonMode = getRuntimeStorageMode() === "neon";
-  const [loadedState, loadedLatestArchive, loadedFacilitatorGrants, loadedCurrentFacilitator, loadedAuthSession] =
+  const cookieStore = await cookies();
+  const [loadedState, loadedLatestArchive, loadedFacilitatorGrants, loadedCurrentFacilitator, loadedAuthSession, loadedParticipantAccess] =
     await Promise.all([
       getWorkshopState(activeInstanceId),
       getLatestWorkshopArchive(activeInstanceId),
       isNeonMode ? getInstanceGrantRepository().listActiveGrants(activeInstanceId) : Promise.resolve([]),
       isNeonMode ? getFacilitatorSession(activeInstanceId) : Promise.resolve(null),
       isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
+      getFacilitatorParticipantAccessState(activeInstanceId),
     ]);
   const state: Awaited<ReturnType<typeof getWorkshopState>> = loadedState;
   const latestArchive: Awaited<ReturnType<typeof getLatestWorkshopArchive>> = loadedLatestArchive;
@@ -721,6 +793,17 @@ export default async function AdminPage({
     loadedFacilitatorGrants;
   const currentFacilitator: Awaited<ReturnType<typeof getFacilitatorSession>> = loadedCurrentFacilitator;
   const authSession: Awaited<ReturnType<NonNullable<typeof auth>["getSession"]>> | { data: null } = loadedAuthSession;
+  const participantAccess = loadedParticipantAccess;
+  const participantAccessFlash = parseParticipantAccessFlash(
+    cookieStore.get(participantAccessFlashCookieName)?.value,
+    activeInstanceId,
+  );
+  const participantAccessExpiresValue = participantAccess.expiresAt
+    ? new Intl.DateTimeFormat(lang === "en" ? "en-US" : "cs-CZ", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(participantAccess.expiresAt))
+    : copy.participantAccessUnavailableValue;
 
   const { currentAgendaItem, nextAgendaItem, selectedInstance } = deriveAdminPageState(
     state,
@@ -1553,95 +1636,158 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "access" ? (
-          <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>
-            {!isNeonMode ? (
+          <div className="space-y-6">
+            <AdminPanel eyebrow={copy.participantAccessEyebrow} title={copy.participantAccessTitle} description={copy.participantAccessDescription}>
               <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
-                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeFacilitatorsPanelTitle}</p>
-                  <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeFacilitatorsPanelBody}</p>
-                  <p className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
-                    {copy.fileModeFacilitators}
-                  </p>
-                  <div className="mt-4 space-y-3">
-                    <KeyValueRow label={copy.fileModeAuthModeLabel} value={copy.fileModeAuthModeValue} />
-                    <KeyValueRow label={copy.fileModeUsernameLabel} value={fileModeUsername} />
-                    <KeyValueRow label={copy.fileModeScopeLabel} value={copy.fileModeScopeValue} />
+                <div className="space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <div className="space-y-3">
+                    <KeyValueRow
+                      label={copy.participantAccessStatusLabel}
+                      value={participantAccess.active ? copy.participantAccessStatusActive : copy.participantAccessStatusMissing}
+                    />
+                    <KeyValueRow label={copy.participantAccessCodeIdLabel} value={participantAccess.codeId ?? copy.participantAccessUnavailableValue} />
+                    <KeyValueRow label={copy.participantAccessExpiresLabel} value={participantAccessExpiresValue} />
                   </div>
-                </div>
 
-                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeUpgradeTitle}</p>
-                  <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeUpgradeBody}</p>
-                  <div className="mt-4 space-y-3">
-                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.fileModeUpgradeBenefitOne}
+                  {participantAccessFlash ? (
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.participantAccessIssuedCodeLabel}</p>
+                      <p className="mt-3 break-all text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+                        {participantAccessFlash.issuedCode}
+                      </p>
+                      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.participantAccessIssuedCodeHint}</p>
                     </div>
-                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.fileModeUpgradeBenefitTwo}
+                  ) : participantAccess.canRevealCurrent && participantAccess.currentCode ? (
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+                      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.participantAccessCurrentCodeLabel}</p>
+                      <p className="mt-3 break-all text-lg font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+                        {participantAccess.currentCode}
+                      </p>
+                      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.participantAccessRecoverableHint}</p>
                     </div>
-                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.fileModeUpgradeBenefitThree}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.84fr)]">
-                <div className="space-y-3">
-                  {facilitatorGrants.length === 0 ? (
-                    <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>
                   ) : (
-                    facilitatorGrants.map((grant) => (
-                      <div key={grant.id} className="flex items-center justify-between gap-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
-                        <div>
-                          <p className="text-sm font-medium text-[var(--text-primary)]">
-                            {grant.userName ?? grant.userEmail ?? grant.neonUserId}
-                          </p>
-                          <p className="text-xs text-[var(--text-muted)]">
-                            {grant.userEmail ? `${grant.userEmail} · ` : ""}
-                            {grant.role}
-                          </p>
-                        </div>
-                        {isOwner && grant.id !== currentFacilitator?.grant.id ? (
-                          <form action={revokeFacilitatorAction}>
-                            <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                            <input name="grantId" type="hidden" value={grant.id} />
-                            <AdminSubmitButton className="text-sm lowercase text-[var(--danger)] transition hover:text-[var(--text-primary)]">
-                              {copy.revokeButton}
-                            </AdminSubmitButton>
-                          </form>
-                        ) : null}
-                      </div>
-                    ))
+                    <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                      {copy.participantAccessUnrecoverableHint}
+                    </div>
                   )}
                 </div>
 
-                {isOwner ? (
-                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                    <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.addFacilitatorTitle}</h3>
-                    <form action={addFacilitatorAction} className="mt-4 grid gap-3">
-                      <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                  <form action={issueParticipantAccessAction} className="space-y-4">
+                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                    <div>
+                      <FieldLabel htmlFor="participant-access-code">{copy.participantAccessCustomCodeLabel}</FieldLabel>
                       <input
-                        name="email"
-                        type="email"
-                        required
-                        placeholder={copy.facilitatorEmailPlaceholder}
-                        className={adminInputClassName}
+                        id="participant-access-code"
+                        name="code"
+                        placeholder={copy.participantAccessCustomCodePlaceholder}
+                        className={`${adminInputClassName} mt-2`}
                       />
-                      <select name="role" className={adminInputClassName}>
-                        <option value="operator">operator</option>
-                        <option value="owner">owner</option>
-                        <option value="observer">observer</option>
-                      </select>
-                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
-                        {copy.addFacilitatorButton}
-                      </AdminSubmitButton>
-                    </form>
-                  </div>
-                ) : null}
+                    </div>
+                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantAccessIssueHint}</p>
+                    {errorParam ? (
+                      <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                        {decodeURIComponent(errorParam)}
+                      </p>
+                    ) : null}
+                    <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
+                      {copy.participantAccessIssueButton}
+                    </AdminSubmitButton>
+                  </form>
+                </div>
               </div>
-            )}
-          </AdminPanel>
+            </AdminPanel>
+
+            <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>
+              {!isNeonMode ? (
+                <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeFacilitatorsPanelTitle}</p>
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeFacilitatorsPanelBody}</p>
+                    <p className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
+                      {copy.fileModeFacilitators}
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      <KeyValueRow label={copy.fileModeAuthModeLabel} value={copy.fileModeAuthModeValue} />
+                      <KeyValueRow label={copy.fileModeUsernameLabel} value={fileModeUsername} />
+                      <KeyValueRow label={copy.fileModeScopeLabel} value={copy.fileModeScopeValue} />
+                    </div>
+                  </div>
+
+                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                    <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeUpgradeTitle}</p>
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeUpgradeBody}</p>
+                    <div className="mt-4 space-y-3">
+                      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                        {copy.fileModeUpgradeBenefitOne}
+                      </div>
+                      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                        {copy.fileModeUpgradeBenefitTwo}
+                      </div>
+                      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                        {copy.fileModeUpgradeBenefitThree}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.84fr)]">
+                  <div className="space-y-3">
+                    {facilitatorGrants.length === 0 ? (
+                      <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>
+                    ) : (
+                      facilitatorGrants.map((grant) => (
+                        <div key={grant.id} className="flex items-center justify-between gap-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
+                          <div>
+                            <p className="text-sm font-medium text-[var(--text-primary)]">
+                              {grant.userName ?? grant.userEmail ?? grant.neonUserId}
+                            </p>
+                            <p className="text-xs text-[var(--text-muted)]">
+                              {grant.userEmail ? `${grant.userEmail} · ` : ""}
+                              {grant.role}
+                            </p>
+                          </div>
+                          {isOwner && grant.id !== currentFacilitator?.grant.id ? (
+                            <form action={revokeFacilitatorAction}>
+                              <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                              <input name="grantId" type="hidden" value={grant.id} />
+                              <AdminSubmitButton className="text-sm lowercase text-[var(--danger)] transition hover:text-[var(--text-primary)]">
+                                {copy.revokeButton}
+                              </AdminSubmitButton>
+                            </form>
+                          ) : null}
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {isOwner ? (
+                    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+                      <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.addFacilitatorTitle}</h3>
+                      <form action={addFacilitatorAction} className="mt-4 grid gap-3">
+                        <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
+                        <input
+                          name="email"
+                          type="email"
+                          required
+                          placeholder={copy.facilitatorEmailPlaceholder}
+                          className={adminInputClassName}
+                        />
+                        <select name="role" className={adminInputClassName}>
+                          <option value="operator">operator</option>
+                          <option value="owner">owner</option>
+                          <option value="observer">observer</option>
+                        </select>
+                        <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
+                          {copy.addFacilitatorButton}
+                        </AdminSubmitButton>
+                      </form>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+            </AdminPanel>
+          </div>
         ) : null}
 
         {activeSection === "settings" ? (

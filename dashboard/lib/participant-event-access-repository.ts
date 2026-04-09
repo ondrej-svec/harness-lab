@@ -9,9 +9,9 @@ import type { ParticipantEventAccessRecord, ParticipantEventAccessRepository } f
 export type { ParticipantEventAccessRepository };
 
 const sampleEventCode = "lantern8-context4-handoff2";
-const eventCodeValidityDays = 14;
+export const participantEventCodeValidityDays = 14;
 
-function getSeedEventCode() {
+export function getConfiguredSeedEventCode() {
   if (getRuntimeStorageMode() === "neon" && !process.env.HARNESS_EVENT_CODE) {
     return null;
   }
@@ -19,7 +19,7 @@ function getSeedEventCode() {
   const code = process.env.HARNESS_EVENT_CODE ?? sampleEventCode;
   const expiresAt =
     process.env.HARNESS_EVENT_CODE_EXPIRES_AT ??
-    new Date(Date.now() + eventCodeValidityDays * 24 * 60 * 60 * 1000).toISOString();
+    new Date(Date.now() + participantEventCodeValidityDays * 24 * 60 * 60 * 1000).toISOString();
 
   return {
     code,
@@ -44,7 +44,7 @@ export class FileParticipantEventAccessRepository implements ParticipantEventAcc
   }
 
   private buildSeedAccess(instanceId: string): ParticipantEventAccessRecord {
-    const seed = getSeedEventCode();
+    const seed = getConfiguredSeedEventCode();
     if (!seed) {
       throw new Error("File-mode participant event access requires a seed event code");
     }
@@ -98,7 +98,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       return;
     }
 
-    const seed = getSeedEventCode();
+    const seed = getConfiguredSeedEventCode();
     if (!seed) {
       return;
     }

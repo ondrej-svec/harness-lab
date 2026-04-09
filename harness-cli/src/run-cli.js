@@ -166,6 +166,19 @@ function summarizeWorkshopInstance(instance) {
   };
 }
 
+function summarizeParticipantAccess(participantAccess) {
+  return {
+    instanceId: participantAccess?.instanceId ?? null,
+    active: participantAccess?.active ?? false,
+    version: participantAccess?.version ?? null,
+    codeId: participantAccess?.codeId ?? null,
+    expiresAt: participantAccess?.expiresAt ?? null,
+    canRevealCurrent: participantAccess?.canRevealCurrent ?? false,
+    source: participantAccess?.source ?? "missing",
+    currentCode: participantAccess?.currentCode ?? null,
+  };
+}
+
 function resolveCurrentInstanceTarget(session, env) {
   if (typeof session?.selectedInstanceId === "string" && session.selectedInstanceId.trim().length > 0) {
     return {
@@ -210,6 +223,7 @@ function printUsage(io, ui) {
     "harness workshop status",
     "harness workshop list-instances",
     "harness workshop show-instance <instance-id>",
+    "harness workshop participant-access [<instance-id>] [--rotate] [--code VALUE]",
     "harness workshop archive [--notes TEXT]",
     "harness workshop create-instance [<instance-id>] [--template-id ID] [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
     "harness workshop update-instance <instance-id> [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
@@ -801,6 +815,55 @@ async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps)
   }
 }
 
+async function handleWorkshopParticipantAccess(io, ui, env, positionals, flags, deps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    if (flags.rotate === true) {
+      const result = await client.issueWorkshopParticipantAccess(instanceId, {
+        ...(typeof flags.code === "string" ? { code: flags.code } : {}),
+      });
+      ui.json("Workshop Participant Access", {
+        ok: true,
+        issuedCode: result.issuedCode ?? null,
+        ...summarizeParticipantAccess(result.participantAccess),
+        participantAccess: result.participantAccess,
+      });
+      return 0;
+    }
+
+    const result = await client.getWorkshopParticipantAccess(instanceId);
+    ui.json("Workshop Participant Access", {
+      ok: true,
+      ...summarizeParticipantAccess(result.participantAccess),
+      participantAccess: result.participantAccess,
+    });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Participant access failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopArchive(io, ui, env, flags, deps) {
   const session = await requireSession(io, ui, env);
   if (!session) {
@@ -1116,6 +1179,10 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "show-instance") {
     return handleWorkshopShowInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participant-access") {
+    return handleWorkshopParticipantAccess(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "archive") {

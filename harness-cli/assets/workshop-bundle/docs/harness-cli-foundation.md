@@ -43,6 +43,7 @@ Required commands:
 - `harness workshop status`
 - `harness workshop list-instances`
 - `harness workshop show-instance <instance-id>`
+- `harness workshop participant-access [<instance-id>]`
 - `harness workshop create-instance`
 - `harness workshop update-instance`
 - `harness workshop reset-instance <instance-id>`
@@ -99,6 +100,7 @@ Current command posture:
   - `harness workshop list-instances`
 - explicit target preferred but selected-instance fallback allowed:
   - `harness workshop show-instance [<instance-id>]`
+  - `harness workshop participant-access [<instance-id>]`
   - `harness workshop update-instance [<instance-id>]`
   - `harness workshop reset-instance [<instance-id>]`
   - `harness workshop prepare [<instance-id>]`

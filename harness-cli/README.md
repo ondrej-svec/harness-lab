@@ -14,6 +14,7 @@ Current shipped scope:
 - `harness workshop status`
 - `harness workshop list-instances`
 - `harness workshop show-instance`
+- `harness workshop participant-access`
 - `harness workshop create-instance`
 - `harness workshop update-instance`
 - `harness workshop reset-instance`
@@ -130,6 +131,9 @@ harness workshop select-instance sample-workshop-demo-orbit
 harness workshop current-instance
 harness workshop status
 harness workshop show-instance sample-workshop-demo-orbit
+harness workshop participant-access
+harness workshop participant-access --rotate
+harness workshop participant-access --rotate --code orbit7-bridge4-shift2
 harness workshop create-instance sample-workshop-demo-orbit --event-title "Sample Workshop Demo"
 harness workshop update-instance --room-name Orbit
 harness workshop reset-instance --template-id blueprint-default
@@ -148,6 +152,7 @@ Targeting model:
 - `harness workshop current-instance` reports the stored target and resolves its current server state
 - `harness workshop status` and `harness workshop phase set <phase-id>` use the selected instance when present, otherwise they fall back to deployment default behavior
 - `harness workshop show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` accept an explicit `<instance-id>` but may also use the stored selection as a fallback
+- `harness workshop participant-access` accepts an explicit `<instance-id>` but may also use the stored selection as a fallback
 - `harness workshop select-instance --clear` removes the stored selection
 - `HARNESS_WORKSHOP_INSTANCE_ID` remains an environment fallback when no local selection is stored
 

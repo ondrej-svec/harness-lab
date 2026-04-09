@@ -395,6 +395,85 @@ test("workshop show-instance reports missing instances clearly", async () => {
   assert.match(io.getStderr(), /Show instance failed: instance not found/);
 });
 
+test("workshop participant-access inspects facilitator-visible participant access state", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-a",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-a/participant-access",
+        async () =>
+          jsonResponse(200, {
+            participantAccess: {
+              instanceId: "sample-studio-a",
+              active: true,
+              version: 1,
+              codeId: "hash-123",
+              expiresAt: "2026-04-20T12:00:00.000Z",
+              canRevealCurrent: true,
+              currentCode: "lantern8-context4-handoff2",
+              source: "sample",
+            },
+          }),
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "participant-access"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /lantern8-context4-handoff2/);
+  assert.match(io.getStdout(), /"source": "sample"/);
+});
+
+test("workshop participant-access can rotate and print a fresh code", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-a",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "POST http://localhost:3000/api/workshop/instances/sample-studio-a/participant-access",
+        async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
+          assert.equal(options.headers["content-type"], "application/json");
+          assert.equal(options.body, JSON.stringify({ action: "rotate", code: "orbit7-bridge4-shift2" }));
+          return jsonResponse(200, {
+            issuedCode: "orbit7-bridge4-shift2",
+            participantAccess: {
+              instanceId: "sample-studio-a",
+              active: true,
+              version: 2,
+              codeId: "hash-456",
+              expiresAt: "2026-04-23T10:00:00.000Z",
+              canRevealCurrent: false,
+              currentCode: null,
+              source: "issued",
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "participant-access", "--rotate", "--code", "orbit7-bridge4-shift2"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /orbit7-bridge4-shift2/);
+  assert.match(io.getStdout(), /"source": "issued"/);
+});
+
 test("workshop phase set sends the selected phase id", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";

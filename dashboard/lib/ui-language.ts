@@ -513,6 +513,29 @@ export const adminCopy = {
     resetHelpTitle: "potřebujete změnit heslo?",
     resetHelpBody:
       "Přihlášení řeší Neon Auth. Pokud heslo znáte, po přihlášení ho změníte v sekci Účet. Pokud ho neznáte, můžete si poslat resetovací odkaz rovnou odsud.",
+    participantAccessEyebrow: "participant access",
+    participantAccessTitle: "sdílený event code",
+    participantAccessDescription:
+      "Kód pro účastníky patří k této instance. Vidíte expiry, identifikátor kódu a podle možnosti i současný raw kód nebo čerstvě vydaný náhradní.",
+    participantAccessStatusLabel: "stav",
+    participantAccessStatusActive: "aktivní",
+    participantAccessStatusMissing: "nevydaný",
+    participantAccessCodeIdLabel: "id kódu",
+    participantAccessExpiresLabel: "expiruje",
+    participantAccessUnavailableValue: "nedostupné",
+    participantAccessCurrentCodeLabel: "aktuální kód",
+    participantAccessIssuedCodeLabel: "nově vydaný kód",
+    participantAccessIssuedCodeHint:
+      "Toto je jediný moment, kdy po rotaci zaručeně vidíte raw kód. Po uložení zůstává v runtime už jen hash.",
+    participantAccessRecoverableHint:
+      "Tento kód je zatím recoverable ze sample nebo bootstrap konfigurace. Pokud ho chcete změnit, vydejte nový.",
+    participantAccessUnrecoverableHint:
+      "Aktuální raw kód už nejde z hash-only úložiště přečíst zpět. Pokud ho potřebujete znovu sdílet, vydejte nový kód.",
+    participantAccessCustomCodeLabel: "vlastní kód",
+    participantAccessCustomCodePlaceholder: "prázdné = vygenerovat nový kód",
+    participantAccessIssueHint:
+      "Nechte pole prázdné pro vygenerovaný kód, nebo zadejte vlastní lowercase variantu s pomlčkami.",
+    participantAccessIssueButton: "vydat nový event code",
   },
   en: {
     deskEyebrow: "facilitator desk",
@@ -851,5 +874,28 @@ export const adminCopy = {
     resetHelpTitle: "need to change your password?",
     resetHelpBody:
       "Facilitator sign-in runs on Neon Auth. If you know the password, change it after sign-in in the Account section. If you do not know it, you can send a reset link from here.",
+    participantAccessEyebrow: "participant access",
+    participantAccessTitle: "shared event code",
+    participantAccessDescription:
+      "The participant code belongs to this workshop instance. You can inspect its expiry and code id, and either see the current raw code when it is still recoverable or issue a fresh replacement.",
+    participantAccessStatusLabel: "status",
+    participantAccessStatusActive: "active",
+    participantAccessStatusMissing: "not issued",
+    participantAccessCodeIdLabel: "code id",
+    participantAccessExpiresLabel: "expires",
+    participantAccessUnavailableValue: "unavailable",
+    participantAccessCurrentCodeLabel: "current code",
+    participantAccessIssuedCodeLabel: "newly issued code",
+    participantAccessIssuedCodeHint:
+      "This is the only guaranteed moment when you can still see the raw code after a rotation. After saving, the runtime keeps only the hash.",
+    participantAccessRecoverableHint:
+      "This code is still recoverable from sample or bootstrap configuration. Issue a new one if you want to replace it.",
+    participantAccessUnrecoverableHint:
+      "The current raw code can no longer be read back from the hash-only store. If you need to share it again, issue a new code.",
+    participantAccessCustomCodeLabel: "custom code",
+    participantAccessCustomCodePlaceholder: "leave blank to generate a new code",
+    participantAccessIssueHint:
+      "Leave the field blank for a generated code, or enter your own lowercase hyphenated code.",
+    participantAccessIssueButton: "issue new event code",
   },
 } satisfies Record<UiLanguage, Record<string, string>>;

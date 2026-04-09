@@ -13,6 +13,9 @@ const listActiveGrants = vi.fn();
 const getSession = vi.fn();
 const listInstances = vi.fn();
 const getInstance = vi.fn();
+const cookies = vi.fn();
+const getFacilitatorParticipantAccessState = vi.fn();
+const issueParticipantEventAccess = vi.fn();
 const redirect = vi.fn();
 const push = vi.fn();
 const replace = vi.fn();
@@ -23,6 +26,10 @@ vi.mock("next/navigation", () => ({
     push,
     replace,
   }),
+}));
+
+vi.mock("next/headers", () => ({
+  cookies,
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({
@@ -65,6 +72,11 @@ vi.mock("@/lib/audit-log-repository", () => ({
   }),
 }));
 
+vi.mock("@/lib/participant-access-management", () => ({
+  getFacilitatorParticipantAccessState,
+  issueParticipantEventAccess,
+}));
+
 vi.mock("@/lib/workshop-instance-repository", () => ({
   getWorkshopInstanceRepository: () => ({
     listInstances,
@@ -105,6 +117,27 @@ describe("Admin control room page", () => {
     getLatestWorkshopArchive.mockResolvedValue({
       createdAt: "2026-04-06T12:00:00.000Z",
       retentionUntil: "2026-04-20T12:00:00.000Z",
+    });
+    cookies.mockResolvedValue({
+      get: vi.fn(() => undefined),
+    });
+    getFacilitatorParticipantAccessState.mockResolvedValue({
+      instanceId: "sample-studio-a",
+      active: true,
+      version: 1,
+      codeId: "hash-123",
+      expiresAt: "2026-04-20T12:00:00.000Z",
+      currentCode: "lantern8-context4-handoff2",
+      canRevealCurrent: true,
+      source: "sample",
+    });
+    issueParticipantEventAccess.mockResolvedValue({
+      ok: true,
+      issuedCode: "orbit7-bridge4-shift2",
+      access: {
+        instanceId: "sample-studio-a",
+        active: true,
+      },
     });
     getFacilitatorSession.mockResolvedValue(null);
     listActiveGrants.mockResolvedValue([]);
@@ -294,5 +327,21 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.archiveResetTitle);
     expect(html).toContain(adminCopy.en.settingsSafetyEyebrow);
     expect(html).toContain(adminCopy.en.blueprintLinkLabel);
+  });
+
+  it("shows participant access management in the access section", async () => {
+    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
+
+    const view = await AdminControlRoomPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", section: "access" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain(adminCopy.en.participantAccessTitle);
+    expect(html).toContain(adminCopy.en.participantAccessCurrentCodeLabel);
+    expect(html).toContain("lantern8-context4-handoff2");
+    expect(html).toContain(adminCopy.en.participantAccessIssueButton);
+    expect(html).toContain(adminCopy.en.facilitatorsTitle);
   });
 });

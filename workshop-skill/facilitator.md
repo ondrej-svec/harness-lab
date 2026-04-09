@@ -176,6 +176,39 @@ Rules:
 - prefer this over ad hoc authenticated scripts for routine discovery
 - if a local selection already exists, the facilitator may omit `<instance-id>` and let the CLI use the stored target
 
+### `/workshop facilitator participant-access`
+
+Preferred inspection path:
+
+```bash
+harness --json workshop participant-access
+```
+
+Preferred rotation path:
+
+```bash
+harness --json workshop participant-access --rotate
+```
+
+Optional explicit code:
+
+```bash
+harness --json workshop participant-access --rotate --code orbit7-bridge4-shift2
+```
+
+Show:
+- whether participant access is active for the current instance
+- code id and expiry
+- the current raw code only when it is still recoverable from sample/bootstrap configuration
+- the newly issued raw code in the rotation response
+
+Rules:
+- treat the runtime store as hash-only after rotation; if the current raw code is unavailable, issue a new one instead of trying to recover it
+- prefer this command over inspecting env vars, deployment config, or database rows directly
+- if a local selection already exists, the CLI may omit `<instance-id>` and use the stored target
+- use `--json` for agent consumption so the skill can quote the issued code exactly without scraping prose
+- keep the participant event code separate from facilitator credentials and do not present it as an admin password
+
 ### `/workshop facilitator grant <email> <role>`
 
 Use the CLI-backed privileged request path. The skill should not handle auth bootstrap itself.

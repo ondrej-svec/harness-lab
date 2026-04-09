@@ -60,6 +60,7 @@ For four hackathons under one company, configure each event as a separate privat
 - verify the required preview or production environment variables match [`private-workshop-instance-env-matrix.md`](private-workshop-instance-env-matrix.md)
 - issue or rotate the shared participant event code
 - verify the participant event code expiry window
+- verify the facilitator can inspect participant access from the protected UI or `harness workshop participant-access`
 - verify workshop skill files
 - verify the chosen instance starts in a clean state
 - verify participant access path and QR code
@@ -78,6 +79,9 @@ During the workshop, facilitator uses the control plane to:
 - review monitoring snapshots
 - confirm the participant event code still works when onboarding late arrivals
 - rotate the event code if it leaks or needs emergency reset
+
+Operator note:
+- after a facilitator rotates participant access, the runtime keeps the hash as the durable record; the newly issued raw code should be copied from the protected response at that time rather than expected to remain perpetually revealable later
 
 ### 4. Reset
 

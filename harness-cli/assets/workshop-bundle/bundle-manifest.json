@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.2.9",
-  "contentHash": "864f073f084f03d6d94595d7734d122629edfc81aafc402b5ad67c30d6ff18e2",
+  "contentHash": "9fcdf853b7b6327920c9be11bc01b8fd86e686f7562874563d8f2da3eeadb404",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -22,7 +22,7 @@
     },
     {
       "path": "content/czech-editorial-review-checklist.md",
-      "sha256": "23539ba8b2c6ed193cfadc7ad0f0f75e99b2926ebff5beade5df9789e6071fcf"
+      "sha256": "277c2774dcdb9062d2449b14f1fd250f2cfb1f754fbd451bc0f61d5878d699ef"
     },
     {
       "path": "content/facilitation/.gitkeep",
@@ -86,7 +86,7 @@
     },
     {
       "path": "content/style-guide.md",
-      "sha256": "ec9a49e040efbc6c365eb264bd3452fdf1906f141f358ff28d2e0e3360648d28"
+      "sha256": "7bddb0e85a834f9d23043f6d9eaa9a28d6ae109f85e713251cc091d99f5ef659"
     },
     {
       "path": "content/talks/.gitkeep",
@@ -102,7 +102,7 @@
     },
     {
       "path": "docs/harness-cli-foundation.md",
-      "sha256": "cff448e5c1ee4e7129724e4f8294add35cd1efb621c83182b341a1b7e5a16b86"
+      "sha256": "10311d3caf8cec304d5d1694eac66623f06c100990d6f5c4d1dd1f4ba8a24bd8"
     },
     {
       "path": "docs/learner-reference-gallery.md",
@@ -134,7 +134,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "d1e242a857f61bc2fae29c74a9e0efbd1ba0ed5beb25087dbaeffabc5f53b4a5"
+      "sha256": "f873a8dca58391bc16488a96ec4a2016485887595e7a7321aad1771307911694"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -182,7 +182,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "525fc9fdad22cf42b47854ff9ad90579d728daf2c4ac484aba13f93193eb56d3"
+      "sha256": "b8c9e1c01ddb314e45d8d2c3a7460bac53a48ba2321eaf6518e4b08436d88895"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

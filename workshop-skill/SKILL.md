@@ -243,6 +243,12 @@ Prefer invoking `harness workshop show-instance <instance-id>` over raw API scri
 Use this when the facilitator needs the full record for one instance rather than the deployment-default runtime status returned by `workshop facilitator status`.
 If a current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
+### `workshop facilitator participant-access`
+
+Inspect or rotate the shared participant event code for the current workshop instance.
+Prefer invoking `harness --json workshop participant-access` for inspection and `harness --json workshop participant-access --rotate` to issue a fresh code.
+If the current raw code is no longer recoverable from the hash-only runtime store, issue a new code instead of guessing.
+
 ### `workshop facilitator grant <email> <role>`
 
 Grant a Neon Auth user access to the current workshop instance.
