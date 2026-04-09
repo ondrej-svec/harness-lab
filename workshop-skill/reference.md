@@ -24,6 +24,20 @@
 - Je dohledatelné, co bylo skutečně ověřeno?
 - Najde nový tým během pár minut první bezpečný krok?
 
+## 3 otázky, ke kterým se vraťte, když se zaseknete
+
+- Co se právě snažíme dokázat?
+- Který artefakt nebo signál v repu nám chybí?
+- Jaký je nejmenší check, který vrátí práci z dojmu do reality?
+
+## Kdy po čem sáhnout během dne
+
+- Po openingu a talku: `workshop setup` nebo `workshop reference`
+- V prvním buildu: `template-agents`, brief, plan a první check
+- Před obědem: dopsat další safe move a použít `workshop analyze`, když si nejste jistí handoffem
+- Po rotaci: `workshop analyze`, learner kit a challenge cards místo ústního rescue
+- Na konci dne: `workshop recap` a `workshop follow-up`
+
 ## Doporučené příkazy
 
 - Workshop skill v Codexu: `$workshop ...`
@@ -71,7 +85,7 @@
 
 ## Rychlá připomínka
 
-Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu a ověření musí být dohledatelné.
+Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu, další safe move musí být dohledatelný a ověření musí zůstat čitelné i pro cizí tým.
 
 ## Kam dál po workshopu
 

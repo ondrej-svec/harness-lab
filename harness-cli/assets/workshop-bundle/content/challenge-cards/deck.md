@@ -2,19 +2,21 @@
 
 Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob práce s agentem i kvalitu handoffu.
 
-## Context Engineering
+## Před obědem: postavte pracovní systém
 
 - `Vytvořte AGENTS.md jako mapu` — sepište cíl, build/test příkazy, trvalá pravidla a kam má další tým sáhnout jako první.
 - `Přidejte build/test příkazy` — agent musí umět ověřit výsledek bez ručního dovysvětlování.
 - `Napište skill pro code review` — formalizujte jednu review rutinu, kterou by uměl použít i cizí tým.
 - `Přesuňte pravidlo z hovoru do repa` — vše, co už tým řekl dvakrát nahlas, převeďte do `AGENTS.md`, README, runbooku nebo testu.
 
-## Workflow
+## Po rotaci: opravte signál, ne jen feature
 
 - `Použijte /plan před kódováním` — ukažte, z jakého plánu tým vycházel, co z něj opravdu plní a jaký je další bezpečný krok.
 - `Rozdělte práci do více vláken` — zkuste dvě nezávislé linie práce a jednoho člověka na integraci.
 - `Delegujte úkol a vraťte se ke kontrole za 10 minut` — neskákejte agentovi do každého kroku, kontrolujte až výsledek.
 - `Přidejte nejmenší užitečné ověření` — vytvořte RED test, tracer bullet nebo jednoduchý browser check dřív, než agent dostane víc autonomie.
+- `Napište diagnózu po handoffu` — pojmenujte, co pomohlo, co chybělo a jaký je další safe move.
+- `Opravte jeden slabý signál v repu` — README, AGENTS.md, plan, runbook nebo check.
 
 ## Advanced
 
@@ -32,7 +34,7 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 ## Jak s kartami pracovat
 
-- Před obědem má každý tým splnit aspoň jednu kartu z části `Context Engineering`.
+- Před obědem má každý tým splnit aspoň jednu kartu z části `Před obědem: postavte pracovní systém`.
 - Před rotací má být v repu dohledatelné, co bylo opravdu ověřeno a jaký je další bezpečný krok.
-- Po rotaci má každý tým splnit aspoň jednu kartu z `Workflow`.
+- Po rotaci má každý tým splnit aspoň jednu kartu z `Po rotaci: opravte signál, ne jen feature`.
 - Ostatní karty jsou dobrovolné. Berte je jako stretch cíle nebo inspiraci, když nevíte, co zlepšit dál.

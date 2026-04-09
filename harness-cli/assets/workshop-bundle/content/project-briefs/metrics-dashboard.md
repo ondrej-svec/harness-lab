@@ -4,7 +4,7 @@
 
 Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.
 
-Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled.
+Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i po handoffu na jiný tým.
 
 ## User stories
 
@@ -18,6 +18,7 @@ Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vy
 - Mobile-first je výhoda, ale dashboard musí být dobře čitelný i na projekci.
 - README a monitoring mají vysvětlit, co už funguje, co je mock a co zatím chybí.
 - Myslete na to, aby přidání další metriky nevedlo k přepisování celé obrazovky.
+- Neoptimalizujte jen vzhled. Hlídejte, aby nový tým rychle pochopil datový model, layout pravidla a způsob ověření.
 
 ## Hotovo když
 
@@ -25,7 +26,8 @@ Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vy
 - Repo popisuje datové zdroje i mock fallback.
 - Je jasné, kde se přidává nová metrika a jak se ověřuje layout.
 - Nový tým zvládne rozšířit dashboard bez rozbití struktury.
+- Layout je čitelný na mobilu i na větší obrazovce a je jasné, jak to ověřit.
 
 ## První krok pro agenta
 
-Navrhni dashboard, který zvládne handoff. Nejdřív popiš datový model, komponenty a kritéria `Hotovo když`, teprve potom stav UI.
+Navrhni dashboard, který zvládne handoff. Nejdřív popiš datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stav UI.

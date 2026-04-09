@@ -10,17 +10,21 @@ Pošli účastníkům:
    - `Done When` a build/test příkazy zvyšují šanci na dobrý handoff
 2. Odkaz na `/workshop recap`
 3. Odkaz nebo výřez z `workshop-skill/template-agents.md`
-4. Výzvu týdne:
+4. Jednu větu, která vrátí room contract:
+   - „Nejde o chytřejší prompt. Jde o repo, ze kterého naváže další tým.“
+5. Výzvu týdne:
    - „Přidejte `AGENTS.md` do jednoho reálného projektu.“
    - „Přesuňte jedno trvalé pravidlo z promptu do repa.“
-5. Odkaz na learner kit:
+6. Odkaz na learner kit:
    - [`docs/learner-resource-kit.md`](../docs/learner-resource-kit.md)
    - [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md)
    - [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
-6. Připomeňte, že stejné materiály lze vyžádat i přes skill:
+7. Připomeňte, že stejné materiály lze vyžádat i přes skill:
    - `workshop resources`
    - `workshop gallery`
    - `workshop follow-up`
+8. Přidejte malý závazek:
+   - „Pošlete si sami sobě nebo týmu jeden commit, task nebo PR, který tenhle týden opravdu vznikne.“
 
 ## 1 týden po workshopu
 
@@ -28,6 +32,7 @@ Krátký navazující dotaz:
 
 - Vytvořili jste `AGENTS.md` v reálném projektu?
 - Přidali jste build/test příkazy nebo sekci `Done When`?
+- Přidali jste další safe move nebo krátký handoff runbook?
 - Co vám pomohlo a co vás zablokovalo?
 
 ## W³ připomínka

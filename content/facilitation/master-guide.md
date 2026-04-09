@@ -122,11 +122,13 @@ Na konci talku má být jasné:
 
 ### Viditelný milestone board
 
-1. do 10:50 existuje repo
-2. do 11:15 existuje `AGENTS.md`
-3. do 11:30 existuje plan
-4. do 11:45 existuje build/test command nebo tracer bullet
-5. do 12:00 existuje první ověřený výstup
+Do oběda má být v repu vidět pět důkazů:
+
+1. `README`, které dává smysl cizímu člověku
+2. `AGENTS.md` jako krátká mapa
+3. plan, ze kterého je poznat další safe move
+4. build/test command nebo tracer bullet
+5. první opravdu ověřený posun
 
 ### Role facilitátora
 
@@ -134,6 +136,7 @@ Na konci talku má být jasné:
 - pak mentor — pomozte s workflow nebo s nástrojem
 - učitel až jako poslední možnost — krátce vysvětlete princip a vraťte tým do práce
 - vracejte týmům hlavně artefakty, ze kterých se dá opravdu pracovat, ne celý backstage Harness Lab
+- když se tým zasekne, vraťte ho k důkazu, ne k delšímu promptu
 
 ### Na co se při obcházení dívat
 
@@ -181,6 +184,19 @@ Preferované checkpoint otázky:
 - připomenout, že workflow je stejně důležité jako samotný výsledek
 - vracet týmy k tomu, že bez ověření jen akcelerují nejistotu
 
+Nevést intermezzo jako status meeting.
+Vést ho jako krátký checkpoint, ze kterého si týmy odnesou jednu věc, kterou ještě ten den dopíšou, zpřesní nebo ověří.
+
+## Oběd a příprava na handoff
+
+- Oběd není pauza od handoffu.
+- Než týmy vstanou od stolu, musí být z repa poznat:
+  - co se změnilo
+  - co je hotové
+  - co je stále hypotéza
+  - jaký je další bezpečný krok
+- Když něco z toho zůstane jen v hovoru, odpoledne se to vrátí jako tření.
+
 ## Rotace
 
 - Bez ústního handoffu.
@@ -200,6 +216,12 @@ Preferované checkpoint otázky:
 - Frustrace je užitečný signál, pokud ukazuje na skrytý kontext nebo chybějící verifikaci.
 - Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.
 - Pomáhejte jim pojmenovat, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.
+
+## Build fáze 2
+
+- Po rotaci neopravujeme jen feature. Opravujeme i signál, který převzetí zbrzdil.
+- Každá opakující se bolest je kandidát na lepší mapu, pravidlo, runbook nebo check.
+- Další větší změna má přijít až po nové explicitní verifikaci.
 
 ## Reveal a reflexe
 
@@ -223,3 +245,9 @@ Otázky:
 - Díváme se na systém: které signály pomáhají práci přežít handoff a které ji brzdí.
 - Sbíráme konkrétní příklady, ne obecné dojmy.
 - Každá opakující se bolest je kandidát na lepší template, challenge card nebo vodítko v blueprintu.
+
+Na konci dne chceme, aby si lidé odnesli tři věci:
+
+1. jeden signál, který chtějí zavést natrvalo
+2. jednu slabinu, kterou už příště nenechají jen v hovoru
+3. jeden konkrétní tah pro příští týden

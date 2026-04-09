@@ -24,6 +24,20 @@
 - Can you find what was actually verified?
 - Can a new team find the first safe move within a few minutes?
 
+## 3 questions to return to when you get stuck
+
+- What are we trying to prove right now?
+- Which artifact or repo signal is missing?
+- What is the smallest check that moves the work from confidence back to reality?
+
+## What to reach for during the day
+
+- After the opening and talk: `workshop setup` or `workshop reference`
+- In Build 1: `template-agents`, the brief, the plan, and the first check
+- Before lunch: write the next safe move and use `workshop analyze` if the handoff still feels vague
+- After rotation: `workshop analyze`, the learner kit, and challenge cards instead of verbal rescue
+- At the end of the day: `workshop recap` and `workshop follow-up`
+
 ## Recommended commands
 
 - Workshop skill in Codex: `$workshop ...`
@@ -71,7 +85,7 @@
 
 ## Quick reminder
 
-A good prompt is not enough. If the work should survive handoff, the context must live in the repo and verification must stay traceable.
+A good prompt is not enough. If the work should survive handoff, the context must live in the repo, the next safe move must stay traceable, and verification must remain legible to a different team.
 
 ## Where to go after the workshop
 

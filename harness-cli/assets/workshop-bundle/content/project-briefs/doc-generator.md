@@ -2,9 +2,9 @@
 
 ## Problém
 
-Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu.
+Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po handoffu pak nový tým neví, čemu má věřit a co je jen odhad.
 
-Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled.
+Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.
 
 ## User stories
 
@@ -18,6 +18,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní t
 - Výstup může být Markdown, HTML nebo jednoduchý textový report.
 - Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.
 - Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.
+- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po handoffu.
 
 ## Hotovo když
 
@@ -25,7 +26,8 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní t
 - Je jasné, jak se nástroj spouští lokálně a nad jakým vstupem.
 - Výstup odděluje fakta od odhadů nebo heuristik.
 - Další tým umí přidat nový typ výstupu bez chaosu v repu.
+- Reviewer během pár minut pozná, odkud které tvrzení pochází.
 
 ## První krok pro agenta
 
-Nejdřív popiš, jaké signály budeš z projektu číst, co z nich umíš odvodit a kde jsou hranice jistoty. Až potom navrhni první implementaci.
+Nejdřív napiš, jaké signály budeš z projektu číst, které výstupy budou jistota a které jen heuristika. Teprve potom navrhni první implementační slice.

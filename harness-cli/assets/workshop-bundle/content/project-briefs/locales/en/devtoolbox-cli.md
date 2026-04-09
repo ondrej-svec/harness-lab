@@ -4,7 +4,7 @@
 
 Almost every team ends up with small one-off scripts for log cleanup, JSON conversion, suspicious commit lookup, or fast repo checks. They work for a while, often for one person only, and after a few days nobody remembers how to run or extend them.
 
-Your task is to design a CLI tool that handles several common developer tasks in a way that survives handoff to another team.
+Your task is to design a CLI tool that handles several common developer tasks in a way that survives handoff to another team and does not collapse the moment another command is added.
 
 ## User stories
 
@@ -18,6 +18,7 @@ Your task is to design a CLI tool that handles several common developer tasks in
 - Separate commands from helper utilities and configuration from the start.
 - `AGENTS.md` should describe the build and test flow, output conventions, and the rules for future extension.
 - A runbook for the team that inherits the project after lunch matters as much as a working command.
+- Do not build a bag of scripts. Build a small system where it is obvious where the next command, test, and doc belong.
 
 ## Done when
 
@@ -25,7 +26,8 @@ Your task is to design a CLI tool that handles several common developer tasks in
 - `README` and `AGENTS.md` describe local execution and verification.
 - It is clear where to add another command without breaking the project structure.
 - A new team can add or fix another command within 10 minutes.
+- Each command has at least one readable input/output example.
 
 ## First step for the agent
 
-First design the minimal architecture that survives handoff. Start with `AGENTS.md`, then prepare a plan, and only then implement the first command.
+First design the minimal architecture that survives handoff. Start with `AGENTS.md`, the extension flow for another command, and the first verification step. Only then implement the first command.

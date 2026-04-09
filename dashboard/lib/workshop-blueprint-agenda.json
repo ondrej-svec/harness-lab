@@ -791,8 +791,8 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Co má být vidět do oběda",
-          "body": "Repo, AGENTS.md, plan, build/test command nebo tracer bullet a první ověřený výstup.",
+          "title": "Do oběda musí být v repu pět důkazů",
+          "body": "README, krátká mapa v AGENTS.md, plan, spustitelný check a první ověřený posun. Když něco z toho chybí, room ještě nestaví pracovní systém.",
           "facilitatorNotes": [
             "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru."
           ],
@@ -806,21 +806,21 @@
             {
               "id": "build-1-checklist",
               "type": "checklist",
-              "title": "Milníky",
+              "title": "Pět důkazů před obědem",
               "items": [
-                "Do 10:50 existuje repo.",
-                "Do 11:15 existuje AGENTS.md.",
-                "Do 11:30 existuje plan.",
-                "Do 11:45 existuje build/test command nebo tracer bullet.",
-                "Do 12:00 existuje první ověřený výstup."
+                "README řekne cizímu člověku, co tenhle projekt dělá.",
+                "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
+                "Plan drží společný směr místo improvizace.",
+                "Build/test příkaz nebo tracer bullet umí vrátit práci na zem.",
+                "V repu je vidět první opravdu ověřený posun."
               ]
             },
             {
               "id": "build-1-callout",
               "type": "callout",
               "tone": "warning",
-              "title": "Pozor",
-              "body": "Když agent dostává větší autonomii, tým musí zvýšit kvalitu ověřování."
+              "title": "Více autonomie, více důkazů",
+              "body": "Když agent dělá víc práce sám, tým musí zvednout kvalitu checků a průběžného úklidu v repu."
             }
           ]
         },
@@ -830,8 +830,8 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Když se tým zasekne, vraťte ho k systému",
-          "body": "První pomoc není dlouhé vysvětlování. Je to návrat k cíli, artefaktům v repu a nejmenšímu checku, který znovu ukotví práci v realitě.",
+          "title": "Když se zaseknete, vraťte se k důkazu",
+          "body": "První pomoc není delší prompt ani delší vysvětlování. Je to návrat k cíli, chybějícímu artefaktu v repu a nejmenšímu checku, který znovu ukotví práci v realitě.",
           "facilitatorNotes": [
             "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, checkům a dalšímu bezpečnému kroku.",
             "Drž pořadí coach -> mentor -> učitel. Jakmile začneš dlouze vysvětlovat princip, vrať tým zpět do práce."
@@ -846,15 +846,15 @@
             {
               "id": "build-1-roles",
               "type": "steps",
-              "title": "Než sahnete po dalším promptu",
+              "title": "Než zkusíte další generování",
               "items": [
                 {
-                  "title": "Ujasněte cíl",
-                  "body": "Musí být jasné, co tým právě zkouší udělat a podle čeho pozná, že se posunul."
+                  "title": "Řekněte, co se snažíte dokázat",
+                  "body": "Musí být jasné, co tým právě zkouší udělat a podle čeho pozná, že se opravdu posunul."
                 },
                 {
-                  "title": "Najděte chybějící artefakt",
-                  "body": "Je problém v README, AGENTS.md, plánu, runbooku nebo v nečitelné struktuře repa?"
+                  "title": "Najděte slepé místo v repu",
+                  "body": "Je problém v README, AGENTS.md, plánu, runbooku nebo v nečitelné struktuře projektu?"
                 },
                 {
                   "title": "Přidejte nejmenší check",
@@ -865,7 +865,7 @@
             {
               "id": "build-1-watch",
               "type": "checklist",
-              "title": "Na čem musí jít navázat",
+              "title": "Na čem musí jít navázat už teď",
               "items": [
                 "Tým má jednu společnou představu o cíli.",
                 "Kontext přibývá v repu, ne jen v hovoru.",
@@ -877,8 +877,8 @@
               "id": "build-1-rescue",
               "type": "callout",
               "tone": "info",
-              "title": "Další instrukce není vždy pomoc",
-              "body": "Když tým dostane hotové řešení bez artefaktů a bez checku, problém se jen schová. Vracejte práci k repu a k ověřitelnému dalšímu kroku."
+              "title": "Hotové řešení není totéž co pomoc",
+              "body": "Když tým dostane ústní answer bez artefaktů a bez checku, problém se jen schová. Vracejte práci k repu a k ověřitelnému dalšímu kroku."
             }
           ]
         },
@@ -888,8 +888,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "První build fáze pro tým",
-          "body": "Vrstva pro účastníky během první build fáze nemá ukazovat celý backstage. Má držet aktuální moment, další krok a signál z místnosti, aby tým věděl, co je teď podstatné.",
+          "title": "V prvním buildu držte pět věcí pohromadě",
+          "body": "Teď nejde o další chytrý prompt. Jde o to, aby váš repo setup unesl další krok bez improvizace u stolu.",
           "ctaLabel": "Otevřít install a setup flow",
           "ctaHref": "workshop-skill/install.md",
           "facilitatorNotes": [
@@ -906,30 +906,31 @@
               "id": "build-1-participant-hero",
               "type": "hero",
               "eyebrow": "Build fáze 1",
-              "title": "Co má tým držet viditelně před obědem",
-              "body": "Krátké AGENTS.md jako mapu, plan, build/test flow a první ověřený krok. Vrstva pro účastníky má držet pohromadě signál z místnosti i další bezpečný krok."
+              "title": "Do oběda potřebujete mapu, plán a první důkaz",
+              "body": "Krátké AGENTS.md jako mapu, plan, spustitelný check a první ověřený posun. Když se ztratíte, vraťte se právě k těmhle čtyřem věcem."
             },
             {
               "id": "build-1-participant-focus",
               "type": "bullet-list",
               "title": "Teď držte v záběru",
               "items": [
-                "Krátké AGENTS.md jako mapu repa.",
-                "Plan a první ověřený krok.",
-                "Signál z místnosti, který pomůže i dalšímu týmu navázat."
+                "README a AGENTS.md, ze kterých se dá orientovat.",
+                "Plan a nejbližší bezpečný krok.",
+                "První check, který odliší realitu od dojmu.",
+                "Poznámku, ze které naváže i cizí tým."
               ]
             },
             {
               "id": "build-1-participant-preview",
               "type": "participant-preview",
-              "body": "Sledujte aktuální fázi, další blok a sdílené poznámky pro celou místnost. Backstage patří facilitátorovi, ne vrstvě pro účastníky."
+              "body": "Další společný moment je krátké intermezzo. Přijďte do něj s jednou větou: co jste změnili a proč."
             },
             {
               "id": "build-1-participant-callout",
               "type": "callout",
               "tone": "warning",
               "title": "Když se zaseknete",
-              "body": "Vraťte se k README, AGENTS.md, workshop skillu, plánu a nejmenšímu užitečnému ověření místo dalšího generování bez hranic."
+              "body": "Vraťte se k README, AGENTS.md, workshop skillu, plánu a nejmenšímu užitečnému ověření. Další generování bez hranic vás zpomalí."
             }
           ]
         }
@@ -1022,8 +1023,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Intermezzo: co si má místnost všimnout",
-          "body": "Vrstva pro účastníky v intermezzu stahuje pozornost ke konkrétním signálům z týmů a z místnosti, ne k reportingu pro reporting.",
+          "title": "Na intermezzu poslouchejte tři signály",
+          "body": "Nejde o status update. Jde o krátký checkpoint, který vám ukáže, co už se v repu opravdu mění a co je zatím jen řeč.",
           "facilitatorNotes": [
             "Tahle scéna drží intermezzo jako krátký checkpoint pro celou místnost."
           ],
@@ -1044,7 +1045,7 @@
             {
               "id": "intermezzo-1-participant-questions",
               "type": "bullet-list",
-              "title": "Poslouchejte hlavně",
+              "title": "Všímejte si hlavně",
               "items": [
                 "Co kdo změnil a proč.",
                 "Co se přesunulo z hlavy do repa.",
@@ -1054,7 +1055,7 @@
             {
               "id": "intermezzo-1-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky drží intermezzo jako společný checkpoint, ne jako backstage shrnutí."
+              "body": "Po intermezzu se vracíte k buildu. Vezměte si z něj jednu věc, kterou ještě dnes dopíšete nebo ověříte."
             }
           ]
         }
@@ -1102,8 +1103,8 @@
           "sceneType": "transition",
           "intent": "transition",
           "chromePreset": "agenda",
-          "title": "Uklidit, ne utéct",
-          "body": "Před odchodem na oběd musí být z repa poznat, co se změnilo, co to ověřuje a jaký je další bezpečný krok pro cizí tým.",
+          "title": "Oběd není pauza od handoffu",
+          "body": "Než vstanete od stolu, musí být z repa poznat, co se změnilo, co to ověřuje a jaký je další bezpečný krok pro cizí tým.",
           "facilitatorNotes": [
             "Tohle je tichá příprava na handoff. Vysvětli ji jako součást práce, ne jako administrativu."
           ],
@@ -1117,7 +1118,7 @@
             {
               "id": "lunch-reset-checklist",
               "type": "checklist",
-              "title": "Před obědem",
+              "title": "Než půjdete na oběd",
               "items": [
                 "Je dopsaný další bezpečný krok.",
                 "Klíčová pravidla a rozhodnutí jsou v repu.",
@@ -1133,8 +1134,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Před obědem uklidit kontext",
-          "body": "Vrstva pro účastníky před obědem drží přípravu na handoff: co má být dopsané, co má další tým číst jako první a co ještě nesmí zůstat jen v hovoru.",
+          "title": "Neodcházejte bez dalšího bezpečného kroku",
+          "body": "Před obědem připravujete repo pro cizí tým. Co dál, co je hotové a co je jen hypotéza musí být dohledatelné bez vás.",
           "facilitatorNotes": [
             "Použij, když chceš týmům připomenout, že oběd není pauza od handoffu."
           ],
@@ -1149,7 +1150,7 @@
               "id": "lunch-reset-participant-hero",
               "type": "hero",
               "eyebrow": "Oběd a handoff",
-              "title": "Neodcházejte bez dalšího bezpečného kroku",
+              "title": "Připravte repo pro odpolední převzetí",
               "body": "Než půjdete na oběd, musí být z repa jasné, co se změnilo, co je hotové, co je hypotéza a kudy má další tým navázat."
             },
             {
@@ -1166,7 +1167,7 @@
             {
               "id": "lunch-reset-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky během poledního srovnání drží pohled připravený na handoff, ne jen odpočet do oběda."
+              "body": "Odpoledne začne tichý handoff. Když teď něco necháte jen v hovoru, za chvíli se to vrátí jako tření."
             }
           ]
         }
@@ -1244,8 +1245,8 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Jak začít po rotaci",
-          "body": "Začněte README, AGENTS.md a planem. První úkol není kódovat, ale udělat si mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
+          "title": "První úkol po rotaci není kódovat",
+          "body": "Začněte README, AGENTS.md a planem. Nejdřív si udělejte mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
           "facilitatorNotes": [
             "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu.",
             "Dohlédni, aby se vlastní diagnóza objevila dřív než první editace."
@@ -1260,7 +1261,7 @@
             {
               "id": "rotation-steps",
               "type": "steps",
-              "title": "Nový tým",
+              "title": "Prvních 10 minut nového týmu",
               "items": [
                 {
                   "title": "Začněte README, AGENTS.md a planem",
@@ -1295,8 +1296,10 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Rotace bez ústního handoffu",
-          "body": "Vrstva pro účastníky při rotaci drží nový tým u mapy repa, dalšího bezpečného kroku a signálů z místnosti. Nemá nahrazovat ústní dovysvětlování.",
+          "title": "Po rotaci deset minut nekódujte",
+          "body": "Nový tým má nejdřív přečíst repo, napsat vlastní diagnózu a teprve potom sahat do změn. Když to nejde, problém je v signálu, ne ve vaší poslušnosti.",
+          "ctaLabel": "Otevřít analyze checklist",
+          "ctaHref": "workshop-skill/analyze-checklist.md",
           "facilitatorNotes": [
             "Tohle je účastnický ekvivalent tvrdého handoff momentu. Pomáhá udržet místnost v disciplíně bez backstage detailů."
           ],
@@ -1312,7 +1315,7 @@
               "type": "hero",
               "eyebrow": "Odpolední převzetí",
               "title": "Nový tým začíná mapou, ne improvizací",
-              "body": "Nejdřív čtěte README, AGENTS.md a plan. Vrstva pro účastníky má držet pohromadě aktuální moment, další krok a sdílené poznámky pro celou místnost."
+              "body": "Nejdřív čtěte README, AGENTS.md a plan. Pak napište, co pomáhá, co chybí, co je rizikové a co je další bezpečný krok."
             },
             {
               "id": "rotation-participant-steps",
@@ -1336,7 +1339,7 @@
             {
               "id": "rotation-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky nemá zachraňovat slabý signál v repu. Má pomoct týmu držet společnou orientaci při převzetí práce."
+              "body": "Když je signál slabý, nezachraňujte ho hovorem. Zapište diagnózu a opravte mapu, pravidlo nebo check."
             }
           ]
         }
@@ -1384,7 +1387,7 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Pokračujte jen z toho, co přežilo",
+          "title": "Po rotaci neopravujte jen feature, opravujte i signál",
           "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějších checků a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
           "facilitatorNotes": [
             "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání.",
@@ -1431,8 +1434,10 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Návaznost po rotaci",
-          "body": "Vrstva pro účastníky po rotaci drží nový tým u toho, co přežilo v repu, co teď ověřuje a co musí být zpřesněno, aby šla práce bezpečně dál.",
+          "title": "Po rotaci nejdřív opravte signál, pak feature",
+          "body": "Teď už nejde jen o dokončení úkolu. Jde o to, aby další verze repa byla po vašem zásahu čitelnější, ověřitelnější a levnější na převzetí.",
+          "ctaLabel": "Otevřít challenge cards",
+          "ctaHref": "content/challenge-cards/deck.md",
           "facilitatorNotes": [
             "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další check."
           ],
@@ -1448,7 +1453,7 @@
               "type": "hero",
               "eyebrow": "Build fáze 2",
               "title": "Pokračujte jen z toho, co je dohledatelné",
-              "body": "Po rotaci už vrstva pro účastníky neukazuje startovní onboarding. Má držet společnou orientaci v tom, co pomáhá, co chybí a jaký je další bezpečný check."
+              "body": "Pojmenujte, co vám pomohlo navázat, dopište chybějící signál a přidejte další explicitní check dřív, než uděláte větší změnu."
             },
             {
               "id": "build-2-participant-bullets",
@@ -1463,7 +1468,7 @@
             {
               "id": "build-2-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky ve druhé build fázi drží signály pro návaznost, ne nostalgii po původním týmu."
+              "body": "Každé odpolední tření je kandidát na lepší mapu, pravidlo, challenge card nebo runbook."
             }
           ]
         }
@@ -1511,8 +1516,8 @@
           "sceneType": "checkpoint",
           "intent": "reflection",
           "chromePreset": "checkpoint",
-          "title": "Co po rotaci opravdu pomohlo",
-          "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co nový tým zrychlilo, co ho brzdilo a co už si říká o lepší template nebo pravidlo.",
+          "title": "Co po rotaci opravdu pomohlo pokračovat",
+          "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co nový tým zrychlilo, co ho brzdilo a co už si říká o lepší template, runbook nebo pravidlo.",
           "facilitatorNotes": [
             "Vyžaduj konkrétní příklady z repa, ne obecné dojmy.",
             "Připrav místnost na reveal tím, že oddělíš skutečně užitečné signály od dobrých pocitů."
@@ -1547,7 +1552,7 @@
               "id": "intermezzo-2-evidence",
               "type": "callout",
               "tone": "info",
-              "title": "Bereme příklady, ne dojmy",
+              "title": "Bereme důkazy, ne dojmy",
               "body": "Každá odpověď má mířit k něčemu dohledatelnému v repu nebo k jasně chybějícímu signálu."
             }
           ]
@@ -1558,8 +1563,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Co po rotaci opravdu pomáhá",
-          "body": "Vrstva pro účastníky v druhém intermezzu stahuje místnost k tomu, které signály v repu skutečně pomohly pokračovat a které zůstávají slabé.",
+          "title": "Připravte si jednu věc, která po rotaci opravdu pomohla",
+          "body": "Teď nesbíráme obecné pocity z odpoledne. Sbíráme přesně to, co novému týmu šetřilo čas, a to, co ho naopak brzdilo.",
           "facilitatorNotes": [
             "Tahle scéna pomáhá stáhnout odpolední část ke konkrétním signálům návaznosti před reveal."
           ],
@@ -1590,7 +1595,7 @@
             {
               "id": "intermezzo-2-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky tady drží společnou reflexi nad návaznou částí dne, ne výsledkovou tabuli."
+              "body": "Za chvíli přijde reveal. Vezměte si jednu věc, kterou chcete převést do příštího týdne."
             }
           ]
         }
@@ -1634,7 +1639,7 @@
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "minimal",
-          "title": "Co pomohlo pokračovat",
+          "title": "Z místnosti bereme jen to, co chcete převzít do reálné práce",
           "body": "Závěrečné 1-2-4-All má vytáhnout konkrétní signály, které pomohly práci přežít handoff, a oddělit je od obecných pocitů.",
           "facilitatorNotes": [
             "Drž otázky konkrétní. Každý příklad by měl mířit k signálu v repu nebo k chybějícímu signálu.",
@@ -1674,7 +1679,7 @@
               "id": "reveal-system-frame",
               "type": "callout",
               "tone": "info",
-              "title": "Nehodnotíme vítěze",
+              "title": "Neodnášejte si dojmy, ale pravidla",
               "body": "Nedíváme se, kdo byl lepší. Díváme se, které signály pomáhají práci přežít handoff a které ji brzdí."
             }
           ]
@@ -1685,7 +1690,7 @@
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "agenda",
-          "title": "Co? A co? A teď?",
+          "title": "Co si zítřka odnesete do skutečné práce",
           "body": "Zakončení přes W3 převádí den do konkrétní další praxe s AI agenty.",
           "facilitatorNotes": [
             "Na závěr to stoč do příštího týdne i do zlepšení blueprintu a workshopového systému."
@@ -1720,8 +1725,8 @@
               "id": "reveal-system",
               "type": "callout",
               "tone": "success",
-              "title": "Sledujeme systém",
-              "body": "Každá opakující se bolest je kandidát na lepší template, challenge card nebo vodítko v blueprintu."
+              "title": "Proměňte bolest v artefakt",
+              "body": "Každá opakující se bolest je kandidát na lepší template, challenge card, runbook nebo vodítko v blueprintu."
             }
           ]
         },
@@ -1731,8 +1736,10 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Co si odnášíme z dne",
-          "body": "Vrstva pro účastníky na konci dne má stáhnout pozornost k tomu, co práci pomohlo přežít handoff a co si tým bere do další praxe.",
+          "title": "Odneste si tři věci, ne jen dobrý pocit",
+          "body": "Na konci dne si vezměte konkrétní signál, který chcete zachovat, jednu slabinu, kterou už nechcete opakovat, a jeden tah pro příští týden.",
+          "ctaLabel": "Otevřít recap a follow-up",
+          "ctaHref": "workshop-skill/recap.md",
           "facilitatorNotes": [
             "Použij tuhle scénu při závěrečném stažení dne do konkrétních signálů a dalších kroků."
           ],
@@ -1748,22 +1755,22 @@
               "type": "hero",
               "eyebrow": "Reveal a reflexe",
               "title": "Nejde o vítěze. Jde o signály, které drží práci pohromadě.",
-              "body": "Na konci dne sledujeme, co pomohlo navázat, co chybělo a co příští týden uděláme jinak."
+              "body": "Na konci dne sledujeme, co pomohlo navázat, co chybělo a co příští týden uděláme jinak ve vlastním repu."
             },
             {
               "id": "reveal-participant-questions",
               "type": "bullet-list",
-              "title": "Co si odnést",
+              "title": "Odneste si hlavně",
               "items": [
-                "Co vám pomohlo pokračovat?",
-                "Co chybělo?",
-                "Co uděláte jinak příští týden?"
+                "Jeden signál, který chcete zavést natrvalo.",
+                "Jednu slabinu, kterou příště dopíšete do repa dřív.",
+                "Jeden konkrétní tah pro příští týden."
               ]
             },
             {
               "id": "reveal-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky drží závěrečný moment v konkrétních signálech, ne v hodnocení týmů."
+              "body": "Recap a follow-up balíček mají navázat hned po workshopu. Nenechte závazek zůstat jen na sticky note."
             }
           ]
         }

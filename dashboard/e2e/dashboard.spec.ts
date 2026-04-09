@@ -68,7 +68,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByText("vrstva pro účastníky", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
-    await expect(page.getByText("Co má tým držet viditelně před obědem")).toBeVisible();
+    await expect(page.getByText("Do oběda potřebujete mapu, plán a první důkaz")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
 
     // Verify context-aware nav — room links visible, public anchors gone

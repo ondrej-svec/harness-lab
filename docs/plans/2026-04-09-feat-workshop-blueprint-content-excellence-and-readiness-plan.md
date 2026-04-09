@@ -248,6 +248,23 @@ Execution consequence:
 - Phase 2 remains `in_progress`
 - the proof slice remains centered on `talk`
 - but the adjacent `opening` pack now joins the remaining Phase 2 correction scope because it directly affects the same thesis bridge into Build 1 and was shown by review to still violate the content-quality bar
+- the user later requested a whole-system rewrite before human review, so broader Phase 3 and Phase 4 implementation may proceed ahead of the proof-gate signoff
+- that sequencing change does not relax the review bar: human proof gates still block marking the plan complete
+
+## Nearly Finished Readiness Checklist
+
+Before calling the workshop system "nearly finished," confirm:
+
+- every flagship room scene states one dominant idea rather than presenter meta
+- every participant mirror answers "what should our team do now?"
+- every shared transition makes the next contract explicit
+- every facilitator beat can run from agenda-owned content plus source materials without hidden author memory
+- the install/use moment for the workshop skill is explicit where participants first need it
+- mobile participant surfaces remain glanceable
+- projected room surfaces remain legible from distance
+- internal provenance stays in source affordances and real authority stays properly attributed
+- learner kit, briefs, challenge cards, recap, and follow-up feel like one system rather than appendix material
+- the next team can find the next safe move without spoken rescue
 
 ## Rollout Rule
 
@@ -474,17 +491,17 @@ This section is a summary view only. The phased implementation section below is 
   - [ ] Check portability and public-safe references.
   - [x] Confirm opening and talk room-facing slides no longer display facilitator/backstage labels as visible content.
 
-- [ ] Propagate the validated pattern to the other flagged flagship moments.
+- [x] Propagate the validated pattern to the other flagged flagship moments.
   - `build-1-coaching`
   - `build-2-handoff-work`
   - `intermezzo-2-reflection`
   - `reveal-1-2-4-all`
   - any other scene reclassified as structurally present but editorially weak
 
-- [ ] Elevate the participant and learner layer after the flagship scenes hold.
-  - Tighten challenge-card wording only where it improves action and distinction.
-  - Raise project briefs from disciplined templates to sharper challenge narratives.
-  - Rework learner kit and follow-up surfaces so they feel like premium takeaways, not appendix material.
+- [x] Elevate the participant and learner layer after the flagship scenes hold.
+  - [x] Tighten challenge-card wording only where it improves action and distinction.
+  - [x] Raise project briefs from disciplined templates to sharper challenge narratives.
+  - [x] Rework learner kit and follow-up surfaces so they feel like premium takeaways, not appendix material.
 
 - [x] Add durable review gates for future content work.
   - Define a content QA checklist for architecture correctness, portability, authority handling, scene quality, `facilitatorRunner` alignment, participant usefulness, mobile/projection legibility, and locale parity.
@@ -587,9 +604,9 @@ Blocking: Phase 4 is blocked on this phase's exit criteria.
 
 Tasks:
 
-- [ ] rewrite the remaining flagged flagship scenes
-- [ ] ensure narrative transitions across the day remain distinct
-- [ ] remove or split scenes that repeat rather than advance the story
+- [x] rewrite the remaining flagged flagship scenes
+- [x] ensure narrative transitions across the day remain distinct
+- [x] remove or split scenes that repeat rather than advance the story
 
 Exit criteria:
 
@@ -604,9 +621,9 @@ Blocking: Phase 5 is blocked on this phase's exit criteria.
 
 Tasks:
 
-- [ ] elevate project briefs
-- [ ] tighten challenge cards where needed
-- [ ] upgrade learner kit, recap, follow-up, and reference surfaces
+- [x] elevate project briefs
+- [x] tighten challenge cards where needed
+- [x] upgrade learner kit, recap, follow-up, and reference surfaces
 
 Exit criteria:
 
@@ -622,9 +639,9 @@ Tasks:
 - [x] define reusable preview and approval expectations
 - [x] define where review artifacts live and how completion is recorded
 - [x] leave explicit guidance for future blueprint/content continuation
-- [ ] add a lightweight cross-surface readiness checklist for "nearly finished" workshop quality
-- [ ] record explicit rules for visible-content vs backstage-content separation
-- [ ] record explicit rules for install/use-moment clarity and demo/micro-exercise ownership
+- [x] add a lightweight cross-surface readiness checklist for "nearly finished" workshop quality
+- [x] record explicit rules for visible-content vs backstage-content separation
+- [x] record explicit rules for install/use-moment clarity and demo/micro-exercise ownership
 
 Exit criteria:
 

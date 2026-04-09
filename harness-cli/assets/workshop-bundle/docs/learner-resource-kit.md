@@ -1,27 +1,27 @@
 # Learner Resource Kit
 
-Tato stránka definuje účastnický kit zdrojů pro Harness Lab.
+This page defines the participant learner kit for Harness Lab.
 
-Je to malá, kopírovatelná část repa, kterou si mají účastníci odnést, projít a znovu použít ve vlastních projektech.
+It is the small, portable subset of the repo that participants should take away, review, and reuse in their own projects.
 
-## Základní pravidlo
+## Ground Rule
 
-Learner kit není celý backstage workshopu.
+The learner kit is not the full workshop backstage.
 
-Má odpovídat na otázky:
-- co si mám z workshopu zkopírovat do vlastního repa?
-- co má agent udělat jako první?
-- jak zařídit, aby práce přežila handoff?
-- co musím ověřit, než výsledku uvěřím?
+It should answer:
+- what should I copy into a real repo?
+- what should the agent or team do first?
+- how do I make the work survive handoff?
+- what do I need to verify before I trust the result?
 
-Výchozí pracovní rytmus, který má learner kit posilovat, je:
+Default participant rhythm the learner kit should reinforce:
 - `workshop` pro orientaci
 - `brainstorm` nebo `plan` před větším řezem
 - `work` proti jednomu ověřitelnému cíli
 - `review` před důvěrou
 - `compound` a průběžný úklid pro věci, které mají přežít session
 
-## Jádro learner kitu
+## Learner Kit Core
 
 ### 1. Workshop skill
 
@@ -31,34 +31,34 @@ Hlavní rozhraní pro účastníky:
 - [`workshop-skill/reference.md`](../workshop-skill/reference.md)
 - [`workshop-skill/recap.md`](../workshop-skill/recap.md)
 
-Proč sem patří:
-- ukazuje, jak může skill pro účastníky vést setup, workflow i ověřování v češtině
-- je to reálné rozhraní opřené o repo, ne workshopový slide artefakt
+Why it belongs here:
+- it shows how a participant skill can guide setup, workflow, and verification
+- it is a real repo-backed interface, not only a workshop slide artifact
 
-### 2. `AGENTS.md` příklad
+### 2. `AGENTS.md` example
 
 Výchozí starter:
 - [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
 
-Proč sem patří:
-- je to nejmenší znovupoužitelný příklad trvalého kontextu v repu
-- účastníci ho mohou upravit přímo pro vlastní projekt
+Why it belongs here:
+- it is the smallest reusable example of durable repo context
+- participants can adapt it directly for a real project
 
-### 3. Příklad pro ověření a review
+### 3. Verification and review example
 
 Výchozí checklist:
 - [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
 
-Proč sem patří:
-- dává konkrétní standard pro otázku „dokáže odtud pokračovat další tým?“
-- převádí kvalitu repa do checklistu, který jde opravdu projít
+Why it belongs here:
+- it gives a concrete standard for “can another team continue from here?”
+- it turns repo quality into a checklist people can actually run
 
 ### 4. Challenge cards
 
 Doporučený subset:
 - [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
-Použití:
+Use:
 - malé zásahy během workshopu
 - nápověda, co zlepšit později v reálném repu
 
@@ -68,31 +68,31 @@ Posílení po workshopu:
 - [`workshop-skill/follow-up-package.md`](../workshop-skill/follow-up-package.md)
 - [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
 
-Proč sem patří:
-- proměňuje workshop z jednodenní akce na opakovatelný impuls ke změně chování
-- dává doslovný handout, který lze poslat nebo vytisknout bez dalšího vysvětlování
+Why it belongs here:
+- it turns the workshop from a one-day event into a repeatable behaviour change
+- it gives a literal handout that can be sent or printed without extra explanation
 
-## Kdy který artefakt použít
+## When To Use Which Artifact
 
-### Během setupu
+### During setup
 
 Použijte:
 - [`workshop-skill/setup.md`](../workshop-skill/setup.md)
 - [`workshop-skill/reference.md`](../workshop-skill/reference.md)
 
-### Během build fáze 1
+### During Build Phase 1
 
 Použijte:
 - [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
-- karty `Context Engineering` v [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
+- karty `Před obědem: postavte pracovní systém` v [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
-### Během odpoledního převzetí
+### During the afternoon takeover
 
 Použijte:
 - [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
-- karty `Workflow` v [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
+- karty `Po rotaci: opravte signál, ne jen feature` v [`content/challenge-cards/deck.md`](../content/challenge-cards/deck.md)
 
-### Po workshopu
+### After the workshop
 
 Použijte:
 - [`workshop-skill/recap.md`](../workshop-skill/recap.md)
@@ -100,9 +100,9 @@ Použijte:
 - [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
 - [`learner-reference-gallery.md`](learner-reference-gallery.md)
 
-## Co si odnést do reálného projektu
+## What To Carry Into A Real Project
 
-Účastníci by měli odejít s těmito konkrétními kroky:
+Participants should leave with these concrete moves:
 
 1. Přidejte `AGENTS.md` s částmi:
    - goal
@@ -117,9 +117,9 @@ Použijte:
 7. Před větší implementací použijte plan a po větší změně review nebo check.
 8. Když už používáte externí workflow skill pack, napojte ho až nad tento základ místo toho, abyste jím nahrazovali kontext zapsaný v repu a ověřování.
 
-## Co sem nepatří
+## What Does Not Belong Here
 
-Learner kit nemá obsahovat plný backstage provozní detail, například:
+The learner kit should not include full backstage operational detail, for example:
 - runbooky pro konkrétní workshop instance
 - privátní runtime architekturu a operace
 - monitoring nebo řídicí postupy jen pro facilitátory
