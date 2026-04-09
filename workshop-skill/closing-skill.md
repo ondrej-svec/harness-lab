@@ -19,7 +19,7 @@ Na konci dne vytvoř krátké shrnutí workshopu, které je:
 
 1. Co pomohlo týmům pokračovat po handoffu
 2. Co opakovaně chybělo
-3. Jaké 2-3 principy si má místnost odnést do příštího týdne
+3. Jaké 2–3 principy si má místnost odnést do příštího týdne
 4. Jedna závěrečná věta, která propojí workshop s reálnou prací v týmu
 
 ## Styl

@@ -108,7 +108,7 @@ Pointa:
 - přenos mantinelů
 - přenos done criteria
 
-### Most do Build fáze 1
+### Co si odnesete do build fáze
 
 Na konci talku má být jasné:
 

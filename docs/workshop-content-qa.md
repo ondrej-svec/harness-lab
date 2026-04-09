@@ -21,6 +21,22 @@ Every meaningful content slice should be reviewed for:
 
 AI-assisted review is allowed as a detection aid, but it does not satisfy blocking Czech language gates on its own **except for the deterministic typography layer**, which is by design the one layer scripted tooling can close. Spoken-readability, visible-surface Czech signoff, and Layer 2 judgment suggestions all require a Czech-fluent human reviewer.
 
+## Layer 2 is in-slice, not deferred
+
+When an agent edits or creates any file in the `.copy-editor.yaml` scope, Layer 2 judgment runs in the same slice as the edit. Deferring it to "a later review session" is not a valid handoff on a closing slice.
+
+An agent touching Czech visible-surface content is responsible, before claiming the work complete, for:
+
+1. loading `content/style-guide.md`, `content/czech-reject-list.md`, and the voice doctrine from `.copy-editor.yaml`
+2. running the five Layer 2 passes mentally over the edited files: reject-list hits, nominal-style detection, clarity/ambiguity (strict on `surface_profile: participant`), voice/register, rhythm/spoken-readability
+3. surfacing findings as explicit items with rationale, citing the rule or guide section that triggered each one
+4. applying fixes for items the agent can resolve unambiguously, and asking the user per item for anything that needs judgment
+5. recording what was reviewed and what still needs human Czech signoff in the review note
+
+The agent does not close Layer 2. The human reviewer closes it. But the agent must produce the judgment findings in the same slice — because only the editing agent has the full context of what changed and why.
+
+The `marvin:copy-editor` skill's SKILL.md encodes this loop. Any agent editing Czech content is expected to execute it, not only when the skill is explicitly invoked.
+
 ## Required Artifacts
 
 Store review artifacts in `docs/reviews/workshop-content/`.

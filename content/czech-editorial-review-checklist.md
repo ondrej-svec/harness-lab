@@ -29,6 +29,8 @@ Musí platit:
 - Warning-level findings (R1b konjunkce `a`/`i`, R6 pomlčky, R7 sentence case) si reviewer projde, ale nemusí je všechny řešit – jsou to hints, ne gates.
 - Pokud je Layer 1 červený, vraťte text do editace a opravte typografii (nebo spusťte `/marvin:work` na výstup skriptu). Teprve pak pokračujte na Sekci 1.
 
+**Layer 2 (sekce 1–11 níže) běží v té samé slice jako edit, ne později.** Agent, který upravuje český visible-surface obsah, projde sekce 1–11 jako součást stejné práce a vynese judgment findings s rationale. Člověk pak Layer 2 uzavírá. Doctrína je v [`docs/workshop-content-qa.md`](../docs/workshop-content-qa.md#layer-2-is-in-slice-not-deferred).
+
 Konfigurace je v [`.copy-editor.yaml`](../.copy-editor.yaml).
 
 ## 1. Přirozenost češtiny

@@ -17,7 +17,7 @@
 
 1. nahoře název karty
 2. pod ním kategorie
-3. 2-3 věty zadání
+3. 2–3 věty zadání
 4. dole malý štítek:
    - `Před obědem`
    - `Po rotaci`

@@ -62,7 +62,7 @@ Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob
 - Když agent dělá víc, já musím lépe ověřovat.
 - Handoff není závěr dne. Je to průběžná podmínka celé práce.
 
-## Most do Build fáze 1
+## Co si odnesete do build fáze
 
 Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytřejší prompt. Má se vracet s jedním jasným očekáváním:
 

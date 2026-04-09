@@ -91,6 +91,7 @@ If you touch these areas, read these files first:
 - For dashboard UI work, treat [`docs/dashboard-design-system.md`](docs/dashboard-design-system.md) as the shared visual and interaction baseline. Update it or the relevant surface-specific design doc when you introduce a new recurring UI pattern.
 - Do not introduce live workshop data, real logistics, or participant-private context into tracked public files.
 - Keep the workshop method transferable across coding agents. Codex-specific helpers are useful accelerators, not the whole method.
+- When editing any file in the `.copy-editor.yaml` scope, editorial self-check (Layer 1 + Layer 2) runs in the same slice as the edit. Doctrine: [`docs/workshop-content-qa.md`](docs/workshop-content-qa.md#layer-2-is-in-slice-not-deferred).
 
 ## Framework Guidance
 
