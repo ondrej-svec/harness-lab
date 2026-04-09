@@ -125,3 +125,91 @@ Když text zní moc tvrdě přeloženě, uprav ho takto:
 2. vrať české sloveso do aktivního rodu
 3. nech technický termín v angličtině
 4. zkontroluj, že věta vede k akci
+
+## Slovesné vs jmenné vyjadřování
+
+Nominalizace je nejspolehlivější otisk přeložené nebo AI-generované češtiny. Přepište věty kolem aktivního slovesa – čtenář je zpracuje výrazně rychleji.
+
+### 9. Konfigurace a setup
+
+Do:
+
+- „Nakonfigurujte systém podle `AGENTS.md`."
+- „Až nainstalujete Codex, pokračujte podle `setup.md`."
+
+Don't:
+
+- „Provedení konfigurace systému podle `AGENTS.md` je nutné."
+- „Po dokončení instalace Codexu dojde k pokračování podle `setup.md`."
+
+### 10. Kontrola a ověření
+
+Do:
+
+- „Po každé změně zkontrolujte repo."
+- „Ověřte, že nasazený kód funguje, a teprve potom pokračujte."
+
+Don't:
+
+- „Kontrola stavu repozitáře po každé změně je důležitá."
+- „Verifikace funkčnosti nasazeného kódu musí proběhnout před pokračováním."
+
+### 11. Facilitace
+
+Do:
+
+- „Než workshop začne, rozdejte účastníkům tištěné karty."
+- „Když se build zasekne, vraťte se k `AGENTS.md` a přepište, co chybí."
+
+Don't:
+
+- „V rámci realizace přípravné fáze workshopu je nutné provést distribuci tištěných karet mezi účastníky."
+- „V případě uvíznutí procesu sestavení doporučujeme návrat k `AGENTS.md` za účelem doplnění chybějících informací."
+
+## Typografie – co reviewer hlídá
+
+Tyhle věci řeší deterministický audit (`marvin:copy-editor`, Layer 1), ale znát je má autor i reviewer.
+
+### 12. Nezlomitelná mezera po jednopísmenných předložkách
+
+Do (nezlomitelná mezera `\u00A0`):
+
+- „Nejdřív si přečtěte, co je v\u00A0repu."
+- „S\u00A0účastníky proberte, co je v\u00A0`AGENTS.md`."
+
+Don't (běžná mezera):
+
+- „Nejdřív si přečtěte, co je v repu."
+- „S účastníky proberte, co je v `AGENTS.md`."
+
+### 13. České uvozovky
+
+Do:
+
+- „Workshop začíná v\u00A09 hodin."
+
+Don't:
+
+- "Workshop začíná v 9 hodin."
+
+### 14. Sentence case v nadpisech
+
+Do:
+
+- `Jak nastavit vývojové prostředí`
+- `Co je kontext a proč na něm záleží`
+
+Don't:
+
+- `Jak Nastavit Vývojové Prostředí`
+- `Co Je Kontext A Proč Na Něm Záleží`
+
+### 15. Trojtečka jako jeden znak
+
+Do:
+
+- „Počkejte chvíli…"
+
+Don't:
+
+- „Počkejte chvíli..."

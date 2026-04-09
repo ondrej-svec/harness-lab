@@ -3,12 +3,14 @@
 Použijte tento checklist při revizi českého obsahu pro účastníky, hlavně pro:
 
 - workshop agenda a presenter scenes
-- pokyny pro participant room
+- pokyny pro participant plochu
 - project briefs
 - challenge cards
 - setup, reference, recap, follow-up a learner-kit materiály
 
-Tento checklist doplňuje [`content/style-guide.md`](./style-guide.md) a [`content/style-examples.md`](./style-examples.md). Není to náhrada. Je to poslední quality gate před tím, než se text bere jako workshop-ready.
+Tento checklist doplňuje [`content/style-guide.md`](./style-guide.md), [`content/style-examples.md`](./style-examples.md) a [`content/czech-reject-list.md`](./czech-reject-list.md). Není to náhrada. Je to poslední quality gate před tím, než se text bere jako workshop-ready.
+
+Pro mechanický pass nad typografií (nezlomitelné mezery, uvozovky, pomlčky, trojtečky, sentence case) použijte `marvin:copy-editor` skill (Layer 1, deterministický). Tenhle checklist řeší to, co skript neumí – voice, rytmus, spoken readability a visible-surface judgment.
 
 ## 1. Přirozenost češtiny
 
@@ -30,6 +32,7 @@ Tento checklist doplňuje [`content/style-guide.md`](./style-guide.md) a [`conte
 - Nepůsobí viditelný text jako interní taxonomie nebo polopřeložený source draft?
 - Není na viditelné české surface ponechané anglické slovo jen proto, že ho obsahoval původní workshop shorthand?
 - Když na slidu vidíte slova jako `launch`, `check`, `checkpoint` nebo podobný interní termín, je pro ně opravdu silný důvod?
+- Nemluví slide o `místnosti`, jejím `tempu` nebo `návycích`, když má ve skutečnosti mluvit o lidech, týmu nebo účastnících?
 - Pokud by fluentní český reviewer větu okamžitě přepsal v hlavě, vraťte ji do editace.
 
 ## 4. Jasnost instrukce
@@ -60,6 +63,7 @@ Pokud se v textu objeví něco z toho, vraťte ho do editace:
 - doslovný překlad anglické vazby
 - česká věta s náhodně vloženými anglickými slovy mimo technické termíny
 - viditelný nadpis nebo callout, který přebírá interní anglický shorthand místo přirozené češtiny
+- personifikovaná `místnost`, když jde ve skutečnosti o zkušenost, chování nebo potřeby lidí v ní
 - korporátní nebo školometský tón
 - fráze, které nic nekotví k akci
 - generické AI obraty bez konkrétního významu
@@ -86,7 +90,7 @@ Pokud text vznikal z anglického source:
 
 ## 10. Required workflow
 
-Když se mění viditelný český obsah v agendě, presenteru, participant view nebo workshop skillu, nestačí jen tichá self-editace.
+Když se mění viditelný český obsah v agendě, presenteru, participant ploše nebo workshop skillu, nestačí jen tichá self-editace.
 
 Minimum:
 

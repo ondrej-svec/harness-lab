@@ -51,6 +51,8 @@ If you touch these areas, read these files first:
 - participant-facing workshop copy:
   - [`content/style-guide.md`](content/style-guide.md)
   - [`content/style-examples.md`](content/style-examples.md)
+  - [`content/czech-reject-list.md`](content/czech-reject-list.md)
+  - [`content/czech-editorial-review-checklist.md`](content/czech-editorial-review-checklist.md)
 
 ## Repo Map
 
