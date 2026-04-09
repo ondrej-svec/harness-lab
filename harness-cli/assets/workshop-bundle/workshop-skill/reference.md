@@ -20,7 +20,7 @@
 - Je `AGENTS.md` krátká mapa, ne přerostlý dump?
 - Jsou v repu build/test příkazy, které umí spustit i další tým?
 - Je jasné, co už funguje, co je rozpracované a co je jen nápad?
-- Je v repu plan, runbook nebo jiný dokument, ze kterého další tým pochopí záměr?
+- Je v repu plán, runbook nebo jiný dokument, ze kterého další tým pochopí záměr?
 - Je dohledatelné, co bylo skutečně ověřeno?
 - Najde nový tým během pár minut první bezpečný krok?
 
@@ -33,7 +33,7 @@
 ## Kdy po čem sáhnout během dne
 
 - Po openingu a talku: `workshop setup` nebo `workshop reference`
-- V prvním buildu: `template-agents`, brief, plan a první check
+- V prvním buildu: `template-agents`, brief, plán a první check
 - Před obědem: dopsat další safe move a použít `workshop analyze`, když si nejste jistí handoffem
 - Po rotaci: `workshop analyze`, learner kit a challenge cards místo ústního rescue
 - Na konci dne: `workshop recap` a `workshop follow-up`
@@ -52,8 +52,8 @@
 - `Codex: $workshop follow-up` když řešíte, co si odnést po workshopu
 - `Codex: $brainstorm` když ještě není jasné, co je nejrozumnější scope nebo slice
 - `Codex: $plan` před větší implementací
-- `Codex: $work` když už máte plan a chcete držet implementaci v jedné linii
-- `Codex: $test-writer` nebo vlastní RED test před implementací, když potřebujete držet agenta v mezích
+- `Codex: $work` když už máte plán a chcete držet implementaci v jedné linii
+- `Codex: $test-writer` nebo vlastní spustitelný check před implementací, když potřebujete držet agenta v mezích
 - `Codex: $review` po větším kusu práce
 - `Codex: $compound` když chcete převést nové zjištění, fix nebo workflow pravidlo do trvalého artefaktu v repu
 - `Codex: $workshop` pro orientaci během dne
@@ -63,7 +63,7 @@
 ## Doporučený pracovní rytmus
 
 - `workshop` pro orientaci a další bezpečný krok
-- `brainstorm` nebo rovnou `plan`, když už je scope zřejmý
+- `brainstorm` nebo rovnou `$plan`, když už je scope zřejmý
 - `work` proti jednomu ověřitelnému cíli
 - `review` před tím, než změně uvěříte
 - `compound` nebo krátký runbook, když něco stojí za zachování
@@ -73,7 +73,7 @@
 
 - Čím víc práce dělá agent samostatně, tím méně stačí „já jsem to rychle projel očima“.
 - Když necháte agenta psát bez testů, často jen urychlíte vznik neověřené složitosti.
-- RED test, tracer bullet nebo jednoduché e2e ověření je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
+- Spustitelný check (unit test, tracer bullet nebo jednoduché e2e ověření) je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
 
 ## Bezpečný UI workflow
 
@@ -90,5 +90,7 @@ Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext 
 ## Kam dál po workshopu
 
 - Oficiální docs, OpenAI článek o Harness Engineering a ověřené veřejné skill repozitáře najdete v [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md).
+- Codex-specific craft (approval módy, sandboxing, long-horizon drift, před/po příklad) je v [`content/codex-craft.md`](../content/codex-craft.md).
+- Conversational moves pro coaching agenta sežene v jedné straně v [`materials/coaching-codex.md`](../materials/coaching-codex.md).
 - Když už používáte další workflow pack nebo toolkit, berte ho jako rozšíření nad tímto základem, ne jako náhradu za `AGENTS.md`, ověřování a handoff opřený o repo.
 - Když nechcete hledat v repu, použijte přímo `workshop resources`, `workshop gallery` nebo `workshop follow-up`.

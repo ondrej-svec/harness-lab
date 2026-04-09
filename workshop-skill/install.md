@@ -47,7 +47,7 @@ Doporučený další postup:
 1. rozběhnout `workshop` skill
 2. otevřít `commands`, `reference` a `brief`
 3. doplnit `AGENTS.md`
-4. podle potřeby použít `brainstorm`, `plan`, `work`, `review` nebo `compound`, pokud je ve svém agent setupu máte k dispozici
+4. podle potřeby použít `brainstorm`, `$plan`, `$work`, `$review` nebo `$compound`, pokud je ve svém agent setupu máte k dispozici
 5. když chcete materiály pro účastníky bez hledání v GitHubu, použijte `workshop resources`, `workshop gallery` a `workshop follow-up`
 
 ## Poznámka

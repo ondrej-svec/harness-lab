@@ -51,7 +51,7 @@ Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob
 - Jednoduché mantinely zrychlují práci. Agentovi pomáhá jasný build/test flow, viditelné hranice a předvídatelná struktura.
 - U UI práce je výchozí pattern: agent exploration, potom repeatable browser test, potom lidské review.
 - „Nech model jezdit v mém běžném přihlášeném browseru“ není výchozí doporučení. Bezpečnější je izolované lokální prostředí a jasné mantinely.
-- RED → GREEN není s agenty pomalejší. Naopak často zlevňuje korekce, protože agent dostane přesnější mantinely.
+- Ověření napsané dřív, než pustíte agenta do většího kusu práce, není test-first dogma. Je to zápis done criteria do formy, kterou agent i další tým umí zkontrolovat. Iteraci to zrychluje, protože agent dostane přesné mantinely, ne další prompt.
 - Úklid není bonus po workshopu. Když narazíte na opakující se chaos, je čas ho proměnit v lepší template, check nebo runbook.
 - Odpolední návaznost prověří, jestli váš kontext funguje i bez vás.
 
@@ -68,7 +68,7 @@ Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytř
 
 - pokud ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
 - nejdřív krátká mapa v repu
-- potom plan
+- potom krátký plán kroků
 - potom první explicitní check
 - teprve potom další feature motion
 

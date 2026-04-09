@@ -409,11 +409,11 @@ export const workshopBlueprintLocalizedContent = {
           },
           "opening-participant-view": {
             label: "Team start board",
-            title: "At the start of the day, keep the purpose, next block, and first proof in view",
+            title: "At the start of the day, keep the purpose, next block, and first repo move in view",
             body:
-              "At the start of the day, the team does not need a promo banner. It needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
+              "At the start of the day, the team needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
             facilitatorNotes: [
-              "Use this scene when you want to show the room that the participant layer is not a promo banner, but working orientation.",
+              "Use this scene when you want to show that the participant surface is not decoration, but working orientation.",
               "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
@@ -426,7 +426,7 @@ export const workshopBlueprintLocalizedContent = {
               },
               "opening-participant-preview": {
                 body:
-                  "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, a plan, and a first check.",
+                  "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, first steps, and a first runnable check.",
               },
               "opening-participant-callout": {
                 title: "What to write down immediately",
@@ -579,7 +579,7 @@ export const workshopBlueprintLocalizedContent = {
               },
               "talk-participant-preview": {
                 body:
-                  "Build Phase 1 starts now. The participant view should keep in view what is live, what comes next, and what the team should verify before it asks the agent for more motion.",
+                  "Build Phase 1 starts now. Align on what is live, what comes next, and what the team should verify before it asks the agent for more motion.",
               },
               "talk-participant-bridge": {
                 title: "Bridge into Build 1",
@@ -592,9 +592,9 @@ export const workshopBlueprintLocalizedContent = {
       },
       demo: {
         goal:
-          "Use one compact story to show a real working line: context, planning, implementation, review, and explicit fallback moves when something goes wrong.",
+          "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong.",
         roomSummary:
-          "The room should see quality rise as context, planning, and review enter the flow. The point is not magic output, model mystique, or a feature parade.",
+          "The room should see quality rise as context, bounded next steps, and change control enter the flow. The point is not magic output, model mystique, or a feature parade.",
         facilitatorPrompts: [
           "One story-driven example, not a feature list.",
           "The tool alone is not enough. The working system around it is what matters.",
@@ -607,7 +607,7 @@ export const workshopBlueprintLocalizedContent = {
         ],
         checkpointQuestions: [
           "What in this flow carries intent and constraints?",
-          "Where can you see that review is part of the process?",
+          "Where can you see that change control is part of the process?",
           "What from this do you need to be able to build in your own repo?",
         ],
         sourceRefs: [{ label: "Talk: Codex Demo Script", path: "content/talks/codex-demo-script.md" }],
@@ -616,7 +616,7 @@ export const workshopBlueprintLocalizedContent = {
             label: "Demo story",
             title: "Not another prompt. A working system.",
             body:
-              "The demo story is intentionally ordinary: a developer gets a small task and chooses not to keep nudging the model blindly, but to build a system that will support the next iteration too.",
+              "The demo story is intentionally ordinary: a developer gets a small task and chooses not to keep nudging the model blindly, but to make the repo show the goal, the next step, and how the change will be checked.",
             facilitatorNotes: [
               "Stay with one line. After 15 minutes, the audience should understand the workflow, not the tool menu.",
             ],
@@ -625,7 +625,7 @@ export const workshopBlueprintLocalizedContent = {
               "demo-hero": {
                 eyebrow: "Codex demo",
                 title: "Not another prompt. A working system.",
-                body: "One compact story where you can watch context, planning, implementation, and review reinforce each other.",
+                body: "One compact story where you can watch context, bounded next steps, implementation, and change control reinforce each other.",
               },
               "demo-story-quote": {
                 title: "The point of the demo",
@@ -637,11 +637,11 @@ export const workshopBlueprintLocalizedContent = {
             label: "Workflow steps",
             title: "From AGENTS.md to review",
             body:
-              "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, /plan, and /review it becomes a working system instead of another prompt.",
+              "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, bounded next steps, and change control it becomes a working system instead of another prompt.",
             facilitatorNotes: [
               "Have snapshots ready as fallbacks. Do not wait on generation for long.",
               "Do not drift into a feature tour or five different modalities.",
-              "After the callout, say the room-level point explicitly: quality rises fast when you add context, planning, and review.",
+              "After the callout, say the room-level point explicitly: quality rises fast when you add context, bounded next steps, and change control.",
             ],
             sourceRefs: [{ label: "Codex Demo Script: Flow", path: "content/talks/codex-demo-script.md" }],
             blocks: {
@@ -650,14 +650,14 @@ export const workshopBlueprintLocalizedContent = {
                 items: [
                   { title: "Without context the agent drifts", body: "Briefly show a weak start without guardrails." },
                   { title: "AGENTS.md with 4 elements", body: "Goal, Context, Constraints, Done When." },
-                  { title: "Let the agent plan", body: "/plan turns one vague task into bounded moves." },
-                  { title: "Small implementation slice + review", body: "Review belongs inside the workflow, not as panic recovery at the end." },
+                  { title: "Turn the work into bounded steps", body: "Use `/plan` or a short step list to make the next move legible." },
+                  { title: "Small implementation slice + change control", body: "Checks and review belong inside the workflow, not as panic recovery at the end." },
                 ],
               },
               "demo-point": {
                 title: "What to take from the demo",
                 body:
-                  "The point is not a magical result. The point is how fast quality rises once you add context, planning, and review.",
+                  "The point is not a magical result. The point is that the repo makes clear why the work matters, what comes next, and how the change will be checked.",
               },
               "demo-fallbacks": {
                 title: "Fallbacks",
@@ -673,9 +673,9 @@ export const workshopBlueprintLocalizedContent = {
             label: "Participant demo board",
             title: "Treat the demo as workflow, not a feature tour",
             body:
-              "During the demo, keep one working thread in view: where context came from, where planning happened, what got checked, and how review restored trust.",
+              "During the demo, keep one working thread in view: where context came from, how the work was broken into steps, what got checked, and how the change came back under control.",
             facilitatorNotes: [
-              "Use this when you want to remind the audience that the demo also needs learner-facing logic and a clear working line.",
+              "Use this when you want to remind the audience that the demo also needs a clear working line and a concrete learner payoff.",
             ],
             sourceRefs: [{ label: "Talk: Codex Demo Script", path: "content/talks/codex-demo-script.md" }],
             blocks: {
@@ -683,18 +683,18 @@ export const workshopBlueprintLocalizedContent = {
                 eyebrow: "Codex demo",
                 title: "Watch the working system, not only the output",
                 body:
-                  "During the demo, keep your eye on the invisible scaffolding: where context came from, where the plan appeared, what got verified, and how review turned output into something safer to trust.",
+                  "During the demo, keep your eye on the invisible scaffolding: where context came from, where the next steps became clear, what got verified, and how review turned output into something safer to trust.",
               },
               "demo-participant-steps": {
                 title: "Pay attention to",
                 items: [
                   { title: "Where context comes from", body: "AGENTS.md and the brief, not only a prompt blob." },
-                  { title: "Where planning happens", body: "Before implementation starts." },
-                  { title: "Where verification happens", body: "Review and checks are part of the workflow, not an extra." },
+                  { title: "Where the next step becomes clear", body: "A short plan or step list should be visible before implementation starts." },
+                  { title: "Where the change is checked", body: "Review and checks are part of the workflow, not an extra." },
                 ],
               },
               "demo-participant-preview": {
-                body: "Follow the working thread of the demo, not a feature checklist.",
+                body: "Watch how a small task turns into work another person could safely continue.",
               },
             },
           },
@@ -724,15 +724,15 @@ export const workshopBlueprintLocalizedContent = {
         scenes: {
           "build-1-milestones": {
             label: "Milestone board",
-            title: "By lunch, the repo should carry five proofs",
-            body: "A README, a short map in AGENTS.md, a plan, one executable check, and a first verified move. If one of those is missing, the room is not building a working system yet.",
+            title: "What should be in the repo before lunch",
+            body: "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, and a first verified move. If one of those is missing, the team is not building a working system yet.",
             facilitatorNotes: ["This is the main room cue for Build Phase 1. Keep it on the projector often."],
             sourceRefs: [
               { label: "Facilitation guide: Visible milestone board", path: "content/facilitation/master-guide.md" },
             ],
             blocks: {
               "build-1-checklist": {
-                title: "Five proofs before lunch",
+                title: "Five things before lunch",
                 items: [
                   "A README explains the project to a new reader.",
                   "AGENTS.md shows where to start and where to reach next.",
@@ -795,15 +795,15 @@ export const workshopBlueprintLocalizedContent = {
             blocks: {
               "build-1-participant-hero": {
                 eyebrow: "Build Phase 1",
-                title: "By lunch, you need a map, a plan, and first proof",
+                title: "By lunch, you need a repo map, step plan, runnable check, and first move",
                 body:
-                  "Keep a short AGENTS.md as a map, a plan, an executable check, and a first verified move in view. If you lose orientation, come back to those four things first.",
+                  "Keep a short AGENTS.md as a map, a short step plan, an executable check, and a first verified move in view. If you lose orientation, come back to those four things first.",
               },
               "build-1-participant-focus": {
                 title: "Keep in frame now",
                 items: [
                   "A README and AGENTS.md people can actually navigate.",
-                  "A plan and the nearest safe move.",
+                  "A short step plan and the nearest safe move.",
                   "A first check that separates reality from confidence.",
                   "A note another team can continue from.",
                 ],

@@ -71,7 +71,7 @@ Do oběda má být vidět:
 
 - `README`, které dává smysl cizímu člověku
 - `AGENTS.md` jako krátká mapa, ne sklad všeho
-- plan nebo jasně vedená implementační stopa, ze které je poznat další safe move
+- plán nebo jasně vedená implementační stopa, ze které je poznat další safe move
 - první explicitní check před dalším generováním
 
 ## Context is King talk
@@ -122,11 +122,11 @@ Na konci talku má být jasné:
 
 ### Viditelný milestone board
 
-Do oběda má být v repu vidět pět důkazů:
+Do oběda má být v repu vidět pět základních věcí:
 
 1. `README`, které dává smysl cizímu člověku
 2. `AGENTS.md` jako krátká mapa
-3. plan, ze kterého je poznat další safe move
+3. plán, ze kterého je poznat další safe move
 4. build/test command nebo tracer bullet
 5. první opravdu ověřený posun
 
@@ -159,9 +159,34 @@ Do oběda má být v repu vidět pět důkazů:
 ### Co normalizovat
 
 - `AGENTS.md` jako krátkou mapu, ne rostoucí skladiště všeho
-- plan jako pracovní artefakt, ne ceremonii navíc
+- plán jako pracovní artefakt, ne ceremonii navíc
 - malý průběžný úklid, když se začne šířit chaos nebo duplicity
 - převod opakovaných připomínek do repa místo dalšího ústního mentoringu
+
+## Codex demo
+
+### Cíl
+
+Ukázat Codex jako součást pracovního systému, ne jako samostatné kouzlo. Demo má vysvětlit i to, proč tenhle repo drží pohromadě: protože v repu žije záměr, mantinely, rozpad práce do kroků i způsob kontroly, ne jen v hlavě facilitátora.
+
+### Co má být vidět
+
+- jedna příběhová linka, ne přehlídka funkcí
+- repozitář, ve kterém je vidět `README`, `AGENTS.md`, rozpad práce do kroků a způsob, jak změnu zkontrolujete
+- kontrast mezi slabým startem bez kontextu a prací, která má mapu a další safe move
+- krátké ukotvení workshop skillu: `harness skill install`, první command a proč to šetří ústní rescue
+
+### Co explicitně říct
+
+- „Tohle není demo pro demo. Tohle je způsob, jak vznikal i tenhle workshopový repo systém.“
+- „Když z repa není poznat, proč se změna dělá, jaký je další krok a podle čeho ji zkontrolujete, další člověk ani další agent nenaváže bezpečně.“
+- „Codex je v tomhle důležitý, ale není to pointa sám o sobě. Pointa je harness kolem něj.“
+
+### Co neukazovat
+
+- pět různých módů Codexu za sebou
+- dlouhé čekání na generování bez komentáře
+- repo, které není continuation-ready a slouží jen jako jednorázový sandbox
 
 ## Intermezza
 
@@ -251,3 +276,17 @@ Na konci dne chceme, aby si lidé odnesli tři věci:
 1. jeden signál, který chtějí zavést natrvalo
 2. jednu slabinu, kterou už příště nenechají jen v hovoru
 3. jeden konkrétní tah pro příští týden
+
+### `Monday commitments` — sdílený artefakt
+
+Reflexe bez zápisu se do pondělí většinou neudrží. Proto na samém konci dne:
+
+- každý účastník napíše jednu větu ve tvaru: **„Příští týden udělám [X], protože [důvod z dnešního dne]."**
+- věty se napíší na papírek, sticky note nebo přímo do sdíleného dokumentu
+- facilitátor je sesbírá a udělá z nich jeden krátký sdílený seznam, který si tým odnese
+- seznam není hodnocení ani soutěž. Je to jediný artefakt z dnešního dne, který prokáže, že reflexe skutečně něco změnila
+
+Facilitátorův tah:
+- věty vybízejte k tomu, aby byly konkrétní (ne „budu lépe pracovat s agenty", ale „do AGENTS.md svého hlavního repa napíšu 4 elementy: goal, context, constraints, done when")
+- když někdo napíše něco velmi obecného, zeptejte se: „Jaký je první konkrétní tah, který to spustí?"
+- commitmenty nepublikujte jmenovitě mimo room; artefakt patří týmu, ne marketingu

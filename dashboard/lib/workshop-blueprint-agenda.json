@@ -311,10 +311,10 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "Na startu dne držte v hlavě smysl, další blok a první důkaz",
-          "body": "Na začátku dne tým nepotřebuje promo banner. Potřebuje v jednom pohledu vědět, proč tu je, co přijde po úvodu a co má být po prvním buildu skutečně vidět v repu.",
+          "title": "Na startu dne držte v hlavě smysl, další blok a první krok v repu",
+          "body": "Na začátku dne tým potřebuje v jednom pohledu vidět, proč tu je, co přijde po úvodu a co má být po prvním buildu skutečně vidět v repu.",
           "facilitatorNotes": [
-            "Tuhle scénu použij, když chceš místnosti ukázat, že vrstva pro účastníky není promo banner, ale pracovní orientace.",
+            "Tuhle scénu použij, když chceš ukázat, že participant plocha není ozdoba, ale pracovní orientace.",
             "Pojmenuj tři věci, které mají účastníci vidět v jednom pohledu: co běží teď, co přijde dál a co má vzniknout v repu."
           ],
           "sourceRefs": [
@@ -334,7 +334,7 @@
             {
               "id": "opening-participant-preview",
               "type": "participant-preview",
-              "body": "Teď běží úvod. Za chvíli přijde blok Context is King. Po něm se vracíte k repu pro mapu, plan a první ověření."
+              "body": "Teď běží úvod. Za chvíli přijde blok Context is King. Po něm se vracíte k repu pro mapu, první kroky a první spustitelné ověření."
             },
             {
               "id": "opening-participant-callout",
@@ -548,7 +548,7 @@
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Teď začíná Build 1. Pohled pro účastníky má držet v záběru právě tohle: co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
+              "body": "Teď začíná Build 1. Srovnejte si, co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
             },
             {
               "id": "talk-participant-bridge",
@@ -568,8 +568,8 @@
       "startTime": "10:05",
       "kind": "shared",
       "intent": "demo",
-      "goal": "Na jedné příběhové ukázce předvést workflow s AGENTS.md, plánem, implementací a review jako součástí běžné práce.",
-      "roomSummary": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když přidáme kontext, plán a review. Nejde o kouzelný výsledek ani přehlídku funkcí.",
+      "goal": "Na jedné příběhové ukázce předvést workflow s AGENTS.md, rozpadem práce do kroků, malou implementací a kontrolou změny jako součástí běžné práce.",
+      "roomSummary": "Publikum má během krátkého dema pochopit, že kvalita rychle roste, když do práce přidáme kontext, rozpad kroků a kontrolu změny. Nejde o kouzelný výsledek ani přehlídku funkcí.",
       "facilitatorPrompts": [
         "Jedna příběhová ukázka, ne seznam funkcí.",
         "Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj.",
@@ -582,7 +582,7 @@
       ],
       "checkpointQuestions": [
         "Co v tomhle flow nese záměr a omezení?",
-        "Kde je vidět, že review je součást procesu?",
+        "Kde je vidět, že kontrola změny je součást procesu?",
         "Co z toho musíte umět postavit i ve vlastním repu?"
       ],
       "sourceRefs": [
@@ -600,7 +600,7 @@
           "intent": "demo",
           "chromePreset": "minimal",
           "title": "Ne další prompt. Pracovní systém.",
-          "body": "Jsem vývojář, dostal jsem malý úkol a nechci s agentem jen zkoušet další prompt. Chci postavit systém, který unese další iterace.",
+          "body": "Jsem vývojář, dostal jsem malý úkol a nechci s agentem jen zkoušet další prompt. Chci z repa udělat místo, kde je jasný cíl, další krok i způsob kontroly změny.",
           "facilitatorNotes": [
             "Drž se jedné linky. Publikum má po 15 minutách chápat workflow, ne nástrojové menu."
           ],
@@ -616,7 +616,7 @@
               "type": "hero",
               "eyebrow": "Codex demo",
               "title": "Ne další prompt. Pracovní systém.",
-              "body": "Jedna příběhová ukázka, ve které je vidět kontext, plán, implementace i review."
+              "body": "Jedna příběhová ukázka, ve které je vidět kontext, rozpad práce do kroků, implementace i kontrola změny."
             },
             {
               "id": "demo-story-quote",
@@ -634,11 +634,11 @@
           "intent": "walkthrough",
           "chromePreset": "agenda",
           "title": "Od AGENTS.md k review",
-          "body": "Krátký sled kroků, který jde zopakovat i u stolu: bez kontextu to drhne, s `AGENTS.md`, `/plan` a `/review` vzniká pracovní systém, ne jen další prompt.",
+          "body": "Krátký sled kroků, který jde zopakovat i u stolu: bez kontextu to drhne, s `AGENTS.md`, rozpadem práce do kroků a kontrolou změny vzniká pracovní systém, ne jen další prompt.",
           "facilitatorNotes": [
             "Měj připravené snapshoty pro fallbacky. Nečekej dlouho na generování.",
             "Neukazuj přehlídku funkcí ani pět různých režimů práce.",
-            "Po calloutu explicitně řekni pointu pro místnost: sledujeme, jak rychle roste kvalita, když přidáme kontext, plán a review."
+            "Po calloutu explicitně řekni pointu pro místnost: sledujeme, jak rychle roste kvalita, když přidáme kontext, rozpad práce a kontrolu změny."
           ],
           "sourceRefs": [
             {
@@ -661,12 +661,12 @@
                   "body": "Goal, Context, Constraints, Done When."
                 },
                 {
-                  "title": "Nech agenta plánovat",
-                  "body": "/plan rozpadne práci na bezpečné kroky."
+                  "title": "Rozpad práce do kroků",
+                  "body": "Pomocí `/plan` nebo jiného krátkého plánu ukážete, co přijde dál a proč."
                 },
                 {
-                  "title": "Malý kus implementace + review",
-                  "body": "Review je součást workflow, ne nouzová brzda na konci."
+                  "title": "Malý kus implementace + kontrola změny",
+                  "body": "Kontrola změny je součást workflow, ne nouzová brzda na konci."
                 }
               ]
             },
@@ -675,7 +675,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Co si z dema odnést",
-              "body": "Nejde o kouzelný výsledek. Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán a review."
+              "body": "Nejde o kouzelný výsledek. Jde o to ukázat, že z repa je poznat, proč se něco dělá, co přijde dál a jak změnu zkontrolujete."
             },
             {
               "id": "demo-fallbacks",
@@ -708,9 +708,9 @@
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Demo jako workflow, ne přehlídka funkcí",
-          "body": "Během dema si držte jednu pracovní linku: odkud přišel kontext, kde vznikl plán, co se ověřilo a jak review vrací důvěru.",
+          "body": "Během dema si držte jednu pracovní linku: odkud přišel kontext, jak se práce rozpadla na kroky, co se ověřilo a jak se změna vrací pod kontrolu.",
           "facilitatorNotes": [
-            "Použij ji, když chceš publiku připomenout, že i demo má mít logiku pro účastníky a jasnou pracovní linku."
+            "Použij ji, když chceš publiku připomenout, že i demo má mít jasnou pracovní linku a konkrétní přínos pro tým."
           ],
           "sourceRefs": [
             {
@@ -724,7 +724,7 @@
               "type": "hero",
               "eyebrow": "Codex demo",
               "title": "Sledujte pracovní systém, ne jen výsledek",
-              "body": "Během dema držte v hlavě jednu linku: odkud se bere kontext, kde vzniká plán, co se ověřuje a jak review vrací důvěru."
+              "body": "Během dema držte v hlavě jednu linku: odkud se bere kontext, kde se práce rozpadá na kroky, co se ověřuje a jak se změna vrací pod kontrolu."
             },
             {
               "id": "demo-participant-steps",
@@ -736,19 +736,19 @@
                   "body": "AGENTS.md a zadání, ne jen prompt blob."
                 },
                 {
-                  "title": "Kde se plánuje",
-                  "body": "Než se začne implementovat."
+                  "title": "Kde je vidět další krok",
+                  "body": "Krátký plán nebo rozpad práce do kroků musí být čitelný dřív, než se začne implementovat."
                 },
                 {
-                  "title": "Kde se ověřuje",
-                  "body": "Review a check jsou součást workflow, ne dodatek."
+                  "title": "Kde se změna kontroluje",
+                  "body": "Check a review patří do workflow, ne jako dodatek na konec."
                 }
               ]
             },
             {
               "id": "demo-participant-preview",
               "type": "participant-preview",
-              "body": "Sledujte pracovní linku dema, ne seznam funkcí."
+              "body": "Sledujte, jak se z malého úkolu stává práce, kterou může převzít další člověk."
             }
           ]
         }
@@ -761,7 +761,7 @@
       "startTime": "10:30",
       "kind": "team",
       "intent": "build",
-      "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plan, nejmenší ověření a první ověřený výstup.",
+      "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
       "roomSummary": "Facilitátor má držet viditelnou tabuli milníků, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
       "facilitatorPrompts": [
         "Nejdřív coach, pak mentor, učitel až jako poslední možnost.",
@@ -792,8 +792,8 @@
           "sceneType": "checkpoint",
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
-          "title": "Do oběda musí být v repu pět důkazů",
-          "body": "README, krátká mapa v AGENTS.md, plan, spustitelný check a první ověřený posun. Když něco z toho chybí, room ještě nestaví pracovní systém.",
+          "title": "Co má být v repu před obědem",
+          "body": "README, krátká mapa v AGENTS.md, plán kroků, spustitelné ověření a první ověřený posun. Když něco z toho chybí, tým ještě nestaví pracovní systém.",
           "facilitatorNotes": [
             "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru."
           ],
@@ -807,7 +807,7 @@
             {
               "id": "build-1-checklist",
               "type": "checklist",
-              "title": "Pět důkazů před obědem",
+              "title": "Pět věcí před obědem",
               "items": [
                 "README řekne cizímu člověku, co tenhle projekt dělá.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
@@ -907,8 +907,8 @@
               "id": "build-1-participant-hero",
               "type": "hero",
               "eyebrow": "Build fáze 1",
-              "title": "Do oběda potřebujete mapu, plán a první důkaz",
-              "body": "Krátké AGENTS.md jako mapu, plan, spustitelné ověření a první ověřený posun. Když se ztratíte, vraťte se právě k těmhle čtyřem věcem."
+              "title": "Do oběda potřebujete mapu repa, plán kroků, spustitelné ověření a první posun",
+              "body": "Krátké AGENTS.md jako mapu, plán dalších kroků, spustitelné ověření a první ověřený posun. Když se ztratíte, vraťte se právě k těmhle čtyřem věcem."
             },
             {
               "id": "build-1-participant-focus",
@@ -916,7 +916,7 @@
               "title": "Teď držte v záběru",
               "items": [
                 "README a AGENTS.md, ze kterých se dá orientovat.",
-                "Plan a nejbližší bezpečný krok.",
+                "Plán dalších kroků a nejbližší bezpečný krok.",
                 "První ověření, které odliší realitu od dojmu.",
                 "Poznámku, ze které naváže i cizí tým."
               ]
@@ -1247,7 +1247,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "První úkol po rotaci není kódovat",
-          "body": "Začněte README, AGENTS.md a planem. Nejdřív si udělejte mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
+          "body": "Začněte README, AGENTS.md a plánem kroků. Nejdřív si udělejte mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
           "facilitatorNotes": [
             "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu.",
             "Dohlédni, aby se vlastní diagnóza objevila dřív než první editace."
@@ -1265,7 +1265,7 @@
               "title": "Prvních 10 minut nového týmu",
               "items": [
                 {
-                  "title": "Začněte README, AGENTS.md a planem",
+                  "title": "Začněte README, AGENTS.md a plánem kroků",
                   "body": "Nepřeskakujte mapu repa."
                 },
                 {
@@ -1316,7 +1316,7 @@
               "type": "hero",
               "eyebrow": "Odpolední převzetí",
               "title": "Nový tým začíná mapou, ne improvizací",
-              "body": "Nejdřív čtěte README, AGENTS.md a plan. Pak napište, co pomáhá, co chybí, co je rizikové a co je další bezpečný krok."
+              "body": "Nejdřív čtěte README, AGENTS.md a plán kroků. Pak napište, co pomáhá, co chybí, co je rizikové a co je další bezpečný krok."
             },
             {
               "id": "rotation-participant-steps",
@@ -1325,7 +1325,7 @@
               "items": [
                 {
                   "title": "Přečtěte mapu repa",
-                  "body": "Začněte README, AGENTS.md a planem."
+                  "body": "Začněte README, AGENTS.md a plánem kroků."
                 },
                 {
                   "title": "Napište vlastní diagnózu",

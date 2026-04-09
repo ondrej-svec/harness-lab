@@ -11,12 +11,12 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 ## Po rotaci: opravte signál, ne jen feature
 
-- `Použijte /plan před kódováním` — ukažte, z jakého plánu tým vycházel, co z něj opravdu plní a jaký je další bezpečný krok.
+- `Použijte /plan před kódováním` — ukažte, z jakého plánu kroků tým vycházel, co z něj opravdu plní a jaký je další bezpečný krok.
 - `Rozdělte práci do více vláken` — zkuste dvě nezávislé linie práce a jednoho člověka na integraci.
 - `Delegujte úkol a vraťte se ke kontrole za 10 minut` — neskákejte agentovi do každého kroku, kontrolujte až výsledek.
-- `Přidejte nejmenší užitečné ověření` — vytvořte RED test, tracer bullet nebo jednoduchý browser check dřív, než agent dostane víc autonomie.
+- `Přidejte nejmenší užitečné ověření` — zapište done criteria jako spustitelný check (unit test, tracer bullet nebo jednoduchý browser check) dřív, než agent dostane víc autonomie.
 - `Napište diagnózu po handoffu` — pojmenujte, co pomohlo, co chybělo a jaký je další safe move.
-- `Opravte jeden slabý signál v repu` — README, AGENTS.md, plan, runbook nebo check.
+- `Opravte jeden slabý signál v repu` — README, AGENTS.md, plán, runbook nebo check.
 
 ## Advanced
 

@@ -2,7 +2,7 @@
 title: "feat: workshop blueprint content excellence and readiness"
 type: plan
 date: 2026-04-09
-status: in_progress
+status: complete
 brainstorm: ../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md
 confidence: medium
 ---
@@ -258,6 +258,8 @@ Current canonical review findings from live workshop review:
 - the workshop-skill install/use moment is still not explicit enough in the shared workshop flow and should not be discoverable only through later CTAs or fallback links
 - the broader rewrite exposed a systemic Czech-quality problem on visible surfaces: some headings and callouts still read like half-translated workshop shorthand rather than natural Czech for a developer room
 - visible Czech labels that borrow internal English terms such as `launch` or `check` without a strong reason should be treated as release failures, not as late polish
+- visible workshop copy gets weak when it names tool shorthands like plain `plan` or vague phrases like "review stopa" instead of the concrete repo signal the audience should understand
+- file-mode sample runtime snapshots can drift away from the maintained blueprint source pair and must be resynced when blueprint-owned agenda content changes, otherwise local review paths can display stale text even when the blueprint is fixed
 
 Execution consequence:
 
@@ -498,7 +500,7 @@ This section is a summary view only. The phased implementation section below is 
   - Replace them with portable repo-relative or instance-appropriate references.
   - Add a review check for future upstream-specific leaks.
 
-- [ ] Audit the full workshop content system against the target outcome.
+- [x] Audit the full workshop content system against the target outcome.
   - Classify flagship room scenes.
   - Classify participant mirrors.
   - Classify facilitator support beats, including `facilitatorRunner` coverage and quality.
@@ -524,16 +526,16 @@ This section is a summary view only. The phased implementation section below is 
   - [x] Make the micro-exercise contract explicit: facilitator demo/contrast vs. participant action, and align the workshop-skill bridge to that choice.
   - [x] Add one explicit workshop-skill install/use moment to the shared workshop flow so participants do not discover it only through later CTAs or fallbacks.
 
-- [ ] Run the proof gates before propagation.
-  - [ ] Cold-read the proof slice with a non-Ondrej reader.
-  - [ ] Run spoken-readability review in Czech.
-  - [ ] Run visible-Czech idiom and headline review for room and participant surfaces.
-  - [ ] Check participant usefulness in the mirror.
-  - [ ] Check mobile glanceability for participant-facing use.
-  - [ ] Check projected-room legibility for presenter-facing use.
+- [x] Run the proof gates before propagation.
+  - [x] Cold-read the proof slice with a non-Ondrej reader. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Run spoken-readability review in Czech. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Run visible-Czech idiom and headline review for room and participant surfaces. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Check participant usefulness in the mirror. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Check mobile glanceability for participant-facing use. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Check projected-room legibility for presenter-facing use. Deferred by explicit user instruction when closing the plan on 2026-04-09.
   - [x] Verify that presenter-owned visible chrome no longer exposes backstage authoring language on projected slides.
-  - [ ] Check English/Czech parity.
-  - [ ] Check portability and public-safe references.
+  - [x] Check English/Czech parity. Deferred by explicit user instruction when closing the plan on 2026-04-09.
+  - [x] Check portability and public-safe references. Deferred by explicit user instruction when closing the plan on 2026-04-09.
   - [x] Confirm opening and talk room-facing slides no longer display facilitator/backstage labels as visible content.
 
 - [x] Propagate the validated pattern to the other flagged flagship moments.
@@ -636,6 +638,8 @@ Tasks:
 - [x] make quote attribution and source-provenance treatment consistent with the authority/citation doctrine
 - [x] clarify the micro-exercise ownership and participant/workshop-skill bridge
 - [x] define the explicit participant install/use moment for the workshop skill in the shared workshop flow
+- [x] align participant-facing reference surfaces, challenge cards, and Codex-demo wording so they describe concrete repo signals instead of tool-internal shorthand
+- [x] resync file-mode sample runtime agenda snapshots so local sample review paths reflect the maintained blueprint copy instead of stale imported text
 
 Exit criteria:
 
@@ -643,6 +647,7 @@ Exit criteria:
 - the `opening` to `talk` bridge no longer leaks facilitator meta language into projected slides
 - projection-visible presenter chrome obeys the same visible-content rule as authored scenes and no longer injects backstage labels by default
 - the visible Czech labels in the proof slice read as natural workshop Czech, not as translated taxonomy
+- local file-mode sample workshop states no longer override the blueprint with stale agenda text during content review
 - source provenance and external authority are clearly separated on visible surfaces
 - participants can tell when the workshop skill enters the day and what the micro-exercise expects from them
 - the team has evidence that the new pattern works before broad rollout
@@ -699,6 +704,10 @@ Exit criteria:
 
 - future maintainers can continue the content system without re-deriving the editorial bar
 - future maintainers can tell whether the system is locally polished or genuinely ready to run end-to-end
+
+## Closeout Note
+
+This plan is marked `complete` by explicit user instruction on 2026-04-09 after the implementation, source-of-truth alignment, renderer cleanup, sample-runtime sync, and automated verification work landed. The remaining human proof gates were consciously deferred rather than actually performed. Treat them as review debt for the next live workshop prep, not as evidence that those checks already happened.
 
 ## References
 

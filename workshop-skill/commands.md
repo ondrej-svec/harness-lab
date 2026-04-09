@@ -34,7 +34,7 @@
 ## Kdy co použít
 
 - Když nevíte, kde začít: `workshop reference`
-- Když je zadání rozmazané: `workshop brief`, potom `brainstorm` nebo `plan`
+- Když je zadání rozmazané: `workshop brief`, potom `brainstorm` nebo `$plan`
 - Když repu chybí kontext: `workshop template`
 - Když si nejste jistí workflow: `workshop commands`
 - Když chcete materiály i po workshopu: `workshop resources`, `workshop follow-up`, `workshop gallery`
