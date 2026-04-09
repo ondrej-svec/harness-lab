@@ -291,6 +291,14 @@ Presenter scenes are agenda-linked, room-facing outputs for the facilitator and 
 - delete a local scene
 - read and optionally edit `facilitatorNotes`, `sourceRefs`, and `blocks`
 
+Rich-scene rules:
+
+- keep presenter scenes agenda-linked; do not invent a separate slide-deck source of truth
+- prefer one dominant voice and one main idea per scene
+- for reusable visuals, prefer reviewed local blueprint assets and metadata over ad hoc remote image URLs
+- runtime edits remain instance-local until a maintainer deliberately publishes them back into the repo
+- when working in the source repo, use the maintainer playbook in `docs/presenter-rich-scene-authoring.md` for drafting, refinement, and publish-back
+
 Per-instance route:
 
 ```http

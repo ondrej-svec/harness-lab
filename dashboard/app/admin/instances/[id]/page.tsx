@@ -64,6 +64,7 @@ import {
   adminPrimaryButtonClassName,
   adminSecondaryButtonClassName,
 } from "../../admin-ui";
+import { SceneBlockEditor } from "./scene-block-editor";
 
 type SourceRef = {
   path: string;
@@ -2122,7 +2123,7 @@ function PresenterSceneCreateSheetBody({
     <form action={addPresenterSceneAction} className="space-y-4">
       <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
       <input name="agendaItemId" type="hidden" value={item.id} />
-      <PresenterSceneFormFields copy={copy} />
+      <PresenterSceneFormFields copy={copy} lang={lang} />
       <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>{copy.createSceneButton}</AdminSubmitButton>
     </form>
   );
@@ -2154,7 +2155,7 @@ function PresenterSceneEditorSheetBody({
         <AdminActionStateFields lang={lang} section={section} instanceId={instanceId} />
         <input name="agendaItemId" type="hidden" value={item.id} />
         <input name="sceneId" type="hidden" value={scene.id} />
-        <PresenterSceneFormFields copy={copy} scene={scene} />
+        <PresenterSceneFormFields copy={copy} lang={lang} scene={scene} />
         <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>{copy.saveSceneButton}</AdminSubmitButton>
       </form>
 
@@ -2202,9 +2203,11 @@ function PresenterSceneEditorSheetBody({
 
 function PresenterSceneFormFields({
   copy,
+  lang,
   scene,
 }: {
   copy: (typeof adminCopy)[UiLanguage];
+  lang: UiLanguage;
   scene?: RichPresenterScene;
 }) {
   return (
@@ -2289,14 +2292,8 @@ function PresenterSceneFormFields({
         />
       </div>
       <div>
-        <FieldLabel htmlFor="scene-blocks">{copy.sceneFieldBlocks}</FieldLabel>
-        <textarea
-          id="scene-blocks"
-          name="blocks"
-          rows={12}
-          defaultValue={stringifyJson(scene?.blocks ?? [])}
-          className={`${adminInputClassName} mt-2 font-mono text-xs leading-6`}
-        />
+        <FieldLabel htmlFor="scene-block-editor">{copy.sceneFieldBlocks}</FieldLabel>
+        <SceneBlockEditor initialBlocks={scene?.blocks ?? []} inputName="blocks" lang={lang} />
         <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{copy.sceneJsonHint}</p>
       </div>
     </>

@@ -8,6 +8,8 @@ Runtime state never auto-promotes back into the public blueprint.
 
 Reusable improvements are published through deliberate repo edits.
 
+For richer presenter scene work, use [`presenter-rich-scene-authoring.md`](presenter-rich-scene-authoring.md) for the proof gate, asset model, and promotion checklist.
+
 ## Workflow
 
 1. Observe a runtime issue or improvement during a live workshop.

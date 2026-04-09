@@ -47,11 +47,12 @@
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "minimal",
-          "title": "Nestavíme jen výsledek",
-          "body": "Stavíme pracovní systém pro práci s AI coding agenty. Důkazem dne nebude nejhezčí prompt, ale repo a workflow, na které se dá navázat.",
+          "title": "Dnes nestavíme demo pro dnešek",
+          "body": "Stavíme pracovní systém pro práci s AI coding agenty. Důkazem dne nebude nejhezčí prompt, ale repo a workflow, na které se dá navázat bez vašeho hlasového komentáře.",
           "facilitatorNotes": [
-            "Začni klidně, ale ostře. Musí zaznít, že předání bez dovysvětlování je součást zadání a že kontext zapsaný v repu je týmová infrastruktura.",
-            "Nepřetahuj to do tool marketingu. Jde o disciplínu."
+            "Začni klidně, ale ostře. Hlavní beat: handoff bez dovysvětlování je součást zadání, ne až odpolední bonus.",
+            "Neprodávej nástroj. Rámuj disciplínu: co dnes nezapíšeme do repa, to se při převzetí rozpadne.",
+            "Po citátu udělej krátkou pauzu a nech větu dosednout dřív, než přejdeš k pracovnímu kontraktu."
           ],
           "sourceRefs": [
             {
@@ -64,24 +65,124 @@
               "id": "opening-hero",
               "type": "hero",
               "eyebrow": "Harness Lab",
-              "title": "Dnes nestavíme jen výsledek",
+              "title": "Dnes nestavíme demo pro dnešek",
               "body": "Stavíme repo, workflow a pracovní instrukce pro práci s AI coding agenty. Cílem dne je systém, který unese handoff bez ústního dovysvětlování."
-            },
-            {
-              "id": "opening-principles",
-              "type": "bullet-list",
-              "title": "Co musí zaznít",
-              "items": [
-                "Nejde o soutěž v promptování.",
-                "Po vás má zůstat použitelný kontext v repu.",
-                "Odpolední návaznost prověří, jestli repo opravdu unese převzetí dalším týmem."
-              ]
             },
             {
               "id": "opening-quote",
               "type": "quote",
               "quote": "Dnes nejde o to být nejrychlejší. Jde o to předat práci tak, aby ji cizí tým dokázal převzít a posunout dál.",
-              "attribution": "Harness Lab facilitation framing"
+              "attribution": "Harness Lab opening framing"
+            },
+            {
+              "id": "opening-framing-callout",
+              "type": "callout",
+              "tone": "warning",
+              "title": "Když to žije jen u stolu, ještě to neexistuje",
+              "body": "Pravidlo vyřčené dvakrát nahlas patří do repa. Odpolední návaznost nemá odhalit, kdo byl výřečnější, ale jestli repo mluví samo za sebe."
+            }
+          ]
+        },
+        {
+          "id": "opening-handoff-loop",
+          "label": "Co musí po týmu zůstat",
+          "sceneType": "briefing",
+          "intent": "framing",
+          "chromePreset": "agenda",
+          "title": "Repo musí unést převzetí",
+          "body": "Předání není závěr dne. Je to průběžný tlak na všechno, co dnes vytvoříte.",
+          "facilitatorNotes": [
+            "Použij vizuál jako mapu, ne jako dekoraci. Ukaž smyčku po směru hodin a ke každému uzlu řekni jednu větu.",
+            "Nesjížděj do detailu tooling stacku. Pointa je, že záměr, kontext, ověření a další safe move musí držet pohromadě.",
+            "Zakonči scénu větou, že handoff je průběžná podmínka práce, ne ceremoniální poslední krok."
+          ],
+          "sourceRefs": [
+            {
+              "label": "Facilitační průvodce: Otevření a welcome",
+              "path": "content/facilitation/master-guide.md"
+            },
+            {
+              "label": "Talk: Context is King",
+              "path": "content/talks/context-is-king.md"
+            }
+          ],
+          "blocks": [
+            {
+              "id": "opening-loop-image",
+              "type": "image",
+              "src": "/blueprint/opening/opening-continuation-loop.svg",
+              "alt": "Diagram čtyř navazujících uzlů: záměr, kontext v repu, ověření a další tým.",
+              "caption": "Jedna pracovní smyčka pro celý den: záměr pojmenujete, kontext zapíšete, výsledek ověříte a další tým z něj musí umět pokračovat.",
+              "sourceLabel": "Harness Lab blueprint asset"
+            },
+            {
+              "id": "opening-loop-steps",
+              "type": "steps",
+              "title": "Čtyři uzly, které musí držet pohromadě",
+              "items": [
+                {
+                  "title": "Pojmenovaný záměr",
+                  "body": "Co přesně dnes děláte a proč je to důležité právě teď."
+                },
+                {
+                  "title": "Kontext v repu",
+                  "body": "AGENTS.md, plan, runbook nebo skill. Ne jen chat a hlava."
+                },
+                {
+                  "title": "Explicitní ověření",
+                  "body": "Test, tracer bullet nebo jiný spustitelný check, který drží práci při zemi."
+                },
+                {
+                  "title": "Další bezpečný krok",
+                  "body": "Cizí tým ví, odkud pokračovat bez ústního rescue."
+                }
+              ]
+            },
+            {
+              "id": "opening-loop-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Pointa pro místnost",
+              "body": "Handoff není závěrečný ceremoniál. Je to kvalita pracovního systému v každém okamžiku dne."
+            }
+          ]
+        },
+        {
+          "id": "opening-room-contract",
+          "label": "Kontrakt pro dnešek",
+          "sceneType": "checkpoint",
+          "intent": "checkpoint",
+          "chromePreset": "checkpoint",
+          "title": "Jak vypadá dobrý začátek dne",
+          "body": "Tým po prvním bloku nepotřebuje víc energie. Potřebuje viditelné pracovní artefakty, které drží směr a snižují improvizaci.",
+          "facilitatorNotes": [
+            "Tohle není motivační slide. Je to pracovní kontrakt, ke kterému se dopoledne vracíš.",
+            "Když některý řádek chybí, nepřeskakuj ho ústním mentoringem. Pomoz týmu vytvořit nejmenší verzi artefaktu."
+          ],
+          "sourceRefs": [
+            {
+              "label": "Facilitační průvodce: Build fáze 1",
+              "path": "content/facilitation/master-guide.md"
+            }
+          ],
+          "blocks": [
+            {
+              "id": "opening-contract-checklist",
+              "type": "checklist",
+              "title": "Do oběda má být vidět",
+              "items": [
+                "Repo a README dávají smysl cizímu člověku.",
+                "AGENTS.md je krátká mapa, ne skladiště všeho.",
+                "Existuje plan a je z něj poznat další safe move.",
+                "Tým má nejmenší užitečný check před dalším generováním."
+              ]
+            },
+            {
+              "id": "opening-contract-callout",
+              "type": "callout",
+              "tone": "success",
+              "title": "Facilitátorský tah",
+              "body": "Když tým nemá ověření, netlač další feature. Tlač nejmenší test nebo tracer bullet, který vrátí práci na zem."
             }
           ]
         },
@@ -92,9 +193,10 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Otázky, které budeš vracet celý den",
-          "body": "Používej krátké otázky, které týmy vrací k repu, k ověření a k dalšímu bezpečnému kroku.",
+          "body": "Používej krátké otázky, které týmy vrací k repu, k ověření a k dalšímu bezpečnému kroku místo dalšího improvizovaného mentoringu.",
           "facilitatorNotes": [
-            "Tuhle scénu si můžeš otevřít kdykoli jako rychlou oporu pro coaching."
+            "Tuhle scénu si můžeš otevřít kdykoli jako rychlou oporu pro coaching.",
+            "Nech otázky pracovat. Neodpovídej na ně za tým, pokud to není skutečný blocker."
           ],
           "sourceRefs": [
             {
@@ -113,6 +215,13 @@
                 "Je AGENTS.md mapa, nebo už dump?",
                 "Jaký je další bezpečný krok pro cizího člověka nebo agenta?"
               ]
+            },
+            {
+              "id": "opening-coaching-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Co tím sledujeme",
+              "body": "Facilitátor nehlídá jen pokrok. Hlídá, jestli je z repa poznat, co je hotové, co je hypotéza a co má číst další tým jako první."
             }
           ]
         },
@@ -125,7 +234,8 @@
           "title": "Jak číst začátek dne",
           "body": "Vrstva pro účastníky na startu dne drží smysl workshopu, to, co právě běží, a signál, že důležité věci mají být zapsané v repu, ne jen vyřčené u stolu.",
           "facilitatorNotes": [
-            "Tuhle scénu použij, když chceš místnosti ukázat, že vrstva pro účastníky není promo banner, ale pracovní orientace."
+            "Tuhle scénu použij, když chceš místnosti ukázat, že vrstva pro účastníky není promo banner, ale pracovní orientace.",
+            "Pojmenuj tři věci, které mají účastníci vidět v jednom pohledu: co běží teď, co přijde dál a co má vzniknout v repu."
           ],
           "sourceRefs": [
             {
@@ -142,19 +252,16 @@
               "body": "Vrstva pro účastníky má od začátku držet stejnou logiku jako facilitátor: aktuální fázi, další krok a disciplínu, že co není v repu, není spolehlivě předatelné."
             },
             {
-              "id": "opening-participant-focus",
-              "type": "bullet-list",
-              "title": "Na co se naladit",
-              "items": [
-                "Kontext zapsaný přímo v repu je součást práce, ne doplněk.",
-                "Další krok má být bezpečný a dohledatelný.",
-                "Odpolední návaznost prověří, co po týmu opravdu zůstalo."
-              ]
-            },
-            {
               "id": "opening-participant-preview",
               "type": "participant-preview",
-              "body": "Vrstva pro účastníky drží začátek dne čitelně: co právě běží, co přijde dál a proč je důležité ukládat pravidla do repa."
+              "body": "Začátek dne musí být čitelný v jednom pohledu: co právě běží, co přijde dál a proč má důležitý kontext žít v repu."
+            },
+            {
+              "id": "opening-participant-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Co má zaznít i bez facilitátora",
+              "body": "Kontext v repu je součást práce. Další krok má být bezpečný a dohledatelný. Odpoledne prověří, co po týmu opravdu zůstalo."
             }
           ]
         }

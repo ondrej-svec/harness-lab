@@ -47,12 +47,18 @@ describe("workshop-data", () => {
   it("resolves localized agenda and presenter content for an English-content instance", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const opening = state.agenda[0];
+    const handoffScene = opening?.presenterScenes.find((scene) => scene.id === "opening-handoff-loop");
     const participantScene = opening?.presenterScenes.find((scene) => scene.id === "opening-participant-view");
 
     expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(opening?.title).toBe("Opening and orientation");
     expect(opening?.goal).toContain("Set the tone for the day");
+    expect(handoffScene?.title).toBe("The repo has to survive inheritance");
+    expect(handoffScene?.blocks[0]).toMatchObject({
+      id: "opening-loop-image",
+      src: "/blueprint/opening/opening-continuation-loop.svg",
+    });
     expect(participantScene?.title).toBe("How to read the start of the day");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",
@@ -109,7 +115,7 @@ describe("workshop-data", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: blueprintAgenda.phases[0]?.scenes[0]?.id,
-          title: "We are not building output alone",
+          title: "Today we are not building a demo for today",
         }),
       ]),
     );

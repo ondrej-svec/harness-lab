@@ -307,6 +307,21 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
+  test("renders the opening proof scene with reviewed asset, source strip, and stable ipad layout", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-handoff-loop&lang=en");
+
+    await expect(page.getByRole("heading", { name: "Úvod a naladění" })).toBeVisible();
+    await expect(page.getByText("Co musí po týmu zůstat")).toBeVisible();
+    await expect(page.getByText("Harness Lab blueprint asset")).toBeVisible();
+    await expect(page.getByText("source material")).toBeVisible();
+    await expect(page.locator('img[src="/blueprint/opening/opening-continuation-loop.svg"]')).toBeVisible();
+
+    await expect(page).toHaveScreenshot("presenter-opening-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+  });
+
   test("facilitators API returns list with auth", async ({ request }) => {
     const response = await request.get("/api/admin/facilitators");
     expect(response.status()).toBe(200);

@@ -162,6 +162,29 @@ describe("PresenterPage", () => {
     expect(html).toContain(adminCopy.en.openLinkLabel);
   });
 
+  it("renders the richer opening proof scene with tone-aware callouts and source refs", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
+    state.teams = structuredClone(seedWorkshopState.teams.slice(0, 1));
+    getWorkshopState.mockResolvedValue(state);
+    getInstance.mockResolvedValue({
+      ...structuredClone(sampleWorkshopInstances[0]),
+      workshopMeta: state.workshopMeta,
+    });
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-handoff-loop" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("What must remain after a team");
+    expect(html).toContain("/blueprint/opening/opening-continuation-loop.svg");
+    expect(html).toContain("data-tone=\"info\"");
+    expect(html).toContain("content/talks/context-is-king.md");
+    expect(html).toContain("Harness Lab blueprint asset");
+  });
+
   it("renders localized English presenter content for an English-content workshop instance", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");

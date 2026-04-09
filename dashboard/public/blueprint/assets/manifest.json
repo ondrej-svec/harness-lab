@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "id": "opening-continuation-loop",
+      "src": "/blueprint/opening/opening-continuation-loop.svg",
+      "title": "Continuation loop diagram",
+      "reviewStatus": "reviewed",
+      "legalStatus": "repo-owned-original",
+      "licenseNote": "Original Harness Lab workshop blueprint asset stored in the public repo.",
+      "createdBy": "Harness Lab maintainers",
+      "creationPath": "Hand-authored SVG proof asset",
+      "localizationNote": "Text-free visual; captions and attribution live in the scene block copy per locale.",
+      "recommendedScenes": [
+        "opening-handoff-loop"
+      ],
+      "sourceLabel": "Harness Lab blueprint asset",
+      "sourceHref": null
+    }
+  ]
+}

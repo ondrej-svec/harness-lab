@@ -178,6 +178,8 @@ describe("Admin control room page", () => {
 
     expect(html).toContain(adminCopy.en.sceneEditTitle);
     expect(html).toContain(adminCopy.en.sceneFieldBlocks);
+    expect(html).toContain("Block editor");
+    expect(html).toContain("Add block");
     expect(html).toContain(adminCopy.en.presenterSetDefaultSceneButton);
     expect(html).toContain('name="sceneId"');
     expect(html).toContain('value="talk-framing"');

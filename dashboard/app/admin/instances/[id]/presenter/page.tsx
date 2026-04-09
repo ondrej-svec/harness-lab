@@ -8,6 +8,7 @@ import type { AgendaItem, PresenterBlock, PresenterScene } from "@/lib/workshop-
 import { adminCopy, resolveUiLanguage } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
+const repoBlobBaseUrl = "https://github.com/ondrej-svec/harness-lab/blob/main";
 
 export default async function PresenterPage({
   params,
@@ -140,6 +141,10 @@ function RoomScene({
         activeAgendaItem={agendaItem}
         participantCueFirst={scene.chromePreset === "participant"}
       />
+
+      {scene.sourceRefs.length > 0 ? (
+        <SceneSourceRefs refs={scene.sourceRefs} label={copy.presenterSourceMaterialTitle} openLabel={copy.openLinkLabel} />
+      ) : null}
 
       {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
     </div>
@@ -361,11 +366,27 @@ function SceneBlocks({
           );
         }
 
-        return (
-          <BlockCard key={block.id} title={block.title}>
-            <p className="text-base leading-7 text-[var(--text-secondary)]">{block.body}</p>
-          </BlockCard>
-        );
+        if (block.type === "callout") {
+          const toneClass =
+            block.tone === "warning"
+              ? "border-[var(--border-strong)] bg-[color:color-mix(in_oklab,var(--surface-soft)_76%,#d97706_24%)]"
+              : block.tone === "success"
+                ? "border-[var(--border-strong)] bg-[color:color-mix(in_oklab,var(--surface-soft)_80%,#15803d_20%)]"
+                : "border-[var(--border)] bg-[color:color-mix(in_oklab,var(--surface-soft)_88%,#2563eb_12%)]";
+
+          return (
+            <div key={block.id} data-tone={block.tone} className={`rounded-[28px] border p-6 ${toneClass}`}>
+              {block.title ? (
+                <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{block.title}</p>
+              ) : null}
+              <p className={block.title ? "mt-3 text-base leading-7 text-[var(--text-primary)]" : "text-base leading-7 text-[var(--text-primary)]"}>
+                {block.body}
+              </p>
+            </div>
+          );
+        }
+
+        return null;
       })}
     </div>
   );
@@ -515,6 +536,43 @@ function ImageSourceAttribution({
       <span>{label}</span>
       <span>{openLabel}</span>
     </a>
+  );
+}
+
+function SceneSourceRefs({
+  refs,
+  label,
+  openLabel,
+}: {
+  refs: Array<{ label: string; path: string }>;
+  label: string;
+  openLabel: string;
+}) {
+  return (
+    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {refs.map((ref) => {
+          const href = isExternalHref(ref.path) ? ref.path : `${repoBlobBaseUrl}/${ref.path}`;
+
+          return (
+            <a
+              key={`${ref.path}-${ref.label}`}
+              className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
+              href={href}
+              rel={isExternalHref(href) ? "noreferrer" : undefined}
+              target="_blank"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <p className="text-sm font-medium text-[var(--text-primary)]">{ref.label}</p>
+                <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{openLabel}</span>
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{ref.path}</p>
+            </a>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 

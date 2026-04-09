@@ -267,6 +267,13 @@ Inspect and edit the local agenda copy for one workshop instance. Requires facil
 
 Inspect and edit presenter scenes for one workshop instance. This includes listing scenes for an agenda item, creating a new scene, editing content, changing default scene, reordering scenes, and enabling or hiding scenes. Requires facilitator session.
 
+Rules for rich scenes:
+- keep scenes agenda-linked and room-facing rather than inventing a freeform slide deck
+- prefer one dominant voice per scene and one main idea per scene
+- use reviewed local blueprint assets for reusable visuals instead of ad hoc remote image URLs
+- treat runtime scene edits as instance-local until a maintainer deliberately publishes them back into the repo
+- when richer scene authoring or promotion is involved, follow `docs/presenter-rich-scene-authoring.md`
+
 ### `workshop facilitator archive`
 
 Archive the current workshop instance with optional notes.

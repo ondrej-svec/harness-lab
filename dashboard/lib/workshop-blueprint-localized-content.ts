@@ -211,33 +211,104 @@ export const workshopBlueprintLocalizedContent = {
         scenes: {
           "opening-framing": {
             label: "Opening framing",
-            title: "We are not building output alone",
+            title: "Today we are not building a demo for today",
             body:
-              "We are not here to squeeze one impressive answer out of an AI agent. We are here to build a working system another team can pick up later and continue without guesswork.",
+              "We are not here to squeeze one impressive answer out of an AI agent. We are here to build a working system another team can pick up later and continue without your running commentary.",
             facilitatorNotes: [
-              "Start calm, but sharp. The handoff constraint and repo-native context both need to land as team infrastructure.",
-              "Do not drift into tool marketing. The point is discipline.",
+              "Start calm, but sharp. The key beat is that handoff without rescue is part of the assignment, not an afternoon bonus.",
+              "Do not drift into tool marketing. Frame the working discipline: what is not written into the repo will not survive continuation.",
+              "After the quote, pause briefly and let the line land before you move into the room contract.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
             blocks: {
               "opening-hero": {
                 eyebrow: "Harness Lab",
-                title: "Today we are not building output alone",
+                title: "Today we are not building a demo for today",
                 body:
                   "We are building a repo, workflow, and set of working instructions that can survive a real handoff. If the next team still needs your explanation, the system is not finished yet.",
-              },
-              "opening-principles": {
-                title: "What must be said",
-                items: [
-                  "This is not a prompting contest.",
-                  "Usable context in the repo must remain after you.",
-                  "The afternoon continuation will test whether the repo can speak for itself.",
-                ],
               },
               "opening-quote": {
                 quote:
                   "Today is not about being the fastest. It is about handing work over so another team can take it and push it further.",
-                attribution: "Harness Lab facilitation framing",
+                attribution: "Harness Lab opening framing",
+              },
+              "opening-framing-callout": {
+                title: "If it only lives in table talk, it does not exist yet",
+                body:
+                  "Any rule said out loud twice belongs in the repo. The afternoon continuation is not there to reveal who spoke better, but whether the repo can speak for itself.",
+              },
+            },
+          },
+          "opening-handoff-loop": {
+            label: "What must remain after a team",
+            title: "The repo has to survive inheritance",
+            body: "Handoff is not the end of the day. It is design pressure on everything you build from the first hour onward.",
+            facilitatorNotes: [
+              "Use the visual as a map, not as decoration. Move clockwise through the loop and give one sentence to each node.",
+              "Do not get lost in tooling detail. The point is that intent, repo context, verification, and the next safe move must stay connected.",
+              "Close with the line that handoff is a working condition, not a ceremonial final step.",
+            ],
+            sourceRefs: [
+              { label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" },
+              { label: "Talk: Context is King", path: "content/talks/context-is-king.md" },
+            ],
+            blocks: {
+              "opening-loop-image": {
+                alt: "Diagram of four connected nodes: intent, repo context, verification, and the next team.",
+                caption:
+                  "One working loop for the whole day: name the intent, record the context, verify the result, and leave a path another team can continue.",
+              },
+              "opening-loop-steps": {
+                title: "Four nodes that have to stay connected",
+                items: [
+                  {
+                    title: "Named intent",
+                    body: "What exactly are you doing today, and why does it matter right now?",
+                  },
+                  {
+                    title: "Repo-native context",
+                    body: "AGENTS.md, a plan, a runbook, or a skill. Not just chat and memory.",
+                  },
+                  {
+                    title: "Explicit verification",
+                    body: "A test, tracer bullet, or another executable check that keeps the work honest.",
+                  },
+                  {
+                    title: "Next safe move",
+                    body: "Another team knows where to continue without verbal rescue.",
+                  },
+                ],
+              },
+              "opening-loop-callout": {
+                title: "Point for the room",
+                body: "Handoff is not a closing ceremony. It is a measure of working-system quality at every point in the day.",
+              },
+            },
+          },
+          "opening-room-contract": {
+            label: "Contract for today",
+            title: "What a good start to the day looks like",
+            body:
+              "After the first block, a team does not need more hype. It needs visible working artifacts that keep the direction clear and reduce improvisation.",
+            facilitatorNotes: [
+              "This is not a motivational slide. It is the operating contract you return to all morning.",
+              "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact.",
+            ],
+            sourceRefs: [{ label: "Facilitation guide: Build Phase 1", path: "content/facilitation/master-guide.md" }],
+            blocks: {
+              "opening-contract-checklist": {
+                title: "Before lunch, you should be able to see",
+                items: [
+                  "A repo and README that make sense to a new reader.",
+                  "An AGENTS.md that is a map, not a warehouse dump.",
+                  "A plan that makes the next safe move legible.",
+                  "The smallest useful check before more generation.",
+                ],
+              },
+              "opening-contract-callout": {
+                title: "Facilitator move",
+                body:
+                  "If a team has no verification, do not push the next feature. Push the smallest test or tracer bullet that puts the work back on the ground.",
               },
             },
           },
@@ -245,8 +316,11 @@ export const workshopBlueprintLocalizedContent = {
             label: "Facilitator cues",
             title: "Questions you will keep returning all day",
             body:
-              "Use short questions that push teams back toward the repo, toward verification, and toward the next safe move instead of table talk.",
-            facilitatorNotes: ["You can open this scene at any time as a quick coaching support."],
+              "Use short questions that push teams back toward the repo, toward verification, and toward the next safe move instead of improvised mentoring.",
+            facilitatorNotes: [
+              "You can open this scene at any time as a quick coaching support.",
+              "Let the questions do the work. Do not answer them for the team unless there is a real blocker.",
+            ],
             sourceRefs: [
               { label: "Facilitation guide: What the facilitator should keep returning to", path: "content/facilitation/master-guide.md" },
             ],
@@ -260,6 +334,11 @@ export const workshopBlueprintLocalizedContent = {
                   "What is the next safe move for a new person or agent?",
                 ],
               },
+              "opening-coaching-callout": {
+                title: "What these questions protect",
+                body:
+                  "The facilitator is not only watching progress. They are checking whether the repo makes it clear what is done, what is still a hypothesis, and what the next team should read first.",
+              },
             },
           },
           "opening-participant-view": {
@@ -269,6 +348,7 @@ export const workshopBlueprintLocalizedContent = {
               "At the start of the day, the participant view should answer three things cleanly: what is happening now, what comes next, and why the important rules have to live in the repo.",
             facilitatorNotes: [
               "Use this scene when you want to show the room that the participant layer is not a promo banner, but working orientation.",
+              "Name the three things participants should get in one glance: what is live now, what comes next, and what has to exist in the repo.",
             ],
             sourceRefs: [{ label: "Facilitation guide: Opening and welcome", path: "content/facilitation/master-guide.md" }],
             blocks: {
@@ -278,17 +358,14 @@ export const workshopBlueprintLocalizedContent = {
                 body:
                   "From the first minute, the participant view should carry the same discipline as the facilitator view: the live phase, the next step, and the rule that if it is not in the repo, it is not reliable yet.",
               },
-              "opening-participant-focus": {
-                title: "Tune into",
-                items: [
-                  "Repo-native context is part of the work, not an add-on.",
-                  "The next step should be safe and traceable.",
-                  "The afternoon continuation will test what survives handoff.",
-                ],
-              },
               "opening-participant-preview": {
                 body:
-                  "The start of the day should read in one glance: live now, next step, and the expectation that durable context belongs in files, not in side conversations.",
+                  "The start of the day should read in one glance: what is live now, what comes next, and why durable context belongs in files instead of side conversations.",
+              },
+              "opening-participant-callout": {
+                title: "What should land even without a facilitator",
+                body:
+                  "Repo-native context is part of the work. The next step should be safe and traceable. The afternoon continuation will test what actually survives handoff.",
               },
             },
           },
