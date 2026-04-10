@@ -156,7 +156,7 @@ jobs:
       run:
         working-directory: harness-cli
     permissions:
-      contents: read
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -174,6 +174,37 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --provenance
 
+      - name: Download packed tarball
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
+        with:
+          name: harness-cli-tarball
+          path: harness-cli
+
+      - name: Sign tarball with cosign (keyless)
+        shell: bash
+        env:
+          TARBALL: ${{ needs.verify-cli-package.outputs.tarball_name }}
+        run: |
+          cosign sign-blob --yes \
+            --output-signature "${TARBALL}.sig" \
+            --output-certificate "${TARBALL}.pem" \
+            --bundle "${TARBALL}.sigstore" \
+            "${TARBALL}"
+
+      - name: Upload signed artifacts to GitHub Release
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ needs.verify-cli-package.outputs.release_tag }}
+          TARBALL: ${{ needs.verify-cli-package.outputs.tarball_name }}
+        run: |
+          gh release upload "${RELEASE_TAG}" \
+            "${TARBALL}" \
+            "${TARBALL}.sig" \
+            "${TARBALL}.pem" \
+            "${TARBALL}.sigstore" \
+            --clobber
+
       - name: Write publish summary
         run: |
           {
@@ -183,4 +214,5 @@ jobs:
             echo "- Version: \`${{ needs.verify-cli-package.outputs.package_version }}\`"
             echo "- Release tag: \`${{ needs.verify-cli-package.outputs.release_tag }}\`"
             echo "- Provenance: Sigstore-signed, linked to this workflow run"
+            echo "- Release assets: tarball + \`.sig\` + \`.pem\` + \`.sigstore\` bundle"
           } >> "$GITHUB_STEP_SUMMARY"
