@@ -38,15 +38,8 @@ function readSource(): BilingualAgenda {
     console.error(`Source not found: ${SOURCE_PATH}`);
     process.exit(1);
   }
-  const raw = JSON.parse(Bun.file(SOURCE_PATH).text() as unknown as string);
-  return raw as BilingualAgenda;
-}
-
-// Synchronous read for Bun
-function readSourceSync(): BilingualAgenda {
   const text = require("node:fs").readFileSync(SOURCE_PATH, "utf-8");
-  const raw = JSON.parse(text);
-  return raw as BilingualAgenda;
+  return JSON.parse(text) as BilingualAgenda;
 }
 
 type ValidationError = { path: string; message: string };
@@ -210,7 +203,7 @@ function filesMatch(pathA: string, pathB: string): boolean {
 // ---------------------------------------------------------------------------
 
 const isVerify = process.argv.includes("--verify");
-const source = readSourceSync();
+const source = readSource();
 
 // Validate
 const errors = validate(source);

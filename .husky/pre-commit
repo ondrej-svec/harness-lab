@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Only run content verification when content-related files are staged.
-if git diff --cached --name-only | grep -qE '^workshop-content/|^dashboard/lib/generated/'; then
+if git diff --cached --name-only | grep -qE '^workshop-content/|^dashboard/lib/generated/|^workshop-blueprint/agenda\.json'; then
   echo "[content] Verifying generated files match bilingual source..."
   bun scripts/content/generate-views.ts --verify
   if [ $? -ne 0 ]; then

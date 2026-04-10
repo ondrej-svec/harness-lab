@@ -60,10 +60,10 @@ function collectMarkdownFiles(dir: string, skipLocales = true): string[] {
       const full = join(current, entry);
       const rel = relative(ROOT, full);
 
-      if (SKIP_PATTERNS.some((p) => entry === p || rel.includes(`/${p}/`) || rel.includes(`/${p}`))) {
-        if (skipLocales && entry === "locales") continue;
-        if (entry !== "locales") continue;
-      }
+      // Skip non-content directories (node_modules, .next, SKILL.md, etc.)
+      if (SKIP_PATTERNS.some((p) => entry === p) && entry !== "locales") continue;
+      // Skip locales directory when collecting Czech (non-locale) files
+      if (entry === "locales" && skipLocales) continue;
 
       if (statSync(full).isDirectory()) {
         walk(full);

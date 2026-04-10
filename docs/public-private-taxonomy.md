@@ -124,8 +124,8 @@ Use these terms consistently:
 
 Avoid in public positioning:
 
-- `Silent Post`
-- `signature exercise`
+- internal naming for the hidden handoff mechanic
+- exercise labels that reveal the workshop twist too early
 - language that explains the hidden handoff mechanic before participants experience it
 
 ## Access Policy

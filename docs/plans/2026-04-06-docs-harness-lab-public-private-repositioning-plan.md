@@ -172,7 +172,7 @@ Goal: make the public repo feel like a coherent workshop kit instead of a partia
 
 Tasks:
 - [x] Rewrite [`README.md`](../../README.md) around Harness Lab as the public identity.
-- [x] Remove public-facing mentions that spoil the handoff mechanic, including "Silent Post" and "signature exercise" framing.
+- [x] Remove public-facing mentions that spoil the handoff mechanic, including internal framing terms and overly revealing exercise labels.
 - [x] Replace exact dates, venues, and event counts with generic or sample wording.
 - [x] Review participant-facing markdown for vocabulary consistency across repo, dashboard, and skill.
 - [x] Add a short public architecture section explaining: template repo, dashboard, and team repos.

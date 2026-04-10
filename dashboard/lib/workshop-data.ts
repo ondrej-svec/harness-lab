@@ -1370,7 +1370,7 @@ export function createWorkshopInstanceRecord(input: {
 
 export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
-  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintAgendaCs.phases[0]?.id);
+  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, getBlueprintAgenda(instance.workshopMeta.contentLang).phases[0]?.id);
   const inventory = createWorkshopInventory(instance.workshopMeta.contentLang);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;
 
