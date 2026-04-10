@@ -71,6 +71,12 @@ test.describe("participant dashboard", () => {
     await expect(page.getByText("Do oběda potřebujete mapu repa, plán kroků, spustitelné ověření a první posun")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
 
+    // Workshop context line visible with event metadata
+    await expect(page.getByText("harness lab · ukázkový workshop den · studio a")).toBeVisible();
+
+    // Session sidebar with facilitator mention is gone
+    await expect(page.getByText("Facilitátor zůstává odděleně")).not.toBeVisible();
+
     // Verify context-aware nav — room links visible, public anchors gone
     await expect(page.getByRole("navigation").getByRole("link", { name: "místnost" })).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toBeVisible();

@@ -56,6 +56,7 @@ export default async function AdminParticipantMirrorPage({
         <ParticipantRoomSurface
           copy={copy}
           lang={lang}
+          workshopContextLine=""
           currentAgendaItem={currentAgendaItem}
           nextAgendaItem={nextAgendaItem}
           participantSession={buildParticipantMirrorSession(instanceId)}
@@ -64,6 +65,7 @@ export default async function AdminParticipantMirrorPage({
               id: team.id,
               name: team.name,
               city: team.city,
+              members: team.members,
               repoUrl: team.repoUrl,
               checkpoint: team.checkpoint,
             })),
