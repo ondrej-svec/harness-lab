@@ -209,12 +209,12 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-room-contract" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-day-schedule" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("By lunch, the repo should visibly contain");
-    expect(html).toContain("A README that explains the project to a new reader.");
+    expect(html).toContain("09:10");
+    expect(html).toContain("Day schedule");
     expect(html).not.toContain("What the room should see now");
   });
 

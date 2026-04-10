@@ -268,41 +268,78 @@
           ]
         },
         {
-          "id": "opening-room-contract",
-          "label": "What must be visible before lunch",
-          "sceneType": "checkpoint",
-          "intent": "checkpoint",
-          "chromePreset": "checkpoint",
-          "title": "By the first build, the repo should carry four visible proofs",
-          "body": "After the launch, the room does not need another principle. It needs to know what must be visible in the repo after the first build block, not only promised aloud.",
+          "id": "opening-day-schedule",
+          "label": "Day schedule",
+          "sceneType": "briefing",
+          "intent": "walkthrough",
+          "chromePreset": "default",
+          "title": "Here is what the day looks like",
+          "body": "Before the room moves, everyone should know the shape of the day: when things happen, what kind of work each block asks for, and where the key turning points are.",
           "facilitatorNotes": [
-            "This is the first concrete rule of the day. It comes after ambition, analogy, and activation. [TEACHING]",
-            "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact."
+            "Walk through the schedule quickly — one sentence per block, no commentary. The room just needs orientation, not motivation. [NARRATING]",
+            "Highlight the rotation at 13:30 explicitly. That is the moment most people will not expect.",
+            "Do not explain what harness engineering means here. That is the job of Context is King. Just name the blocks."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitation guide: Build Phase 1",
+              "label": "Facilitation guide: Opening and welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
           "blocks": [
             {
-              "id": "opening-contract-checklist",
-              "type": "checklist",
-              "title": "By lunch, the repo should visibly contain",
+              "id": "opening-schedule-timeline",
+              "type": "steps",
+              "title": "Today's timeline",
               "items": [
-                "A README that explains the project to a new reader.",
-                "An AGENTS.md that shows where to start and where to reach next.",
-                "A plan or guided implementation trail that makes the next useful move legible.",
-                "A first check that stops blind generation."
+                {
+                  "title": "09:10 — Opening",
+                  "body": "Framing, day arc, and room activation."
+                },
+                {
+                  "title": "09:40 — Context is King",
+                  "body": "Why context beats prompting. A live contrast exercise."
+                },
+                {
+                  "title": "10:05 — Demo",
+                  "body": "A working agent workflow from AGENTS.md to review."
+                },
+                {
+                  "title": "10:30 — Build Phase 1",
+                  "body": "Teams build in their repos. The longest block of the morning."
+                },
+                {
+                  "title": "11:35 — Intermezzo 1",
+                  "body": "Pause, reflect, recalibrate."
+                },
+                {
+                  "title": "12:15 — Lunch",
+                  "body": "Eat and prepare for the handoff."
+                },
+                {
+                  "title": "13:30 — Rotation",
+                  "body": "Teams swap repos. You continue someone else's work."
+                },
+                {
+                  "title": "13:45 — Build Phase 2",
+                  "body": "Build in the inherited repo without the original authors."
+                },
+                {
+                  "title": "14:45 — Intermezzo 2",
+                  "body": "What survived the handoff? What broke?"
+                },
+                {
+                  "title": "15:45 — Reveal",
+                  "body": "Reflection and commitments for Monday."
+                }
               ]
             },
             {
-              "id": "opening-contract-callout",
+              "id": "opening-schedule-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Without a check, you are still guessing",
-              "body": "If verification is missing, another prompt will not save the team. Push the smallest test or tracer bullet that puts the work back on the ground."
+              "title": "The afternoon tests the morning",
+              "body": "Everything you build before lunch will be read and continued by a different team after lunch. That is not a surprise — it is the design of the day."
             }
           ]
         },
@@ -312,8 +349,8 @@
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
-          "title": "At the start of the day, keep the purpose, next block, and first repo move in view",
-          "body": "At the start of the day, the team needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
+          "title": "The day starts now — here is where you are heading",
+          "body": "The opening sets the frame. Next comes a live exercise, a demo, and then the first build block. Keep this board in view to stay oriented.",
           "facilitatorNotes": [
             "Use this scene when you want to show that the participant surface is not decoration, but working orientation. [FACILITATING]",
             "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo."
@@ -333,16 +370,30 @@
               "body": "By the end of the day, a different team will read your repo without asking you. Start building for that moment now."
             },
             {
-              "id": "opening-participant-preview",
-              "type": "participant-preview",
-              "body": "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, first steps, and a first runnable check."
+              "id": "opening-participant-next",
+              "type": "steps",
+              "title": "What comes next",
+              "items": [
+                {
+                  "title": "Context is King",
+                  "body": "A live contrast exercise that shows why context beats prompting."
+                },
+                {
+                  "title": "Demo",
+                  "body": "A working agent workflow you will replicate in the build."
+                },
+                {
+                  "title": "Build Phase 1",
+                  "body": "Your team builds in your repo until lunch. Milestones will appear on the board."
+                }
+              ]
             },
             {
               "id": "opening-participant-callout",
               "type": "callout",
               "tone": "info",
-              "title": "What to write down immediately",
-              "body": "Important things belong in files, not only in conversation. The afternoon continuation will test what really survives handoff."
+              "title": "Important things belong in files",
+              "body": "Not in conversation, not in your head. The afternoon handoff will test what actually made it into the repo."
             }
           ]
         }

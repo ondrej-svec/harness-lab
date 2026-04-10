@@ -62,7 +62,7 @@ describe("workshop-data", () => {
       title: "What you are actually going to experience today",
     });
     expect(handoffScene?.surface).toBe("room");
-    expect(participantScene?.title).toBe("At the start of the day, keep the purpose, next block, and first repo move in view");
+    expect(participantScene?.title).toBe("The day starts now \u2014 here is where you are heading");
     expect(participantScene?.surface).toBe("participant");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",

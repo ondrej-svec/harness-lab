@@ -879,77 +879,151 @@
           "cs_reviewed": true
         },
         {
-          "id": "opening-room-contract",
-          "sceneType": "checkpoint",
-          "intent": "checkpoint",
-          "chromePreset": "checkpoint",
+          "id": "opening-day-schedule",
+          "sceneType": "briefing",
+          "intent": "walkthrough",
+          "chromePreset": "default",
           "en": {
-            "label": "What must be visible before lunch",
-            "title": "By the first build, the repo should carry four visible proofs",
-            "body": "After the launch, the room does not need another principle. It needs to know what must be visible in the repo after the first build block, not only promised aloud.",
+            "label": "Day schedule",
+            "title": "Here is what the day looks like",
+            "body": "Before the room moves, everyone should know the shape of the day: when things happen, what kind of work each block asks for, and where the key turning points are.",
             "facilitatorNotes": [
-              "This is the first concrete rule of the day. It comes after ambition, analogy, and activation. [TEACHING]",
-              "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact."
+              "Walk through the schedule quickly — one sentence per block, no commentary. The room just needs orientation, not motivation. [NARRATING]",
+              "Highlight the rotation at 13:30 explicitly. That is the moment most people will not expect.",
+              "Do not explain what harness engineering means here. That is the job of Context is King. Just name the blocks."
             ],
             "sourceRefs": [
               {
-                "label": "Facilitation guide: Build Phase 1",
+                "label": "Facilitation guide: Opening and welcome",
                 "path": "content/facilitation/master-guide.md"
               }
             ],
             "blocks": [
               {
-                "id": "opening-contract-checklist",
-                "type": "checklist",
-                "title": "By lunch, the repo should visibly contain",
+                "id": "opening-schedule-timeline",
+                "type": "steps",
+                "title": "Today's timeline",
                 "items": [
-                  "A README that explains the project to a new reader.",
-                  "An AGENTS.md that shows where to start and where to reach next.",
-                  "A plan or guided implementation trail that makes the next useful move legible.",
-                  "A first check that stops blind generation."
+                  {
+                    "title": "09:10 — Opening",
+                    "body": "Framing, day arc, and room activation."
+                  },
+                  {
+                    "title": "09:40 — Context is King",
+                    "body": "Why context beats prompting. A live contrast exercise."
+                  },
+                  {
+                    "title": "10:05 — Demo",
+                    "body": "A working agent workflow from AGENTS.md to review."
+                  },
+                  {
+                    "title": "10:30 — Build Phase 1",
+                    "body": "Teams build in their repos. The longest block of the morning."
+                  },
+                  {
+                    "title": "11:35 — Intermezzo 1",
+                    "body": "Pause, reflect, recalibrate."
+                  },
+                  {
+                    "title": "12:15 — Lunch",
+                    "body": "Eat and prepare for the handoff."
+                  },
+                  {
+                    "title": "13:30 — Rotation",
+                    "body": "Teams swap repos. You continue someone else's work."
+                  },
+                  {
+                    "title": "13:45 — Build Phase 2",
+                    "body": "Build in the inherited repo without the original authors."
+                  },
+                  {
+                    "title": "14:45 — Intermezzo 2",
+                    "body": "What survived the handoff? What broke?"
+                  },
+                  {
+                    "title": "15:45 — Reveal",
+                    "body": "Reflection and commitments for Monday."
+                  }
                 ]
               },
               {
-                "id": "opening-contract-callout",
+                "id": "opening-schedule-callout",
                 "type": "callout",
                 "tone": "info",
-                "title": "Without a check, you are still guessing",
-                "body": "If verification is missing, another prompt will not save the team. Push the smallest test or tracer bullet that puts the work back on the ground."
+                "title": "The afternoon tests the morning",
+                "body": "Everything you build before lunch will be read and continued by a different team after lunch. That is not a surprise — it is the design of the day."
               }
             ]
           },
           "cs": {
-            "label": "Co musí být do oběda vidět",
-            "title": "Do prvního buildu mají být v repu čtyři jasné signály",
-            "body": "Po úvodu nepotřebujete další princip. Potřebujete vědět, co má být po prvním build bloku opravdu vidět v repu, ne jen slíbeno nahlas.",
+            "label": "Program dne",
+            "title": "Takhle vypadá dnešní den",
+            "body": "Než se pohneme dál, potřebujete vědět, jak je den poskládaný: kdy se co děje, jaký typ práce každý blok vyžaduje a kde jsou klíčové zlomy.",
             "facilitatorNotes": [
-              "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci. [TEACHING]",
-              "Když některý řádek chybí, nepřeskakuj ho ústním mentoringem. Pomoz týmu vytvořit nejmenší verzi artefaktu."
+              "Projdi harmonogram rychle — jedna věta na blok, žádný komentář navíc. Místnost potřebuje orientaci, ne motivaci. [NARRATING]",
+              "Explicitně vyzdvihni rotaci ve 13:30. To je moment, který většinu lidí překvapí.",
+              "Nevysvětluj tady, co je harness engineering. To je práce bloku Context is King. Jen pojmenuj bloky."
             ],
             "sourceRefs": [
               {
-                "label": "Facilitační průvodce: Build fáze 1",
+                "label": "Facilitační průvodce: Otevření a welcome",
                 "path": "content/facilitation/master-guide.md"
               }
             ],
             "blocks": [
               {
-                "id": "opening-contract-checklist",
-                "type": "checklist",
-                "title": "Do oběda má být v repu vidět",
+                "id": "opening-schedule-timeline",
+                "type": "steps",
+                "title": "Časový plán dne",
                 "items": [
-                  "README vysvětlí projekt cizímu člověku.",
-                  "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
-                  "Plán kroků nebo vedená implementace ukáže další bezpečný krok.",
-                  "Existuje první ověření, které zastaví slepé generování."
+                  {
+                    "title": "09:10 — Úvod",
+                    "body": "Framing, oblouk dne a aktivace místnosti."
+                  },
+                  {
+                    "title": "09:40 — Context is King",
+                    "body": "Proč kontext poráží promptování. Živé kontrastní cvičení."
+                  },
+                  {
+                    "title": "10:05 — Demo",
+                    "body": "Ukázka pracovního workflow od AGENTS.md po review."
+                  },
+                  {
+                    "title": "10:30 — Build fáze 1",
+                    "body": "Týmy staví ve svých repech. Nejdelší blok dopoledne."
+                  },
+                  {
+                    "title": "11:35 — Intermezzo 1",
+                    "body": "Pauza, reflexe, rekalibrace."
+                  },
+                  {
+                    "title": "12:15 — Oběd",
+                    "body": "Jídlo a příprava na handoff."
+                  },
+                  {
+                    "title": "13:30 — Rotace",
+                    "body": "Týmy si vymění repa. Pokračujete v práci někoho jiného."
+                  },
+                  {
+                    "title": "13:45 — Build fáze 2",
+                    "body": "Stavíte ve zděděném repu bez původních autorů."
+                  },
+                  {
+                    "title": "14:45 — Intermezzo 2",
+                    "body": "Co přežilo handoff? Co se rozbilo?"
+                  },
+                  {
+                    "title": "15:45 — Reveal",
+                    "body": "Reflexe a závazky na pondělí."
+                  }
                 ]
               },
               {
-                "id": "opening-contract-callout",
+                "id": "opening-schedule-callout",
                 "type": "callout",
                 "tone": "info",
-                "title": "Bez ověření jen hádáte",
-                "body": "Když chybí ověření, další prompt to nezachrání. Nejmenší test nebo tracer bullet vrací práci zpátky na zem."
+                "title": "Odpoledne testuje dopoledne",
+                "body": "Všechno, co do oběda postavíte, přečte a převezme jiný tým. To není překvapení — to je záměr celého dne."
               }
             ]
           },
@@ -962,8 +1036,8 @@
           "chromePreset": "participant",
           "en": {
             "label": "Team start board",
-            "title": "At the start of the day, keep the purpose, next block, and first repo move in view",
-            "body": "At the start of the day, the team needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
+            "title": "The day starts now — here is where you are heading",
+            "body": "The opening sets the frame. Next comes a live exercise, a demo, and then the first build block. Keep this board in view to stay oriented.",
             "facilitatorNotes": [
               "Use this scene when you want to show that the participant surface is not decoration, but working orientation. [FACILITATING]",
               "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo."
@@ -983,23 +1057,37 @@
                 "body": "By the end of the day, a different team will read your repo without asking you. Start building for that moment now."
               },
               {
-                "id": "opening-participant-preview",
-                "type": "participant-preview",
-                "body": "Opening is live now. Context is King comes next. After that, teams go back to the repo for a map, first steps, and a first runnable check."
+                "id": "opening-participant-next",
+                "type": "steps",
+                "title": "What comes next",
+                "items": [
+                  {
+                    "title": "Context is King",
+                    "body": "A live contrast exercise that shows why context beats prompting."
+                  },
+                  {
+                    "title": "Demo",
+                    "body": "A working agent workflow you will replicate in the build."
+                  },
+                  {
+                    "title": "Build Phase 1",
+                    "body": "Your team builds in your repo until lunch. Milestones will appear on the board."
+                  }
+                ]
               },
               {
                 "id": "opening-participant-callout",
                 "type": "callout",
                 "tone": "info",
-                "title": "What to write down immediately",
-                "body": "Important things belong in files, not only in conversation. The afternoon continuation will test what really survives handoff."
+                "title": "Important things belong in files",
+                "body": "Not in conversation, not in your head. The afternoon handoff will test what actually made it into the repo."
               }
             ]
           },
           "cs": {
             "label": "Start pro tým",
-            "title": "Na startu dne držte v hlavě smysl, další blok a první krok v repu",
-            "body": "Na začátku dne tým potřebuje v jednom pohledu vidět, proč tu je, co přijde po úvodu a co má být po prvním buildu skutečně vidět v repu.",
+            "title": "Den začíná — tady je, kam míříte",
+            "body": "Úvod nastaví rámec. Pak přijde živé cvičení, demo a první build blok. Nechte si tuhle tabuli na očích, abyste věděli, kde jste.",
             "facilitatorNotes": [
               "Tuhle scénu použij, když chceš ukázat, že participant plocha není ozdoba, ale pracovní orientace. [FACILITATING]",
               "Pojmenuj tři věci, které mají účastníci vidět v jednom pohledu: co běží teď, co přijde dál a co má vzniknout v repu."
@@ -1019,16 +1107,30 @@
                 "body": "Než den skončí, vaše repo přečte jiný tým a nebude se vás ptát. Začněte stavět pro ten moment právě teď."
               },
               {
-                "id": "opening-participant-preview",
-                "type": "participant-preview",
-                "body": "Teď běží úvod. Za chvíli přijde blok Context is King. Po něm se vracíte k repu pro mapu, první kroky a první spustitelné ověření."
+                "id": "opening-participant-next",
+                "type": "steps",
+                "title": "Co přijde dál",
+                "items": [
+                  {
+                    "title": "Context is King",
+                    "body": "Živé kontrastní cvičení, které ukáže, proč kontext poráží promptování."
+                  },
+                  {
+                    "title": "Demo",
+                    "body": "Ukázka pracovního workflow, který budete v buildu replikovat."
+                  },
+                  {
+                    "title": "Build fáze 1",
+                    "body": "Váš tým staví ve svém repu do oběda. Milníky se objeví na tabuli."
+                  }
+                ]
               },
               {
                 "id": "opening-participant-callout",
                 "type": "callout",
                 "tone": "info",
-                "title": "Co si zapište hned",
-                "body": "Důležité věci patří do souborů, ne jen do hovoru. Odpolední návaznost prověří, co z dnešní práce opravdu přežije handoff."
+                "title": "Důležité věci patří do souborů",
+                "body": "Ne do hovoru, ne do hlavy. Odpolední handoff prověří, co se opravdu dostalo do repa."
               }
             ]
           },
