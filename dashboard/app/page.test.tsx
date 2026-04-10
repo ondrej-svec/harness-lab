@@ -275,6 +275,6 @@ describe("HomePage", () => {
 
     expect(html).toContain("Opening and orientation");
     expect(html).toContain("Team start board");
-    expect(html).toContain("Today is not prompt theatre");
+    expect(html).toContain("Today you build so another team can continue");
   });
 });

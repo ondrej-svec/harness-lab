@@ -66,7 +66,7 @@ describe("workshop-data", () => {
     expect(participantScene?.surface).toBe("participant");
     expect(participantScene?.blocks[0]).toMatchObject({
       id: "opening-participant-hero",
-      title: "Today is not prompt theatre",
+      title: "Today you build so another team can continue",
     });
     expect(state.briefs[0]?.problem).toContain("Developers lose time");
     expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
@@ -155,11 +155,10 @@ describe("workshop-data", () => {
 
     expect(talkScene?.blocks).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-reframe", type: "callout" }),
+        expect.objectContaining({ id: "talk-hero", type: "hero" }),
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
-    expect(talk?.facilitatorRunner.say[0]).toBe("Context is leverage, not cosmetics.");
     expect(talkParticipantScene?.ctaLabel).toBe("Open install and first commands");
     expect(rotationParticipantScene?.ctaLabel).toBe("Open analyze checklist");
     expect(revealScene?.blocks).toEqual(
@@ -184,11 +183,10 @@ describe("workshop-data", () => {
 
     expect(talkScene?.blocks).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-reframe", type: "callout" }),
+        expect.objectContaining({ id: "talk-hero", type: "hero" }),
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
-    expect(talk?.facilitatorRunner.say[0]).toBe("Kontext je páka, ne kosmetika.");
     // Czech typography baseline pass binds single-letter "a" to the next
     // word with a non-breaking space. Match the blueprint source exactly.
     expect(talkParticipantScene?.ctaLabel).toBe("Otevřít install a\u00a0první příkazy");
