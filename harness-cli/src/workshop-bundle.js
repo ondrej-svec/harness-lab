@@ -66,6 +66,10 @@ export function getInstalledSkillPath(targetRoot) {
   return path.join(targetRoot, ".agents", "skills", WORKSHOP_SKILL_NAME);
 }
 
+export function getClaudeCodeSkillPath(targetRoot) {
+  return path.join(targetRoot, ".claude", "skills", "workshop");
+}
+
 export function getBundleManifestPath(bundleRoot) {
   return path.join(bundleRoot, WORKSHOP_BUNDLE_MANIFEST);
 }

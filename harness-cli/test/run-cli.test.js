@@ -1129,7 +1129,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "participant-resource-kit.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "bundle-manifest.json"));
   assert.match(io.getStdout(), /Workshop Skill/);
-  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
+  assert.match(io.getStdout(), /Codex\/pi: .*\.agents[\\/]+skills/);
   assert.match(io.getStdout(), /Target:/);
   await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
   assert.match(io.getStdout(), /\$workshop commands/);
@@ -1193,7 +1193,7 @@ test("skill install reports an existing current install at the target path", asy
 
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /already current at the target path/);
-  assert.match(io.getStdout(), /Location: .*\.agents[\\/]+skills/);
+  assert.match(io.getStdout(), /Codex\/pi: .*\.agents[\\/]+skills/);
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
 });
 

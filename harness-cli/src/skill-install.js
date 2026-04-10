@@ -6,6 +6,7 @@ import {
   createWorkshopBundleManifestFromSource,
   createWorkshopBundleFromSource,
   getInstalledSkillPath,
+  getClaudeCodeSkillPath,
   getPackagedWorkshopBundlePath,
   getRepoWorkshopSourceRoot,
   pathExists,
@@ -189,12 +190,15 @@ export async function installWorkshopSkill(startDir, options = {}) {
   if (existingInstall && options.force !== true) {
     const installedManifest = await createWorkshopBundleManifestFromDirectory(installPath);
     if (installedManifest.contentHash === sourceManifest.contentHash) {
+      // Agents bundle is current but Claude Code target may be missing
+      const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
       return {
         installPath,
         skillName: WORKSHOP_SKILL_NAME,
         mode: "already_current",
         sourceMode: resolvedBundle.mode,
         targetRoot,
+        claudeCodePath: claudeInstalled,
       };
     }
 
@@ -234,11 +238,36 @@ async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
   );
   await installFromResolvedBundle(resolvedBundle, installPath);
 
+  const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
+
   return {
     installPath,
     skillName: WORKSHOP_SKILL_NAME,
     mode: "installed",
     sourceMode: resolvedBundle.mode,
     targetRoot,
+    claudeCodePath: claudeInstalled,
   };
+}
+
+async function installClaudeCodeSkill(agentsInstallPath, targetRoot) {
+  const claudePath = getClaudeCodeSkillPath(targetRoot);
+  try {
+    await fs.mkdir(claudePath, { recursive: true });
+    // Copy the participant SKILL.md as the Claude Code entry point
+    await fs.copyFile(
+      path.join(agentsInstallPath, "SKILL.md"),
+      path.join(claudePath, "SKILL.md"),
+    );
+    // Copy the workshop-skill support files that the skill references
+    const workshopSkillSource = path.join(agentsInstallPath, "workshop-skill");
+    const workshopSkillTarget = path.join(claudePath, "workshop-skill");
+    if (await pathExists(workshopSkillSource)) {
+      await fs.cp(workshopSkillSource, workshopSkillTarget, { recursive: true });
+    }
+    return claudePath;
+  } catch {
+    // Claude Code install is best-effort — don't fail the main install
+    return null;
+  }
 }

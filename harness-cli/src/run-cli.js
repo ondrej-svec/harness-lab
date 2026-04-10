@@ -305,18 +305,23 @@ async function handleSkillInstall(io, ui, deps, flags) {
       ui.status("ok", "Installed the Harness Lab workshop skill bundle.");
     }
     ui.keyValue("Target", result.targetRoot);
-    ui.keyValue("Location", result.installPath);
-    ui.keyValue("Discovery", ".agents/skills");
+    ui.keyValue("Codex/pi", result.installPath);
+    if (result.claudeCodePath) {
+      ui.keyValue("Claude Code", result.claudeCodePath);
+    }
     ui.keyValue("Bundle source", result.sourceMode === "packaged_bundle" ? "packaged portable bundle" : "source checkout fallback");
     ui.blank();
     ui.section("Next steps");
-    ui.numberedList([
-      "Open Codex or pi in the target repo.",
-      "Start with the workshop command menu.",
+    const steps = [
+      "Open your coding agent in the target repo.",
       "Codex: `$workshop commands`.",
       "pi: `/skill:workshop`, then ask for the workshop commands.",
-      "Next: `$workshop reference`, `$workshop brief`, and `$workshop resources`.",
-    ]);
+    ];
+    if (result.claudeCodePath) {
+      steps.push("Claude Code: the `workshop` skill is available as a slash command.");
+    }
+    steps.push("Next: `$workshop reference`, `$workshop brief`, and `$workshop resources`.");
+    ui.numberedList(steps);
     return 0;
   } catch (error) {
     if (error instanceof SkillInstallError) {
@@ -1350,7 +1355,7 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "skill") {
     ui.heading("Harness CLI — Skill");
-    ui.paragraph("Install the workshop skill into your project repo.");
+    ui.paragraph("Install the workshop skill into your project repo for Codex, pi, and Claude Code.");
     ui.blank();
     ui.section("Commands");
     ui.commandList([
@@ -1359,11 +1364,10 @@ export async function runCli(argv, io, deps = {}) {
     ui.blank();
     ui.section("After install");
     ui.commandList([
-      "Open Codex or pi in the same repo",
-      "Run: $workshop commands",
-      "Run: $workshop reference",
-      "Run: $workshop brief",
-      "Run: $workshop help",
+      "Open your coding agent (Codex, pi, or Claude Code) in the same repo",
+      "Codex: $workshop commands",
+      "pi: /skill:workshop",
+      "Claude Code: the workshop skill is available as a slash command",
     ]);
     ui.blank();
     ui.paragraph("The skill is the participant's primary workshop interface.");
