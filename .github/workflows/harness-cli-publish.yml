@@ -182,7 +182,6 @@ jobs:
         uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4
         with:
           name: harness-cli-tarball
-          path: harness-cli
 
       - name: Install cosign
         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
@@ -192,11 +191,13 @@ jobs:
         env:
           TARBALL: ${{ needs.verify-cli-package.outputs.tarball_name }}
         run: |
+          ls -la "${TARBALL}"
           cosign sign-blob --yes \
             --output-signature "${TARBALL}.sig" \
             --output-certificate "${TARBALL}.pem" \
             --bundle "${TARBALL}.sigstore" \
             "${TARBALL}"
+          ls -la "${TARBALL}"*
 
       - name: Upload signed artifacts to GitHub Release
         shell: bash
