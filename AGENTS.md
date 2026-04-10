@@ -85,6 +85,7 @@ If you touch these areas, read these files first:
 
 ## Working Rules
 
+- **Trunk-based development.** Commit directly to `main`. Do not create feature branches, topic branches, or long-lived side branches. All work lands on `main` in small, verified increments.
 - Prefer repository knowledge over chat memory. If a rule or decision should survive the session, write it down in the repo.
 - Prefer progressive disclosure. Keep this file short and route to deeper docs instead of pasting long policy blocks here.
 - When the same issue repeats, improve the harness: add or sharpen instructions, tests, runbooks, or review routines.

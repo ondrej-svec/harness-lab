@@ -1,11 +1,11 @@
 .DS_Store
+node_modules/
 
 .env
 .env.local
 .env.*.local
 
 dashboard/.next/
-dashboard/node_modules/
 dashboard/.vercel/
 dashboard/.env.vercel.local
 dashboard/data/workshop-state.json
@@ -22,6 +22,5 @@ monitoring/latest-monitoring.md
 monitoring/team-repos.tsv
 
 harness-cli/*.tgz
-harness-cli/node_modules/
 
 .agents/skills/harness-lab-workshop/
