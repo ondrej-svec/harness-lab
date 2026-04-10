@@ -219,6 +219,7 @@ function printUsage(io, ui) {
   ui.commandList([
     helpLine("skill install [--target PATH] [--force]", "Install the workshop skill into your repo"),
   ]);
+  ui.paragraph("Most participants only need this. After install, use $workshop in your agent.");
   ui.blank();
 
   ui.section("Authentication");
@@ -1333,6 +1334,28 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "skill" && action === "install") {
     return handleSkillInstall(io, ui, mergedDeps, flags);
+  }
+
+  if (scope === "skill") {
+    ui.heading("Harness CLI — Skill");
+    ui.paragraph("Install the workshop skill into your project repo.");
+    ui.blank();
+    ui.section("Commands");
+    ui.commandList([
+      helpLine("harness skill install [--target PATH] [--force]", "Install the workshop skill"),
+    ]);
+    ui.blank();
+    ui.section("After install");
+    ui.commandList([
+      "Open Codex or pi in the same repo",
+      "Run: $workshop commands",
+      "Run: $workshop reference",
+      "Run: $workshop brief",
+      "Run: $workshop help",
+    ]);
+    ui.blank();
+    ui.paragraph("The skill is the participant's primary workshop interface.");
+    return 0;
   }
 
   if (scope === "workshop" && action === "current-instance") {

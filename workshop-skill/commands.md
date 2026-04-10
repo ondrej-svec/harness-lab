@@ -39,10 +39,6 @@
 - Když si nejste jistí workflow: `workshop commands`
 - Když chcete materiály i po workshopu: `workshop resources`, `workshop follow-up`, `workshop gallery`
 
-## Facilitátorské příkazy
-
-- `workshop facilitator learnings` — dotaz do learnings logu: záznamy z rotace z minulých i aktuálních workshopů. Podporuje filtrování podle tagu, instance a cohortu.
-
 ## Důležitá poznámka
 
 `workshop` skill je garantovaný výchozí nástroj workshopu. Další workflow skills a veřejné toolkity jsou doporučené rozšíření, ne podmínka účasti.

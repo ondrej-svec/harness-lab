@@ -39,10 +39,6 @@
 - If you are unsure about workflow: `workshop commands`
 - If you want materials after the workshop too: `workshop resources`, `workshop follow-up`, `workshop gallery`
 
-## Facilitator commands
-
-- `workshop facilitator learnings` — query the cross-cohort learnings log: rotation signals from past and current workshops. Supports filtering by tag, instance, and cohort.
-
 ## Important note
 
 The `workshop` skill is the guaranteed workshop default. Additional workflow skills and public toolkits are recommended accelerators, not a requirement for participation.

@@ -74,11 +74,15 @@ harness version
 harness --help
 ```
 
-Install the portable workshop skill bundle into your current repo for Codex/pi discovery:
+## Participant Quick Start
+
+If you are a workshop participant, this is the only command you need:
 
 ```bash
 harness skill install
 ```
+
+This installs the workshop skill into your current repo. After install, open Codex or pi in the same repo and run `$workshop commands` to get started. You do not need any of the facilitator commands below.
 
 Optional explicit target:
 
@@ -92,6 +96,12 @@ After install, the CLI prints the first recommended agent commands, starting wit
 Treat the installed `workshop` skill as the first participant entrypoint. It should route setup, reference, and workshop guidance through live `contentLang` when available or the best reviewed bundled locale otherwise, instead of assuming the base authored Czech docs are always the right first stop.
 
 Treat `.agents/skills/harness-lab-workshop` as generated workshop bundle content. The canonical authored source remains in this repository under `workshop-skill/`, `workshop-blueprint/`, selected `docs/`, and selected `materials/`.
+
+---
+
+## Facilitator Commands
+
+Everything below this line is for facilitators managing workshop instances.
 
 Default device/browser login:
 
