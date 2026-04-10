@@ -581,7 +581,7 @@ async function handleAuthLogin(io, ui, env, flags, deps) {
 }
 
 async function handleEventCodeLogin(io, ui, env, flags, deps) {
-  const dashboardUrl = resolveDashboardUrl(env, flags);
+  const dashboardUrl = String(flags["dashboard-url"] ?? getDefaultDashboardUrl(env));
   const code = String(flags.code);
 
   const client = createHarnessClient({
