@@ -141,7 +141,7 @@ jobs:
           args: detect --source . --no-git
 
       - name: SAST (Semgrep)
-        uses: docker://semgrep/semgrep:latest
+        uses: docker://semgrep/semgrep@sha256:17d89ddd91a7729bbd5de09402f7f79a70204289e2a94635086e9db532a495f2
         with:
           args: semgrep scan --config auto --error harness-cli/bin harness-cli/src harness-cli/scripts
 
