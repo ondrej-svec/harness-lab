@@ -54,7 +54,20 @@ jobs:
 
       - run: npm run verify:workshop-bundle
 
-      - run: npm test
+      - name: Run tests
+        run: npm test
+
+      - name: Generate coverage report
+        if: matrix.name == 'ubuntu-latest'
+        run: node --test --experimental-test-coverage --test-reporter=lcov --test-reporter-destination=coverage.lcov
+
+      - name: Upload coverage to Codecov
+        if: matrix.name == 'ubuntu-latest'
+        uses: codecov/codecov-action@v5
+        with:
+          files: harness-cli/coverage.lcov
+          flags: harness-cli
+          fail_ci_if_error: false
 
       - run: npm pack
 
