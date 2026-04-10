@@ -5,6 +5,24 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.3.1 — 2026-04-10
+
+### Added
+
+- **`harness workshop learnings`** — query the cross-cohort learnings log
+  from the CLI. Reads the append-only JSONL file at
+  `$HARNESS_DATA_DIR/learnings-log.jsonl` and supports `--tag TAG`,
+  `--instance ID`, `--cohort NAME`, and `--limit N` (default 20) filters.
+  Human-readable mode prints cohort, timestamp, team, tags, and
+  observation text per signal. JSON mode (`--json`) returns a structured
+  `{ ok, totalMatched, returned, source, signals }` payload.
+- **Workshop skill wiring**: new `workshop facilitator learnings` command
+  in `workshop-skill/SKILL.md` routes to the CLI for machine-readable
+  output. "Facilitator commands" section added to `commands.md` (both
+  locales). `reference.md` (Czech) gained a dedicated "Learnings log"
+  section with CLI examples; the English locale was updated with a
+  one-line command reference.
+
 ## 0.3.0 — 2026-04-09
 
 This release lands the expert-audit remediation work for participant-facing

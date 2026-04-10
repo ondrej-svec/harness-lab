@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.3.0",
-  "contentHash": "d52937fa7d980cdd71345b725b68bc934e939bc5b48cabd4d5bcfb55da03362f",
+  "bundleVersion": "0.3.1",
+  "contentHash": "8095e0475f7defad71c1af47ab7600f366dffd1c7ef41410af94cecddaa86119",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -10,7 +10,7 @@
     },
     {
       "path": "content/challenge-cards/deck.md",
-      "sha256": "1c8b4e3a6ab987dc2e9e5418a32a84b8dd3485b8ee0d7d5dc9dc01394f57e3cc"
+      "sha256": "d2523b1fbedd84faef5327affe5a698f44b8634c9eb0da8320dc8339bc5158fc"
     },
     {
       "path": "content/challenge-cards/locales/en/deck.md",
@@ -42,7 +42,7 @@
     },
     {
       "path": "content/project-briefs/code-review-helper.md",
-      "sha256": "96bbbef60ab0ff93ad4aa3858852886329139a25ce9f375bc4cc57ad706b7c98"
+      "sha256": "faf51210e1305683432f3e96eec1e18f91cdb2f1fd086ff73aeb70b6d17895a0"
     },
     {
       "path": "content/project-briefs/devtoolbox-cli.md",
@@ -50,7 +50,7 @@
     },
     {
       "path": "content/project-briefs/doc-generator.md",
-      "sha256": "48b8298be1e14e962055ac6d157be2728aa96fc71109e7ee833a6c56dab64731"
+      "sha256": "b4a3da683eba039f6009be61fe546ed1585341c82c3492f94add8363ad9496e3"
     },
     {
       "path": "content/project-briefs/locales/en/code-review-helper.md",
@@ -74,11 +74,11 @@
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
-      "sha256": "40c0d09c02fb20c97c0f99088641de20fa966b17089f6f7701a7808814b31c55"
+      "sha256": "926dd8ccedab65a30b862bf4dc481f2c8054778e5668d97f5c8cf46665c60860"
     },
     {
       "path": "content/project-briefs/standup-bot.md",
-      "sha256": "df9abc9d7bc8283d30d1c09fb412f9e072a980782c0b622747b13744b2a81c84"
+      "sha256": "c2f56513bf69dd92c95f3dbd68c5b0925d19faf17d9d42eb2ed40c7cc8e8839b"
     },
     {
       "path": "content/talks/.gitkeep",
@@ -90,7 +90,7 @@
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "31fb6a02037c50e0b3fa2ae4bc39f658924bd164279fb490fc192d604763ff9f"
+      "sha256": "2f666585220c50901fe91443904a127e3357aa71a92e93b10eafa17100eb105c"
     },
     {
       "path": "docs/harness-cli-foundation.md",
