@@ -157,6 +157,7 @@ jobs:
         working-directory: harness-cli
     permissions:
       contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
@@ -168,17 +169,18 @@ jobs:
       - name: Install CLI dependencies
         run: npm ci
 
-      - name: Publish package to npm
+      - name: Publish package to npm with provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: npm publish --access public --provenance
 
       - name: Write publish summary
         run: |
           {
-            echo "## Harness CLI published"
+            echo "## Harness CLI published with provenance"
             echo
             echo "- Package: \`@harness-lab/cli\`"
             echo "- Version: \`${{ needs.verify-cli-package.outputs.package_version }}\`"
             echo "- Release tag: \`${{ needs.verify-cli-package.outputs.release_tag }}\`"
+            echo "- Provenance: Sigstore-signed, linked to this workflow run"
           } >> "$GITHUB_STEP_SUMMARY"
