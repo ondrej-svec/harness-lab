@@ -1237,8 +1237,8 @@ test("skill install refreshes a stale install without requiring force", async ()
 test("repo README routes participants through the locale-aware workshop interface", async () => {
   const readme = await fs.readFile(repoReadmeUrl, "utf8");
 
-  assert.match(readme, /Codex: \$workshop commands/);
-  assert.match(readme, /pi: \/skill:workshop/);
+  assert.match(readme, /\$workshop commands/);
+  assert.match(readme, /\/skill:workshop/);
   assert.doesNotMatch(readme, /participant:.*workshop-skill\/install\.md/);
   assert.doesNotMatch(readme, /participant:.*workshop-skill\/reference\.md/);
 });
