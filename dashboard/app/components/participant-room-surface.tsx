@@ -8,6 +8,7 @@ import type { ParticipantTeamLookup } from "@/lib/event-access";
 import type { ParticipantSession } from "@/lib/runtime-contracts";
 import { publicCopy, type UiLanguage } from "@/lib/ui-language";
 import type { PresenterBlock, WorkshopState } from "@/lib/workshop-data";
+import { SubmitButton } from "./submit-button";
 
 type AgendaItem = WorkshopState["agenda"][number];
 type PublicNote = WorkshopState["ticker"][number];
@@ -111,12 +112,11 @@ export function ParticipantRoomSurface({
           {logoutAction ? (
             <form action={logoutAction} className="mt-6">
               <input name="lang" type="hidden" value={lang} />
-              <button
+              <SubmitButton
                 className="w-full rounded-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
-                type="submit"
               >
                 {copy.leaveRoomContext}
-              </button>
+              </SubmitButton>
             </form>
           ) : null}
         </aside>

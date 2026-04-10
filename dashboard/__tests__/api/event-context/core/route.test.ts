@@ -23,6 +23,10 @@ class MemoryEventAccessRepository implements EventAccessRepository {
     );
   }
 
+  async findSessionByTokenHash(tokenHash: string) {
+    return structuredClone(this.sessions.find((session) => session.tokenHash === tokenHash) ?? null);
+  }
+
   async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
     this.sessions = this.sessions.some((item) => item.tokenHash === session.tokenHash)
       ? this.sessions.map((item) =>

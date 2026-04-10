@@ -36,6 +36,10 @@ class MemoryEventAccessRepository implements EventAccessRepository {
     );
   }
 
+  async findSessionByTokenHash(tokenHash: string) {
+    return structuredClone(this.sessions.find((session) => session.tokenHash === tokenHash) ?? null);
+  }
+
   async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
     this.sessions = this.sessions.some((item) => item.tokenHash === session.tokenHash)
       ? this.sessions.map((item) =>
@@ -192,7 +196,7 @@ describe("event-access", () => {
     }
   });
 
-  it("rejects sessions from a different workshop instance", async () => {
+  it("resolves sessions across instances via cross-instance token lookup", async () => {
     const result = await redeemEventCode("lantern8-context4-handoff2");
     expect(result.ok).toBe(true);
     if (!result.ok) {
@@ -201,7 +205,9 @@ describe("event-access", () => {
 
     process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
 
-    await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
+    const session = await getParticipantSession(result.session.token);
+    expect(session).not.toBeNull();
+    expect(session?.instanceId).toBe("sample-studio-a");
   });
 
   it("builds the participant core bundle and protected team lookup shapes", async () => {
@@ -223,17 +229,16 @@ describe("event-access", () => {
     expect(participantSessionCookieName).toBe("harness_event_session");
   });
 
-  it("prunes expired sessions during validation", async () => {
-    await repository.upsertSession("sample-studio-a", {
-      tokenHash: "deadbeef",
-      instanceId: "sample-studio-a",
-      createdAt: "2026-04-05T12:00:00.000Z",
-      lastValidatedAt: "2026-04-05T12:00:00.000Z",
-      expiresAt: "2026-04-06T11:59:59.000Z",
-      absoluteExpiresAt: "2026-04-06T12:30:00.000Z",
-    });
+  it("rejects and removes expired sessions during validation", async () => {
+    const result = await redeemEventCode("lantern8-context4-handoff2");
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
 
-    await expect(getParticipantSession("expired-token")).resolves.toBeNull();
+    vi.setSystemTime(new Date("2026-04-08T00:00:00.000Z"));
+
+    await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
     await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
   });
 });

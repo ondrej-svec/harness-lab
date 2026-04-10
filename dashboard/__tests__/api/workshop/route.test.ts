@@ -69,6 +69,10 @@ class MemoryEventAccessRepository implements EventAccessRepository {
     void tokenHash;
     return null;
   }
+  async findSessionByTokenHash(tokenHash: string) {
+    void tokenHash;
+    return null;
+  }
   async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
     void instanceId;
     void session;

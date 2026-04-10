@@ -7,5 +7,5 @@ export async function GET(request: Request) {
     return access.response;
   }
 
-  return NextResponse.json(await getParticipantCoreBundle());
+  return NextResponse.json(await getParticipantCoreBundle(access.session.instanceId));
 }

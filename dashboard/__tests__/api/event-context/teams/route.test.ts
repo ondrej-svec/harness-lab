@@ -30,7 +30,7 @@ describe("GET /api/event-context/teams", () => {
 
   it("returns participant team lookup data for an authorized session", async () => {
     const { GET } = await routeModulePromise;
-    requireParticipantSession.mockResolvedValue({ ok: true });
+    requireParticipantSession.mockResolvedValue({ ok: true, session: { instanceId: "sample-studio-a" } });
     getParticipantTeamLookup.mockResolvedValue({
       items: [{ id: "t1", name: "Team 1" }],
     });

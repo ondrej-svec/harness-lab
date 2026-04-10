@@ -7,5 +7,5 @@ export async function GET(request: Request) {
     return access.response;
   }
 
-  return NextResponse.json(await getParticipantTeamLookup());
+  return NextResponse.json(await getParticipantTeamLookup(access.session.instanceId));
 }

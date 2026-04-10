@@ -53,29 +53,39 @@ describe("event-access-repository", () => {
     await expect(repository.listSessions("instance-a")).resolves.toEqual([]);
   });
 
+  it("finds sessions by token hash across instances in file mode", async () => {
+    const { FileEventAccessRepository } = await import("./event-access-repository");
+    const repository = new FileEventAccessRepository();
+
+    const sessionA = { ...session, tokenHash: "token-a", instanceId: "instance-a" };
+    const sessionB = { ...session, tokenHash: "token-b", instanceId: "instance-b" };
+
+    await repository.upsertSession("instance-a", sessionA);
+    await repository.upsertSession("instance-b", sessionB);
+
+    const foundA = await repository.findSessionByTokenHash("token-a");
+    expect(foundA).toEqual(sessionA);
+
+    const foundB = await repository.findSessionByTokenHash("token-b");
+    expect(foundB).toEqual(sessionB);
+
+    await expect(repository.findSessionByTokenHash("nonexistent")).resolves.toBeNull();
+  });
+
   it("maps neon session rows and issues the expected writes", async () => {
+    const neonRow = {
+      token_hash: "token-1",
+      instance_id: "instance-a",
+      created_at: session.createdAt,
+      expires_at: session.expiresAt,
+      last_validated_at: session.lastValidatedAt,
+      absolute_expires_at: session.absoluteExpiresAt,
+    };
     const query = vi
       .fn()
-      .mockResolvedValueOnce([
-        {
-          token_hash: "token-1",
-          instance_id: "instance-a",
-          created_at: session.createdAt,
-          expires_at: session.expiresAt,
-          last_validated_at: session.lastValidatedAt,
-          absolute_expires_at: session.absoluteExpiresAt,
-        },
-      ])
-      .mockResolvedValueOnce([
-        {
-          token_hash: "token-1",
-          instance_id: "instance-a",
-          created_at: session.createdAt,
-          expires_at: session.expiresAt,
-          last_validated_at: session.lastValidatedAt,
-          absolute_expires_at: session.absoluteExpiresAt,
-        },
-      ])
+      .mockResolvedValueOnce([neonRow])
+      .mockResolvedValueOnce([neonRow])
+      .mockResolvedValueOnce([neonRow])
       .mockResolvedValue(undefined);
 
     vi.doMock("./runtime-storage", () => ({
@@ -90,6 +100,7 @@ describe("event-access-repository", () => {
 
     await expect(repository.listSessions("instance-a")).resolves.toEqual([session]);
     await expect(repository.findSession("instance-a", "token-1")).resolves.toEqual(session);
+    await expect(repository.findSessionByTokenHash("token-1")).resolves.toEqual(session);
     await repository.upsertSession("instance-a", session);
     await repository.deleteSession("instance-a", "token-1");
     await repository.deleteExpiredSessions("instance-a", "2026-04-07T19:00:00.000Z");

@@ -18,6 +18,8 @@ import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { ParticipantRoomSurface } from "./components/participant-room-surface";
 import { SiteHeader } from "./components/site-header";
+import { ParticipantLiveRefresh } from "./components/participant-live-refresh";
+import { SubmitButton } from "./components/submit-button";
 
 export const dynamic = "force-dynamic";
 
@@ -64,12 +66,12 @@ export default async function HomePage({
 }: {
   searchParams?: Promise<{ eventAccess?: string; lang?: string }>;
 }) {
-  const state = await getWorkshopState();
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
   const copy = publicCopy[lang];
   const participantSession = await getParticipantSessionFromCookieStore();
-  const participantTeams = participantSession ? await getParticipantTeamLookup() : null;
+  const state = await getWorkshopState(participantSession?.instanceId);
+  const participantTeams = participantSession ? await getParticipantTeamLookup(participantSession.instanceId) : null;
   const configuredEventCode = await getConfiguredEventCode();
   const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
 
@@ -79,6 +81,8 @@ export default async function HomePage({
         <SiteHeader isParticipant={!!participantSession} lang={lang} copy={copy} />
 
         {participantSession ? (
+          <>
+          <ParticipantLiveRefresh currentAgendaItemId={currentAgendaItem?.id} />
           <ParticipantRoomSurface
             copy={copy}
             lang={lang}
@@ -90,6 +94,7 @@ export default async function HomePage({
             rotationRevealed={rotationRevealed}
             logoutAction={logoutEventCodeAction}
           />
+          </>
         ) : (
           <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
         )}
@@ -169,12 +174,11 @@ function PublicView({
               name="eventCode"
               placeholder={copy.eventCodePlaceholder}
             />
-            <button
+            <SubmitButton
               className="w-full rounded-full border border-[var(--accent-text)] bg-[var(--accent-text)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-surface)] transition hover:bg-transparent hover:text-[var(--accent-text)]"
-              type="submit"
             >
               {copy.eventCodeSubmit}
-            </button>
+            </SubmitButton>
           </form>
 
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm lowercase">

@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { getNeonSql } from "./neon-db";
@@ -40,6 +40,31 @@ export class FileEventAccessRepository implements EventAccessRepository {
   async findSession(instanceId: string, tokenHash: string) {
     const sessions = await this.listSessions(instanceId);
     return sessions.find((session) => session.tokenHash === tokenHash) ?? null;
+  }
+
+  async findSessionByTokenHash(tokenHash: string) {
+    let entries: string[];
+    try {
+      entries = await readdir(this.dataDir);
+    } catch {
+      return null;
+    }
+
+    for (const entry of entries) {
+      const sessionsPath = path.join(this.dataDir, entry, "participant-sessions.json");
+      try {
+        const raw = await readFile(sessionsPath, "utf8");
+        const parsed = JSON.parse(raw) as StoredParticipantSessions;
+        const match = parsed.sessions.find((s) => s.tokenHash === tokenHash);
+        if (match) {
+          return match;
+        }
+      } catch {
+        // Directory without session file — skip
+      }
+    }
+
+    return null;
   }
 
   async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
@@ -120,6 +145,40 @@ export class NeonEventAccessRepository implements EventAccessRepository {
         LIMIT 1
       `,
       [instanceId, tokenHash],
+    )) as {
+      token_hash: string;
+      instance_id: string;
+      created_at: string;
+      expires_at: string;
+      last_validated_at: string;
+      absolute_expires_at: string;
+    }[];
+
+    const row = rows[0];
+    if (!row) {
+      return null;
+    }
+
+    return {
+      tokenHash: row.token_hash,
+      instanceId: row.instance_id,
+      createdAt: row.created_at,
+      expiresAt: row.expires_at,
+      lastValidatedAt: row.last_validated_at,
+      absoluteExpiresAt: row.absolute_expires_at,
+    };
+  }
+
+  async findSessionByTokenHash(tokenHash: string) {
+    const sql = getNeonSql();
+    const rows = (await sql.query(
+      `
+        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at
+        FROM participant_sessions
+        WHERE token_hash = $1
+        LIMIT 1
+      `,
+      [tokenHash],
     )) as {
       token_hash: string;
       instance_id: string;

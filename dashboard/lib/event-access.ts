@@ -128,25 +128,29 @@ export async function getParticipantSession(token: string | undefined | null): P
     return null;
   }
 
-  const instanceId = getCurrentWorkshopInstanceId();
   const repository = getEventAccessRepository();
-  await repository.deleteExpiredSessions(instanceId, new Date().toISOString());
   const tokenHash = hashSecret(token);
-  const session = await repository.findSession(instanceId, tokenHash);
+  const session = await repository.findSessionByTokenHash(tokenHash);
 
   if (!session) {
     return null;
   }
 
+  const now = new Date().toISOString();
+  if (Date.parse(session.expiresAt) <= Date.now() || Date.parse(session.absoluteExpiresAt) <= Date.now()) {
+    await repository.deleteSession(session.instanceId, tokenHash);
+    return null;
+  }
+
   const refreshedSession: ParticipantSessionRecord = {
     ...session,
-    lastValidatedAt: new Date().toISOString(),
+    lastValidatedAt: now,
   };
 
-  await repository.upsertSession(instanceId, refreshedSession);
+  await repository.upsertSession(session.instanceId, refreshedSession);
 
   return {
-    instanceId,
+    instanceId: session.instanceId,
     expiresAt: refreshedSession.expiresAt,
     lastValidatedAt: refreshedSession.lastValidatedAt,
     absoluteExpiresAt: refreshedSession.absoluteExpiresAt,
@@ -163,9 +167,10 @@ export async function revokeParticipantSession(token: string | undefined | null)
     return;
   }
 
-  const instanceId = getCurrentWorkshopInstanceId();
   const tokenHash = hashSecret(token);
   const repository = getEventAccessRepository();
+  const session = await repository.findSessionByTokenHash(tokenHash);
+  const instanceId = session?.instanceId ?? getCurrentWorkshopInstanceId();
   await repository.deleteSession(instanceId, tokenHash);
   await getAuditLogRepository().append({
     id: `audit-${randomUUID()}`,
@@ -197,8 +202,8 @@ export async function requireParticipantSession(request: Request) {
   return { ok: true as const, session };
 }
 
-export async function getParticipantCoreBundle(): Promise<ParticipantCoreBundle> {
-  const state = await getWorkshopState();
+export async function getParticipantCoreBundle(instanceId?: string): Promise<ParticipantCoreBundle> {
+  const state = await getWorkshopState(instanceId);
 
   return {
     event: {
@@ -227,8 +232,8 @@ export async function getParticipantCoreBundle(): Promise<ParticipantCoreBundle>
   };
 }
 
-export async function getParticipantTeamLookup(): Promise<ParticipantTeamLookup> {
-  const state = await getWorkshopState();
+export async function getParticipantTeamLookup(instanceId?: string): Promise<ParticipantTeamLookup> {
+  const state = await getWorkshopState(instanceId);
 
   return {
     items: state.teams.map((team) => ({

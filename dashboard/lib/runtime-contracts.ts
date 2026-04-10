@@ -173,6 +173,7 @@ export interface RuntimeWorkshopStateRepository {
 export interface ParticipantSessionRepository {
   listSessions(instanceId: WorkshopInstanceId): Promise<ParticipantSessionRecord[]>;
   findSession(instanceId: WorkshopInstanceId, tokenHash: string): Promise<ParticipantSessionRecord | null>;
+  findSessionByTokenHash(tokenHash: string): Promise<ParticipantSessionRecord | null>;
   upsertSession(instanceId: WorkshopInstanceId, session: ParticipantSessionRecord): Promise<void>;
   deleteSession(instanceId: WorkshopInstanceId, tokenHash: string): Promise<void>;
   deleteExpiredSessions(instanceId: WorkshopInstanceId, now: string): Promise<void>;

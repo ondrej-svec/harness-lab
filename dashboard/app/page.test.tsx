@@ -14,6 +14,7 @@ vi.mock("next/headers", () => ({
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(),
+  useRouter: () => ({ refresh: vi.fn() }),
 }));
 
 vi.mock("@/lib/event-access", () => ({
