@@ -1,262 +1,82 @@
 # Harness Lab
 
 [![CI](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml/badge.svg?branch=main)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
-[![CLI Publish](https://github.com/ondrej-svec/harness-lab/actions/workflows/harness-cli-publish.yml/badge.svg)](https://github.com/ondrej-svec/harness-lab/actions/workflows/harness-cli-publish.yml)
 [![npm](https://img.shields.io/npm/v/@harness-lab/cli?label=%40harness-lab%2Fcli)](https://www.npmjs.com/package/@harness-lab/cli)
-[![Security: Semgrep](https://img.shields.io/badge/SAST-Semgrep-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
-[![Security: Gitleaks](https://img.shields.io/badge/secrets-Gitleaks-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
-[![npm audit](https://img.shields.io/badge/dependencies-audited-green)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
-[![codecov](https://codecov.io/gh/ondrej-svec/harness-lab/graph/badge.svg)](https://codecov.io/gh/ondrej-svec/harness-lab)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ondrej-svec/harness-lab/badge)](https://scorecard.dev/viewer/?uri=github.com/ondrej-svec/harness-lab)
 [![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
 
 Open-source workshop template for teams working with AI coding agents on real software.
 
-Harness Lab teaches **harness engineering**: the discipline of engineering context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into disposable output.
-
-If you are a **participant** arriving at a workshop, you do not need to clone or fork this repo. Install the CLI in your own project and run `harness skill install` — that is the entire participant path. If you are a **facilitator** or **workshop operator**, start with [harness-cli/README.md](harness-cli/README.md) and [workshop-blueprint/control-surfaces.md](workshop-blueprint/control-surfaces.md).
-
-## Table of Contents
-
-- [What You Can Do Here](#what-you-can-do-here)
-- [Choose Your Path](#choose-your-path)
-- [Quick Start](#quick-start)
-- [What Harness Lab Is](#what-harness-lab-is)
-- [Working Principles](#working-principles)
-- [Participant Default Loop](#participant-default-loop)
-- [Workshop Blueprint](#workshop-blueprint)
-- [Repository Guide](#repository-guide)
-- [Public vs Private](#public-vs-private)
-- [Maintainer Collaboration](#maintainer-collaboration)
-- [Community Standards](#community-standards)
-- [Language](#language)
-
-## What You Can Do Here
-
-- install the portable `workshop` skill into your own repo without cloning this repo first
-- run the workshop dashboard locally with demo data
-- fork the repo and deploy your own workshop instance on Vercel plus Neon
-- reuse the public workshop blueprint, content, and facilitator tooling
-- contribute improvements back upstream without mixing in private workshop data
-
-## Choose Your Path
-
-- participant: install `@harness-lab/cli` in your own project, run `harness skill install`, then start with `Codex: $workshop commands` or `pi: /skill:workshop`
-- facilitator: start with [harness-cli/README.md](harness-cli/README.md), then [workshop-skill/facilitator.md](workshop-skill/facilitator.md)
-- self-hoster or workshop operator: start with [docs/self-hosting.md](docs/self-hosting.md)
-- maintainer or contributor: start with [docs/internal-harness.md](docs/internal-harness.md), [docs/contributing.md](docs/contributing.md), and [docs/public-private-taxonomy.md](docs/public-private-taxonomy.md)
+Harness Lab teaches **harness engineering** — the discipline of building context, instructions, verification, and workflows around AI agents so the work survives handoffs instead of collapsing into disposable output.
 
 ## Quick Start
 
-### Use Harness Lab in your own repo
+### Participant
 
-You do **not** need to fork or clone this repository just to participate in the workshop.
+You do **not** need to fork or clone this repo. Install the CLI in your own project:
 
 ```bash
 npm install -g @harness-lab/cli
 harness skill install
 ```
 
-Then open your coding agent in that repo and start with:
-
-- Codex: `$workshop commands`
-- pi: `/skill:workshop`
-
-The installed `.agents/skills/harness-lab-workshop` directory is generated bundle output. Treat it as the participant-facing install target, not the canonical authoring source.
-
-For the CLI surface and facilitator commands, see [harness-cli/README.md](harness-cli/README.md).
+Then open your coding agent and run `$workshop commands` (Codex) or `/skill:workshop` (pi).
 
 ### Run the dashboard locally
 
-Local development uses the file-backed demo runtime by default.
-
 ```bash
-git clone https://github.com/<your-account>/harness-lab.git
+git clone https://github.com/ondrej-svec/harness-lab.git
 cd harness-lab/dashboard
 cp .env.example .env.local
-npm install
-npm run dev
+npm install && npm run dev
 ```
 
-Useful local checks:
-
-```bash
-npm run test
-npm run test:e2e
-npm run lint
-npm run build
-```
-
-Local demo notes:
-
-- default storage mode is `HARNESS_STORAGE_MODE=file`
-- `/admin` uses the demo credentials from `dashboard/.env.example`
-- local mode is for sample data and development only, not for real workshop operations
+Open `http://localhost:3000/admin` with the demo credentials from `.env.example`.
 
 ### Deploy your own instance
 
-Fork the repo if you want your own hosted dashboard, your own runtime state, or your own workshop variant.
+Fork the repo, connect Vercel + Neon, and follow [docs/self-hosting.md](docs/self-hosting.md).
 
-Recommended deployment model:
+## Choose Your Path
 
-1. fork this repository
-2. create one Vercel project rooted at `dashboard/`
-3. create private Neon preview and production databases or branches
-4. configure preview and production environment variables outside the repo
-5. run `cd dashboard && npm run db:migrate`
-6. create the first facilitator account and workshop instance through the documented operator flow
+| You are a... | Start here |
+|---|---|
+| **Participant** | [harness-cli/README.md](harness-cli/README.md) |
+| **Facilitator** | [harness-cli/README.md](harness-cli/README.md) then [workshop-skill/facilitator.md](workshop-skill/facilitator.md) |
+| **Self-hoster** | [docs/self-hosting.md](docs/self-hosting.md) |
+| **Contributor** | [docs/contributing.md](docs/contributing.md) |
 
-Start with [docs/self-hosting.md](docs/self-hosting.md). The deeper operator docs are:
+## Repository Map
 
-- [docs/private-workshop-instance-env-matrix.md](docs/private-workshop-instance-env-matrix.md)
-- [docs/private-workshop-instance-deployment-spec.md](docs/private-workshop-instance-deployment-spec.md)
-- [docs/workshop-instance-runbook.md](docs/workshop-instance-runbook.md)
+| Directory | What lives here |
+|---|---|
+| `harness-cli/` | CLI for skill installation and facilitator operations |
+| `workshop-skill/` | Portable participant skill, setup help, and reference card |
+| `dashboard/` | Facilitator and participant dashboard (Next.js) |
+| `workshop-blueprint/` | Canonical workshop method and day structure |
+| `content/` | Project briefs, challenge cards, talks, and facilitation content |
+| `materials/` | Printable participant takeaways |
+| `docs/` | Architecture, ADRs, operator guides, and contributor docs |
 
-## What Harness Lab Is
+## What Gets Practiced
 
-Harness Lab is not about prompt theatre or one-off hacks. It is about context, decisions, verification, and a way of working that another person or another agent can continue.
+During the workshop, teams work through:
 
-During the workshop, teams practice:
+1. Writing repo-native context (`AGENTS.md`, skills, runbooks)
+2. A structured flow: brainstorm &rarr; plan &rarr; work &rarr; review &rarr; compound
+3. Delegating, checking, and redirecting agent work
+4. Turning decisions into artifacts that survive handoffs
 
-- writing clearer repo-native context such as `AGENTS.md`, skills, and runbooks
-- working through a structured flow: `brainstorm` -> `plan` -> `work` -> `review` -> `compound`
-- delegating, checking, and redirecting agent work like a real technical team
-- turning decisions, constraints, and operating knowledge into artifacts another person or agent can continue
-- doing periodic cleanup so temporary chat knowledge becomes durable repo guidance instead of entropy
+Three rules guide the work:
 
-The goal is not to produce the most code. The goal is to build software work that stays legible, verifiable, and maintainable through continuation.
+- **Clarify first, then generate.** An agent without intent and constraints does not create; it improvises.
+- **Verify before you move on.** Verification is the trust boundary.
+- **Work so others can continue.** The next person or agent should not have to guess what happened.
 
-## Working Principles
+## Community
 
-Harness Lab uses three core rules:
-
-1. **Clarify first, then generate.** An agent without intent and constraints does not create; it improvises.
-2. **Verify before you move on.** Once an agent is doing meaningful work, verification becomes the trust boundary.
-3. **Work so others can continue.** The next person or the next agent should not have to guess what happened.
-
-Default expectations in this repo:
-
-- tests before implementation when the change is important enough to automate
-- tracer bullets and end-to-end checks where reading files is not enough
-- repeatable browser checks plus agent-driven UI inspection for important UI flows
-- review and explicit done criteria instead of blind trust in generated output
-
-The default UI workflow in this repo is:
-
-1. agent exploration in an isolated local environment
-2. Playwright regression for the critical flow
-3. human review before the change is considered complete
-
-Harness Lab does not teach unrestricted browser autonomy in a normal authenticated browser as the default mode of work.
-
-## Participant Default Loop
-
-For participants, the intended default is:
-
-1. use `workshop` to orient yourself in the repo and the day
-2. create or tighten `AGENTS.md`
-3. run `brainstorm` or go straight to `plan` when the task is already clear
-4. do `work` against one executable check
-5. run `review` before treating the change as done
-6. use `compound` or another repo-native note to capture what should survive the session
-7. do small cleanup passes so rules, commands, and handoff notes live in the repo instead of chat scrollback
-
-The workshop-guaranteed interface is the bundled `workshop` skill. Many workflow packs and plugins are Codex-first today, but they are not the hard dependency for getting started.
-
-The broader method is not Codex-only. The same harness-engineering discipline should transfer across Codex, pi, Claude Code, and similar coding agents:
-
-- repo-native context over chat-only memory
-- verification as the trust boundary
-- handoff-ready artifacts instead of one-session output
-
-## Workshop Blueprint
-
-The canonical public definition of the workshop lives in [`workshop-blueprint/`](workshop-blueprint/).
-
-Recommended entry points:
-
-- [workshop-blueprint/README.md](workshop-blueprint/README.md)
-- [workshop-blueprint/day-structure.md](workshop-blueprint/day-structure.md)
-- [workshop-blueprint/control-surfaces.md](workshop-blueprint/control-surfaces.md)
-- [workshop-blueprint/edit-boundaries.md](workshop-blueprint/edit-boundaries.md)
-
-## Repository Guide
-
-Public teaching surfaces:
-
-- `workshop-skill/` - participant-facing skill, setup help, reference card, and fallback workshop guidance
-- `harness-cli/` - CLI for participant skill installation and facilitator operations
-- `materials/` - printable participant takeaways and handouts
-- `content/` - project briefs, challenge cards, talks, and facilitation content
-- `workshop-blueprint/` - canonical public definition of the workshop method
-
-Runtime and operations:
-
-- `dashboard/` - participant and facilitator dashboard surfaces
-- `monitoring/` - facilitator monitoring helpers
-- `capture/` - support material for quick observation capture
-
-System and doctrine:
-
-- `docs/` - architecture notes, ADRs, plans, trust boundaries, and maintainer guidance
-- `AGENTS.md` - short operating map for agents and maintainers
-
-## Public vs Private
-
-This repository is a **public template repo**:
-
-- it contains the reusable public workshop framework
-- it runs with sample or demo data only
-- it does not contain real workshop dates, rooms, live operational state, or participant-private context
-
-The actual workshop run belongs in the **private workshop-instance layer**:
-
-- workshop instance metadata
-- facilitator operations
-- checkpoints, monitoring, and team repo registry
-- any sensitive or event-specific data
-
-The boundary model is documented in [docs/public-private-taxonomy.md](docs/public-private-taxonomy.md).
-
-Working rule:
-
-- update reusable workshop method in the blueprint and supporting public docs
-- operate live workshop state through the dashboard or facilitator skill and CLI path
-- do not let runtime changes silently become the new canonical blueprint
-
-## Maintainer Collaboration
-
-If you want to contribute upstream or maintain a fork:
-
-- read [docs/internal-harness.md](docs/internal-harness.md) for the maintainer map
-- follow [docs/contributing.md](docs/contributing.md) for workflow, verification, and link hygiene
-- read [docs/public-private-taxonomy.md](docs/public-private-taxonomy.md) before adding data, routes, or new operational copy
-- update the relevant ADR or operator doc when you change trust boundaries, deployment, or auth behavior
-- if you change the portable workshop bundle, sync it with `node harness-cli/scripts/sync-workshop-bundle.mjs`
-
-## Community Standards
-
-- [LICENSE](LICENSE)
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- [SUPPORT.md](SUPPORT.md)
-- [docs/contributing.md](docs/contributing.md)
-- [docs/internal-harness.md](docs/internal-harness.md)
-
-## Language
-
-The language split in this repo is intentional:
-
-- dev-facing repo surfaces such as `README.md`, `AGENTS.md`, architecture notes, and technical docs are in English
-- dashboard and workshop delivery may be shown in Czech or English
-- shared structured workshop content is moving toward canonical English authoring with reviewed localized delivery, especially Czech for real workshop runs
-- code and configuration stay in English
-- technical terms such as skills, commands, and harness vocabulary remain in English where that improves clarity
-
-Current language architecture and terminology are documented in:
-
-- [docs/workshop-content-language-architecture.md](docs/workshop-content-language-architecture.md)
-
-Style guidance for Czech participant-facing copy lives in:
-
-- [content/style-guide.md](content/style-guide.md)
-- [content/style-examples.md](content/style-examples.md)
+- [Contributing](docs/contributing.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security](SECURITY.md)
+- [Support](SUPPORT.md)
+- [License](LICENSE)
