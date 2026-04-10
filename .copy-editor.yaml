@@ -41,9 +41,8 @@ voice_doctrine: |
 
 paths:
   include:
-    # Canonical runtime-facing source pair — highest priority.
-    - dashboard/lib/workshop-blueprint-agenda.json
-    - dashboard/lib/workshop-blueprint-localized-content.ts
+    # Canonical bilingual source — highest priority.
+    - workshop-content/agenda.json
 
     # Participant-facing authored content.
     - content/project-briefs/**/*.md
@@ -90,18 +89,12 @@ paths:
     - "workshop-skill/facilitator.md"
     - "materials/coaching-codex.md"
     - "content/codex-craft.md"
-    # The English overlay for the runtime blueprint agenda. This file is
-    # included above as part of the canonical runtime-facing source pair
-    # for the Czech review, but the overlay object only has an `en:` key
-    # and contains no Czech content. Excluding it from the Czech pass
-    # keeps English prose assertions in dashboard tests stable.
-    - "dashboard/lib/workshop-blueprint-localized-content.ts"
-
     # Tests and generated artifacts.
     - "**/*.test.*"
     - "**/node_modules/**"
     - "**/.next/**"
     - "**/dist/**"
+    - "dashboard/lib/generated/**"
 
   # Surface profile classification for Layer 2 Pass C (clarity/ambiguity).
   # participant = strict clarity bar (self-contained, no vague directives)
@@ -123,11 +116,10 @@ paths:
     "content/talks/**": presenter
     "content/facilitation/**": presenter
 
-    # Hybrid — runtime source pair is consumed by both room projection
+    # Hybrid — bilingual source is consumed by both room projection
     # (presenter-ish) and participant mirrors (participant-ish).
     # Clarity pass applies with judgment.
-    "dashboard/lib/workshop-blueprint-agenda.json": hybrid
-    "dashboard/lib/workshop-blueprint-localized-content.ts": hybrid
+    "workshop-content/agenda.json": hybrid
 
 # Output conventions.
 output:

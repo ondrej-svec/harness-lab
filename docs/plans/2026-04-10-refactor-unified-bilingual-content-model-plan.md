@@ -96,11 +96,11 @@ Exit: dashboard consumes the generated views, tests pass, both languages render 
 
 ### Phase 4 — Delete old files, update references
 
-- [ ] Delete `dashboard/lib/workshop-blueprint-agenda.json` (Czech content now in bilingual source).
-- [ ] Delete `dashboard/lib/workshop-blueprint-localized-content.ts` (English content now in bilingual source).
-- [ ] Move the hand-authored `workshop-blueprint/agenda.json` out of the way (it's now generated).
-- [ ] Update all references to the deleted files in `docs/`, `AGENTS.md`, `.copy-editor.yaml`, `docs/workshop-content-language-architecture.md`, `docs/workshop-content-qa.md`, and any plan docs.
-- [ ] Run the full test suite + build + Playwright e2e — must pass.
+- [x] Delete `dashboard/lib/workshop-blueprint-agenda.json` (Czech content now in bilingual source).
+- [x] Delete `dashboard/lib/workshop-blueprint-localized-content.ts` (English content now in bilingual source).
+- [x] Move the hand-authored `workshop-blueprint/agenda.json` out of the way (it's now generated).
+- [x] Update all references to the deleted files in `docs/`, `AGENTS.md`, `.copy-editor.yaml`, `docs/workshop-content-language-architecture.md`, `docs/workshop-content-qa.md`, and any plan docs.
+- [x] Run the full test suite + build + Playwright e2e — must pass.
 
 Exit: old files gone, no broken references, tests green.
 

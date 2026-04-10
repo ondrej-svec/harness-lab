@@ -60,28 +60,21 @@ Target model:
 - Czech remains a first-class reviewed delivery locale
 - runtime machine translation is not the default path for workshop-copy delivery
 
-Current maintained contract for agenda-backed workshop content:
+## Bilingual Content Source
 
-- [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json) is the structural backbone and the currently maintained Czech delivery source
-- [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts) stores the reviewed English locale keyed by the same phase, scene, and block ids
+The single bilingual source for structured workshop content is:
 
-Until a full single-locale canonical migration lands, treat those two files as one maintained source pair. Do not edit one without checking the other.
+- [`workshop-content/agenda.json`](../workshop-content/agenda.json) — `en`/`cs` content per phase, scene, and block with `cs_reviewed` staleness flags
 
-## Current Blueprint Source Pair
+Generated views (never hand-edited):
 
-For the structured dashboard/presenter agenda model, the maintained source pair currently lives in:
+- `dashboard/lib/generated/agenda-cs.json` — Czech-only runtime view
+- `dashboard/lib/generated/agenda-en.json` — English-only runtime view
+- `workshop-blueprint/agenda.json` — public-readable English blueprint
 
-- [`dashboard/lib/workshop-blueprint-agenda.json`](../dashboard/lib/workshop-blueprint-agenda.json)
-- [`dashboard/lib/workshop-blueprint-localized-content.ts`](../dashboard/lib/workshop-blueprint-localized-content.ts)
+To regenerate: `npm run generate:content`. To verify committed views match source: `npm run verify:content`.
 
-Together these files are the runtime-facing workshop blueprint backbone used by:
-
-- workshop-state creation and reset
-- control-room agenda rendering
-- presenter scene defaults
-- participant fallback guidance derived from agenda content
-
-The public-readable workshop-method mirror in [`workshop-blueprint/agenda.json`](../workshop-blueprint/agenda.json) is a human-readable blueprint artifact. It is not the runtime-facing structured agenda source.
+The dashboard imports the generated views directly — no overlay-merge at runtime. The `contentLang` resolution picks which generated JSON to load.
 
 ## Delivery Rule
 
