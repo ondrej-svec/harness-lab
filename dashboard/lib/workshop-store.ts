@@ -304,22 +304,6 @@ function mergeLocalizedAgenda(existingAgenda: AgendaItem[], localizedAgenda: Age
   });
 }
 
-function mergeLocalizedChallenges(
-  existingChallenges: WorkshopState["challenges"],
-  localizedChallenges: WorkshopState["challenges"],
-) {
-  const localizedById = new Map(localizedChallenges.map((challenge) => [challenge.id, challenge] as const));
-
-  return existingChallenges.map((challenge) => {
-    const localizedChallenge = localizedById.get(challenge.id);
-    return localizedChallenge
-      ? {
-          ...localizedChallenge,
-          completedBy: [...challenge.completedBy],
-        }
-      : challenge;
-  });
-}
 
 function projectLocalizedTicker(
   ticker: WorkshopState["ticker"],
@@ -356,8 +340,8 @@ function projectLocalizedWorkshopState(state: WorkshopState) {
   return {
     ...state,
     agenda: localizedAgenda,
-    briefs: localizedInventory.briefs,
-    challenges: mergeLocalizedChallenges(state.challenges, localizedInventory.challenges),
+    briefs: state.briefs,
+    challenges: state.challenges,
     ticker: projectLocalizedTicker(state.ticker, contentLang, localizedInventory.ticker),
     setupPaths: localizedInventory.setupPaths,
     workshopMeta: {

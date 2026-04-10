@@ -2115,5 +2115,137 @@
         }
       ]
     }
-  ]
+  ],
+  "inventory": {
+    "briefs": [
+      {
+        "id": "devtoolbox-cli",
+        "title": "DevToolbox CLI",
+        "problem": "Developers lose time on repeated small utilities that are scattered across wiki pages, shell history, and private notes.",
+        "userStories": [
+          "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
+          "As a developer, I want a fast way to list the last problematic commits or branches.",
+          "As a team, I want the commands documented clearly so another team can continue after the handoff."
+        ],
+        "architectureNotes": [
+          "The CLI can be written in any language, but commands must stay easy to discover.",
+          "AGENTS.md must explain the build and test flow and the expected output style.",
+          "A handoff runbook matters more than a wide feature set."
+        ],
+        "acceptanceCriteria": [
+          "There are at least 3 useful commands.",
+          "README and AGENTS.md explain how to run the tool locally.",
+          "A new team can add or fix another command within 10 minutes."
+        ],
+        "firstAgentPrompt": "Design a minimal CLI architecture that survives handoff. Start with AGENTS.md, then a plan, and only then implementation."
+      },
+      {
+        "id": "standup-bot",
+        "title": "Standup Bot",
+        "problem": "Daily standups in chat often become long, inconsistent, and hard to review later.",
+        "userStories": [
+          "As a team lead, I want standup replies collected into one overview.",
+          "As a developer, I want blockers and dependencies visible in one place.",
+          "As the next team after rotation, I want to understand the data flow and integration points quickly."
+        ],
+        "architectureNotes": [
+          "Prefer a clear data model over a complicated integration.",
+          "Mock data is fine if the workflow still feels realistic.",
+          "Prompts and runbooks must be part of the solution, not a side note."
+        ],
+        "acceptanceCriteria": [
+          "The bot can ingest at least seed data and produce a summary.",
+          "The repo explains how to extend the solution to a real chat channel.",
+          "After rotation, another team can continue without verbal explanation."
+        ],
+        "firstAgentPrompt": "Split the work into ingest, summarization, and context for the next team. Before implementation, create the documentation the next team should open first."
+      },
+      {
+        "id": "code-review-helper",
+        "title": "Code Review Helper",
+        "problem": "Code review often depends on who looked at the diff, which means risky changes slip through without a shared language for certainty, heuristics, and required follow-up.",
+        "userStories": [
+          "As a reviewer, I want a checklist of changed boundaries, risks, and follow-up questions extracted from a diff.",
+          "As the author of a change, I want to know what I should verify before I ask for review.",
+          "As the inheriting team, I want the first team’s review heuristics recorded so I can extend them instead of rediscovering them."
+        ],
+        "architectureNotes": [
+          "This can be a CLI, a web tool, or a simple script. The key is a clean diff -> rubric -> checklist flow.",
+          "Make the output separate certainty from heuristic suspicion.",
+          "Add a seed diff or examples folder so another team can test new rules quickly."
+        ],
+        "acceptanceCriteria": [
+          "The tool produces a review checklist from a seed diff.",
+          "It explains what is certain, what is heuristic, and what still needs human judgment.",
+          "Another team can add a new rule without a long onboarding call."
+        ],
+        "firstAgentPrompt": "Do not start by generating code. First define the review rubric, the certainty model, and the seed diff flow another team should open first."
+      },
+      {
+        "id": "metrics-dashboard",
+        "title": "Metrics Dashboard",
+        "problem": "Teams have data but struggle to turn it into a shared view that actually supports decisions.",
+        "userStories": [
+          "As a team, I want several metrics on one screen.",
+          "As a facilitator, I want to change seed data without touching UI logic.",
+          "As the next team after rotation, I want to understand the screen and data structure within minutes."
+        ],
+        "architectureNotes": [
+          "Separate seed data from UI from the first commit.",
+          "Mobile-first is a plus, but projected desktop view still needs to stay readable.",
+          "Monitoring and README should explain what already works and what does not."
+        ],
+        "acceptanceCriteria": [
+          "The dashboard shows at least 3 metrics and one trend.",
+          "The repo describes both data sources and mock fallbacks.",
+          "A new team can add another metric without breaking the layout."
+        ],
+        "firstAgentPrompt": "Design a dashboard that survives handoff. First describe the data model, components, and done criteria, and only then write the UI."
+      }
+    ],
+    "challenges": [
+      {
+        "id": "agents-md",
+        "title": "Create AGENTS.md as a map",
+        "category": "Context Engineering",
+        "phaseHint": "before-lunch",
+        "description": "Write down the goal, build and test flow, durable rules, and where the next team should look first."
+      },
+      {
+        "id": "review-skill",
+        "title": "Write a code review skill",
+        "category": "Context Engineering",
+        "phaseHint": "before-lunch",
+        "description": "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt."
+      },
+      {
+        "id": "plan-first",
+        "title": "Use /plan before coding",
+        "category": "Workflow",
+        "phaseHint": "before-lunch",
+        "description": "Let the agent plan the work first, show what the plan was based on, and record the next safe move."
+      },
+      {
+        "id": "smallest-verification",
+        "title": "Add the smallest useful verification",
+        "category": "Workflow",
+        "phaseHint": "before-lunch",
+        "description": "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy."
+      },
+      {
+        "id": "parallel-agents",
+        "title": "Run 2 parallel Codex sessions",
+        "category": "Advanced",
+        "phaseHint": "after-rotation",
+        "description": "Split the problem into two independent streams and compare what actually worked."
+      },
+      {
+        "id": "done-when",
+        "title": "Add 'Done When' to every task",
+        "category": "Meta",
+        "phaseHint": "anytime",
+        "description": "Every important task needs an explicit completion criterion and a link to verification."
+      }
+    ]
+  }
 }

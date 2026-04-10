@@ -2,10 +2,23 @@ import blueprintAgendaCs from "./generated/agenda-cs.json";
 import blueprintAgendaEn from "./generated/agenda-en.json";
 import { resolveRepoLinkedHref } from "./repo-links";
 
-export type BlueprintAgenda = typeof blueprintAgendaCs;
+export type BlueprintInventory = {
+  briefs?: ProjectBrief[];
+  challenges?: Omit<Challenge, "completedBy">[];
+};
+
+export type BlueprintAgenda = {
+  version: number;
+  blueprintId: string;
+  title: string;
+  subtitle: string;
+  principles?: string[];
+  phases: WorkshopBlueprintPhase[];
+  inventory?: BlueprintInventory;
+};
 
 function getBlueprintAgenda(contentLang: WorkshopContentLanguage): BlueprintAgenda {
-  return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : blueprintAgendaCs;
+  return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : (blueprintAgendaCs as BlueprintAgenda);
 }
 
 export type WorkshopContentLanguage = "cs" | "en";
@@ -1104,21 +1117,22 @@ const seedWorkshopSetupPathsEn: SetupPath[] = [
   },
 ];
 
-export function createWorkshopInventory(contentLang: WorkshopContentLanguage) {
-  if (contentLang === "en") {
-    return {
-      briefs: seedWorkshopBriefsEn.map(cloneProjectBrief),
-      challenges: seedWorkshopChallengesEn.map(cloneChallenge),
-      ticker: seedWorkshopTickerEn.map(cloneTickerItem),
-      setupPaths: seedWorkshopSetupPathsEn.map(cloneSetupPath),
-    };
-  }
+export function createWorkshopInventory(contentLang: WorkshopContentLanguage, externalBlueprint?: BlueprintAgenda) {
+  const seedBriefs = contentLang === "en" ? seedWorkshopBriefsEn : seedWorkshopBriefs;
+  const seedChallenges = contentLang === "en" ? seedWorkshopChallengesEn : seedWorkshopChallenges;
+  const seedTickerItems = contentLang === "en" ? seedWorkshopTickerEn : seedWorkshopTicker;
+  const seedSetupPathItems = contentLang === "en" ? seedWorkshopSetupPathsEn : seedWorkshopSetupPaths;
+
+  const briefs = externalBlueprint?.inventory?.briefs ?? seedBriefs;
+  const challenges = externalBlueprint?.inventory?.challenges
+    ? externalBlueprint.inventory.challenges.map((c) => ({ ...c, completedBy: [] as string[] }))
+    : seedChallenges;
 
   return {
-    briefs: seedWorkshopBriefs.map(cloneProjectBrief),
-    challenges: seedWorkshopChallenges.map(cloneChallenge),
-    ticker: seedWorkshopTicker.map(cloneTickerItem),
-    setupPaths: seedWorkshopSetupPaths.map(cloneSetupPath),
+    briefs: briefs.map(cloneProjectBrief),
+    challenges: challenges.map(cloneChallenge),
+    ticker: seedTickerItems.map(cloneTickerItem),
+    setupPaths: seedSetupPathItems.map(cloneSetupPath),
   };
 }
 
@@ -1373,7 +1387,7 @@ export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
   const blueprintSource = externalBlueprint ?? getBlueprintAgenda(instance.workshopMeta.contentLang);
   const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintSource.phases[0]?.id, externalBlueprint);
-  const inventory = createWorkshopInventory(instance.workshopMeta.contentLang);
+  const inventory = createWorkshopInventory(instance.workshopMeta.contentLang, externalBlueprint);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;
 
   return {

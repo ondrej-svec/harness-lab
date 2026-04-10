@@ -15,6 +15,10 @@ import type {
   BilingualScene,
   BilingualSceneContent,
   BilingualPhaseContent,
+  BilingualProjectBrief,
+  BilingualChallenge,
+  BilingualTickerItem,
+  BilingualSetupPath,
   PresenterBlock,
   WorkshopSourceRef,
   FacilitatorRunner,
@@ -133,6 +137,37 @@ function generateSceneView(scene: BilingualScene, lang: "en" | "cs") {
   return result;
 }
 
+function generateBriefView(brief: BilingualProjectBrief, lang: "en" | "cs") {
+  const content = brief[lang];
+  return {
+    id: brief.id,
+    title: content.title,
+    problem: content.problem,
+    userStories: content.userStories,
+    architectureNotes: content.architectureNotes,
+    acceptanceCriteria: content.acceptanceCriteria,
+    firstAgentPrompt: content.firstAgentPrompt,
+  };
+}
+
+function generateChallengeView(challenge: BilingualChallenge, lang: "en" | "cs") {
+  const content = challenge[lang];
+  return {
+    id: challenge.id,
+    title: content.title,
+    category: challenge.category,
+    phaseHint: challenge.phaseHint,
+    description: content.description,
+  };
+}
+
+function generateInventoryView(source: BilingualAgenda, lang: "en" | "cs") {
+  return {
+    briefs: source.inventory.briefs.map((brief) => generateBriefView(brief, lang)),
+    challenges: source.inventory.challenges.map((challenge) => generateChallengeView(challenge, lang)),
+  };
+}
+
 function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs") {
   return {
     version: 2,
@@ -141,6 +176,7 @@ function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs") {
     subtitle: source.meta[lang].subtitle,
     principles: source.meta[lang].principles,
     phases: source.phases.map((phase) => generatePhaseView(phase, lang)),
+    inventory: generateInventoryView(source, lang),
   };
 }
 
@@ -165,8 +201,9 @@ function generatePublicBlueprint(source: BilingualAgenda) {
       kind: phase.kind,
       goal: phase.en.goal,
     })),
+    inventory: generateInventoryView(source, "en"),
     runtimeImport: {
-      copiedIntoInstance: ["title", "subtitle", "phases"],
+      copiedIntoInstance: ["title", "subtitle", "phases", "inventory"],
       instanceLocalOnly: [
         "currentPhaseId",
         "continuationRevealed",

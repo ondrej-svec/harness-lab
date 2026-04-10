@@ -2057,5 +2057,137 @@
         }
       ]
     }
-  ]
+  ],
+  "inventory": {
+    "briefs": [
+      {
+        "id": "devtoolbox-cli",
+        "title": "DevToolbox CLI",
+        "problem": "Vývojáři ztrácejí čas opakovanými drobnými utilitami, které jsou rozseté po wiki, shellech a poznámkách.",
+        "userStories": [
+          "Jako vývojář chci převést log nebo JSON do čitelnější podoby jedním příkazem.",
+          "Jako vývojář chci rychle vypsat poslední problematické commity nebo větve.",
+          "Jako tým chci mít jasně zdokumentované příkazy, aby nástroj mohl převzít jiný tým po rotaci."
+        ],
+        "architectureNotes": [
+          "CLI může být v libovolném jazyce, ale příkazy musí být snadno objevitelné.",
+          "AGENTS.md musí obsahovat build/test flow a očekávaný styl výstupů.",
+          "Runbook pro další tým je důležitější než šířka feature setu."
+        ],
+        "acceptanceCriteria": [
+          "Existují alespoň 3 užitečné příkazy.",
+          "README a AGENTS.md vysvětlují lokální spuštění.",
+          "Nový tým zvládne do 10 minut přidat nebo opravit další příkaz."
+        ],
+        "firstAgentPrompt": "Navrhni minimální CLI architekturu, která přežije předání. Začni AGENTS.md, pak plánem, teprve potom implementací."
+      },
+      {
+        "id": "standup-bot",
+        "title": "Standup Bot",
+        "problem": "Denní standupy v chatu bývají dlouhé, nekonzistentní a těžko dohledatelné.",
+        "userStories": [
+          "Jako team lead chci sesbírat standup odpovědi do jednoho přehledu.",
+          "Jako vývojář chci vidět blokery a dependency mezi lidmi na jednom místě.",
+          "Jako nový tým po rotaci chci rychle pochopit datový tok a integrační body."
+        ],
+        "architectureNotes": [
+          "Preferujte jasný datový model před složitou integrací.",
+          "Mock data jsou v pořádku, pokud workflow působí realisticky.",
+          "Prompty a runbooky musí být součástí řešení, ne bokem."
+        ],
+        "acceptanceCriteria": [
+          "Bot umí ingestovat aspoň vzorová data a vytvořit souhrn.",
+          "Repo obsahuje instrukce pro rozšíření na reálný chat kanál.",
+          "Po rotaci lze navázat bez verbálního vysvětlování."
+        ],
+        "firstAgentPrompt": "Rozděl práci na ingest, sumarizaci a kontext pro další tým. Před implementací vytvoř dokumentaci, kterou nový tým otevře jako první."
+      },
+      {
+        "id": "code-review-helper",
+        "title": "Code Review Helper",
+        "problem": "Code review často závisí na tom, kdo se zrovna dívá do diffu. Rizikové změny pak procházejí bez společného jazyka pro jistotu, heuristiku a nutný follow-up.",
+        "userStories": [
+          "Jako reviewer chci z diffu získat checklist změněných hranic, rizik a follow-up otázek.",
+          "Jako autor změny chci vědět, co mám ověřit před requestem na review.",
+          "Jako inheriting tým chci navázat na heuristiky prvního týmu místo toho, abych je znovu vymýšlel."
+        ],
+        "architectureNotes": [
+          "Může jít o CLI, web nebo jednoduchý script, hlavní je čistý tok diff -> hodnoticí schéma -> checklist.",
+          "Výstup musí oddělit jistotu od heuristického podezření.",
+          "Doplňte seed diff nebo examples folder, aby další tým rychle otestoval nové pravidlo."
+        ],
+        "acceptanceCriteria": [
+          "Nástroj vytvoří review checklist ze seed diffu.",
+          "Je popsáno, co je jistota, co je heuristika a co pořád potřebuje lidský úsudek.",
+          "Další tým může přidat nové pravidlo bez dlouhého zaučovacího hovoru."
+        ],
+        "firstAgentPrompt": "Nezačínej generováním kódu. Nejdřív navrhni hodnoticí schéma review, ukaž kde je jistota versus heuristika a definuj seed diff flow, na který může po rotaci navázat další tým."
+      },
+      {
+        "id": "metrics-dashboard",
+        "title": "Metrics Dashboard",
+        "problem": "Týmy mají data, ale neumí z nich vytvořit sdílený přehled, který podporuje rozhodování.",
+        "userStories": [
+          "Jako tým chci zobrazit několik metrik na jedné obrazovce.",
+          "Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.",
+          "Jako nový tým po rotaci chci pochopit strukturu obrazovek a dat během pár minut."
+        ],
+        "architectureNotes": [
+          "Vzorová data a UI oddělte už od prvního commitu.",
+          "Mobile-first je plus, ale desktop projekce musí být čitelná.",
+          "Monitoring a README mají vysvětlit, co se už povedlo a co ne."
+        ],
+        "acceptanceCriteria": [
+          "Dashboard ukáže aspoň 3 metriky a jeden trend.",
+          "Repo popisuje datové zdroje i záložní vzorová data.",
+          "Nový tým umí přidat další metriku bez rozbití layoutu."
+        ],
+        "firstAgentPrompt": "Navrhni dashboard, který zvládne předání. Nejprve popiš datový model, komponenty a kritéria hotovo, až pak piš UI."
+      }
+    ],
+    "challenges": [
+      {
+        "id": "agents-md",
+        "title": "Vytvořte AGENTS.md jako mapu",
+        "category": "Context Engineering",
+        "phaseHint": "before-lunch",
+        "description": "Zapište cíl, build/test flow, trvalá pravidla a kam má další tým sáhnout jako první."
+      },
+      {
+        "id": "review-skill",
+        "title": "Napište skill pro code review",
+        "category": "Context Engineering",
+        "phaseHint": "before-lunch",
+        "description": "Alespoň jedna opakovatelná review rutina musí být v repu jako skill nebo runbook, ne jen v promptu."
+      },
+      {
+        "id": "plan-first",
+        "title": "Použijte /plan před kódováním",
+        "category": "Workflow",
+        "phaseHint": "before-lunch",
+        "description": "Nechte agenta nejprve rozplánovat práci, ukažte z čeho se vycházelo a dopište další safe move."
+      },
+      {
+        "id": "smallest-verification",
+        "title": "Přidejte nejmenší užitečné ověření",
+        "category": "Workflow",
+        "phaseHint": "before-lunch",
+        "description": "Vytvořte RED test, tracer bullet nebo jednoduchý browser check dřív, než dáte agentovi víc autonomie."
+      },
+      {
+        "id": "parallel-agents",
+        "title": "Spusťte 2 paralelní Codex sessions",
+        "category": "Advanced",
+        "phaseHint": "after-rotation",
+        "description": "Rozdělte problém do dvou nezávislých proudů a porovnejte, co se osvědčilo."
+      },
+      {
+        "id": "done-when",
+        "title": "Přidejte 'Done When' ke každému tasku",
+        "category": "Meta",
+        "phaseHint": "anytime",
+        "description": "Každý důležitý task musí mít explicitní kritérium dokončení a odkaz na ověření."
+      }
+    ]
+  }
 }
