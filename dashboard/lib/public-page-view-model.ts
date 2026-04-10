@@ -167,7 +167,7 @@ export function buildParticipantPanelState(options: {
     (scene) => scene.enabled && scene.surface === "participant",
   );
   const fallbackGuidance = buildFallbackParticipantGuidance({ currentAgendaItem, copy });
-  const sessionUntilValue = formatDateTime(participantSession.expiresAt, lang);
+  const sessionUntilValue = formatSessionExpiry(participantSession.expiresAt, lang);
   const nextPhaseTitle = nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : null;
 
   return {
@@ -205,6 +205,32 @@ export function formatDateTime(value: string, lang: UiLanguage) {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(new Date(value));
+}
+
+export function formatSessionExpiry(value: string, lang: UiLanguage) {
+  const locale = lang === "en" ? "en-US" : "cs-CZ";
+  const expiryDate = new Date(value);
+  const now = new Date();
+  const isToday =
+    expiryDate.getFullYear() === now.getFullYear() &&
+    expiryDate.getMonth() === now.getMonth() &&
+    expiryDate.getDate() === now.getDate();
+
+  if (isToday) {
+    return new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(expiryDate);
+  }
+
+  const isTomorrow =
+    expiryDate.getFullYear() === now.getFullYear() &&
+    expiryDate.getMonth() === now.getMonth() &&
+    expiryDate.getDate() === now.getDate() + 1;
+
+  if (isTomorrow) {
+    const time = new Intl.DateTimeFormat(locale, { timeStyle: "short" }).format(expiryDate);
+    return lang === "en" ? `tomorrow ${time}` : `zítra ${time}`;
+  }
+
+  return new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(expiryDate);
 }
 
 export function formatEventAccessError(value: string, copy: PublicCopy) {

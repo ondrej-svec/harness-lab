@@ -181,6 +181,7 @@ export interface ParticipantSessionRepository {
 
 export interface ParticipantEventAccessRepository {
   getActiveAccess(instanceId: WorkshopInstanceId): Promise<ParticipantEventAccessRecord | null>;
+  listAllActiveAccess(): Promise<ParticipantEventAccessRecord[]>;
   saveAccess(instanceId: WorkshopInstanceId, access: ParticipantEventAccessRecord): Promise<void>;
 }
 

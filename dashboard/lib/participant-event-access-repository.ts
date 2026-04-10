@@ -1,4 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import path from "node:path";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
@@ -77,6 +77,30 @@ export class FileParticipantEventAccessRepository implements ParticipantEventAcc
     return parsed.access.revokedAt ? null : parsed.access;
   }
 
+  async listAllActiveAccess() {
+    const results: ParticipantEventAccessRecord[] = [];
+    let entries: string[];
+    try {
+      entries = await readdir(this.dataDir);
+    } catch {
+      return results;
+    }
+
+    for (const entry of entries) {
+      try {
+        const accessPath = this.getAccessPath(entry);
+        const raw = await readFile(accessPath, "utf8");
+        const parsed = JSON.parse(raw) as StoredParticipantEventAccess;
+        if (!parsed.access.revokedAt) {
+          results.push(parsed.access);
+        }
+      } catch {
+        // No access file for this instance — skip
+      }
+    }
+    return results;
+  }
+
   async saveAccess(instanceId: string, access: ParticipantEventAccessRecord) {
     const accessPath = this.getAccessPath(instanceId);
     await mkdir(path.dirname(accessPath), { recursive: true });
@@ -146,6 +170,35 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       revokedAt: row.revoked_at,
       sampleCode: null,
     };
+  }
+
+  async listAllActiveAccess() {
+    const sql = getNeonSql();
+    const rows = (await sql.query(
+      `
+        SELECT DISTINCT ON (instance_id) id, instance_id, version, code_hash, expires_at, revoked_at
+        FROM participant_event_access
+        WHERE revoked_at IS NULL AND expires_at > NOW()
+        ORDER BY instance_id, version DESC
+      `,
+    )) as {
+      id: string;
+      instance_id: string;
+      version: number;
+      code_hash: string;
+      expires_at: string;
+      revoked_at: string | null;
+    }[];
+
+    return rows.map((row) => ({
+      id: row.id,
+      instanceId: row.instance_id,
+      version: row.version,
+      codeHash: row.code_hash,
+      expiresAt: row.expires_at,
+      revokedAt: row.revoked_at,
+      sampleCode: null,
+    }));
   }
 
   async saveAccess(_instanceId: string, access: ParticipantEventAccessRecord) {

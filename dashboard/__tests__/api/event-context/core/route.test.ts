@@ -59,6 +59,10 @@ class MemoryParticipantEventAccessRepository implements ParticipantEventAccessRe
   async saveAccess(_instanceId: string, access: ParticipantEventAccessRecord) {
     this.access = structuredClone(access);
   }
+
+  async listAllActiveAccess() {
+    return this.access ? [structuredClone(this.access)] : [];
+  }
 }
 
 class MemoryAuditLogRepository implements AuditLogRepository {

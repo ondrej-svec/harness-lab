@@ -7,6 +7,7 @@ import { getEventAccessRepository } from "./event-access-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getEventAccessPreview, getParticipantEventAccessRepository, hashSecret } from "./participant-event-access-repository";
 import type { ParticipantSession, ParticipantSessionRecord } from "./runtime-contracts";
+import { getRuntimeStorageMode } from "./runtime-storage";
 import { getWorkshopState } from "./workshop-store";
 
 export const participantSessionCookieName = "harness_event_session";
@@ -34,6 +35,11 @@ export type ParticipantTeamLookup = {
 };
 
 export async function getConfiguredEventCode() {
+  // In Neon mode, event codes are managed per-instance in the DB — no env var needed.
+  // Only show the sample hint in file mode where a seed code is configured.
+  if (getRuntimeStorageMode() === "neon") {
+    return null;
+  }
   return getEventAccessPreview();
 }
 
@@ -58,36 +64,33 @@ function safeCompare(left: string, right: string) {
 
 export async function redeemEventCode(submittedCode: string) {
   const normalized = submittedCode.trim();
-  const instanceId = getCurrentWorkshopInstanceId();
+  const codeHash = hashSecret(normalized);
   const auditLogRepository = getAuditLogRepository();
-  const eventAccess = await getParticipantEventAccessRepository().getActiveAccess(instanceId);
+  const accessRepository = getParticipantEventAccessRepository();
 
-  if (!eventAccess || Date.parse(eventAccess.expiresAt) <= Date.now()) {
+  // Scan all instances' active event codes to find which one this code belongs to.
+  const allAccess = await accessRepository.listAllActiveAccess();
+  const matchedAccess = allAccess.find(
+    (access) => Date.parse(access.expiresAt) > Date.now() && safeCompare(codeHash, access.codeHash),
+  );
+
+  if (!matchedAccess) {
+    // Determine whether to report "invalid" or "expired" for audit purposes.
+    const expiredMatch = allAccess.find((access) => safeCompare(codeHash, access.codeHash));
+    const reason = expiredMatch ? "expired_code" : "invalid_code";
     await auditLogRepository.append({
       id: `audit-${randomUUID()}`,
-      instanceId,
+      instanceId: expiredMatch?.instanceId ?? "unknown",
       actorKind: "participant",
       action: "participant_event_access_redeem",
       result: "failure",
       createdAt: new Date().toISOString(),
-      metadata: { reason: "expired_code" },
+      metadata: { reason },
     });
-    return { ok: false as const, reason: "expired_code" as const };
+    return { ok: false as const, reason: reason as "expired_code" | "invalid_code" };
   }
 
-  if (!safeCompare(hashSecret(normalized), eventAccess.codeHash)) {
-    await auditLogRepository.append({
-      id: `audit-${randomUUID()}`,
-      instanceId,
-      actorKind: "participant",
-      action: "participant_event_access_redeem",
-      result: "failure",
-      createdAt: new Date().toISOString(),
-      metadata: { reason: "invalid_code" },
-    });
-    return { ok: false as const, reason: "invalid_code" as const };
-  }
-
+  const instanceId = matchedAccess.instanceId;
   const repository = getEventAccessRepository();
   await repository.deleteExpiredSessions(instanceId, new Date().toISOString());
   const token = randomUUID();

@@ -79,7 +79,9 @@ After the project exists:
 cd dashboard
 vercel env add HARNESS_STORAGE_MODE preview
 vercel env add HARNESS_DATABASE_URL preview
-vercel env add HARNESS_WORKSHOP_INSTANCE_ID preview
+# HARNESS_WORKSHOP_INSTANCE_ID is optional — participant sessions resolve their own instance.
+# Set it only if you want to pin the public homepage to a specific instance.
+# vercel env add HARNESS_WORKSHOP_INSTANCE_ID preview
 vercel env add HARNESS_ADMIN_USERNAME preview
 vercel env add HARNESS_ADMIN_PASSWORD preview
 ```

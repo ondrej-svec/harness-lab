@@ -111,6 +111,10 @@ class MemoryParticipantEventAccessRepository implements ParticipantEventAccessRe
     void instanceId;
     void access;
   }
+
+  async listAllActiveAccess() {
+    return [];
+  }
 }
 
 class MemoryArchiveRepository implements InstanceArchiveRepository {
