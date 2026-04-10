@@ -87,6 +87,14 @@
 
 Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu, další bezpečný krok musí být dohledatelný a ověření musí zůstat čitelné i pro cizí tým.
 
+## Learnings log — pro facilitátory
+
+- Po rotaci můžete procházet zachycené signály přímo v CLI: `harness workshop learnings`
+- Filtrujte podle tagu: `harness --json workshop learnings --tag missing_runbook`
+- Filtrujte podle kohorty nebo instance: `--cohort 2026-Q2`, `--instance <id>`
+- V dashboardu: rotační panel v detailu instance obsahuje capture formulář i přehled posledních záznamů
+- Learnings log přežije smazání instance a postupně buduje evidenci pro vylepšení blueprintu
+
 ## Kam dál po workshopu
 
 - Oficiální docs, OpenAI článek o Harness Engineering a ověřené veřejné skill repozitáře najdete v [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md).

@@ -1,3 +1,5 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { getDefaultDashboardUrl } from "./config.js";
 import { createHarnessClient, HarnessApiError } from "./client.js";
 import { createCliUi, prompt, writeLine } from "./io.js";
@@ -231,6 +233,7 @@ function printUsage(io, ui) {
     "harness workshop prepare <instance-id>",
     "harness workshop remove-instance <instance-id>",
     "harness workshop phase set <phase-id>",
+    "harness workshop learnings [--tag TAG] [--instance ID] [--cohort NAME] [--limit N]",
   ]);
 }
 
@@ -1142,6 +1145,101 @@ async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
   }
 }
 
+async function handleWorkshopLearningsQuery(io, ui, env, flags) {
+  const dataDir = env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
+  const logPath = env.HARNESS_LEARNINGS_LOG_PATH ?? path.join(dataDir, "learnings-log.jsonl");
+
+  let rawLines;
+  try {
+    const content = await fs.readFile(logPath, "utf8");
+    rawLines = content.split("\n").filter((line) => line.trim().length > 0);
+  } catch (error) {
+    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") {
+      ui.json("Workshop Learnings", { ok: true, signals: [], totalMatched: 0, source: logPath });
+      return 0;
+    }
+    ui.status("error", `Could not read learnings log at ${logPath}: ${error instanceof Error ? error.message : String(error)}`, { stream: "stderr" });
+    return 1;
+  }
+
+  let entries;
+  try {
+    entries = rawLines.map((line) => JSON.parse(line));
+  } catch (error) {
+    ui.status("error", `Learnings log has malformed JSON lines: ${error instanceof Error ? error.message : String(error)}`, { stream: "stderr" });
+    return 1;
+  }
+
+  const filterTag = readStringFlag(flags, "tag");
+  const filterInstance = readStringFlag(flags, "instance");
+  const filterCohort = readStringFlag(flags, "cohort");
+  const limit = Number(readStringFlag(flags, "limit") ?? "20");
+
+  let matched = entries;
+  if (filterTag) {
+    matched = matched.filter((entry) =>
+      Array.isArray(entry.signal?.tags) && entry.signal.tags.some((tag) => tag === filterTag),
+    );
+  }
+  if (filterInstance) {
+    matched = matched.filter((entry) => entry.instanceId === filterInstance);
+  }
+  if (filterCohort) {
+    matched = matched.filter((entry) => entry.cohort === filterCohort);
+  }
+
+  const totalMatched = matched.length;
+  const limited = Number.isFinite(limit) && limit > 0 ? matched.slice(-limit) : matched;
+
+  if (ui.jsonMode) {
+    ui.json("Workshop Learnings", {
+      ok: true,
+      totalMatched,
+      returned: limited.length,
+      source: logPath,
+      signals: limited.map((entry) => ({
+        cohort: entry.cohort,
+        instanceId: entry.instanceId,
+        capturedAt: entry.signal?.capturedAt ?? entry.loggedAt,
+        capturedBy: entry.signal?.capturedBy ?? "unknown",
+        teamId: entry.signal?.teamId ?? null,
+        tags: entry.signal?.tags ?? [],
+        freeText: entry.signal?.freeText ?? "",
+      })),
+    });
+    return 0;
+  }
+
+  ui.heading("Workshop Learnings");
+  if (limited.length === 0) {
+    ui.paragraph(totalMatched === 0
+      ? "No signals captured yet. Use the rotation capture panel in the facilitator dashboard during the continuation shift."
+      : `No signals matched the current filters (${totalMatched} total in log).`,
+    );
+    ui.blank();
+    ui.keyValue("Source", logPath);
+    return 0;
+  }
+
+  ui.paragraph(`${totalMatched} signal${totalMatched === 1 ? "" : "s"} matched${totalMatched > limited.length ? ` (showing last ${limited.length})` : ""}`);
+  ui.blank();
+
+  for (const entry of limited) {
+    const signal = entry.signal ?? {};
+    const capturedAt = signal.capturedAt ?? entry.loggedAt ?? "";
+    const time = capturedAt ? new Date(capturedAt).toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" }) : "";
+    const team = signal.teamId ? ` [${signal.teamId}]` : "";
+    const tags = Array.isArray(signal.tags) && signal.tags.length > 0 ? `  {${signal.tags.join(", ")}}` : "";
+
+    ui.section(`${entry.cohort ?? "?"} · ${time}${team}${tags}`);
+    ui.paragraph(signal.freeText ?? "(no observation text)", { indent: "  " });
+    ui.blank();
+  }
+
+  ui.keyValue("Source", logPath);
+  return 0;
+}
+
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
   const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
@@ -1239,6 +1337,10 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "phase" && subaction === "set") {
     return handleWorkshopPhaseSet(io, ui, io.env, positionals, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "learnings") {
+    return handleWorkshopLearningsQuery(io, ui, io.env, flags);
   }
 
   printUsage(io, ui);

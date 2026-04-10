@@ -59,6 +59,7 @@
 - `Codex: $workshop` for orientation during the day
 - `Codex: $workshop template` when the repo is missing baseline context
 - `Codex: $workshop analyze` before handoff or after rotation when you want to expose blind spots in the repo quickly
+- `Codex: $workshop facilitator learnings` or `harness workshop learnings` to query the cross-cohort learnings log (rotation signals from past workshops). Prefers the CLI path for machine-readable output with filtering by tag, instance, or cohort.
 
 ## Recommended participant loop
 

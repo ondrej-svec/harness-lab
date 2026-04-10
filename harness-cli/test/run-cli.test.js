@@ -1533,3 +1533,64 @@ test("neon auth logout revokes the remote session before clearing local state", 
   assert.equal(exitCode, 0);
   assert.equal(await readSession(env), null);
 });
+
+test("workshop learnings returns an empty list when the log does not exist", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "harness-learnings-"));
+  const env = { HARNESS_DATA_DIR: tempDir };
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "learnings", "--json"], io);
+  assert.equal(exitCode, 0);
+  const result = JSON.parse(io.getStdout());
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.signals, []);
+  assert.equal(result.totalMatched, 0);
+  await fs.rm(tempDir, { recursive: true, force: true });
+});
+
+test("workshop learnings reads and filters JSONL entries", async () => {
+  const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), "harness-learnings-"));
+  const logPath = path.join(tempDir, "learnings-log.jsonl");
+  const entries = [
+    { cohort: "2026-Q2", instanceId: "inst-a", loggedAt: "2026-04-09T10:00:00Z", signal: { id: "s1", capturedAt: "2026-04-09T10:00:00Z", capturedBy: "facilitator", tags: ["agents_md_helped"], freeText: "AGENTS.md was found quickly." } },
+    { cohort: "2026-Q2", instanceId: "inst-a", loggedAt: "2026-04-09T10:05:00Z", signal: { id: "s2", capturedAt: "2026-04-09T10:05:00Z", capturedBy: "facilitator", tags: ["missing_runbook"], freeText: "Plan referenced a runbook that does not exist.", teamId: "t3" } },
+    { cohort: "2026-Q3", instanceId: "inst-b", loggedAt: "2026-07-01T10:00:00Z", signal: { id: "s3", capturedAt: "2026-07-01T10:00:00Z", capturedBy: "facilitator", tags: ["agents_md_helped"], freeText: "Another workshop, same observation." } },
+  ];
+  await fs.writeFile(logPath, entries.map(JSON.stringify).join("\n") + "\n");
+
+  const env = { HARNESS_DATA_DIR: tempDir };
+
+  const io1 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings", "--json"], io1), 0);
+  const result1 = JSON.parse(io1.getStdout());
+  assert.equal(result1.totalMatched, 3);
+  assert.equal(result1.returned, 3);
+
+  const io2 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings", "--json", "--tag", "missing_runbook"], io2), 0);
+  const result2 = JSON.parse(io2.getStdout());
+  assert.equal(result2.totalMatched, 1);
+  assert.equal(result2.signals[0].freeText, "Plan referenced a runbook that does not exist.");
+
+  const io3 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings", "--json", "--instance", "inst-b"], io3), 0);
+  const result3 = JSON.parse(io3.getStdout());
+  assert.equal(result3.totalMatched, 1);
+
+  const io4 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings", "--json", "--cohort", "2026-Q2"], io4), 0);
+  const result4 = JSON.parse(io4.getStdout());
+  assert.equal(result4.totalMatched, 2);
+
+  const io5 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings", "--json", "--limit", "1"], io5), 0);
+  const result5 = JSON.parse(io5.getStdout());
+  assert.equal(result5.totalMatched, 3);
+  assert.equal(result5.returned, 1);
+
+  const io6 = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "learnings"], io6), 0);
+  assert.match(io6.getStdout(), /3 signals matched/);
+  assert.match(io6.getStdout(), /AGENTS.md was found quickly/);
+
+  await fs.rm(tempDir, { recursive: true, force: true });
+});

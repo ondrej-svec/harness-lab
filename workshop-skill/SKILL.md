@@ -326,6 +326,14 @@ Rules for rich scenes:
 
 Archive the current workshop instance with optional notes.
 
+### `workshop facilitator learnings`
+
+Query the cross-cohort learnings log to review rotation signals from past and current workshops.
+Prefer invoking `harness --json workshop learnings` for machine-readable output.
+Supports flags: `--tag TAG`, `--instance ID`, `--cohort NAME`, `--limit N` (default 20).
+When the facilitator asks for rotation signals, captured observations, or what happened during past handoffs, use this command.
+If the learnings log is empty, say so and suggest capturing the first signal using the rotation capture panel in the facilitator dashboard.
+
 ### `workshop analyze`
 
 Review the team's repo against the handoff criteria in `workshop-skill/analyze-checklist.md`.
