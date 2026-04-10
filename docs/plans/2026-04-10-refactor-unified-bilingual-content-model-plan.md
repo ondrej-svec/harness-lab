@@ -2,7 +2,7 @@
 title: "refactor: unified bilingual content model"
 type: plan
 date: 2026-04-10
-status: in_progress
+status: complete
 brainstorm: ../brainstorms/2026-04-10-unified-bilingual-content-model-brainstorm.md
 confidence: medium
 ---
@@ -168,12 +168,12 @@ Exit: all docs reflect the new model, copy-editor config updated, ADR written, b
 
 ### Phase 7 — Public blueprint generation
 
-- [ ] Extend `scripts/content/generate-views.ts` to emit the public blueprint markdown files:
+- [x] Extend `scripts/content/generate-views.ts` to emit the public blueprint markdown files:
   - `workshop-blueprint/day-structure.md` — generated from the `en` side of the Tier 1 agenda (phase labels, goals, room summaries)
   - `workshop-blueprint/agenda.json` — already generated in Phase 2
-- [ ] Decide which `workshop-blueprint/` files stay hand-authored (method docs like `teaching-spine.md`, `operator-guide.md`, `control-surfaces.md`, `edit-boundaries.md`) vs. generated. Recommendation: the METHOD docs stay hand-authored (they describe the workshop pedagogy, not the content); only `day-structure.md` and `agenda.json` are generated from content.
-- [ ] Add `# This file is generated — do not edit` headers to generated files.
-- [ ] Update `workshop-blueprint/README.md` to explain which files are generated and which are hand-authored.
+- [x] Decide which `workshop-blueprint/` files stay hand-authored (method docs like `teaching-spine.md`, `operator-guide.md`, `control-surfaces.md`, `edit-boundaries.md`) vs. generated. Recommendation: the METHOD docs stay hand-authored (they describe the workshop pedagogy, not the content); only `day-structure.md` and `agenda.json` are generated from content.
+- [x] Add `# This file is generated — do not edit` headers to generated files.
+- [x] Update `workshop-blueprint/README.md` to explain which files are generated and which are hand-authored.
 
 Exit: public blueprint is partially generated from the bilingual source, hand-authored method docs stay as-is.
 
