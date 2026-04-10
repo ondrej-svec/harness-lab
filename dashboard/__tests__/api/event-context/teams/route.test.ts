@@ -38,6 +38,7 @@ describe("GET /api/event-context/teams", () => {
     const response = await GET(new Request("http://localhost/api/event-context/teams"));
 
     expect(response.status).toBe(200);
+    expect(getParticipantTeamLookup).toHaveBeenCalledWith("sample-studio-a");
     await expect(response.json()).resolves.toEqual({
       items: [{ id: "t1", name: "Team 1" }],
     });

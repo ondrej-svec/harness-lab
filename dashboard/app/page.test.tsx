@@ -243,8 +243,10 @@ describe("HomePage", () => {
     }
     getWorkshopState.mockResolvedValue(state);
     getParticipantSessionFromCookieStore.mockResolvedValue({
-      token: "session-token",
+      instanceId: "sample-studio-a",
       expiresAt: "2026-04-06T16:30:00.000Z",
+      lastValidatedAt: "2026-04-06T10:30:00.000Z",
+      absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
     });
 
     const view = await HomePage({
@@ -253,7 +255,8 @@ describe("HomePage", () => {
     const html = renderToStaticMarkup(view);
 
     expect(view).toBeTruthy();
-    expect(getParticipantTeamLookup).toHaveBeenCalledTimes(1);
+    expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
+    expect(getParticipantTeamLookup).toHaveBeenCalledWith("sample-studio-a");
     expect(html).not.toContain(publicCopy.cs.navFacilitatorLogin);
     expect(html).toContain("href=\"https://example.com/reference\"");
     expect(html).toContain(publicCopy.cs.openLinkLabel);
@@ -265,8 +268,10 @@ describe("HomePage", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     getWorkshopState.mockResolvedValue(state);
     getParticipantSessionFromCookieStore.mockResolvedValue({
-      token: "session-token",
+      instanceId: "sample-studio-a",
       expiresAt: "2026-04-06T16:30:00.000Z",
+      lastValidatedAt: "2026-04-06T10:30:00.000Z",
+      absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
     });
 
     const view = await HomePage({
@@ -274,6 +279,7 @@ describe("HomePage", () => {
     });
     const html = renderToStaticMarkup(view);
 
+    expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
     expect(html).toContain("Opening and orientation");
     expect(html).toContain("Team start board");
     expect(html).toContain("Today you build so another team can continue");

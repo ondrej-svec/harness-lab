@@ -107,4 +107,24 @@ describe("event-access-repository", () => {
 
     expect(query).toHaveBeenCalled();
   });
+
+  it("returns null from neon findSessionByTokenHash when no rows match", async () => {
+    const query = vi.fn().mockResolvedValueOnce([]);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonEventAccessRepository } = await import("./event-access-repository");
+    const repository = new NeonEventAccessRepository();
+
+    await expect(repository.findSessionByTokenHash("nonexistent")).resolves.toBeNull();
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining("WHERE token_hash = $1"),
+      ["nonexistent"],
+    );
+  });
 });
