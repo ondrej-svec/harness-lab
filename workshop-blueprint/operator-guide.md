@@ -26,6 +26,8 @@ The facilitator does not use the live dashboard to silently rewrite the reusable
    - facilitator-only notes
 4. Verify participant and facilitator access paths.
 5. Verify the active instance begins from the expected blueprint version/reference.
+6. **Pre-workshop skill install**: ensure each participant repo has the workshop skill pre-installed (`harness skill install`). This avoids repeated install instructions during the talk and demo. If pre-install is not possible, the talk bridge scene (`talk-participant-view`) includes a fallback prompt.
+7. **Demo prep**: prepare two folders for the repo-readiness contrast (see `content/talks/codex-demo-script.md` for the two-folder setup specification).
 
 ## During The Day
 

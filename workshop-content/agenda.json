@@ -491,7 +491,7 @@
             "title": "Today we are building a working system, not prompt theatre",
             "body": "The goal today is not one impressive answer. The goal is to learn how to steer work with coding agents so the repo, workflow, and instructions still hold without your running commentary.",
             "facilitatorNotes": [
-              "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session.",
+              "Start calm, but with ambition. The first beat should say that this is a build day with coding agents, not a tool onboarding session. [NARRATING]",
               "Say harness engineering explicitly, but do not stay inside the definition. Move quickly into the day arc: learn, build, hand off, continue.",
               "After the main line, pause briefly and let it land before you move into the day arc."
             ],
@@ -521,7 +521,7 @@
                 "type": "callout",
                 "tone": "info",
                 "title": "What should change today",
-                "body": "This is not prompt theatre and not a feature race. It is a day that should change how you work with coding agents after the workshop too."
+                "body": "This is a day that should change how you work with coding agents after the workshop too. Not a feature race. Not a contest."
               }
             ]
           },
@@ -530,7 +530,7 @@
             "title": "Dnes stavíme pracovní systém, ne prompt show",
             "body": "Cílem dne není vyrobit jeden efektní výstup. Cílem je naučit se řídit práci s coding agenty tak, aby repo, workflow a instrukce unesly další krok i bez improvizovaného voice-overu.",
             "facilitatorNotes": [
-              "Začni klidně, ale s ambicí. První beat má říct, že tohle je build day s coding agenty, ne provozní onboarding k nástroji.",
+              "Začni klidně, ale s ambicí. První beat má říct, že tohle je build day s coding agenty, ne provozní onboarding k nástroji. [NARRATING]",
               "Vyslov harness engineering explicitně, ale nezůstávej v definici. Hned ukaž, že tenhle den má oblouk: učit se, stavět, předat, pokračovat.",
               "Po hlavní větě udělej krátkou pauzu a nech ji dosednout dřív, než přejdeš k oblouku dne."
             ],
@@ -560,7 +560,7 @@
                 "type": "callout",
                 "tone": "info",
                 "title": "Co se dnes má změnit",
-                "body": "Nejde o promptovací show ani o feature race. Jde o den, který má změnit, jak budete s coding agenty pracovat i po workshopu."
+                "body": "Jde o den, který má změnit, jak budete s coding agenty pracovat i po workshopu. Ne feature race. Ne soutěž."
               }
             ]
           },
@@ -576,7 +576,7 @@
             "title": "The day has one arc: learn, build, hand off, continue",
             "body": "The morning does not begin with a rules card. It begins with a promise that you will experience the full arc of agent work in one day.",
             "facilitatorNotes": [
-              "Keep this as the promise of the day, not as workshop logistics.",
+              "Keep this as the promise of the day, not as workshop logistics. [NARRATING]",
               "Give each step one sentence. The room should feel that everything ahead has one direction.",
               "Close by naming that the afternoon tests what the morning actually encoded in the repo."
             ],
@@ -628,7 +628,7 @@
             "title": "Dnešek má jeden oblouk: naučit se, postavit, předat, pokračovat",
             "body": "Dopoledne nezačíná seznamem pravidel. Začíná příslibem, že si celý tenhle oblouk zažijete na vlastní kůži v jednom dni.",
             "facilitatorNotes": [
-              "Tuhle scénu drž jako příslib dne, ne jako logistický harmonogram.",
+              "Tuhle scénu drž jako příslib dne, ne jako logistický harmonogram. [NARRATING]",
               "Každou položku pojmenuj jednou větou. Místnost má cítit, že všechno, co přijde, má společný směr."
             ],
             "sourceRefs": [
@@ -686,7 +686,7 @@
             "title": "The same bricks, a different duck",
             "body": "Give people the same bricks and you still will not get one correct duck. The same is true here: the model alone does not determine the quality of the work. Context, boundaries, and team imagination do.",
             "facilitatorNotes": [
-              "Use the Lego-duck analogy briefly and concretely. This is not a cute detour. It explains why harness engineering is a creative discipline.",
+              "Use the Lego-duck analogy briefly and concretely. This is not a cute detour. It explains why harness engineering is a creative discipline. [TEACHING]",
               "Do not ask who is right. Ask what produced the more useful working result and why."
             ],
             "sourceRefs": [
@@ -733,7 +733,7 @@
             "title": "Stejné kostky, jiná kachna",
             "body": "Když dáte lidem stejné kostky, nevznikne jedna správná kachna. Stejně tak ze stejného modelu nevzniká jedna správná práce. Rozdíl dělá kontext, mantinely a představivost týmu.",
             "facilitatorNotes": [
-              "Použij Lego-duck analogii krátce a konkrétně. Nemá to být roztomilá odbočka, ale vysvětlení, proč je harness engineering tvůrčí disciplína.",
+              "Použij Lego-duck analogii krátce a konkrétně. Nemá to být roztomilá odbočka, ale vysvětlení, proč je harness engineering tvůrčí disciplína. [TEACHING]",
               "Neptej se, kdo má pravdu. Ptej se, co vedlo k lepšímu pracovnímu výsledku a proč."
             ],
             "sourceRefs": [
@@ -787,7 +787,7 @@
             "title": "Stand where you honestly are with AI agents today",
             "body": "I want a quick map of the room: daily users, careful practitioners, curious beginners, or sceptics. This is not a ranking. It is a facilitation map for the day.",
             "facilitatorNotes": [
-              "Do not turn this into long self-introductions. A quick move, two short voices, and then back to the main line.",
+              "Do not turn this into long self-introductions. A quick move, two short voices, and then back to the main line. [FACILITATING]",
               "The point is not seniority. The point is to make the workshop participatory and to calibrate the room in public."
             ],
             "sourceRefs": [
@@ -834,7 +834,7 @@
             "title": "Postavte se tam, kde dnes s AI agenty opravdu jste",
             "body": "Chci rychle vidět, s čím dnes přicházíte: jestli už AI agenty používáte denně, opatrně zkoušíte, nebo teprve hledáte první pracovní model. Není to ranking. Jen si tím nastavíme tempo a míru konkrétnosti.",
             "facilitatorNotes": [
-              "Neudělej z toho dlouhé představení. Stačí krátký přesun, dva hlasy a návrat k hlavní lince dne.",
+              "Neudělej z toho dlouhé představení. Stačí krátký přesun, dva hlasy a návrat k hlavní lince dne. [FACILITATING]",
               "Pointa není zjistit senioritu. Pointa je ukázat, že workshop je participativní a že facilitace se přizpůsobuje skutečné místnosti."
             ],
             "sourceRefs": [
@@ -888,7 +888,7 @@
             "title": "By the first build, the repo should carry four visible proofs",
             "body": "After the launch, the room does not need another principle. It needs to know what must be visible in the repo after the first build block, not only promised aloud.",
             "facilitatorNotes": [
-              "This is the first concrete rule of the day. It comes after ambition, analogy, and activation.",
+              "This is the first concrete rule of the day. It comes after ambition, analogy, and activation. [TEACHING]",
               "If a line item is missing, do not replace it with verbal coaching. Help the team create the smallest useful version of the artifact."
             ],
             "sourceRefs": [
@@ -923,7 +923,7 @@
             "title": "Do prvního buildu mají být v repu čtyři jasné signály",
             "body": "Po úvodu nepotřebujete další princip. Potřebujete vědět, co má být po prvním build bloku opravdu vidět v repu, ne jen slíbeno nahlas.",
             "facilitatorNotes": [
-              "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci.",
+              "Tohle je první konkrétní pravidlo dne. Přichází až po ambici, analogii a aktivaci. [TEACHING]",
               "Když některý řádek chybí, nepřeskakuj ho ústním mentoringem. Pomoz týmu vytvořit nejmenší verzi artefaktu."
             ],
             "sourceRefs": [
@@ -965,7 +965,7 @@
             "title": "At the start of the day, keep the purpose, next block, and first repo move in view",
             "body": "At the start of the day, the team needs one view that says why it is here, what comes after the opening, and what should become visible in the repo by the first build block.",
             "facilitatorNotes": [
-              "Use this scene when you want to show that the participant surface is not decoration, but working orientation.",
+              "Use this scene when you want to show that the participant surface is not decoration, but working orientation. [FACILITATING]",
               "Name the three things participants should get in one glance: what is live now, what comes next, and what should exist in the repo."
             ],
             "sourceRefs": [
@@ -979,8 +979,8 @@
                 "id": "opening-participant-hero",
                 "type": "hero",
                 "eyebrow": "Harness Lab",
-                "title": "Today is not prompt theatre",
-                "body": "Today you are building so another team can continue without rescue. If it is not in the repo, it is not reliable yet."
+                "title": "Today you build so another team can continue",
+                "body": "By the end of the day, a different team will read your repo without asking you. Start building for that moment now."
               },
               {
                 "id": "opening-participant-preview",
@@ -1001,7 +1001,7 @@
             "title": "Na startu dne držte v hlavě smysl, další blok a první krok v repu",
             "body": "Na začátku dne tým potřebuje v jednom pohledu vidět, proč tu je, co přijde po úvodu a co má být po prvním buildu skutečně vidět v repu.",
             "facilitatorNotes": [
-              "Tuhle scénu použij, když chceš ukázat, že participant plocha není ozdoba, ale pracovní orientace.",
+              "Tuhle scénu použij, když chceš ukázat, že participant plocha není ozdoba, ale pracovní orientace. [FACILITATING]",
               "Pojmenuj tři věci, které mají účastníci vidět v jednom pohledu: co běží teď, co přijde dál a co má vzniknout v repu."
             ],
             "sourceRefs": [
@@ -1015,8 +1015,8 @@
                 "id": "opening-participant-hero",
                 "type": "hero",
                 "eyebrow": "Harness Lab",
-                "title": "Dnes nejde o promptovací exhibici",
-                "body": "Dnes budeme stavět tak, aby další tým dokázal navázat bez rescue. Co není v repu, není spolehlivě předatelné."
+                "title": "Dnes stavíte tak, aby další tým mohl navázat",
+                "body": "Než den skončí, vaše repo přečte jiný tým a nebude se vás ptát. Začněte stavět pro ten moment právě teď."
               },
               {
                 "id": "opening-participant-preview",
@@ -1042,7 +1042,7 @@
       "startTime": "09:40",
       "kind": "shared",
       "intent": "teaching",
-      "defaultSceneId": "talk-framing",
+      "defaultSceneId": "talk-micro-exercise",
       "en": {
         "label": "Context is King",
         "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
@@ -1072,16 +1072,18 @@
         "facilitatorRunner": {
           "goal": "Make harness engineering precise, memorable, and immediately actionable so the room returns to the repo with a concrete first working contract.",
           "say": [
-            "Context is leverage, not cosmetics.",
-            "A team lead does not stand behind the model and dictate another sentence every thirty seconds.",
-            "After this talk, you go back to the repo with a working system, not with a hunt for a smarter prompt."
+            "Open with the repo-readiness contrast: same prompt, two repos. Let the room see the difference before you name it.",
+            "After the contrast, ask the room: 'What changed?' Let two voices answer.",
+            "Name what you saw: the agent in the bare repo made plausible but wrong decisions because it had no constraints. This is task drift.",
+            "Context is leverage, not cosmetics. The repo did the work, not the prompt."
           ],
           "show": [
-            "Show the core thesis, the micro-exercise contrast, and a short bridge back into the participant and repo layers.",
+            "Show the repo-readiness contrast first, then the thesis scene, then the bridge into build.",
             "Use the participant surface only as proof that the room, dashboard, and repo still describe the same moment."
           ],
           "do": [
-            "Compare the same task in two conditions: prompt blob versus a short brief with Goal, Context, Constraints, and Done When.",
+            "Run the contrast: show the bare repo variant first, then the harnessed variant with the same prompt.",
+            "After the contrast lands, transition to the thesis scene. Say the thesis once clearly.",
             "Send the room into Build Phase 1 with one expectation: map and verification first, feature motion second."
           ],
           "watch": [
@@ -1089,7 +1091,7 @@
             "By the end, the room should know what to do in the repo in the next few minutes."
           ],
           "fallback": [
-            "If the demo starts dragging, do not open another live example. State the contrast between prompt blob and repo-native map directly.",
+            "If live demo drags, use pre-prepared screenshots. The contrast matters more than live generation.",
             "If attention drops, keep the core line, the team-lead analogy, and one concrete build expectation."
           ]
         }
@@ -1121,32 +1123,143 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a poslat místnost zpátky do repa s konkrétním prvním pracovním kontraktem.",
+          "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a poslat místnost zpátky do repa s konkrétním prvním pracovním kontraktem.",
           "say": [
-            "Kontext je páka, ne kosmetika.",
-            "Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.",
-            "Po tomhle talku se vracíte k repu s konkrétním systémem práce, ne s lovem na lepší prompt."
+            "Začni kontrastem připravenosti repa: stejný prompt, dvě repa. Nech místnost vidět rozdíl dřív, než ho pojmenuješ.",
+            "Po kontrastu se zeptej: 'Co se změnilo?' Nech promluvit dva hlasy.",
+            "Pojmenuj, co jsi viděl: agent v holém repu dělal uvěřitelná, ale špatná rozhodnutí, protože neměl mantinely. Tohle je task drift.",
+            "Kontext je páka, ne kosmetika. Práci udělalo repo, ne prompt."
           ],
           "show": [
-            "Promítni hlavní tezi, mikro-cvičení a krátký bridge zpátky do participant a repo vrstvy.",
-            "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
+            "Promítni nejdřív kontrast připravenosti repa, pak tezi, pak bridge do buildu.",
+            "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
           ],
           "do": [
-            "Porovnej stejný task ve dvou podmínkách: prompt blob vs. krátké zadání s Goal, Context, Constraints a Done When.",
-            "Po pointě pošli místnost rovnou do build 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom feature motion."
+            "Spusť kontrast: ukaž nejdřív holé repo, pak repo s harnessem a stejným promptem.",
+            "Když kontrast dosedne, přejdi na tezi. Řekni ji jednou jasně.",
+            "Pošli místnost do build fáze 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom feature motion."
           ],
           "watch": [
-            "Talk nesmí sklouznout k tipům na promptování nebo feature tour nástroje.",
-            "Místnost má po talku vědět, co má udělat v repu během příštích minut."
+            "Talk nesmí sklouznout k tipům na promptování nebo feature tour nástroje.",
+            "Místnost má po talku vědět, co má udělat v repu během příštích minut."
           ],
           "fallback": [
-            "Když se demo vleče, nespouštěj další live ukázku. Řekni kontrast prompt blob vs. repo-native map přímo.",
-            "Když je pozornost nízko, nech hlavní větu, team-lead analogii a jeden konkrétní build expectation."
+            "Když se demo vleče, použij připravené screenshoty. Kontrast je důležitější než živé generování.",
+            "Když je pozornost nízko, nech hlavní větu, team-lead analogii a jeden konkrétní build expectation."
           ]
         }
       },
       "cs_reviewed": true,
       "scenes": [
+        {
+          "id": "talk-micro-exercise",
+          "sceneType": "demo",
+          "intent": "walkthrough",
+          "chromePreset": "agenda",
+          "en": {
+            "label": "Repo-readiness contrast",
+            "title": "Same prompt. Different repo. Watch what happens.",
+            "body": "This is a facilitator-led contrast. The same simple prompt runs in two repos: one bare, one with AGENTS.md and constraints. The prompt does not change. The repo does.",
+            "facilitatorNotes": [
+              "This is a facilitator-led contrast. Do not narrate the conclusion before the room sees it. After showing both variants, pause and ask the room: 'What changed?' Let two voices answer before naming the thesis. [NARRATING]",
+              "Do not let this drift into a debate about which model is smarter. The point is that the repo context, not the prompt, changed the outcome.",
+              "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second."
+            ],
+            "sourceRefs": [
+              {
+                "label": "Talk: Repo-readiness contrast",
+                "path": "content/talks/context-is-king.md"
+              },
+              {
+                "label": "Demo script: Two-folder setup",
+                "path": "content/talks/codex-demo-script.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "talk-contrast-hero",
+                "type": "hero",
+                "eyebrow": "Context is King",
+                "title": "Same prompt. Different repo. Watch what happens.",
+                "body": "One simple prompt. Two repos. The agent's output is only as good as the context it finds."
+              },
+              {
+                "id": "talk-steps",
+                "type": "steps",
+                "title": "The contrast",
+                "items": [
+                  {
+                    "title": "Variant A: bare repo",
+                    "body": "A simple prompt in a repo with no AGENTS.md, no constraints, no context. The agent drifts — plausible but wrong decisions."
+                  },
+                  {
+                    "title": "Variant B: repo with harness",
+                    "body": "The same prompt in a repo with AGENTS.md (Goal, Context, Constraints, Done When), a plan, and a workshop skill. The agent produces aligned output."
+                  }
+                ]
+              },
+              {
+                "id": "talk-callout",
+                "type": "callout",
+                "tone": "info",
+                "title": "The prompt did not change. The repo did.",
+                "body": "Skilled practitioners do not put Goal, Context, Constraints, and Done When into prompts. They put it into the repo and use simple prompts. The harness does the work, not the wording."
+              }
+            ]
+          },
+          "cs": {
+            "label": "Repo kontrast",
+            "title": "Stejný prompt. Jiné repo. Sledujte, co se stane.",
+            "body": "Facilitátor vede krátké srovnání. Stejný jednoduchý prompt běží ve dvou repech: jedno holé, druhé s AGENTS.md a mantinely. Prompt se nemění. Repo ano.",
+            "facilitatorNotes": [
+              "Facilitátor vede kontrast. Neříkej závěr dřív, než ho místnost vidí. Po obou variantách se zastav a zeptej: 'Co se změnilo?' Nech promluvit dva hlasy, teprve pak pojmenuj tezi. [NARRATING]",
+              "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je, že výsledek změnil kontext v repu, ne prompt.",
+              "Uzavři to větou, že build fáze 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
+            ],
+            "sourceRefs": [
+              {
+                "label": "Talk: Kontrast připravenosti repa",
+                "path": "content/talks/context-is-king.md"
+              },
+              {
+                "label": "Demo script: Dvě složky",
+                "path": "content/talks/codex-demo-script.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "talk-contrast-hero",
+                "type": "hero",
+                "eyebrow": "Context is King",
+                "title": "Stejný prompt. Jiné repo. Sledujte, co se stane.",
+                "body": "Jeden jednoduchý prompt. Dvě repa. Výstup agenta je jen tak dobrý, jako kontext, který v repu najde."
+              },
+              {
+                "id": "talk-steps",
+                "type": "steps",
+                "title": "Kontrast",
+                "items": [
+                  {
+                    "title": "Varianta A: holé repo",
+                    "body": "Jednoduchý prompt v repu bez AGENTS.md, bez mantinelů, bez kontextu. Agent tápe — rozhoduje se uvěřitelně, ale špatně."
+                  },
+                  {
+                    "title": "Varianta B: repo s harnessem",
+                    "body": "Stejný prompt v repu s AGENTS.md (Goal, Context, Constraints, Done When), plánem a workshop skillem. Agent produkuje výstup, který sedí."
+                  }
+                ]
+              },
+              {
+                "id": "talk-callout",
+                "type": "callout",
+                "tone": "info",
+                "title": "Prompt se nezměnil. Repo ano.",
+                "body": "Zkušení praktici nedávají Goal, Context, Constraints a Done When do promptu. Dávají je do repa a používají jednoduché prompty. Práci dělá harness, ne formulace."
+              }
+            ]
+          },
+          "cs_reviewed": true
+        },
         {
           "id": "talk-framing",
           "sceneType": "briefing",
@@ -1154,12 +1267,12 @@
           "chromePreset": "minimal",
           "en": {
             "label": "Core line",
-            "title": "Context is leverage, not cosmetics",
-            "body": "Harness engineering is not a trick for a better prompt. It is the discipline of shaping context, instructions, and workflow so the model and the next team can carry the intent without verbal rescue and so the first build move does not begin in chaos.",
+            "title": "What you just saw: context is leverage, not cosmetics",
+            "body": "The contrast you just witnessed is the thesis in action. The repo context — not the prompt — determined whether the agent drifted or produced aligned work. Harness engineering is the discipline of making that context durable.",
             "facilitatorNotes": [
-              "Use the reframing sentence and explicitly contrast a better prompt with a better working system.",
-              "Let the short authority quote land and move on. Do not turn it into a reading break.",
-              "After the callout, remind the room of the team-lead analogy and then turn it directly into what teams should do next in the repo."
+              "The thesis arrives as the answer to a question the room already has. Say it once, clearly. Do not re-explain the contrast — the room saw it. [TEACHING]",
+              "Let the Lopopolo quote open the scene as a provocation the contrast just proved.",
+              "After the checklist, remind the room of the team-lead analogy and turn it directly into what teams should do next in the repo."
             ],
             "sourceRefs": [
               {
@@ -1169,33 +1282,25 @@
             ],
             "blocks": [
               {
-                "id": "talk-hero",
-                "type": "hero",
-                "eyebrow": "Context is King",
-                "title": "We are not learning to prompt better",
-                "body": "We are learning to build a repo and workflow where the model and the next team can continue safely without folklore, without verbal rescue, and without guessing what the next useful move is."
-              },
-              {
                 "id": "talk-authority-quote",
                 "type": "quote",
                 "quote": "Humans steer. Agents execute.",
                 "attribution": "Ryan Lopopolo, OpenAI, Harness engineering (2026)"
               },
               {
-                "id": "talk-reframe",
-                "type": "callout",
-                "tone": "info",
-                "title": "A team lead does not stand behind the model",
-                "body": "Just as you do not guide a developer by drip-feeding one sentence every thirty seconds, you do not get durability from endless prompt patching. You build a system people can work inside, a review path they can trust, and a next move that is not a guessing game."
+                "id": "talk-hero",
+                "type": "hero",
+                "eyebrow": "Context is King",
+                "title": "What you just saw: context is leverage, not cosmetics",
+                "body": "The repo did the work, not the prompt. Harness engineering means shaping context, instructions, and workflow so the agent and the next team can carry the intent without verbal rescue."
               },
               {
                 "id": "talk-adopt",
                 "type": "checklist",
-                "title": "What the team should carry out of the room",
+                "title": "What the team carries out of this room",
                 "items": [
                   "Before generating the next feature, make the repo a place people can actually navigate.",
                   "When the agent does more, review and checks need to become sharper, not looser.",
-                  "Handoff is a design condition throughout the day, not an ending.",
                   "After the talk, return to the repo with a map and one explicit check instead of one more prompt idea."
                 ]
               }
@@ -1203,12 +1308,12 @@
           },
           "cs": {
             "label": "Klíčová linka",
-            "title": "Kontext je páka, ne kosmetika",
-            "body": "Harness engineering není trik pro lepší prompt. Je to práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali převzít záměr bez doplňujícího rescue a aby první build krok nezačínal z chaosu.",
+            "title": "Co jste právě viděli: kontext je páka, ne kosmetika",
+            "body": "Kontrast, který jste právě viděli, je teze v akci. Kontext v repu — ne prompt — rozhodl o tom, jestli agent tápal, nebo produkoval srovnaný výstup. Harness engineering je disciplína, jak ten kontext udržet.",
             "facilitatorNotes": [
-              "Použij reframing větu a explicitně kontrastuj 'lepší prompt' versus 'lepší pracovní systém'.",
-              "Krátkou authority quote nech jen dosednout. Nevykládej ji dlouho.",
-              "Po calloutu připomeň team lead analogii a hned ji převeď do toho, co teď mají týmy udělat v repu."
+              "Teze přichází jako odpověď na otázku, kterou místnost už má. Řekni ji jednou, jasně. Nepřeříkávej kontrast — místnost ho viděla. [TEACHING]",
+              "Nech Lopopolo citát otevřít scénu jako provokaci, kterou kontrast právě dokázal.",
+              "Po checklistu připomeň team lead analogii a hned ji převeď do toho, co teď mají týmy udělat v repu."
             ],
             "sourceRefs": [
               {
@@ -1218,130 +1323,27 @@
             ],
             "blocks": [
               {
-                "id": "talk-hero",
-                "type": "hero",
-                "eyebrow": "Context is King",
-                "title": "Neučíme se lépe promptovat",
-                "body": "Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat bez folkloru, bez ústního rescue a bez hádání, co je teď vlastně další bezpečný krok."
-              },
-              {
                 "id": "talk-authority-quote",
                 "type": "quote",
                 "quote": "Humans steer. Agents execute.",
                 "attribution": "Ryan Lopopolo, OpenAI, Harness engineering (2026)"
               },
               {
-                "id": "talk-reframe",
-                "type": "callout",
-                "tone": "info",
-                "title": "Team lead nestojí modelu za zády",
-                "body": "Stejně jako neříkáte vývojáři každých třicet sekund, co má dělat, ani agentovi nepomůže nekonečné dopromptování. Stavíte systém, ve kterém se dá pracovat, review má oporu a další krok není hádanka."
+                "id": "talk-hero",
+                "type": "hero",
+                "eyebrow": "Context is King",
+                "title": "Co jste právě viděli: kontext je páka, ne kosmetika",
+                "body": "Práci udělalo repo, ne prompt. Harness engineering je práce s kontextem, instrukcemi a workflow tak, aby agent i další tým dokázali převzít záměr bez ústního rescue."
               },
               {
                 "id": "talk-adopt",
                 "type": "checklist",
                 "title": "Co si má tým odnést hned teď",
                 "items": [
-                  "Než začnu generovat další feature, udělám z repa místo, kde se dá orientovat.",
-                  "Když agent dělá víc, review i ověřování musí být přesnější, ne volnější.",
-                  "Handoff je průběžná podmínka práce, ne závěr dne.",
-                  "Po talku se vracím k repu s mapou a prvním ověřením, ne s nápadem na chytřejší prompt."
+                  "Než začnu generovat další feature, udělám z repa místo, kde se dá orientovat.",
+                  "Když agent dělá víc, review i ověřování musí být přesnější, ne volnější.",
+                  "Po talku se vracím k repu s mapou a prvním ověřením, ne s nápadem na chytřejší prompt."
                 ]
-              }
-            ]
-          },
-          "cs_reviewed": true
-        },
-        {
-          "id": "talk-micro-exercise",
-          "sceneType": "demo",
-          "intent": "walkthrough",
-          "chromePreset": "agenda",
-          "en": {
-            "label": "Short contrast",
-            "title": "The facilitator shows the same task in two conditions",
-            "body": "This is a short facilitator-led contrast, not a team exercise yet. Watch what changes between a prompt blob and a short brief with four elements in AGENTS.md.",
-            "facilitatorNotes": [
-              "Do not let this drift into a debate about which model is smarter. The point is transferring intent, boundaries, and done criteria.",
-              "Say explicitly that this is a short facilitator-led contrast, not a room-wide exercise for every team.",
-              "Close with the line that Build Phase 1 starts here: map and verification first, feature motion second."
-            ],
-            "sourceRefs": [
-              {
-                "label": "Talk: Micro-exercise",
-                "path": "content/talks/context-is-king.md"
-              }
-            ],
-            "blocks": [
-              {
-                "id": "talk-steps",
-                "type": "steps",
-                "title": "What to compare during the contrast",
-                "items": [
-                  {
-                    "title": "The same task for everyone",
-                    "body": "Short and clear so the working-system difference is obvious."
-                  },
-                  {
-                    "title": "Variant A: prompt blob",
-                    "body": "No structure, no repo-native context, no explicit done criteria."
-                  },
-                  {
-                    "title": "Variant B: 4 context elements",
-                    "body": "Goal, Context, Constraints, Done When plus a repo-native map."
-                  }
-                ]
-              },
-              {
-                "id": "talk-callout",
-                "type": "callout",
-                "tone": "info",
-                "title": "What to carry out of this contrast",
-                "body": "The winning move is not prettier wording. It is a way of working that carries intent, constraints, and done criteria into the next turn, the review pass, and the next team."
-              }
-            ]
-          },
-          "cs": {
-            "label": "Krátká ukázka",
-            "title": "Facilitátor ukáže stejný task ve dvou podmínkách",
-            "body": "Tuhle část vede facilitátor jako krátké srovnání. Vy ji teď neděláte sami. Sledujte, co se změní mezi prompt blobem a krátkým zadáním se 4 prvky v AGENTS.md.",
-            "facilitatorNotes": [
-              "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru, mantinelů a done criteria.",
-              "Řekni explicitně, že jde o krátkou facilitátorovu ukázku, ne o společnou práci všech týmů.",
-              "Uzavři to větou, že build fáze 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
-            ],
-            "sourceRefs": [
-              {
-                "label": "Talk: Mikro-cvičení",
-                "path": "content/talks/context-is-king.md"
-              }
-            ],
-            "blocks": [
-              {
-                "id": "talk-steps",
-                "type": "steps",
-                "title": "Co během ukázky porovnávat",
-                "items": [
-                  {
-                    "title": "Stejný úkol pro všechny",
-                    "body": "Krátký task bez zbytečného scénáře, aby vynikl rozdíl v pracovním systému."
-                  },
-                  {
-                    "title": "Varianta A: prompt blob",
-                    "body": "Bez struktury, bez kontextu v repu a bez jasného done criteria."
-                  },
-                  {
-                    "title": "Varianta B: 4 prvky kontextu",
-                    "body": "Goal, Context, Constraints, Done When plus odkaz na repo-native mapu."
-                  }
-                ]
-              },
-              {
-                "id": "talk-callout",
-                "type": "callout",
-                "tone": "info",
-                "title": "Co si z ukázky odnést",
-                "body": "Nehledáme nejhezčí prompt. Hledáme způsob práce, který přenese záměr, omezení a done criteria do dalšího kroku, do review a k dalšímu týmu."
               }
             ]
           },
@@ -1359,7 +1361,7 @@
             "ctaLabel": "Open install and first commands",
             "ctaHref": "README.md",
             "facilitatorNotes": [
-              "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1.",
+              "Use this briefly. This is not a dashboard tour. It is the operating contract for the first 10 to 15 minutes of Build Phase 1. [FACILITATING]",
               "Name the expectation clearly: the team now returns to the repo for a map, a first slice, and one explicit check instead of more prompt debate.",
               "Say explicitly: if the team does not have the workshop skill yet, now is the time for `harness skill install` and the first workshop command."
             ],
@@ -1409,7 +1411,7 @@
             "ctaLabel": "Otevřít install a první příkazy",
             "ctaHref": "README.md",
             "facilitatorNotes": [
-              "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut build fáze 1.",
+              "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut build fáze 1. [FACILITATING]",
               "Pojmenuj konkrétně, že tým teď potřebuje mapu repa, první slice a jedno ověření, ne další brainstorming o promptu.",
               "Řekni explicitně: pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install` a první workshop command."
             ],
@@ -1551,7 +1553,7 @@
             "title": "Not another prompt. A working system.",
             "body": "The demo story is intentionally ordinary: a developer gets a small task and chooses not to keep nudging the model blindly, but to make the repo show the goal, the next step, and how the change will be checked.",
             "facilitatorNotes": [
-              "Stay with one line. After 15 minutes, the audience should understand the workflow, not the tool menu."
+              "Stay with one line. After 15 minutes, the audience should understand the workflow, not the tool menu. [NARRATING]"
             ],
             "sourceRefs": [
               {
@@ -1581,7 +1583,7 @@
             "title": "Ne další prompt. Pracovní systém.",
             "body": "Jsem vývojář, dostal jsem malý úkol a nechci s agentem jen zkoušet další prompt. Chci z repa udělat místo, kde je jasný cíl, další krok i způsob kontroly změny.",
             "facilitatorNotes": [
-              "Drž se jedné linky. Publikum má po 15 minutách chápat workflow, ne nástrojové menu."
+              "Drž se jedné linky. Publikum má po 15 minutách chápat workflow, ne nástrojové menu. [NARRATING]"
             ],
             "sourceRefs": [
               {
@@ -1618,9 +1620,10 @@
             "title": "From AGENTS.md to review",
             "body": "The sequence should be simple enough for every table to repeat: without context it drifts, with AGENTS.md, bounded next steps, and change control it becomes a working system instead of another prompt.",
             "facilitatorNotes": [
-              "Have snapshots ready as fallbacks. Do not wait on generation for long.",
+              "Have snapshots ready as fallbacks. Do not wait on generation for long. [TEACHING]",
               "Do not drift into a feature tour or five different modalities.",
-              "After the callout, say the room-level point explicitly: quality rises fast when you add context, bounded next steps, and change control."
+              "After the callout, say the room-level point explicitly: quality rises fast when you add context, bounded next steps, and change control.",
+              "Fallbacks: if CLI is not working, switch to Codex App. If App is not working, use the web fallback. If demo is slow, have a repo snapshot after each step."
             ],
             "sourceRefs": [
               {
@@ -1658,28 +1661,6 @@
                 "tone": "info",
                 "title": "What to take from the demo",
                 "body": "The point is not a magical result. The point is that the repo makes clear why the work matters, what comes next, and how the change will be checked."
-              },
-              {
-                "id": "demo-fallbacks",
-                "type": "link-list",
-                "title": "Fallbacks",
-                "items": [
-                  {
-                    "label": "CLI is not working",
-                    "href": "workshop-skill/install.md",
-                    "description": "Switch to the Codex App."
-                  },
-                  {
-                    "label": "The app is not working",
-                    "href": "README.md",
-                    "description": "Use the web fallback."
-                  },
-                  {
-                    "label": "The demo is slow",
-                    "href": "docs/agent-ui-testing.md",
-                    "description": "Have a repo snapshot after each step."
-                  }
-                ]
               }
             ]
           },
@@ -1688,9 +1669,10 @@
             "title": "Od AGENTS.md k review",
             "body": "Krátký sled kroků, který jde zopakovat i u stolu: bez kontextu to drhne, s `AGENTS.md`, rozpadem práce do kroků a kontrolou změny vzniká pracovní systém, ne jen další prompt.",
             "facilitatorNotes": [
-              "Měj připravené snapshoty pro fallbacky. Nečekej dlouho na generování.",
+              "Měj připravené snapshoty pro fallbacky. Nečekej dlouho na generování. [TEACHING]",
               "Neukazuj přehlídku funkcí ani pět různých režimů práce.",
-              "Po calloutu explicitně řekni pointu pro místnost: sledujeme, jak rychle roste kvalita, když přidáme kontext, rozpad práce a kontrolu změny."
+              "Po calloutu explicitně řekni pointu pro místnost: sledujeme, jak rychle roste kvalita, když přidáme kontext, rozpad práce a kontrolu změny.",
+              "Fallbacky: když nejede CLI, přejdi na Codex App. Když nejede App, použij web fallback. Když je demo pomalé, měj snapshot repa po každém kroku."
             ],
             "sourceRefs": [
               {
@@ -1728,28 +1710,6 @@
                 "tone": "info",
                 "title": "Co si z dema odnést",
                 "body": "Nejde o kouzelný výsledek. Jde o to ukázat, že z repa je poznat, proč se něco dělá, co přijde dál a jak změnu zkontrolujete."
-              },
-              {
-                "id": "demo-fallbacks",
-                "type": "link-list",
-                "title": "Fallbacky",
-                "items": [
-                  {
-                    "label": "CLI nejede",
-                    "href": "workshop-skill/install.md",
-                    "description": "Přejdi na Codex App."
-                  },
-                  {
-                    "label": "App nejede",
-                    "href": "README.md",
-                    "description": "Použij web fallback."
-                  },
-                  {
-                    "label": "Demo je pomalé",
-                    "href": "docs/agent-ui-testing.md",
-                    "description": "Měj repo snapshot po každém kroku."
-                  }
-                ]
               }
             ]
           },
@@ -1765,7 +1725,7 @@
             "title": "Treat the demo as workflow, not a feature tour",
             "body": "During the demo, keep one working thread in view: where context came from, how the work was broken into steps, what got checked, and how the change came back under control.",
             "facilitatorNotes": [
-              "Use this when you want to remind the audience that the demo also needs a clear working line and a concrete learner payoff."
+              "Use this when you want to remind the audience that the demo also needs a clear working line and a concrete learner payoff. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -1804,6 +1764,11 @@
                 "id": "demo-participant-preview",
                 "type": "participant-preview",
                 "body": "Watch how a small task turns into work another person could safely continue."
+              },
+              {
+                "id": "demo-forward-preview",
+                "type": "participant-preview",
+                "body": "Next: you go back to the repo with three things — a map, a first slice, and the smallest useful check."
               }
             ]
           },
@@ -1812,7 +1777,7 @@
             "title": "Demo jako workflow, ne přehlídka funkcí",
             "body": "Během dema si držte jednu pracovní linku: odkud přišel kontext, jak se práce rozpadla na kroky, co se ověřilo a jak se změna vrací pod kontrolu.",
             "facilitatorNotes": [
-              "Použij ji, když chceš publiku připomenout, že i demo má mít jasnou pracovní linku a konkrétní přínos pro tým."
+              "Použij ji, když chceš publiku připomenout, že i demo má mít jasnou pracovní linku a konkrétní přínos pro tým. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -1851,6 +1816,11 @@
                 "id": "demo-participant-preview",
                 "type": "participant-preview",
                 "body": "Sledujte, jak se z malého úkolu stává práce, kterou může převzít další člověk."
+              },
+              {
+                "id": "demo-forward-preview",
+                "type": "participant-preview",
+                "body": "Dál: vracíte se k repu se třemi věcmi — mapou, prvním sliceem a nejmenším užitečným ověřením."
               }
             ]
           },
@@ -1895,7 +1865,8 @@
           "say": [
             "Coach first, mentor second, teach only as a last resort.",
             "If the team has no verification at all, push for the smallest useful test or tracer bullet.",
-            "Return learner-facing artifacts to participants, not the whole backstage of Harness Lab."
+            "Return learner-facing artifacts to participants, not the whole backstage of Harness Lab.",
+            "An agent that starts without constraints will make plausible but wrong architectural decisions. This is task drift. AGENTS.md constraints are the fix."
           ],
           "show": [],
           "do": [],
@@ -1934,7 +1905,9 @@
         ],
         "facilitatorRunner": {
           "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
-          "say": [],
+          "say": [
+            "Agent, který začne bez mantinelů, udělá uvěřitelná, ale špatná architektonická rozhodnutí. Tohle je task drift. Mantinely v AGENTS.md jsou řešení."
+          ],
           "show": [],
           "do": [],
           "watch": [],
@@ -1953,7 +1926,7 @@
             "title": "What should be in the repo before lunch",
             "body": "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, a first verified move, and a working slice another team could actually run. If one of those is missing, the team is not building a working system yet.",
             "facilitatorNotes": [
-              "This is the main room cue for Build Phase 1. Keep it on the projector often."
+              "This is the main room cue for Build Phase 1. Keep it on the projector often. [COACHING]"
             ],
             "sourceRefs": [
               {
@@ -1989,7 +1962,7 @@
             "title": "Co má být v repu před obědem",
             "body": "README, krátká mapa v AGENTS.md, plán kroků, spustitelné ověření, první ověřený posun a spustitelný výsek, který zvládne spustit i cizí tým. Když něco z toho chybí, tým ještě nestaví pracovní systém.",
             "facilitatorNotes": [
-              "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru."
+              "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru. [COACHING]"
             ],
             "sourceRefs": [
               {
@@ -2032,7 +2005,7 @@
             "title": "When a team gets stuck, return to the proof",
             "body": "First aid is not a longer prompt or a longer explanation. It is a return to the goal, the missing repo artifact, and the smallest check that anchors the work back in reality.",
             "facilitatorNotes": [
-              "Good help is not a verbal handoff. It is returning the team to the repo, checks, and the next safe move.",
+              "Good help is not a verbal handoff. It is returning the team to the repo, checks, and the next safe move. [COACHING]",
               "Keep the order coach -> mentor -> teacher. If you explain for too long, return the team to work quickly."
             ],
             "sourceRefs": [
@@ -2086,7 +2059,7 @@
             "title": "Když se zaseknete, vraťte se k ověření",
             "body": "První pomoc není delší prompt ani delší vysvětlování. Je to návrat k cíli, chybějícímu artefaktu v repu a nejmenšímu ověření, které znovu ukotví práci v realitě.",
             "facilitatorNotes": [
-              "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, ověřování a dalšímu bezpečnému kroku.",
+              "Dobrá pomoc není ústní handoff. Je to vrácení týmu k repu, ověřování a dalšímu bezpečnému kroku. [COACHING]",
               "Drž pořadí coach -> mentor -> učitel. Jakmile začneš dlouze vysvětlovat princip, vrať tým zpět do práce."
             ],
             "sourceRefs": [
@@ -2149,7 +2122,7 @@
             "ctaLabel": "Open install and setup flow",
             "ctaHref": "workshop-skill/install.md",
             "facilitatorNotes": [
-              "Use this when you want to return a learner-facing view to the team instead of facilitator backstage."
+              "Use this when you want to return a learner-facing view to the team instead of facilitator backstage. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2198,7 +2171,7 @@
             "ctaLabel": "Otevřít install a setup flow",
             "ctaHref": "workshop-skill/install.md",
             "facilitatorNotes": [
-              "Použij ji ve chvíli, kdy chceš týmu vrátit pohled pro účastníky místo facilitátorského backstage."
+              "Použij ji ve chvíli, kdy chceš týmu vrátit pohled pro účastníky místo facilitátorského backstage. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2250,7 +2223,7 @@
       "startTime": "11:35",
       "kind": "shared",
       "intent": "checkpoint",
-      "defaultSceneId": "intermezzo-1-checkpoint",
+      "defaultSceneId": "intermezzo-1-silent-retrieval",
       "en": {
         "label": "Intermezzo 1",
         "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself.",
@@ -2284,11 +2257,14 @@
             "What are you verifying today with an executable check?"
           ],
           "show": [],
-          "do": [],
+          "do": [
+            "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes team discussion, then room sharing."
+          ],
           "watch": [
             "The intermezzo slips into reporting without a principle point.",
             "Only the loudest team speaks while the others stay passive.",
-            "The facilitator summarizes impressions instead of evidence."
+            "The facilitator summarizes impressions instead of evidence.",
+            "If someone starts talking during the silent phase, redirect. The retrieval benefit requires individual production before social sharing."
           ],
           "fallback": []
         }
@@ -2322,13 +2298,84 @@
           "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný výsledek.",
           "say": [],
           "show": [],
-          "do": [],
-          "watch": [],
+          "do": [
+            "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          ],
+          "watch": [
+            "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
+          ],
           "fallback": []
         }
       },
       "cs_reviewed": true,
       "scenes": [
+        {
+          "id": "intermezzo-1-silent-retrieval",
+          "sceneType": "checkpoint",
+          "intent": "checkpoint",
+          "chromePreset": "minimal",
+          "en": {
+            "label": "Silent retrieval",
+            "title": "3 minutes. Write before you speak.",
+            "body": "Each person writes individually. No sharing yet.",
+            "facilitatorNotes": [
+              "Enforce the silence. If anyone starts discussing, redirect: 'Write first, then we'll share.' After 3 minutes, open team discussion for 2 minutes, then room sharing. [FACILITATING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitation guide: Intermezzos",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "intermezzo-1-retrieval-hero",
+                "type": "hero",
+                "eyebrow": "Intermezzo 1",
+                "title": "3 minutes. Write before you speak.",
+                "body": "Each person writes individually. No sharing yet."
+              },
+              {
+                "id": "intermezzo-1-retrieval-question",
+                "type": "callout",
+                "tone": "info",
+                "title": "The question",
+                "body": "What would the next team need to find in your repo right now to continue without asking you?"
+              }
+            ]
+          },
+          "cs": {
+            "label": "Tichý zápis",
+            "title": "3 minuty. Nejdřív napište, pak mluvte.",
+            "body": "Každý píše sám. Zatím se nesdílí.",
+            "facilitatorNotes": [
+              "Vynuť ticho. Když někdo začne diskutovat, přesměruj: 'Nejdřív napište, pak budeme sdílet.' Po 3 minutách otevři týmovou diskuzi na 2 minuty, pak sdílení v místnosti. [FACILITATING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitační průvodce: Intermezza",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "intermezzo-1-retrieval-hero",
+                "type": "hero",
+                "eyebrow": "Intermezzo 1",
+                "title": "3 minuty. Nejdřív napište, pak mluvte.",
+                "body": "Každý píše sám. Zatím se nesdílí."
+              },
+              {
+                "id": "intermezzo-1-retrieval-question",
+                "type": "callout",
+                "tone": "info",
+                "title": "Otázka",
+                "body": "Co by další tým potřeboval najít ve vašem repu právě teď, aby mohl pokračovat bez ptaní?"
+              }
+            ]
+          },
+          "cs_reviewed": true
+        },
         {
           "id": "intermezzo-1-checkpoint",
           "sceneType": "checkpoint",
@@ -2339,7 +2386,7 @@
             "title": "Intermezzo: evidence, not impressions",
             "body": "Keep the intermezzo disciplined: one sentence from each team, then the shared signals, then one principle point tied to real evidence rather than facilitator vibes.",
             "facilitatorNotes": [
-              "Keep it short. The intermezzo is a reset and checkpoint, not a long presentation."
+              "Keep it short. The intermezzo is a reset and checkpoint, not a long presentation. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2384,7 +2431,7 @@
             "title": "Intermezzo: evidence, ne dojmy",
             "body": "Každý tým dá jednu větu. Pak pojmenujeme společné signály a jednu principovou pointu navázanou na to, co se opravdu děje.",
             "facilitatorNotes": [
-              "Drž to krátké. Intermezzo je reset a checkpoint, ne dlouhá prezentace."
+              "Drž to krátké. Intermezzo je reset a checkpoint, ne dlouhá prezentace. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2436,7 +2483,7 @@
             "title": "In the intermezzo, listen for three signals",
             "body": "This is not a status report. It is a short checkpoint that should show what is actually changing in the repo and what is still only talk.",
             "facilitatorNotes": [
-              "This scene keeps the intermezzo as a short checkpoint for the whole room."
+              "This scene keeps the intermezzo as a short checkpoint for the whole room. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2465,7 +2512,7 @@
               {
                 "id": "intermezzo-1-participant-preview",
                 "type": "participant-preview",
-                "body": "After the intermezzo, you go back to the build. Take one thing from it that you will still write down or verify today."
+                "body": "Take one thing from this intermezzo that you will verify before the next checkpoint."
               }
             ]
           },
@@ -2474,7 +2521,7 @@
             "title": "Na intermezzu poslouchejte tři signály",
             "body": "Nejde o status update. Jde o krátký checkpoint, který vám ukáže, co už se v repu opravdu mění a co je zatím jen řeč.",
             "facilitatorNotes": [
-              "Tahle scéna drží intermezzo jako krátký checkpoint pro celou místnost."
+              "Tahle scéna drží intermezzo jako krátký checkpoint pro celou místnost. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2503,7 +2550,7 @@
               {
                 "id": "intermezzo-1-participant-preview",
                 "type": "participant-preview",
-                "body": "Po intermezzu se vracíte k buildu. Vezměte si z něj jednu věc, kterou ještě dnes dopíšete nebo ověříte."
+                "body": "Vezměte si z tohohle intermezza jednu věc, kterou ověříte před dalším checkpointem."
               }
             ]
           },
@@ -2555,11 +2602,14 @@
             "If the same rule was said aloud twice, it belongs in the repo."
           ],
           "show": [],
-          "do": [],
+          "do": [
+            "During lunch, quietly check each team repo. If a repo is genuinely unusable (no AGENTS.md at all, no code, broken setup), help the team write the minimum. Frame it as normal coaching, not a gate."
+          ],
           "watch": [
             "Teams leave for lunch without a clear next step and without cleaned-up context.",
             "A key decision is still only in people’s heads.",
-            "The repo does not explain the midday state."
+            "The repo does not explain the midday state.",
+            "The gate is silent — participants should not know there is a check. Only intervene on genuinely broken repos, not weak ones."
           ],
           "fallback": []
         }
@@ -2597,8 +2647,12 @@
           "goal": "Zastavit flow před odpoledním posunem a připravit týmy na to, že repo musí být čitelné i bez nich.",
           "say": [],
           "show": [],
-          "do": [],
-          "watch": [],
+          "do": [
+            "Během oběda tiše zkontroluj repo každého týmu. Když je repo opravdu nepoužitelné (vůbec žádné AGENTS.md, žádný kód, rozbitý setup), pomozte týmu napsat minimum. Rámujte to jako běžný coaching, ne jako bránu."
+          ],
+          "watch": [
+            "Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasahujte jen u opravdu rozbitých repozitářů, ne u slabých."
+          ],
           "fallback": []
         }
       },
@@ -2614,7 +2668,7 @@
             "title": "Lunch is not a break from handoff",
             "body": "Before anyone leaves for lunch, the repo has to show what changed, what verifies it, and what the next safe move is for the incoming team.",
             "facilitatorNotes": [
-              "This is quiet handoff prep. Explain it as part of the work, not as admin overhead."
+              "This is quiet handoff prep. Explain it as part of the work, not as admin overhead. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2641,7 +2695,7 @@
             "title": "Oběd není pauza od handoffu",
             "body": "Než vstanete od stolu, musí být z repa poznat, co se změnilo, co to ověřuje a jaký je další bezpečný krok pro cizí tým.",
             "facilitatorNotes": [
-              "Tohle je tichá příprava na handoff. Vysvětli ji jako součást práce, ne jako administrativu."
+              "Tohle je tichá příprava na handoff. Vysvětli ji jako součást práce, ne jako administrativu. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2675,7 +2729,7 @@
             "title": "Do not leave without the next safe move",
             "body": "Before lunch, you are preparing the repo for a different team. What happens next, what is done, and what is still only a hypothesis should all be readable without you.",
             "facilitatorNotes": [
-              "Use this when you want to remind teams that lunch is not a break from handoff."
+              "Use this when you want to remind teams that lunch is not a break from handoff. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2705,7 +2759,7 @@
               {
                 "id": "lunch-reset-participant-preview",
                 "type": "participant-preview",
-                "body": "The afternoon starts with a quiet handoff. If something still lives only in conversation now, it will come back as friction soon."
+                "body": "When you return, a different team will read your repo without asking you. What will they find?"
               }
             ]
           },
@@ -2714,7 +2768,7 @@
             "title": "Neodcházejte bez dalšího bezpečného kroku",
             "body": "Před obědem připravujete repo pro cizí tým. Co dál, co je hotové a co je jen hypotéza musí být dohledatelné bez vás.",
             "facilitatorNotes": [
-              "Použij, když chceš týmům připomenout, že oběd není pauza od handoffu."
+              "Použij, když chceš týmům připomenout, že oběd není pauza od handoffu. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -2744,7 +2798,7 @@
               {
                 "id": "lunch-reset-participant-preview",
                 "type": "participant-preview",
-                "body": "Odpoledne začne tichý handoff. Když teď něco necháte jen v hovoru, za chvíli se to vrátí jako tření."
+                "body": "Až se vrátíte, jiný tým přečte vaše repo a nebude se vás ptát. Co tam najde?"
               }
             ]
           },
@@ -2789,7 +2843,8 @@
           "say": [
             "The first 10 minutes are quiet. No improvised explanation.",
             "For the first 10 minutes, the new team only reads the repo and maps the situation.",
-            "Frustration is not a workshop bug. It is a signal of context quality in the repository."
+            "Frustration is not a workshop bug. It is a signal of context quality in the repository.",
+            "A new agent session has no memory of the previous session. If your context is in chat only, the session starts blind. This is why the repo is the session state."
           ],
           "show": [],
           "do": [],
@@ -2828,7 +2883,9 @@
         ],
         "facilitatorRunner": {
           "goal": "Vynutit tichý start po rotaci a nechat kvalitu repa ukázat, co je opravdu čitelné.",
-          "say": [],
+          "say": [
+            "Nová session agenta nemá žádnou paměť z předchozí session. Když je kontext jen v chatu, session začíná naslepo. Proto je repo stavem session."
+          ],
           "show": [],
           "do": [],
           "watch": [],
@@ -2847,7 +2904,7 @@
             "title": "Quiet start after rotation",
             "body": "For the first ten minutes, the incoming team only reads the repo and builds its own picture of the situation. Do not rescue the system with spoken explanation; let the repo show its quality honestly.",
             "facilitatorNotes": [
-              "Be strict. The moment you allow improvised explanation, the whole point of the afternoon is lost."
+              "Be strict. The moment you allow improvised explanation, the whole point of the afternoon is lost. [NARRATING]"
             ],
             "sourceRefs": [
               {
@@ -2877,7 +2934,7 @@
             "title": "Tichý start po rotaci",
             "body": "Prvních deset minut nový tým jen čte repo a mapuje situaci. Frustrace není chyba workshopu. Je to signál kvality kontextu v repu.",
             "facilitatorNotes": [
-              "Buď striktní. Jakmile dovolíš improvizované dovysvětlování, ztratí se pointa odpoledne."
+              "Buď striktní. Jakmile dovolíš improvizované dovysvětlování, ztratí se pointa odpoledne. [NARRATING]"
             ],
             "sourceRefs": [
               {
@@ -2914,7 +2971,7 @@
             "title": "After rotation, the first job is not coding",
             "body": "Start with the README, AGENTS.md, and the plan. First make a map: what helps, what is missing, what is risky, and what the next safe move is.",
             "facilitatorNotes": [
-              "If the team does not know what to reach for, return them to learner kit artifacts.",
+              "If the team does not know what to reach for, return them to learner kit artifacts. [COACHING]",
               "Make sure the team's own diagnosis appears before the first edit."
             ],
             "sourceRefs": [
@@ -2961,7 +3018,7 @@
             "title": "První úkol po rotaci není kódovat",
             "body": "Začněte README, AGENTS.md a plánem kroků. Nejdřív si udělejte mapu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.",
             "facilitatorNotes": [
-              "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu.",
+              "Když tým neví, po čem sáhnout, vrať ho k README, AGENTS.md a dalším vodicím artefaktům v learner kitu. [COACHING]",
               "Dohlédni, aby se vlastní diagnóza objevila dřív než první editace."
             ],
             "sourceRefs": [
@@ -3017,7 +3074,7 @@
             "ctaLabel": "Open analyze checklist",
             "ctaHref": "workshop-skill/analyze-checklist.md",
             "facilitatorNotes": [
-              "This is the participant equivalent of the hard handoff moment. It helps keep the room disciplined without backstage details."
+              "This is the participant equivalent of the hard handoff moment. It helps keep the room disciplined without backstage details. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3066,7 +3123,7 @@
             "ctaLabel": "Otevřít analyze checklist",
             "ctaHref": "workshop-skill/analyze-checklist.md",
             "facilitatorNotes": [
-              "Tohle je účastnický ekvivalent tvrdého handoff momentu. Pomáhá udržet místnost v disciplíně bez backstage detailů."
+              "Tohle je účastnický ekvivalent tvrdého handoff momentu. Pomáhá udržet místnost v disciplíně bez backstage detailů. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3118,7 +3175,7 @@
       "startTime": "13:45",
       "kind": "team",
       "intent": "build",
-      "defaultSceneId": "build-2-handoff-work",
+      "defaultSceneId": "build-2-codification-pause",
       "en": {
         "label": "Build fáze 2",
         "goal": "Continue from repo-native signals only, then turn the friction of the handoff into stronger maps, stronger checks, and stronger continuation guidance.",
@@ -3153,10 +3210,13 @@
           "say": [
             "Do not let teams replace a weak repo signal with verbal handoff.",
             "Name what needs to be written, clarified, or verified after rotation.",
-            "Every repeated pain is a candidate for a better template, check, or runbook."
+            "Every repeated pain is a candidate for a better template, check, or runbook.",
+            "When the agent generates tests as part of the same task, those tests reflect the agent interpretation, not your specification. Independent verification means: you wrote the done criteria, or a separate check evaluates the output."
           ],
           "show": [],
-          "do": [],
+          "do": [
+            "Start with the codification pause. 5 minutes. Only after teams have encoded at least one friction point do they continue building."
+          ],
           "watch": [
             "The team only cleans up chaos, but does not turn it into better guidance.",
             "A weak repo signal keeps getting rescued in conversation.",
@@ -3196,15 +3256,86 @@
         ],
         "facilitatorRunner": {
           "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepšího ověřování a lepšího handoffu.",
-          "say": [],
+          "say": [
+            "Když agent generuje testy jako součást stejného úkolu, ty testy odrážejí jeho interpretaci, ne vaši specifikaci. Nezávislé ověření znamená: done criteria jste napsali vy, nebo výstup vyhodnocuje nezávislá kontrola."
+          ],
           "show": [],
-          "do": [],
+          "do": [
+            "Začněte codifikační pauzou. 5 minut. Teprve po zakódování alespoň jednoho bodu tření pokračujte v budování."
+          ],
           "watch": [],
           "fallback": []
         }
       },
       "cs_reviewed": true,
       "scenes": [
+        {
+          "id": "build-2-codification-pause",
+          "sceneType": "checkpoint",
+          "intent": "checkpoint",
+          "chromePreset": "checkpoint",
+          "en": {
+            "label": "Codification pause",
+            "title": "Before you write code: name one friction and encode it",
+            "body": "5 minutes. Name what caused friction in the rotation. Write it into the repo.",
+            "facilitatorNotes": [
+              "This is the trigger for Habits 5 and 6. Enforce the 5-minute pause. Teams will want to jump to coding — redirect them to the encoding step first. [COACHING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitation guide: Facilitation point for rotation",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "build-2-pause-hero",
+                "type": "hero",
+                "eyebrow": "Build Phase 2",
+                "title": "Before you write code: name one friction and encode it",
+                "body": "5 minutes. Name what caused friction in the rotation. Write it into the repo."
+              },
+              {
+                "id": "build-2-pause-callout",
+                "type": "callout",
+                "tone": "warning",
+                "title": "Encode, then continue",
+                "body": "Write it as a rule, a check, or a clearer AGENTS.md section. Only after it is written do you move to feature work."
+              }
+            ]
+          },
+          "cs": {
+            "label": "Codifikační pauza",
+            "title": "Než začnete psát kód: pojmenujte jedno tření a zapište ho do repa",
+            "body": "5 minut. Pojmenujte, co způsobilo tření při rotaci. Zapište to do repa.",
+            "facilitatorNotes": [
+              "Tohle je spouštěč pro Habits 5 a 6. Vynuťte 5minutovou pauzu. Týmy budou chtít skočit rovnou ke kódu — přesměrujte je nejdřív k zápisu do repa. [COACHING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitační průvodce: Facilitační pointa k rotaci",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "build-2-pause-hero",
+                "type": "hero",
+                "eyebrow": "Build fáze 2",
+                "title": "Než začnete psát kód: pojmenujte jedno tření a zapište ho do repa",
+                "body": "5 minut. Pojmenujte, co způsobilo tření při rotaci. Zapište to do repa."
+              },
+              {
+                "id": "build-2-pause-callout",
+                "type": "callout",
+                "tone": "warning",
+                "title": "Zapište, pak pokračujte",
+                "body": "Zapište to jako pravidlo, ověření nebo jasnější sekci v AGENTS.md. Teprve potom přejděte k feature práci."
+              }
+            ]
+          },
+          "cs_reviewed": true
+        },
         {
           "id": "build-2-handoff-work",
           "sceneType": "checkpoint",
@@ -3215,7 +3346,7 @@
             "title": "After rotation, fix the signal as well as the feature",
             "body": "Build Phase 2 should turn handoff friction into a better repo map, stronger checks, and a clearer next safe move. Do not continue as if nothing happened.",
             "facilitatorNotes": [
-              "Help the team see frustration as a diagnostic signal, not a failure.",
+              "Help the team see frustration as a diagnostic signal, not a failure. [COACHING]",
               "Ask what genuinely helped after rotation, what had to be written down, and which next check now keeps the work grounded."
             ],
             "sourceRefs": [
@@ -3258,7 +3389,7 @@
             "title": "Po rotaci neopravujte jen feature, opravujte i signál",
             "body": "Druhá build fáze má přetavit handoff tření do lepší mapy repa, silnějšího ověřování a jasnějšího dalšího kroku. Nepokračujte, jako by se nic nestalo.",
             "facilitatorNotes": [
-              "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání.",
+              "Pomoz týmu vidět frustraci jako diagnostický signál, ne jako selhání. [COACHING]",
               "Ptej se, co po rotaci opravdu pomohlo, co bylo nutné dopsat a jaké další ověření teď drží práci při zemi."
             ],
             "sourceRefs": [
@@ -3310,7 +3441,7 @@
             "ctaLabel": "Open challenge cards",
             "ctaHref": "content/challenge-cards/deck.md",
             "facilitatorNotes": [
-              "This is the participant equivalent of the second build phase: no rescue through talking, only better orientation and the next check."
+              "This is the participant equivalent of the second build phase: no rescue through talking, only better orientation and the next check. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3350,7 +3481,7 @@
             "ctaLabel": "Otevřít challenge cards",
             "ctaHref": "content/challenge-cards/deck.md",
             "facilitatorNotes": [
-              "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další ověření."
+              "Tohle je účastnický ekvivalent druhé build fáze: žádné zachraňování hovorem, jen lepší orientace a další ověření. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3393,7 +3524,7 @@
       "startTime": "14:45",
       "kind": "shared",
       "intent": "checkpoint",
-      "defaultSceneId": "intermezzo-2-reflection",
+      "defaultSceneId": "intermezzo-2-silent-retrieval",
       "en": {
         "label": "Intermezzo 2",
         "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
@@ -3431,11 +3562,14 @@
             "Which repo signal saved you the most time?"
           ],
           "show": [],
-          "do": [],
+          "do": [
+            "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes team discussion, then room sharing."
+          ],
           "watch": [
             "The intermezzo stays general and without concrete examples.",
             "You collect opinions, not signals from the repo.",
-            "No link appears to the closing reflection."
+            "No link appears to the closing reflection.",
+            "If someone starts talking during the silent phase, redirect. The retrieval benefit requires individual production before social sharing."
           ],
           "fallback": []
         }
@@ -3473,13 +3607,84 @@
           "goal": "Krátce zachytit, co po rotaci skutečně pomohlo pokračovat a co se ukazuje jako slabé místo workshopového systému.",
           "say": [],
           "show": [],
-          "do": [],
-          "watch": [],
+          "do": [
+            "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          ],
+          "watch": [
+            "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
+          ],
           "fallback": []
         }
       },
       "cs_reviewed": true,
       "scenes": [
+        {
+          "id": "intermezzo-2-silent-retrieval",
+          "sceneType": "checkpoint",
+          "intent": "checkpoint",
+          "chromePreset": "minimal",
+          "en": {
+            "label": "Silent retrieval",
+            "title": "3 minutes. Write before you speak.",
+            "body": "Each person writes individually. No sharing yet.",
+            "facilitatorNotes": [
+              "Enforce the silence. If anyone starts discussing, redirect: 'Write first, then we'll share.' After 3 minutes, open team discussion for 2 minutes, then room sharing. [FACILITATING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitation guide: Intermezzos",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "intermezzo-2-retrieval-hero",
+                "type": "hero",
+                "eyebrow": "Intermezzo 2",
+                "title": "3 minutes. Write before you speak.",
+                "body": "Each person writes individually. No sharing yet."
+              },
+              {
+                "id": "intermezzo-2-retrieval-question",
+                "type": "callout",
+                "tone": "info",
+                "title": "The question",
+                "body": "Name one thing that genuinely helped you continue after rotation, and one that was missing."
+              }
+            ]
+          },
+          "cs": {
+            "label": "Tichý zápis",
+            "title": "3 minuty. Nejdřív napište, pak mluvte.",
+            "body": "Každý píše sám. Zatím se nesdílí.",
+            "facilitatorNotes": [
+              "Vynuť ticho. Když někdo začne diskutovat, přesměruj: 'Nejdřív napište, pak budeme sdílet.' Po 3 minutách otevři týmovou diskuzi na 2 minuty, pak sdílení v místnosti. [FACILITATING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitační průvodce: Intermezza",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "intermezzo-2-retrieval-hero",
+                "type": "hero",
+                "eyebrow": "Intermezzo 2",
+                "title": "3 minuty. Nejdřív napište, pak mluvte.",
+                "body": "Každý píše sám. Zatím se nesdílí."
+              },
+              {
+                "id": "intermezzo-2-retrieval-question",
+                "type": "callout",
+                "tone": "info",
+                "title": "Otázka",
+                "body": "Pojmenujte jednu věc, která vám po rotaci opravdu pomohla pokračovat, a jednu, která chyběla."
+              }
+            ]
+          },
+          "cs_reviewed": true
+        },
         {
           "id": "intermezzo-2-reflection",
           "sceneType": "checkpoint",
@@ -3490,7 +3695,7 @@
             "title": "What really helped people continue after rotation",
             "body": "Use this moment to pull out hard continuation signals: what sped the new team up, what slowed it down, and what now deserves to become a better template, runbook, or rule.",
             "facilitatorNotes": [
-              "Ask for concrete repo examples, not general impressions.",
+              "Ask for concrete repo examples, not general impressions. [FACILITATING]",
               "Prepare the room for reveal by separating genuinely useful signals from good vibes."
             ],
             "sourceRefs": [
@@ -3533,7 +3738,7 @@
             "title": "Co po rotaci opravdu pomohlo pokračovat",
             "body": "Druhé intermezzo má vytáhnout tvrdé signály z návaznosti: co novému týmu ušetřilo čas, co ho brzdilo a co už si říká o lepší template, runbook nebo pravidlo.",
             "facilitatorNotes": [
-              "Vyžaduj konkrétní příklady z repa, ne obecné dojmy.",
+              "Vyžaduj konkrétní příklady z repa, ne obecné dojmy. [FACILITATING]",
               "Připrav místnost na reveal tím, že oddělíš skutečně užitečné signály od dobrých pocitů."
             ],
             "sourceRefs": [
@@ -3583,7 +3788,7 @@
             "title": "Prepare one thing that really helped after rotation",
             "body": "This is not a broad mood check about the afternoon. It is a search for what saved time for the incoming team and what still blocked it.",
             "facilitatorNotes": [
-              "This scene helps pull the afternoon back to concrete continuation signals before reveal."
+              "This scene helps pull the afternoon back to concrete continuation signals before reveal. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3621,7 +3826,7 @@
             "title": "Připravte si jednu věc, která po rotaci opravdu pomohla",
             "body": "Teď nesbíráme obecné pocity z odpoledne. Sbíráme přesně to, co novému týmu šetřilo čas, a to, co ho naopak brzdilo.",
             "facilitatorNotes": [
-              "Tahle scéna pomáhá stáhnout odpolední část ke konkrétním signálům návaznosti před reveal."
+              "Tahle scéna pomáhá stáhnout odpolední část ke konkrétním signálům návaznosti před reveal. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3695,10 +3900,13 @@
           "say": [
             "We are not judging which team was better.",
             "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
-            "Collect concrete examples, not general impressions."
+            "Collect concrete examples, not general impressions.",
+            "These practices are tool-agnostic. If you are back in a different toolchain Monday, the principles transfer: context in tracked artifacts, plan before motion, verification before trust."
           ],
           "show": [],
-          "do": [],
+          "do": [
+            "After W3, run the Monday commitments: each person writes one sentence. Collect them."
+          ],
           "watch": [
             "The reflection turns into ranking teams.",
             "The questions stay too general and detached from the repo.",
@@ -3734,9 +3942,13 @@
         ],
         "facilitatorRunner": {
           "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít handoff, a převést je do další praxe i do lepšího workshopového systému.",
-          "say": [],
+          "say": [
+            "Tyhle postupy jsou nezávislé na nástroji. Když v pondělí budete pracovat s jiným toolchainem, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
+          ],
           "show": [],
-          "do": [],
+          "do": [
+            "Po W3 spusťte pondělní závazky: každý napíše jednu větu. Seberte je."
+          ],
           "watch": [],
           "fallback": []
         }
@@ -3753,7 +3965,7 @@
             "title": "Only take out what you want to repeat in real work",
             "body": "Use the final 1-2-4-All to surface the concrete signals that helped work survive handoff, and to separate them from general feelings about the day.",
             "facilitatorNotes": [
-              "Keep the questions concrete. Every example should point to a signal in the repo or to a missing signal.",
+              "Keep the questions concrete. Every example should point to a signal in the repo or to a missing signal. [FACILITATING]",
               "During the group share, keep steering away from team scoring and back toward system signals."
             ],
             "sourceRefs": [
@@ -3800,7 +4012,7 @@
             "title": "Z místnosti bereme jen to, co chcete převzít do reálné práce",
             "body": "Závěrečné 1-2-4-All má vytáhnout konkrétní signály, které pomohly práci přežít handoff, a oddělit je od obecných pocitů.",
             "facilitatorNotes": [
-              "Drž otázky konkrétní. Každý příklad by měl mířit k signálu v repu nebo k chybějícímu signálu.",
+              "Drž otázky konkrétní. Každý příklad by měl mířit k signálu v repu nebo k chybějícímu signálu. [FACILITATING]",
               "Ve skupinové části hlídej, aby se nehodnotily týmy, ale systém a jeho signály."
             ],
             "sourceRefs": [
@@ -3854,7 +4066,7 @@
             "title": "What from today belongs in your real repo tomorrow",
             "body": "W3 matters because it forces the day to end in concrete future practice rather than in abstract agreement.",
             "facilitatorNotes": [
-              "At the end, turn it toward next week as well as toward improving the blueprint and workshop system."
+              "At the end, turn it toward next week as well as toward improving the blueprint and workshop system. [COACHING]"
             ],
             "sourceRefs": [
               {
@@ -3896,7 +4108,7 @@
             "title": "Co si z dneška odnesete do skutečné práce",
             "body": "Zakončení přes W3 převádí den do konkrétní další praxe s AI agenty.",
             "facilitatorNotes": [
-              "Na závěr to stoč do příštího týdne i do zlepšení blueprintu a workshopového systému."
+              "Na závěr to stoč do příštího týdne i do zlepšení blueprintu a workshopového systému. [COACHING]"
             ],
             "sourceRefs": [
               {
@@ -3936,6 +4148,109 @@
           "cs_reviewed": true
         },
         {
+          "id": "reveal-monday-commitments",
+          "sceneType": "reflection",
+          "intent": "reflection",
+          "chromePreset": "minimal",
+          "en": {
+            "label": "Monday commitment",
+            "title": "Write one sentence you will act on Monday",
+            "body": "Not an aspiration. A concrete move.",
+            "facilitatorNotes": [
+              "Collect the written commitments (cards, repo commits, or shared doc). Push for specificity: if someone writes something vague, ask 'What is the first concrete move that starts this?' [COACHING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitation guide: Reveal and reflection",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "reveal-monday-hero",
+                "type": "hero",
+                "eyebrow": "Monday",
+                "title": "Write one sentence you will act on Monday",
+                "body": "Not an aspiration. A concrete move."
+              },
+              {
+                "id": "reveal-monday-format",
+                "type": "steps",
+                "title": "The format",
+                "items": [
+                  {
+                    "title": "Next week I will [specific action] because [specific reason from today].",
+                    "body": ""
+                  }
+                ]
+              },
+              {
+                "id": "reveal-monday-specificity",
+                "type": "callout",
+                "tone": "warning",
+                "title": "Be specific enough to check",
+                "body": "Not: 'I will work better with agents.' Yes: 'I will add Goal, Context, Constraints, Done When to my main repo's AGENTS.md before my next agent task.'"
+              },
+              {
+                "id": "reveal-monday-tool-agnostic",
+                "type": "callout",
+                "tone": "info",
+                "title": "The harness is the repo, not the tool",
+                "body": "These practices work with any coding agent — Codex, Claude Code, Cursor, Copilot. What you learned today is tool-agnostic."
+              }
+            ]
+          },
+          "cs": {
+            "label": "Pondělní závazek",
+            "title": "Napište jednu větu, kterou v pondělí uděláte",
+            "body": "Žádná aspirace. Konkrétní krok.",
+            "facilitatorNotes": [
+              "Seberte napsané závazky (kartičky, commity do repa nebo sdílený dokument). Tlačte na konkrétnost: když někdo napíše něco vágního, zeptejte se: 'Jaký je první konkrétní krok, který to spustí?' [COACHING]"
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitační průvodce: Reveal a reflexe",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ],
+            "blocks": [
+              {
+                "id": "reveal-monday-hero",
+                "type": "hero",
+                "eyebrow": "Pondělí",
+                "title": "Napište jednu větu, kterou v pondělí uděláte",
+                "body": "Žádná aspirace. Konkrétní krok."
+              },
+              {
+                "id": "reveal-monday-format",
+                "type": "steps",
+                "title": "Formát",
+                "items": [
+                  {
+                    "title": "Příští týden udělám [konkrétní akce], protože [konkrétní důvod z dnešního dne].",
+                    "body": ""
+                  }
+                ]
+              },
+              {
+                "id": "reveal-monday-specificity",
+                "type": "callout",
+                "tone": "warning",
+                "title": "Buďte konkrétní natolik, aby se to dalo ověřit",
+                "body": "Ne: 'Budu lépe pracovat s agenty.' Ano: 'Před dalším úkolem pro agenta dopíšu Goal, Context, Constraints a Done When do AGENTS.md hlavního repa.'"
+              },
+              {
+                "id": "reveal-monday-tool-agnostic",
+                "type": "callout",
+                "tone": "info",
+                "title": "Harness je repo, ne nástroj",
+                "body": "Tyhle postupy fungují s jakýmkoli coding agentem — Codex, Claude Code, Cursor, Copilot. Co jste se dnes naučili, je nezávislé na nástroji."
+              }
+            ]
+          },
+          "cs_reviewed": true
+        },
+        {
           "id": "reveal-participant-view",
           "sceneType": "participant-view",
           "intent": "walkthrough",
@@ -3947,7 +4262,7 @@
             "ctaLabel": "Open recap and follow-up",
             "ctaHref": "workshop-skill/recap.md",
             "facilitatorNotes": [
-              "Use this scene when you pull the day back to concrete signals and next steps."
+              "Use this scene when you pull the day back to concrete signals and next steps. [FACILITATING]"
             ],
             "sourceRefs": [
               {
@@ -3987,7 +4302,7 @@
             "ctaLabel": "Otevřít recap a follow-up",
             "ctaHref": "workshop-skill/recap.md",
             "facilitatorNotes": [
-              "Použij tuhle scénu při závěrečném stažení dne do konkrétních signálů a dalších kroků."
+              "Použij tuhle scénu při závěrečném stažení dne do konkrétních signálů a dalších kroků. [FACILITATING]"
             ],
             "sourceRefs": [
               {

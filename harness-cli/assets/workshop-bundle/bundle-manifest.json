@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.4.3",
-  "contentHash": "3c32873f3843de2cc505a4d9ff56925398353e83c1969867d556253c38e59528",
+  "bundleVersion": "0.5.2",
+  "contentHash": "7e57ba62cc961ca8d179b41ff32b5ceaf48e8457467b0b8a00a24c1e9e0361f6",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -42,7 +42,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "c5f3df56380b3df498a92dc6de55e922b2c7722e53e4f6f2efbef9b76de1d163"
+      "sha256": "4cf353e3881bbc3df5310c93b904aa97a2f005c44f3750190c415f40df81df6e"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -94,7 +94,7 @@
     },
     {
       "path": "content/talks/codex-demo-script.md",
-      "sha256": "d5ff639fde21e47606a81aeae6e2b135d2063c073a8dd5717a0386546b9b77cc"
+      "sha256": "4ac80c3fbacf32e5f6b2128da9ca7db6068c0a585bf1cc80a6b28ce7219b1ad2"
     },
     {
       "path": "content/talks/context-is-king.md",
@@ -162,7 +162,7 @@
     },
     {
       "path": "workshop-blueprint/operator-guide.md",
-      "sha256": "eda21a849b8a7e9ce3ae69e0c038611773f4fdfdab518c990590a23941808f0c"
+      "sha256": "84f87fcce68d61cb0dbeff8e0d7dbb5ab6a2af5fd8634bcfaee4eaef42312671"
     },
     {
       "path": "workshop-blueprint/README.md",
