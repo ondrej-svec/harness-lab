@@ -36,6 +36,7 @@ const CZECH_ONLY = new Set([
   "workshop-skill/facilitator.md",
   "workshop-skill/template-agents.md",
   "workshop-skill/install.md",
+  "workshop-skill/SKILL-facilitator.md",
   "workshop-skill/analyze-checklist.md",
   "materials/README.md",
   "materials/coaching-codex.md",

@@ -52,6 +52,24 @@ Typical runtime-only actions:
 
 These actions affect only the active workshop instance unless a facilitator deliberately makes a repo edit afterward.
 
+## During Rotation
+
+The continuation shift is the pedagogical centerpiece of the day. Its learning value depends on what was handed off.
+
+**Before rotation begins:**
+- Check the pre-rotation handoff gate (see `day-structure.md`): each team needs a readable AGENTS.md, one executable verification step, and a written next safe step.
+- If a team does not meet the gate, intervene to help them write the minimum. This is not punishment — it ensures the receiving team gets a signal worth diagnosing.
+
+**During rotation:**
+- Watch for teams that jump to editing before reading. Redirect them to the "required first move" (write what helped, what's missing, what's risky, next safe step).
+- Let productive friction stand. The receiving team's frustration at missing context is the lesson — do not resolve it for them.
+- Intervene when frustration becomes unproductive — when teams are stuck on setup, permissions, or broken tooling rather than on repo quality. That friction does not teach anything.
+
+**Capturing signals:**
+- Use the `HandoffMomentCard` capture panel on the facilitator dashboard during or immediately after the rotation phase.
+- Use the suggested seed tags (`missing_runbook`, `no_test_evidence`, `next_step_not_obvious`, `constraint_only_in_chat`, `drift_not_caught`) or add your own.
+- These signals feed the cross-cohort learnings log. Even one captured signal per team is valuable.
+
 ## After The Day
 
 1. Archive the workshop instance.

@@ -130,15 +130,17 @@ The day should not feel like separate agenda cards. Each phase should change wha
 - `build-1`:
   Shift teams from listening to evidence. Before lunch, the repo needs to show map, plan, one executable check, and one verified step.
 - `intermezzo-1`:
-  Shift from isolated table work to shared learning. The room should hear concrete repo signals, not generic progress reporting.
+  Shift from isolated table work to shared learning. The room should hear concrete repo signals, not generic progress reporting. Open with a 3-minute silent written exercise using the retrieval prompt before any team reports aloud.
 - `lunch-reset`:
   Shift from local progress to handoff readiness. Going to lunch without a readable next safe step should feel unfinished.
+- `pre-rotation handoff gate`:
+  Before rotation begins, the facilitator checks that each team's repo meets the minimum: (1) a readable AGENTS.md with goal + build/test commands + one explicit constraint, (2) one executable verification step with a passing result, (3) a written "next safe step" in the repo. If a team does not meet these, the facilitator intervenes directly — not to punish, but to help them write the minimum before the handoff. The gate ensures that every receiving team gets a signal worth diagnosing rather than chaos to decode.
 - `rotation`:
   Shift from authorship to inheritance. The receiving team must read first, diagnose second, and edit only after it can explain the state.
 - `build-2`:
   Shift from frustration to codification. Weak continuation signals should turn into clearer repo guidance, stronger checks, and better runbooks.
 - `intermezzo-2`:
-  Shift from anecdotes about the afternoon to concrete continuation evidence. The room should identify which repo signals actually saved time.
+  Shift from anecdotes about the afternoon to concrete continuation evidence. The room should identify which repo signals actually saved time. Open with a 3-minute silent written exercise using the retrieval prompt before any team reports aloud.
 - `reveal`:
   Shift from reflection to adoption. The close should turn signals from the day into next-week practice and into improvements to the reusable workshop blueprint.
 

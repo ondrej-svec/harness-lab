@@ -809,7 +809,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "Co má být v repu před obědem",
-          "body": "README, krátká mapa v AGENTS.md, plán kroků, spustitelné ověření a první ověřený posun. Když něco z toho chybí, tým ještě nestaví pracovní systém.",
+          "body": "README, krátká mapa v AGENTS.md, plán kroků, spustitelné ověření, první ověřený posun a spustitelný výsek, který zvládne spustit i cizí tým. Když něco z toho chybí, tým ještě nestaví pracovní systém.",
           "facilitatorNotes": [
             "Tohle je hlavní signál pro místnost v první build fázi. Měj ho často na projektoru."
           ],
@@ -823,13 +823,14 @@
             {
               "id": "build-1-checklist",
               "type": "checklist",
-              "title": "Pět věcí před obědem",
+              "title": "Šest věcí před obědem",
               "items": [
                 "README řekne cizímu člověku, co tenhle projekt dělá.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
                 "Plán drží společný směr místo improvizace.",
                 "build/test příkaz nebo tracer bullet umí vrátit práci na zem.",
-                "V repu je vidět první opravdu ověřený posun."
+                "V repu je vidět první opravdu ověřený posun.",
+                "První spustitelný výsek, který zvládne spustit i cizí tým — jeden příkaz, jedna obrazovka, jedna cesta, která dokazuje, že systém funguje."
               ]
             },
             {
@@ -932,7 +933,8 @@
                 "README a AGENTS.md, ze kterých se dá orientovat.",
                 "Plán dalších kroků a nejbližší bezpečný krok.",
                 "První ověření, které odliší realitu od dojmu.",
-                "Poznámku, ze které naváže i cizí tým."
+                "Poznámku, ze které naváže i cizí tým.",
+                "První spustitelný výsek, který zvládnete ukázat cizímu týmu do minuty."
               ]
             },
             {

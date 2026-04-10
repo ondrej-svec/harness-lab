@@ -2,39 +2,32 @@
 
 ## 48 hours after the workshop
 
-Send participants:
+### Your commitment
 
-1. A short reminder of the main principles:
-   - Context is a working system
-   - `AGENTS.md` is team infrastructure
-   - `Done When` and build/test commands improve the chances of a good handoff
-2. A pointer to `/workshop recap`
-3. A link to or excerpt from `workshop-skill/template-agents.md`
-4. One sentence that brings the room contract back:
-   - "This is not about a smarter prompt. It is about a repo another team can continue from."
-5. A challenge for the week:
-   - "Add `AGENTS.md` to one real project."
-   - "Move one durable rule from a prompt into the repo."
-6. Links to the learner kit:
-   - [`docs/locales/en/learner-resource-kit.md`](../../../docs/locales/en/learner-resource-kit.md)
-   - [`docs/locales/en/learner-reference-gallery.md`](../../../docs/locales/en/learner-reference-gallery.md)
-   - [`materials/locales/en/participant-resource-kit.md`](../../../materials/locales/en/participant-resource-kit.md)
-7. A reminder that the same materials are available through the skill too:
-   - `workshop resources`
-   - `workshop gallery`
-   - `workshop follow-up`
-8. Add one small commitment:
-   - "Send yourself or your team one commit, task, or PR that will actually happen this week."
+If you have a photo of the sticky notes from the "And now?" section, send each person their own commitment as a personal reminder. The sticky-note commitment is the only thing specific to you, from this day. Start there.
 
-## 1 week after the workshop
+**One thing before Friday:** Complete your sticky-note commitment. One commit, one PR, one task — anything that turns your commitment into reality.
 
-Short follow-up questions:
+### Anchor exercise
 
-- Did you create `AGENTS.md` in a real project?
-- Did you add build/test commands or a `Done When` section?
-- Did you add the next safe move or a short handoff runbook?
-- What helped you and what blocked you?
+Write down three moments in your normal work week when you open a new task or a new session — these are your Anchor moments for "Map before motion." When these moments become your trigger, the habit sustains itself.
 
-## W³ reminder
+### Resources
 
-If you have a photo of the sticky notes from the `And now?` section, send each person their own commitment as a personal reminder.
+- Principle reminder: Context is a working system. `AGENTS.md` is team infrastructure. `Done When` and build/test commands improve the chances of a good handoff.
+- Pointer to `/workshop recap`
+- Link to or excerpt from `workshop-skill/template-agents.md`
+- Learner kit: [`docs/learner-resource-kit.md`](../../../docs/learner-resource-kit.md), [`docs/learner-reference-gallery.md`](../../../docs/learner-reference-gallery.md), [`materials/participant-resource-kit.md`](../../../materials/participant-resource-kit.md)
+- Skill commands: `workshop resources`, `workshop gallery`, `workshop follow-up`
+
+## Weekly generation prompts
+
+Instead of checklists — one prompt per week that asks you to describe a concrete experience:
+
+**Week 1:** Describe a specific moment this week when you needed to verify agent output. What did you use as the check, and what would you change next time?
+
+**Week 2:** Describe a decision you wrote into the repository this week instead of leaving it in chat. What made you decide to write it down?
+
+**Week 3:** Describe a moment when you gave the agent a constraint upfront and it saved you a correction. What was the constraint?
+
+**Week 4:** Describe a situation where the same problem repeated. Did you change the system (template, check, rule), or just the output?

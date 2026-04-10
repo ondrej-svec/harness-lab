@@ -826,7 +826,7 @@
           "intent": "checkpoint",
           "chromePreset": "checkpoint",
           "title": "What should be in the repo before lunch",
-          "body": "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, and a first verified move. If one of those is missing, the team is not building a working system yet.",
+          "body": "A README, a short map in AGENTS.md, a step-by-step plan, a runnable check, a first verified move, and a working slice another team could actually run. If one of those is missing, the team is not building a working system yet.",
           "facilitatorNotes": [
             "This is the main room cue for Build Phase 1. Keep it on the projector often."
           ],
@@ -840,13 +840,14 @@
             {
               "id": "build-1-checklist",
               "type": "checklist",
-              "title": "Five things before lunch",
+              "title": "Six things before lunch",
               "items": [
                 "A README explains the project to a new reader.",
                 "AGENTS.md shows where to start and where to reach next.",
                 "A plan holds the line instead of improvisation.",
                 "A build/test command or tracer bullet puts the work back on the ground.",
-                "The repo shows a first actually verified move."
+                "The repo shows a first actually verified move.",
+                "A first working slice another team could run — one command, one screen, one path that proves the system works."
               ]
             },
             {
@@ -949,7 +950,8 @@
                 "A README and AGENTS.md people can actually navigate.",
                 "A short step plan and the nearest safe move.",
                 "A first check that separates reality from confidence.",
-                "A note another team can continue from."
+                "A note another team can continue from.",
+                "A first working slice you can demo to another team in under a minute."
               ]
             },
             {

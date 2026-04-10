@@ -6,6 +6,7 @@
 - `If it is not in the repo, it does not exist` - important agreements, rules, and next steps belong in files
 - `Verification is the trust boundary` - more autonomy requires stronger evidence
 - `Handoff is a continuous constraint` - the next team should find the first safe move without your explanation
+- `Fix the system, not just the symptom` - when the same thing repeats, do not fix the output — fix the system
 
 ## 4 elements of a good task
 

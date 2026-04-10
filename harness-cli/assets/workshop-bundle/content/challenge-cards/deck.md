@@ -1,40 +1,60 @@
 # Challenge Cards
 
-Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob práce s agentem i kvalitu handoffu.
+Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob práce s agentem i kvalitu handoffu.
+
+## Kde začít
+
+- Nemáte ještě `AGENTS.md`? Začněte první kartou z „Před obědem".
+- Máte `AGENTS.md`, ale žádné spustitelné ověření? Začněte druhou kartou.
+- Máte obojí? Vyberte si libovolnou kartu, která vás posune dál.
 
 ## Před obědem: postavte pracovní systém
 
-- `Vytvořte AGENTS.md jako mapu` — sepište cíl, build/test příkazy, trvalá pravidla a kam má další tým sáhnout jako první.
-- `Přidejte build/test příkazy` — agent musí umět ověřit výsledek bez ručního dovysvětlování.
-- `Napište skill pro code review` — formalizujte jednu review rutinu, kterou by uměl použít i cizí tým.
-- `Přesuňte pravidlo z hovoru do repa` — vše, co už tým řekl dvakrát nahlas, převeďte do `AGENTS.md`, README, runbooku nebo testu.
+- `AGENTS.md jako mapa` — Váš agent právě dostal úkol, ale nezná architekturu, pravidla ani co testovat. Vytvořte AGENTS.md se čtyřmi sekcemi: Goal / Context / Constraints / Done When. [Habit: Map before motion]
+
+- `Build/test příkazy` — Agent napsal kód, ale neumí ho ověřit bez vašeho ručního dovysvětlování. Přidejte build a test příkazy tak, aby agent i další tým uměl spustit kontrolu sám. [Habit: Verification is the trust boundary]
+
+- `Skill pro code review` — Tým opakuje v review vždy stejné připomínky. Formalizujte jednu review rutinu do skillu nebo checklistu, který by uměl použít i cizí tým. [Habit: Cleanup is part of build]
+
+- `Pravidlo z hovoru do repa` — Tým právě řekl nahlas nějaké pravidlo podruhé. Převeďte ho do AGENTS.md, README, runbooku nebo testu — co není v repu, neexistuje. [Habit: If it is not in the repo, it does not exist]
 
 ## Po rotaci: opravte signál, ne jen feature
 
-- `Použijte /plan před kódováním` — ukažte, z jakého plánu kroků tým vycházel, co z něj opravdu plní a jaký je další bezpečný krok.
-- `Rozdělte práci do více vláken` — zkuste dvě nezávislé linie práce a jednoho člověka na integraci.
-- `Delegujte úkol a vraťte se ke kontrole za 10 minut` — neskákejte agentovi do každého kroku, kontrolujte až výsledek.
-- `Přidejte nejmenší užitečné ověření` — zapište done criteria jako spustitelný check (unit test, tracer bullet nebo jednoduchý browser check) dřív, než agent dostane víc autonomie.
-- `Napište diagnózu po handoffu` — pojmenujte, co pomohlo, co chybělo a jaký je další bezpečný krok.
-- `Opravte jeden slabý signál v repu` — README, AGENTS.md, plán, runbook nebo check.
+- `Diagnóza po handoffu` — Právě jste zdědili repo, které jste nikdy neviděli. Napište, co vám pomohlo, co chybělo, co je rizikové a jaký je další bezpečný krok. [Habit: Map before motion]
+
+- `/plan před kódováním` — Tým se chce rovnou pustit do kódu, ale nikdo nevidí celkový plán. Použijte /plan, ukažte kroky, co plníte a jaký je další bezpečný krok. [Habit: Boundaries create speed]
+
+- `Rozdělte práci do více vláken` — Všichni v týmu pracují na jedné věci najednou. Zkuste dvě nezávislé linie práce a jednoho člověka na integraci. [Habit: Boundaries create speed]
+
+- `Delegujte a kontrolujte výsledek` — Skáčete agentovi do každého kroku. Dejte mu úkol s jasnými mantinely a vraťte se za 10 minut zkontrolovat výsledek, ne proces. [Habit: Verification is the trust boundary]
+
+- `Nejmenší užitečné ověření` — Agent říká, že je hotovo, ale nemáte jak to ověřit. Zapište done criteria jako spustitelný check (unit test, tracer bullet nebo browser check) dřív, než agent dostane víc autonomie. [Habit: Verification is the trust boundary]
+
+- `Opravte jeden slabý signál` — Přebírající tým musel hádat, co je hotové a co ne. Opravte jedno místo v README, AGENTS.md, plánu, runbooku nebo checku, které by to příště vyjasnilo. [Habit: Cleanup is part of build]
 
 ## Advanced
 
-- `Spusťte 2 paralelní Codex sessions` — rozdělte problém na dvě nezávislé části a porovnejte výstupy.
-- `Vytvořte runbook pro deployment` — i kdyby deploy zůstal jen simulovaný.
-- `Napište AGENTS.md pro podsložku` — ukažte, že kontext může být globální i lokální.
-- `Zaveďte garbage collection` — najděte jednu opakující se formu chaosu a proměňte ji v check, template nebo pravidlo.
+- `2 paralelní sessions` — Máte velký problém a jednu session. Rozdělte ho na dvě nezávislé části, paralelně je zpracujte a porovnejte výstupy. [Habit: Boundaries create speed]
+
+- `Runbook pro deployment` — Nikdo v týmu neví, jak by se výsledek nasadil. Vytvořte runbook pro deployment — i kdyby deploy zůstal jen simulovaný. [Habit: If it is not in the repo, it does not exist]
+
+- `AGENTS.md pro podsložku` — Hlavní AGENTS.md je příliš obecné pro konkrétní část projektu. Napište lokální AGENTS.md pro jednu podsložku, které přidá přesný kontext. [Habit: Map before motion]
+
+- `Garbage collection` — Stejný typ chaosu se v repu opakuje podruhé. Najděte ho a proměňte v check, template nebo pravidlo. [Habit: Cleanup is part of build]
 
 ## Meta
 
-- `Přesuňte trvalé pravidlo z promptu do AGENTS.md`.
-- `Přidejte sekci Done When ke každému tasku`.
-- `Napište README pro tým po rotaci, ne pro sebe`.
-- `Zapište, co je skutečně ověřené` — odlište hotové, rozpracované a jen předpokládané.
+- `Pravidlo z promptu do AGENTS.md` — Opakovaně píšete stejné omezení do promptu. Přesuňte ho do AGENTS.md, kde ho agent najde automaticky. [Habit: If it is not in the repo, it does not exist]
 
-## Jak s kartami pracovat
+- `Done When ke každému tasku` — Váš úkol nemá jasné done criteria. Přidejte sekci Done When, aby agent i review věděli, kdy je hotovo. [Habit: Verification is the trust boundary]
 
-- Před obědem má každý tým splnit aspoň jednu kartu z části `Před obědem: postavte pracovní systém`.
-- Před rotací má být v repu dohledatelné, co bylo opravdu ověřeno a jaký je další bezpečný krok.
-- Po rotaci má každý tým splnit aspoň jednu kartu z `Po rotaci: opravte signál, ne jen feature`.
+- `README pro tým po rotaci` — Váš README popisuje, co jste udělali vy, ne co potřebuje vědět další tým. Přepište ho pro přebírající, ne pro sebe. [Habit: Map before motion]
+
+- `Co je skutečně ověřené` — Nevíte, co je hotové, co je rozpracované a co jen předpokládané. Zapište, co je skutečně ověřeno, a odlište to od zbytku. [Habit: Verification is the trust boundary]
+
+## Jak s kartami pracovat
+
+- Před obědem má každý tým splnit aspoň jednu kartu z části „Před obědem: postavte pracovní systém".
+- Před rotací má být v repu dohledatelné, co bylo opravdu ověřeno a jaký je další bezpečný krok.
+- Po rotaci má každý tým splnit aspoň jednu kartu z „Po rotaci: opravte signál, ne jen feature".
 - Ostatní karty jsou dobrovolné. Berte je jako stretch cíle nebo inspiraci, když nevíte, co zlepšit dál.
