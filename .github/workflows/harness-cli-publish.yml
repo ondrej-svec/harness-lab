@@ -193,8 +193,6 @@ jobs:
           TARBALL: ${{ needs.verify-cli-package.outputs.tarball_name }}
         run: |
           cosign sign-blob --yes \
-            --output-signature "${TARBALL}.sig" \
-            --output-certificate "${TARBALL}.pem" \
             --bundle "${TARBALL}.sigstore" \
             "${TARBALL}"
 
@@ -208,8 +206,6 @@ jobs:
         run: |
           gh release upload "${RELEASE_TAG}" \
             "${TARBALL}" \
-            "${TARBALL}.sig" \
-            "${TARBALL}.pem" \
             "${TARBALL}.sigstore" \
             --clobber
 
@@ -222,5 +218,5 @@ jobs:
             echo "- Version: \`${{ needs.verify-cli-package.outputs.package_version }}\`"
             echo "- Release tag: \`${{ needs.verify-cli-package.outputs.release_tag }}\`"
             echo "- Provenance: Sigstore-signed, linked to this workflow run"
-            echo "- Release assets: tarball + \`.sig\` + \`.pem\` + \`.sigstore\` bundle"
+            echo "- Release assets: tarball + \`.sigstore\` bundle"
           } >> "$GITHUB_STEP_SUMMARY"

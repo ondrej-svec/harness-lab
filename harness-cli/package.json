@@ -1,6 +1,6 @@
 {
   "name": "@harness-lab/cli",
-  "version": "0.5.6",
+  "version": "0.5.7",
   "description": "Participant-facing Harness Lab CLI for facilitator auth and workshop operations",
   "license": "MIT",
   "type": "module",
