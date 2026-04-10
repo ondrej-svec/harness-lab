@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Tier 2 sync check — blocks push if Czech/English pairs are missing.
+echo "[content] Checking Tier 2 locale sync..."
+bun scripts/content/check-tier2-sync.ts
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "Tier 2 sync check failed. Create missing English counterparts before pushing."
+  exit 1
+fi
+
+# Also verify generated content as a safety net.
+echo "[content] Verifying generated files match bilingual source..."
+bun scripts/content/generate-views.ts --verify
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "Generated content files are out of date. Run 'npm run generate:content' first."
+  exit 1
+fi

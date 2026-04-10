@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Only run content verification when content-related files are staged.
+if git diff --cached --name-only | grep -qE '^workshop-content/|^dashboard/lib/generated/'; then
+  echo "[content] Verifying generated files match bilingual source..."
+  bun scripts/content/generate-views.ts --verify
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo "Generated content files are out of date."
+    echo "Run 'npm run generate:content' (from dashboard/) first,"
+    echo "or edit 'workshop-content/agenda.json' instead of the generated files."
+    exit 1
+  fi
+fi

@@ -109,6 +109,16 @@ npm run lint
 npm run build
 ```
 
+Content verification:
+
+- **Bilingual source**: Edit `workshop-content/agenda.json` (never the generated files). Run `npm run generate:content` to update views, then `npm run verify:content` to confirm they match.
+- **Pre-commit hook** (`.husky/pre-commit`): blocks commits when staged generated files don't match source. Only runs when `workshop-content/` or `dashboard/lib/generated/` files are staged.
+- **Pre-push hook** (`.husky/pre-push`): runs Tier 2 locale sync check + generated file verification before push.
+- **CI** (`.github/workflows/content-integrity.yml`): runs both checks on push to main and PRs.
+- **Do not hand-edit** files under `dashboard/lib/generated/` or `workshop-blueprint/agenda.json` — edit `workshop-content/agenda.json` and run the generator.
+- Emergency bypass: `git commit --no-verify` / `git push --no-verify` — document the reason in the commit message.
+- After fresh clone: hooks in `.husky/` are tracked in git. If your git version doesn't auto-detect them, run `git config core.hooksPath .husky`.
+
 Additional repo-specific checks:
 
 - if you change the portable workshop bundle, sync the packaged artifact with `node harness-cli/scripts/sync-workshop-bundle.mjs`

@@ -1,0 +1,23 @@
+name: Content Integrity
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  content-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Verify generated content matches bilingual source
+        run: bun scripts/content/generate-views.ts --verify
+
+      - name: Check Tier 2 locale sync
+        run: bun scripts/content/check-tier2-sync.ts
