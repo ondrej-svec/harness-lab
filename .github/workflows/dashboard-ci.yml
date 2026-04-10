@@ -25,8 +25,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  detect-changes:
+    name: detect-changes
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      cli: ${{ steps.filter.outputs.cli }}
+      dashboard: ${{ steps.filter.outputs.dashboard }}
+      security: ${{ steps.filter.outputs.security }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            cli:
+              - 'harness-cli/**'
+              - 'workshop-skill/**'
+              - 'docs/harness-cli-*.md'
+            dashboard:
+              - 'dashboard/**'
+            security:
+              - '.github/workflows/**'
+
   verify-harness-cli:
     name: verify-harness-cli (${{ matrix.name }}, Node ${{ matrix.node_version }})
+    needs: detect-changes
+    if: needs.detect-changes.outputs.cli == 'true' || needs.detect-changes.outputs.security == 'true'
     runs-on: ${{ fromJSON(matrix.runs_on) }}
     strategy:
       fail-fast: false
@@ -100,7 +126,8 @@ jobs:
 
   verify-harness-cli-self-hosted:
     name: verify-harness-cli (linux-self-hosted, Node 25)
-    if: github.event_name == 'push'
+    needs: detect-changes
+    if: github.event_name == 'push' && (needs.detect-changes.outputs.cli == 'true' || needs.detect-changes.outputs.security == 'true')
     timeout-minutes: 10
     runs-on:
       - self-hosted
@@ -155,6 +182,8 @@ jobs:
 
   verify-dashboard:
     name: verify-dashboard
+    needs: detect-changes
+    if: needs.detect-changes.outputs.dashboard == 'true' || needs.detect-changes.outputs.security == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -345,6 +374,7 @@ jobs:
       contents: read
       statuses: write
     needs:
+      - detect-changes
       - verify-dashboard
       - verify-harness-cli
       - verify-harness-cli-self-hosted
@@ -383,12 +413,12 @@ jobs:
           STATE="success"
           DESCRIPTION="Ready for Vercel promotion"
 
-          if [ "${CLI_RESULT}" != "success" ]; then
+          if [ "${CLI_RESULT}" != "success" ] && [ "${CLI_RESULT}" != "skipped" ]; then
             STATE="failure"
             DESCRIPTION="verify-harness-cli failed"
           fi
 
-          if [ "${VERIFY_RESULT}" != "success" ]; then
+          if [ "${VERIFY_RESULT}" != "success" ] && [ "${VERIFY_RESULT}" != "skipped" ]; then
             STATE="failure"
             DESCRIPTION="verify-dashboard failed"
           fi
@@ -398,7 +428,7 @@ jobs:
             DESCRIPTION="verify-harness-cli-self-hosted failed"
           fi
 
-          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "pull_request" ] && [ "${E2E_PR_RESULT}" != "success" ]; then
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "pull_request" ] && [ "${E2E_PR_RESULT}" != "success" ] && [ "${E2E_PR_RESULT}" != "skipped" ]; then
             STATE="failure"
             DESCRIPTION="e2e-dashboard failed"
           fi
