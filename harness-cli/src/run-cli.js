@@ -839,7 +839,7 @@ async function handleWorkshopStatus(io, ui, env, deps) {
 }
 
 async function handleWorkshopCurrentInstance(io, ui, env, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -876,7 +876,7 @@ async function handleWorkshopCurrentInstance(io, ui, env, deps) {
 }
 
 async function handleWorkshopSelectInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -940,7 +940,7 @@ async function handleWorkshopSelectInstance(io, ui, env, positionals, flags, dep
 }
 
 async function handleWorkshopListInstances(io, ui, env, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -965,7 +965,7 @@ async function handleWorkshopListInstances(io, ui, env, deps) {
 }
 
 async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1009,7 +1009,7 @@ async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps)
 }
 
 async function handleWorkshopParticipantAccess(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1058,7 +1058,7 @@ async function handleWorkshopParticipantAccess(io, ui, env, positionals, flags, 
 }
 
 async function handleWorkshopArchive(io, ui, env, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1078,7 +1078,7 @@ async function handleWorkshopArchive(io, ui, env, flags, deps) {
 }
 
 async function handleWorkshopCreateInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1121,7 +1121,7 @@ async function handleWorkshopCreateInstance(io, ui, env, positionals, flags, dep
 }
 
 async function handleWorkshopUpdateInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1171,7 +1171,7 @@ async function handleWorkshopUpdateInstance(io, ui, env, positionals, flags, dep
 }
 
 async function handleWorkshopPrepare(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1207,7 +1207,7 @@ async function handleWorkshopPrepare(io, ui, env, positionals, flags, deps) {
 }
 
 async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1246,7 +1246,7 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
 }
 
 async function handleWorkshopRemoveInstance(io, ui, env, positionals, flags, deps) {
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }
@@ -1288,7 +1288,7 @@ async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
     return 1;
   }
 
-  const session = await requireSession(io, ui, env);
+  const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
     return 1;
   }

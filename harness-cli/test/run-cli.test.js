@@ -64,12 +64,16 @@ test.afterEach(() => {
 });
 
 function responseWithSetCookie(status, payload, setCookie) {
+  const cookieArray = Array.isArray(setCookie) ? setCookie : (setCookie ? [setCookie] : []);
   return {
     ok: status >= 200 && status < 300,
     status,
     headers: {
       get(name) {
-        return name.toLowerCase() === "set-cookie" ? setCookie : null;
+        return name.toLowerCase() === "set-cookie" ? cookieArray.join(", ") : null;
+      },
+      getSetCookie() {
+        return cookieArray;
       },
     },
     async json() {
@@ -1598,4 +1602,268 @@ test("workshop learnings reads and filters JSONL entries", async () => {
   assert.match(io6.getStdout(), /AGENTS.md was found quickly/);
 
   await fs.rm(tempDir, { recursive: true, force: true });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// Security tests: participant auth, role enforcement, credential safety
+// ═══════════════════════════════════════════════════════════════
+
+test("participant login via event code stores a participant-role session", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const io = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "POST http://localhost:3000/api/event-access/redeem",
+        async (_url, options) => {
+          const body = JSON.parse(String(options.body));
+          assert.equal(body.eventCode, "test-event-code-123");
+          assert.equal(options.headers.origin, "http://localhost:3000");
+          return responseWithSetCookie(
+            200,
+            { ok: true, expiresAt: "2026-12-31T23:59:59.000Z" },
+            ["harness_event_session=abc123; Path=/; HttpOnly; SameSite=lax"],
+          );
+        },
+      ],
+    ]),
+  );
+
+  const exitCode = await runCli(["auth", "login", "--code", "test-event-code-123"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+
+  const session = await readSession(env);
+  assert.equal(session.role, "participant");
+  assert.equal(session.authType, "event-code");
+  assert.equal(session.cookieHeader, "harness_event_session=abc123");
+  assert.match(io.getStdout(), /Logged in as participant/);
+  assert.match(io.getStdout(), /Role.*participant/);
+});
+
+test("participant login with invalid event code fails gracefully", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const io = createMemoryIo(env);
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "POST http://localhost:3000/api/event-access/redeem",
+        async () => responseWithSetCookie(200, { ok: false, error: "invalid_code" }, []),
+      ],
+    ]),
+  );
+
+  const exitCode = await runCli(["auth", "login", "--code", "wrong-code"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /invalid/i);
+
+  const session = await readSession(env);
+  assert.equal(session, null);
+});
+
+test("participant auth status shows role and does not leak credentials", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    mode: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=secret-token-value",
+    loggedInAt: "2026-04-10T10:00:00.000Z",
+    expiresAt: "2026-04-10T22:00:00.000Z",
+  });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["auth", "status"], io, { fetchFn: createFetchStub(new Map()) });
+  assert.equal(exitCode, 0);
+
+  const stdout = io.getStdout();
+  assert.match(stdout, /participant/);
+  assert.doesNotMatch(stdout, /secret-token-value/);
+  assert.doesNotMatch(stdout, /cookieHeader/);
+  assert.doesNotMatch(stdout, /harness_event_session/);
+});
+
+test("participant logout clears session and calls the server endpoint", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+  });
+
+  let logoutCalled = false;
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "POST http://localhost:3000/api/event-access/logout",
+        async () => {
+          logoutCalled = true;
+          return jsonResponse(200, { ok: true });
+        },
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["auth", "logout"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.equal(logoutCalled, true);
+  assert.match(io.getStdout(), /Logged out/);
+
+  const session = await readSession(env);
+  assert.equal(session, null);
+});
+
+test("participant session cannot access facilitator instance commands", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+  });
+
+  const fetchFn = createFetchStub(new Map());
+
+  for (const args of [
+    ["instance", "create", "test-id"],
+    ["instance", "list"],
+    ["instance", "reset", "test-id"],
+    ["instance", "remove", "test-id"],
+    ["workshop", "phase", "set", "build-1"],
+    ["workshop", "participant-access"],
+  ]) {
+    const io = createMemoryIo(env);
+    const exitCode = await runCli(args, io, { fetchFn });
+    assert.equal(exitCode, 1, `Expected failure for: ${args.join(" ")}`);
+    assert.match(io.getStderr(), /facilitator/i, `Expected facilitator error for: ${args.join(" ")}`);
+  }
+});
+
+test("participant session can access workshop brief, challenges, and team", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+  });
+
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/briefs",
+        async (_url, options) => {
+          assert.equal(options.headers.cookie, "harness_event_session=abc123");
+          return jsonResponse(200, {
+            items: [{ id: "standup-bot", title: "Standup Bot", problemStatement: "Teams need a daily standup automation." }],
+          });
+        },
+      ],
+      [
+        "GET http://localhost:3000/api/challenges",
+        async () =>
+          jsonResponse(200, {
+            items: [{ id: "agents-md", title: "Create AGENTS.md", section: "before-lunch" }],
+          }),
+      ],
+      [
+        "GET http://localhost:3000/api/teams",
+        async (_url, options) => {
+          assert.equal(options.headers.cookie, "harness_event_session=abc123");
+          return jsonResponse(200, {
+            items: [{ id: "team-alpha", name: "Alpha", members: ["Alice", "Bob"] }],
+          });
+        },
+      ],
+    ]),
+  );
+
+  const briefIo = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "brief"], briefIo, { fetchFn }), 0);
+  assert.match(briefIo.getStdout(), /standup/i);
+
+  const challengesIo = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "challenges"], challengesIo, { fetchFn }), 0);
+  assert.match(challengesIo.getStdout(), /AGENTS\.md/);
+
+  const teamIo = createMemoryIo(env);
+  assert.equal(await runCli(["workshop", "team"], teamIo, { fetchFn }), 0);
+  assert.match(teamIo.getStdout(), /Alpha/);
+});
+
+test("facilitator credentials are not leaked in json output for any auth type", async () => {
+  const secretFields = ["cookieHeader", "authorizationHeader", "accessToken"];
+
+  for (const authCase of [
+    { authType: "basic", authorizationHeader: "Basic c2VjcmV0", username: "admin", dashboardUrl: "http://localhost:3000" },
+    { authType: "neon", cookieHeader: "session=neon-secret-cookie", email: "a@b.com", dashboardUrl: "http://localhost:3000" },
+    { authType: "device", accessToken: "bearer-secret-token", neonUserId: "u1", role: "facilitator", dashboardUrl: "http://localhost:3000" },
+    { authType: "event-code", cookieHeader: "harness_event_session=participant-secret", role: "participant", dashboardUrl: "http://localhost:3000" },
+  ]) {
+    const env = await createEnv();
+    env.HARNESS_SESSION_STORAGE = "file";
+    await writeSession(env, authCase);
+
+    const fetchFn = createFetchStub(
+      new Map([
+        ["GET http://localhost:3000/api/auth/device/session", async () => jsonResponse(200, { session: { id: "s1" } })],
+        ["GET http://localhost:3000/api/auth/get-session", async () => jsonResponse(200, { user: { email: "a@b.com" } })],
+      ]),
+    );
+
+    const io = createMemoryIo(env);
+    await runCli(["auth", "status"], io, { fetchFn });
+    const stdout = io.getStdout();
+
+    for (const field of secretFields) {
+      assert.doesNotMatch(stdout, new RegExp(field), `Secret field "${field}" leaked for authType: ${authCase.authType}`);
+    }
+    assert.doesNotMatch(stdout, /c2VjcmV0/, "Base64 credential leaked");
+    assert.doesNotMatch(stdout, /neon-secret-cookie/, "Neon cookie leaked");
+    assert.doesNotMatch(stdout, /bearer-secret-token/, "Bearer token leaked");
+    assert.doesNotMatch(stdout, /participant-secret/, "Participant cookie leaked");
+  }
+});
+
+test("expired participant session reports sessionHealth as expired", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=expired-token",
+    expiresAt: "2020-01-01T00:00:00.000Z",
+  });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["auth", "status"], io, { fetchFn: createFetchStub(new Map()) });
+  assert.equal(exitCode, 0);
+  assert.match(io.getStdout(), /expired/);
+});
+
+test("workshop data commands require an active session", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+
+  const fetchFn = createFetchStub(new Map());
+
+  for (const args of [
+    ["workshop", "brief"],
+    ["workshop", "challenges"],
+    ["workshop", "team"],
+  ]) {
+    const io = createMemoryIo(env);
+    const exitCode = await runCli(args, io, { fetchFn });
+    assert.equal(exitCode, 1, `Expected failure for: ${args.join(" ")}`);
+    assert.match(io.getStderr(), /login/i, `Expected login prompt for: ${args.join(" ")}`);
+  }
 });
