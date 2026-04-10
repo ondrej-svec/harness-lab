@@ -883,6 +883,41 @@ export async function setPresenterSceneEnabled(
     }), instanceId);
 }
 
+export async function updateTeamFromParticipant(
+  teamId: string,
+  patch: { name?: string; repoUrl?: string; members?: string[] },
+  instanceId: string,
+) {
+  const repository = getTeamRepository();
+  const teams = await repository.listTeams(instanceId);
+  const baselineTeams = teams.length > 0 ? teams : (await getBaseWorkshopState(instanceId)).teams;
+  const team = baselineTeams.find((t) => t.id === teamId);
+  if (!team) {
+    throw new WorkshopStateTargetError("agenda_item_not_found", `team '${teamId}' not found`);
+  }
+
+  const updatedTeam = {
+    ...team,
+    ...(patch.name !== undefined ? { name: patch.name } : {}),
+    ...(patch.repoUrl !== undefined ? { repoUrl: patch.repoUrl } : {}),
+    ...(patch.members !== undefined ? { members: patch.members } : {}),
+  };
+
+  const nextTeams = baselineTeams.map((t) => (t.id === teamId ? updatedTeam : t));
+  await repository.replaceTeams(instanceId, nextTeams);
+
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
+  await getWorkshopStateRepository().saveState(instanceId, {
+    ...state,
+    version: state.version + 1,
+    teams: nextTeams,
+  }, {
+    expectedVersion: state.version,
+  });
+
+  return getWorkshopState(instanceId);
+}
+
 export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopInstanceId()) {
   const repository = getTeamRepository();
   await repository.upsertTeam(instanceId, input);

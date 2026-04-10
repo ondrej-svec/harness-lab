@@ -31,7 +31,7 @@ export type ParticipantCoreBundle = {
 };
 
 export type ParticipantTeamLookup = {
-  items: Pick<Team, "id" | "name" | "city" | "repoUrl" | "checkpoint">[];
+  items: Pick<Team, "id" | "name" | "city" | "members" | "repoUrl" | "checkpoint">[];
 };
 
 export async function getConfiguredEventCode() {
@@ -243,6 +243,7 @@ export async function getParticipantTeamLookup(instanceId?: string): Promise<Par
       id: team.id,
       name: team.name,
       city: team.city,
+      members: team.members,
       repoUrl: team.repoUrl,
       checkpoint: team.checkpoint,
     })),

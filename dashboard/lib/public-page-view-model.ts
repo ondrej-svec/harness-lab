@@ -1,7 +1,7 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
 import { getBlueprintRepoUrl, getPublicRepoUrl } from "./repo-links";
-import type { PresenterBlock, TickerItem, WorkshopState } from "./workshop-data";
+import type { PresenterBlock, TickerItem, WorkshopMeta, WorkshopState } from "./workshop-data";
 import { publicCopy, type UiLanguage, withLang } from "./ui-language";
 
 type PublicCopy = (typeof publicCopy)[UiLanguage];
@@ -87,16 +87,27 @@ export type PublicAccessPanelState = {
 };
 
 export function deriveHomePageState(state: WorkshopState) {
-  const { agenda, rotation, ticker } = state;
+  const { agenda, rotation, ticker, workshopMeta } = state;
   const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
   const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
 
   return {
     currentAgendaItem,
     nextAgendaItem,
-    participantNotes: ticker.slice(0, 3),
+    participantNotes: ticker,
     rotationRevealed: rotation.revealed,
+    workshopMeta,
   };
+}
+
+export function buildWorkshopContextLine(meta: WorkshopMeta): string {
+  const parts = [
+    meta.eventTitle ?? meta.title,
+    meta.dateRange,
+    meta.venueName ?? meta.city,
+    meta.roomName,
+  ].filter(Boolean);
+  return parts.join(" · ").toLowerCase();
 }
 
 export function buildSiteHeaderNavLinks(options: {

@@ -57,7 +57,7 @@ describe("public page helpers", () => {
     expect(deriveHomePageState(state)).toMatchObject({
       currentAgendaItem: state.agenda[1],
       nextAgendaItem: state.agenda[2],
-      participantNotes: state.ticker.slice(0, 3),
+      participantNotes: state.ticker,
       rotationRevealed: state.rotation.revealed,
     });
   });

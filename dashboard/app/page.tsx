@@ -11,6 +11,7 @@ import {
 import {
   buildPublicAccessPanelState,
   buildPublicFooterLinks,
+  buildWorkshopContextLine,
   deriveHomePageState,
   getBlueprintRepoUrl,
 } from "@/lib/public-page-view-model";
@@ -73,7 +74,8 @@ export default async function HomePage({
   const state = await getWorkshopState(participantSession?.instanceId);
   const participantTeams = participantSession ? await getParticipantTeamLookup(participantSession.instanceId) : null;
   const configuredEventCode = await getConfiguredEventCode();
-  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
+  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, workshopMeta } = deriveHomePageState(state);
+  const workshopContextLine = participantSession ? buildWorkshopContextLine(workshopMeta) : "";
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
@@ -86,6 +88,7 @@ export default async function HomePage({
           <ParticipantRoomSurface
             copy={copy}
             lang={lang}
+            workshopContextLine={workshopContextLine}
             currentAgendaItem={currentAgendaItem}
             nextAgendaItem={nextAgendaItem}
             participantSession={participantSession}

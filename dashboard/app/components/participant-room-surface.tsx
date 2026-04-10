@@ -16,6 +16,7 @@ type PublicNote = WorkshopState["ticker"][number];
 export function ParticipantRoomSurface({
   copy,
   lang,
+  workshopContextLine,
   currentAgendaItem,
   nextAgendaItem,
   participantSession,
@@ -26,6 +27,7 @@ export function ParticipantRoomSurface({
 }: {
   copy: (typeof publicCopy)[UiLanguage];
   lang: UiLanguage;
+  workshopContextLine: string;
   currentAgendaItem: AgendaItem | undefined;
   nextAgendaItem: AgendaItem | undefined;
   participantSession: ParticipantSession;
@@ -48,7 +50,13 @@ export function ParticipantRoomSurface({
 
   return (
     <>
-      <section className="grid gap-8 border-b border-[var(--border)] py-10 lg:grid-cols-[1.12fr_0.88fr]" id="room">
+      {workshopContextLine ? (
+        <p className="border-b border-[var(--border)] py-3 text-sm lowercase text-[var(--text-muted)]">
+          {workshopContextLine}
+        </p>
+      ) : null}
+
+      <section className="border-b border-[var(--border)] py-10" id="room">
         <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7">
           <SectionLabel>{copy.participantEyebrow}</SectionLabel>
           <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
@@ -92,34 +100,6 @@ export function ParticipantRoomSurface({
             <GuidanceCta href={participantPanel.guidanceCtaHref} label={participantPanel.guidanceCtaLabel} openLabel={copy.openLinkLabel} />
           ) : null}
         </div>
-
-        <aside className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur">
-          <SectionLabel>{copy.sessionEyebrow}</SectionLabel>
-          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.sessionBody}</p>
-          <div className="mt-6 grid gap-3">
-            <MetricCard label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
-            <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
-            <a
-              href="#notes"
-              className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] px-4 py-4 transition hover:border-[var(--border-strong)]"
-            >
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
-              <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-                {sharedNotes.length > 0 ? sharedNotes[0] : copy.noRoomData}
-              </p>
-            </a>
-          </div>
-          {logoutAction ? (
-            <form action={logoutAction} className="mt-6">
-              <input name="lang" type="hidden" value={lang} />
-              <SubmitButton
-                className="w-full rounded-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
-              >
-                {copy.leaveRoomContext}
-              </SubmitButton>
-            </form>
-          ) : null}
-        </aside>
       </section>
 
       <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -136,10 +116,24 @@ export function ParticipantRoomSurface({
                     </div>
                     <span className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{team.id}</span>
                   </div>
+                  {"members" in team && Array.isArray(team.members) && team.members.length > 0 ? (
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
+                  ) : null}
                   <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
-                  <p className="mt-4 break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
-                    {team.repoUrl}
-                  </p>
+                  {team.repoUrl ? (
+                    <a
+                      className="mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                      href={team.repoUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {team.repoUrl}
+                    </a>
+                  ) : (
+                    <p className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
+                      {copy.noRoomData}
+                    </p>
+                  )}
                 </article>
               ))}
             </div>
@@ -150,15 +144,35 @@ export function ParticipantRoomSurface({
 
         <div id="notes">
           <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
-          <div className="mt-4 grid gap-4">
-            {sharedNotes.map((note) => (
-              <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line">
-                {note}
-              </div>
-            ))}
-          </div>
+          {sharedNotes.length > 0 ? (
+            <div className="mt-4 grid gap-4">
+              {sharedNotes.map((note) => (
+                <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line">
+                  {note}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{copy.noRoomData}</p>
+          )}
         </div>
       </section>
+
+      {logoutAction ? (
+        <footer className="flex items-center justify-between gap-4 border-t border-[var(--border)] py-6">
+          <p className="text-sm text-[var(--text-muted)]">
+            {participantPanel.sessionUntilLabel}: {participantPanel.sessionUntilValue}
+          </p>
+          <form action={logoutAction}>
+            <input name="lang" type="hidden" value={lang} />
+            <SubmitButton
+              className="rounded-full border border-[var(--border-strong)] px-5 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
+            >
+              {copy.leaveRoomContext}
+            </SubmitButton>
+          </form>
+        </footer>
+      ) : null}
     </>
   );
 }
@@ -218,7 +232,7 @@ function ParticipantGuidanceBlocks({
             <ParticipantBlockCard key={block.id} title={block.title}>
               <ul className="space-y-3 text-sm leading-7 text-[var(--text-secondary)]">
                 {block.items.map((item) => (
-                  <li key={item}>• {item}</li>
+                  <li key={item}>{"\u2022"} {item}</li>
                 ))}
               </ul>
             </ParticipantBlockCard>
@@ -290,7 +304,7 @@ function ParticipantGuidanceBlocks({
           const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
           return (
             <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
-              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">“{block.quote}”</blockquote>
+              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">&ldquo;{block.quote}&rdquo;</blockquote>
               <p className="mt-3 text-sm text-[var(--text-muted)]">{attribution}</p>
             </div>
           );
