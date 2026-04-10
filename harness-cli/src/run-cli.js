@@ -1492,6 +1492,76 @@ async function handleWorkshopChallenges(io, ui, env, mergedDeps) {
   }
 }
 
+async function handleWorkshopTeamSetRepo(io, ui, env, positionals, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const teamId = positionals[3]?.trim();
+  const repoUrl = positionals[4]?.trim();
+  if (!teamId || !repoUrl) {
+    ui.status("error", "Usage: harness workshop team set-repo <teamId> <url>", { stream: "stderr" });
+    return 1;
+  }
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    await client.updateTeam(teamId, { repoUrl });
+    ui.json("Team Updated", { ok: true, teamId, repoUrl });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to update team: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeamSetMembers(io, ui, env, positionals, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const teamId = positionals[3]?.trim();
+  const membersRaw = positionals.slice(4).join(" ").trim();
+  if (!teamId || !membersRaw) {
+    ui.status("error", "Usage: harness workshop team set-members <teamId> <name1, name2, ...>", { stream: "stderr" });
+    return 1;
+  }
+  const members = membersRaw.split(",").map((m) => m.trim()).filter(Boolean);
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    await client.updateTeam(teamId, { members });
+    ui.json("Team Updated", { ok: true, teamId, members });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to update team: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeamSetName(io, ui, env, positionals, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const teamId = positionals[3]?.trim();
+  const name = positionals.slice(4).join(" ").trim();
+  if (!teamId || !name) {
+    ui.status("error", "Usage: harness workshop team set-name <teamId> <name>", { stream: "stderr" });
+    return 1;
+  }
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    await client.updateTeam(teamId, { name });
+    ui.json("Team Updated", { ok: true, teamId, name });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to update team: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopTeam(io, ui, env, mergedDeps) {
   const session = await requireSession(io, ui, env);
   if (!session) return 1;
@@ -1590,7 +1660,19 @@ export async function runCli(argv, io, deps = {}) {
     return handleWorkshopChallenges(io, ui, io.env, mergedDeps);
   }
 
-  if (scope === "workshop" && action === "team") {
+  if (scope === "workshop" && action === "team" && subaction === "set-repo") {
+    return handleWorkshopTeamSetRepo(io, ui, io.env, positionals, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team" && subaction === "set-members") {
+    return handleWorkshopTeamSetMembers(io, ui, io.env, positionals, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team" && subaction === "set-name") {
+    return handleWorkshopTeamSetName(io, ui, io.env, positionals, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team" && !subaction) {
     return handleWorkshopTeam(io, ui, io.env, mergedDeps);
   }
 

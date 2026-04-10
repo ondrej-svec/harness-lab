@@ -1867,3 +1867,109 @@ test("workshop data commands require an active session", async () => {
     assert.match(io.getStderr(), /login/i, `Expected login prompt for: ${args.join(" ")}`);
   }
 });
+
+test("workshop team set-repo sends PATCH with participant cookie", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+    expiresAt: new Date(Date.now() + 3600000).toISOString(),
+  });
+
+  let capturedBody;
+  let capturedHeaders;
+  const fetchFn = createFetchStub(new Map([
+    ["PATCH http://localhost:3000/api/event-context/teams/t1", (_url, options) => {
+      capturedBody = JSON.parse(options.body);
+      capturedHeaders = options.headers;
+      return jsonResponse(200, { ok: true });
+    }],
+  ]));
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "team", "set-repo", "t1", "https://github.com/test/repo"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(capturedBody, { repoUrl: "https://github.com/test/repo" });
+  assert.equal(capturedHeaders.cookie, "harness_event_session=abc123");
+});
+
+test("workshop team set-members sends PATCH with comma-separated names", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+    expiresAt: new Date(Date.now() + 3600000).toISOString(),
+  });
+
+  let capturedBody;
+  const fetchFn = createFetchStub(new Map([
+    ["PATCH http://localhost:3000/api/event-context/teams/t2", (_url, options) => {
+      capturedBody = JSON.parse(options.body);
+      return jsonResponse(200, { ok: true });
+    }],
+  ]));
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "team", "set-members", "t2", "Anna,", "David,", "Eva"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(capturedBody, { members: ["Anna", "David", "Eva"] });
+});
+
+test("workshop team set-name sends PATCH with new team name", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+    expiresAt: new Date(Date.now() + 3600000).toISOString(),
+  });
+
+  let capturedBody;
+  const fetchFn = createFetchStub(new Map([
+    ["PATCH http://localhost:3000/api/event-context/teams/t1", (_url, options) => {
+      capturedBody = JSON.parse(options.body);
+      return jsonResponse(200, { ok: true });
+    }],
+  ]));
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "team", "set-name", "t1", "Robotníci"], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(capturedBody, { name: "Robotníci" });
+});
+
+test("workshop team set-repo fails without arguments", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  await writeSession(env, {
+    authType: "event-code",
+    role: "participant",
+    dashboardUrl: "http://localhost:3000",
+    cookieHeader: "harness_event_session=abc123",
+    expiresAt: new Date(Date.now() + 3600000).toISOString(),
+  });
+
+  const fetchFn = createFetchStub(new Map());
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "team", "set-repo"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /usage/i);
+});
+
+test("workshop team set-repo requires a session", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const fetchFn = createFetchStub(new Map());
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["workshop", "team", "set-repo", "t1", "https://example.com"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /login/i);
+});

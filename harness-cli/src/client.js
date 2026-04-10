@@ -189,5 +189,11 @@ export function createHarnessClient({ fetchFn, session }) {
     getParticipantContext() {
       return request("/api/event-context/core");
     },
+    updateTeam(teamId, input) {
+      return request(`/api/event-context/teams/${encodeURIComponent(teamId)}`, {
+        method: "PATCH",
+        body: input,
+      });
+    },
   };
 }
