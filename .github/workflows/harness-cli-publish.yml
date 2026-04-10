@@ -123,10 +123,31 @@ jobs:
             echo "- Publish mode: \`${{ github.event_name == 'release' && 'publish' || 'dry-run' }}\`"
           } >> "$GITHUB_STEP_SUMMARY"
 
+  security-scan:
+    name: security-scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Secret scan (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: detect --source . --no-git
+
+      - name: SAST (Semgrep)
+        uses: docker://semgrep/semgrep:latest
+        with:
+          args: semgrep scan --config auto --error harness-cli/bin harness-cli/src harness-cli/scripts
+
   publish-cli-to-npm:
     name: publish-cli-to-npm
     needs:
       - verify-cli-package
+      - security-scan
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     defaults:
