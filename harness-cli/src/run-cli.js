@@ -305,15 +305,34 @@ async function handleSkillInstall(io, ui, deps, flags) {
       ui.status("ok", "Installed the Harness Lab workshop skill bundle.");
     }
     ui.keyValue("Target", result.targetRoot);
+    ui.blank();
+    ui.section("Installed skills");
+    ui.commandList([
+      helpLine("workshop (participant)", "orientation, briefs, challenges, coaching, analyze"),
+    ]);
+    if (result.facilitator?.agents || result.facilitator?.claude) {
+      ui.commandList([
+        helpLine("workshop-facilitator", "instance management, agenda, scenes, learnings"),
+      ]);
+    }
+    ui.blank();
+    ui.section("Discovery paths");
     ui.keyValue("Codex/pi", result.installPath);
     if (result.claudeCodePath) {
       ui.keyValue("Claude Code", result.claudeCodePath);
+    }
+    if (result.facilitator?.agents) {
+      ui.keyValue("Facilitator (Codex/pi)", result.facilitator.agents);
+    }
+    if (result.facilitator?.claude) {
+      ui.keyValue("Facilitator (Claude Code)", result.facilitator.claude);
     }
     ui.keyValue("Bundle source", result.sourceMode === "packaged_bundle" ? "packaged portable bundle" : "source checkout fallback");
     ui.blank();
     ui.section("Next steps");
     const steps = [
       "Open your coding agent in the target repo.",
+      "Run `$workshop login` and enter the shared event code to connect to the live workshop.",
       "Codex: `$workshop commands`.",
       "pi: `/skill:workshop`, then ask for the workshop commands.",
     ];

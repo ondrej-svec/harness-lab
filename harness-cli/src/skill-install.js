@@ -190,8 +190,9 @@ export async function installWorkshopSkill(startDir, options = {}) {
   if (existingInstall && options.force !== true) {
     const installedManifest = await createWorkshopBundleManifestFromDirectory(installPath);
     if (installedManifest.contentHash === sourceManifest.contentHash) {
-      // Agents bundle is current but Claude Code target may be missing
+      // Agents bundle is current but Claude Code / facilitator targets may be missing
       const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
+      const facilitatorInstalled = await installFacilitatorSkill(installPath, targetRoot);
       return {
         installPath,
         skillName: WORKSHOP_SKILL_NAME,
@@ -199,6 +200,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
         sourceMode: resolvedBundle.mode,
         targetRoot,
         claudeCodePath: claudeInstalled,
+        facilitator: facilitatorInstalled,
       };
     }
 
@@ -239,6 +241,7 @@ async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
   await installFromResolvedBundle(resolvedBundle, installPath);
 
   const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
+  const facilitatorInstalled = await installFacilitatorSkill(installPath, targetRoot);
 
   return {
     installPath,
@@ -247,6 +250,7 @@ async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
     sourceMode: resolvedBundle.mode,
     targetRoot,
     claudeCodePath: claudeInstalled,
+    facilitator: facilitatorInstalled,
   };
 }
 
@@ -270,4 +274,46 @@ async function installClaudeCodeSkill(agentsInstallPath, targetRoot) {
     // Claude Code install is best-effort — don't fail the main install
     return null;
   }
+}
+
+async function installFacilitatorSkill(agentsInstallPath, targetRoot) {
+  const facilitatorSource = path.join(agentsInstallPath, "workshop-skill", "SKILL-facilitator.md");
+  if (!(await pathExists(facilitatorSource))) {
+    return { agents: null, claude: null };
+  }
+
+  const results = { agents: null, claude: null };
+
+  // Install as a separate Codex/pi skill
+  try {
+    const agentsFacPath = path.join(targetRoot, ".agents", "skills", "harness-lab-workshop-facilitator");
+    await fs.mkdir(agentsFacPath, { recursive: true });
+    await fs.copyFile(facilitatorSource, path.join(agentsFacPath, "SKILL.md"));
+    // Copy workshop-skill support files for facilitator references
+    const workshopSkillSource = path.join(agentsInstallPath, "workshop-skill");
+    const workshopSkillTarget = path.join(agentsFacPath, "workshop-skill");
+    if (await pathExists(workshopSkillSource)) {
+      await fs.cp(workshopSkillSource, workshopSkillTarget, { recursive: true });
+    }
+    results.agents = agentsFacPath;
+  } catch {
+    // best-effort
+  }
+
+  // Install as a separate Claude Code skill
+  try {
+    const claudeFacPath = path.join(targetRoot, ".claude", "skills", "workshop-facilitator");
+    await fs.mkdir(claudeFacPath, { recursive: true });
+    await fs.copyFile(facilitatorSource, path.join(claudeFacPath, "SKILL.md"));
+    const workshopSkillSource = path.join(agentsInstallPath, "workshop-skill");
+    const workshopSkillTarget = path.join(claudeFacPath, "workshop-skill");
+    if (await pathExists(workshopSkillSource)) {
+      await fs.cp(workshopSkillSource, workshopSkillTarget, { recursive: true });
+    }
+    results.claude = claudeFacPath;
+  } catch {
+    // best-effort
+  }
+
+  return results;
 }
