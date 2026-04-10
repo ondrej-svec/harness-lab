@@ -318,7 +318,7 @@ test.describe("facilitator admin (file mode)", () => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-framing");
 
-    await expect(page.getByText("Co jste právě viděli: kontext je páka, ne kosmetika")).toBeVisible();
+    await expect(page.getByText("Neučíme se lépe promptovat")).toBeVisible();
     await expect(page.getByText("Humans steer. Agents execute.")).toBeVisible();
     await expect(page.getByText("Co si má tým odnést hned teď")).toBeVisible();
     await expect(page.getByText("source material")).toHaveCount(0);
