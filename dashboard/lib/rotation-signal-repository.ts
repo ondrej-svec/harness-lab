@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
+import { assertSafeInstanceId } from "./safe-instance-id";
 import type { RotationSignal, RotationSignalRepository, WorkshopInstanceId } from "./runtime-contracts";
 
 type StoredRotationSignals = {
@@ -18,6 +19,7 @@ export class FileRotationSignalRepository implements RotationSignalRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getSignalPath(instanceId: WorkshopInstanceId) {
+    assertSafeInstanceId(instanceId);
     return path.join(this.dataDir, instanceId, "rotation-signals.json");
   }
 

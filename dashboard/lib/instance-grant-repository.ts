@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
+import { assertSafeInstanceId } from "./safe-instance-id";
 import { seedWorkshopState } from "./workshop-data";
 import type { FacilitatorGrantInfo, InstanceGrantRecord, InstanceGrantRepository } from "./runtime-contracts";
 
@@ -25,6 +26,7 @@ export class FileInstanceGrantRepository implements InstanceGrantRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
   private getGrantPath(instanceId: string) {
+    assertSafeInstanceId(instanceId);
     return path.join(this.dataDir, instanceId, "instance-grants.json");
   }
 
