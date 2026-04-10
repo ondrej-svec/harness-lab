@@ -4,7 +4,7 @@
   "title": "Harness Lab",
   "subtitle": "Public-readable 10-phase mirror of the Harness Lab workshop day",
   "presentationMode": "public-readable-mirror",
-  "sourceNote": "Runtime imports come from dashboard/lib/workshop-blueprint-agenda.json plus dashboard/lib/workshop-blueprint-localized-content.ts.",
+  "sourceNote": "Generated from workshop-content/agenda.json. Do not edit by hand.",
   "principles": [
     "Context before generation",
     "Verification is the trust boundary",
@@ -14,10 +14,10 @@
     {
       "id": "opening",
       "order": 1,
-      "label": "Opening and framing",
+      "label": "Opening and orientation",
       "startTime": "09:10",
       "kind": "shared",
-      "goal": "Shift the room from prompt-hackathon expectations to continuation-quality discipline."
+      "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue."
     },
     {
       "id": "talk",
@@ -25,63 +25,63 @@
       "label": "Context is King",
       "startTime": "09:40",
       "kind": "shared",
-      "goal": "Turn context into a precise thesis: AGENTS.md, plans, and checks are working infrastructure, not polish."
+      "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt."
     },
     {
       "id": "demo",
       "order": 3,
-      "label": "Demo",
+      "label": "Codex demo",
       "startTime": "10:05",
       "kind": "shared",
-      "goal": "Show one compact workflow story: context, planning, implementation, review, and safe fallback moves."
+      "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong."
     },
     {
       "id": "build-1",
       "order": 4,
-      "label": "Build Phase 1",
+      "label": "Build fáze 1",
       "startTime": "10:30",
       "kind": "team",
-      "goal": "Before lunch, get every team to a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice."
+      "goal": "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work."
     },
     {
       "id": "intermezzo-1",
       "order": 5,
       "label": "Intermezzo 1",
-      "startTime": "11:40",
+      "startTime": "11:35",
       "kind": "shared",
-      "goal": "Surface one change, one proof, and one next move from the room before lunch momentum slips."
+      "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself."
     },
     {
       "id": "lunch-reset",
       "order": 6,
-      "label": "Lunch Reset",
+      "label": "Lunch and handoff prep",
       "startTime": "12:15",
       "kind": "shared",
-      "goal": "Frame lunch as a handoff preparation point, not as a pause between unrelated workshop blocks."
+      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read."
     },
     {
       "id": "rotation",
       "order": 7,
-      "label": "Continuation Shift",
+      "label": "Team rotation",
       "startTime": "13:30",
       "kind": "team",
-      "goal": "Force silent repo reading, diagnosis, and explicit continuation before anyone edits code."
+      "goal": "Force a quiet start after rotation and let repo quality reveal what is genuinely legible."
     },
     {
       "id": "build-2",
       "order": 8,
-      "label": "Build Phase 2",
-      "startTime": "14:05",
+      "label": "Build fáze 2",
+      "startTime": "13:45",
       "kind": "team",
-      "goal": "Turn continuation friction into better repo guidance, stronger checks, and clearer next moves."
+      "goal": "Continue from repo-native signals only, then turn the friction of the handoff into stronger maps, stronger checks, and stronger continuation guidance."
     },
     {
       "id": "intermezzo-2",
       "order": 9,
       "label": "Intermezzo 2",
-      "startTime": "15:05",
+      "startTime": "14:45",
       "kind": "shared",
-      "goal": "Name which repo signals actually saved time during continuation and which failures repeated."
+      "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
     },
     {
       "id": "reveal",
@@ -89,7 +89,7 @@
       "label": "Reveal and reflection",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Turn the day into reusable practice: what helped continuation, what failed, and what should change next week."
+      "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending."
     }
   ],
   "runtimeImport": {

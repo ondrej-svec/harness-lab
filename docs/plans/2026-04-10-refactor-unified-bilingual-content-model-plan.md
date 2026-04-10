@@ -66,7 +66,7 @@ Exit: `workshop-content/agenda.json` exists with all content from both sources, 
 
 ### Phase 2 — Generator
 
-- [ ] Write `scripts/content/generate-views.ts` — Bun script that:
+- [x] Write `scripts/content/generate-views.ts` — Bun script that:
   - Reads `workshop-content/agenda.json` (bilingual source)
   - Validates structure: every node has both `en` and `cs`, no empty required fields
   - Reports `cs_reviewed: false` nodes as warnings (not blocking — content may be in-flight)
@@ -75,9 +75,9 @@ Exit: `workshop-content/agenda.json` exists with all content from both sources, 
     - `dashboard/lib/generated/agenda-en.json` — English-only runtime JSON
     - `workshop-blueprint/agenda.json` — public-readable English-only JSON (replacing the current hand-maintained one)
   - Exits non-zero if validation fails (missing fields, schema errors)
-- [ ] Wire the generator into the build: `package.json` script `generate:content` that runs before `npm run build` and before `npm run dev`.
-- [ ] Add `dashboard/lib/generated/` to `.gitignore` (generated artifacts, not committed). OR: commit them for CI simplicity and add a check that they match the generator output. **Decision needed:** gitignore vs committed-generated. Recommendation: **commit them** so CI and Vercel builds don't need to run the generator, and add a `verify:content` script that confirms the committed generated files match the generator output.
-- [ ] Add a `verify:content` script that re-runs the generator to a temp dir and diffs against the committed generated files. Wire into `npm run lint` or CI.
+- [x] Wire the generator into the build: `package.json` script `generate:content` that runs before `npm run build` and before `npm run dev`.
+- [x] Add `dashboard/lib/generated/` to `.gitignore` (generated artifacts, not committed). OR: commit them for CI simplicity and add a check that they match the generator output. **Decision needed:** gitignore vs committed-generated. Recommendation: **commit them** so CI and Vercel builds don't need to run the generator, and add a `verify:content` script that confirms the committed generated files match the generator output.
+- [x] Add a `verify:content` script that re-runs the generator to a temp dir and diffs against the committed generated files. Wire into `npm run lint` or CI.
 
 Exit: generator produces correct views from the bilingual source, wired into build.
 
