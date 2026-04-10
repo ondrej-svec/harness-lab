@@ -80,7 +80,7 @@ Current production-safe setup:
 Verification on 2026-04-06:
 
 - project: `harness-lab-dashboard`
-- owner scope: `svecond2s-projects`
+- owner scope: *(your Vercel account scope)*
 - root directory: `dashboard`
 - production redeploy completed successfully after the root-directory fix
 

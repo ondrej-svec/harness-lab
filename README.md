@@ -23,7 +23,7 @@ npm install -g @harness-lab/cli
 harness skill install
 ```
 
-Then open your coding agent and run `$workshop commands` (Codex) or `/skill:workshop` (pi).
+Then open your coding agent and run `$workshop commands` (Codex) or `/skill:workshop` (Claude Code).
 
 ### Run the dashboard locally
 

@@ -34,7 +34,7 @@ If you experience or witness a serious problem, contact the maintainers privatel
 
 Use:
 
+- [GitHub private reporting](https://github.com/ondrej-svec/harness-lab/security/advisories/new) for conduct or privacy concerns that require confidentiality
 - [SUPPORT.md](SUPPORT.md) for normal help and contributor questions
-- private maintainer contact for conduct or privacy concerns
 
 Maintainers may remove comments, close threads, reject contributions, or block access when behavior breaks this standard or puts participants, facilitators, or the project at risk.

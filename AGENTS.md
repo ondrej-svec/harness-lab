@@ -144,7 +144,7 @@ Additional repo-specific checks:
 ## Key Constraints
 
 - Dashboard must work on mobile (participants scan QR code)
-- Workshop skill must be installable in both Codex and pi
+- Workshop skill must be installable in both Codex and Claude Code
 - The system must support reviewed Czech workshop delivery without tying all authored source content to Czech-only storage
 - No pre-work required from participants — everything works from zero on the day
 

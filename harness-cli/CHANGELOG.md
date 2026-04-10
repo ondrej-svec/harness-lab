@@ -5,6 +5,96 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.5.8 — 2026-04-10
+
+### Added
+
+- **`harness instance reset --from-local`** — reset a workshop instance from
+  locally generated blueprint files without waiting for a deployment. The CLI
+  reads `dashboard/lib/generated/agenda-{lang}.json` and sends it in the
+  reset API payload.
+
+## 0.5.5 — 2026-04-10
+
+### Fixed
+
+- **Cosign signing in publish workflow.** Fixed artifact paths, added
+  `sigstore/cosign-installer`, and handled the new `.sigstore` bundle format
+  (replaces separate `.sig` / `.pem` files). Versions 0.5.3 and 0.5.4 were
+  intermediate publish-pipeline fixes for the same issue.
+
+## 0.5.2 — 2026-04-10
+
+### Added
+
+- **Participant role enforcement at CLI layer.** Participant sessions are
+  rejected from facilitator commands before any network request. Enforced by
+  `requireFacilitatorSession`, tested by 9 security-specific tests.
+- **Credential isolation.** `sanitizeSession` strips session cookies, access
+  tokens, and authorization headers from all CLI output. Tested across all 4
+  auth types.
+
+## 0.5.1 — 2026-04-10
+
+### Fixed
+
+- **Participant login dashboard URL resolution.** Fixed `ReferenceError` where
+  `resolveDashboardUrl` was not defined in the event-code login handler.
+
+## 0.5.0 — 2026-04-10
+
+This release restructures the CLI scope taxonomy and adds participant-facing
+commands. **Breaking**: several commands were renamed.
+
+### Added
+
+- **Participant auth**: `harness auth login --code <CODE>` authenticates via
+  event code. Sessions now store a role (`participant` or `facilitator`).
+- **Participant data commands**: `harness workshop brief`, `harness workshop
+  challenges`, `harness workshop team`.
+- **Skill delegation rule**: `SKILL.md` now delegates login, brief, challenges,
+  and team commands to the CLI. Skills never make HTTP requests directly.
+
+### Changed
+
+- **Scope rename (breaking)**: `harness instance create` (was `workshop
+  create-instance`), and similarly for `list`, `show`, `select`, `current`,
+  `update`, `reset`, `remove`.
+- Test suite restructured to match the new command surface.
+
+## 0.4.3 — 2026-04-10
+
+### Changed
+
+- **Dual-skill install for all agents.** `harness skill install` now installs
+  both participant and facilitator skills regardless of agent type.
+
+## 0.4.2 — 2026-04-10
+
+### Added
+
+- **Claude Code skill install support.** `harness skill install` now supports
+  Claude Code alongside Codex.
+
+## 0.4.1 — 2026-04-10
+
+### Added
+
+- **Content summary in `reset-instance` and `show-instance`.** Both commands
+  now include a `contentSummary` (phases, scenes, briefs, challenges) when the
+  API supports it. `show-instance` fetches the agenda alongside metadata.
+
+## 0.4.0 — 2026-04-10
+
+This release lands the expert-panel remediation work: skill split, CLI
+progressive disclosure, and an updated workshop content bundle.
+
+### Changed
+
+- Skill architecture split into participant and facilitator surfaces.
+- CLI help and command grouping updated for progressive disclosure.
+- Workshop content bundle refreshed.
+
 ## 0.3.2 — 2026-04-10
 
 ### Changed
