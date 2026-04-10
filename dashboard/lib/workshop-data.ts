@@ -1,6 +1,12 @@
-import blueprintAgenda from "./workshop-blueprint-agenda.json";
-import { workshopBlueprintLocalizedContent } from "./workshop-blueprint-localized-content";
+import blueprintAgendaCs from "./generated/agenda-cs.json";
+import blueprintAgendaEn from "./generated/agenda-en.json";
 import { resolveRepoLinkedHref } from "./repo-links";
+
+type BlueprintAgenda = typeof blueprintAgendaCs;
+
+function getBlueprintAgenda(contentLang: WorkshopContentLanguage): BlueprintAgenda {
+  return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : blueprintAgendaCs;
+}
 
 export type WorkshopContentLanguage = "cs" | "en";
 
@@ -9,20 +15,14 @@ function resolveWorkshopContentLanguage(value: string | undefined): WorkshopCont
 }
 
 export function getBlueprintWorkshopMetaCopy(contentLang: WorkshopContentLanguage) {
-  if (contentLang === "en") {
-    return {
-      title: "Harness Lab",
-      subtitle: "Workshop operating system for working with AI agents",
-      adminHint:
-        "This repo uses sample data. Real workshop instances should be loaded from the private runtime layer outside the public template repo.",
-    };
-  }
-
+  const agenda = getBlueprintAgenda(contentLang);
   return {
-    title: "Harness Lab",
-    subtitle: "Workshop operating system pro práci s AI agenty",
+    title: agenda.title,
+    subtitle: agenda.subtitle,
     adminHint:
-      "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
+      contentLang === "en"
+        ? "This repo uses sample data. Real workshop instances should be loaded from the private runtime layer outside the public template repo."
+        : "Repo používá ukázková data. Reálné workshop instance mají být načítané z privátní vrstvy mimo veřejný template repo.",
   };
 }
 
@@ -42,80 +42,6 @@ type WorkshopBlueprintScene = {
   blocks?: PresenterBlock[];
 };
 
-type LocalizedBlueprintScene = {
-  label?: string;
-  title?: string;
-  body?: string;
-  ctaLabel?: string | null;
-  ctaHref?: string | null;
-  facilitatorNotes?: readonly string[];
-  sourceRefs?: readonly WorkshopSourceRef[];
-  blocks?: Record<string, Partial<PresenterBlock>>;
-};
-
-type LocalizedBlueprintPhase = {
-  label?: string;
-  goal?: string;
-  roomSummary?: string;
-  facilitatorPrompts?: readonly string[];
-  watchFors?: readonly string[];
-  checkpointQuestions?: readonly string[];
-  facilitatorRunner?: Partial<FacilitatorRunner>;
-  sourceRefs?: readonly WorkshopSourceRef[];
-  scenes?: Record<string, LocalizedBlueprintScene>;
-};
-
-function getLocalizedBlueprintPhase(phaseId: string, contentLang: WorkshopContentLanguage) {
-  if (contentLang === "cs") {
-    return null;
-  }
-
-  return (workshopBlueprintLocalizedContent.en.phases[
-    phaseId as keyof typeof workshopBlueprintLocalizedContent.en.phases
-  ] ?? null) as LocalizedBlueprintPhase | null;
-}
-
-function getLocalizedBlueprintPhaseLabel(phaseId: string, fallback: string, contentLang: WorkshopContentLanguage) {
-  return getLocalizedBlueprintPhase(phaseId, contentLang)?.label ?? fallback;
-}
-
-function getLocalizedWorkshopMeta(contentLang: WorkshopContentLanguage) {
-  if (contentLang === "cs") {
-    return null;
-  }
-
-  return workshopBlueprintLocalizedContent.en.meta ?? null;
-}
-
-function getLocalizedWorkshopInventory(contentLang: WorkshopContentLanguage) {
-  if (contentLang === "cs") {
-    return null;
-  }
-
-  return workshopBlueprintLocalizedContent.en.inventory ?? null;
-}
-
-function getLocalizedSourceRefs(
-  fallback: readonly WorkshopSourceRef[] | undefined,
-  localized: readonly WorkshopSourceRef[] | undefined,
-) {
-  return localized ? [...localized] : fallback ? [...fallback] : [];
-}
-
-function getLocalizedPresenterBlocks(
-  blocks: PresenterBlock[],
-  localizedScene: LocalizedBlueprintScene | null,
-) {
-  const localizedBlocks = localizedScene?.blocks;
-  const mergedBlocks = localizedBlocks
-    ? (blocks.map((block) => ({
-        ...block,
-        ...(localizedBlocks[block.id as keyof typeof localizedBlocks] ?? {}),
-      })) as PresenterBlock[])
-    : blocks;
-
-  return resolvePresenterBlockLinks(mergedBlocks);
-}
 
 type WorkshopBlueprintPhase = {
   id: string;
@@ -722,25 +648,21 @@ function createSampleWorkshopMeta(input: {
   contentLang?: WorkshopContentLanguage;
 }) {
   const contentLang = resolveWorkshopContentLanguage(input.contentLang);
+  const agenda = getBlueprintAgenda(contentLang);
   const blueprintMetaCopy = getBlueprintWorkshopMetaCopy(contentLang);
-  const localizedMeta = getLocalizedWorkshopMeta(contentLang);
   return {
     title: blueprintMetaCopy.title,
     subtitle: blueprintMetaCopy.subtitle,
     contentLang,
     eventTitle: input.eventTitle,
     city: input.city,
-    dateRange: localizedMeta?.sampleDayLabel ?? "Ukázkový workshop den",
+    dateRange: contentLang === "en" ? "Sample workshop day" : "Ukázkový workshop den",
     venueName: input.city,
     roomName: input.room,
     addressLine: input.addressLine,
     locationDetails: input.locationDetails,
     facilitatorLabel: input.facilitatorLabel ?? "facilitator crew",
-    currentPhaseLabel: getLocalizedBlueprintPhaseLabel(
-      blueprintAgenda.phases[0]?.id ?? "opening",
-      blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
-      contentLang,
-    ),
+    currentPhaseLabel: agenda.phases[0]?.label ?? "Opening",
     adminHint: blueprintMetaCopy.adminHint,
   } satisfies WorkshopMeta;
 }
@@ -749,7 +671,8 @@ export function createAgendaFromBlueprint(
   contentLang: WorkshopContentLanguage,
   currentPhaseId?: string,
 ): AgendaItem[] {
-  const phases = blueprintAgenda.phases as WorkshopBlueprintPhase[];
+  const agenda = getBlueprintAgenda(contentLang);
+  const phases = agenda.phases as WorkshopBlueprintPhase[];
   const phaseId =
     currentPhaseId ??
     phases.find((phase) => phase.id === "build-1")?.id ??
@@ -760,72 +683,67 @@ export function createAgendaFromBlueprint(
   );
 
   return phases.map((phase, index) => {
-    const localizedPhase = getLocalizedBlueprintPhase(phase.id, contentLang);
-    const localizedGoal = localizedPhase?.goal ?? phase.goal;
-    const localizedRoomSummary = localizedPhase?.roomSummary ?? phase.roomSummary ?? localizedGoal;
-    const localizedFacilitatorPrompts = localizedPhase?.facilitatorPrompts ? [...localizedPhase.facilitatorPrompts] : phase.facilitatorPrompts ?? [];
-    const localizedWatchFors = localizedPhase?.watchFors ? [...localizedPhase.watchFors] : phase.watchFors ?? [];
-    const localizedCheckpointQuestions =
-      localizedPhase?.checkpointQuestions ? [...localizedPhase.checkpointQuestions] : phase.checkpointQuestions ?? [];
+    const goal = phase.goal;
+    const roomSummary = phase.roomSummary ?? goal;
+    const facilitatorPrompts = phase.facilitatorPrompts ?? [];
+    const watchFors = phase.watchFors ?? [];
+    const checkpointQuestions = phase.checkpointQuestions ?? [];
     const roomSceneLabels = (phase.scenes ?? [])
       .filter((scene) => normalizePresenterSceneSurface(scene.surface, normalizePresenterSceneType(scene.sceneType)) === "room")
-      .map((scene) => localizedPhase?.scenes?.[scene.id]?.label ?? scene.label);
+      .map((scene) => scene.label);
 
     return {
       id: phase.id,
-      title: localizedPhase?.label ?? phase.label,
+      title: phase.label,
       time: phase.startTime,
-      description: localizedRoomSummary,
+      description: roomSummary,
       intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
-      goal: localizedGoal,
-      roomSummary: localizedRoomSummary,
-      facilitatorPrompts: localizedFacilitatorPrompts,
-      watchFors: localizedWatchFors,
-      checkpointQuestions: localizedCheckpointQuestions,
+      goal,
+      roomSummary,
+      facilitatorPrompts: [...facilitatorPrompts],
+      watchFors: [...watchFors],
+      checkpointQuestions: [...checkpointQuestions],
       facilitatorRunner: buildFacilitatorRunner({
         contentLang,
         intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
-        goal: localizedGoal,
-        facilitatorPrompts: localizedFacilitatorPrompts,
-        watchFors: localizedWatchFors,
-        checkpointQuestions: localizedCheckpointQuestions,
+        goal,
+        facilitatorPrompts: [...facilitatorPrompts],
+        watchFors: [...watchFors],
+        checkpointQuestions: [...checkpointQuestions],
         roomSceneLabels,
-        runner: localizedPhase?.facilitatorRunner ?? phase.facilitatorRunner ?? null,
+        runner: phase.facilitatorRunner ?? null,
       }),
-      sourceRefs: getLocalizedSourceRefs(phase.sourceRefs, localizedPhase?.sourceRefs),
+      sourceRefs: phase.sourceRefs ? [...phase.sourceRefs] : [],
       order: phase.order,
       sourceBlueprintPhaseId: phase.id,
       kind: "blueprint" as const,
       status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
       defaultPresenterSceneId: phase.defaultSceneId ?? phase.scenes?.[0]?.id ?? null,
       presenterScenes: (phase.scenes ?? []).map((scene, sceneIndex) => {
-        const localizedScene = localizedPhase?.scenes?.[scene.id] ?? null;
-        const localizedTitle = localizedScene?.title ?? scene.title;
-        const localizedBody = localizedScene?.body ?? scene.body;
         const normalizedSceneType = normalizePresenterSceneType(scene.sceneType);
         const baseBlocks = normalizePresenterBlocks(scene.blocks);
         const resolvedBlocks =
           baseBlocks.length > 0
-            ? getLocalizedPresenterBlocks(baseBlocks, localizedScene)
+            ? resolvePresenterBlockLinks(baseBlocks)
             : buildFallbackPresenterBlocks({
                 sceneType: normalizedSceneType,
-                title: localizedTitle,
-                body: localizedBody,
+                title: scene.title,
+                body: scene.body,
               });
 
         return {
           id: scene.id,
-          label: localizedScene?.label ?? scene.label,
+          label: scene.label,
           sceneType: normalizedSceneType,
           surface: normalizePresenterSceneSurface(scene.surface, normalizedSceneType),
           intent: normalizePresenterSceneIntent(scene.intent ?? scene.sceneType ?? "custom"),
           chromePreset: normalizePresenterChromePreset(scene.chromePreset ?? "minimal"),
-          title: localizedTitle,
-          body: localizedBody,
-          ctaLabel: localizedScene?.ctaLabel ?? scene.ctaLabel ?? null,
-          ctaHref: resolveRepoLinkedHref(localizedScene?.ctaHref ?? scene.ctaHref ?? null),
-          facilitatorNotes: localizedScene?.facilitatorNotes ? [...localizedScene.facilitatorNotes] : scene.facilitatorNotes ?? [],
-          sourceRefs: getLocalizedSourceRefs(scene.sourceRefs, localizedScene?.sourceRefs),
+          title: scene.title,
+          body: scene.body,
+          ctaLabel: scene.ctaLabel ?? null,
+          ctaHref: resolveRepoLinkedHref(scene.ctaHref ?? null),
+          facilitatorNotes: scene.facilitatorNotes ?? [],
+          sourceRefs: scene.sourceRefs ? [...scene.sourceRefs] : [],
           blocks: resolvePresenterBlockLinks(resolvedBlocks),
           order: sceneIndex + 1,
           enabled: true,
@@ -1011,18 +929,195 @@ const seedWorkshopSetupPaths: SetupPath[] = [
   },
 ];
 
+const seedWorkshopBriefsEn: ProjectBrief[] = [
+  {
+    id: "devtoolbox-cli",
+    title: "DevToolbox CLI",
+    problem: "Developers lose time on repeated small utilities that are scattered across wiki pages, shell history, and private notes.",
+    userStories: [
+      "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
+      "As a developer, I want a fast way to list the last problematic commits or branches.",
+      "As a team, I want the commands documented clearly so another team can continue after the handoff.",
+    ],
+    architectureNotes: [
+      "The CLI can be written in any language, but commands must stay easy to discover.",
+      "AGENTS.md must explain the build and test flow and the expected output style.",
+      "A handoff runbook matters more than a wide feature set.",
+    ],
+    acceptanceCriteria: [
+      "There are at least 3 useful commands.",
+      "README and AGENTS.md explain how to run the tool locally.",
+      "A new team can add or fix another command within 10 minutes.",
+    ],
+    firstAgentPrompt:
+      "Design a minimal CLI architecture that survives handoff. Start with AGENTS.md, then a plan, and only then implementation.",
+  },
+  {
+    id: "standup-bot",
+    title: "Standup Bot",
+    problem: "Daily standups in chat often become long, inconsistent, and hard to review later.",
+    userStories: [
+      "As a team lead, I want standup replies collected into one overview.",
+      "As a developer, I want blockers and dependencies visible in one place.",
+      "As the next team after rotation, I want to understand the data flow and integration points quickly.",
+    ],
+    architectureNotes: [
+      "Prefer a clear data model over a complicated integration.",
+      "Mock data is fine if the workflow still feels realistic.",
+      "Prompts and runbooks must be part of the solution, not a side note.",
+    ],
+    acceptanceCriteria: [
+      "The bot can ingest at least seed data and produce a summary.",
+      "The repo explains how to extend the solution to a real chat channel.",
+      "After rotation, another team can continue without verbal explanation.",
+    ],
+    firstAgentPrompt:
+      "Split the work into ingest, summarization, and context for the next team. Before implementation, create the documentation the next team should open first.",
+  },
+  {
+    id: "code-review-helper",
+    title: "Code Review Helper",
+    problem:
+      "Code review often depends on who looked at the diff, which means risky changes slip through without a shared language for certainty, heuristics, and required follow-up.",
+    userStories: [
+      "As a reviewer, I want a checklist of changed boundaries, risks, and follow-up questions extracted from a diff.",
+      "As the author of a change, I want to know what I should verify before I ask for review.",
+      "As the inheriting team, I want the first team's review heuristics recorded so I can extend them instead of rediscovering them.",
+    ],
+    architectureNotes: [
+      "This can be a CLI, a web tool, or a simple script. The key is a clean diff -> rubric -> checklist flow.",
+      "Make the output separate certainty from heuristic suspicion.",
+      "Add a seed diff or examples folder so another team can test new rules quickly.",
+    ],
+    acceptanceCriteria: [
+      "The tool produces a review checklist from a seed diff.",
+      "It explains what is certain, what is heuristic, and what still needs human judgment.",
+      "Another team can add a new rule without a long onboarding call.",
+    ],
+    firstAgentPrompt:
+      "Do not start by generating code. First define the review rubric, the certainty model, and the seed diff flow another team should open first.",
+  },
+  {
+    id: "metrics-dashboard",
+    title: "Metrics Dashboard",
+    problem: "Teams have data but struggle to turn it into a shared view that actually supports decisions.",
+    userStories: [
+      "As a team, I want several metrics on one screen.",
+      "As a facilitator, I want to change seed data without touching UI logic.",
+      "As the next team after rotation, I want to understand the screen and data structure within minutes.",
+    ],
+    architectureNotes: [
+      "Separate seed data from UI from the first commit.",
+      "Mobile-first is a plus, but projected desktop view still needs to stay readable.",
+      "Monitoring and README should explain what already works and what does not.",
+    ],
+    acceptanceCriteria: [
+      "The dashboard shows at least 3 metrics and one trend.",
+      "The repo describes both data sources and mock fallbacks.",
+      "A new team can add another metric without breaking the layout.",
+    ],
+    firstAgentPrompt:
+      "Design a dashboard that survives handoff. First describe the data model, components, and done criteria, and only then write the UI.",
+  },
+];
+
+const seedWorkshopChallengesEn: Challenge[] = [
+  {
+    id: "agents-md",
+    title: "Create AGENTS.md as a map",
+    category: "Context Engineering",
+    phaseHint: "before-lunch",
+    description: "Write down the goal, build and test flow, durable rules, and where the next team should look first.",
+    completedBy: ["t1", "t3"],
+  },
+  {
+    id: "review-skill",
+    title: "Write a code review skill",
+    category: "Context Engineering",
+    phaseHint: "before-lunch",
+    description: "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt.",
+    completedBy: [],
+  },
+  {
+    id: "plan-first",
+    title: "Use /plan before coding",
+    category: "Workflow",
+    phaseHint: "before-lunch",
+    description: "Let the agent plan the work first, show what the plan was based on, and record the next safe move.",
+    completedBy: ["t2"],
+  },
+  {
+    id: "smallest-verification",
+    title: "Add the smallest useful verification",
+    category: "Workflow",
+    phaseHint: "before-lunch",
+    description: "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy.",
+    completedBy: [],
+  },
+  {
+    id: "parallel-agents",
+    title: "Run 2 parallel Codex sessions",
+    category: "Advanced",
+    phaseHint: "after-rotation",
+    description: "Split the problem into two independent streams and compare what actually worked.",
+    completedBy: [],
+  },
+  {
+    id: "done-when",
+    title: "Add 'Done When' to every task",
+    category: "Meta",
+    phaseHint: "anytime",
+    description: "Every important task needs an explicit completion criterion and a link to verification.",
+    completedBy: ["t4"],
+  },
+];
+
+const seedWorkshopTickerEn: TickerItem[] = [
+  { id: "tick-1", label: "Team 3 just added its first custom skill.", tone: "highlight" },
+  { id: "tick-2", label: "Team 1 has made 6 commits in the last 30 minutes.", tone: "signal" },
+  {
+    id: "tick-3",
+    label: "Intermezzo in 12 minutes: write what changed, what verifies it, and what the next team should read first.",
+    tone: "info",
+  },
+];
+
+const seedWorkshopSetupPathsEn: SetupPath[] = [
+  {
+    id: "cli",
+    label: "Codex CLI",
+    audience: "macOS / Linux",
+    summary: "The fastest path for people who want to work directly in the repo and terminal.",
+  },
+  {
+    id: "app",
+    label: "Codex App",
+    audience: "Windows / macOS",
+    summary: "A safe fallback for participants who do not want to solve CLI setup first thing in the morning.",
+  },
+  {
+    id: "web",
+    label: "Web fallback",
+    audience: "when setup gets blocked",
+    summary: "Use this when installation or authentication is blocking you.",
+  },
+];
+
 export function createWorkshopInventory(contentLang: WorkshopContentLanguage) {
-  const localizedInventory = getLocalizedWorkshopInventory(contentLang);
-  const briefs = (localizedInventory?.briefs as ProjectBrief[] | undefined) ?? seedWorkshopBriefs;
-  const challenges = (localizedInventory?.challenges as Challenge[] | undefined) ?? seedWorkshopChallenges;
-  const ticker = (localizedInventory?.ticker as TickerItem[] | undefined) ?? seedWorkshopTicker;
-  const setupPaths = (localizedInventory?.setupPaths as SetupPath[] | undefined) ?? seedWorkshopSetupPaths;
+  if (contentLang === "en") {
+    return {
+      briefs: seedWorkshopBriefsEn.map(cloneProjectBrief),
+      challenges: seedWorkshopChallengesEn.map(cloneChallenge),
+      ticker: seedWorkshopTickerEn.map(cloneTickerItem),
+      setupPaths: seedWorkshopSetupPathsEn.map(cloneSetupPath),
+    };
+  }
 
   return {
-    briefs: briefs.map(cloneProjectBrief),
-    challenges: challenges.map(cloneChallenge),
-    ticker: ticker.map(cloneTickerItem),
-    setupPaths: setupPaths.map(cloneSetupPath),
+    briefs: seedWorkshopBriefs.map(cloneProjectBrief),
+    challenges: seedWorkshopChallenges.map(cloneChallenge),
+    ticker: seedWorkshopTicker.map(cloneTickerItem),
+    setupPaths: seedWorkshopSetupPaths.map(cloneSetupPath),
   };
 }
 
@@ -1044,8 +1139,8 @@ function createWorkshopMetaFromTemplate(
   contentLang: WorkshopContentLanguage = "cs",
 ): WorkshopMeta {
   const resolvedContentLang = resolveWorkshopContentLanguage(contentLang);
+  const agenda = getBlueprintAgenda(resolvedContentLang);
   const blueprintMetaCopy = getBlueprintWorkshopMetaCopy(resolvedContentLang);
-  const localizedMeta = getLocalizedWorkshopMeta(resolvedContentLang);
   return {
     title: blueprintMetaCopy.title,
     subtitle: blueprintMetaCopy.subtitle,
@@ -1055,15 +1150,14 @@ function createWorkshopMetaFromTemplate(
     dateRange: template.dateLabel,
     venueName: template.city,
     roomName: template.room,
-    addressLine: localizedMeta?.templateAddressLine ?? "Adresa nebo orientační bod",
+    addressLine:
+      resolvedContentLang === "en" ? "Address or waypoint" : "Adresa nebo orientační bod",
     locationDetails:
-      localizedMeta?.templateLocationDetails ?? "Doplňte konkrétní venue, room a organizační poznámky pro tuto akci.",
+      resolvedContentLang === "en"
+        ? "Add the concrete venue, room, and logistics notes for this event."
+        : "Doplňte konkrétní venue, room a organizační poznámky pro tuto akci.",
     facilitatorLabel: "facilitator crew",
-    currentPhaseLabel: getLocalizedBlueprintPhaseLabel(
-      blueprintAgenda.phases[0]?.id ?? "opening",
-      blueprintAgenda.phases[0]?.label ?? "Úvod a naladění",
-      resolvedContentLang,
-    ),
+    currentPhaseLabel: agenda.phases[0]?.label ?? "Opening",
     adminHint: blueprintMetaCopy.adminHint,
   };
 }
@@ -1263,8 +1357,8 @@ export function createWorkshopInstanceRecord(input: {
     id: input.id,
     templateId: template.id,
     status: input.status ?? "prepared",
-    blueprintId: input.blueprintId ?? blueprintAgenda.blueprintId,
-    blueprintVersion: input.blueprintVersion ?? blueprintAgenda.version,
+    blueprintId: input.blueprintId ?? blueprintAgendaCs.blueprintId,
+    blueprintVersion: input.blueprintVersion ?? blueprintAgendaCs.version,
     importedAt: input.importedAt ?? new Date().toISOString(),
     removedAt: input.removedAt ?? null,
     workshopMeta: normalizeWorkshopMeta(
@@ -1276,7 +1370,7 @@ export function createWorkshopInstanceRecord(input: {
 
 export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
-  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintAgenda.phases[0]?.id);
+  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintAgendaCs.phases[0]?.id);
   const inventory = createWorkshopInventory(instance.workshopMeta.contentLang);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;
 

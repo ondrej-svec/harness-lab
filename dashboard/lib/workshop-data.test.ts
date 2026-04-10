@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import blueprintAgenda from "./workshop-blueprint-agenda.json";
+import blueprintAgenda from "./generated/agenda-cs.json";
 import {
   createWorkshopInstanceRecord,
   createWorkshopStateFromInstance,

@@ -83,14 +83,14 @@ Exit: generator produces correct views from the bilingual source, wired into bui
 
 ### Phase 3 — Dashboard import migration
 
-- [ ] Update `dashboard/lib/workshop-data.ts`:
+- [x] Update `dashboard/lib/workshop-data.ts`:
   - Replace `import blueprintAgenda from "./workshop-blueprint-agenda.json"` with `import blueprintAgenda from "./generated/agenda-cs.json"` (or dynamically based on `contentLang` via a thin resolver)
   - Remove `import { workshopBlueprintLocalizedContent } from "./workshop-blueprint-localized-content"`
   - Simplify or remove the `getLocalizedBlueprintPhase`, `getLocalizedWorkshopMeta`, `getLocalizedWorkshopInventory`, and `getLocalizedPresenterBlocks` overlay-merge functions — the generated views are already language-complete, no merging needed
   - The `contentLang` resolution logic stays; it now picks which generated JSON to import
-- [ ] Update `dashboard/lib/workshop-store.test.ts` and `dashboard/lib/workshop-data.test.ts` to import from the generated views.
-- [ ] Run `npm run test` and `npm run build` — must pass.
-- [ ] Verify the dashboard renders correctly in both Czech and English mode (manual browser check or Playwright e2e).
+- [x] Update `dashboard/lib/workshop-store.test.ts` and `dashboard/lib/workshop-data.test.ts` to import from the generated views.
+- [x] Run `npm run test` and `npm run build` — must pass.
+- [x] Verify the dashboard renders correctly in both Czech and English mode (manual browser check or Playwright e2e).
 
 Exit: dashboard consumes the generated views, tests pass, both languages render correctly.
 
