@@ -2,21 +2,9 @@ name: Dashboard CI
 
 on:
   push:
-    paths:
-      - "harness-cli/**"
-      - "docs/harness-cli-*.md"
-      - "workshop-skill/**"
-      - "dashboard/**"
-      - ".github/workflows/dashboard-ci.yml"
-      - ".github/workflows/harness-cli-publish.yml"
+    branches: [main]
   pull_request:
-    paths:
-      - "harness-cli/**"
-      - "docs/harness-cli-*.md"
-      - "workshop-skill/**"
-      - "dashboard/**"
-      - ".github/workflows/dashboard-ci.yml"
-      - ".github/workflows/harness-cli-publish.yml"
+    branches: [main]
 
 permissions: read-all
 
