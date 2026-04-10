@@ -1257,7 +1257,7 @@ test("installed workshop blueprint README stays portable and avoids GitHub main 
   );
 
   assert.doesNotMatch(installedBlueprintReadme, /github\.com\/ondrej-svec\/harness-lab\/blob\/main/);
-  assert.match(installedBlueprintReadme, /maintainer\/source-repo references/);
+  assert.match(installedBlueprintReadme, /canonical bilingual content source/);
 });
 
 test("skill install force refreshes an existing install", async () => {
