@@ -140,7 +140,7 @@ Show:
 ### `workshop help`
 
 Give phase-aware coaching. Examples:
-- during Build Phase 1: remind the team to get a short `AGENTS.md`, a plan, commands, one executable check, and a reviewed output in place
+- during Build Phase 1: remind the team to get a short `AGENTS.md`, a plan, commands, one executable check, and a reviewed output in place. Also include this provocation: "Zkuste toto: dejte agentovi úkol bez omezení a sledujte, co si vybere. Pak porovnejte výsledek se čtyřmi prvky dobrého úkolu (Goal / Context / Constraints / Done When). Co chybělo?"
 - during the continuation shift: tell the team to read before editing and to preserve evidence of what they changed
 - when the team is letting the agent work with more autonomy: push them toward tests, tracer bullets, or another executable check
 - for UI work: recommend `agent exploration -> Playwright regression -> human review` as the safe default workflow

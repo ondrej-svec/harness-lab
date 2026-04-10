@@ -29,6 +29,9 @@ What to say:
 Adoption signal:
 - the team has a short `AGENTS.md`, clear entry points, and an explicit next safe step
 
+Anchor moment:
+- The first time you open a new repo, a new task, or a new agent session.
+
 ### 2. If it is not in the repo, it does not exist
 
 Teach:
@@ -40,6 +43,9 @@ What to say:
 
 Adoption signal:
 - new assumptions become docs, plan updates, runbooks, or tests instead of staying in chat
+
+Anchor moment:
+- The moment you close a chat window, finish a call, or end a pairing session where a decision was made.
 
 ### 3. Verification is the trust boundary
 
@@ -53,6 +59,9 @@ What to say:
 Adoption signal:
 - meaningful work has executable evidence attached to it
 
+Anchor moment:
+- The moment you feel confident enough to move on — that confidence is the trigger to verify, not skip verification.
+
 ### 4. Boundaries create speed
 
 Teach:
@@ -65,6 +74,9 @@ What to say:
 Adoption signal:
 - the repo names boundaries, commands, and done criteria clearly enough that a new team can act without guessing
 
+Anchor moment:
+- The moment before you delegate a task to the agent — write the constraint before the prompt.
+
 ### 5. Cleanup is part of build
 
 Teach:
@@ -76,6 +88,9 @@ What to say:
 
 Adoption signal:
 - teams stop to simplify, document, or encode a recurring rule before moving on
+
+Anchor moment:
+- The second time the same review comment, friction point, or manual step appears.
 
 ## Phase-By-Phase Teaching Moves
 

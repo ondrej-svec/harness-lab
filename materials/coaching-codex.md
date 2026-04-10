@@ -6,6 +6,20 @@ The workshop teaches that context, not prompts, is what makes agent work survive
 
 ---
 
+## The meta-skill: three questions that reset anything
+
+These three questions work in any situation — before code, during work, when stuck, when you disagree. The protocols below are specific applications.
+
+When you feel the session going sideways, stop and ask these out loud, to yourself first:
+
+1. **What are we trying to prove right now?**
+2. **Which repo artifact is missing that would have prevented this?**
+3. **What is the smallest check that returns this work from confidence back to reality?**
+
+If you can't answer any of the three, the session is done. Close it. Come back when you can.
+
+---
+
 ## Before you let the agent write code
 
 Ask these, in this order. Do not skip ahead.
@@ -52,18 +66,6 @@ Run this short script, always:
 - **Don't argue.** Arguing with an agent in a session is a sign the harness is missing. Exit the chat, strengthen the repo, re-enter.
 - **Name the disagreement as a rule.** "We don't use `any` in this repo" is a rule. Write it down. Move it into `AGENTS.md`. Don't re-type it next session.
 - **Ask: "Which file in the repo should have prevented this?"** The answer is usually a doc that doesn't exist yet. Create it.
-
----
-
-## The three questions that reset a stuck session
-
-When you feel the session going sideways, stop and ask these out loud, to yourself first:
-
-1. **What are we trying to prove right now?**
-2. **Which repo artifact is missing that would have prevented this?**
-3. **What is the smallest check that returns this work from confidence back to reality?**
-
-If you can't answer any of the three, the session is done. Close it. Come back when you can.
 
 ---
 

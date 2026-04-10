@@ -152,7 +152,7 @@ Restructure teaching content for pedagogical quality. Each file is touched once,
 
 #### 2.1 Talk restructure — "Context is King"
 
-- [ ] **2.1.1** Restructure `content/talks/context-is-king.md` (Czech root):
+- [x] **2.1.1** Restructure `content/talks/context-is-king.md` (Czech root):
   - Move `## Mikro-cvičení` (currently lines 31–43) to become the **first section** after the title
   - Open cold: show both prompt variants side by side, run the demo, let the room observe
   - Move `## Otevírací modul` (lines 3–11) to after the micro-exercise, reframed as "what you just saw"
@@ -160,29 +160,29 @@ Restructure teaching content for pedagogical quality. Each file is touched once,
   - Keep `## Hlavní teze` (lines 44–65) in the middle as the explanation of what the demo showed
   - Keep `## Co si odnesete do build fáze` (lines 74–82) as the action bridge
   - Result: Demo → "What you just saw" → Analogy → Main theses → Adoption → Action → Thesis as close
-- [ ] **2.1.2** Apply same restructure to English locale if `content/talks/locales/en/context-is-king.md` exists; if not, note for future locale sync
+- [x] **2.1.2** Apply same restructure to English locale if `content/talks/locales/en/context-is-king.md` exists; if not, note for future locale sync
 
 #### 2.2 Challenge cards — triage and micro-stories
 
-- [ ] **2.2.1** Add difficulty triage block to top of `content/challenge-cards/deck.md`:
+- [x] **2.2.1** Add difficulty triage block to top of `content/challenge-cards/deck.md`:
   - Before `## Před obědem`: add a 3-line triage routing teams by current state:
     - No AGENTS.md yet → start with card 1 from "Před obědem"
     - AGENTS.md exists but no verification → start with card 3 from "Před obědem"
     - Both exist → choose any card
-- [ ] **2.2.2** Rewrite each card to open with a one-sentence situation:
+- [x] **2.2.2** Rewrite each card to open with a one-sentence situation:
   - Current format: `` `Title` — directive ``
   - New format: `` `Title` — Situation sentence. Directive sentence. ``
   - Keep cards to 2–3 lines max for printability
   - Example pre-lunch card: `` `AGENTS.md jako mapa` — Váš agent právě dostal úkol, ale nezná architekturu, pravidla ani co testovat. Vytvořte AGENTS.md se čtyřmi sekcemi: Goal / Context / Constraints / Done When. ``
   - Example post-rotation card: `` `Diagnóza po handoffu` — Právě jste zdědili repo, které jste nikdy neviděli. Napište, co vám pomohlo, co chybělo, co je rizikové a jaký je další bezpečný krok. ``
-- [ ] **2.2.3** Add habit labels to each card:
+- [x] **2.2.3** Add habit labels to each card:
   - After the directive, add a small tag indicating which habit the card installs: `[Habit: Map before motion]`
   - This reinforces the habit vocabulary without adding weight
-- [ ] **2.2.4** Apply same changes to `content/challenge-cards/locales/en/deck.md`
+- [x] **2.2.4** Apply same changes to `content/challenge-cards/locales/en/deck.md`
 
 #### 2.3 Coaching codex restructure
 
-- [ ] **2.3.1** Restructure `materials/coaching-codex.md`:
+- [x] **2.3.1** Restructure `materials/coaching-codex.md`:
   - Move `## The three questions that reset a stuck session` (lines 57–66) to become the **first section** after the framing paragraph
   - Rename to `## The meta-skill: three questions that reset anything`
   - Add a one-line bridge: "These three questions work in any situation — before code, during work, when stuck, when you disagree. The protocols below are specific applications."
@@ -195,21 +195,21 @@ Restructure teaching content for pedagogical quality. Each file is touched once,
 
 #### 2.4 Habit Anchors
 
-- [ ] **2.4.1** Add `Anchor moment:` field to each habit in `workshop-blueprint/teaching-spine.md`:
+- [x] **2.4.1** Add `Anchor moment:` field to each habit in `workshop-blueprint/teaching-spine.md`:
   - After each habit's `Adoption signal:` line, add `Anchor moment:` with the Monday trigger
   - H1 "Map before motion": `Anchor moment: The first time you open a new repo, a new task, or a new agent session.`
   - H2 "If it is not in the repo, it does not exist": `Anchor moment: The moment you close a chat window, finish a call, or end a pairing session where a decision was made.`
   - H3 "Verification is the trust boundary": `Anchor moment: The moment you feel confident enough to move on — that confidence is the trigger to verify, not skip verification.`
   - H4 "Boundaries create speed": `Anchor moment: The moment before you delegate a task to the agent — write the constraint before the prompt.`
   - H5 "Cleanup is part of build": `Anchor moment: The second time the same review comment, friction point, or manual step appears.`
-- [ ] **2.4.2** Propagate Anchors to `materials/participant-resource-kit.md`:
+- [x] **2.4.2** Propagate Anchors to `materials/participant-resource-kit.md`:
   - Add a new section `## Kdy se návyky spustí` (When habits fire) between the current section 6 and the weekly challenge
   - Format: "Když [Anchor], udělám [Habit]" for each of the five habits
-- [ ] **2.4.3** Propagate Anchors to `workshop-skill/follow-up-package.md` (done as part of 2.5)
+- [x] **2.4.3** Propagate Anchors to `workshop-skill/follow-up-package.md` (done as part of 2.5)
 
 #### 2.5 Follow-up package restructure
 
-- [ ] **2.5.1** Restructure `workshop-skill/follow-up-package.md`:
+- [x] **2.5.1** Restructure `workshop-skill/follow-up-package.md`:
   - **Open with W³ commitment** — move the W³ sticky-note section (lines 38–41) to become the first paragraph of the 48h section
   - **Reduce 48h email to a single action** — keep one principle reminder + one specific "do this before Friday" action tied to the sticky-note commitment
   - Move the remaining 48h items (template links, learner kit links, skill reminder) to a "Resources" sub-section at the bottom
@@ -219,11 +219,11 @@ Restructure teaching content for pedagogical quality. Each file is touched once,
     - Week 3: "Popište moment, kdy jste agentovi dali omezení předem a ušetřilo vám to opravu. Jaké to bylo omezení?"
     - Week 4: "Popište situaci, kdy se stejný problém opakoval. Změnili jste systém, nebo jen výstup?"
   - **Add Anchor-identification exercise** after W³ section: "Zapište si tři momenty z vašeho běžného pracovního týdne, kdy otevíráte nový úkol nebo novou session — to jsou vaše Anchor momenty pro 'Map before motion.'"
-- [ ] **2.5.2** Apply same restructure to `workshop-skill/locales/en/follow-up-package.md`
+- [x] **2.5.2** Apply same restructure to `workshop-skill/locales/en/follow-up-package.md`
 
 #### 2.6 Participant failure exercise in skill
 
-- [ ] **2.6.1** Update participant SKILL.md `workshop help` behavior:
+- [x] **2.6.1** Update participant SKILL.md `workshop help` behavior:
   - During Build Phase 1, include a provocation in the `workshop help` response:
   - "Zkuste toto: dejte agentovi úkol bez omezení a sledujte, co si vybere. Pak porovnejte výsledek se čtyřmi prvky dobrého úkolu (Goal / Context / Constraints / Done When). Co chybělo?"
   - This surfaces the micro-exercise from the talk as a participant-executable moment

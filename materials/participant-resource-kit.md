@@ -66,6 +66,16 @@ Poznámka:
 - `workshop` skill je garantovaný výchozí nástroj workshopu
 - další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
 
+## Kdy se návyky spustí
+
+Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním týdnu, kdy se návyk aktivuje:
+
+- Když **otevíráte nový repo, nový úkol nebo novou agent session** → Map before motion (udělám z repa mapu, než začnu generovat)
+- Když **zavíráte chat, končíte hovor nebo pairing kde padlo rozhodnutí** → If it is not in the repo, it does not exist (zapíšu rozhodnutí do repa)
+- Když **cítím dost jistoty na to, abych šel dál** → Verification is the trust boundary (ta jistota je spouštěč k ověření, ne k přeskočení)
+- Když **chystám úkol pro agenta** → Boundaries create speed (napíšu omezení dřív než prompt)
+- Když **se stejná připomínka, třecí plocha nebo ruční krok objeví podruhé** → Cleanup is part of build (proměním to v check, template nebo pravidlo)
+
 ## Výzva na příští týden
 
 1. Přidejte `AGENTS.md` do jednoho reálného projektu.
