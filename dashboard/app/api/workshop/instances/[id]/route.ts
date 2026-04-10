@@ -69,5 +69,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   }
 
   const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id, id);
-  return NextResponse.json({ ok: true, workshopId: state.workshopId, workshopMeta: state.workshopMeta });
+  return NextResponse.json({
+    ok: true,
+    workshopId: state.workshopId,
+    workshopMeta: state.workshopMeta,
+    contentSummary: {
+      phases: state.agenda.length,
+      scenes: state.agenda.reduce((sum, item) => sum + item.presenterScenes.length, 0),
+      briefs: state.briefs.length,
+      challenges: state.challenges.length,
+      blueprintVersion: state.version,
+    },
+  });
 }

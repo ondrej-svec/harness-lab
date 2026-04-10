@@ -879,11 +879,19 @@ async function handleWorkshopShowInstance(io, ui, env, positionals, flags, deps)
 
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
-    const result = await client.getWorkshopInstance(instanceId);
+    const [result, agenda] = await Promise.all([
+      client.getWorkshopInstance(instanceId),
+      client.getWorkshopAgenda(instanceId).catch(() => null),
+    ]);
     ui.json("Workshop Instance", {
       ok: true,
       ...summarizeWorkshopInstance(result.instance),
       instance: result.instance,
+      contentSummary: agenda ? {
+        phases: Array.isArray(agenda.items) ? agenda.items.length : 0,
+        scenes: Array.isArray(agenda.items) ? agenda.items.reduce((sum, item) => sum + (item.presenterScenes?.length ?? 0), 0) : 0,
+        currentPhase: agenda.phase ?? null,
+      } : null,
     });
     return 0;
   } catch (error) {
@@ -1118,6 +1126,10 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
       readStringFlag(flags, "template-id", "template"),
     );
     ui.json("Workshop Reset Instance", result);
+    if (result.contentSummary) {
+      const s = result.contentSummary;
+      ui.status("ok", `Reset ${instanceId}: ${s.phases} phases, ${s.scenes} scenes, ${s.briefs} briefs, ${s.challenges} challenges`);
+    }
     return 0;
   } catch (error) {
     if (error instanceof HarnessApiError) {
