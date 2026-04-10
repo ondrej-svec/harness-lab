@@ -43,6 +43,17 @@ export class FileEventAccessRepository implements EventAccessRepository {
   }
 
   async findSessionByTokenHash(tokenHash: string) {
+    // When a single override path is configured, scan only that file.
+    if (process.env.HARNESS_EVENT_ACCESS_PATH) {
+      try {
+        const raw = await readFile(process.env.HARNESS_EVENT_ACCESS_PATH, "utf8");
+        const parsed = JSON.parse(raw) as StoredParticipantSessions;
+        return parsed.sessions.find((s) => s.tokenHash === tokenHash) ?? null;
+      } catch {
+        return null;
+      }
+    }
+
     let entries: string[];
     try {
       entries = await readdir(this.dataDir);
