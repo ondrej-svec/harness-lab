@@ -52,15 +52,15 @@ Exit: the schema is documented, typed, and verified against current content.
 
 ### Phase 1 — Migration script
 
-- [ ] Write `scripts/content/migrate-to-bilingual.ts` — one-time Bun script that:
+- [x] Write `scripts/content/migrate-to-bilingual.ts` — one-time Bun script that:
   - Reads `dashboard/lib/workshop-blueprint-agenda.json` (Czech source)
   - Reads `dashboard/lib/workshop-blueprint-localized-content.ts` (English source — parse the exported object)
   - Merges into the bilingual schema: Czech fields → `cs`, English fields → `en`, matched by ID
   - Sets `cs_reviewed: true` on all nodes (both languages are reviewed as of the current copy-editor pass)
   - Handles orphans: IDs present in one source but not the other get flagged with a `TODO` comment and `cs_reviewed: false`
   - Writes `workshop-content/agenda.json` (the new bilingual source)
-- [ ] Run the migration. Verify the output has every phase, scene, and block from both sources.
-- [ ] Spot-check 3–5 scenes manually: open the bilingual source and confirm the `en` and `cs` fields match the current content.
+- [x] Run the migration. Verify the output has every phase, scene, and block from both sources.
+- [x] Spot-check 3–5 scenes manually: open the bilingual source and confirm the `en` and `cs` fields match the current content.
 
 Exit: `workshop-content/agenda.json` exists with all content from both sources, verified.
 
