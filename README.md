@@ -6,9 +6,12 @@
 [![Security: Semgrep](https://img.shields.io/badge/SAST-Semgrep-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
 [![Security: Gitleaks](https://img.shields.io/badge/secrets-Gitleaks-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
 [![npm audit](https://img.shields.io/badge/dependencies-audited-green)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
+
+<!-- Activate after making repo public:
 [![codecov](https://codecov.io/gh/ondrej-svec/harness-lab/graph/badge.svg)](https://codecov.io/gh/ondrej-svec/harness-lab)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ondrej-svec/harness-lab/badge)](https://scorecard.dev/viewer/?uri=github.com/ondrej-svec/harness-lab)
-[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
+-->
 
 Open-source workshop template for teams working with AI coding agents on real software.
 

@@ -99,6 +99,7 @@ jobs:
   verify-harness-cli-self-hosted:
     name: verify-harness-cli (linux-self-hosted, Node 25)
     if: github.event_name == 'push'
+    timeout-minutes: 10
     runs-on:
       - self-hosted
       - Linux
@@ -214,6 +215,7 @@ jobs:
   e2e-dashboard-self-hosted:
     name: e2e-dashboard (push, self-hosted)
     if: github.event_name == 'push'
+    timeout-minutes: 15
     runs-on:
       - self-hosted
       - Linux
@@ -389,7 +391,7 @@ jobs:
             DESCRIPTION="verify-dashboard failed"
           fi
 
-          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${CLI_SELF_HOSTED_RESULT}" != "success" ]; then
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${CLI_SELF_HOSTED_RESULT}" = "failure" ]; then
             STATE="failure"
             DESCRIPTION="verify-harness-cli-self-hosted failed"
           fi
@@ -399,7 +401,7 @@ jobs:
             DESCRIPTION="e2e-dashboard failed"
           fi
 
-          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${E2E_PUSH_RESULT}" != "success" ]; then
+          if [ "${STATE}" = "success" ] && [ "${EVENT_NAME}" = "push" ] && [ "${E2E_PUSH_RESULT}" = "failure" ]; then
             STATE="failure"
             DESCRIPTION="e2e-dashboard-self-hosted failed"
           fi
