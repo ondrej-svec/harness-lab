@@ -334,7 +334,7 @@ test.describe("facilitator admin (file mode)", () => {
 
     await expect(page.getByText("Vraťte se k repu se třemi věcmi")).toBeVisible();
     await expect(page.getByText("Co udělat v prvních minutách")).toBeVisible();
-    await expect(page.getByText("Otevřete README, AGENTS.md a brief. Srovnejte si, co je cíl, kontext a mantinely.")).toBeVisible();
+    await expect(page.getByText("Otevřete README, AGENTS.md a zadání. Srovnejte si, co je cíl, kontext a mantinely.")).toBeVisible();
     await expect(page.getByText(/harness skill install/)).toBeVisible();
     await expect(page.getByText("zdrojový materiál")).toHaveCount(0);
 
@@ -351,7 +351,7 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByText("runner goal")).toBeVisible();
     await expect(page.getByText("Kontext je páka, ne kosmetika.")).toBeVisible();
     await expect(page.getByText("show")).toBeVisible();
-    await expect(page.getByText("Promítni nejdřív kontrast připravenosti repa, pak tezi, pak bridge do buildu.")).toBeVisible();
+    await expect(page.getByText("Promítni nejdřív kontrast připravenosti repa, pak tezi, pak přechod do buildu.")).toBeVisible();
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {
