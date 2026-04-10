@@ -36,7 +36,7 @@
 - V prvním buildu: `template-agents`, brief, plán a první ověření
 - Před obědem: dopsat další bezpečný krok a použít `workshop analyze`, když si nejste jistí handoffem
 - Po rotaci: `workshop analyze`, learner kit a challenge cards místo ústního rescue
-- Na konci dne: `workshop recap` a `workshop follow-up`
+- Po posledním bloku: `workshop recap` a `workshop follow-up`
 
 ## Doporučené příkazy
 

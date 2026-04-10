@@ -10,7 +10,7 @@ Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik v
 
 - Jako tým chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.
 - Jako facilitátor chci snadno měnit seed data bez zásahu do UI logiky.
-- Jako tým po rotaci chci během několika minut pochopit strukturu dat, komponent i obrazovek.
+- Jako tým po rotaci chci během 10 minut pochopit strukturu dat, komponent i obrazovek.
 
 ## Architektonické poznámky
 

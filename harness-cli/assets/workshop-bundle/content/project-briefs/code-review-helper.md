@@ -24,7 +24,7 @@ Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří pou
 - Nástroj vytvoří review checklist ze seed diffu.
 - Výstup odlišuje jistá zjištění od doporučení, hypotéz a bodů pro lidský úsudek.
 - Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.
-- Další tým může během několika minut pokračovat v rozvoji bez chaosu.
+- Další tým může během 10 minut pokračovat v rozvoji bez chaosu.
 
 ## První krok pro agenta
 

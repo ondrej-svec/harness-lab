@@ -15,7 +15,7 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 - `Rozdělte práci do více vláken` — zkuste dvě nezávislé linie práce a jednoho člověka na integraci.
 - `Delegujte úkol a vraťte se ke kontrole za 10 minut` — neskákejte agentovi do každého kroku, kontrolujte až výsledek.
 - `Přidejte nejmenší užitečné ověření` — zapište done criteria jako spustitelný check (unit test, tracer bullet nebo jednoduchý browser check) dřív, než agent dostane víc autonomie.
-- `Napište diagnózu po handoffu` — pojmenujte, co pomohlo, co chybělo a jaký je další safe move.
+- `Napište diagnózu po handoffu` — pojmenujte, co pomohlo, co chybělo a jaký je další bezpečný krok.
 - `Opravte jeden slabý signál v repu` — README, AGENTS.md, plán, runbook nebo check.
 
 ## Advanced

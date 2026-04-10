@@ -32,7 +32,7 @@ Krátký navazující dotaz:
 
 - Vytvořili jste `AGENTS.md` v reálném projektu?
 - Přidali jste build/test příkazy nebo sekci `Done When`?
-- Přidali jste další safe move nebo krátký handoff runbook?
+- Přidali jste další bezpečný krok nebo krátký handoff runbook?
 - Co vám pomohlo a co vás zablokovalo?
 
 ## W³ připomínka

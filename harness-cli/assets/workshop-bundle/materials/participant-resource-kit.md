@@ -77,7 +77,7 @@ Poznámka:
 Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
 
 - **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
-- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — jeden z nejhustších praktických zdrojů o Codexu, Claude Code a dalších agentech. Denně pracuje s těmito nástroji a zapisuje si to.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — praktický zdroj o Codexu, Claude Code a dalších agentech. Píše z vlastní každodenní praxe.
 - **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
 - **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
 - **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si je znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.

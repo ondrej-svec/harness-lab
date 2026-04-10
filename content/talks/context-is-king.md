@@ -43,15 +43,23 @@ Vezmeme stejný malý task ve dvou podmínkách. Jedna varianta bude prompt blob
 
 ## Hlavní teze
 
+### Kontext je páka
+
 - Kontext je páka, ne kosmetika.
 - `AGENTS.md`, skills a runbooky jsou týmová infrastruktura.
 - `AGENTS.md` nemá být encyklopedie. Má to být mapa, která ukáže, kam sáhnout dál.
-- Co není v repu, neexistuje. Slack, ústní dovysvětlení a "to si pamatujeme" se při návaznosti rozpadají.
+- Co není v repu, neexistuje. Slack, ústní dovysvětlení a „to si pamatujeme" se rozpadne, jakmile práci někdo převezme.
+
+### Ověření je hranice důvěry
+
 - Testy jsou hranice důvěry. Když agent pracuje samostatněji, musíte mnohem líp ověřovat, že udělal právě to, co jste chtěli.
 - Jednoduché mantinely zrychlují práci. Agentovi pomáhá jasný build/test flow, viditelné hranice a předvídatelná struktura.
 - U UI práce je výchozí pattern: agent exploration, potom repeatable browser test, potom lidské review.
 - „Nech model jezdit v mém běžném přihlášeném browseru“ není výchozí doporučení. Bezpečnější je izolované lokální prostředí a jasné mantinely.
-- Ověření napsané dřív, než pustíte agenta do většího kusu práce, není test-first dogma. Je to zápis done criteria do formy, kterou agent i další tým umí zkontrolovat. Iteraci to zrychluje, protože agent dostane přesné mantinely, ne další prompt.
+- Ověření napsané dřív, než pustíte agenta do většího kusu práce, není test-first dogma. Znamená to zapsat done criteria v takové formě, aby je agent i další tým uměl zkontrolovat. Iteraci to zrychluje, protože agent dostane přesné mantinely, ne další prompt.
+
+### Repo se udržuje, ne jen plní
+
 - Úklid není bonus po workshopu. Když narazíte na opakující se chaos, je čas ho proměnit v lepší template, ověření nebo runbook.
 - Odpolední návaznost prověří, jestli váš kontext funguje i bez vás.
 
@@ -69,7 +77,7 @@ Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chyt
 - pokud ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
 - nejdřív krátká mapa v repu
 - potom krátký plán kroků
-- potom první explicitní ověření
+- potom první explicitní ověření, že agent dělá, co jste čekali
 - teprve potom další feature motion
 
 ## Závěr

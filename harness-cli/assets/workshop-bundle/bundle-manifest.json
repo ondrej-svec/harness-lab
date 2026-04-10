@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.3.1",
-  "contentHash": "8095e0475f7defad71c1af47ab7600f366dffd1c7ef41410af94cecddaa86119",
+  "contentHash": "579eac8240790ff7974b9cfdfba7f4c2ae0c901fbf3bf312e1017ad258069174",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -34,7 +34,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "b5e107e88ab335aaa8870f51cf9c8b8dadb619d3b0f61dab087dacdcdef4c136"
+      "sha256": "c5f3df56380b3df498a92dc6de55e922b2c7722e53e4f6f2efbef9b76de1d163"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -126,7 +126,7 @@
     },
     {
       "path": "materials/participant-resource-kit.md",
-      "sha256": "d7cd7db05429faf7af570e33401cb5788d663e06c984f193596c14d2d8a12a5b"
+      "sha256": "c9c58ebf3e66a6f6823a06b5d938bc930eb3a768d3d23a2b4f18fe99b4b85a47"
     },
     {
       "path": "SKILL.md",
@@ -166,7 +166,7 @@
     },
     {
       "path": "workshop-skill/closing-skill.md",
-      "sha256": "db23689de38b1ebfc2d9dde5387c5386a774cc6e90ab3e6c95f7749601d6abb7"
+      "sha256": "f0ce3f0f4a515dff14dab77fd31317a73a489ee24ba536eb7dd20f0b13cff4ec"
     },
     {
       "path": "workshop-skill/commands.md",
@@ -178,7 +178,7 @@
     },
     {
       "path": "workshop-skill/follow-up-package.md",
-      "sha256": "74b8232f54b663d8ba9a97485c898ef0e8cffd5b5423831627ee7fe94d1cca44"
+      "sha256": "3299b0cf49e90f87ec3090ed934234d8c06e502fd3305c4e69c8aadfe1b42e7e"
     },
     {
       "path": "workshop-skill/install.md",
@@ -206,11 +206,11 @@
     },
     {
       "path": "workshop-skill/recap.md",
-      "sha256": "fa242bbb17d5305fda2b3c08a8da14744f60f6895985bbbbb1604c4c1ad4c8b4"
+      "sha256": "c479b255b4ebd35dde9a1afbf7a174e3aa8b348ebed8e07187f641f5dcb1b143"
     },
     {
       "path": "workshop-skill/reference.md",
-      "sha256": "fe7d1c5f32d2a88b4673f565fda8bb389c4fe3b2a50aad5e2a9fafef7f75d658"
+      "sha256": "438cfc517d5ff707ce737e81a7ec3f8098c08f8fd2589ac105aea968da39f9a6"
     },
     {
       "path": "workshop-skill/setup.md",

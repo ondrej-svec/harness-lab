@@ -2,7 +2,7 @@
 
 ## Úkol
 
-Na konci dne vytvoř krátké shrnutí workshopu, které je:
+Po posledním bloku vytvoř krátké shrnutí workshopu, které je:
 
 - konkrétní
 - systémové, ne osobní

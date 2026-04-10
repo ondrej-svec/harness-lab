@@ -9,7 +9,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 ## User stories
 
 - Jako vývojář chci z projektu rychle získat základní technickou dokumentaci bez ručního sepisování všeho od nuly.
-- Jako reviewer chci během pár minut pochopit strukturu modulů a hlavní vstupní body.
+- Jako reviewer chci během 5 minut pochopit strukturu modulů a hlavní vstupní body.
 - Jako tým po rotaci chci objevit architekturu projektu bez dlouhého pátrání po souvislostech.
 
 ## Architektonické poznámky
@@ -26,7 +26,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 - Je jasné, jak se nástroj spouští lokálně a nad jakým vstupem.
 - Výstup odděluje fakta od odhadů nebo heuristik.
 - Další tým umí přidat nový typ výstupu bez chaosu v repu.
-- Reviewer během pár minut pozná, odkud které tvrzení pochází.
+- Reviewer během 10 minut pozná, odkud které tvrzení pochází.
 
 ## První krok pro agenta
 

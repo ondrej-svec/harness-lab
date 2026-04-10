@@ -25,7 +25,7 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 - Nástroj umí ingestovat seed data a vytvořit čitelný souhrn.
 - Výstup zvýrazní blokery nebo položky, které potřebují pozornost.
 - Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.
-- Po rotaci lze navázat bez dalšího vysvětlování.
+- Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního handoffu.
 - Je jasné, co je jisté shrnutí a co je jen heuristika nebo návrh.
 
 ## První krok pro agenta

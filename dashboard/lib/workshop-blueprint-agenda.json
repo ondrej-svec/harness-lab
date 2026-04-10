@@ -391,7 +391,7 @@
         ],
         "do": [
           "Porovnej stejný task ve dvou podmínkách: prompt blob vs. krátké zadání s Goal, Context, Constraints a Done When.",
-          "Po pointě pošli místnost rovnou do Build 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom feature motion."
+          "Po pointě pošli místnost rovnou do build 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom feature motion."
         ],
         "watch": [
           "Talk nesmí sklouznout k tipům na promptování nebo feature tour nástroje.",
@@ -468,7 +468,7 @@
           "facilitatorNotes": [
             "Nenech to sklouznout do debaty o tom, který model je chytřejší. Pointa je přenos záměru, mantinelů a done criteria.",
             "Řekni explicitně, že jde o krátkou facilitátorovu ukázku, ne o společnou práci všech týmů.",
-            "Uzavři to větou, že Build Phase 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
+            "Uzavři to větou, že build fáze 1 začíná právě tady: nejdřív mapa a ověření, teprve potom feature motion."
           ],
           "sourceRefs": [
             {
@@ -507,7 +507,7 @@
         },
         {
           "id": "talk-participant-view",
-          "label": "Most do Build 1",
+          "label": "Most do build 1",
           "sceneType": "participant-view",
           "intent": "walkthrough",
           "chromePreset": "participant",
@@ -516,7 +516,7 @@
           "ctaLabel": "Otevřít install a první příkazy",
           "ctaHref": "README.md",
           "facilitatorNotes": [
-            "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut Build Phase 1.",
+            "Použij ji krátce. Tohle není tour dashboardu, ale operační kontrakt pro prvních 10 až 15 minut build fáze 1.",
             "Pojmenuj konkrétně, že tým teď potřebuje mapu repa, první slice a jedno ověření, ne další brainstorming o promptu.",
             "Řekni explicitně: pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install` a první workshop command."
           ],
@@ -548,13 +548,13 @@
             {
               "id": "talk-participant-preview",
               "type": "participant-preview",
-              "body": "Teď začíná Build 1. Srovnejte si, co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
+              "body": "Teď začíná build 1. Srovnejte si, co běží teď, co přijde dál a jaký je nejbližší bezpečný krok pro tým."
             },
             {
               "id": "talk-participant-bridge",
               "type": "callout",
               "tone": "info",
-              "title": "Most do Build 1",
+              "title": "Most do build 1",
               "body": "Teorie tím končí. Teď má tým vrátit hlavní větu talku do repa jako mapu, první explicitní decision log a jeden ověřitelný krok."
             }
           ]
@@ -780,7 +780,7 @@
       ],
       "sourceRefs": [
         {
-          "label": "Facilitační průvodce: Build Phase 1",
+          "label": "Facilitační průvodce: Build fáze 1",
           "path": "content/facilitation/master-guide.md"
         }
       ],
@@ -812,7 +812,7 @@
                 "README řekne cizímu člověku, co tenhle projekt dělá.",
                 "AGENTS.md ukáže, kde začít a kam sáhnout dál.",
                 "Plán drží společný směr místo improvizace.",
-                "Build/test příkaz nebo tracer bullet umí vrátit práci na zem.",
+                "build/test příkaz nebo tracer bullet umí vrátit práci na zem.",
                 "V repu je vidět první opravdu ověřený posun."
               ]
             },
@@ -898,7 +898,7 @@
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Build Phase 1",
+              "label": "Facilitační průvodce: Build fáze 1",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -1738,7 +1738,7 @@
           "intent": "walkthrough",
           "chromePreset": "participant",
           "title": "Odneste si tři věci, ne jen dobrý pocit",
-          "body": "Na konci dne si vezměte konkrétní signál, který chcete zachovat, jednu slabinu, kterou už nechcete opakovat, a jeden tah pro příští týden.",
+          "body": "Vezměte si konkrétní signál, který chcete zachovat, jednu slabinu, kterou už nechcete opakovat, a jeden tah pro příští týden.",
           "ctaLabel": "Otevřít recap a follow-up",
           "ctaHref": "workshop-skill/recap.md",
           "facilitatorNotes": [
@@ -1756,7 +1756,7 @@
               "type": "hero",
               "eyebrow": "Reveal a reflexe",
               "title": "Nejde o vítěze. Jde o signály, které drží práci pohromadě.",
-              "body": "Na konci dne sledujeme, co pomohlo navázat, co chybělo a co příští týden uděláme jinak ve vlastním repu."
+              "body": "Sledujeme, co pomohlo navázat, co chybělo a co příští týden uděláme jinak ve vlastním repu."
             },
             {
               "id": "reveal-participant-questions",
