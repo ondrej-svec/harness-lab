@@ -44,10 +44,9 @@ Do not use this folder for live event state. Real dates, rooms, rosters, checkpo
 
 The deeper runtime and maintainer docs such as blueprint import, publish-back flow, workshop-instance runbooks, and the governance rules in `edit-boundaries.md` remain part of the source repository and maintainer path. They are intentionally not part of the portable participant bundle. Read them directly from the [Harness Lab source repository](https://github.com/ondrej-svec/harness-lab/tree/main/workshop-blueprint) when you need them as a maintainer.
 
-For maintainers working in the source repository, the runtime-facing structured agenda sources are:
+For maintainers working in the source repository, the canonical bilingual content source is:
 
-- `docs/workshop-content-language-architecture.md`
-- `dashboard/lib/workshop-blueprint-agenda.json`
-- `dashboard/lib/workshop-blueprint-localized-content.ts`
+- `workshop-content/agenda.json` — single bilingual source (en/cs per node)
+- `docs/workshop-content-language-architecture.md` — architecture doc
 
-Treat those as maintainer/source-repo references, not as portable participant-bundle docs. The public `agenda.json` file should stay aligned with the same phase structure, but it is not the runtime import source.
+The public `agenda.json` in this directory and the dashboard runtime views (`dashboard/lib/generated/agenda-cs.json`, `agenda-en.json`) are generated from the bilingual source. Do not edit them by hand — run `npm run generate:content` instead.

@@ -146,23 +146,23 @@ Exit: pre-commit blocks generated-file drift, pre-push blocks missing locale pai
 
 ### Phase 6 — Copy-editor and doc updates
 
-- [ ] Update `.copy-editor.yaml`:
+- [x] Update `.copy-editor.yaml`:
   - Tier 1 path: `workshop-content/agenda.json` replaces the old `dashboard/lib/workshop-blueprint-agenda.json`
   - Remove the old `dashboard/lib/workshop-blueprint-localized-content.ts` path
   - Add `dashboard/lib/generated/` to exclude (generated, not hand-edited)
   - Add surface profile entries for the new paths
-- [ ] Update `docs/workshop-content-language-architecture.md` to describe the new two-tier model:
+- [x] Update `docs/workshop-content-language-architecture.md` to describe the new two-tier model:
   - Replace the "maintained source pair" section with the bilingual source + generated views model
   - Update the authoring rule, delivery rule, skill rule, review rule, and maintenance rule
-- [ ] Update `docs/workshop-content-qa.md`:
+- [x] Update `docs/workshop-content-qa.md`:
   - Add `content validation clean` as a named blocking check (the `verify:content` script)
   - Update the review-note template to include `cs_reviewed` staleness check
-- [ ] Update `AGENTS.md`:
+- [x] Update `AGENTS.md`:
   - Task routing for workshop content points at `workshop-content/agenda.json` and the generator
   - Build And Test includes `npm run generate:content` and `npm run verify:content`
   - Add a working rule: "Do not hand-edit files under `dashboard/lib/generated/` or `workshop-blueprint/agenda.json` — edit `workshop-content/agenda.json` and run the generator"
-- [ ] Write an ADR (`docs/adr/2026-04-10-unified-bilingual-content-model.md`) formalizing the two-tier decision. Reference the brainstorm.
-- [ ] Sync the portable workshop bundle with `node harness-cli/scripts/sync-workshop-bundle.mjs`.
+- [x] Write an ADR (`docs/adr/2026-04-10-unified-bilingual-content-model.md`) formalizing the two-tier decision. Reference the brainstorm.
+- [x] Sync the portable workshop bundle with `node harness-cli/scripts/sync-workshop-bundle.mjs`.
 
 Exit: all docs reflect the new model, copy-editor config updated, ADR written, bundle synced.
 

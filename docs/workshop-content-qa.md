@@ -10,6 +10,7 @@ Every meaningful content slice should be reviewed for:
 - portability and public-safe references
 - authority and citation handling
 - scene or artifact quality
+- **content validation clean** (`npm run verify:content` from dashboard/) — generated views match the bilingual source and all Tier 2 locale pairs exist
 - **Czech deterministic typography audit clean** (Layer 1 of `marvin:copy-editor`, driven by `.copy-editor.yaml`) — this is the only editorial gate scripted tooling is allowed to close on its own
 - visible-surface Czech idiom quality when Czech delivery changed (human judgment, Layer 2 suggestions from the copy-editor skill assist but do not decide)
 - clarity / ambiguity pass for participant-facing content (strict: `surface_profile: participant` in `.copy-editor.yaml`)

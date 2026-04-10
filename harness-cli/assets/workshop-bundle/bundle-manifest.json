@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.3.2",
-  "contentHash": "579eac8240790ff7974b9cfdfba7f4c2ae0c901fbf3bf312e1017ad258069174",
+  "contentHash": "b84fb3fd43e0b322020f366e965e2910a141d2ae8bcf9fcf692d8dd32f5500f0",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -31,6 +31,14 @@
     {
       "path": "content/facilitation/codex-setup-verification.md",
       "sha256": "d137a5e729a1d443713a9e8431bffe169a1058d3e64c298688a6b7924fbdf3a8"
+    },
+    {
+      "path": "content/facilitation/locales/en/codex-setup-verification.md",
+      "sha256": "22cccab9c416fd3be90ffc1b4cdacda2e9cb3dbc87996b6757fa8e892cb62b1c"
+    },
+    {
+      "path": "content/facilitation/locales/en/master-guide.md",
+      "sha256": "8457779270bc6dbcfa9ac35e1d4d6f2d0b9d6ca5f1711971cb0c575726e6c228"
     },
     {
       "path": "content/facilitation/master-guide.md",
@@ -93,6 +101,14 @@
       "sha256": "2f666585220c50901fe91443904a127e3357aa71a92e93b10eafa17100eb105c"
     },
     {
+      "path": "content/talks/locales/en/codex-demo-script.md",
+      "sha256": "9910eed4c759318b50bbb52683da4a0bf3274f376717ab15440c18317831852f"
+    },
+    {
+      "path": "content/talks/locales/en/context-is-king.md",
+      "sha256": "50f5b1bf964bdc941047f61dd59d657463aa3a23f8b5b50f1966883154ec796a"
+    },
+    {
       "path": "docs/harness-cli-foundation.md",
       "sha256": "10311d3caf8cec304d5d1694eac66623f06c100990d6f5c4d1dd1f4ba8a24bd8"
     },
@@ -134,7 +150,7 @@
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "91b4037578ce61d172e09941089b97180322552cb42bb52de87b3956e60b1ed0"
+      "sha256": "7cb25f1723945e1eb01e83ffb46eed0e3c988e3fdaed6767f513bedb9a94cf72"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
@@ -150,7 +166,7 @@
     },
     {
       "path": "workshop-blueprint/README.md",
-      "sha256": "e5cc8a87576988ce724b7ffacd86a4276aa6733bd4b9037d1f560a58da048308"
+      "sha256": "22dc35a0a1b8539b32b9c4f1ab2d6c095095a1e48078851e34d7f629e432b4fe"
     },
     {
       "path": "workshop-blueprint/teaching-spine.md",
