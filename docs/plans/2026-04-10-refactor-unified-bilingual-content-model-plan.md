@@ -106,16 +106,16 @@ Exit: old files gone, no broken references, tests green.
 
 ### Phase 5 — Tier 2 sync checker
 
-- [ ] Write `scripts/content/check-tier2-sync.ts` — Bun script that:
+- [x] Write `scripts/content/check-tier2-sync.ts` — Bun script that:
   - For every Tier 2 Czech file (`content/**/*.md`, `workshop-skill/**/*.md`, `materials/**/*.md`, excluding `locales/en/`), verifies a matching English file exists in `locales/en/`
   - For every English file, verifies a matching Czech file exists
   - Computes a content hash per file
   - Reads `cs_reviewed` from the Czech file's YAML frontmatter (or assumes `true` if not present — backwards compatible)
   - Reports mismatches: Czech file exists without English counterpart, English without Czech, `cs_reviewed: false` files
   - Exits non-zero on missing counterparts (blocking); exits zero with warnings on `cs_reviewed: false` (informational)
-- [ ] Add `cs_reviewed: true` frontmatter to each existing Tier 2 Czech file that doesn't already have it.
-- [ ] Wire `check-tier2-sync` into `npm run lint` or the `verify:content` script.
-- [ ] Run the checker. Fix any missing English counterparts (create stubs or confirm they genuinely don't need English).
+- [x] Add `cs_reviewed: true` frontmatter to each existing Tier 2 Czech file that doesn't already have it.
+- [x] Wire `check-tier2-sync` into `npm run lint` or the `verify:content` script.
+- [x] Run the checker. Fix any missing English counterparts (create stubs or confirm they genuinely don't need English).
 
 Exit: Tier 2 sync checker runs, all Czech files have English counterparts, `cs_reviewed` frontmatter present.
 
