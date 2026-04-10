@@ -153,5 +153,40 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { action: "remove" },
       });
     },
+
+    // Participant methods
+    async redeemEventAccess(eventCode) {
+      const url = `${baseUrl}/api/event-access/redeem`;
+      const response = await fetchFn(url, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          accept: "application/json",
+          origin: baseUrl,
+        },
+        body: JSON.stringify({ eventCode }),
+      });
+      const data = await response.json();
+      const setCookie = response.headers.getSetCookie?.() ?? [];
+      return { ...data, setCookie, status: response.status };
+    },
+    logoutParticipant() {
+      return request("/api/event-access/logout", { method: "POST" });
+    },
+    getBriefs() {
+      return request("/api/briefs");
+    },
+    getChallenges() {
+      return request("/api/challenges");
+    },
+    getTeams() {
+      return request("/api/teams");
+    },
+    getCheckpoints() {
+      return request("/api/checkpoints");
+    },
+    getParticipantContext() {
+      return request("/api/event-context/core");
+    },
   };
 }

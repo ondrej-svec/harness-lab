@@ -215,54 +215,50 @@ function printUsage(io, ui) {
   ui.commandList(["harness <command> [flags]"]);
   ui.blank();
 
-  ui.section("Participant");
+  ui.section("Setup");
   ui.commandList([
     helpLine("skill install [--target PATH] [--force]", "Install the workshop skill into your repo"),
   ]);
-  ui.paragraph("Most participants only need this. After install, use $workshop in your agent.");
+  ui.paragraph("After install, use the workshop skill in your coding agent.");
   ui.blank();
 
   ui.section("Authentication");
   ui.commandList([
-    helpLine("auth login [--auth device|basic|neon]", "Authenticate as a facilitator"),
+    helpLine("auth login [--code <EVENT_CODE>]", "Log in as participant (with event code)"),
+    helpLine("auth login [--auth device|basic|neon]", "Log in as facilitator"),
     helpLine("auth logout", "End the current session"),
-    helpLine("auth status", "Check session status"),
+    helpLine("auth status", "Check session status and role"),
   ]);
   ui.blank();
 
-  ui.section("Workshop — inspect");
+  ui.section("Workshop");
   ui.commandList([
-    helpLine("workshop status", "Show current state and selected instance"),
-    helpLine("workshop current-instance", "Show the locally selected instance"),
-    helpLine("workshop select-instance <id> [--clear]", "Pin an instance for subsequent commands"),
-    helpLine("workshop list-instances", "List all facilitator-visible instances"),
-    helpLine("workshop show-instance <id>", "Inspect one instance in detail"),
+    helpLine("workshop status", "Current workshop state"),
+    helpLine("workshop brief", "Your team's project brief"),
+    helpLine("workshop challenges", "Challenge cards"),
+    helpLine("workshop team", "Team info, repo, checkpoint"),
+    helpLine("workshop phase set <phase-id>", "Advance the agenda (facilitator)"),
+    helpLine("workshop participant-access [<id>]", "Inspect or rotate event code (facilitator)"),
+    helpLine("  [--rotate] [--code VALUE]", ""),
+    helpLine("workshop prepare [<id>]", "Mark instance ready (facilitator)"),
+    helpLine("workshop archive [--notes TEXT]", "Snapshot state (facilitator)"),
+    helpLine("workshop learnings", "Query rotation signals (facilitator)"),
+    helpLine("  [--tag TAG] [--instance ID]", ""),
   ]);
   ui.blank();
 
-  ui.section("Workshop — lifecycle");
+  ui.section("Instance");
   ui.commandList([
-    helpLine("workshop create-instance [<id>]", "Create a new workshop from a template"),
+    helpLine("instance create [<id>]", "Create a new workshop from a template"),
     helpLine("  [--template-id ID] [--content-lang cs|en]", ""),
     helpLine("  [--event-title TEXT] [--city CITY]", ""),
-    helpLine("workshop update-instance <id>", "Update event metadata for an instance"),
-    helpLine("  [--content-lang cs|en] [--event-title TEXT]", ""),
-    helpLine("  [--city CITY]", ""),
-    helpLine("workshop reset-instance <id> [--template-id ID]", "Reset an instance from the blueprint"),
-    helpLine("workshop prepare <id>", "Mark an instance as ready for participants"),
-    helpLine("workshop remove-instance <id>", "Soft-remove an instance from the list"),
-    helpLine("workshop archive [--notes TEXT]", "Snapshot runtime state before reset"),
-  ]);
-  ui.blank();
-
-  ui.section("Workshop — live facilitation");
-  ui.commandList([
-    helpLine("workshop phase set <phase-id>", "Advance the agenda to a phase"),
-    helpLine("workshop participant-access [<id>]", "Inspect or rotate the event code"),
-    helpLine("  [--rotate] [--code VALUE]", ""),
-    helpLine("workshop learnings", "Query the cross-cohort learnings log"),
-    helpLine("  [--tag TAG] [--instance ID]", ""),
-    helpLine("  [--cohort NAME] [--limit N]", ""),
+    helpLine("instance list", "List all facilitator-visible instances"),
+    helpLine("instance show [<id>]", "Inspect one instance in detail"),
+    helpLine("instance select <id> [--clear]", "Pin an instance for subsequent commands"),
+    helpLine("instance current", "Show the locally selected instance"),
+    helpLine("instance update [<id>]", "Update event metadata"),
+    helpLine("instance reset [<id>] [--template-id ID]", "Reset from the blueprint"),
+    helpLine("instance remove [<id>]", "Soft-remove an instance"),
   ]);
   ui.blank();
 
@@ -277,9 +273,10 @@ function printUsage(io, ui) {
   ui.section("Examples");
   ui.commandList([
     helpLine("harness skill install", "Install workshop skill here"),
-    helpLine("harness auth login", "Start device-code login"),
-    helpLine("harness workshop status", "Check what instance you target"),
-    helpLine("harness workshop learnings --tag missing_runbook", "Search learnings by tag"),
+    helpLine("harness auth login --code <EVENT_CODE>", "Log in as participant"),
+    helpLine("harness auth login", "Log in as facilitator (device flow)"),
+    helpLine("harness workshop brief", "See your team's project brief"),
+    helpLine("harness instance list", "List all workshop instances"),
   ]);
   ui.blank();
 
@@ -566,6 +563,10 @@ async function handleDeviceAuthLogin(io, ui, env, flags, deps) {
 }
 
 async function handleAuthLogin(io, ui, env, flags, deps) {
+  if (flags.code) {
+    return handleEventCodeLogin(io, ui, env, flags, deps);
+  }
+
   const authMode = String(flags.auth ?? env.HARNESS_AUTH_MODE ?? "device");
 
   if (authMode === "device") {
@@ -577,6 +578,60 @@ async function handleAuthLogin(io, ui, env, flags, deps) {
   }
 
   return handleBasicAuthLogin(io, ui, env, flags, deps);
+}
+
+async function handleEventCodeLogin(io, ui, env, flags, deps) {
+  const dashboardUrl = resolveDashboardUrl(env, flags);
+  const code = String(flags.code);
+
+  const client = createHarnessClient({
+    fetchFn: deps.fetchFn,
+    session: { dashboardUrl },
+  });
+
+  try {
+    const result = await client.redeemEventAccess(code);
+
+    if (!result.ok) {
+      ui.heading("Auth Login");
+      ui.status("error", `Event code login failed: ${result.error ?? "invalid code"}`, { stream: "stderr" });
+      return 1;
+    }
+
+    const cookieHeader = (result.setCookie ?? [])
+      .map((c) => c.split(";")[0])
+      .join("; ");
+
+    const session = {
+      authType: "event-code",
+      mode: "participant",
+      role: "participant",
+      dashboardUrl,
+      cookieHeader,
+      loggedInAt: new Date().toISOString(),
+      expiresAt: result.expiresAt ?? null,
+    };
+
+    if (!(await persistSession(io, ui, env, session))) {
+      return 1;
+    }
+
+    ui.heading("Auth Login");
+    ui.status("ok", "Logged in as participant.");
+    ui.keyValue("Dashboard", dashboardUrl);
+    ui.keyValue("Role", "participant");
+    ui.keyValue("Session storage", getSessionStorageMode(env));
+    if (result.expiresAt) {
+      ui.keyValue("Expires", result.expiresAt);
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Event code login failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
 }
 
 async function requireSession(io, ui, env) {
@@ -591,6 +646,16 @@ async function requireSession(io, ui, env) {
     ui.status("error", `Session storage failed: ${formatStorageError(error)}`, { stream: "stderr" });
     return null;
   }
+}
+
+async function requireFacilitatorSession(io, ui, env) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return null;
+  if (session.role === "participant") {
+    ui.status("error", "This command requires facilitator access. Run `harness auth login` (without --code) to authenticate as a facilitator.", { stream: "stderr" });
+    return null;
+  }
+  return session;
 }
 
 async function handleAuthStatus(io, ui, env, deps) {
@@ -620,6 +685,11 @@ async function handleAuthStatus(io, ui, env, deps) {
       }
       throw error;
     }
+  }
+
+  if (session.authType === "event-code") {
+    ui.json("Auth Status", { ok: true, session: sanitizeSession(session, env) });
+    return 0;
   }
 
   if (session.authType === "neon") {
@@ -665,6 +735,17 @@ async function handleAuthLogout(io, ui, env, deps) {
     try {
       const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
       await client.signOutAuthSession();
+    } catch (error) {
+      if (!(error instanceof HarnessApiError)) {
+        throw error;
+      }
+    }
+  }
+
+  if (session?.authType === "event-code") {
+    try {
+      const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+      await client.logoutParticipant();
     } catch (error) {
       if (!(error instanceof HarnessApiError)) {
         throw error;
@@ -1325,6 +1406,57 @@ async function handleWorkshopLearningsQuery(io, ui, env, flags) {
   return 0;
 }
 
+async function handleWorkshopBrief(io, ui, env, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.getBriefs();
+    ui.json("Workshop Brief", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to fetch briefs: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopChallenges(io, ui, env, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.getChallenges();
+    ui.json("Workshop Challenges", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to fetch challenges: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeam(io, ui, env, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.getTeams();
+    ui.json("Workshop Team", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to fetch teams: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
   const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
@@ -1393,24 +1525,21 @@ export async function runCli(argv, io, deps = {}) {
     return 0;
   }
 
-  if (scope === "workshop" && action === "current-instance") {
-    return handleWorkshopCurrentInstance(io, ui, io.env, mergedDeps);
-  }
-
-  if (scope === "workshop" && action === "select-instance") {
-    return handleWorkshopSelectInstance(io, ui, io.env, positionals, flags, mergedDeps);
-  }
-
+  // Workshop scope — the day (participant + facilitator)
   if (scope === "workshop" && action === "status") {
     return handleWorkshopStatus(io, ui, io.env, mergedDeps);
   }
 
-  if (scope === "workshop" && action === "list-instances") {
-    return handleWorkshopListInstances(io, ui, io.env, mergedDeps);
+  if (scope === "workshop" && action === "brief") {
+    return handleWorkshopBrief(io, ui, io.env, mergedDeps);
   }
 
-  if (scope === "workshop" && action === "show-instance") {
-    return handleWorkshopShowInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  if (scope === "workshop" && action === "challenges") {
+    return handleWorkshopChallenges(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team") {
+    return handleWorkshopTeam(io, ui, io.env, mergedDeps);
   }
 
   if (scope === "workshop" && action === "participant-access") {
@@ -1421,24 +1550,8 @@ export async function runCli(argv, io, deps = {}) {
     return handleWorkshopArchive(io, ui, io.env, flags, mergedDeps);
   }
 
-  if (scope === "workshop" && action === "create-instance") {
-    return handleWorkshopCreateInstance(io, ui, io.env, positionals, flags, mergedDeps);
-  }
-
-  if (scope === "workshop" && action === "update-instance") {
-    return handleWorkshopUpdateInstance(io, ui, io.env, positionals, flags, mergedDeps);
-  }
-
-  if (scope === "workshop" && action === "reset-instance") {
-    return handleWorkshopResetInstance(io, ui, io.env, positionals, flags, mergedDeps);
-  }
-
   if (scope === "workshop" && action === "prepare") {
     return handleWorkshopPrepare(io, ui, io.env, positionals, flags, mergedDeps);
-  }
-
-  if (scope === "workshop" && action === "remove-instance") {
-    return handleWorkshopRemoveInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "phase" && subaction === "set") {
@@ -1447,6 +1560,39 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "learnings") {
     return handleWorkshopLearningsQuery(io, ui, io.env, flags);
+  }
+
+  // Instance scope — infrastructure management (facilitator only)
+  if (scope === "instance" && action === "create") {
+    return handleWorkshopCreateInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "list") {
+    return handleWorkshopListInstances(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "show") {
+    return handleWorkshopShowInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "select") {
+    return handleWorkshopSelectInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "current") {
+    return handleWorkshopCurrentInstance(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "update") {
+    return handleWorkshopUpdateInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "reset") {
+    return handleWorkshopResetInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "remove") {
+    return handleWorkshopRemoveInstance(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   printUsage(io, ui);

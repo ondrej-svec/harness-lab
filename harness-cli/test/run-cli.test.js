@@ -170,7 +170,7 @@ test("workshop select-instance stores a validated local target and current-insta
   );
 
   const selectIo = createMemoryIo(env);
-  const selectExitCode = await runCli(["workshop", "select-instance", "sample-studio-b"], selectIo, { fetchFn });
+  const selectExitCode = await runCli(["instance", "select", "sample-studio-b"], selectIo, { fetchFn });
   assert.equal(selectExitCode, 0);
   assert.match(selectIo.getStdout(), /"selectedInstanceId": "sample-studio-b"/);
 
@@ -178,7 +178,7 @@ test("workshop select-instance stores a validated local target and current-insta
   assert.equal(persisted.selectedInstanceId, "sample-studio-b");
 
   const currentIo = createMemoryIo(env);
-  const currentExitCode = await runCli(["workshop", "current-instance"], currentIo, { fetchFn });
+  const currentExitCode = await runCli(["instance", "current"], currentIo, { fetchFn });
   assert.equal(currentExitCode, 0);
   assert.match(currentIo.getStdout(), /"source": "session"/);
   assert.match(currentIo.getStdout(), /"eventTitle": "Prague Hackathon"/);
@@ -214,7 +214,7 @@ test("workshop current-instance falls back to HARNESS_WORKSHOP_INSTANCE_ID when 
   );
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "current-instance"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "current"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /"source": "env"/);
   assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
@@ -306,7 +306,7 @@ test("workshop list-instances returns the facilitator-visible instance registry"
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "list-instances"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "list"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /"count": 2/);
   assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
@@ -331,7 +331,7 @@ test("workshop list-instances supports strict json output without headings", asy
   );
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["--json", "workshop", "list-instances"], io, { fetchFn });
+  const exitCode = await runCli(["--json", "instance", "list"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.doesNotMatch(io.getStdout(), /Workshop Instances/);
   assert.match(io.getStdout(), /^\{\n/);
@@ -366,7 +366,7 @@ test("workshop show-instance returns one explicit instance", async () => {
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "show-instance", "sample-studio-b"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "show", "sample-studio-b"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /"instanceId": "sample-studio-b"/);
   assert.match(io.getStdout(), /"templateId": "blueprint-default"/);
@@ -390,7 +390,7 @@ test("workshop show-instance reports missing instances clearly", async () => {
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "show-instance", "missing-instance"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "show", "missing-instance"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Show instance failed: instance not found/);
 });
@@ -588,8 +588,8 @@ test("workshop create-instance sends rich metadata and reports created state", a
   const io = createMemoryIo(env);
   const exitCode = await runCli(
     [
-      "workshop",
-      "create-instance",
+      "instance",
+      "create",
       "sample-workshop-demo-orbit",
       "--template-id",
       "blueprint-default",
@@ -651,7 +651,7 @@ test("workshop create-instance surfaces validation failures from the API", async
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "create-instance", "Sample Workshop Demo"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "create", "Sample Workshop Demo"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Create instance failed: id must be a lowercase slug/);
 });
@@ -692,8 +692,8 @@ test("workshop update-instance patches metadata through the shared instance rout
   const io = createMemoryIo(env);
   const exitCode = await runCli(
     [
-      "workshop",
-      "update-instance",
+      "instance",
+      "update",
       "sample-studio-a",
       "--content-lang",
       "en",
@@ -748,7 +748,7 @@ test("workshop update-instance falls back to the selected local instance id", as
   );
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "update-instance", "--room-name", "Dakar"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "update", "--room-name", "Dakar"], io, { fetchFn });
   assert.equal(exitCode, 0);
   assert.deepEqual(requestBody, {
     action: "update_metadata",
@@ -785,7 +785,7 @@ test("workshop reset-instance patches the shared instance route with reset seman
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(
-    ["workshop", "reset-instance", "sample-studio-a", "--template-id", "blueprint-default"],
+    ["instance", "reset", "sample-studio-a", "--template-id", "blueprint-default"],
     io,
     { fetchFn },
   );
@@ -814,7 +814,7 @@ test("workshop reset-instance reports API failures from the shared instance rout
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "reset-instance", "sample-studio-a"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "reset", "sample-studio-a"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Reset instance failed: owner role required/);
 });
@@ -874,7 +874,7 @@ test("workshop remove-instance reports owner-only failures from the API", async 
   await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
 
   const io = createMemoryIo(env);
-  const exitCode = await runCli(["workshop", "remove-instance", "sample-studio-a"], io, { fetchFn });
+  const exitCode = await runCli(["instance", "remove", "sample-studio-a"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Remove instance failed: owner role required/);
 });
@@ -1068,8 +1068,10 @@ test("help exits successfully", async () => {
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /Harness CLI/);
   assert.match(io.getStdout(), /^Usage$/m);
-  assert.match(io.getStdout(), /^Participant$/m);
+  assert.match(io.getStdout(), /^Setup$/m);
   assert.match(io.getStdout(), /^Authentication$/m);
+  assert.match(io.getStdout(), /^Workshop$/m);
+  assert.match(io.getStdout(), /^Instance$/m);
   assert.match(io.getStdout(), /^Global flags$/m);
   assert.match(io.getStdout(), /^Examples$/m);
 });
@@ -1424,7 +1426,7 @@ test("device auth can drive workshop create-instance with the brokered facilitat
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(
-    ["workshop", "create-instance", "developer-hackathon-brno-21-4-dakar", "--event-title", "Developer Hackathon Brno"],
+    ["instance", "create", "developer-hackathon-brno-21-4-dakar", "--event-title", "Developer Hackathon Brno"],
     io,
     { fetchFn },
   );

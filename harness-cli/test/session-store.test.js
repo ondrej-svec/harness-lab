@@ -126,6 +126,7 @@ test("sanitized sessions include storage mode but exclude secret fields", async 
     authType: "neon",
     dashboardUrl: "https://example.com",
     email: "facilitator@example.com",
+    role: null,
     expiresAt: null,
     loggedInAt: "2026-04-07T10:00:00.000Z",
     mode: "local-dev",
