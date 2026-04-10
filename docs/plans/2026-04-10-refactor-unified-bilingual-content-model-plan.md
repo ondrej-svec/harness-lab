@@ -2,7 +2,7 @@
 title: "refactor: unified bilingual content model"
 type: plan
 date: 2026-04-10
-status: approved
+status: in_progress
 brainstorm: ../brainstorms/2026-04-10-unified-bilingual-content-model-brainstorm.md
 confidence: medium
 ---
@@ -40,13 +40,13 @@ This is a **detailed** plan: migration touches the dashboard runtime, introduces
 
 ### Phase 0 — Schema design and validation
 
-- [ ] Design the Tier 1 bilingual JSON schema. Key decisions:
+- [x] Design the Tier 1 bilingual JSON schema. Key decisions:
   - `en`/`cs` split at the **phase level** (each phase has `en: {label, goal, roomSummary, ...}` and `cs: {...}`) with scenes and blocks nested INSIDE each language block. This keeps each language's content tree self-contained and readable.
   - `cs_reviewed: boolean` per phase and per scene. When `false`, the Czech content for that node needs review after an English change.
   - Top-level `meta` section with `en`/`cs` for workshop title, subtitle, principles.
   - Version field (`schemaVersion: 3`) so consumers can detect format changes.
-- [ ] Write a TypeScript type definition for the bilingual schema at `dashboard/lib/types/bilingual-agenda.ts` (consumed by the generator and optionally by the dashboard for type-checking).
-- [ ] Validate the schema handles every field currently in `agenda.json` and `localized-content.ts` — no field left behind. Produce a checklist of all fields from both sources.
+- [x] Write a TypeScript type definition for the bilingual schema at `dashboard/lib/types/bilingual-agenda.ts` (consumed by the generator and optionally by the dashboard for type-checking).
+- [x] Validate the schema handles every field currently in `agenda.json` and `localized-content.ts` — no field left behind. Produce a checklist of all fields from both sources.
 
 Exit: the schema is documented, typed, and verified against current content.
 
