@@ -5,6 +5,16 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.3.2 — 2026-04-10
+
+### Changed
+
+- **Redesigned `--help` output.** Commands are now grouped by workflow
+  (Participant, Authentication, Workshop inspect/lifecycle/live), each
+  with a one-line description in a two-column layout. Global flags,
+  examples, and a documentation link are shown at the bottom. The old
+  help was a flat wall of command signatures with no descriptions.
+
 ## 0.3.1 — 2026-04-10
 
 ### Added
