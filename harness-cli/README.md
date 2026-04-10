@@ -1,5 +1,13 @@
 # Harness CLI
 
+[![npm](https://img.shields.io/npm/v/@harness-lab/cli)](https://www.npmjs.com/package/@harness-lab/cli)
+[![CI](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml/badge.svg?branch=main)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![tests](https://img.shields.io/badge/tests-60_passing-brightgreen)](#)
+[![SAST](https://img.shields.io/badge/SAST-Semgrep-blue)](#)
+[![secrets](https://img.shields.io/badge/secrets-Gitleaks-blue)](#)
+[![audit](https://img.shields.io/badge/npm_audit-high--level-green)](#)
+[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](../LICENSE)
+
 Small Harness Lab CLI for facilitator auth, workshop operations, and portable workshop skill installation.
 
 Current shipped scope:

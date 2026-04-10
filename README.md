@@ -1,5 +1,13 @@
 # Harness Lab
 
+[![CI](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml/badge.svg?branch=main)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![CLI Publish](https://github.com/ondrej-svec/harness-lab/actions/workflows/harness-cli-publish.yml/badge.svg)](https://github.com/ondrej-svec/harness-lab/actions/workflows/harness-cli-publish.yml)
+[![npm](https://img.shields.io/npm/v/@harness-lab/cli?label=%40harness-lab%2Fcli)](https://www.npmjs.com/package/@harness-lab/cli)
+[![Security: Semgrep](https://img.shields.io/badge/SAST-Semgrep-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![Security: Gitleaks](https://img.shields.io/badge/secrets-Gitleaks-blue)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![npm audit](https://img.shields.io/badge/dependencies-audited-green)](https://github.com/ondrej-svec/harness-lab/actions/workflows/dashboard-ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](LICENSE)
+
 Open-source workshop template for teams working with AI coding agents on real software.
 
 Harness Lab teaches **harness engineering**: the discipline of engineering context, instructions, verification, and workflows around AI coding agents so the work survives handoffs instead of collapsing into disposable output.
