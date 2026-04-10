@@ -523,10 +523,13 @@ describe("workshop-store", () => {
 
     const state = await getWorkshopState();
 
+    // Workshop meta and agenda are localized on read
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(state.agenda[0]?.title).toBe("Opening and orientation");
-    expect(state.briefs[0]?.problem).toContain("Developers lose time");
-    expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
+    // Briefs and challenges are preserved as stored (set at reset time, not re-derived on read)
+    expect(state.briefs[0]?.problem).toContain("Vývojáři ztrácejí čas");
+    expect(state.challenges[0]?.title).toBe("Vytvořte AGENTS.md jako mapu");
+    // Ticker and setup paths are still localized from seed on read
     expect(state.setupPaths[0]?.summary).toContain("fastest path");
     expect(state.ticker[0]?.label).toBe("Team 3 just added its first custom skill.");
   });

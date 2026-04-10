@@ -5,6 +5,21 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.5.9 — 2026-04-10
+
+### Changed
+
+- **Blueprint inventory in workshop bundle.** The generated agenda views
+  (`agenda-cs.json`, `agenda-en.json`) and the public blueprint now include
+  an `inventory` section with briefs and challenges. When a facilitator resets
+  an instance with `--from-local`, the blueprint's inventory is used instead
+  of hardcoded seed data, making each workshop instance independently
+  configurable.
+
+- **Workshop skill routing.** The SKILL.md now routes brief and challenge
+  requests through the CLI (`harness --json workshop brief/challenges`) as the
+  primary source, with local content files as offline-only fallback.
+
 ## 0.5.8 — 2026-04-10
 
 ### Added
