@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { checkBotId } from "botid/server";
 import { participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
 import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
 import { isRedeemRateLimited, recordRedeemAttempt } from "@/lib/redeem-rate-limit";
@@ -15,6 +16,11 @@ export async function POST(request: Request) {
     })
   ) {
     return untrustedOriginResponse();
+  }
+
+  const botCheck = await checkBotId();
+  if (botCheck.isBot) {
+    return NextResponse.json({ ok: false, error: "denied" }, { status: 403 });
   }
 
   if (await isRedeemRateLimited(request)) {

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { checkBotId } from "botid/server";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
@@ -27,6 +28,11 @@ export async function signInAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
+  const botCheck = await checkBotId();
+  if (botCheck.isBot) {
+    return redirect(withLang("/admin/sign-in?error=denied", lang));
+  }
+
   if (!auth) {
     return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
@@ -52,6 +58,11 @@ export async function requestPasswordResetAction(formData: FormData) {
 
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const email = String(formData.get("email") ?? "").trim();
+
+  const botCheck = await checkBotId();
+  if (botCheck.isBot) {
+    return redirect(withLang("/admin/sign-in?error=denied", lang));
+  }
 
   if (!auth) {
     return redirect(withLang("/admin/sign-in?error=unavailable", lang));
