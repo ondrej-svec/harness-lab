@@ -19,8 +19,8 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.locator("#overview").getByText(/Nejde o demo promptů ani o jednorázové hacky/i)).toBeVisible();
-    await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru/i)).toBeVisible();
+    await expect(page.locator("#overview").getByText(/Nejde o demo promptů ani o hackathon energii/i)).toBeVisible();
+    await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "vstup pro facilitátora" })).toBeVisible();
 
     expect(pageErrors).toEqual([]);
@@ -33,7 +33,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
     await expect(page.getByRole("heading", { name: "enter room context" })).toBeVisible();
-    await expect(page.locator("#overview").getByText(/This is not prompt theatre or one-off hacking/i)).toBeVisible();
+    await expect(page.locator("#overview").getByText(/Not prompt demos or hackathon energy/i)).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "facilitator login" })).toBeVisible();
 
     await page.getByRole("link", { name: "harness lab" }).click();

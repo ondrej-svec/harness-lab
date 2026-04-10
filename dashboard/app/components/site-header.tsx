@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { buildSiteHeaderNavLinks } from "@/lib/public-page-view-model";
+import { buildAgentPrompt, buildSiteHeaderNavLinks } from "@/lib/public-page-view-model";
 import { publicCopy, type UiLanguage, withLang } from "@/lib/ui-language";
+import { AgentPopover } from "./agent-popover";
 import { ThemeSwitcher } from "./theme-switcher";
 
 export function SiteHeader({
@@ -40,6 +41,19 @@ export function SiteHeader({
             ))}
           </nav>
           <div className="flex items-center gap-3">
+            {!isParticipant ? (
+              <>
+                <AgentPopover
+                  label={copy.navAgents}
+                  title={copy.agentPopoverTitle}
+                  body={copy.agentPopoverBody}
+                  prompt={buildAgentPrompt()}
+                  copyLabel={copy.agentPopoverCopy}
+                  copiedLabel={copy.agentPopoverCopied}
+                />
+                <span className="text-[var(--text-muted)]">/</span>
+              </>
+            ) : null}
             <LanguageSwitcher lang={lang} csHref={csHref} enHref={enHref} />
             <span className="text-[var(--text-muted)]">/</span>
             <ThemeSwitcher />

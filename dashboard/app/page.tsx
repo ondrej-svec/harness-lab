@@ -215,6 +215,25 @@ function PublicView({
         </div>
       </section>
 
+      <section className="border-b border-[var(--border)] py-12" id="structure">
+        <div className="grid gap-10 lg:grid-cols-[0.48fr_1fr] lg:gap-16">
+          <div>
+            <SectionLabel>{copy.structureEyebrow}</SectionLabel>
+            <h2 className="mt-4 max-w-sm text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-4xl">
+              {copy.structureTitle}
+            </h2>
+          </div>
+          <div className="space-y-0">
+            <PhaseStep number="1" title={copy.structurePhase1Title} body={copy.structurePhase1Body} />
+            <PhaseStep number="2" title={copy.structurePhase2Title} body={copy.structurePhase2Body} />
+            <PhaseStep number="3" title={copy.structurePhase3Title} body={copy.structurePhase3Body} />
+            <PhaseStep number="4" title={copy.structurePhase4Title} body={copy.structurePhase4Body} />
+            <PhaseStep number="5" title={copy.structurePhase5Title} body={copy.structurePhase5Body} />
+            <p className="mt-6 text-sm leading-7 text-[var(--text-muted)]">{copy.structureOutcome}</p>
+          </div>
+        </div>
+      </section>
+
       <section className="border-b border-[var(--border)] py-12" id="details">
         <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-4 lg:gap-12">
           <div>
@@ -278,6 +297,24 @@ function SimpleRule({
 }) {
   return (
     <div className="grid gap-3 border-t border-[var(--border)] pt-5 sm:grid-cols-[220px_1fr] sm:gap-8">
+      <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
+      <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
+    </div>
+  );
+}
+
+function PhaseStep({
+  number,
+  title,
+  body,
+}: {
+  number: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="grid gap-3 border-t border-[var(--border)] py-4 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
+      <span className="text-sm font-medium tabular-nums text-[var(--text-muted)]">{number}</span>
       <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
       <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
     </div>

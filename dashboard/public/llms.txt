@@ -1,0 +1,36 @@
+# Harness Lab
+
+> A full-day workshop on working with AI coding agents so anyone can continue where your team left off. Humans steer, agents execute, the repo carries context, verification carries trust.
+
+Harness Lab is a practical workshop about harness engineering — designing context, instructions, workflow, and review loops so that AI-agent work survives another team, another facilitator, and another context window. The workshop optimizes for continuation quality, not feature count.
+
+## Workshop Structure
+
+The day follows five phases:
+
+- [Opening and framing]: Shift from hackathon energy to continuation discipline. Success is not how much code you ship, but whether the next team can pick it up.
+- [Context is King]: A live demonstration of how better context changes output quality. Why AGENTS.md, a plan, and explicit boundaries come before implementation.
+- [Build Phase]: Teams enter a real repo. Before lunch: AGENTS.md, a plan, one executable check, and the first verified step.
+- [Continuation shift]: Another team takes over your repo. They read first, diagnose second, change only after they can explain the state.
+- [Reveal and reflection]: What helped continuation and what caused friction. Signals from the day become next-week practice.
+
+## Core Principles
+
+- **Map before motion** — Before generating features, make the repo navigable. A short AGENTS.md with clear entry points and an explicit next safe step.
+- **Verify before you move on** — Anchor each meaningful step in evidence as early as possible. A smaller verified step is worth more than a faster path that falls apart later.
+- **Work so others can continue** — The next person or the next agent should not have to guess what happened. The repo should make clear what holds, what is actually verified, and what the next safe step is.
+
+## Role Shift Model
+
+The engineer's role shifts upward:
+- humans steer
+- agents execute
+- the repo carries context
+- verification carries trust
+
+## Resources
+
+- [Workshop Blueprint](workshop-blueprint/): Canonical day structure, teaching spine, and edit boundaries
+- [Teaching Spine](workshop-blueprint/teaching-spine.md): Six habits the workshop installs
+- [Day Structure](workshop-blueprint/day-structure.md): Detailed phase-by-phase design
+- [Edit Boundaries](workshop-blueprint/edit-boundaries.md): What is public vs. private in the workshop model

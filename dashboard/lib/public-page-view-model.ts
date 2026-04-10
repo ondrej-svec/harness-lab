@@ -121,7 +121,7 @@ export function buildSiteHeaderNavLinks(options: {
   return [
     { href: "#overview", label: copy.navOverview },
     { href: "#principles", label: copy.navPrinciples },
-    { href: "#details", label: copy.navDetails },
+    { href: "#structure", label: copy.structureEyebrow },
     { href: "#access", label: copy.navParticipantAccess },
     ...repoLinks,
     { href: withLang("/admin", lang), label: copy.navFacilitatorLogin },
@@ -131,6 +131,7 @@ export function buildSiteHeaderNavLinks(options: {
 export function buildPublicFooterLinks(lang: UiLanguage, copy: PublicCopy): HeaderNavLink[] {
   return [
     { href: "#overview", label: copy.footerTop },
+    { href: "#structure", label: copy.structureEyebrow },
     { href: "#access", label: copy.footerParticipantAccess },
     ...(getBlueprintRepoUrl() ? [{ href: getBlueprintRepoUrl()!, label: copy.footerBlueprint, external: true }] : []),
     ...(getPublicRepoUrl() ? [{ href: getPublicRepoUrl()!, label: copy.navRepo, external: true }] : []),
@@ -215,6 +216,18 @@ export function formatEventAccessError(value: string, copy: PublicCopy) {
     default:
       return copy.unknownCodeError;
   }
+}
+
+export function buildAgentPrompt(): string {
+  const blueprintUrl = getBlueprintRepoUrl();
+  const parts = [
+    "Explain what Harness Lab is — a workshop about working with AI coding agents in teams.",
+    "Use the workshop blueprint for context:",
+  ];
+  if (blueprintUrl) {
+    parts.push(blueprintUrl);
+  }
+  return parts.join(" ");
 }
 
 export { getBlueprintRepoUrl, getPublicRepoUrl };

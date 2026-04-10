@@ -23,9 +23,9 @@ export const publicCopy = {
     navNotes: "poznámky",
     navFacilitatorLogin: "vstup pro facilitátora",
     heroEyebrow: "workshop pro týmy, které pracují s ai coding agenty",
-    heroLead: "Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty na skutečném softwaru.",
+    heroLead: "Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další.",
     heroBody:
-      "Nejde o demo promptů ani o jednorázové hacky. Jde o kontext, rozhodnutí, ověřování a způsob práce, na který může navázat další člověk i další agent.",
+      "Nejde o demo promptů ani o hackathon energii. Lidé řídí, agenti vykonávají, repo nese kontext a ověření nese důvěru. Úspěch je, když na práci dokáže navázat další tým bez autorů v místnosti.",
     blueprintLink: "otevřít workshop blueprint",
     blueprintHint:
       "Veřejný blueprint workshopu: jak je postavený den, co patří do repa a co až do živé workshop instance.",
@@ -50,6 +50,31 @@ export const publicCopy = {
     principleThreeTitle: "pracujte tak, aby se dalo navázat",
     principleThreeBody:
       "Další člověk ani další agent nemá hádat, co se stalo. V repu má být jasné, co platí, co je skutečně ověřené a jaký je bezpečný další krok.",
+    structureEyebrow: "struktura dne",
+    structureTitle: "pět fází, které den drží pohromadě.",
+    structurePhase1Title: "otevření a zarámování",
+    structurePhase1Body:
+      "Přepnout z hackathon energie na disciplínu pokračování. Úspěch není kolik kódu vznikne, ale jestli další tým dokáže navázat.",
+    structurePhase2Title: "context is king",
+    structurePhase2Body:
+      "Praktická ukázka, jak lepší kontext mění kvalitu výstupu. Proč AGENTS.md, plán a explicitní hranice předchází implementaci.",
+    structurePhase3Title: "první build",
+    structurePhase3Body:
+      "Týmy vstupují do reálného repa. Před obědem: AGENTS.md, plán, první spustitelný check a první ověřený krok.",
+    structurePhase4Title: "continuation shift",
+    structurePhase4Body:
+      "Jiný tým přebírá vaše repo. Nejdřív čte, pak diagnostikuje, teprve pak mění. Co přežije bez autorů v místnosti?",
+    structurePhase5Title: "reveal a reflexe",
+    structurePhase5Body:
+      "Co pomohlo pokračování a co způsobilo tření. Signály z dne se promění v praxi na příští týden.",
+    structureOutcome:
+      "Workshop neoptimalizuje na počet features. Optimalizuje na kvalitu pokračování.",
+    navAgents: "pro agenty",
+    agentPopoverTitle: "kontext pro vašeho agenta",
+    agentPopoverBody:
+      "Zkopírujte prompt a nechte svého AI agenta vysvětlit, co je Harness Lab a jak workshop funguje.",
+    agentPopoverCopy: "zkopírovat",
+    agentPopoverCopied: "zkopírováno",
     detailsWhat: "co to je",
     detailsWhatBody:
       "Harness Lab je praktický workshop o tom, jak používat AI coding agenty při skutečné týmové práci na softwaru. Důraz je na způsob práce, který zůstává srozumitelný, ověřitelný a použitelný i po dalším předání.",
@@ -105,9 +130,9 @@ export const publicCopy = {
     navNotes: "notes",
     navFacilitatorLogin: "facilitator login",
     heroEyebrow: "workshop for teams working with ai coding agents",
-    heroLead: "A full-day workshop on how teams work with AI coding agents on real software.",
+    heroLead: "A full-day workshop on working with AI coding agents so anyone can continue where your team left off.",
     heroBody:
-      "This is not prompt theatre or one-off hacking. It is about context, decisions, verification, and a way of working that another person or another agent can continue.",
+      "Not prompt demos or hackathon energy. Humans steer, agents execute, the repo carries context, verification carries trust. Success is when another team can continue the work without the authors in the room.",
     blueprintLink: "open workshop blueprint",
     blueprintHint:
       "The public workshop blueprint: how the day is structured, what belongs in the repo, and what only exists in the live workshop instance.",
@@ -132,6 +157,31 @@ export const publicCopy = {
     principleThreeTitle: "work so others can continue",
     principleThreeBody:
       "The next person or the next agent should not have to guess what happened. The repo should make clear what holds, what is actually verified, and what the next safe step is.",
+    structureEyebrow: "day structure",
+    structureTitle: "five phases that hold the day together.",
+    structurePhase1Title: "opening and framing",
+    structurePhase1Body:
+      "Shift from hackathon energy to continuation discipline. Success is not how much code you ship, but whether the next team can pick it up.",
+    structurePhase2Title: "context is king",
+    structurePhase2Body:
+      "A live demonstration of how better context changes output quality. Why AGENTS.md, a plan, and explicit boundaries come before implementation.",
+    structurePhase3Title: "build phase",
+    structurePhase3Body:
+      "Teams enter a real repo. Before lunch: AGENTS.md, a plan, one executable check, and the first verified step.",
+    structurePhase4Title: "continuation shift",
+    structurePhase4Body:
+      "Another team takes over your repo. They read first, diagnose second, change only after they can explain the state. What survives without the authors in the room?",
+    structurePhase5Title: "reveal and reflection",
+    structurePhase5Body:
+      "What helped continuation and what caused friction. Signals from the day become next-week practice.",
+    structureOutcome:
+      "The workshop does not optimize for feature count. It optimizes for continuation quality.",
+    navAgents: "for agents",
+    agentPopoverTitle: "context for your agent",
+    agentPopoverBody:
+      "Copy the prompt and let your AI agent explain what Harness Lab is and how the workshop works.",
+    agentPopoverCopy: "copy",
+    agentPopoverCopied: "copied",
     detailsWhat: "what it is",
     detailsWhatBody:
       "Harness Lab is a practical workshop about using AI coding agents in real team software work. The focus is on a way of working that stays understandable, verifiable, and usable through handoffs.",
