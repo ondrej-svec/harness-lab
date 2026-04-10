@@ -187,19 +187,19 @@ jobs:
         uses: sigstore/cosign-installer@cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003 # v4.1.1
 
       - name: Sign tarball with cosign (keyless)
+        working-directory: .
         shell: bash
         env:
           TARBALL: ${{ needs.verify-cli-package.outputs.tarball_name }}
         run: |
-          ls -la "${TARBALL}"
           cosign sign-blob --yes \
             --output-signature "${TARBALL}.sig" \
             --output-certificate "${TARBALL}.pem" \
             --bundle "${TARBALL}.sigstore" \
             "${TARBALL}"
-          ls -la "${TARBALL}"*
 
       - name: Upload signed artifacts to GitHub Release
+        working-directory: .
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
