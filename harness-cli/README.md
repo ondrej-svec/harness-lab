@@ -6,6 +6,7 @@
 [![SAST](https://img.shields.io/badge/SAST-Semgrep-blue)](#)
 [![secrets](https://img.shields.io/badge/secrets-Gitleaks-blue)](#)
 [![audit](https://img.shields.io/badge/npm_audit-high--level-green)](#)
+[![codecov](https://codecov.io/gh/ondrej-svec/harness-lab/graph/badge.svg?flag=harness-cli)](https://codecov.io/gh/ondrej-svec/harness-lab)
 [![License: MIT](https://img.shields.io/badge/license-MIT-brightgreen)](../LICENSE)
 
 Small Harness Lab CLI for facilitator auth, workshop operations, and portable workshop skill installation.
