@@ -202,39 +202,87 @@ function resolveCurrentInstanceTarget(session, env) {
   };
 }
 
+function helpLine(command, description) {
+  return description ? `${command.padEnd(48)} ${description}` : `    ${command}`;
+}
+
 function printUsage(io, ui) {
   ui.heading("Harness CLI");
-  ui.paragraph(`Version ${version}`);
+  ui.paragraph(`Workshop toolkit for teams working with AI coding agents. Version ${version}.`);
   ui.blank();
+
   ui.section("Usage");
+  ui.commandList(["harness <command> [flags]"]);
+  ui.blank();
+
+  ui.section("Participant");
   ui.commandList([
-    "harness [--json] <command>",
-    "harness --help",
-    "harness --version",
-    "harness version",
+    helpLine("skill install [--target PATH] [--force]", "Install the workshop skill into your repo"),
   ]);
   ui.blank();
-  ui.section("Commands");
+
+  ui.section("Authentication");
   ui.commandList([
-    "harness auth login [--auth device|basic|neon] [--dashboard-url URL] [--username USER] [--email EMAIL] [--password PASS] [--no-open]",
-    "harness auth logout",
-    "harness auth status",
-    "harness skill install [--target PATH] [--force]",
-    "harness workshop current-instance",
-    "harness workshop select-instance <instance-id> [--clear]",
-    "harness workshop status",
-    "harness workshop list-instances",
-    "harness workshop show-instance <instance-id>",
-    "harness workshop participant-access [<instance-id>] [--rotate] [--code VALUE]",
-    "harness workshop archive [--notes TEXT]",
-    "harness workshop create-instance [<instance-id>] [--template-id ID] [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
-    "harness workshop update-instance <instance-id> [--content-lang cs|en] [--event-title TEXT] [--city CITY]",
-    "harness workshop reset-instance <instance-id> [--template-id ID]",
-    "harness workshop prepare <instance-id>",
-    "harness workshop remove-instance <instance-id>",
-    "harness workshop phase set <phase-id>",
-    "harness workshop learnings [--tag TAG] [--instance ID] [--cohort NAME] [--limit N]",
+    helpLine("auth login [--auth device|basic|neon]", "Authenticate as a facilitator"),
+    helpLine("auth logout", "End the current session"),
+    helpLine("auth status", "Check session status"),
   ]);
+  ui.blank();
+
+  ui.section("Workshop — inspect");
+  ui.commandList([
+    helpLine("workshop status", "Show current state and selected instance"),
+    helpLine("workshop current-instance", "Show the locally selected instance"),
+    helpLine("workshop select-instance <id> [--clear]", "Pin an instance for subsequent commands"),
+    helpLine("workshop list-instances", "List all facilitator-visible instances"),
+    helpLine("workshop show-instance <id>", "Inspect one instance in detail"),
+  ]);
+  ui.blank();
+
+  ui.section("Workshop — lifecycle");
+  ui.commandList([
+    helpLine("workshop create-instance [<id>]", "Create a new workshop from a template"),
+    helpLine("  [--template-id ID] [--content-lang cs|en]", ""),
+    helpLine("  [--event-title TEXT] [--city CITY]", ""),
+    helpLine("workshop update-instance <id>", "Update event metadata for an instance"),
+    helpLine("  [--content-lang cs|en] [--event-title TEXT]", ""),
+    helpLine("  [--city CITY]", ""),
+    helpLine("workshop reset-instance <id> [--template-id ID]", "Reset an instance from the blueprint"),
+    helpLine("workshop prepare <id>", "Mark an instance as ready for participants"),
+    helpLine("workshop remove-instance <id>", "Soft-remove an instance from the list"),
+    helpLine("workshop archive [--notes TEXT]", "Snapshot runtime state before reset"),
+  ]);
+  ui.blank();
+
+  ui.section("Workshop — live facilitation");
+  ui.commandList([
+    helpLine("workshop phase set <phase-id>", "Advance the agenda to a phase"),
+    helpLine("workshop participant-access [<id>]", "Inspect or rotate the event code"),
+    helpLine("  [--rotate] [--code VALUE]", ""),
+    helpLine("workshop learnings", "Query the cross-cohort learnings log"),
+    helpLine("  [--tag TAG] [--instance ID]", ""),
+    helpLine("  [--cohort NAME] [--limit N]", ""),
+  ]);
+  ui.blank();
+
+  ui.section("Global flags");
+  ui.commandList([
+    helpLine("--json", "Output machine-readable JSON"),
+    helpLine("--help", "Show this help"),
+    helpLine("--version", "Print version"),
+  ]);
+  ui.blank();
+
+  ui.section("Examples");
+  ui.commandList([
+    helpLine("harness skill install", "Install workshop skill here"),
+    helpLine("harness auth login", "Start device-code login"),
+    helpLine("harness workshop status", "Check what instance you target"),
+    helpLine("harness workshop learnings --tag missing_runbook", "Search learnings by tag"),
+  ]);
+  ui.blank();
+
+  ui.paragraph("Documentation: https://github.com/ondrej-svec/harness-lab");
 }
 
 function printVersion(io) {

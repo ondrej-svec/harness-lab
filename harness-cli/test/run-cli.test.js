@@ -1068,7 +1068,10 @@ test("help exits successfully", async () => {
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /Harness CLI/);
   assert.match(io.getStdout(), /^Usage$/m);
-  assert.match(io.getStdout(), /^Commands$/m);
+  assert.match(io.getStdout(), /^Participant$/m);
+  assert.match(io.getStdout(), /^Authentication$/m);
+  assert.match(io.getStdout(), /^Global flags$/m);
+  assert.match(io.getStdout(), /^Examples$/m);
 });
 
 test("version exits successfully", async () => {
