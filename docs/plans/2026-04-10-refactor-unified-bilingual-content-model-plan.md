@@ -119,6 +119,31 @@ Exit: old files gone, no broken references, tests green.
 
 Exit: Tier 2 sync checker runs, all Czech files have English counterparts, `cs_reviewed` frontmatter present.
 
+### Phase 5.5 — Git hooks and CI enforcement
+
+The scripts from Phases 2 and 5 need to run **automatically**, not only when someone remembers to lint. This phase wires them into git hooks and CI so drift is caught before it reaches `main`.
+
+- [ ] **Pre-commit hook** (via `.husky/pre-commit` or a simple `.git/hooks/pre-commit` script):
+  - Runs `bun scripts/content/generate-views.ts --verify` (a `--verify` flag that generates to a temp dir and diffs against the committed generated files, without overwriting). If the diff is non-empty, the commit is blocked with a message: *"Generated content files are out of date. Run `npm run generate:content` first, or edit `workshop-content/agenda.json` instead of the generated files."*
+  - Fast: only runs when staged files include anything under `workshop-content/` or `dashboard/lib/generated/`. Skip the check otherwise (don't slow down unrelated commits).
+- [ ] **Pre-push hook** (`.husky/pre-push` or `.git/hooks/pre-push`):
+  - Runs `bun scripts/content/check-tier2-sync.ts`. Blocks the push if any Czech file is missing its English counterpart (hard error). Warns (but does not block) on `cs_reviewed: false` files — content may be in-flight.
+  - Also runs `verify:content` as a safety net in case the pre-commit hook was bypassed.
+- [ ] **GitHub Actions CI workflow** (`.github/workflows/content-integrity.yml`):
+  - Triggers on: push to `main`, pull requests targeting `main`.
+  - Steps:
+    1. Checkout
+    2. `bun install` (for scripts)
+    3. `bun scripts/content/generate-views.ts --verify` — fails if generated files don't match source
+    4. `bun scripts/content/check-tier2-sync.ts` — fails on missing counterparts
+    5. `bun ../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts --config .copy-editor.yaml` — fails on Layer 1 errors
+  - This is the real enforcement. Everything else (hooks, lint) can be bypassed; CI cannot.
+- [ ] **`cs_reviewed: false` threshold decision**: CI warns on stale nodes but does NOT block. Rationale: English-first changes are expected to land before Czech adaptation catches up. Blocking on staleness would prevent incremental English authoring. The warning ensures visibility; the Layer 2 in-slice doctrine ensures the adaptation happens in the same work stream.
+- [ ] Wire `npm run verify:content` as a single command that runs both `generate-views.ts --verify` and `check-tier2-sync.ts` — used by hooks, CI, and manual `npm run lint`.
+- [ ] Document the hooks in `AGENTS.md` Build And Test section: what each hook checks, how to bypass in emergency (`--no-verify` with documented reason), and how to add the hooks after a fresh clone (if using husky: `npx husky install`; if using raw git hooks: document the script).
+
+Exit: pre-commit blocks generated-file drift, pre-push blocks missing locale pairs, CI catches everything on every push/PR. `cs_reviewed: false` is visible but non-blocking.
+
 ### Phase 6 — Copy-editor and doc updates
 
 - [ ] Update `.copy-editor.yaml`:
@@ -233,10 +258,11 @@ Mitigation: Phase 5 creates missing English stubs. The checker distinguishes "mi
 | 3 | 2 | Dashboard import migration: use generated views |
 | 4 | 3 | Delete old files, update references |
 | 5 | 0 | Tier 2 sync checker (can run in parallel with 1–4) |
-| 6 | 4, 5 | Copy-editor, doc, and ADR updates |
+| 5.5 | 2, 5 | Git hooks (pre-commit, pre-push) + GitHub Actions CI workflow |
+| 6 | 4, 5, 5.5 | Copy-editor, doc, and ADR updates |
 | 7 | 4 | Public blueprint generation (optional — evaluate quality) |
 
-Phase 5 is independent of Phases 1–4 and can run in parallel. All other phases are sequential.
+Phase 5 is independent of Phases 1–4 and can run in parallel. Phase 5.5 depends on the generator (Phase 2) and the sync checker (Phase 5) existing so the hooks can call them. All other phases are sequential.
 
 ## References
 
