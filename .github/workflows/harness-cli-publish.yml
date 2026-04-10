@@ -11,6 +11,8 @@ on:
     types:
       - published
 
+permissions: read-all
+
 concurrency:
   group: harness-cli-publish-${{ github.event_name }}-${{ github.event.release.tag_name || inputs.release_tag || github.ref }}
   cancel-in-progress: false
@@ -29,9 +31,9 @@ jobs:
       release_tag: ${{ steps.release_meta.outputs.release_tag }}
       tarball_name: ${{ steps.pack.outputs.tarball_name }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 22
 
@@ -106,7 +108,7 @@ jobs:
           ../tmp/harness-cli-release-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-release-target
 
       - name: Upload packed tarball
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
           name: harness-cli-tarball
           path: harness-cli/${{ steps.pack.outputs.tarball_name }}
@@ -129,12 +131,12 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
 
       - name: Secret scan (Gitleaks)
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@dcedce43c6f43de0b836d1fe38946645c9c638dc # v2
         with:
           args: detect --source . --no-git
 
@@ -156,9 +158,9 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
         with:
           node-version: 22
           registry-url: "https://registry.npmjs.org"
