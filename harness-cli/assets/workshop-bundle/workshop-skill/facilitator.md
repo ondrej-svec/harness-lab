@@ -331,6 +331,14 @@ Preferred path:
 harness instance reset sample-workshop-demo-orbit --template-id blueprint-default
 ```
 
+To reset from local blueprint files without waiting for a deployment:
+
+```bash
+harness instance reset sample-workshop-demo-orbit --from-local
+```
+
+The `--from-local` flag reads the generated blueprint from `dashboard/lib/generated/agenda-{lang}.json` on disk and sends it directly to the server. This is useful when workshop content has changed locally (e.g. after editing `workshop-content/agenda.json` and running `bun scripts/content/generate-views.ts`) but the dashboard has not been redeployed yet.
+
 Raw API reference:
 
 ```http
@@ -343,12 +351,27 @@ Content-Type: application/json
 }
 ```
 
+To send a local blueprint in the API call, include the full agenda JSON as the `blueprint` field:
+
+```http
+PATCH {DASHBOARD_URL}/api/workshop/instances/{instanceId}
+Content-Type: application/json
+
+{
+  "action": "reset",
+  "templateId": "blueprint-default",
+  "blueprint": { ...contents of agenda-cs.json or agenda-en.json... }
+}
+```
+
 Rules:
 - use this when the goal is to re-import fresh blueprint-owned workshop content into an existing instance
 - warn that reset archives current runtime state first and then clears live runtime state for the instance
 - prefer `update-instance` for ordinary metadata corrections; reset is the high-impact operation
 - if the facilitator does not specify a template, keep the current template unless there is a clear reason to switch
 - if the facilitator already selected a local current instance, the CLI may omit `<instance-id>` and use the stored target
+- when content changes are local and not yet deployed, suggest `--from-local` instead of waiting for a deployment
+- the `--from-local` workflow is: edit `workshop-content/agenda.json` → run `bun scripts/content/generate-views.ts` → `harness instance reset <id> --from-local`
 
 ### `/workshop facilitator prepare`
 

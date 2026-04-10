@@ -2,7 +2,7 @@ import blueprintAgendaCs from "./generated/agenda-cs.json";
 import blueprintAgendaEn from "./generated/agenda-en.json";
 import { resolveRepoLinkedHref } from "./repo-links";
 
-type BlueprintAgenda = typeof blueprintAgendaCs;
+export type BlueprintAgenda = typeof blueprintAgendaCs;
 
 function getBlueprintAgenda(contentLang: WorkshopContentLanguage): BlueprintAgenda {
   return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : blueprintAgendaCs;
@@ -670,8 +670,9 @@ function createSampleWorkshopMeta(input: {
 export function createAgendaFromBlueprint(
   contentLang: WorkshopContentLanguage,
   currentPhaseId?: string,
+  externalBlueprint?: BlueprintAgenda,
 ): AgendaItem[] {
-  const agenda = getBlueprintAgenda(contentLang);
+  const agenda = externalBlueprint ?? getBlueprintAgenda(contentLang);
   const phases = agenda.phases as WorkshopBlueprintPhase[];
   const phaseId =
     currentPhaseId ??
@@ -1368,9 +1369,10 @@ export function createWorkshopInstanceRecord(input: {
   };
 }
 
-export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord): WorkshopState {
+export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord, externalBlueprint?: BlueprintAgenda): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
-  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, getBlueprintAgenda(instance.workshopMeta.contentLang).phases[0]?.id);
+  const blueprintSource = externalBlueprint ?? getBlueprintAgenda(instance.workshopMeta.contentLang);
+  const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintSource.phases[0]?.id, externalBlueprint);
   const inventory = createWorkshopInventory(instance.workshopMeta.contentLang);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;
 
@@ -1402,6 +1404,7 @@ export function createWorkshopStateFromTemplate(
   templateId: string,
   instanceId?: string,
   contentLang?: WorkshopContentLanguage,
+  externalBlueprint?: BlueprintAgenda,
 ): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === templateId) ?? workshopTemplates[0];
   return createWorkshopStateFromInstance(
@@ -1411,5 +1414,6 @@ export function createWorkshopStateFromTemplate(
       contentLang,
       workshopMeta: createWorkshopMetaFromTemplate(template, contentLang),
     }),
+    externalBlueprint,
   );
 }

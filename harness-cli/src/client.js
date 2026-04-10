@@ -132,12 +132,13 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { action: "update_metadata", ...input },
       });
     },
-    resetWorkshopInstance(instanceId, templateId) {
+    resetWorkshopInstance(instanceId, templateId, blueprint) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}`, {
         method: "PATCH",
         body: {
           action: "reset",
           ...(templateId ? { templateId } : {}),
+          ...(blueprint ? { blueprint } : {}),
         },
       });
     },

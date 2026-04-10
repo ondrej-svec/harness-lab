@@ -96,7 +96,8 @@ After a workshop:
 When public workshop content changes before an upcoming event:
 - refresh the portable bundle first so installer-facing workshop guidance matches the repo sources
 - treat existing instances as stale if the change affects blueprint-owned agenda, presenter, or participant-facing content that was imported during instance creation
-- re-import the affected instance from the current blueprint with `harness workshop reset-instance <instance-id> [--template-id blueprint-default]`
+- re-import the affected instance from the current blueprint with `harness instance reset <instance-id> [--template-id blueprint-default]`
+- to skip the deployment wait, use `harness instance reset <instance-id> --from-local` after running `bun scripts/content/generate-views.ts` locally
 - do not reset just for dashboard-only code changes unless the imported instance content itself changed
 
 ### 5. Archive

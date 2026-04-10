@@ -9,6 +9,7 @@ import {
   createWorkshopStateFromTemplate,
   getBlueprintWorkshopMetaCopy,
   type AgendaItem,
+  type BlueprintAgenda,
   type FacilitatorRunner,
   type MonitoringSnapshot,
   type PresenterBlock,
@@ -1323,7 +1324,7 @@ export async function applyRuntimeRetentionPolicy(instanceId = getCurrentWorksho
   ]);
 }
 
-export async function resetWorkshopState(templateId = workshopTemplates[0]?.id || "blueprint-default", instanceId = getCurrentWorkshopInstanceId()) {
+export async function resetWorkshopState(templateId = workshopTemplates[0]?.id || "blueprint-default", instanceId = getCurrentWorkshopInstanceId(), externalBlueprint?: BlueprintAgenda) {
   await createWorkshopArchive({
     reason: "reset",
     notes: `Automatic pre-reset archive for template ${templateId}`,
@@ -1339,6 +1340,7 @@ export async function resetWorkshopState(templateId = workshopTemplates[0]?.id |
     templateId,
     instanceId,
     existingInstance ? resolveStoredContentLanguage(existingInstance.workshopMeta.contentLang) : undefined,
+    externalBlueprint,
   );
   if (existingInstance) {
     const nextWorkshopMeta = {

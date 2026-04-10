@@ -152,6 +152,46 @@ async function promptWorkshopMetadataInput(io) {
   return values;
 }
 
+async function findRepoRoot(startDir) {
+  let dir = startDir;
+  while (true) {
+    try {
+      await fs.access(path.join(dir, "workshop-content", "agenda.json"));
+      return dir;
+    } catch {
+      const parent = path.dirname(dir);
+      if (parent === dir) return null;
+      dir = parent;
+    }
+  }
+}
+
+async function readLocalBlueprint(io, ui, flags) {
+  const contentLang = readStringFlag(flags, "content-lang", "content-language") ?? "cs";
+  const langFile = contentLang === "en" ? "agenda-en.json" : "agenda-cs.json";
+
+  const repoRoot = await findRepoRoot(process.cwd());
+  if (!repoRoot) {
+    ui.status("error", "Cannot find repo root (no workshop-content/agenda.json found above cwd).", { stream: "stderr" });
+    return null;
+  }
+
+  const generatedPath = path.join(repoRoot, "dashboard", "lib", "generated", langFile);
+  try {
+    const raw = await fs.readFile(generatedPath, "utf-8");
+    const blueprint = JSON.parse(raw);
+    ui.status("ok", `Loaded local blueprint from ${path.relative(process.cwd(), generatedPath)} (${blueprint.phases?.length ?? "?"} phases)`);
+    return blueprint;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      ui.status("error", `Local blueprint not found at ${generatedPath}. Run: bun scripts/content/generate-views.ts`, { stream: "stderr" });
+    } else {
+      ui.status("error", `Failed to read local blueprint: ${error.message}`, { stream: "stderr" });
+    }
+    return null;
+  }
+}
+
 function summarizeWorkshopInstance(instance) {
   const workshopMeta = instance?.workshopMeta ?? {};
 
@@ -258,6 +298,7 @@ function printUsage(io, ui) {
     helpLine("instance current", "Show the locally selected instance"),
     helpLine("instance update [<id>]", "Update event metadata"),
     helpLine("instance reset [<id>] [--template-id ID]", "Reset from the blueprint"),
+    helpLine("  [--from-local]", "Use local blueprint (no deploy needed)"),
     helpLine("instance remove [<id>]", "Soft-remove an instance"),
   ]);
   ui.blank();
@@ -1224,16 +1265,27 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
     return 1;
   }
 
+  const fromLocal = flags["from-local"] === true || flags["local"] === true;
+  let blueprint;
+  if (fromLocal) {
+    blueprint = await readLocalBlueprint(io, ui, flags);
+    if (!blueprint) {
+      return 1;
+    }
+  }
+
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const result = await client.resetWorkshopInstance(
       instanceId,
       readStringFlag(flags, "template-id", "template"),
+      blueprint,
     );
     ui.json("Workshop Reset Instance", result);
     if (result.contentSummary) {
       const s = result.contentSummary;
-      ui.status("ok", `Reset ${instanceId}: ${s.phases} phases, ${s.scenes} scenes, ${s.briefs} briefs, ${s.challenges} challenges`);
+      const source = fromLocal ? " (from local blueprint)" : "";
+      ui.status("ok", `Reset ${instanceId}: ${s.phases} phases, ${s.scenes} scenes, ${s.briefs} briefs, ${s.challenges} challenges${source}`);
     }
     return 0;
   } catch (error) {

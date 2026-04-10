@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { parseWorkshopInstanceMetadataUpdateBody } from "@/lib/workshop-instance-api";
-import { workshopTemplates } from "@/lib/workshop-data";
+import { workshopTemplates, type BlueprintAgenda } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { prepareWorkshopInstance, removeWorkshopInstance, resetWorkshopState, updateWorkshopInstanceMetadata } from "@/lib/workshop-store";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
@@ -32,6 +32,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const body = (await request.json()) as {
     action?: "prepare" | "reset" | "remove" | "update" | "update_metadata";
     templateId?: string;
+    blueprint?: Record<string, unknown>;
   };
   const action = body.action ?? "prepare";
   const facilitator = await getFacilitatorSession(id);
@@ -68,7 +69,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     return NextResponse.json({ ok: true });
   }
 
-  const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id, id);
+  const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id, id, body.blueprint as BlueprintAgenda | undefined);
   return NextResponse.json({
     ok: true,
     workshopId: state.workshopId,
