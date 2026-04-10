@@ -44,9 +44,9 @@ Note:
 Preferred operator flow after login:
 
 ```bash
-harness workshop list-instances
-harness workshop select-instance sample-workshop-demo-orbit
-harness workshop current-instance
+harness instance list
+harness instance select sample-workshop-demo-orbit
+harness instance current
 harness workshop status
 ```
 
@@ -83,7 +83,7 @@ Use this for the current default or selected workshop context.
 If the facilitator needs the full workspace registry first, use `list-instances` instead of probing local session files or writing raw authenticated fetch scripts.
 
 Targeting behavior:
-- if the facilitator previously ran `harness workshop select-instance <instance-id>`, `status` reports that selected instance
+- if the facilitator previously ran `harness instance select <instance-id>`, `status` reports that selected instance
 - if no local selection exists, `status` falls back to the deployment-default workshop context
 - for exact machine parsing, prefer `harness --json workshop status`
 
@@ -92,7 +92,7 @@ Targeting behavior:
 Preferred path:
 
 ```bash
-harness workshop current-instance
+harness instance current
 ```
 
 Show:
@@ -109,13 +109,13 @@ Rules:
 Preferred path:
 
 ```bash
-harness workshop select-instance sample-workshop-demo-orbit
+harness instance select sample-workshop-demo-orbit
 ```
 
 Clear the stored selection:
 
 ```bash
-harness workshop select-instance --clear
+harness instance select --clear
 ```
 
 Rules:
@@ -129,7 +129,7 @@ Rules:
 Preferred path:
 
 ```bash
-harness workshop list-instances
+harness instance list
 ```
 
 Show:
@@ -149,14 +149,14 @@ Rules:
 - prefer this over inspecting local session files or composing one-off authenticated scripts
 - use it when the facilitator needs to discover which live instances exist before reset, update, or scene work
 - keep raw API usage as a diagnostic fallback, not the default operator workflow
-- when an agent needs to parse the output, prefer `harness --json workshop list-instances`
+- when an agent needs to parse the output, prefer `harness --json instance list`
 
 ### `/workshop facilitator show-instance <instance-id>`
 
 Preferred path:
 
 ```bash
-harness workshop show-instance sample-workshop-demo-orbit
+harness instance show sample-workshop-demo-orbit
 ```
 
 Show:
@@ -240,7 +240,7 @@ Requires `owner` role.
 The preferred path is a CLI command over the shared runtime API:
 
 ```bash
-harness workshop create-instance sample-workshop-demo-orbit \
+harness instance create sample-workshop-demo-orbit \
   --template-id blueprint-default \
   --content-lang en \
   --event-title "Sample Workshop Demo" \
@@ -286,7 +286,7 @@ Notes for the skill:
 Preferred path:
 
 ```bash
-harness workshop update-instance sample-workshop-demo-orbit \
+harness instance update sample-workshop-demo-orbit \
   --content-lang en \
   --event-title "Sample Workshop Demo" \
   --date-range "June 15, 2026" \
@@ -328,7 +328,7 @@ Rules:
 Preferred path:
 
 ```bash
-harness workshop reset-instance sample-workshop-demo-orbit --template-id blueprint-default
+harness instance reset sample-workshop-demo-orbit --template-id blueprint-default
 ```
 
 Raw API reference:
@@ -375,7 +375,7 @@ If a local current instance is already selected, the CLI may omit `<instance-id>
 Preferred path:
 
 ```bash
-harness workshop remove-instance sample-workshop-demo-orbit
+harness instance remove sample-workshop-demo-orbit
 ```
 
 Raw API reference:

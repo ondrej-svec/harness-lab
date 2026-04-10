@@ -52,26 +52,26 @@ When an agent needs machine-readable output, prefer `harness --json workshop sta
 ### `workshop facilitator current-instance`
 
 Show the locally selected facilitator target, where it came from, and the resolved instance record.
-Prefer invoking `harness workshop current-instance`.
+Prefer invoking `harness instance current`.
 Use this to confirm the CLI target before update, reset, prepare, remove, or phase operations.
 
 ### `workshop facilitator select-instance <instance-id>`
 
 Persist a facilitator-local current target for later workshop commands.
-Prefer invoking `harness workshop select-instance <instance-id>`.
-Use `harness workshop select-instance --clear` to remove the stored selection.
+Prefer invoking `harness instance select <instance-id>`.
+Use `harness instance select --clear` to remove the stored selection.
 
 ### `workshop facilitator list-instances`
 
 List the facilitator-visible workshop instance registry.
-Prefer invoking `harness workshop list-instances` over raw API scripts or local session-file inspection.
+Prefer invoking `harness instance list` over raw API scripts or local session-file inspection.
 Use this when the facilitator needs to discover what currently exists on a shared dashboard before choosing an explicit instance for reset, update, or agenda work.
-When an agent needs strict parsing, prefer `harness --json workshop list-instances`.
+When an agent needs strict parsing, prefer `harness --json instance list`.
 
 ### `workshop facilitator show-instance <instance-id>`
 
 Inspect one explicit workshop instance.
-Prefer invoking `harness workshop show-instance <instance-id>` over raw API scripts.
+Prefer invoking `harness instance show <instance-id>` over raw API scripts.
 Use this when the facilitator needs the full record for one instance rather than the deployment-default runtime status returned by `workshop facilitator status`.
 If a current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
@@ -93,7 +93,7 @@ Revoke a facilitator's access to the current instance. Requires `owner` role.
 ### `workshop facilitator create-instance`
 
 Create a new workshop instance from a template. Requires facilitator session.
-Prefer invoking `harness workshop create-instance` over raw API scripts.
+Prefer invoking `harness instance create` over raw API scripts.
 
 The skill should support rich event metadata, not just id and city:
 - `id`
@@ -111,26 +111,26 @@ The skill should support rich event metadata, not just id and city:
 ### `workshop facilitator update-instance <instance-id>`
 
 Update event metadata for an existing workshop instance. Requires facilitator session.
-Prefer invoking `harness workshop update-instance` over raw API scripts.
+Prefer invoking `harness instance update` over raw API scripts.
 Use this when the facilitator wants to correct or refine date, venue, room, address, or event title without resetting the instance.
 Support `contentLang` changes explicitly so facilitators can choose workshop delivery language per instance without changing admin UI language.
 
 Facilitator discovery rule:
-- for routine discovery, use `harness workshop list-instances` and `harness workshop show-instance`
-- for repeated work on one live workshop, use `harness workshop select-instance <instance-id>` and `harness workshop current-instance`
+- for routine discovery, use `harness instance list` and `harness instance show`
+- for repeated work on one live workshop, use `harness instance select <instance-id>` and `harness instance current`
 - do not read local CLI session files or improvise authenticated `node -e` fetch scripts unless you are diagnosing the CLI itself
 
 ### `workshop facilitator reset-instance <instance-id>`
 
 Reset one existing workshop instance from the selected blueprint template. Requires facilitator session.
-Prefer invoking `harness workshop reset-instance` over raw API scripts.
+Prefer invoking `harness instance reset` over raw API scripts.
 Use this when the facilitator wants fresh canonical agenda, runner, and presenter content for a live instance and accepts that local runtime state will be reinitialized.
 If a current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
 ### `workshop facilitator remove-instance`
 
 Remove a workshop instance from the active list without deleting its archive history. Requires facilitator session.
-Prefer invoking `harness workshop remove-instance`.
+Prefer invoking `harness instance remove`.
 If a current instance is already selected, the CLI may omit `<instance-id>` and use the stored target.
 
 ### `workshop facilitator prepare`

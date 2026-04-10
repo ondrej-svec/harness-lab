@@ -65,7 +65,8 @@ Use repo-native content for stable public guidance:
 - challenge cards, project briefs, and public-safe framing
 
 Rule:
-- runtime APIs first for live workshop state
+- for all commands that need live workshop data, prefer `harness --json <command>` over direct API calls. The CLI handles authentication, session management, and origin headers. The skill must not make HTTP requests directly or store credentials.
+- runtime data via CLI first for live workshop state
 - repo docs first for durable workshop guidance
 - if runtime is unavailable, fall back to repo material and say explicitly that the answer is fallback rather than live state
 - runtime edits do not imply blueprint edits; reusable changes belong back in the repo deliberately
@@ -93,15 +94,16 @@ Show:
 
 ### `workshop login`
 
-Ask for the shared event code and redeem it into a short-lived participant session.
+Ask the participant for the shared event code, then run `harness auth login --code <CODE>` to authenticate.
 After success:
 - confirm live mode is active
 - say when the participant may need to log in again
 - keep facilitator-only data unavailable
+The CLI handles all HTTP requests, cookies, and session storage. The skill must not make HTTP requests directly.
 
 ### `workshop logout`
 
-Clear the current participant session and return to fallback/public-only mode.
+Run `harness auth logout` to clear the current session and return to fallback/public-only mode.
 
 ### `workshop setup`
 
@@ -114,7 +116,7 @@ Use `workshop-skill/locales/<locale>/setup.md` when present, otherwise fall back
 
 ### `workshop brief`
 
-Show the assigned project brief. Include:
+Show the assigned project brief. Prefer `harness --json workshop brief` for live data. Include:
 - problem statement
 - user stories
 - architecture considerations
@@ -123,7 +125,7 @@ If live runtime brief data is unavailable, prefer `content/project-briefs/locale
 
 ### `workshop challenges`
 
-Show available challenge cards, clearly marking:
+Show available challenge cards. Prefer `harness --json workshop challenges` for live data. Clearly mark:
 - semi-mandatory before lunch
 - semi-mandatory after the continuation shift
 - optional stretch cards
@@ -131,7 +133,7 @@ If live runtime challenge data is unavailable, prefer `content/challenge-cards/l
 
 ### `workshop team`
 
-Show:
+Prefer `harness --json workshop team` for live data. Show:
 - team name
 - members
 - repo URL

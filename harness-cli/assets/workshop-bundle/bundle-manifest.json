@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.4.1",
-  "contentHash": "99a5b8475b6a4c11bc0652784d160a3a9d8fa3cfe38595c21bbe71d48159b3a4",
+  "bundleVersion": "0.4.3",
+  "contentHash": "3c32873f3843de2cc505a4d9ff56925398353e83c1969867d556253c38e59528",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -146,7 +146,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "806cb0abbe835e37ed3f76e2db053472dda272f87777e473d9c524d10fe1012c"
+      "sha256": "9f236488f485a69c744c7cd7486a3ac012fa1ec018190d5334bf4be8d65cbbcd"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -190,7 +190,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "b8c9e1c01ddb314e45d8d2c3a7460bac53a48ba2321eaf6518e4b08436d88895"
+      "sha256": "b323ea02b3fe102ad5240ac13da9aa31e67d2c2bd2655925127198047caa85a6"
     },
     {
       "path": "workshop-skill/follow-up-package.md",
@@ -234,7 +234,7 @@
     },
     {
       "path": "workshop-skill/SKILL-facilitator.md",
-      "sha256": "dab4428fd02059bee12269234931aac95b1863fe295c4bdd965eb50cc53d80b2"
+      "sha256": "dc735d9a1346823b65c9b4514cf8a40379bf6b658703f3c2d8607b6ec20d08eb"
     },
     {
       "path": "workshop-skill/template-agents.md",
