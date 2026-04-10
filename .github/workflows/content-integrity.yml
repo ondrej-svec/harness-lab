@@ -21,5 +21,8 @@ jobs:
       - name: Verify generated content matches bilingual source
         run: bun scripts/content/generate-views.ts --verify
 
+      - name: Check Czech anglicism reject list
+        run: bun scripts/content/check-czech-anglicisms.ts
+
       - name: Check Tier 2 locale sync
         run: bun scripts/content/check-tier2-sync.ts
