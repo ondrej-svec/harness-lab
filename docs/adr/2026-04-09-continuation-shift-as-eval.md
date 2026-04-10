@@ -55,6 +55,14 @@ Rules:
 - each captured signal carries a free-text observation, zero or more
   free-text tags, and an optional team identifier; the schema is
   deliberately loose until cohort evidence justifies a rubric
+- to guide early capture without freezing the schema, v1 ships with
+  suggested seed tags derived from the autonomous planning standard's
+  failure taxonomy: `missing_runbook`, `no_test_evidence`,
+  `next_step_not_obvious`, `constraint_only_in_chat`,
+  `agents_md_too_large`, `drift_not_caught`, `premature_propagation`,
+  `missing_session_state`. Facilitators may use these, ignore them, or
+  add their own. The tags are vocabulary suggestions, not a required
+  schema.
 - instance-local signals live at
   `$HARNESS_DATA_DIR/<instanceId>/rotation-signals.json` and are
   classified facilitator-private per

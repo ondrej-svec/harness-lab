@@ -2,7 +2,7 @@
 title: "docs: expert panel remediation — skills, CLI, teaching approach"
 type: plan
 date: 2026-04-10
-status: in_progress
+status: complete
 brainstorm: docs/brainstorms/2026-04-10-expert-panel-remediation-brainstorm.md
 confidence: high
 ---
@@ -251,60 +251,60 @@ Add operational infrastructure that makes the first cohort stronger. These chang
 
 #### 3.1 Session-state artifact standard
 
-- [ ] **3.1.1** Add to `docs/autonomous-planning-standard.md`:
+- [x] **3.1.1** Add to `docs/autonomous-planning-standard.md`:
   - New failure type 7 after line 31: "Session-state opacity — the plan authorizes work but produces no durable artifact capturing what was decided, tried, and where current state is"
   - New row in the Minimum Plan Contract table (lines 49–57): `Session-state artifact | What evidence of current state must exist at any handoff point? | Prevents context loss across agents and sessions`
   - New checkbox in Work Authorization Checklist (before line 150): `[ ] a durable session-state artifact exists or is scoped in the plan`
-- [ ] **3.1.2** Add to `materials/coaching-codex.md`:
+- [x] **3.1.2** Add to `materials/coaching-codex.md`:
   - In "When the agent says it's done" section, add step 5: "Write a session-state note: what was proved, what's in progress, what's the next safe action."
-- [ ] **3.1.3** Add to `workshop-skill/analyze-checklist.md`:
+- [x] **3.1.3** Add to `workshop-skill/analyze-checklist.md`:
   - New checklist item (after item 8): "Existuje záznam stavu session — co bylo ověřeno, co je rozpracované, jaký je další bezpečný krok?"
 
 #### 3.2 Intermezzo retrieval prompts
 
-- [ ] **3.2.1** Add `retrievalPrompt` field to intermezzo phases in `workshop-blueprint/agenda.json`:
+- [x] **3.2.1** Add `retrievalPrompt` field to intermezzo phases in `workshop-blueprint/agenda.json`:
   - `intermezzo-1` (lines 47–54): add `"retrievalPrompt": { "en": "Without checking the repo, state your team's current working rules in one sentence each.", "cs": "Bez kontroly repozitáře pojmenujte aktuální pracovní pravidla vašeho týmu — každé jednou větou." }`
   - `intermezzo-2` (lines 79–86): add `"retrievalPrompt": { "en": "Name one signal that saved time during continuation, without explaining your project.", "cs": "Pojmenujte jeden signál, který vám ušetřil čas při pokračování — bez vysvětlování projektu." }`
-- [ ] **3.2.2** Document the retrieval prompt facilitation move in `workshop-blueprint/day-structure.md`:
+- [x] **3.2.2** Document the retrieval prompt facilitation move in `workshop-blueprint/day-structure.md`:
   - In the intermezzo narrative sections, add: "Open each intermezzo with a 3-minute silent written exercise using the retrieval prompt before any team reports aloud."
 
 #### 3.3 Continuation shift seed tags
 
-- [ ] **3.3.1** Add seed tags to `docs/adr/2026-04-09-continuation-shift-as-eval.md`:
+- [x] **3.3.1** Add seed tags to `docs/adr/2026-04-09-continuation-shift-as-eval.md`:
   - After the schema definition (line 54), add a new paragraph:
   - "To guide early capture without freezing the schema, v1 ships with suggested seed tags derived from the autonomous planning standard's failure taxonomy: `missing_runbook`, `no_test_evidence`, `next_step_not_obvious`, `constraint_only_in_chat`, `agents_md_too_large`, `drift_not_caught`, `premature_propagation`, `missing_session_state`."
   - Note: "Facilitators may use these, ignore them, or add their own. The tags are vocabulary suggestions, not a required schema."
 
 #### 3.4 Minimum viable handoff gate
 
-- [ ] **3.4.1** Add pre-rotation gate to `workshop-blueprint/day-structure.md`:
+- [x] **3.4.1** Add pre-rotation gate to `workshop-blueprint/day-structure.md`:
   - Between the lunch-reset narrative (line 134) and the rotation narrative (line 135), add a new sub-section:
   - `### Pre-rotation handoff gate`
   - Minimum criteria: (1) readable AGENTS.md with goal + build/test commands + one explicit constraint, (2) one executable verification step with a passing result, (3) a written "next safe step" in the repo
   - "If a team does not meet these by rotation time, the facilitator intervenes directly — not to punish, but to help them write the minimum before the handoff."
-- [ ] **3.4.2** Add rotation facilitation guidance to `workshop-blueprint/operator-guide.md`:
+- [x] **3.4.2** Add rotation facilitation guidance to `workshop-blueprint/operator-guide.md`:
   - New section `## During Rotation` between "During The Day" and "After The Day"
   - Content: what to watch for, when to let friction stand vs. intervene, how to use the HandoffMomentCard capture, the difference between "frustration that teaches" and "frustration that breaks"
 
 #### 3.5 Adoption negotiation section
 
-- [ ] **3.5.1** Add to `materials/participant-resource-kit.md`:
+- [x] **3.5.1** Add to `materials/participant-resource-kit.md`:
   - New section after `## Výzva na příští týden`: `## Minimum viable harness pro váš tým`
   - Content: the smallest version that survives a skeptical PR review — one AGENTS.md entry + one executable check
   - Frame: "You don't need to convince your team of 'harness engineering.' You need to show them a useful AGENTS.md that saved 20 minutes of onboarding."
   - Include: what to say when asked "why are we doing this" (answer: "so the next person doesn't have to ask you")
-- [ ] **3.5.2** Apply to English locale if it exists
+- [x] **3.5.2** Apply to English locale if it exists
 
 #### 3.6 Sixth habit — "Fix the system, not just the symptom"
 
-- [ ] **3.6.1** Add to `workshop-blueprint/teaching-spine.md`:
+- [x] **3.6.1** Add to `workshop-blueprint/teaching-spine.md`:
   - After Habit 5, add `### 6. Fix the system, not just the symptom`
   - `Teach:` When the same review comment, friction, or manual step appears a second time, the response is not to fix the output — it's to improve the harness. Write a template, add a check, encode the rule.
   - `What to say:` "Když se stejná věc opakuje, neopravujte výstup — opravte systém."
   - `Adoption signal:` A repeated friction point becomes a new template, check, or documented rule instead of staying in conversation.
   - `Anchor moment:` The second time you encounter the same friction — the repetition is the trigger.
-- [ ] **3.6.2** Add the 6th habit to the reference card (`workshop-skill/reference.md`) and its English locale
-- [ ] **3.6.3** Add to `materials/participant-resource-kit.md` in the habit Anchors section (from 2.4.2)
+- [x] **3.6.2** Add the 6th habit to the reference card (`workshop-skill/reference.md`) and its English locale
+- [x] **3.6.3** Add to `materials/participant-resource-kit.md` in the habit Anchors section (from 2.4.2)
 
 ### Wave 3 Acceptance Criteria
 

@@ -92,6 +92,22 @@ Adoption signal:
 Anchor moment:
 - The second time the same review comment, friction point, or manual step appears.
 
+### 6. Fix the system, not just the symptom
+
+Teach:
+- when the same review comment, friction, or manual step appears a second time, the response is not to fix the output — it is to improve the harness
+- write a template, add a check, encode the rule
+- the harness is part of the product, not support material around it
+
+What to say:
+- "Když se stejná věc opakuje, neopravujte výstup — opravte systém."
+
+Adoption signal:
+- a repeated friction point becomes a new template, check, or documented rule instead of staying in conversation
+
+Anchor moment:
+- The second time you encounter the same friction — the repetition is the trigger.
+
 ## Phase-By-Phase Teaching Moves
 
 ### Opening and framing

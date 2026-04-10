@@ -29,6 +29,8 @@ Name the failure before trying to fix it:
    A pattern rolls broadly before one representative slice has proved it.
 6. **Chat-only correction**
    The real rule gets corrected in conversation but never written into the repo or toolkit.
+7. **Session-state opacity**
+   The plan authorizes work, but no durable artifact captures what was decided, what was tried, and where the current state is. The next agent or team inherits orientation (AGENTS.md) but not progress.
 
 ## Authorization Rule
 
@@ -55,6 +57,7 @@ Every plan that authorizes autonomous `work` must include these sections or thei
 | Verification and acceptance | What evidence will count as done? | Defines the trust boundary |
 | Propagation rule | Prove one slice first or roll broadly? | Prevents premature spread |
 | Decision rationale | Why this approach, not the nearby alternatives? | Keeps future execution from re-litigating or silently reversing the plan |
+| Session-state artifact | What evidence of current state must exist at any handoff point? | Prevents context loss across agents and sessions |
 
 ## Additional Contract For Subjective Or Boundary-Sensitive Work
 
@@ -145,6 +148,7 @@ Before starting autonomous `work`, verify:
 - [ ] the plan says whether to prove one slice first or propagate broadly
 - [ ] subjective work includes references, anti-references, tone rules, and rejection criteria
 - [ ] design-heavy work includes a preview artifact and preview review gate
+- [ ] a durable session-state artifact exists or is scoped in the plan
 
 If any box is unchecked, stay in planning mode.
 

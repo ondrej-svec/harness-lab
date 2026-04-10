@@ -6,6 +6,7 @@
 - `Co není v repu, neexistuje` — důležité dohody, pravidla a další kroky patří do souborů
 - `Ověření je hranice důvěry` — s větší autonomií musí růst i kvalita evidence
 - `Handoff je průběžná podmínka práce` — další tým má najít první bezpečný krok bez vašeho výkladu
+- `Opravte systém, ne jen symptom` — když se stejná věc opakuje, neopravujte výstup — opravte systém
 
 ## 4 prvky dobrého zadání
 

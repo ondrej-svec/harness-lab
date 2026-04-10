@@ -49,7 +49,11 @@
       "label": "Intermezzo 1",
       "startTime": "11:35",
       "kind": "shared",
-      "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself."
+      "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself.",
+      "retrievalPrompt": {
+        "en": "Without checking the repo, state your team's current working rules in one sentence each.",
+        "cs": "Bez kontroly repozitáře pojmenujte aktuální pracovní pravidla vašeho týmu — každé jednou větou."
+      }
     },
     {
       "id": "lunch-reset",
@@ -81,7 +85,11 @@
       "label": "Intermezzo 2",
       "startTime": "14:45",
       "kind": "shared",
-      "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
+      "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
+      "retrievalPrompt": {
+        "en": "Name one signal that saved time during continuation, without explaining your project.",
+        "cs": "Pojmenujte jeden signál, který vám ušetřil čas při pokračování — bez vysvětlování projektu."
+      }
     },
     {
       "id": "reveal",

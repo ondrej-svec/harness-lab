@@ -10,6 +10,7 @@ Když agent dělá `/workshop analyze`, měl by projít:
 - jestli repo rozlišuje hotové vs. rozpracované části
 - jestli je v repu plán nebo runbook pro další tým
 - jestli je dohledatelné, co bylo skutečně ověřeno
+- jestli existuje záznam stavu session — co bylo ověřeno, co je rozpracované, jaký je další bezpečný krok
 - kolik pravidel žije jen v promptu a ne v repu
 - jak snadné by bylo pokračovat po rotaci bez ústního handoffu
 - jestli je zřejmý další bezpečný krok
