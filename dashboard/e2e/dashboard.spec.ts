@@ -57,14 +57,7 @@ test.describe("participant dashboard", () => {
     await page.getByLabel("event code").fill("lantern8-context4-handoff2");
     await page.getByRole("button", { name: "otevřít participant plochu" }).click();
 
-    await expect
-      .poll(async () => {
-        const cookies = await page.context().cookies();
-        return cookies.some((cookie) => cookie.name === "harness_event_session");
-      })
-      .toBe(true);
-
-    await page.reload();
+    await page.waitForURL("**/participant**");
 
     await expect(page.getByText("participant plocha", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
@@ -88,6 +81,7 @@ test.describe("participant dashboard", () => {
     await page.goto("/");
     await page.getByLabel("event code").fill("lantern8-context4-handoff2");
     await page.getByRole("button", { name: "otevřít participant plochu" }).click();
+    await page.waitForURL("**/participant**");
     await expect(page).toHaveScreenshot("participant-mobile-room.png", {
       maxDiffPixelRatio: 0.05,
     });

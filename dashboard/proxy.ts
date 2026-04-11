@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { hasCompleteNeonAuthConfig, isNeonRuntimeMode } from "./lib/runtime-auth-configuration";
+import { participantSessionCookieName } from "@/lib/event-access";
 import { resolveUiLanguage, uiLanguageCookieName } from "@/lib/ui-language";
 
 /**
@@ -27,6 +28,18 @@ export async function proxy(request: NextRequest) {
   const urlLanguage = request.nextUrl.searchParams.get("lang") ?? undefined;
   const cookieLanguage = request.cookies.get(uiLanguageCookieName)?.value;
   const resolvedLanguage = resolveUiLanguage(urlLanguage ?? cookieLanguage);
+
+  // Protect /participant — redirect to public page if no session cookie
+  if (request.nextUrl.pathname.startsWith("/participant")) {
+    const hasParticipantSession = request.cookies.has(participantSessionCookieName);
+    if (!hasParticipantSession) {
+      const publicUrl = new URL("/", request.url);
+      if (resolvedLanguage !== "cs") {
+        publicUrl.searchParams.set("lang", resolvedLanguage);
+      }
+      return NextResponse.redirect(publicUrl);
+    }
+  }
 
   // Protect /admin routes (but not /admin/sign-in itself)
   if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/sign-in")) {

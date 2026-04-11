@@ -2,24 +2,16 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   getConfiguredEventCode,
-  getParticipantSessionFromCookieStore,
-  getParticipantTeamLookup,
   participantSessionCookieName,
   redeemEventCode,
-  revokeParticipantSession,
 } from "@/lib/event-access";
 import {
   buildPublicAccessPanelState,
   buildPublicFooterLinks,
-  buildWorkshopContextLine,
-  deriveHomePageState,
   getBlueprintRepoUrl,
 } from "@/lib/public-page-view-model";
-import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
-import { ParticipantRoomSurface } from "./components/participant-room-surface";
 import { SiteHeader } from "./components/site-header";
-import { ParticipantLiveRefresh } from "./components/participant-live-refresh";
 import { SubmitButton } from "./components/submit-button";
 
 export const dynamic = "force-dynamic";
@@ -42,24 +34,7 @@ async function redeemEventCodeAction(formData: FormData) {
     expires: new Date(result.session.expiresAt),
   });
 
-  redirect(withLang("/", lang));
-}
-
-async function logoutEventCodeAction(formData: FormData) {
-  "use server";
-  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-
-  const cookieStore = await cookies();
-  const token = cookieStore.get(participantSessionCookieName)?.value;
-  await revokeParticipantSession(token);
-  cookieStore.set(participantSessionCookieName, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(0),
-  });
-
-  redirect(withLang("/", lang));
+  redirect(withLang("/participant", lang));
 }
 
 export default async function HomePage({
@@ -70,37 +45,13 @@ export default async function HomePage({
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
   const copy = publicCopy[lang];
-  const participantSession = await getParticipantSessionFromCookieStore();
-  const state = await getWorkshopState(participantSession?.instanceId);
-  const participantTeams = participantSession ? await getParticipantTeamLookup(participantSession.instanceId) : null;
   const configuredEventCode = await getConfiguredEventCode();
-  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, workshopMeta } = deriveHomePageState(state);
-  const workshopContextLine = participantSession ? buildWorkshopContextLine(workshopMeta) : "";
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
-        <SiteHeader isParticipant={!!participantSession} lang={lang} copy={copy} />
-
-        {participantSession ? (
-          <>
-          <ParticipantLiveRefresh currentAgendaItemId={currentAgendaItem?.id} />
-          <ParticipantRoomSurface
-            copy={copy}
-            lang={lang}
-            workshopContextLine={workshopContextLine}
-            currentAgendaItem={currentAgendaItem}
-            nextAgendaItem={nextAgendaItem}
-            participantSession={participantSession}
-            participantTeams={participantTeams}
-            publicNotes={participantNotes}
-            rotationRevealed={rotationRevealed}
-            logoutAction={logoutEventCodeAction}
-          />
-          </>
-        ) : (
-          <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
-        )}
+        <SiteHeader isParticipant={false} lang={lang} copy={copy} />
+        <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
       </div>
     </main>
   );
@@ -295,13 +246,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--text-muted)]">{children}</p>;
 }
 
-function SimpleRule({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) {
+function SimpleRule({ title, body }: { title: string; body: string }) {
   return (
     <div className="grid gap-3 border-t border-[var(--border)] pt-5 sm:grid-cols-[220px_1fr] sm:gap-8">
       <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
@@ -310,15 +255,7 @@ function SimpleRule({
   );
 }
 
-function PhaseStep({
-  number,
-  title,
-  body,
-}: {
-  number: string;
-  title: string;
-  body: string;
-}) {
+function PhaseStep({ number, title, body }: { number: string; title: string; body: string }) {
   return (
     <div className="grid gap-3 border-t border-[var(--border)] py-4 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
       <span className="text-sm font-medium tabular-nums text-[var(--text-muted)]">{number}</span>
@@ -328,13 +265,7 @@ function PhaseStep({
   );
 }
 
-function SignalTile({
-  title,
-  body,
-}: {
-  title: string;
-  body: string;
-}) {
+function SignalTile({ title, body }: { title: string; body: string }) {
   return (
     <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)] backdrop-blur">
       <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>

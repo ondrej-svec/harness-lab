@@ -1,4 +1,3 @@
-import { renderToStaticMarkup } from "react-dom/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { publicCopy } from "@/lib/ui-language";
 import { createWorkshopStateFromTemplate, seedWorkshopState } from "@/lib/workshop-data";
@@ -204,9 +203,8 @@ describe("HomePage", () => {
     });
   });
 
-  it("returns the public overview when no participant session exists", async () => {
+  it("returns the public overview", async () => {
     const { default: HomePage } = await import("./page");
-    getParticipantSessionFromCookieStore.mockResolvedValue(null);
 
     const view = await HomePage({
       searchParams: Promise.resolve({ lang: "en", eventAccess: "invalid_code" }),
@@ -214,74 +212,5 @@ describe("HomePage", () => {
 
     expect(view).toBeTruthy();
     expect(getConfiguredEventCode).toHaveBeenCalledTimes(1);
-    expect(getParticipantTeamLookup).not.toHaveBeenCalled();
-  });
-
-  it("returns the participant room view when a participant session exists", async () => {
-    process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
-    const { default: HomePage } = await import("./page");
-    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "cs");
-    state.agenda = state.agenda.map((item, index) => ({
-      ...item,
-      status: item.id === "build-1" ? "current" : index < 3 ? "done" : "upcoming",
-    }));
-    const buildPhase = state.agenda.find((item) => item.id === "build-1");
-    const participantScene = buildPhase?.presenterScenes.find((scene) => scene.id === "build-1-participant-view");
-    if (participantScene) {
-      participantScene.blocks.push({
-        id: "participant-links",
-        type: "link-list",
-        title: "Další reference",
-        items: [
-          {
-            label: "Workshop skill reference",
-            href: "https://example.com/reference",
-            description: "Otevři instalační a referenční flow.",
-          },
-        ],
-      });
-    }
-    getWorkshopState.mockResolvedValue(state);
-    getParticipantSessionFromCookieStore.mockResolvedValue({
-      instanceId: "sample-studio-a",
-      expiresAt: "2026-04-06T16:30:00.000Z",
-      lastValidatedAt: "2026-04-06T10:30:00.000Z",
-      absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
-    });
-
-    const view = await HomePage({
-      searchParams: Promise.resolve({ lang: "cs" }),
-    });
-    const html = renderToStaticMarkup(view);
-
-    expect(view).toBeTruthy();
-    expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(getParticipantTeamLookup).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).not.toContain(publicCopy.cs.navFacilitatorLogin);
-    expect(html).toContain("href=\"https://example.com/reference\"");
-    expect(html).toContain(publicCopy.cs.openLinkLabel);
-    expect(html).toContain("href=\"https://github.com/example/harness-lab/blob/main/workshop-skill/install.md\"");
-  });
-
-  it("renders English participant guidance for an English-content workshop instance", async () => {
-    const { default: HomePage } = await import("./page");
-    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
-    getWorkshopState.mockResolvedValue(state);
-    getParticipantSessionFromCookieStore.mockResolvedValue({
-      instanceId: "sample-studio-a",
-      expiresAt: "2026-04-06T16:30:00.000Z",
-      lastValidatedAt: "2026-04-06T10:30:00.000Z",
-      absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
-    });
-
-    const view = await HomePage({
-      searchParams: Promise.resolve({ lang: "en" }),
-    });
-    const html = renderToStaticMarkup(view);
-
-    expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain("Opening and orientation");
-    expect(html).toContain("Team start board");
-    expect(html).toContain("Today you build so another team can continue");
   });
 });
