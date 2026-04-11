@@ -78,7 +78,6 @@ export function ParticipantRoomSurface({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <MetricCard label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
-              <MetricCard label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
               <a
                 href="#notes"
                 className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
