@@ -73,15 +73,15 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Today you learn to shape the work so anyone — or any agent — can carry it",
-          "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently.",
+          "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently.",
           "facilitatorNotes": [
             "Open with ambition and the participant destination, not logistics.",
-            "The hero title is the day's spine — read it out loud, then pause.",
+            "The hero title is the day's spine — read it out loud, then pause.",
             "Cut any reference to prompt theatre or contest framing."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Otevření a welcome",
+              "label": "Facilitační průvodce: Otevření a welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -91,21 +91,21 @@
               "type": "hero",
               "eyebrow": "Harness Lab",
               "title": "Today you learn to shape the work so anyone — or any agent — can carry it",
-              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently."
+              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently."
             },
             {
               "id": "opening-main-line",
               "type": "callout",
               "tone": "info",
               "title": "The main line for today",
-              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is a teammate who joined today or a fresh agent you open on Monday."
+              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is a teammate who joined today or a fresh agent you open on Monday."
             },
             {
               "id": "opening-what-should-change",
               "type": "callout",
               "tone": "info",
               "title": "What should change today",
-              "body": "Monday morning you open a fresh agent in your own repo. That agent arrives without your memory. What you practice today is how you treat every session — not once, for every session."
+              "body": "Monday morning you open a fresh agent in your own repo. That agent arrives without your memory. What you practice today is how you treat every session — not once, for every session."
             }
           ]
         },
@@ -123,7 +123,7 @@
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Otevření a welcome",
+              "label": "Facilitační průvodce: Otevření a welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -133,7 +133,7 @@
               "type": "hero",
               "eyebrow": "The day has one arc",
               "title": "Learn. Build. Hand off. Continue.",
-              "body": "This is not a prompting contest. It is a day where you will learn the craft, build something real, hand it to another team, and watch what continues without you."
+              "body": "This is not a prompting contest. It is a day where you will learn the craft, build something real, hand it to another team, and watch what continues without you."
             },
             {
               "id": "opening-day-arc-steps",
@@ -142,12 +142,12 @@
                 {
                   "id": "arc-learn",
                   "title": "Learn.",
-                  "body": "The talk and the demo name the craft and show you what it looks like in a real repo."
+                  "body": "The talk and the demo name the craft and show you what it looks like in a real repo."
                 },
                 {
                   "id": "arc-build",
                   "title": "Build.",
-                  "body": "Your team picks a brief and builds a working slice — with AGENTS.md as a map, a plan, a tracer, and a next-move note."
+                  "body": "Your team picks a brief and builds a working slice — with AGENTS.md as a map, a plan, a tracer, and a next-move note."
                 },
                 {
                   "id": "arc-handoff",
@@ -177,7 +177,7 @@
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Otevření a welcome",
+              "label": "Facilitační průvodce: Otevření a welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -185,7 +185,7 @@
             {
               "id": "opening-schedule-hero",
               "type": "hero",
-              "eyebrow": "Today's schedule",
+              "eyebrow": "Today's schedule",
               "title": "The shape of the day",
               "body": "Guides, not deadlines. Lunch timing is negotiated on the day based on room energy."
             },
@@ -222,7 +222,7 @@
           "intent": "activation",
           "chromePreset": "participant",
           "title": "Form the line. Count off. Claim your anchor.",
-          "body": "Nine minutes. We form teams by experience line, then each team claims an anchor — a physical marker that the team, the repo, and the day's check-ins live at.",
+          "body": "Nine minutes. We form teams by experience line, then each team claims an anchor — a physical marker that the team, the repo, and the day's check-ins live at.",
           "facilitatorNotes": [
             "Start by having everyone stand and form one line by experience with AI agents.",
             "Count off live based on head count. Announce the target team size before counting.",
@@ -231,7 +231,7 @@
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Otevření a welcome",
+              "label": "Facilitační průvodce: Otevření a welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -255,22 +255,22 @@
                 {
                   "id": "team-count",
                   "title": "Count off into teams (1 min).",
-                  "body": "Count off down the line based on the target team size. All the 1s form a team, all the 2s, and so on. Every team automatically spans the full experience spectrum."
+                  "body": "Count off down the line based on the target team size. All the 1s form a team, all the 2s, and so on. Every team automatically spans the full experience spectrum."
                 },
                 {
                   "id": "team-sit",
                   "title": "Sit, introduce, name (4 min).",
-                  "body": "Go to a table together. Tell each other your name and one sentence about what brought you here. Pick a team name."
+                  "body": "Go to a table together. Tell each other your name and one sentence about what brought you here. Pick a team name."
                 },
                 {
                   "id": "team-anchor",
                   "title": "Claim your anchor.",
-                  "body": "Pick one of the anchors on the tables — a Lego brick, a numbered card, whatever's in front of you. The anchor stays at the table. Your team, your repo, and your check-ins live with it for the rest of the day."
+                  "body": "Pick one of the anchors on the tables — a Lego brick, a numbered card, whatever's in front of you. The anchor stays at the table. Your team, your repo, and your check-ins live with it for the rest of the day."
                 },
                 {
                   "id": "team-record",
                   "title": "We record it live.",
-                  "body": "Raise a hand with your team name. Facilitator types it into the dashboard; it appears on the participant board in front of you."
+                  "body": "Raise a hand with your team name. Facilitator types it into the dashboard; it appears on the participant board in front of you."
                 }
               ]
             },
@@ -279,7 +279,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Why mix experience.",
-              "body": "A team where everyone works with agents the same way will only build what they already know. A mixed team will argue, and the argument is where harness engineering actually happens."
+              "body": "A team where everyone works with agents the same way will only build what they already know. A mixed team will argue, and the argument is where harness engineering actually happens."
             }
           ]
         },
@@ -293,11 +293,11 @@
           "body": "Brief transition beat. Facilitator moves the room into the talk.",
           "facilitatorNotes": [
             "30-second beat. Room reset, then straight into the talk.",
-            "May be collapsed into a verbal transition if the team formation runs long."
+            "May be collapsed into a verbal transition if the team formation runs long."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Otevření a welcome",
+              "label": "Facilitační průvodce: Otevření a welcome",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -345,29 +345,29 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a poslat místnost zpátky do repa s konkrétním prvním pracovním kontraktem.",
+        "goal": "Udělat z harness engineeringu přesnou, zapamatovatelnou tezi a poslat místnost zpátky do repa s konkrétním prvním pracovním kontraktem.",
         "say": [
           "Začni kontrastem připravenosti repa: stejný prompt, dvě repa. Nech místnost vidět rozdíl dřív, než ho pojmenuješ.",
           "Po kontrastu se zeptej: 'Co se změnilo?' Nech promluvit dva hlasy.",
-          "Pojmenuj, co jsi viděl: agent v holém repu dělal uvěřitelná, ale špatná rozhodnutí, protože neměl mantinely. Tohle je task drift.",
+          "Pojmenuj, co jsi viděl: agent v holém repu dělal uvěřitelná, ale špatná rozhodnutí, protože neměl mantinely. Tohle je task drift.",
           "Kontext je páka, ne kosmetika. Práci udělalo repo, ne prompt."
         ],
         "show": [
           "Promítni nejdřív kontrast připravenosti repa, pak tezi, pak přechod do buildu.",
-          "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
+          "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
         ],
         "do": [
-          "Spusť kontrast: ukaž nejdřív holé repo, pak repo s harnessem a stejným promptem.",
+          "Spusť kontrast: ukaž nejdřív holé repo, pak repo s harnessem a stejným promptem.",
           "Když kontrast dosedne, přejdi na tezi. Řekni ji jednou jasně.",
-          "Pošli místnost do build fáze 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom práci na funkcích."
+          "Pošli místnost do build fáze 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom práci na funkcích."
         ],
         "watch": [
-          "Talk nesmí sklouznout k tipům na promptování nebo přehlídce funkcí nástroje.",
-          "Místnost má po talku vědět, co má udělat v repu během příštích minut."
+          "Talk nesmí sklouznout k tipům na promptování nebo přehlídce funkcí nástroje.",
+          "Místnost má po talku vědět, co má udělat v repu během příštích minut."
         ],
         "fallback": [
           "Když se demo vleče, použij připravené screenshoty. Kontrast je důležitější než živé generování.",
-          "Když je pozornost nízko, nech hlavní větu, team-lead analogii a jeden konkrétní build expectation."
+          "Když je pozornost nízko, nech hlavní větu, team-lead analogii a jeden konkrétní build expectation."
         ]
       },
       "defaultSceneId": "talk-argued-about-prompts",
@@ -379,7 +379,7 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "While we argued about prompts, something changed",
-          "body": "Six months ago the conversation was still about prompts. Today it's about what the agent reads when it opens your repo. The teams that figured that out are shipping in ways that looked impossible last year. Let me show you what changed — then we'll spend the rest of the day practicing it.",
+          "body": "Six months ago the conversation was still about prompts. Today it's about what the agent reads when it opens your repo. The teams that figured that out are shipping in ways that looked impossible last year. Let me show you what changed — then we'll spend the rest of the day practicing it.",
           "facilitatorNotes": [
             "Scene 2.1 is the densest scene of the day. Deliberate pause after each named voice.",
             "If the room is fatigued, the Gartner/Forrester references are the first thing to cut."
@@ -396,7 +396,7 @@
               "type": "hero",
               "eyebrow": "The Craft Underneath",
               "title": "While we argued about prompts, something changed",
-              "body": "Six months ago the conversation was still about prompts. Today it's about what the agent reads when it opens your repo. The teams that figured that out are shipping in ways that looked impossible last year. Let me show you what changed — then we'll spend the rest of the day practicing it."
+              "body": "Six months ago the conversation was still about prompts. Today it's about what the agent reads when it opens your repo. The teams that figured that out are shipping in ways that looked impossible last year. Let me show you what changed — then we'll spend the rest of the day practicing it."
             },
             {
               "id": "talk-six-months-steps",
@@ -405,12 +405,12 @@
                 {
                   "id": "talk-lopopolo",
                   "title": "Ryan Lopopolo at OpenAI, February.",
-                  "body": "Led a team at OpenAI Frontier & Symphony that shipped a production beta with one million lines of code in five months. Zero lines written by hand. One billion tokens a day. Zero percent human review. He published the playbook. Its first principle: \"Humans steer. Agents execute.\""
+                  "body": "Led a team at OpenAI Frontier & Symphony that shipped a production beta with one million lines of code in five months. Zero lines written by hand. One billion tokens a day. Zero percent human review. He published the playbook. Its first principle: \"Humans steer. Agents execute.\""
                 },
                 {
                   "id": "talk-bockeler",
                   "title": "Birgitta Böckeler at Thoughtworks, ten days ago.",
-                  "body": "Published on Martin Fowler's site the cleanest definition of the craft underneath all of this. She called it harness engineering and defined it as the discipline of the entire environment an agent works inside — guides that steer it before it acts, sensors that catch it after."
+                  "body": "Published on Martin Fowler's site the cleanest definition of the craft underneath all of this. She called it harness engineering and defined it as the discipline of the entire environment an agent works inside — guides that steer it before it acts, sensors that catch it after."
                 },
                 {
                   "id": "talk-guo",
@@ -420,12 +420,12 @@
                 {
                   "id": "talk-hashimoto",
                   "title": "Mitchell Hashimoto at HashiCorp, earlier this year.",
-                  "body": "His test for whether you're actually practicing the craft: \"Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.\" That is a one-sentence definition of a sensor."
+                  "body": "His test for whether you're actually practicing the craft: \"Anytime you find an agent makes   mistake, you take the time to engineer   solution such that the agent never makes that mistake again.\" That is a one-sentence definition of a sensor."
                 },
                 {
                   "id": "talk-minions",
-                  "title": "Stripe's Minions project, quietly shipping.",
-                  "body": "Over a thousand PRs a week landing for review with no human between the task being posted and the pull request arriving. Not a demo. Production."
+                  "title": "Stripe's Minions project, quietly shipping.",
+                  "body": "Over a thousand PRs a week landing for review with no human between the task being posted and the pull request arriving. Not a demo. Production."
                 }
               ]
             },
@@ -434,20 +434,20 @@
               "type": "callout",
               "tone": "info",
               "title": "Nobody actually knows what December looks like.",
-              "body": "The analyst firms are already projecting 2028 numbers. Honestly? Nobody knows what this looks like at the end of 2026. Simon Willison — a working developer, one of the most level-headed voices in this space — opened his January predictions post by saying \"I'm certain that things will change significantly, but unclear as to what those changes will be.\" In the same post, he mentioned that since Opus 4.5 and GPT-5.2 shipped late last year, the amount of code he writes by hand had dropped to a single digit percentage of his output. The weather is moving faster than anyone predicted. The craft we're practicing today is the hedge against a year none of us can see."
+              "body": "The analyst firms are already projecting 2028 numbers. Honestly? Nobody knows what this looks like at the end of 2026. Simon Willison — a working developer, one of the most level-headed voices in this space — opened his January predictions post by saying \"I'm certain that things will change significantly, but unclear as to what those changes will be.\" In the same post, he mentioned that since Opus 4.5 and GPT-5.2 shipped late last year, the amount of code he writes by hand had dropped to a single digit percentage of his output. The weather is moving faster than anyone predicted. The craft we're practicing today is the hedge against a year none of us can see."
             }
           ]
         },
         {
           "id": "talk-got-a-name",
-          "label": "It got a name",
+          "label": "It got a name",
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "minimal",
-          "title": "Last week, it got a name",
-          "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. It's the cleanest version I've seen. The model has the power. The harness is what turns that power into useful work instead of drift.",
+          "title": "Last week, it got a name",
+          "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. It's the cleanest version I've seen. The model has the power. The harness is what turns that power into useful work instead of drift.",
           "facilitatorNotes": [
-            "Hold the engine/chassis analogy as a one-time image. If you extend it later, be consistent."
+            "Hold the engine/chassis analogy as a one-time image. If you extend it later, be consistent."
           ],
           "sourceRefs": [
             {
@@ -459,9 +459,9 @@
             {
               "id": "talk-got-a-name-hero",
               "type": "hero",
-              "eyebrow": "The discipline has a name",
-              "title": "Last week, it got a name",
-              "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. The model has the power. The harness is what turns that power into useful work instead of drift."
+              "eyebrow": "The discipline has a name",
+              "title": "Last week, it got a name",
+              "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. The model has the power. The harness is what turns that power into useful work instead of drift."
             },
             {
               "id": "talk-bockeler-quote",
@@ -472,14 +472,14 @@
             {
               "id": "talk-engine-chassis",
               "type": "rich-text",
-              "body": "Think of a raw engine. A powerful one — four hundred horsepower, capable of more than most drivers can handle. Bolt it to a shopping cart and you have a very expensive way to destroy a parking lot. Bolt it to a well-designed chassis — frame, suspension, brakes, transmission, proper tires — and suddenly the car becomes drivable by someone who isn't a professional. The chassis didn't make the engine less powerful. It made the power accessible, predictable, survivable. That's the model. That's the harness."
+              "body": "Think of a raw engine. A powerful one — four hundred horsepower, capable of more than most drivers can handle. Bolt it to a shopping cart and you have a very expensive way to destroy a parking lot. Bolt it to a well-designed chassis — frame, suspension, brakes, transmission, proper tires — and suddenly the car becomes drivable by someone who isn't a professional. The chassis didn't make the engine less powerful. It made the power accessible, predictable, survivable. That's the model. That's the harness."
             },
             {
               "id": "talk-reframe-callout",
               "type": "callout",
               "tone": "info",
               "title": "The gap between models is narrowing. The gap between harnesses is widening.",
-              "body": "Two teams using the same Claude or the same GPT can ship wildly different outcomes — not because of the model, but because of the environment the model runs in. That environment has a name now. Today we learn to build it."
+              "body": "Two teams using the same Claude or the same GPT can ship wildly different outcomes — not because of the model, but because of the environment the model runs in. That environment has a name now. Today we learn to build it."
             }
           ]
         },
@@ -506,7 +506,7 @@
               "type": "hero",
               "eyebrow": "How it actually works",
               "title": "How you actually build one",
-              "body": "Four pillars. Each one is a move you'll practice today."
+              "body": "Four pillars. Each one is a move you'll practice today."
             },
             {
               "id": "talk-four-pillars",
@@ -515,12 +515,12 @@
                 {
                   "id": "pillar-context",
                   "title": "Context as infrastructure.",
-                  "body": "The repo is the agent's memory. AGENTS.md, skills, runbooks — team infrastructure, not documentation. If it's not in a file, it doesn't exist. That standard has a name — AGENTS.md — and the Linux Foundation now stewards it."
+                  "body": "The repo is the agent's memory. AGENTS.md, skills, runbooks — team infrastructure, not documentation. If it's not in a file, it doesn't exist. That standard has a name — AGENTS.md — and the Linux Foundation now stewards it."
                 },
                 {
                   "id": "pillar-guides",
                   "title": "Guides — steering before it acts.",
-                  "body": "Architectural rules, templates, constraints the agent literally cannot break. OpenAI's harness enforced layered architecture mechanically so drift was impossible, not just discouraged."
+                  "body": "Architectural rules, templates, constraints the agent literally cannot break. OpenAI's harness enforced layered architecture mechanically so drift was impossible, not just discouraged."
                 },
                 {
                   "id": "pillar-sensors",
@@ -530,7 +530,7 @@
                 {
                   "id": "pillar-managing",
                   "title": "Managing, not chatting.",
-                  "body": "You stop being a pair-programmer and become a director with a crew. \"I'm moving away from chatting with AIs and moving towards managing them.\" — Charlie Guo."
+                  "body": "You stop being a pair-programmer and become a director with a crew. \"I'm moving away from chatting with AIs and moving towards managing them.\" — Charlie Guo."
                 }
               ]
             },
@@ -572,7 +572,7 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Humans steer. Agents execute.",
-          "body": "Four words from Ryan Lopopolo, the OpenAI engineer who led the team that shipped a million lines of production code in five months with zero lines written by hand. This is his foundational principle — the one he says everything else rests on. I want you to carry these four words back to Monday. Everything else you learn today is a way of making them real.",
+          "body": "Four words from Ryan Lopopolo, the OpenAI engineer who led the team that shipped a million lines of production code in five months with zero lines written by hand. This is his foundational principle — the one he says everything else rests on. I want you to carry these four words back to Monday. Everything else you learn today is a way of making them real.",
           "facilitatorNotes": [
             "This is the most memorable line in the whole workshop. Protect it."
           ],
@@ -588,18 +588,18 @@
               "type": "hero",
               "eyebrow": "The core line",
               "title": "Humans steer. Agents execute.",
-              "body": "Four words from Ryan Lopopolo, OpenAI Frontier & Symphony. The team that shipped a million lines of production code in five months with zero lines written by hand. His foundational principle — everything else rests on this."
+              "body": "Four words from Ryan Lopopolo, OpenAI Frontier & Symphony. The team that shipped a million lines of production code in five months with zero lines written by hand. His foundational principle — everything else rests on this."
             },
             {
               "id": "talk-lopopolo-quote",
               "type": "quote",
-              "body": "Give Codex a map, not a 1,000-page instruction manual.",
+              "body": "Give Codex a map, not a 1,000-page instruction manual.",
               "attribution": "Ryan Lopopolo, OpenAI"
             },
             {
               "id": "talk-hashimoto-quote",
               "type": "quote",
-              "body": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.",
+              "body": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.",
               "attribution": "Mitchell Hashimoto, HashiCorp"
             },
             {
@@ -607,7 +607,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Monday morning, you'll open your editor and work differently.",
-              "body": "Not with a new tool. With a different role. You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into."
+              "body": "Not with a new tool. With a different role. You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into."
             }
           ]
         },
@@ -618,9 +618,9 @@
           "intent": "transition",
           "chromePreset": "minimal",
           "title": "You've been sitting inside one all morning",
-          "body": "The workshop skill. The dashboard. The participant board in front of you. The repo you're about to open. I built all of it with agents, using the discipline we just named. Not as a sales pitch — as proof. The craft is real. It works. Today we're practicing inside an example of it.",
+          "body": "The workshop skill. The dashboard. The participant board in front of you. The repo you're about to open. I built all of it with agents, using the discipline we just named. Not as a sales pitch — as proof. The craft is real. It works. Today we're practicing inside an example of it.",
           "facilitatorNotes": [
-            "Facilitator transition line: \"Let me show you what I mean — here's what a working agent session actually looks like when the harness is doing its job.\""
+            "Facilitator transition line: \"Let me show you what   mean — here'  what   working agent session actually looks like when the harness is doing its job.\""
           ],
           "sourceRefs": [
             {
@@ -634,7 +634,7 @@
               "type": "hero",
               "eyebrow": "Before the demo",
               "title": "You've been sitting inside one all morning",
-              "body": "The workshop skill, the dashboard, the participant board, the repo you're about to open — all of it was built with agents, using the discipline we just named. What you're about to see in the demo is a working instance, not a promise."
+              "body": "The workshop skill, the dashboard, the participant board, the repo you're about to open — all of it was built with agents, using the discipline we just named. What you're about to see in the demo is a working instance, not a promise."
             }
           ]
         }
@@ -687,9 +687,9 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Same prompt. Two repos. Watch what happens.",
-          "body": "I'm going to run the same simple prompt in two repos — one bare, one with a harness. Same words. Same model. Watch what changes.",
+          "body": "I'm going to run the same simple prompt in two repos — one bare, one with a harness. Same words. Same model. Watch what changes.",
           "facilitatorNotes": [
-            "Live demo. Pre-prepared screenshots of both Folder A drift and Folder B aligned output must be ready on a second screen.",
+            "Live demo. Pre-prepared screenshots of both Folder A drift and Folder B aligned output must be ready on a second screen.",
             "If live generation exceeds ~90 seconds, switch to screenshots mid-demo."
           ],
           "sourceRefs": [
@@ -704,7 +704,7 @@
               "type": "hero",
               "eyebrow": "Let me show you",
               "title": "Same prompt. Two repos. Watch what happens.",
-              "body": "I'm going to run the same simple prompt in two repos — one bare, one with a harness. Same words. Same model. Watch what changes."
+              "body": "I'm going to run the same simple prompt in two repos — one bare, one with a harness. Same words. Same model. Watch what changes."
             },
             {
               "id": "demo-two-folders",
@@ -717,8 +717,8 @@
                 },
                 {
                   "id": "folder-b",
-                  "title": "Folder B — the same repo, with a harness.",
-                  "body": "Same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus the workshop skill installed."
+                  "title": "Folder B — the same repo, with a harness.",
+                  "body": "Same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus the workshop skill installed."
                 }
               ]
             },
@@ -727,14 +727,14 @@
               "type": "callout",
               "tone": "info",
               "title": "That was task drift.",
-              "body": "The agent started without constraints and made plausible but wrong decisions. Without a harness, it filled in the blanks with its own assumptions. This is what happens in every repo without AGENTS.md. It has a name: task drift. Once you can name it, you can build for it."
+              "body": "The agent started without constraints and made plausible but wrong decisions. Without a harness, it filled in the blanks with its own assumptions. This is what happens in every repo without AGENTS.md. It has a name: task drift. Once you can name it, you can build for it."
             },
             {
               "id": "demo-key-line-callout",
               "type": "callout",
               "tone": "info",
               "title": "The prompt didn't change. The repo did.",
-              "body": "Same words, same model, different harness, different outcome. That's the whole day in thirty seconds."
+              "body": "Same words, same model, different harness, different outcome. That's the whole day in thirty seconds."
             }
           ]
         },
@@ -770,7 +770,7 @@
                 {
                   "id": "flow-agents",
                   "title": "AGENTS.md — the map.",
-                  "body": "Goal, Context, Constraints, Done When. Four headings. The agent reads this first, every session. This is the team's memory."
+                  "body": "Goal, Context, Constraints, Done When. Four headings. The agent reads this first, every session. This is the team's memory."
                 },
                 {
                   "id": "flow-plan",
@@ -785,7 +785,7 @@
                 {
                   "id": "flow-review",
                   "title": "/review — change control inside the flow.",
-                  "body": "Review is not a panic brake at the end. It's how the agent and the team agree on what just shipped."
+                  "body": "Review is not a panic brake at the end. It's how the agent and the team agree on what just shipped."
                 }
               ]
             },
@@ -794,7 +794,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Review is not an emergency brake.",
-              "body": "It's part of the workflow. Every beat feeds the next. When something goes wrong — and things go wrong — you catch it one beat away, not ten."
+              "body": "It's part of the workflow. Every beat feeds the next. When something goes wrong — and things go wrong — you catch it one beat away, not ten."
             }
           ]
         },
@@ -805,10 +805,10 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Your toolkit, same discipline",
-          "body": "You've been watching me work in Folder B. In twenty minutes, you'll be working in your own Folder B. Here's the one tool that ties it together — the workshop skill. Let me install it on my machine right now so you see exactly what you'll do.",
+          "body": "You've been watching me work in Folder B. In twenty minutes, you'll be working in your own Folder B. Here's the one tool that ties it together — the workshop skill. Let me install it on my machine right now so you see exactly what you'll do.",
           "facilitatorNotes": [
             "Live install on stage. Pre-recorded 30-second fallback video cued and ready to play in under 10 seconds if anything breaks.",
-            "Test the install fresh on the facilitator's machine the morning of."
+            "Test the install fresh on the facilitator's machine the morning of."
           ],
           "sourceRefs": [
             {
@@ -831,7 +831,7 @@
                 {
                   "id": "toolkit-install",
                   "title": "One command to install.",
-                  "body": "In your team's repo. That's it."
+                  "body": "In your team's repo. That's it."
                 },
                 {
                   "id": "toolkit-brief",
@@ -841,12 +841,12 @@
                 {
                   "id": "toolkit-reference",
                   "title": "Reference material when you're stuck.",
-                  "body": "Patterns, examples, checks. Not a tutorial — a reference you pull at the moment of need."
+                  "body": "Patterns, examples, checks. Not a tutorial — a reference you pull at the moment of need."
                 },
                 {
                   "id": "toolkit-record",
                   "title": "A place to record what you learn.",
-                  "body": "Every time you find a mistake worth fixing for next time, it lives here."
+                  "body": "Every time you find a mistake worth fixing for next time, it lives here."
                 }
               ]
             },
@@ -854,8 +854,8 @@
               "id": "demo-hashimoto-operationalized",
               "type": "callout",
               "tone": "info",
-              "title": "Hashimoto's rule, operationalized.",
-              "body": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again. This skill is where you do that — in a file, in the repo, for the next person. Or the next you."
+              "title": "Hashimoto's rule, operationalized.",
+              "body": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again. This skill is where you do that — in a file, in the repo, for the next person. Or the next you."
             }
           ]
         },
@@ -866,7 +866,7 @@
           "intent": "transition",
           "chromePreset": "participant",
           "title": "Your first ten minutes",
-          "body": "In ten minutes I want every team at the point where the agent is actually helping you draft your plan. Here's how you get there — four moves. Don't skip any of them.",
+          "body": "In ten minutes I want every team at the point where the agent is actually helping you draft your plan. Here's how you get there — four moves. Don't skip any of them.",
           "facilitatorNotes": [
             "Facilitator transition to Build 1: \"Clock starts now. Build Phase 1 is open.\""
           ],
@@ -882,7 +882,7 @@
               "type": "hero",
               "eyebrow": "Build Phase 1 starts now",
               "title": "Your first ten minutes",
-              "body": "Four moves. Don't skip any of them. In ten minutes I want every team at the point where the agent is actually helping you draft your plan."
+              "body": "Four moves. Don't skip any of them. In ten minutes I want every team at the point where the agent is actually helping you draft your plan."
             },
             {
               "id": "demo-first-ten-steps",
@@ -890,13 +890,13 @@
               "items": [
                 {
                   "id": "first-ten-repo",
-                  "title": "Open your team's repo.",
+                  "title": "Open your team's repo.",
                   "body": "Create from template if you need to. One person opens it for everyone."
                 },
                 {
                   "id": "first-ten-install",
                   "title": "Install the workshop skill.",
-                  "body": "Same command I just ran. If it breaks, raise a hand — someone will come to you."
+                  "body": "Same command I just ran. If it breaks, raise a hand — someone will come to you."
                 },
                 {
                   "id": "first-ten-brief",
@@ -906,7 +906,7 @@
                 {
                   "id": "first-ten-agents-md",
                   "title": "Start your AGENTS.md with the agent.",
-                  "body": "Open a session and draft three things together: what done looks like, what's not in scope, what you'll verify first. The agent is your first collaborator. Let it ask you questions."
+                  "body": "Open a session and draft three things together: what done looks like, what's not in scope, what you'll verify first. The agent is your first collaborator. Let it ask you questions."
                 }
               ]
             },
@@ -922,7 +922,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Your ambition is welcome — once the harness holds.",
-              "body": "These briefs describe a shape. How far you take it is up to your team. If you want to plug your standup bot into your actual Slack, do it. If you want your metrics dashboard on your real data, do it. The harness comes first — but once the harness holds, go as far as your team can reach. Monday is the point."
+              "body": "These briefs describe a shape. How far you take it is up to your team. If you want to plug your standup bot into your actual Slack, do it. If you want your metrics dashboard on your real data, do it. The harness comes first — but once the harness holds, go as far as your team can reach. Monday is the point."
             }
           ]
         }
@@ -961,7 +961,7 @@
       "facilitatorRunner": {
         "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
         "say": [
-          "Agent, který začne bez mantinelů, udělá uvěřitelná, ale špatná architektonická rozhodnutí. Tohle je task drift. Mantinely v AGENTS.md jsou řešení."
+          "Agent, který začne bez mantinelů, udělá uvěřitelná, ale špatná architektonická rozhodnutí. Tohle je task drift. Mantinely v AGENTS.md jsou řešení."
         ],
         "show": [],
         "do": [],
@@ -1004,7 +1004,7 @@
           "intent": "build",
           "chromePreset": "participant",
           "title": "The next 65 minutes",
-          "body": "Here's the arc your team is building toward. You don't have to hit every beat at the exact minute. But by lunch, your repo should hold the full shape of the work — not your conversations, not your heads, the repo.",
+          "body": "Here's the arc your team is building toward. You don't have to hit every beat at the exact minute. But by lunch, your repo should hold the full shape of the work — not your conversations, not your heads, the repo.",
           "facilitatorNotes": [
             "Default ambient scene for Build 1 — stays on the big screen and participant boards unless facilitator flips to 4.3."
           ],
@@ -1020,7 +1020,7 @@
               "type": "hero",
               "eyebrow": "Build Phase 1",
               "title": "The next 65 minutes",
-              "body": "Here's the arc your team is building toward. By lunch, your repo should hold the full shape of the work — not your conversations, not your heads, the repo."
+              "body": "Here's the arc your team is building toward. By lunch, your repo should hold the full shape of the work — not your conversations, not your heads, the repo."
             },
             {
               "id": "build-1-timeline",
@@ -1034,7 +1034,7 @@
                 {
                   "id": "b1-plan",
                   "title": "10:40–11:00 · Plan and scaffold.",
-                  "body": "AGENTS.md as a map — goal, context, done-when, pointers. Not a warehouse. A short plan for the first slice. Before you write the code, sketch your first tracer — the thin end-to-end path that will prove the system holds together."
+                  "body": "AGENTS.md as a map — goal, context, done-when, pointers. Not a warehouse. A short plan for the first slice. Before you write the code, sketch your first tracer — the thin end-to-end path that will prove the system holds together."
                 },
                 {
                   "id": "b1-ship",
@@ -1059,7 +1059,7 @@
               "items": [
                 {
                   "id": "base-map",
-                  "text": "AGENTS.md — a map. Goal, context, done-when, pointers. Not a warehouse."
+                  "text": "AGENTS.md — a map. Goal, context, done-when, pointers. Not a warehouse."
                 },
                 {
                   "id": "base-plan",
@@ -1080,7 +1080,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Holistic beats granular.",
-              "body": "With agents, your verification needs to prove the whole thing works, not that one function returned 4. Start with a tracer — a thin end-to-end path you can run. Then add automation so the tracer runs on every change. Add review — automated or human — only where judgment is needed. Unit tests are fine, but they are not the point. The more the agent does, the more holistic your checks have to be."
+              "body": "With agents, your verification needs to prove the whole thing works, not that one function returned 4. Start with a tracer — a thin end-to-end path you can run. Then add automation so the tracer runs on every change. Add review — automated or human — only where judgment is needed. Unit tests are fine, but they are not the point. The more the agent does, the more holistic your checks have to be."
             }
           ]
         },
@@ -1093,8 +1093,8 @@
           "title": "Return to the proof",
           "body": "More prompting won't unstick you. Step back. The answer is already in one of three places.",
           "facilitatorNotes": [
-            "Flip to this scene when a team is stuck, or project room-wide at a checkpoint moment.",
-            "Coach first, mentor second, teach only as a last resort."
+            "Flip to this scene when a team is stuck, or project room-wide at a checkpoint moment.",
+            "Coach first, mentor second, teach only as a last resort."
           ],
           "sourceRefs": [
             {
@@ -1127,7 +1127,7 @@
                 {
                   "id": "return-check",
                   "title": "Add the smallest check.",
-                  "body": "A test. A tracer bullet. A one-line script that proves reality matches your mental model. Any executable signal beats more guessing."
+                  "body": "A test. A tracer bullet. A one-line script that proves reality matches your mental model. Any executable signal beats more guessing."
                 }
               ]
             },
@@ -1135,8 +1135,8 @@
               "id": "build-1-answer-not-help-callout",
               "type": "callout",
               "tone": "info",
-              "title": "If a facilitator hands you an answer, it didn't help.",
-              "body": "Ask for a question, not an answer. If you leave the conversation with a spoken solution but no repo artifact, the problem will come back an hour later. Return the fix to the repo."
+              "title": "If a facilitator hands you an answer, it didn't help.",
+              "body": "Ask for a question, not an answer. If you leave the conversation with a spoken solution but no repo artifact, the problem will come back an hour later. Return the fix to the repo."
             }
           ]
         }
@@ -1177,7 +1177,7 @@
         "say": [],
         "show": [],
         "do": [
-          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
         ],
         "watch": [
           "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
@@ -1222,12 +1222,12 @@
         },
         {
           "id": "intermezzo-1-check-in",
-          "label": "Your team's check-in",
+          "label": "Your team's check-in",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "participant",
-          "title": "Your team's check-in",
-          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in into the team card on your participant board. Short, honest — two or three sentences is fine. It becomes part of your team's record.",
+          "title": "Your team's check-in",
+          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in into the team card on your participant board. Short, honest — two or three sentences is fine. It becomes part of your team's record.",
           "facilitatorNotes": [
             "Team card append-only check-in log is load-bearing here. The entry persists across the day."
           ],
@@ -1242,8 +1242,8 @@
               "id": "intermezzo-1-checkin-hero",
               "type": "hero",
               "eyebrow": "Intermezzo 1",
-              "title": "Your team's check-in",
-              "body": "Compare what you wrote. One person types the team's check-in into the team card. Short, honest — two or three sentences."
+              "title": "Your team's check-in",
+              "body": "Compare what you wrote. One person types the team's check-in into the team card. Short, honest — two or three sentences."
             },
             {
               "id": "intermezzo-1-checkin-steps",
@@ -1257,12 +1257,12 @@
                 {
                   "id": "checkin-agree",
                   "title": "Agree on the check-in (1 min).",
-                  "body": "What's actually true about your team right now? What's surprising? What do you want to try differently?"
+                  "body": "What's actually true about your team right now? What's surprising? What do you want to try differently?"
                 },
                 {
                   "id": "checkin-write",
                   "title": "One person writes it (1 min).",
-                  "body": "On the participant board, in the team check-in field. It saves automatically and becomes part of your team's record."
+                  "body": "On the participant board, in the team check-in field. It saves automatically and becomes part of your team's record."
                 }
               ]
             },
@@ -1270,8 +1270,8 @@
               "id": "intermezzo-1-record-callout",
               "type": "callout",
               "tone": "info",
-              "title": "If it's not recorded, it didn't happen.",
-              "body": "Same rule as the repo. A check-in spoken at the table and lost is not a check-in. Type it. Two sentences is enough. It will be here for your future self and for whoever reads this project next."
+              "title": "If it's not recorded, it didn't happen.",
+              "body": "Same rule as the repo. A check-in spoken at the table and lost is not a check-in. Type it. Two sentences is enough. It will be here for your future self and for whoever reads this project next."
             }
           ]
         },
@@ -1282,7 +1282,7 @@
           "intent": "reflection",
           "chromePreset": "team-trail",
           "title": "The thread",
-          "body": "Your check-ins are on screen. I'm going to read them out loud, one team at a time. Then I'll pull the thread that connects them — one principle point for the morning.",
+          "body": "Your check-ins are on screen. I'm going to read them out loud, one team at a time. Then I'll pull the thread that connects them — one principle point for the morning.",
           "facilitatorNotes": [
             "The principle point is ad hoc, read from the room. Don't pre-can it.",
             "Uses the team-trail chrome preset to render all team check-in trails."
@@ -1299,7 +1299,7 @@
               "type": "hero",
               "eyebrow": "Intermezzo 1",
               "title": "The thread",
-              "body": "Your check-ins are on screen. I read them out loud, one team at a time. Then I pull the thread that connects them — one principle point for the morning."
+              "body": "Your check-ins are on screen. I read them out loud, one team at a time. Then I pull the thread that connects them — one principle point for the morning."
             },
             {
               "id": "intermezzo-1-thread-steps",
@@ -1308,17 +1308,17 @@
                 {
                   "id": "thread-read",
                   "title": "Read the check-ins on screen.",
-                  "body": "Facilitator scrolls through each team's recorded check-in and reads it aloud. No debate, just listening."
+                  "body": "Facilitator scrolls through each team's recorded check-in and reads it aloud. No debate, just listening."
                 },
                 {
                   "id": "thread-pull",
                   "title": "The thread.",
-                  "body": "Facilitator names the one thing that connects the check-ins — a pattern, a tension, a shared gap, a common win. Grounded in what is literally on screen, not in impressions."
+                  "body": "Facilitator names the one thing that connects the check-ins — a pattern, a tension, a shared gap, a common win. Grounded in what is literally on screen, not in impressions."
                 },
                 {
                   "id": "thread-carry",
                   "title": "One thing to carry.",
-                  "body": "What each person takes into the afternoon. Verbal, or written back into the team card — facilitator's call."
+                  "body": "What each person takes into the afternoon. Verbal, or written back into the team card — facilitator's call."
                 }
               ]
             },
@@ -1327,7 +1327,7 @@
               "type": "callout",
               "tone": "info",
               "title": "The principle comes from the screen, not from vibes.",
-              "body": "Every team's check-in is on screen. The thread is whatever is actually there, not what the facilitator hopes is there."
+              "body": "Every team's check-in is on screen. The thread is whatever is actually there, not what the facilitator hopes is there."
             }
           ]
         }
@@ -1375,7 +1375,7 @@
           "Během oběda tiše zkontroluj repo každého týmu. Když je repo opravdu nepoužitelné (vůbec žádné AGENTS.md, žádný kód, rozbitý setup), pomozte týmu napsat minimum. Rámujte to jako běžné koučování, ne jako bránu."
         ],
         "watch": [
-          "Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasahujte jen u opravdu rozbitých repozitářů, ne u slabých."
+          "Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasahujte jen u opravdu rozbitých repozitářů, ne u slabých."
         ],
         "fallback": []
       },
@@ -1390,7 +1390,7 @@
           "title": "Back at [return-time]",
           "body": "Eat. Walk. Breathe. See you at [return-time] sharp.",
           "facilitatorNotes": [
-            "The [return-time] placeholder is a facilitator-settable variable. Default is the scheduled resume time from Phase 1's day schedule; facilitator can override it live on the day via the scene editor."
+            "The [return-time] placeholder is a facilitator-settable variable. Default is the scheduled resume time from Phase 1's day schedule; facilitator can override it live on the day via the scene editor."
           ],
           "sourceRefs": [],
           "blocks": [
@@ -1405,7 +1405,7 @@
               "id": "lunch-quote-callout",
               "type": "callout",
               "tone": "info",
-              "title": "In case you forgot the morning's line.",
+              "title": "In case you forgot the morning's line.",
               "body": "Humans steer. Agents execute. — Ryan Lopopolo, OpenAI Frontier & Symphony"
             }
           ]
@@ -1445,7 +1445,7 @@
       "facilitatorRunner": {
         "goal": "Vynutit tichý start po rotaci a nechat kvalitu repa ukázat, co je opravdu čitelné.",
         "say": [
-          "Nová session agenta nemá žádnou paměť z předchozí session. Když je kontext jen v chatu, session začíná naslepo. Proto je repo stavem session."
+          "Nová session agenta nemá žádnou paměť z předchozí session. Když je kontext jen v chatu, session začíná naslepo. Proto je repo stavem session."
         ],
         "show": [],
         "do": [],
@@ -1483,7 +1483,7 @@
               "id": "rotation-always-the-plan-callout",
               "type": "callout",
               "tone": "info",
-              "title": "This isn't an ambush. It's the test.",
+              "title": "This isn't an ambush. It's the test.",
               "body": "The opening said you would hand off and inherit. Lunch was the gate. Whatever you left in the repo at noon is everything the new team has. Whatever is still in your heads — they will never hear it. This is what we practiced for."
             }
           ]
@@ -1495,7 +1495,7 @@
           "intent": "activation",
           "chromePreset": "participant",
           "title": "Line up, count off, walk to the anchor",
-          "body": "I'm going to call a count-off — same shape as this morning. Line up at your old anchor, count off one through N, and remember your number. When I say go, everyone with the same number forms a new team at the anchor that matches. The repo, the history, and the check-in are already waiting.",
+          "body": "I'm going to call a count-off — same shape as this morning. Line up at your old anchor, count off one through N, and remember your number. When I say go, everyone with the same number forms a new team at the anchor that matches. The repo, the history, and the check-in are already waiting.",
           "facilitatorNotes": [
             "Physical movement. Enforce the silence rule gently but firmly."
           ],
@@ -1544,20 +1544,20 @@
               "type": "callout",
               "tone": "info",
               "title": "Your old repo is not yours anymore. Do not help.",
-              "body": "You are leaving your old team's repo behind. The people arriving there have to read it cold. If they catch your eye, smile and point at the repo. The silence is the test — for you too."
+              "body": "You are leaving your old team's repo behind. The people arriving there have to read it cold. If they catch your eye, smile and point at the repo. The silence is the test — for you too."
             }
           ]
         },
         {
           "id": "rotation-read-the-room",
-          "label": "Every fresh agent session is a rotation",
+          "label": "Every fresh agent session is a rotation",
           "sceneType": "checkpoint",
           "intent": "framing",
           "chromePreset": "participant",
-          "title": "Every fresh agent session is a rotation",
-          "body": "A new agent has no memory of the previous session. A new teammate next month opens your repo the same way. The exercise you're about to do — reading a stranger's repo cold — is what every fresh agent session looks like. Monday morning, every morning, it's the same move. We're just practicing it out loud, with humans, at scale.",
+          "title": "Every fresh agent session is a rotation",
+          "body": "A new agent has no memory of the previous session. A new teammate next month opens your repo the same way. The exercise you're about to do — reading a stranger's repo cold — is what every fresh agent session looks like. Monday morning, every morning, it's the same move. We're just practicing it out loud, with humans, at scale.",
           "facilitatorNotes": [
-            "This is where rotation stops being a gimmick and becomes daily practice."
+            "This is where rotation stops being a gimmick and becomes daily practice."
           ],
           "sourceRefs": [
             {
@@ -1569,9 +1569,9 @@
             {
               "id": "rotation-read-hero",
               "type": "hero",
-              "eyebrow": "Now you sit in the other team's work",
-              "title": "Every fresh agent session is a rotation",
-              "body": "Reading a stranger's repo cold is what every fresh agent session looks like. Monday morning, every morning, it's the same move."
+              "eyebrow": "Now you sit in the other team's work",
+              "title": "Every fresh agent session is a rotation",
+              "body": "Reading a stranger's repo cold is what every fresh agent session looks like. Monday morning, every morning, it's the same move."
             },
             {
               "id": "rotation-quiet-start-steps",
@@ -1580,17 +1580,17 @@
                 {
                   "id": "quiet-read",
                   "title": "Read (5 min).",
-                  "body": "README, AGENTS.md, the plan, the latest commits, the team's Intermezzo 1 check-in. No keyboard. No conversation with anyone from the original team."
+                  "body": "README, AGENTS.md, the plan, the latest commits, the team's Intermezzo 1 check-in. No keyboard. No conversation with anyone from the original team."
                 },
                 {
                   "id": "quiet-map",
                   "title": "Map (3 min).",
-                  "body": "Talk at your new table. What helps? What's missing? What's risky? What's the next safe move?"
+                  "body": "Talk at your new table. What helps? What's missing? What's risky? What's the next safe move?"
                 },
                 {
                   "id": "quiet-diagnose",
                   "title": "Diagnose on the team card (2 min).",
-                  "body": "Write your team's diagnosis of the inherited repo directly onto the team card — not as status, as a recorded artifact. It joins the Intermezzo 1 check-in as part of the repo's history. Include the new team composition (who's in the team now)."
+                  "body": "Write your team's diagnosis of the inherited repo directly onto the team card — not as status, as a recorded artifact. It joins the Intermezzo 1 check-in as part of the repo's history. Include the new team composition (who's in the team now)."
                 },
                 {
                   "id": "quiet-start",
@@ -1603,8 +1603,8 @@
               "id": "rotation-frustration-callout",
               "type": "callout",
               "tone": "info",
-              "title": "If this is confusing, that's the point.",
-              "body": "If the repo you just inherited is confusing to read, that isn't bad luck — it's what weak context feels like from the other side. Your job for the next ten minutes is to notice what's missing and write it down. Do not rescue the repo with conversation. The confusion is the signal."
+              "title": "If this is confusing, that's the point.",
+              "body": "If the repo you just inherited is confusing to read, that isn't bad luck — it's what weak context feels like from the other side. Your job for the next ten minutes is to notice what's missing and write it down. Do not rescue the repo with conversation. The confusion is the signal."
             }
           ]
         }
@@ -1651,7 +1651,7 @@
         ],
         "show": [],
         "do": [
-          "Začněte codifikační pauzou. 5 minut. Teprve po zakódování alespoň jednoho bodu tření pokračujte v budování."
+          "Začněte codifikační pauzou. 5 minut. Teprve po zakódování alespoň jednoho bodu tření pokračujte v budování."
         ],
         "watch": [],
         "fallback": []
@@ -1665,7 +1665,7 @@
           "intent": "transition",
           "chromePreset": "minimal",
           "title": "Same clock, new context",
-          "body": "You're at a new anchor, with a new team, in a new repo. Ten minutes of reading first — no keyboard. Then capture what tripped you, so the next hour is clean. Then build. Eighty-five minutes of work, split by a twenty-minute pause at 14:30. Facilitators walking, recovery one flip away.",
+          "body": "You're at a new anchor, with a new team, in a new repo. Ten minutes of reading first — no keyboard. Then capture what tripped you, so the next hour is clean. Then build. Eighty-five minutes of work, split by a twenty-minute pause at 14:30. Facilitators walking, recovery one flip away.",
           "facilitatorNotes": [
             "30-second kickoff. Mirrors Scene 4.1."
           ],
@@ -1692,7 +1692,7 @@
           "intent": "build",
           "chromePreset": "participant",
           "title": "Eighty-five minutes to ship, split in two",
-          "body": "Same goal as this morning — ship a working slice, verified, committed. Same discipline — team first, map first, tracer first. One new move: when the inherited repo trips you, capture the friction into the repo as you go. Eighty-five minutes of building, split by a twenty-minute pause in the middle. Build is the goal. Capturing friction is how you build without tripping on the same thing twice.",
+          "body": "Same goal as this morning — ship a working slice, verified, committed. Same discipline — team first, map first, tracer first. One new move: when the inherited repo trips you, capture the friction into the repo as you go. Eighty-five minutes of building, split by a twenty-minute pause in the middle. Build is the goal. Capturing friction is how you build without tripping on the same thing twice.",
           "facilitatorNotes": [
             "Default ambient scene for Build 2 first push. Watch for the self-validation trap."
           ],
@@ -1722,17 +1722,17 @@
                 {
                   "id": "b2a-friction",
                   "title": "13:55–14:00 · Capture the friction.",
-                  "body": "Five minutes. You just read a stranger's repo. What tripped you? What was missing? Write it into the repo — a clearer AGENTS.md section, a rule, a missing check. Five minutes of cleanup earns an hour of clean building."
+                  "body": "Five minutes. You just read a stranger's repo. What tripped you? What was missing? Write it into the repo — a clearer AGENTS.md section, a rule, a missing check. Five minutes of cleanup earns an hour of clean building."
                 },
                 {
                   "id": "b2a-first-push",
-                  "title": "14:00–14:30 · First push — ship a slice.",
+                  "title": "14:00–14:30 · First push — ship a slice.",
                   "body": "Thirty minutes. One bounded piece, one tracer that runs, committed."
                 },
                 {
                   "id": "b2a-pause",
                   "title": "14:30–14:50 · Mid-point pause (Intermezzo 2).",
-                  "body": "Twenty minutes. Step back with the room, check in, then back to your team. This is a pause, not an ending."
+                  "body": "Twenty minutes. Step back with the room, check in, then back to your team. This is a pause, not an ending."
                 },
                 {
                   "id": "b2a-second-push",
@@ -1752,7 +1752,7 @@
               "items": [
                 {
                   "id": "b2a-base-map",
-                  "text": "AGENTS.md as a map. Goal, context, done-when, pointers. Not a warehouse."
+                  "text": "AGENTS.md as a map. Goal, context, done-when, pointers. Not a warehouse."
                 },
                 {
                   "id": "b2a-base-plan",
@@ -1773,7 +1773,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Watch out for the self-validation trap.",
-              "body": "When the agent generates tests in the same task it generates code, those tests reflect the agent's interpretation of the spec — not the spec itself. Independent verification means: you wrote the done criteria, or a separate pass evaluates the output. This is a quiet trap. Most teams fall into it once. Name it when you see it, and split the work — one pass writes the check, a different pass writes the code."
+              "body": "When the agent generates tests in the same task it generates code, those tests reflect the agent's interpretation of the spec — not the spec itself. Independent verification means: you wrote the done criteria, or a separate pass evaluates the output. This is a quiet trap. Most teams fall into it once. Name it when you see it, and split the work — one pass writes the check, a different pass writes the code."
             }
           ]
         },
@@ -1819,7 +1819,7 @@
                 {
                   "id": "b2a-return-check",
                   "title": "Add the smallest check.",
-                  "body": "A test. A tracer bullet. Any executable signal beats more guessing."
+                  "body": "A test. A tracer bullet. Any executable signal beats more guessing."
                 }
               ]
             },
@@ -1827,8 +1827,8 @@
               "id": "build-2a-answer-callout",
               "type": "callout",
               "tone": "info",
-              "title": "If a facilitator hands you an answer, it didn't help.",
-              "body": "Ask for a question, not an answer. Return the fix to the repo."
+              "title": "If a facilitator hands you an answer, it didn't help.",
+              "body": "Ask for a question, not an answer. Return the fix to the repo."
             }
           ]
         }
@@ -1873,7 +1873,7 @@
         "say": [],
         "show": [],
         "do": [
-          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
         ],
         "watch": [
           "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
@@ -1889,7 +1889,7 @@
           "intent": "reflection",
           "chromePreset": "minimal",
           "title": "Write before you speak",
-          "body": "Three minutes. Individual. No talking. Same rule as the first intermezzo — you produce before you share. This is a pause, not an ending. Write something you'd actually want to act on in the next forty minutes.",
+          "body": "Three minutes. Individual. No talking. Same rule as the first intermezzo — you produce before you share. This is a pause, not an ending. Write something you'd actually want to act on in the next forty minutes.",
           "facilitatorNotes": [
             "Same silent-retrieval discipline as Intermezzo 1."
           ],
@@ -1905,7 +1905,7 @@
               "type": "hero",
               "eyebrow": "Intermezzo 2 · mid-point pause",
               "title": "Write before you speak",
-              "body": "Three minutes. Individual. No talking. This is a pause, not an ending."
+              "body": "Three minutes. Individual. No talking. This is a pause, not an ending."
             },
             {
               "id": "intermezzo-2-question",
@@ -1918,12 +1918,12 @@
         },
         {
           "id": "intermezzo-2-check-in",
-          "label": "Your team's check-in",
+          "label": "Your team's check-in",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "participant",
-          "title": "Your team's check-in",
-          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in on your team card. Short, honest — two or three sentences is fine. Another entry in the story the card is telling.",
+          "title": "Your team's check-in",
+          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in on your team card. Short, honest — two or three sentences is fine. Another entry in the story the card is telling.",
           "facilitatorNotes": [
             "This is not the final check-in. Another entry in the append-only log."
           ],
@@ -1938,7 +1938,7 @@
               "id": "intermezzo-2-checkin-hero",
               "type": "hero",
               "eyebrow": "Intermezzo 2 · mid-point pause",
-              "title": "Your team's check-in",
+              "title": "Your team's check-in",
               "body": "Compare what you wrote. Append to the team card. Two or three sentences."
             },
             {
@@ -1967,7 +1967,7 @@
               "type": "callout",
               "tone": "info",
               "title": "This is one of several check-ins.",
-              "body": "The team card is accumulating a story. Intermezzo 1 check-in, rotation diagnosis, now this, and maybe more. Don't treat it like a final report. Treat it like a commit message — a small honest note about where your team is right now."
+              "body": "The team card is accumulating a story. Intermezzo 1 check-in, rotation diagnosis, now this, and maybe more. Don't treat it like a final report. Treat it like a commit message — a small honest note about where your team is right now."
             }
           ]
         },
@@ -1980,7 +1980,7 @@
           "title": "Back to the work",
           "body": "Your check-ins are on screen. I'll read them, pull the thread, and send you back to your team with one thing to try in the second push.",
           "facilitatorNotes": [
-            "Don't let Intermezzo 2 become a mini-Reveal. Keep it brisk."
+            "Don't let Intermezzo 2 become a mini-Reveal. Keep it brisk."
           ],
           "sourceRefs": [
             {
@@ -2003,7 +2003,7 @@
                 {
                   "id": "i2-thread-read",
                   "title": "Read the check-ins on screen.",
-                  "body": "Facilitator scrolls through each team's check-in and reads it aloud. Same rhythm as the first intermezzo."
+                  "body": "Facilitator scrolls through each team's check-in and reads it aloud. Same rhythm as the first intermezzo."
                 },
                 {
                   "id": "i2-thread-pull",
@@ -2021,7 +2021,7 @@
               "id": "intermezzo-2-pause-callout",
               "type": "callout",
               "tone": "info",
-              "title": "This is a pause, not an ending.",
+              "title": "This is a pause, not an ending.",
               "body": "Same rhythm as the first intermezzo — retrieve, share, move on. No carrying home yet. That is for later. Right now: what is working, what is not, and what you want to do in the next forty minutes."
             }
           ]
@@ -2035,15 +2035,15 @@
       "startTime": "14:50",
       "kind": "shared",
       "intent": "build",
-      "goal": "Aplikujte signál z mezipatra. Iterujte, rozšiřujte, tlačte dál. Commitněte a udělejte repo čitelné pro Reveal.",
-      "roomSummary": "Druhý push Build 2. Tým jedná podle toho, co zvedlo mezipatro, a připravuje repo pro Reveal.",
+      "goal": "Aplikujte signál z mezipatra. Iterujte, rozšiřujte, tlačte dál. Commitněte a udělejte repo čitelné pro Reveal.",
+      "roomSummary": "Druhý push Build 2. Tým jedná podle toho, co zvedlo mezipatro, a připravuje repo pro Reveal.",
       "facilitatorPrompts": [
         "Právě jste se zastavili. Teď jednejte podle signálu.",
         "Commitněte, co drží. Udělejte repo čitelné. Rozhodněte, co ukážete na Reveal."
       ],
       "watchFors": [
         "Týmy místo uzavření slice přepíšou příliš mnoho.",
-        "Týmy vynechají final cleanup a dorazí na Reveal s repem, které nikdo nepřečte."
+        "Týmy vynechají final cleanup a dorazí na Reveal s repem, které nikdo nepřečte."
       ],
       "checkpointQuestions": [
         "Co vám řeklo mezipatro? Jednali jste podle toho?",
@@ -2074,7 +2074,7 @@
           "Self-validation trap re-appearing in the second push."
         ],
         "fallback": [
-          "If a team loses the thread, flip to the recovery scene and coach them back to the proof."
+          "If a team loses the thread, flip to the recovery scene and coach them back to the proof."
         ]
       },
       "defaultSceneId": "build-2b-second-push-timeline",
@@ -2113,7 +2113,7 @@
           "intent": "build",
           "chromePreset": "participant",
           "title": "Forty minutes left. Make it count.",
-          "body": "The work is the same discipline. The test is whether you can take the signal from the intermezzo and act on it. If you get stuck, the recovery pattern is one flip away — it's the same scene as the morning.",
+          "body": "The work is the same discipline. The test is whether you can take the signal from the intermezzo and act on it. If you get stuck, the recovery pattern is one flip away — it's the same scene as the morning.",
           "facilitatorNotes": [
             "Default ambient scene for the second push.",
             "Reuses the stuck-recovery pattern from Build 1 and Build 2 first push."
@@ -2192,7 +2192,7 @@
       "facilitatorRunner": {
         "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít předání, a převést je do další praxe i do lepšího workshopového systému.",
         "say": [
-          "Tyhle postupy jsou nezávislé na nástroji. Když v pondělí budete pracovat s jiným toolchainem, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
+          "Tyhle postupy jsou nezávislé na nástroji. Když v pondělí budete pracovat s jiným toolchainem, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
         ],
         "show": [],
         "do": [
@@ -2210,13 +2210,13 @@
           "intent": "reflection",
           "chromePreset": "checkpoint",
           "title": "Alone, pairs, fours, all",
-          "body": "Four layers of reflection. Each one a little wider than the last. This is the most important twenty minutes of the day — do not rush it.",
+          "body": "Four layers of reflection. Each one a little wider than the last. This is the most important twenty minutes of the day — do not rush it.",
           "facilitatorNotes": [
             "Full 1-2-4-All. Real time on every layer (3 + 4 + 5 + 10 min)."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Závěr a reflexe",
+              "label": "Facilitační průvodce: Závěr a reflexe",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -2226,7 +2226,7 @@
               "type": "hero",
               "eyebrow": "Reflection",
               "title": "Alone, pairs, fours, all",
-              "body": "Four layers of reflection. Each one a little wider than the last."
+              "body": "Four layers of reflection. Each one a little wider than the last."
             },
             {
               "id": "reveal-steps",
@@ -2235,17 +2235,17 @@
                 {
                   "id": "reveal-alone",
                   "title": "Alone · 3 minutes.",
-                  "body": "Individual writing. What signal helped you continue after rotation? What was missing? What's the one thing from today you actually want in your own work next time?"
+                  "body": "Individual writing. What signal helped you continue after rotation? What was missing? What's the one thing from today you actually want in your own work next time?"
                 },
                 {
                   "id": "reveal-pairs",
                   "title": "Pairs · 4 minutes.",
-                  "body": "Turn to one neighbor. Compare what you wrote. Find the one thing between the two of you that's most worth sharing."
+                  "body": "Turn to one neighbor. Compare what you wrote. Find the one thing between the two of you that's most worth sharing."
                 },
                 {
                   "id": "reveal-fours",
                   "title": "Fours · 5 minutes.",
-                  "body": "Two pairs become a four. Compare again. Find the signal, the gap, or the insight that the four of you think the whole room needs to hear."
+                  "body": "Two pairs become a four. Compare again. Find the signal, the gap, or the insight that the four of you think the whole room needs to hear."
                 },
                 {
                   "id": "reveal-all",
@@ -2259,7 +2259,7 @@
               "type": "callout",
               "tone": "info",
               "title": "This isn't about winners.",
-              "body": "We're looking for the signals that helped work survive handoff and the ones that still break under pressure. Every repeated pain across teams is a candidate for a better template, check, or runbook — not a team failure."
+              "body": "We're looking for the signals that helped work survive handoff and the ones that still break under pressure. Every repeated pain across teams is a candidate for a better template, check, or runbook — not a team failure."
             }
           ]
         },
@@ -2277,7 +2277,7 @@
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Závěr a reflexe",
+              "label": "Facilitační průvodce: Závěr a reflexe",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -2295,7 +2295,7 @@
               "items": [
                 {
                   "id": "show-team",
-                  "title": "One team at a time, five minutes each.",
+                  "title": "One team at a time, five minutes each.",
                   "body": "Share your screen. Run what runs. Walk the repo. Point at something specific."
                 },
                 {
@@ -2315,25 +2315,25 @@
               "type": "callout",
               "tone": "info",
               "title": "The reflection did the work.",
-              "body": "You spent twenty minutes in the 1-2-4-All figuring out what you learned. The demo isn't about finding words — you already have them. It's about showing the thing the words point at."
+              "body": "You spent twenty minutes in the 1-2-4-All figuring out what you learned. The demo isn't about finding words — you already have them. It's about showing the thing the words point at."
             }
           ]
         },
         {
           "id": "reveal-what-i-saw",
-          "label": "What I saw today",
+          "label": "What I saw today",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "team-trail",
-          "title": "What I saw today",
-          "body": "Now my part. I walked the room all day. I read every team's card as the afternoon moved. Here's what I saw from outside — the patterns, the surprises, the things everyone collectively figured out that maybe nobody felt individually.",
+          "title": "What I saw today",
+          "body": "Now my part. I walked the room all day. I read every team's card as the afternoon moved. Here's what I saw from outside — the patterns, the surprises, the things everyone collectively figured out that maybe nobody felt individually.",
           "facilitatorNotes": [
             "This is the hardest beat in the day. Prepare by reading team cards during the pre-Reveal buffer, not by preparing generic remarks.",
             "Uses the team-trail chrome preset so facilitator can point at specific team card entries as evidence."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Závěr a reflexe",
+              "label": "Facilitační průvodce: Závěr a reflexe",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -2342,15 +2342,15 @@
               "id": "reveal-what-i-saw-hero",
               "type": "hero",
               "eyebrow": "From outside the teams",
-              "title": "What I saw today",
-              "body": "Two or three patterns, one or two surprises, and the craft observation — what this group did well. Grounded, specific, honest. Not a pep talk."
+              "title": "What I saw today",
+              "body": "Two or three patterns, one or two surprises, and the craft observation — what this group did well. Grounded, specific, honest. Not a pep talk."
             },
             {
               "id": "reveal-what-i-saw-callout",
               "type": "callout",
               "tone": "info",
               "title": "Evidence, not praise.",
-              "body": "The facilitator's observations should be grounded in what's on the team cards and what was just shared in the 1-2-4-All and the demos. Not general encouragement. Specific signals, specific surprises, specific patterns. If you can't point at it, don't say it."
+              "body": "The facilitator's observations should be grounded in what's on the team cards and what was just shared in the 1-2-4-All and the demos. Not general encouragement. Specific signals, specific surprises, specific patterns. If you can't point at it, don't say it."
             }
           ]
         },
@@ -2361,13 +2361,13 @@
           "intent": "commitment",
           "chromePreset": "participant",
           "title": "The one thing you'll change",
-          "body": "One sentence. Specific enough that you could tell, a week from now, whether you actually did it. Write it first. Then pick where it lives.",
+          "body": "One sentence. Specific enough that you could tell, a week from now, whether you actually did it. Write it first. Then pick where it lives.",
           "facilitatorNotes": [
-            "Four storage options. Participants pick one. No Monday framing — anchored to \"the next time I work with an agent.\""
+            "Four storage options. Participants pick one. No Monday framing — anchored to \"the next time   work with an agent.\""
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Závěr a reflexe",
+              "label": "Facilitační průvodce: Závěr a reflexe",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -2377,7 +2377,7 @@
               "type": "hero",
               "eyebrow": "The commitment",
               "title": "The one thing you'll change",
-              "body": "One sentence. Specific enough that you could tell, a week from now, whether you actually did it."
+              "body": "One sentence. Specific enough that you could tell, a week from now, whether you actually did it."
             },
             {
               "id": "reveal-one-thing-steps",
@@ -2386,17 +2386,17 @@
                 {
                   "id": "commit-write",
                   "title": "Write the sentence (2 min).",
-                  "body": "Format: \"The next time I work with an agent, the first thing I'll change is [specific action] — because [specific reason from today].\" No vague language. No \"I will try to...\""
+                  "body": "Format: \"The next time   work with an agent, the first thing I'll change is [specific action] — because [specific reason from today].\" No vague language. No \"I will try…...\""
                 },
                 {
                   "id": "commit-home",
                   "title": "Pick where it lives (1 min).",
-                  "body": "Somewhere you'll actually see it the next time you start a session. Options in the callout below."
+                  "body": "Somewhere you'll actually see it the next time you start a session. Options in the callout below."
                 },
                 {
                   "id": "commit-say",
                   "title": "Say it out loud at your table (3 min).",
-                  "body": "One person at a time. No debate, no defense. Just read it."
+                  "body": "One person at a time. No debate, no defense. Just read it."
                 }
               ]
             },
@@ -2405,14 +2405,14 @@
               "type": "callout",
               "tone": "info",
               "title": "Four options — pick one.",
-              "body": "Pick whichever actually fits how you work: (1) The workshop skill on your machine — save the commitment with the skill's notes command; it lives with the skill you just practiced. (2) A physical card — we handed these out at the start of Reveal. (3) An email to yourself — send it now; it lands in your inbox tonight with today's context still fresh. (4) Wherever you already keep your own notes. Pick one. Do not pick none."
+              "body": "Pick whichever actually fits how you work: (1) The workshop skill on your machine — save the commitment with the skill's notes command; it lives with the skill you just practiced. (2) A physical card — we handed these out at the start of Reveal. (3) An email to yourself — send it now; it lands in your inbox tonight with today's context still fresh. (4) Wherever you already keep your own notes. Pick one. Do not pick none."
             },
             {
               "id": "reveal-specific-callout",
               "type": "callout",
               "tone": "warning",
               "title": "Specific enough to check.",
-              "body": "Not: \"I'll work better with agents.\" Yes: \"The next time I start an agent task, I'll write Goal, Context, Constraints, and Done-When in AGENTS.md before typing anything into the prompt.\" If you can't tell a week from now whether you did it, the sentence isn't specific enough yet."
+              "body": "Not: \"I'll work better with agents.\" Yes: \"The next tim  I start an agent task, I'll write Goal, Context, Constraints, and Done-When in AGENTS.md before typing anything into the prompt.\" If you can't te l a week from now whether you did it, the sentence isn't specific enough yet."
             },
             {
               "id": "reveal-craft-travels-callout",
@@ -2430,14 +2430,14 @@
           "intent": "closing",
           "chromePreset": "minimal",
           "title": "Go use it",
-          "body": "This is where my part ends and yours continues. You built something today that a stranger continued without you — that was the test, and you passed. The craft you practiced is yours. The materials stay with you.",
+          "body": "This is where my part ends and yours continues. You built something today that a stranger continued without you — that was the test, and you passed. The craft you practiced is yours. The materials stay with you.",
           "facilitatorNotes": [
-            "30-60 seconds of screen time. The facilitator's closing words are more important than what's on the slide.",
+            "30-60 seconds of screen time. The facilitator's closing words are more important than what's on the slide.",
             "No \"see you on Monday.\" No pep talk. The room feels more when the closing undersells."
           ],
           "sourceRefs": [
             {
-              "label": "Facilitační průvodce: Závěr a reflexe",
+              "label": "Facilitační průvodce: Závěr a reflexe",
               "path": "content/facilitation/master-guide.md"
             }
           ],
@@ -2447,14 +2447,14 @@
               "type": "hero",
               "eyebrow": "End of day",
               "title": "Go use it",
-              "body": "This is where my part ends and yours continues. You built something today that a stranger continued without you — that was the test, and you passed. The craft you practiced is yours. I won't be in the room next time you open an agent session — but everything you need is already in your hands."
+              "body": "This is where my part ends and yours continues. You built something today that a stranger continued without you — that was the test, and you passed. The craft you practiced is yours. I won't be in the room next time you open an agent session — but everything you need is already in your hands."
             },
             {
               "id": "reveal-follow-up-callout",
               "type": "callout",
               "tone": "info",
               "title": "The follow-up package.",
-              "body": "The workshop skill and reference materials live with you after today. When you want to pull a pattern, a check, or a reminder, ask the skill. It knows what you learned because you were part of building it."
+              "body": "The workshop skill and reference materials live with you after today. When you want to pull a pattern, a check, or a reminder, ask the skill. It knows what you learned because you were part of building it."
             }
           ]
         }
@@ -2593,21 +2593,21 @@
         "title": "Vytvořte AGENTS.md jako mapu",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
-        "description": "Zapište cíl, build/test flow, trvalá pravidla a kam má další tým sáhnout jako první."
+        "description": "Zapište cíl, build/test flow, trvalá pravidla a kam má další tým sáhnout jako první."
       },
       {
         "id": "review-skill",
         "title": "Napište skill pro code review",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
-        "description": "Alespoň jedna opakovatelná review rutina musí být v repu jako skill nebo runbook, ne jen v promptu."
+        "description": "Alespoň jedna opakovatelná review rutina musí být v repu jako skill nebo runbook, ne jen v promptu."
       },
       {
         "id": "plan-first",
         "title": "Použijte /plan před kódováním",
         "category": "Workflow",
         "phaseHint": "before-lunch",
-        "description": "Nechte agenta nejprve rozplánovat práci, ukažte z čeho se vycházelo a dopište další safe move."
+        "description": "Nechte agenta nejprve rozplánovat práci, ukažte z čeho se vycházelo a dopište další safe move."
       },
       {
         "id": "smallest-verification",
@@ -2621,14 +2621,14 @@
         "title": "Spusťte 2 paralelní Codex sessions",
         "category": "Advanced",
         "phaseHint": "after-rotation",
-        "description": "Rozdělte problém do dvou nezávislých proudů a porovnejte, co se osvědčilo."
+        "description": "Rozdělte problém do dvou nezávislých proudů a porovnejte, co se osvědčilo."
       },
       {
         "id": "done-when",
         "title": "Přidejte 'Done When' ke každému tasku",
         "category": "Meta",
         "phaseHint": "anytime",
-        "description": "Každý důležitý task musí mít explicitní kritérium dokončení a odkaz na ověření."
+        "description": "Každý důležitý task musí mít explicitní kritérium dokončení a odkaz na ověření."
       }
     ]
   }
