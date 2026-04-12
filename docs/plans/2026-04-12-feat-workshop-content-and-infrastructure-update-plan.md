@@ -648,11 +648,11 @@ The rest is tracked here so it is not lost:
   contract should narrow to participant-facing content only.
 
 ### Phase E — Operator Docs
-- [ ] E1 — Operator guide: silent-gate practice
-- [ ] E2 — Operator guide: rotation count-off protocol
-- [ ] E3 — Operator guide: pre-workshop checklist
-- [ ] E4 — Physical props documentation
-- [ ] E5 — Phase 2 freshness recurring task
+- [x] E1 — Operator guide: silent-gate practice
+- [x] E2 — Operator guide: rotation count-off protocol
+- [x] E3 — Operator guide: pre-workshop checklist
+- [x] E4 — Physical props documentation
+- [x] E5 — Phase 2 freshness recurring task
 
 ### Phase F — Quality Gates
 - [ ] F1 — Cold-read facilitator gate for opening

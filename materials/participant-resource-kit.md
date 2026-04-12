@@ -68,13 +68,13 @@ Poznámka:
 
 ## Kdy se návyky spustí
 
-Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním týdnu, kdy se návyk aktivuje:
+Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním týdnu, kdy se návyk aktivuje:
 
-- Když **otevíráte nový repo, nový úkol nebo novou agent session** → Map before motion (udělám z repa mapu, než začnu generovat)
+- Když **otevíráte nový repo, nový úkol nebo novou agent session** → Map before motion (udělám z repa mapu, než začnu generovat)
 - Když **zavíráte chat, končíte hovor nebo pairing kde padlo rozhodnutí** → If it is not in the repo, it does not exist (zapíšu rozhodnutí do repa)
-- Když **cítím dost jistoty na to, abych šel dál** → Verification is the trust boundary (ta jistota je spouštěč k ověření, ne k přeskočení)
+- Když **cítím dost jistoty na to, abych šel dál** → Verification is the trust boundary (ta jistota je spouštěč k ověření, ne k přeskočení)
 - Když **chystám úkol pro agenta** → Boundaries create speed (napíšu omezení dřív než prompt)
-- Když **se stejná připomínka, třecí plocha nebo ruční krok objeví podruhé** → Cleanup is part of build (proměním to v check, template nebo pravidlo)
+- Když **se stejná připomínka, třecí plocha nebo ruční krok objeví podruhé** → Cleanup is part of build (proměním to v check, template nebo pravidlo)
 - Když **se stejný problém opakuje** → Fix the system, not just the symptom (neopravím výstup — opravím systém)
 
 ## Výzva na příští týden
@@ -92,7 +92,7 @@ Nejmenší verze, která přežije skeptické code review:
 1. **Jeden `AGENTS.md`** — goal, build/test příkazy, jedno explicitní omezení. Nic víc.
 2. **Jeden spustitelný check** — unit test, tracer bullet, nebo jednoduchý smoke test.
 
-Když se někdo zeptá „proč to děláme?", odpověď je: „Aby se další člověk nemusel ptát tebe."
+Když se někdo zeptá „proč to děláme?“, odpověď je: „Aby se další člověk nemusel ptát tebe.“
 
 Měsíční rytmus: každý měsíc si přečtěte svůj `AGENTS.md` skeptickým okem. Smažte, co už není nosné. Přidejte, co tým říká nahlas podruhé.
 
