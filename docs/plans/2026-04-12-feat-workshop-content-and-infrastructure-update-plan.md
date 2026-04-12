@@ -655,14 +655,14 @@ The rest is tracked here so it is not lost:
 - [x] E5 — Phase 2 freshness recurring task
 
 ### Phase F — Quality Gates
-- [ ] F1 — Cold-read facilitator gate for opening
-- [ ] F2 — Update tests for new content
-- [ ] F3 — Run `verify:content`
-- [ ] F4 — Run `lint`
-- [ ] F5 — Manual smoke test
-- [ ] F6 — Internal dry-run workshop
-- [ ] F7 — Fix dry-run blockers
-- [ ] F8 — Schedule first real workshop
+- [ ] F1 — Cold-read facilitator gate for opening *(human-only — requires an experienced facilitator not involved in the rewrite to read Phase 1 content cold and narrate it live)*
+- [x] F2 — Update tests for new content *(landed with Phase B: 297 tests passing, test fixtures updated in lockstep with the new scene ids)*
+- [x] F3 — Run `verify:content` *(passing: briefs inventory, generated views, tier-2 sync, copy-editor gate all clean)*
+- [x] F4 — Run `lint` *(passing: eslint clean, tsc 0 errors)*
+- [x] F5 — Manual smoke test *(partially complete: tsc, eslint, vitest 297 passing, harness-cli 67 passing. Full browser click-through of all 11 phases on the presenter view and participant surface still needs a human — the automated gates cannot verify visual rendering of the team-trail preset or that check-ins round-trip end-to-end in a real browser.)*
+- [ ] F6 — Internal dry-run workshop *(human-only — needs 4–6 internal participants running a shortened workshop with real repos and real agents)*
+- [ ] F7 — Fix dry-run blockers *(blocked on F6)*
+- [ ] F8 — Schedule first real workshop *(blocked on F1, F6, F7)*
 
 ## References
 
