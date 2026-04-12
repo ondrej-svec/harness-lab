@@ -2,9 +2,7 @@
 
 ## Problem
 
-Documentation becomes stale almost immediately. Once maintenance is fully manual, the team starts postponing it, and after a few iterations nobody knows whether the docs still describe reality. After handoff, the next team no longer knows what to trust and what is only inference.
-
-Your task is to design a tool that generates baseline technical documentation or a structured project overview from an existing codebase in a way that makes certainty and inference visibly different.
+Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After handoff, the next team no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.
 
 ## User stories
 
@@ -22,12 +20,12 @@ Your task is to design a tool that generates baseline technical documentation or
 
 ## Done when
 
-- The tool produces at least one readable documentation page or report.
-- It is clear how the tool runs locally and which input it expects.
-- The output separates facts from estimates or heuristics.
-- Another team can add a new output type without chaos in the repo.
-- A reviewer can tell where each claim came from within minutes.
+- A reviewer can read the generated documentation and tell exactly where each claim came from — within minutes, without opening the original source. *(Handoff test — provenance is the whole point.)*
+- Another team can add a new output format (Markdown → HTML, report → overview) without refactoring the whole tool.
+- The generated output makes it obvious which claims are *certain* (read directly from source) and which are *inference* (heuristic).
+- The tool produces at least one complete, readable output for a real or seed codebase.
+- `README` and `AGENTS.md` explain how to run locally and what input the tool expects.
 
 ## First step for the agent
 
-First define which project signals you will read and which outputs are certainty versus heuristic. Then propose the first implementation slice.
+Start by listing every signal the tool will read from a codebase (file names, imports, commit messages, directory structure, comments — whatever you're choosing) and for each one, decide whether it produces *certain* output or *heuristic* output. Write that spec in `AGENTS.md`. Only then propose the first implementation slice.

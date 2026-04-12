@@ -2,9 +2,7 @@
 
 ## Problem
 
-Almost every team ends up with small one-off scripts for log cleanup, JSON conversion, suspicious commit lookup, or fast repo checks. They work for a while, often for one person only, and after a few days nobody remembers how to run or extend them.
-
-Your task is to design a CLI tool that handles several common developer tasks in a way that survives handoff to another team and does not collapse the moment another command is added.
+Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where it's obvious where the next command, test, and doc belong.
 
 ## User stories
 
@@ -22,12 +20,12 @@ Your task is to design a CLI tool that handles several common developer tasks in
 
 ## Done when
 
-- There are at least 3 useful commands or subcommands.
-- `README` and `AGENTS.md` describe local execution and verification.
-- It is clear where to add another command without breaking the project structure.
-- A new team can add or fix another command within 10 minutes.
-- Each command has at least one readable input/output example.
+- Another team can add or fix a command within 10 minutes of opening the repo. *(Handoff test.)*
+- At least 3 working commands, each solving a concrete developer pain point.
+- `README` and `AGENTS.md` explain how to run and verify locally.
+- The extension pattern is visible — a new command fits without breaking the structure.
+- Every command has at least one readable input/output example.
 
 ## First step for the agent
 
-First design the minimal architecture that survives handoff. Start with `AGENTS.md`, the extension flow for another command, and the first verification step. Only then implement the first command.
+Don't start with code. Start with `AGENTS.md`, a short plan for the extension pattern, and one clear verification step. Only then implement the first command.
