@@ -2061,88 +2061,127 @@
   "inventory": {
     "briefs": [
       {
-        "id": "devtoolbox-cli",
-        "title": "DevToolbox CLI",
-        "problem": "Vývojáři ztrácejí čas opakovanými drobnými utilitami, které jsou rozseté po wiki, shellech a poznámkách.",
-        "userStories": [
-          "Jako vývojář chci převést log nebo JSON do čitelnější podoby jedním příkazem.",
-          "Jako vývojář chci rychle vypsat poslední problematické commity nebo větve.",
-          "Jako tým chci mít jasně zdokumentované příkazy, aby nástroj mohl převzít jiný tým po rotaci."
-        ],
-        "architectureNotes": [
-          "CLI může být v libovolném jazyce, ale příkazy musí být snadno objevitelné.",
-          "AGENTS.md musí obsahovat build/test flow a očekávaný styl výstupů.",
-          "Runbook pro další tým je důležitější než šířka feature setu."
-        ],
-        "acceptanceCriteria": [
-          "Existují alespoň 3 užitečné příkazy.",
-          "README a AGENTS.md vysvětlují lokální spuštění.",
-          "Nový tým zvládne do 10 minut přidat nebo opravit další příkaz."
-        ],
-        "firstAgentPrompt": "Navrhni minimální CLI architekturu, která přežije předání. Začni AGENTS.md, pak plánem, teprve potom implementací."
-      },
-      {
-        "id": "standup-bot",
-        "title": "Standup Bot",
-        "problem": "Denní standupy v chatu bývají dlouhé, nekonzistentní a těžko dohledatelné.",
-        "userStories": [
-          "Jako team lead chci sesbírat standup odpovědi do jednoho přehledu.",
-          "Jako vývojář chci vidět blokery a dependency mezi lidmi na jednom místě.",
-          "Jako nový tým po rotaci chci rychle pochopit datový tok a integrační body."
-        ],
-        "architectureNotes": [
-          "Preferujte jasný datový model před složitou integrací.",
-          "Mock data jsou v pořádku, pokud workflow působí realisticky.",
-          "Prompty a runbooky musí být součástí řešení, ne bokem."
-        ],
-        "acceptanceCriteria": [
-          "Bot umí ingestovat aspoň vzorová data a vytvořit souhrn.",
-          "Repo obsahuje instrukce pro rozšíření na reálný chat kanál.",
-          "Po rotaci lze navázat bez verbálního vysvětlování."
-        ],
-        "firstAgentPrompt": "Rozděl práci na ingest, sumarizaci a kontext pro další tým. Před implementací vytvoř dokumentaci, kterou nový tým otevře jako první."
-      },
-      {
         "id": "code-review-helper",
         "title": "Code Review Helper",
-        "problem": "Code review často závisí na tom, kdo se zrovna dívá do diffu. Rizikové změny pak procházejí bez společného jazyka pro jistotu, heuristiku a nutný follow-up.",
+        "problem": "Code review bývá nevyrovnané. Některé změny projdou s dobrým checklistem a jasným popisem rizik, jiné bez společného rámce. Reviewer pak improvizuje, autor neví, co má ověřit předem, a tým ztrácí konzistenci právě tam, kde by měl být nejpřesnější.\n\nVaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří použitelný review checklist a zároveň jasně oddělí jistotu, heuristiku a místa, kde je pořád potřeba lidský úsudek.",
         "userStories": [
-          "Jako reviewer chci z diffu získat checklist změněných hranic, rizik a follow-up otázek.",
-          "Jako autor změny chci vědět, co mám ověřit před requestem na review.",
-          "Jako inheriting tým chci navázat na heuristiky prvního týmu místo toho, abych je znovu vymýšlel."
+          "Jako reviewer chci z diffu rychle získat checklist změněných hranic, rizik, otázek a míst, na která se zaměřit.",
+          "Jako autor změny chci vědět, co mám ověřit ještě před samotným review.",
+          "Jako tým po rotaci chci navázat na heuristiky, které původní tým objevil, místo abych je znovu vymýšlel."
         ],
         "architectureNotes": [
-          "Může jít o CLI, web nebo jednoduchý script, hlavní je čistý tok diff -> hodnoticí schéma -> checklist.",
-          "Výstup musí oddělit jistotu od heuristického podezření.",
-          "Doplňte seed diff nebo examples folder, aby další tým rychle otestoval nové pravidlo."
+          "Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → rubric → checklist`.",
+          "Musí být zřejmé, jaké vstupy nástroj očekává, co umí označit jistě a co naopak zůstává heuristické.",
+          "Přidejte seed diff nebo `examples/`, aby šlo workflow lokálně ověřit a další tým rychle přidal nové pravidlo.",
+          "Nástroj má pomáhat reviewerovi, ne předstírat neomylnost."
         ],
         "acceptanceCriteria": [
           "Nástroj vytvoří review checklist ze seed diffu.",
-          "Je popsáno, co je jistota, co je heuristika a co pořád potřebuje lidský úsudek.",
-          "Další tým může přidat nové pravidlo bez dlouhého zaučovacího hovoru."
+          "Výstup odlišuje jistá zjištění od doporučení, hypotéz a bodů pro lidský úsudek.",
+          "Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.",
+          "Další tým může během 10 minut pokračovat v rozvoji bez chaosu."
         ],
-        "firstAgentPrompt": "Nezačínej generováním kódu. Nejdřív navrhni hodnoticí schéma review, ukaž kde je jistota versus heuristika a definuj seed diff flow, na který může po rotaci navázat další tým."
+        "firstAgentPrompt": "Nezačínej kódem. Nejdřív napiš review rubric, tok vstupů a definici toho, co znamená dobrý checklist. Ukaž, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhni první implementační slice."
+      },
+      {
+        "id": "devtoolbox-cli",
+        "title": "DevToolbox CLI",
+        "problem": "Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.\n\nVaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil handoff na jiný tým a nerozsypal se po přidání dalšího commandu.",
+        "userStories": [
+          "Jako vývojář chci jedním příkazem převést log nebo JSON do čitelné podoby.",
+          "Jako vývojář chci rychle dohledat podezřelé commity, větve nebo změny bez ručního skládání git příkazů.",
+          "Jako tým chci mít příkazy i způsob práce popsané tak, aby po rotaci mohl bez zmatku pokračovat někdo jiný."
+        ],
+        "architectureNotes": [
+          "Jazyk i framework si zvolte sami, ale CLI musí být snadno spustitelné a snadno objevitelné.",
+          "Od začátku oddělte samotné příkazy od pomocných utilit a konfigurace.",
+          "`AGENTS.md` má popsat build/test flow, konvence pro výstupy a pravidla pro další rozšiřování.",
+          "Stejně důležitý jako funkční příkaz je i runbook pro tým, který projekt převezme po obědě.",
+          "Nejde o pytel skriptů. Jde o malý systém, ve kterém je jasné, kde přibude další command, test a dokumentace."
+        ],
+        "acceptanceCriteria": [
+          "Existují alespoň 3 užitečné příkazy nebo subcommands.",
+          "`README` i `AGENTS.md` popisují lokální spuštění a způsob ověření.",
+          "Je jasné, kde přidat další příkaz bez rozbití struktury projektu.",
+          "Nový tým zvládne během 10 minut přidat nebo opravit další command.",
+          "Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu."
+        ],
+        "firstAgentPrompt": "Nejdřív navrhni minimální architekturu, která přežije handoff. Začni `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementuj první command."
+      },
+      {
+        "id": "doc-generator",
+        "title": "Doc Generator",
+        "problem": "Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po handoffu pak nový tým neví, čemu má věřit a co je jen odhad.\n\nVaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.",
+        "userStories": [
+          "Jako vývojář chci z projektu rychle získat základní technickou dokumentaci bez ručního sepisování všeho od nuly.",
+          "Jako reviewer chci během 5 minut pochopit strukturu modulů a hlavní vstupní body.",
+          "Jako tým po rotaci chci objevit architekturu projektu bez dlouhého pátrání po souvislostech."
+        ],
+        "architectureNotes": [
+          "Vstup může být lokální repo, seed adresář nebo zjednodušený dataset.",
+          "Výstup může být Markdown, HTML nebo jednoduchý textový report.",
+          "Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.",
+          "Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.",
+          "Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po handoffu."
+        ],
+        "acceptanceCriteria": [
+          "Nástroj vytvoří aspoň jednu čitelnou dokumentační stránku nebo report.",
+          "Je jasné, jak se nástroj spouští lokálně a nad jakým vstupem.",
+          "Výstup odděluje fakta od odhadů nebo heuristik.",
+          "Další tým umí přidat nový typ výstupu bez chaosu v repu.",
+          "Reviewer během 10 minut pozná, odkud které tvrzení pochází."
+        ],
+        "firstAgentPrompt": "Nejdřív napiš, jaké signály budeš z projektu číst, které výstupy budou jistota a které jen heuristika. Teprve potom navrhni první implementační slice."
       },
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Týmy mají data, ale neumí z nich vytvořit sdílený přehled, který podporuje rozhodování.",
+        "problem": "Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.\n\nVaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i po handoffu na jiný tým.",
         "userStories": [
-          "Jako tým chci zobrazit několik metrik na jedné obrazovce.",
-          "Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.",
-          "Jako nový tým po rotaci chci pochopit strukturu obrazovek a dat během pár minut."
+          "Jako tým chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.",
+          "Jako facilitátor chci snadno měnit seed data bez zásahu do UI logiky.",
+          "Jako tým po rotaci chci během 10 minut pochopit strukturu dat, komponent i obrazovek."
         ],
         "architectureNotes": [
-          "Vzorová data a UI oddělte už od prvního commitu.",
-          "Mobile-first je plus, ale desktop projekce musí být čitelná.",
-          "Monitoring a README mají vysvětlit, co se už povedlo a co ne."
+          "Seed data a UI oddělte hned od prvního commitu.",
+          "Mobile-first je výhoda, ale dashboard musí být dobře čitelný i na projekci.",
+          "README a monitoring mají vysvětlit, co už funguje, co je mock a co zatím chybí.",
+          "Myslete na to, aby přidání další metriky nevedlo k přepisování celé obrazovky.",
+          "Neoptimalizujte jen vzhled. Hlídejte, aby nový tým rychle pochopil datový model, layout pravidla a způsob ověření."
         ],
         "acceptanceCriteria": [
-          "Dashboard ukáže aspoň 3 metriky a jeden trend.",
-          "Repo popisuje datové zdroje i záložní vzorová data.",
-          "Nový tým umí přidat další metriku bez rozbití layoutu."
+          "Dashboard ukáže alespoň 3 metriky a jeden trend nebo srovnání.",
+          "Repo popisuje datové zdroje i mock fallback.",
+          "Je jasné, kde se přidává nová metrika a jak se ověřuje layout.",
+          "Nový tým zvládne rozšířit dashboard bez rozbití struktury.",
+          "Layout je čitelný na mobilu i na větší obrazovce a je jasné, jak to ověřit."
         ],
-        "firstAgentPrompt": "Navrhni dashboard, který zvládne předání. Nejprve popiš datový model, komponenty a kritéria hotovo, až pak piš UI."
+        "firstAgentPrompt": "Navrhni dashboard, který zvládne handoff. Nejdřív popiš datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stav UI."
+      },
+      {
+        "id": "standup-bot",
+        "title": "Standup Bot",
+        "problem": "Denní standupy v chatu často končí jako dlouhé vlákno bez struktury. Blokery zapadnou, návaznosti mezi lidmi nejsou vidět a po pár hodinách už se těžko dohledává, co se vlastně domluvilo.\n\nVaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přehled, se kterým se dá dál pracovat i bez původního autora nebo bez otevřeného původního vlákna.",
+        "userStories": [
+          "Jako team lead chci sesbírat standup odpovědi do jednoho přehledného souhrnu.",
+          "Jako vývojář chci rychle vidět blokery, dependency a témata, která potřebují domluvu.",
+          "Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního handoffu."
+        ],
+        "architectureNotes": [
+          "Upřednostněte jasný datový model před složitou integrací.",
+          "Mock data jsou v pořádku, pokud workflow působí realisticky a je dobře popsané.",
+          "Oddělte ingest, zpracování a prezentaci výstupu.",
+          "Prompty, runbooky a rozhodnutí musí být uložené v repu, ne jen v hlavách původního týmu.",
+          "Neřešte „hezký summary text“ dřív než to, jestli jsou vidět blokery, dependency a další safe move."
+        ],
+        "acceptanceCriteria": [
+          "Nástroj umí ingestovat seed data a vytvořit čitelný souhrn.",
+          "Výstup zvýrazní blokery nebo položky, které potřebují pozornost.",
+          "Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.",
+          "Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního handoffu.",
+          "Je jasné, co je jisté shrnutí a co je jen heuristika nebo návrh."
+        ],
+        "firstAgentPrompt": "Rozděl práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napiš datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhni implementační kroky."
       }
     ],
     "challenges": [

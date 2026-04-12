@@ -14,8 +14,9 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "db:migrate": "node scripts/run-migrations.mjs",
-    "generate:content": "bun ../scripts/content/generate-views.ts",
-    "verify:content": "bun ../scripts/content/generate-views.ts --verify && bun ../scripts/content/check-tier2-sync.ts"
+    "generate:briefs": "bun ../scripts/content/generate-briefs-inventory.ts",
+    "generate:content": "bun ../scripts/content/generate-briefs-inventory.ts && bun ../scripts/content/generate-views.ts",
+    "verify:content": "bun ../scripts/content/generate-briefs-inventory.ts --verify && bun ../scripts/content/generate-views.ts --verify && bun ../scripts/content/check-tier2-sync.ts"
   },
   "dependencies": {
     "@neondatabase/auth": "^0.2.0-beta.1",
