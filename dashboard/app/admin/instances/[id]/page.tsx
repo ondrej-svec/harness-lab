@@ -2503,6 +2503,7 @@ const presenterChromePresetOptions: PresenterScene["chromePreset"][] = [
   "agenda",
   "checkpoint",
   "participant",
+  "team-trail",
 ];
 
 function PresenterSceneCreateSheetBody({

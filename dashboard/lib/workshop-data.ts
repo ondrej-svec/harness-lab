@@ -147,7 +147,8 @@ export type PresenterChromePreset =
   | "minimal"
   | "agenda"
   | "checkpoint"
-  | "participant";
+  | "participant"
+  | "team-trail";
 
 function getDefaultRunnerDoSteps(intent: AgendaItemIntent, contentLang: WorkshopContentLanguage) {
   if (contentLang === "en") {
@@ -406,6 +407,7 @@ const presenterChromePresets = [
   "agenda",
   "checkpoint",
   "participant",
+  "team-trail",
 ] as const satisfies PresenterChromePreset[];
 
 function buildFallbackPresenterBlocks(scene: {
