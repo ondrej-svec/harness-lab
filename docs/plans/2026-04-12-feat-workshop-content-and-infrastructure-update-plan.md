@@ -448,7 +448,7 @@ Apply every content edit from the brainstorm. This is where the bulk of the work
 - [ ] **B11 — Phase 10 Reveal scenes.** Apply five scenes (10.1 Alone pairs fours all, 10.2 Show us what you built, 10.3 What I saw today, 10.4 The one thing you'll change with four storage options, 10.5 Go use it). Remove all Monday framing and all "see you on Monday" language.
 - [x] **B12 — Brief markdown revisions.** Apply the medium-depth revisions from the brainstorm to all five English brief markdowns: promote handoff test to Done-when #1, tighten problem statements, sharpen first-agent prompts. Do not add "Not in scope" sections (the brainstorm explicitly rejected these).
 - [x] **B13 — Register doc-generator in inventory.** This now happens automatically via the A5 brief generator — just ensure `doc-generator.md` exists in `content/project-briefs/locales/en/` and run `npm run generate:briefs`.
-- [ ] **B14 — Full English versions of talk files.** Replace the 7-line stubs in `content/talks/locales/en/context-is-king.md` and `content/talks/locales/en/codex-demo-script.md` with full English translations from the Czech roots. Two more stub files exist under `content/talks/locales/en/` — identify and translate them.
+- [x] **B14 — Full English versions of talk files.** Replace the 7-line stubs in `content/talks/locales/en/context-is-king.md` and `content/talks/locales/en/codex-demo-script.md` with full English translations from the Czech roots. Two more stub files exist under `content/talks/locales/en/` — identify and translate them.
 - [ ] **B15 — Regenerate Czech content.** For every phase/scene/brief touched in B1–B14, regenerate the Czech side. Either retranslate directly (native speaker workflow) or mark `cs_reviewed: false` and defer Czech review as a separate follow-up task. Record which approach you take.
 - [ ] **B16 — Run `npm run generate:content` and commit generated views.** Ensure `dashboard/lib/generated/agenda-en.json` and `agenda-cs.json` are regenerated and committed. `npm run verify:content` must pass.
 
@@ -597,7 +597,7 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 - [ ] B11 — Phase 10 Reveal scenes
 - [x] B12 — Brief markdown revisions
 - [x] B13 — Register doc-generator (via A5)
-- [ ] B14 — Full English talk files
+- [x] B14 — Full English talk files
 - [ ] B15 — Czech regeneration
 - [ ] B16 — Run generators and commit views
 
