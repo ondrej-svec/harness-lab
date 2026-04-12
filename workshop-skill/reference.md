@@ -1,105 +1,124 @@
 # Workshop Reference
 
-## 4 pracovní výchozí body pro dnešek
+> **Language:** This reference is authored in English and is the canonical source
+> for the workshop skill. The agent responds in the participant's language —
+> translate on the fly; do not maintain parallel locale copies. See ADR
+> `docs/adr/2026-04-12-skill-docs-english-canonical.md` for context.
 
-- `Mapa před pohybem` — nejdřív udělejte z repa místo, kde se dá orientovat
-- `Co není v repu, neexistuje` — důležité dohody, pravidla a další kroky patří do souborů
-- `Ověření je hranice důvěry` — s větší autonomií musí růst i kvalita evidence
-- `Handoff je průběžná podmínka práce` — další tým má najít první bezpečný krok bez vašeho výkladu
-- `Opravte systém, ne jen symptom` — když se stejná věc opakuje, neopravujte výstup — opravte systém
+## 4 working defaults for today
 
-## 4 prvky dobrého zadání
+- `Map before motion` — first make the repo a place people can navigate
+- `If it is not in the repo, it does not exist` — important agreements, rules, and next steps belong in files
+- `Verification is the trust boundary` — more autonomy requires stronger evidence
+- `Handoff is a continuous constraint` — the next team should find the first safe move without your explanation
+- `Fix the system, not just the symptom` — when the same thing repeats, do not fix the output, fix the system
 
-- `Cíl` — co má agent konkrétně vytvořit nebo změnit
-- `Kontext` — které soubory, rozhodnutí a souvislosti jsou pro úkol důležité
-- `Omezení` — pravidla, standardy a hranice řešení
-- `Hotovo když` — podle čeho poznáte, že je práce opravdu dokončená
+## 4 elements of a good task
 
-## Rychlý checklist pro handoff
+- `Goal` — what exactly the agent should create or change
+- `Context` — which files, decisions, and surrounding facts matter for the task
+- `Constraints` — the rules, standards, and solution boundaries
+- `Done When` — how you will know the work is actually finished
 
-- Existuje `AGENTS.md`?
-- Je `AGENTS.md` krátká mapa, ne přerostlý dump?
-- Jsou v repu build/test příkazy, které umí spustit i další tým?
-- Je jasné, co už funguje, co je rozpracované a co je jen nápad?
-- Je v repu plán, runbook nebo jiný dokument, ze kterého další tým pochopí záměr?
-- Je dohledatelné, co bylo skutečně ověřeno?
-- Najde nový tým během pár minut první bezpečný krok?
+## Fast handoff checklist
 
-## 3 otázky, ke kterým se vraťte, když se zaseknete
+- Does `AGENTS.md` exist?
+- Is `AGENTS.md` a short map rather than an overgrown dump?
+- Are there build and test commands in the repo that another team can run?
+- Is it clear what already works, what is in progress, and what is still only an idea?
+- Is there a plan, runbook, or another document that helps the next team understand the intent?
+- Can you find what was actually verified?
+- Can a new team find the first safe move within a few minutes?
 
-- Čeho se právě snažíme dosáhnout?
-- Který artefakt nebo signál v repu nám chybí?
-- Jaké je nejmenší ověření, které vrátí práci z dojmu do reality?
+## 3 questions to return to when you get stuck
 
-## Kdy po čem sáhnout během dne
+- What are we trying to prove right now?
+- Which artifact or repo signal is missing?
+- What is the smallest check that moves the work from confidence back to reality?
 
-- Po openingu a talku: `workshop setup` nebo `workshop reference`
-- V prvním buildu: `template-agents`, brief, plán a první ověření
-- Před obědem: dopsat další bezpečný krok a použít `workshop analyze`, když si nejste jistí handoffem
-- Po rotaci: `workshop analyze`, learner kit a challenge cards místo ústního rescue
-- Po posledním bloku: `workshop recap` a `workshop follow-up`
+## What to reach for during the day
 
-## Doporučené příkazy
+- After the opening and talk: `workshop setup` or `workshop reference`
+- In Build 1: `template-agents`, the brief, the plan, and the first check
+- Before lunch: write the next safe move and use `workshop analyze` if the handoff still feels vague
+- After rotation: `workshop analyze`, the learner kit, and challenge cards instead of verbal rescue
+- At the end of the day: `workshop recap` and `workshop follow-up`
 
-- Workshop skill v Codexu: `$workshop ...`
-- Workshop skill v pi: `/skill:workshop`, potom si řekněte o `reference`, `setup`, `brief` nebo jinou workshop akci
-- Když nevíte, co skill umí: `Codex: $workshop commands`
-- Workshop skill je garantovaný výchozí nástroj. Workflow skills a externí toolkity jsou doporučené akcelerátory, ne povinný bootstrap.
-- Workflow skills jako `$brainstorm`, `$plan`, `$work`, `$test-writer`, `$review` a `$compound` jsou v tomto workshopu popsané hlavně pro Codex. V pi je berte jako volitelnou součást vlastního setupu, ne jako garantovaný výchozí stav.
-- `Codex: $workshop reference` na začátku dne nebo po ztrátě orientace
-- `Codex: $workshop brief` když potřebujete znovu ukotvit zadání
-- `Codex: $workshop resources` když chcete účastnický kit a learner kit bez hledání v repu
-- `Codex: $workshop gallery` když chcete další veřejné docs, repozitáře a volitelné toolkity
-- `Codex: $workshop follow-up` když řešíte, co si odnést po workshopu
-- `Codex: $brainstorm` když ještě není jasné, co je nejrozumnější scope nebo slice
-- `Codex: $plan` před větší implementací
-- `Codex: $work` když už máte plán a chcete držet implementaci v jedné linii
-- `Codex: $test-writer` nebo vlastní spustitelné ověření před implementací, když potřebujete držet agenta v mezích
-- `Codex: $review` po větším kusu práce
-- `Codex: $compound` když chcete převést nové zjištění, fix nebo workflow pravidlo do trvalého artefaktu v repu
-- `Codex: $workshop` pro orientaci během dne
-- `Codex: $workshop template` když repu chybí základní kontext
-- `Codex: $workshop analyze` před handoffem nebo po rotaci, když chcete rychle odhalit slepá místa v repu
+## Recommended commands
 
-## Doporučený pracovní rytmus
+- Workshop skill in Codex: `$workshop ...`
+- Workshop skill in pi: `/skill:workshop`, then ask for `reference`, `setup`, `brief`, or another workshop action
+- If you do not know what the skill can do: `Codex: $workshop commands`
+- The workshop skill is the guaranteed default. Workflow skills and external toolkits are recommended accelerators, not mandatory bootstrap.
+- Workflow skills like `$brainstorm`, `$plan`, `$work`, `$test-writer`, `$review`, and `$compound` are described Codex-first in this workshop. In pi, treat them as optional parts of your own setup rather than the guaranteed default.
+- `Codex: $workshop reference` at the start of the day or after you lose orientation
+- `Codex: $workshop brief` when you need to re-anchor the task
+- `Codex: $workshop briefs` when you want to browse every available brief before Build 1
+- `Codex: $workshop resources` when you want the participant kit and learner kit without searching the repo
+- `Codex: $workshop gallery` when you want more public docs, repos, and optional toolkits
+- `Codex: $workshop follow-up` when you are deciding what to keep after the workshop
+- `Codex: $brainstorm` when the scope is still unclear
+- `Codex: $plan` before larger implementation
+- `Codex: $work` once you have a plan and want to keep implementation in one line
+- `Codex: $test-writer` or your own executable check before implementation when you need to keep the agent inside real boundaries
+- `Codex: $review` after a larger slice of work
+- `Codex: $compound` when a learning, fix, or workflow rule is worth preserving as a durable repo-native artifact
+- `Codex: $workshop` for orientation during the day
+- `Codex: $workshop template` when the repo is missing baseline context
+- `Codex: $workshop analyze` before handoff or after rotation when you want to expose blind spots in the repo quickly
+- `Codex: $workshop commitment` at the end of the day, to store the one thing you will change the next time you work with an agent
+- `Codex: $workshop facilitator learnings` or `harness workshop learnings` to query the cross-cohort learnings log (rotation signals from past workshops). Prefers the CLI path for machine-readable output with filtering by tag, instance, or cohort.
 
-- `workshop` pro orientaci a další bezpečný krok
-- `brainstorm` nebo rovnou `$plan`, když už je scope zřejmý
-- `work` proti jednomu ověřitelnému cíli
-- `review` před tím, než změně uvěříte
-- `compound` nebo krátký runbook, když něco stojí za zachování
-- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
+## Recommended participant loop
 
-## Testy jako hranice důvěry
+- `workshop` for orientation and the next safe move
+- `brainstorm` or directly `plan` when the scope is already clear
+- `work` against one verifiable goal
+- `review` before you trust a change
+- `compound` or a short runbook when something is worth preserving
+- ongoing cleanup work: move build and test commands, constraints, and handoff notes from chat into the repo
 
-- Čím víc práce dělá agent samostatně, tím méně stačí „já jsem to rychle projel očima“.
-- Když necháte agenta psát bez testů, často jen urychlíte vznik neověřené složitosti.
-- Spustitelné ověření (unit test, tracer bullet nebo jednoduché e2e ověření) je často nejrychlejší způsob, jak agentovi říct, co přesně má být pravda.
+## Verification ladder
 
-## Bezpečný UI workflow
+The more the agent does, the more holistic your checks have to be. With agents, your verification needs to prove the whole thing works, not that one function returned 4. Climb the ladder in order; add each rung only when you need it.
 
-- Výchozí pattern je: `agent exploration -> Playwright regression -> human review`.
-- Nechte agenta rychle projít UI, screenshoty a konzoli v izolovaném lokálním prostředí.
-- Jakmile najdete důležitý flow, převeďte ho do opakovatelného browser testu.
-- Nakonec změnu projděte člověkem. Testy chrání proti regresi, ale neřeší automaticky smysl a trade-offy.
-- „Nech model řídit můj běžný přihlášený browser“ není výchozí doporučení. To patří jen do sandboxovaného a záměrně omezeného prostředí.
+1. **Tracer bullet.** A thin end-to-end path that runs. Input goes in, output comes out. You can execute it manually in seconds. This is the first thing to add, before any tests. If you cannot draw a tracer, the system does not hold together yet.
+2. **End-to-end tests.** Automated runs of the tracer (or a small family of tracers) on every change. Fast, deterministic, and scoped to user-visible behavior. Unit tests are fine, but they are not the point — they can all pass while the whole system drifts.
+3. **Automated reviews.** Linters, type checks, policy scans, snapshot comparisons. Feedback optimized for the agent to consume — the agent fixes its own output before a human sees it.
+4. **Human review (only where judgment is needed).** For changes the automation cannot grade: subjective design decisions, security assumptions, contract negotiations with the outside world. Keep this rung small — every item you add here is a place the agent will wait on a human.
 
-## Rychlá připomínka
+### Holistic beats granular
 
-Dobrý prompt nestačí. Když má práce přežít handoff, musí být kontext uložený v repu, další bezpečný krok musí být dohledatelný a ověření musí zůstat čitelné i pro cizí tým.
+A failing unit test tells you that one function behaved unexpectedly. A failing tracer tells you the system cannot deliver its work. With agents doing more of the plumbing, granular evidence is easy to satisfy and hard to trust. Spend your verification budget on the signals that prove the whole path holds.
 
-## Learnings log — pro facilitátory
+### The self-validation trap
 
-- Po rotaci můžete procházet zachycené signály přímo v CLI: `harness workshop learnings`
-- Filtrujte podle tagu: `harness --json workshop learnings --tag missing_runbook`
-- Filtrujte podle kohorty nebo instance: `--cohort 2026-Q2`, `--instance <id>`
-- V dashboardu: rotační panel v detailu instance obsahuje capture formulář i přehled posledních záznamů
-- Learnings log přežije smazání instance a postupně buduje evidenci pro vylepšení blueprintu
+When the agent generates tests in the same task it generates code, those tests reflect the agent's interpretation of the spec — not the spec itself. Independent verification means: you wrote the done criteria, or a separate pass evaluates the output. Most teams fall into the trap once. Name it when you see it, and split the work — one pass writes the check, a different pass writes the code.
 
-## Kam dál po workshopu
+**The question to ask a team that says "the agent wrote tests too":** *Who wrote the spec those tests are validating against?* If the answer is "the agent, in the same session" — that is not independent verification.
 
-- Oficiální docs, OpenAI článek o Harness Engineering a ověřené veřejné skill repozitáře najdete v [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md).
-- Codex-specific craft (approval módy, sandboxing, long-horizon drift, před/po příklad) je v [`content/codex-craft.md`](../content/codex-craft.md).
-- Conversational moves pro coaching agenta sežene v jedné straně v [`materials/coaching-codex.md`](../materials/coaching-codex.md).
-- Když už používáte další workflow pack nebo toolkit, berte ho jako rozšíření nad tímto základem, ne jako náhradu za `AGENTS.md`, ověřování a handoff opřený o repo.
-- Když nechcete hledat v repu, použijte přímo `workshop resources`, `workshop gallery` nebo `workshop follow-up`.
+## Tests as the trust boundary
+
+- The more work the agent does independently, the less "I skimmed it quickly" is enough.
+- If you let the agent write without tests, you often just accelerate unverified complexity.
+- An executable check (unit test, tracer bullet, or simple end-to-end probe) is often the fastest way to tell the agent what must actually be true.
+
+## Safe UI workflow
+
+- The default pattern is: `agent exploration -> Playwright regression -> human review`.
+- Let the agent inspect the UI, screenshots, and console quickly in an isolated local environment.
+- Once you find an important flow, turn it into a repeatable browser test.
+- Then have a human review the change. Tests protect against regression, but they do not decide meaning or trade-offs for you.
+- "Let the model drive my normal signed-in browser" is not the default recommendation. That belongs only in a sandboxed, intentionally constrained environment.
+
+## Quick reminder
+
+A good prompt is not enough. If the work should survive handoff, the context must live in the repo, the next safe move must stay traceable, and verification must remain legible to a different team.
+
+## Where to go after the workshop
+
+- Official docs, the OpenAI Harness Engineering article, and verified public skill repos are collected in [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md).
+- Codex-specific craft (approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough) lives in [`content/codex-craft.md`](../content/codex-craft.md).
+- The one-page pocket card of conversational moves for coaching an agent is [`materials/coaching-codex.md`](../materials/coaching-codex.md).
+- If you already use another workflow pack or toolkit, treat it as an extension on top of this foundation, not as a replacement for `AGENTS.md`, verification, and repo-native handoff.
+- If you do not want to search the repo, use `workshop resources`, `workshop gallery`, or `workshop follow-up` directly.

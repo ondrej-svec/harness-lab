@@ -2,9 +2,7 @@
 
 ## Problem
 
-Daily standups in chat often turn into a long thread with no structure. Blockers disappear in the noise, dependencies between people are hard to see, and after a few hours it is difficult to reconstruct what was actually agreed.
-
-Your task is to design a tool that turns standup inputs into an overview people can continue working with even without the original author or the original chat thread open.
+Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a different team can continue working from — without the original author, without the original thread, and without a verbal handoff.
 
 ## User stories
 
@@ -22,12 +20,12 @@ Your task is to design a tool that turns standup inputs into an overview people 
 
 ## Done when
 
-- The tool can ingest seed data and produce a readable summary.
-- The output highlights blockers or items that need attention.
-- The repo explains how to connect the solution to a real chat or another input channel.
-- After rotation, another team can continue without further explanation.
-- It is clear what is certain summary versus heuristic suggestion.
+- Another team can continue this project without a verbal explanation from the original team. *(Handoff test.)*
+- The tool ingests seed data in a documented format and produces an overview that surfaces blockers, dependencies, and items needing coordination.
+- The output distinguishes what the tool is certain about from what is only a heuristic suggestion.
+- The repo explains how to connect the ingest to a real input channel — without requiring it.
+- Ingest, processing, and presentation are cleanly separated in the code.
 
 ## First step for the agent
 
-Split the work into ingest, summarization, and context for the next team. First write the data model, certainty-versus-heuristic rules, and the documentation the new team should open first. Then propose implementation steps.
+Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a rotating team will open first. Only then propose the first implementation slice.

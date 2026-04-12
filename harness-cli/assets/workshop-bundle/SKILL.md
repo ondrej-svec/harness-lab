@@ -72,9 +72,10 @@ Rule:
 - runtime edits do not imply blueprint edits; reusable changes belong back in the repo deliberately
 - prefer workshop `contentLang` for participant-facing responses in live mode
 - if there is no live workshop context, resolve the fallback locale using the Language Resolution rules above and say when the answer is fallback content rather than live workshop state
-- for bundled fallback docs, resolve `workshop-skill/locales/<locale>/...` first; if a reviewed localized doc does not exist yet, fall back to `workshop-skill/locales/en/...` and say so explicitly
-- the root-level files in `workshop-skill/` (e.g. `workshop-skill/reference.md`) are the Czech-authored source. When the resolved locale is English, always prefer `workshop-skill/locales/en/` over the Czech root files. Never serve a Czech root file to an English-resolved session.
-- do not translate workshop copy ad hoc when a reviewed locale exists in the repo or bundle
+- skill reference docs in `workshop-skill/*.md` are English-canonical per ADR `docs/adr/2026-04-12-skill-docs-english-canonical.md`. The agent reads the English source and responds in the participant's language by translating on the fly. Do not maintain parallel Czech copies for skill reference material.
+- for participant-facing workshop copy that appears verbatim on the presenter surface (agenda scenes, briefs, challenge cards), reviewed Czech translations still matter — that governance lives in `workshop-content/agenda.json`, `content/project-briefs/`, and `content/challenge-cards/`, not in the skill docs.
+- the `workshop-skill/locales/` tree is a legacy parallel structure that is being retired; new skill reference content goes only to the English root files. Existing Czech legacy files in `workshop-skill/locales/cs/` (if any) or at the root should be migrated in a follow-up session, not extended.
+- do not translate workshop scene copy or brief text ad hoc when a reviewed locale exists in `workshop-content/` or `content/`
 
 ## Commands
 
@@ -122,6 +123,20 @@ Show the assigned project brief. Prefer `harness --json workshop brief` for live
 - architecture considerations
 - first recommended prompt for the AI agent
 If live runtime brief data is unavailable, prefer `content/project-briefs/locales/<locale>/<brief>.md` when present and otherwise fall back to `content/project-briefs/<brief>.md`.
+
+### `workshop briefs`
+
+List every project brief available in the current instance so the team can pick one during Phase 3. Prefer `harness --json workshop briefs` for live data, which returns the same payload as `workshop brief` but framed as a catalogue — one line per brief with id, title, and the one-sentence problem, then a short pointer to how to pull the full brief.
+
+If live runtime data is unavailable, enumerate every file under `content/project-briefs/locales/<locale>/*.md` (or `content/project-briefs/*.md` when no locale match) and summarize each by its `# Title` and the first paragraph of `## Problem`. Do not try to display full briefs in one response — keep the listing compact and tell the participant to run `workshop brief` for any one they want to read in detail.
+
+### `workshop commitment`
+
+Store a personal commitment the participant will act on the next time they work with an agent. This is the Phase 10 Reveal closing beat: one sentence, specific enough that the participant could tell a week later whether they actually did it.
+
+Format the commitment as: *"The next time I work with an agent, the first thing I'll change is [specific action] — because [specific reason from today]."*
+
+The skill writes the commitment to `.agents/notes/commitment.md` in the current working directory when that folder exists, or to `~/.harness/commitment.md` otherwise. Include the date, the workshop instance id if known, and the sentence itself. Acknowledge the save and remind the participant where the commitment lives so they can find it later. Never push the commitment anywhere else by default — sharing is an explicit opt-in and does not happen unless the participant asks for it.
 
 ### `workshop challenges`
 

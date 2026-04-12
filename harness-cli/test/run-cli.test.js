@@ -1152,7 +1152,12 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(installedSkill, /English is the default bundled fallback locale/);
   assert.doesNotMatch(installedSkill, /Use Czech for explanations\./);
   const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");
-  assert.match(installedReference, /Workshop skill je garantovaný výchozí nástroj/);
+  // workshop-skill/reference.md is now English-canonical per
+  // docs/adr/2026-04-12-skill-docs-english-canonical.md. The agent responds
+  // in the participant's language by translating on the fly, so the reference
+  // no longer maintains a separate Czech root file.
+  assert.match(installedReference, /The workshop skill is the guaranteed default/);
+  assert.match(installedReference, /Verification ladder/);
   const installedFacilitator = await fs.readFile(
     path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "facilitator.md"),
     "utf8",
@@ -1168,7 +1173,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
     path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"),
     "utf8",
   );
-  assert.match(installedEnglishBrief, /Almost every team ends up with small one-off scripts/);
+  assert.match(installedEnglishBrief, /Every team accumulates small one-off scripts/);
   const installedEnglishLearnerKit = await fs.readFile(
     path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"),
     "utf8",
@@ -1231,7 +1236,7 @@ test("skill install refreshes a stale install without requiring force", async ()
   assert.match(io.getStdout(), /Refreshed the installed Harness Lab workshop skill bundle/);
   const refreshedReference = await fs.readFile(referencePath, "utf8");
   assert.notEqual(refreshedReference, "stale reference\n");
-  assert.match(refreshedReference, /Workshop skill je garantovaný výchozí nástroj/);
+  assert.match(refreshedReference, /The workshop skill is the guaranteed default/);
 });
 
 test("repo README routes participants through the locale-aware workshop interface", async () => {
@@ -1972,4 +1977,48 @@ test("workshop team set-repo requires a session", async () => {
   const exitCode = await runCli(["workshop", "team", "set-repo", "t1", "https://example.com"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /login/i);
+});
+
+test("demo-setup scaffolds the Phase 3 contrast demo folders", async () => {
+  const env = await createEnv();
+  const target = await fs.mkdtemp(path.join(os.tmpdir(), "harness-demo-setup-"));
+  const fetchFn = createFetchStub(new Map());
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["demo-setup", "--target", target], io, { fetchFn });
+  assert.equal(exitCode, 0);
+
+  const folderA = path.join(target, "folder-a-bare");
+  const folderB = path.join(target, "folder-b-harnessed");
+
+  const readmeA = await fs.readFile(path.join(folderA, "README.md"), "utf-8");
+  assert.match(readmeA, /bare repo/i);
+  const briefA = await fs.readFile(path.join(folderA, "PROJECT_BRIEF.md"), "utf-8");
+  assert.match(briefA, /standup summarizer/i);
+  await assert.rejects(
+    fs.access(path.join(folderA, "AGENTS.md")),
+    /ENOENT/,
+    "Folder A must not contain AGENTS.md",
+  );
+
+  const agents = await fs.readFile(path.join(folderB, "AGENTS.md"), "utf-8");
+  assert.match(agents, /## Goal/);
+  assert.match(agents, /## Context/);
+  assert.match(agents, /## Constraints/);
+  assert.match(agents, /## Done when/);
+  const plan = await fs.readFile(path.join(folderB, "PLAN.md"), "utf-8");
+  assert.match(plan, /tracer/);
+  const seed = await fs.readFile(path.join(folderB, "examples", "standup.txt"), "utf-8");
+  assert.match(seed, /Anna/);
+
+  assert.match(io.getStdout(), /Demo setup complete/);
+});
+
+test("demo-setup reports failure with a non-zero exit code when target cannot be written", async () => {
+  const env = await createEnv();
+  const fetchFn = createFetchStub(new Map());
+  const io = createMemoryIo(env);
+  // /dev/null is a character device; attempting to mkdir under it must fail.
+  const exitCode = await runCli(["demo-setup", "--target", "/dev/null/impossible"], io, { fetchFn });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /demo-setup failed/);
 });

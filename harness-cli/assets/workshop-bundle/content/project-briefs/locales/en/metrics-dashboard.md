@@ -2,9 +2,7 @@
 
 ## Problem
 
-Teams often have the data, but not the screen that turns it into a readable shared view. Without that, decisions get harder, discussion gets noisier, and everyone walks away with a different interpretation of the numbers.
-
-Your task is to design a simple dashboard that turns a handful of metrics into a clear shared view and stays understandable after handoff to another team.
+Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible after handoff to a team that didn't build it.
 
 ## User stories
 
@@ -22,12 +20,12 @@ Your task is to design a simple dashboard that turns a handful of metrics into a
 
 ## Done when
 
+- A team that didn't build this can add a new metric within 10 minutes without breaking the layout. *(Handoff test.)*
 - The dashboard shows at least 3 metrics and one trend or comparison.
-- The repo documents the data sources and a mock fallback.
-- It is clear where a new metric is added and how layout changes are verified.
-- A new team can extend the dashboard without breaking the structure.
-- The layout stays legible on mobile and on a larger screen, and the verification path says how to check that.
+- Seed data and UI logic are cleanly separated — a facilitator can swap seed data without touching the UI.
+- The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.
+- The `README` documents what's real, what's mocked, and what's missing.
 
 ## First step for the agent
 
-Design a dashboard that survives handoff. First describe the data model, components, layout rules, and `Done When` criteria. Only then start building the UI.
+Don't start with the UI. Start with the data model, the component boundaries, the layout rules, and a `Done When` in `AGENTS.md`. Only then touch any visual code.

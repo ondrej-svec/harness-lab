@@ -258,6 +258,7 @@ function printUsage(io, ui) {
   ui.section("Setup");
   ui.commandList([
     helpLine("skill install [--target PATH] [--force]", "Install the workshop skill into your repo"),
+    helpLine("demo-setup [--target PATH]", "Scaffold Phase 3 contrast demo folders (facilitator)"),
   ]);
   ui.paragraph("After install, use the workshop skill in your coding agent.");
   ui.blank();
@@ -275,6 +276,7 @@ function printUsage(io, ui) {
   ui.commandList([
     helpLine("workshop status", "Current workshop state"),
     helpLine("workshop brief", "Your team's project brief"),
+    helpLine("workshop briefs", "List every brief available in the instance"),
     helpLine("workshop challenges", "Challenge cards"),
     helpLine("workshop team", "Team info, repo, checkpoint"),
     helpLine("workshop phase set <phase-id>", "Advance the agenda (facilitator)"),
@@ -1562,6 +1564,104 @@ async function handleWorkshopTeamSetName(io, ui, env, positionals, mergedDeps) {
   }
 }
 
+const DEMO_SETUP_BRIEF = `# Demo repo
+
+This folder is the Phase 3 contrast demo used by the Harness Lab
+workshop facilitator. You do not need to edit it. The facilitator
+runs the same agent prompt here and in the harnessed sibling folder
+to show what task drift looks like without guides, sensors, or a map.
+
+Project: a small standup summarizer that ingests a text file of
+standup entries and produces a structured overview highlighting
+blockers and dependencies. Implementation language is whatever the
+agent chooses — the point of the demo is not the output but the
+shape of the work.
+`;
+
+const DEMO_SETUP_AGENTS_MD = `# AGENTS.md
+
+## Goal
+Ship a small standup summarizer that turns a text file of standup
+entries into a structured overview highlighting blockers and
+dependencies. Scope: one bounded slice, end to end.
+
+## Context
+- Seed input: \`examples/standup.txt\` — three fake standup entries.
+- Output: a single Markdown or JSON document the team can read.
+- The workshop skill is installed. The reference card, analyze
+  checklist, and brief are available through it.
+
+## Constraints
+- Do not build a UI. The output is a file or a terminal summary.
+- No network calls. Run fully locally.
+- One bounded slice. Do not try to implement every user story in
+  one pass.
+- Prefer clarity over cleverness. Another team will inherit this.
+
+## Done when
+- A tracer runs end to end: seed file in, structured overview out.
+- The repo explains how to run the tool in five sentences or fewer.
+- Another team could add a second input format within ten minutes
+  without reading the whole codebase.
+`;
+
+const DEMO_SETUP_PLAN = `# Plan
+
+1. Read \`examples/standup.txt\` and sketch the data model for the
+   overview (blockers, dependencies, status per person).
+2. Write the smallest possible tracer: a script that ingests the
+   file, prints one parsed entry, and exits.
+3. Expand the tracer to emit the full structured overview.
+4. Add README instructions for running the tracer.
+5. Verify the handoff test: could another team add a JSON output
+   mode by editing one file?
+`;
+
+const DEMO_SETUP_SEED = `Anna: finished the ingest helper. Blocked on deciding the output format — need a call with David.
+David: pushed the first draft of the dashboard layout. Waiting on Anna's ingest shape before wiring it up. Will be out Friday afternoon.
+Eva: investigating the flaky integration test. Reproduced it locally. Next step is to isolate whether it's the fixture or the runner.
+`;
+
+async function handleDemoSetup(io, ui, flags) {
+  const target = typeof flags.target === "string" && flags.target.trim() ? flags.target.trim() : "demo-setup";
+  const root = path.resolve(target);
+  const folderA = path.join(root, "folder-a-bare");
+  const folderB = path.join(root, "folder-b-harnessed");
+
+  try {
+    await fs.mkdir(folderA, { recursive: true });
+    await fs.mkdir(path.join(folderA, "examples"), { recursive: true });
+    await fs.writeFile(path.join(folderA, "README.md"), "# Folder A — bare repo\n\nNo AGENTS.md. No plan. No skill. Just the brief.\n", "utf-8");
+    await fs.writeFile(path.join(folderA, "PROJECT_BRIEF.md"), DEMO_SETUP_BRIEF, "utf-8");
+    await fs.writeFile(path.join(folderA, "examples", "standup.txt"), DEMO_SETUP_SEED, "utf-8");
+
+    await fs.mkdir(folderB, { recursive: true });
+    await fs.mkdir(path.join(folderB, "examples"), { recursive: true });
+    await fs.writeFile(path.join(folderB, "README.md"), "# Folder B — harnessed repo\n\nSame brief as Folder A. Plus AGENTS.md, a plan, seed data, and the workshop skill.\n", "utf-8");
+    await fs.writeFile(path.join(folderB, "PROJECT_BRIEF.md"), DEMO_SETUP_BRIEF, "utf-8");
+    await fs.writeFile(path.join(folderB, "AGENTS.md"), DEMO_SETUP_AGENTS_MD, "utf-8");
+    await fs.writeFile(path.join(folderB, "PLAN.md"), DEMO_SETUP_PLAN, "utf-8");
+    await fs.writeFile(path.join(folderB, "examples", "standup.txt"), DEMO_SETUP_SEED, "utf-8");
+
+    ui.heading("Demo setup complete");
+    ui.paragraph(`Created two folders under ${root}:`);
+    ui.commandList([
+      `folder-a-bare/ — the bare repo (brief only)`,
+      `folder-b-harnessed/ — the same brief with AGENTS.md, a plan, seed data, and space for the workshop skill`,
+    ]);
+    ui.blank();
+    ui.section("Next");
+    ui.commandList([
+      `cd ${path.join(target, "folder-b-harnessed")} && harness skill install`,
+      `Run the contrast demo from Folder A and Folder B with the same prompt`,
+    ]);
+    return 0;
+  } catch (error) {
+    ui.status("error", `demo-setup failed: ${error instanceof Error ? error.message : String(error)}`, { stream: "stderr" });
+    return 1;
+  }
+}
+
 async function handleWorkshopTeam(io, ui, env, mergedDeps) {
   const session = await requireSession(io, ui, env);
   if (!session) return 1;
@@ -1654,6 +1754,14 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "brief") {
     return handleWorkshopBrief(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "briefs") {
+    return handleWorkshopBrief(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "demo-setup") {
+    return handleDemoSetup(io, ui, flags);
   }
 
   if (scope === "workshop" && action === "challenges") {

@@ -87,6 +87,11 @@ paths:
     # English-only.
     - "workshop-skill/SKILL.md"
     - "workshop-skill/facilitator.md"
+    # workshop-skill/reference.md is English-canonical per ADR
+    # 2026-04-12-skill-docs-english-canonical.md. The agent translates on
+    # the fly for non-English participants; no reviewed Czech copy lives in
+    # the repo for this file.
+    - "workshop-skill/reference.md"
     - "materials/coaching-codex.md"
     - "content/codex-craft.md"
     # Tests and generated artifacts.

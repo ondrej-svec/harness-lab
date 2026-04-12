@@ -611,12 +611,41 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 - [x] C7 — Admin team anchor editor (landed with A4)
 
 ### Phase D — CLI and Skill
-- [ ] D1 — `harness demo-setup` command
-- [ ] D2 — `workshop briefs` (plural) skill command
-- [ ] D3 — `workshop commitment` skill command
-- [ ] D4 — Verification ladder reference doc
-- [ ] D5 — Workshop-bundle sync
-- [ ] D6 — (Optional) Anonymous commitment push
+- [x] D1 — `harness demo-setup` command (scaffold Folder A / Folder B for the Phase 3 contrast demo)
+- [x] D2 — `workshop briefs` (plural) skill command (SKILL.md section + CLI alias to `workshop brief`)
+- [x] D3 — `workshop commitment` skill command (SKILL.md section; local-only storage; no central backend)
+- [x] D4 — Verification ladder reference doc (appended to `workshop-skill/reference.md` in English)
+- [x] D5 — Workshop-bundle sync (`npm run sync:workshop-bundle` regenerated with revised content)
+- [ ] D6 — (Optional, deferred) Anonymous commitment push
+
+### Phase D — Follow-up cleanup items discovered mid-stream (not blocking the first workshop)
+
+The 2026-04-12 ADR `docs/adr/2026-04-12-skill-docs-english-canonical.md` changed how
+skill reference docs are localized. `workshop-skill/*.md` are now English-canonical;
+the `workshop-skill/locales/` parallel tree is legacy and needs to be retired
+in a follow-up. This session only migrated `reference.md` and updated `SKILL.md`.
+The rest is tracked here so it is not lost:
+
+- [ ] D-FU1 — Migrate the remaining Czech root files to English canonical:
+  `workshop-skill/commands.md`, `recap.md`, `setup.md`, `follow-up-package.md`,
+  `analyze-checklist.md`. Each one: read the English version in
+  `workshop-skill/locales/en/` where it exists, promote it to the root, fix
+  relative paths (drop the `../../../` prefix), delete the Czech root file.
+- [ ] D-FU2 — Delete the `workshop-skill/locales/` parallel tree entirely after
+  D-FU1 lands. Keep the directory structure only if some other non-English locale
+  is later authored. English is not a "locale" under this model — it is the root.
+- [ ] D-FU3 — Rerun the harness-cli bundle tests after D-FU1 and D-FU2. Existing
+  tests around installed skill content reference specific Czech strings; update
+  them in lockstep to match the English canonical content.
+- [ ] D-FU4 — Update `README.md`, `AGENTS.md`, and any contributor doc that still
+  refers to "Czech-authored fallback" or "reviewed locales" for skill reference
+  content specifically. The distinction matters: participant-facing presenter
+  copy (agenda scenes, briefs, challenge cards) still needs reviewed Czech;
+  skill reference docs do not.
+- [ ] D-FU5 — Confirm `scripts/content/check-tier2-sync.ts` still passes after
+  D-FU1/D-FU2. The tier-2 sync check currently matches skill docs between root
+  and `locales/en/`; after the migration those pairs disappear and the sync
+  contract should narrow to participant-facing content only.
 
 ### Phase E — Operator Docs
 - [ ] E1 — Operator guide: silent-gate practice

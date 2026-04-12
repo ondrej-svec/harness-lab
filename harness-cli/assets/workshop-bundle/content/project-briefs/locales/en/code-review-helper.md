@@ -2,9 +2,7 @@
 
 ## Problem
 
-Code review is often uneven. Some changes arrive with a strong checklist and clear risk framing, while others come through without a shared standard. The reviewer improvises, the author does not know what to verify in advance, and the team loses consistency.
-
-Your task is to design a tool that turns a diff or change set into a usable review checklist.
+Code review quality swings with whoever's looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.
 
 ## User stories
 
@@ -21,11 +19,12 @@ Your task is to design a tool that turns a diff or change set into a usable revi
 
 ## Done when
 
+- Another team can add a new review rule within 10 minutes without reading through the whole codebase. *(Handoff test.)*
 - The tool produces a review checklist from a seed diff.
-- The output distinguishes certain findings from recommendations or hypotheses.
-- It is clear how to add another rule or heuristic without a long onboarding pass.
-- Another team can continue development within minutes without chaos.
+- The output clearly separates certain findings from heuristic suggestions from items still needing human judgment.
+- The review rules themselves are readable and editable by someone who didn't write them.
+- There is at least one concrete example in `examples/` that demonstrates the full flow.
 
 ## First step for the agent
 
-Do not start with code. First write the review rules, the input flow, and a definition of what a good checklist means. Only then propose the first implementation slice.
+Don't start with code. First write the review rules, define what a good checklist looks like for a specific seed diff, and clarify what the tool *cannot* evaluate reliably. Only then propose the first implementation slice.

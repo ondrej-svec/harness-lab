@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.5.8",
-  "contentHash": "efe985f79269ef09ef309cc977c4811e4df600a7f18cc5b06629e3c118bde5f6",
+  "bundleVersion": "0.6.0",
+  "contentHash": "84b31d9468a9316d0c988100cecb1cd104b81a4511c36b98d58648377d5e994c",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -62,23 +62,23 @@
     },
     {
       "path": "content/project-briefs/locales/en/code-review-helper.md",
-      "sha256": "57339193c04eb3cfd444e5477d86923b0c9d189163437f0c56a7db5a0045aa87"
+      "sha256": "b51929656f1badc51b3c2d55ef919bb86086fbe8e0332a16f07df62649b95db0"
     },
     {
       "path": "content/project-briefs/locales/en/devtoolbox-cli.md",
-      "sha256": "3dd5e35524170feda7fa5e73d6b331d1bed88dd8c5966525d361fd1152802cb0"
+      "sha256": "7eb3d74d7c29f8582818ab95619c831b8a26c3de29cc7741278cb6145612b1f3"
     },
     {
       "path": "content/project-briefs/locales/en/doc-generator.md",
-      "sha256": "b9f5b61dd21d867dc231bc5cf29ef1f493a9a208f55fc0f840b22302cd6890de"
+      "sha256": "fa705729cf693180bf839f12c3c972cb96323b63f6176600da9a911d67a70123"
     },
     {
       "path": "content/project-briefs/locales/en/metrics-dashboard.md",
-      "sha256": "6ae0a048ba0692f9a4b88f4fce90be7ea9cf8a28f551b59870f4862d6e5785a5"
+      "sha256": "57c240abe18e35d0c8dfa6f4a699752a6a03802781d7b6ee7dd9a6101ab23745"
     },
     {
       "path": "content/project-briefs/locales/en/standup-bot.md",
-      "sha256": "bd9aff3ac09e4866b10e90685e348e041dfe8cdbd8a65c17871f5d3b5f2240d0"
+      "sha256": "3043a7a5321d5080593418f553b828b778aef3f5d2d80e2d1c29ef1e8391d741"
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
@@ -102,11 +102,11 @@
     },
     {
       "path": "content/talks/locales/en/codex-demo-script.md",
-      "sha256": "9910eed4c759318b50bbb52683da4a0bf3274f376717ab15440c18317831852f"
+      "sha256": "79484c43c93eaa16338d70eabd7138cbf5fb08e404a9a93e5ccb491509a3c642"
     },
     {
       "path": "content/talks/locales/en/context-is-king.md",
-      "sha256": "50f5b1bf964bdc941047f61dd59d657463aa3a23f8b5b50f1966883154ec796a"
+      "sha256": "8f8b16ad1174d2742bffd383d253c989b54f346017b7821e787aaf23f63a055d"
     },
     {
       "path": "docs/harness-cli-foundation.md",
@@ -146,11 +146,11 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "9f236488f485a69c744c7cd7486a3ac012fa1ec018190d5334bf4be8d65cbbcd"
+      "sha256": "2a437fc14f6e0a9717679c6ca5b2726f53a2dce998610822b87965f2676e6b5d"
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "93a90fde93f80321df2a728ad70c0aed9b65feca5fcd80f1af8527994d125c86"
+      "sha256": "5fd54443d28a3da8b44993c110ace58777eb4e23d96a2f1391bcbe124eedd41a"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
@@ -226,7 +226,7 @@
     },
     {
       "path": "workshop-skill/reference.md",
-      "sha256": "81f1f4bc31ac98a1ff30c049a5dcf7548c08b03d9f2e208dfaccd101813c1503"
+      "sha256": "d493280e850dbb6a1e881357782f27addd85f229e0aedd7a7bc6c94ca3dd12f6"
     },
     {
       "path": "workshop-skill/setup.md",
