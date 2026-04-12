@@ -6,7 +6,7 @@ import { getPresenterScenesBySurface } from "@/lib/presenter-scenes";
 import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
-import type { AgendaItem, PresenterBlock, PresenterScene } from "@/lib/workshop-data";
+import type { AgendaItem, PresenterBlock, PresenterScene, Team } from "@/lib/workshop-data";
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +32,7 @@ export default async function PresenterPage({
   await requireFacilitatorPageAccess(instanceId);
 
   const state = await getWorkshopState(instanceId);
+  const teams = state.teams;
   const presenterState = buildPresenterPageState({
     state,
     requestedAgendaItemId: query?.agendaItem ?? null,
@@ -49,17 +50,32 @@ export default async function PresenterPage({
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
         {presenterState.selectedScene ? (
-          <RoomScene
-            copy={copy}
-            agendaItem={presenterState.activeAgendaItem}
-            scene={presenterState.selectedScene}
-            lang={lang}
-            instanceId={instanceId}
-            previousScene={previousScene}
-            nextScene={nextScene}
-            sceneIndex={selectedSceneIndex}
-            sceneCount={presenterScenePack.length}
-          />
+          presenterState.selectedScene.chromePreset === "team-trail" ? (
+            <TeamTrailScene
+              copy={copy}
+              scene={presenterState.selectedScene}
+              teams={teams}
+              lang={lang}
+              instanceId={instanceId}
+              agendaItem={presenterState.activeAgendaItem}
+              previousScene={previousScene}
+              nextScene={nextScene}
+              sceneIndex={selectedSceneIndex}
+              sceneCount={presenterScenePack.length}
+            />
+          ) : (
+            <RoomScene
+              copy={copy}
+              agendaItem={presenterState.activeAgendaItem}
+              scene={presenterState.selectedScene}
+              lang={lang}
+              instanceId={instanceId}
+              previousScene={previousScene}
+              nextScene={nextScene}
+              sceneIndex={selectedSceneIndex}
+              sceneCount={presenterScenePack.length}
+            />
+          )
         ) : (
           <EmptyScene copy={copy} />
         )}
@@ -102,6 +118,95 @@ function RoomScene({
 
       {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
 
+      <ScenePager
+        copy={copy}
+        lang={lang}
+        instanceId={instanceId}
+        agendaItemId={agendaItem?.id ?? null}
+        previousScene={previousScene}
+        nextScene={nextScene}
+        currentSceneLabel={scene.label}
+        sceneIndex={sceneIndex}
+        sceneCount={sceneCount}
+      />
+    </div>
+  );
+}
+
+function TeamTrailScene({
+  copy,
+  scene,
+  teams,
+  lang,
+  instanceId,
+  agendaItem,
+  previousScene,
+  nextScene,
+  sceneIndex,
+  sceneCount,
+}: {
+  copy: (typeof adminCopy)["cs" | "en"];
+  scene: PresenterScene;
+  teams: Team[];
+  lang: UiLanguage;
+  instanceId: string;
+  agendaItem: AgendaItem | null;
+  previousScene: PresenterScene | null;
+  nextScene: PresenterScene | null;
+  sceneIndex: number;
+  sceneCount: number;
+}) {
+  const heroBlock = scene.blocks.find((block): block is Extract<PresenterBlock, { type: "hero" }> => block.type === "hero");
+  return (
+    <div className="space-y-10">
+      <div className="space-y-4">
+        {heroBlock?.eyebrow ? (
+          <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{heroBlock.eyebrow}</p>
+        ) : null}
+        <h2 className="max-w-5xl text-4xl font-semibold leading-[1.05] tracking-[-0.04em] text-[var(--text-primary)] sm:text-5xl">
+          {heroBlock?.title ?? scene.title}
+        </h2>
+        {heroBlock?.body ? (
+          <p className="max-w-4xl text-lg leading-8 text-[var(--text-secondary)]">{heroBlock.body}</p>
+        ) : null}
+      </div>
+      {teams.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {teams.map((team) => (
+            <article
+              key={team.id}
+              className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur"
+            >
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-xl font-medium text-[var(--text-primary)]">{team.name}</h3>
+                {team.anchor ? (
+                  <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{team.anchor}</span>
+                ) : null}
+              </div>
+              {team.checkIns.length > 0 ? (
+                <ul className="mt-4 space-y-3">
+                  {team.checkIns.map((entry) => (
+                    <li
+                      key={`${entry.phaseId}-${entry.writtenAt}`}
+                      className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2"
+                    >
+                      <p className="whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{entry.content}</p>
+                      <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                        {entry.phaseId}
+                        {entry.writtenBy ? ` · ${entry.writtenBy}` : ""}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">—</p>
+              )}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm leading-6 text-[var(--text-muted)]">—</p>
+      )}
       <ScenePager
         copy={copy}
         lang={lang}

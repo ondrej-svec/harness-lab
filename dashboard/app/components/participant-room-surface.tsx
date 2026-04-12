@@ -9,6 +9,7 @@ import type { ParticipantSession } from "@/lib/runtime-contracts";
 import { publicCopy, type UiLanguage } from "@/lib/ui-language";
 import type { PresenterBlock, WorkshopState } from "@/lib/workshop-data";
 import { SubmitButton } from "./submit-button";
+import { ParticipantCheckInForm } from "./participant-check-in-form";
 
 type AgendaItem = WorkshopState["agenda"][number];
 type PublicNote = WorkshopState["ticker"][number];
@@ -118,11 +119,42 @@ export function ParticipantRoomSurface({
                   {"members" in team && Array.isArray(team.members) && team.members.length > 0 ? (
                     <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
                   ) : null}
-                  <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
-                    {Array.isArray(team.checkIns) && team.checkIns.length > 0
-                      ? team.checkIns[team.checkIns.length - 1].content
-                      : ""}
-                  </p>
+                  <div className="mt-4 space-y-3">
+                    <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                      {copy.teamCheckInsLabel}
+                    </p>
+                    {Array.isArray(team.checkIns) && team.checkIns.length > 0 ? (
+                      <ul className="space-y-2">
+                        {team.checkIns.map((entry) => (
+                          <li
+                            key={`${entry.phaseId}-${entry.writtenAt}`}
+                            className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-6 text-[var(--text-secondary)]"
+                          >
+                            <p className="whitespace-pre-line">{entry.content}</p>
+                            <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                              {entry.phaseId}
+                              {entry.writtenBy ? ` · ${entry.writtenBy}` : ""}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm leading-6 text-[var(--text-muted)]">{copy.teamCheckInsEmpty}</p>
+                    )}
+                  </div>
+                  <ParticipantCheckInForm
+                    teamId={team.id}
+                    currentPhaseId={currentAgendaItem?.id ?? null}
+                    labels={{
+                      contentPlaceholder: copy.teamCheckInContentPlaceholder,
+                      authorPlaceholder: copy.teamCheckInAuthorPlaceholder,
+                      submitLabel: copy.teamCheckInSubmit,
+                      successMessage: copy.teamCheckInSuccess,
+                      missingContent: copy.teamCheckInMissingContent,
+                      missingPhase: copy.teamCheckInMissingPhase,
+                      genericError: copy.teamCheckInGenericError,
+                    }}
+                  />
                   {team.repoUrl ? (
                     <a
                       className="mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"

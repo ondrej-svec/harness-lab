@@ -602,13 +602,13 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 - [x] B16 — Run generators and commit views
 
 ### Phase C — Dashboard Features
-- [ ] C1 — Participant check-in API route
-- [ ] C2 — Participant check-in UI
-- [ ] C3 — Presenter team-trail component
-- [ ] C4 — Wire new chromePreset to presenter render
-- [ ] C5 — Participant board shows own team's check-in history
-- [ ] C6 — Tests for C1–C5
-- [ ] C7 — Admin team anchor editor
+- [x] C1 — Participant check-in API route
+- [x] C2 — Participant check-in UI
+- [x] C3 — Presenter team-trail component
+- [x] C4 — Wire new chromePreset to presenter render
+- [x] C5 — Participant board shows own team's check-in history
+- [x] C6 — Tests for C1–C5
+- [x] C7 — Admin team anchor editor (landed with A4)
 
 ### Phase D — CLI and Skill
 - [ ] D1 — `harness demo-setup` command
