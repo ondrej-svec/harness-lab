@@ -108,18 +108,21 @@ Six phases, loosely sequenced, with clear dependencies. Phases A and E can run i
 
 **Tradeoff accepted:** One new generator script, one new `npm run generate:briefs` target (or bundled into `generate:content`), one new verification check in pre-commit. Modest cost for permanent elimination of drift.
 
-### Decision 3 — Team check-in: append-only JSON array on the existing team payload, not a new table
+### Decision 3 — Team check-in: append-only JSON array on the existing team payload, no backwards-compat wrapping
 
 **Options considered:**
 - **(a) Single-string overwrite.** Status quo. Breaks the brainstorm's "the repo remembers" narrative.
 - **(b) New `team_checkpoint_history` table with `(team_id, instance_id, phase_id, content, created_at)`.** Proper normalized schema. Good for querying.
-- **(c) Migrate `checkpoint` to `checkpoints: Array<{ phase_id, content, written_at, written_by }>` stored as JSON on the existing team payload.** Inherits the existing JSONB storage model. No new table.
+- **(c) Migrate `checkpoint` to `checkIns: Array<{ phaseId, content, writtenAt, writtenBy }>` stored as JSON on the existing team payload.** Inherits the existing JSONB storage model. No new table.
+- **(d) Keep both `checkpoint` (legacy string) and `checkIns` (array), wrap reads so old data is upgraded on load.** Preserves existing running instances.
 
-**Chosen: (c).** The existing team storage is already JSONB payload in the teams table (per the dashboard team card research). Adding an array field to the payload is a small migration compared to a new table. Query needs are modest — we never need to cross-team-aggregate check-ins; we only ever render one team's trail at a time. The JSON array is simpler and faster to ship.
+**Chosen: (c) clean schema change, no backwards-compat wrapping.** The existing team storage is already JSONB payload in the teams table. Adding an array field to the payload is a small migration compared to a new table. Query needs are modest — we never need to cross-team-aggregate check-ins; we only ever render one team's trail at a time.
 
-**Tradeoff accepted:** Slightly worse queryability if we ever want analytics. Not a concern for the current workshop use case.
+**Directive from Ondrej during implementation:** "I don't think we need to wrap any legacies and stuff. Let's make it proper." So the implementation does not carry a legacy reader. Existing seed fixtures and data files (`dashboard/data/*/workshop-state.json`, `seedWorkshopState` in `workshop-data.ts`) are updated in place to the new shape as part of the A3 task. Any running production instance with the old shape is considered expendable — it will be reset before the next workshop.
 
-**Note:** `written_by` stores the participant name or identifier only as free text — no per-participant identity is introduced. The field is for self-accountability ("this is who on our team wrote this"), not authentication.
+**Tradeoff accepted:** Existing running workshops with old-shape data won't load after the migration. This is acceptable because no real workshops have run yet and test instances are easily recreated from seed data.
+
+**Note:** `writtenBy` stores the participant name or free-text identifier — no per-participant identity is introduced. The field is for self-accountability ("this is who on our team wrote this"), not authentication.
 
 ### Decision 4 — Scene 6.1 `[return-time]`: use instance-local scene override, no template engine
 
@@ -198,18 +201,233 @@ Each assumption classified as verified (evidence cited), unverified (needs inves
 
 Land the architectural decisions, schema migrations, and the brief generator. Everything downstream depends on this.
 
-- [ ] **A1 — Build 2 split schema decision.** Write a short ADR (`docs/adr/YYYY-MM-DD-build-2-sibling-phases.md`) capturing Decision 1. Decision is "sibling phases," implemented by adding a new phase to the agenda and re-ordering Phase 9+ accordingly. No code change yet — this task is the decision doc.
-- [ ] **A2 — Add new chromePreset value for team trails.** Update `dashboard/lib/types/bilingual-agenda.ts` to add a new `chromePreset` value. Naming suggestion: `team-trail` or `reflection`. Update the TypeScript union type and any switch statements that exhaustively match on chromePreset. Keep it additive — do not remove or rename existing values.
-- [ ] **A3 — Team check-in append-only migration.** Update the team data model (wherever `Team.checkpoint: string` lives) to `Team.checkIns: Array<{ phaseId: string; content: string; writtenAt: string; writtenBy: string | null }>`. The migration must be backwards-compatible — read old data by wrapping the legacy string in an array with a synthetic phase id (`"legacy"`) if needed. Update `workshop-store.ts` `updateCheckpoint()` to append, not overwrite. Add a new `appendCheckIn(teamId, phaseId, content, writtenBy)` function. Keep the old function signature alive (as a wrapper that appends to the latest phase) so existing code doesn't break.
-- [ ] **A4 — Team anchor field migration.** Add `Team.anchor: string | null` to the team payload. The anchor is a short label ("red brick," "number 3," "blue duck") claimed during Phase 1 team formation and persisted for the rest of the day. No UI editing yet — facilitator sets it via the admin team editor.
-- [ ] **A5 — Markdown-to-inventory brief generator.** Write `scripts/content/generate-briefs-inventory.ts` that reads `content/project-briefs/locales/en/*.md`, parses the frontmatter and section headers (problem, user stories, architecture notes, done when, first step), and writes the result as `.inventory.briefs[]` in `workshop-content/agenda.json`. Bilingual: also reads Czech markdown and populates the `cs` side. Mark `cs_reviewed: false` on any brief whose English changed since the last run.
-- [ ] **A6 — Wire A5 into the content pipeline.** Add `generate:briefs` to `package.json` scripts. Make `generate:content` depend on it. Make `verify:content` include brief inventory verification.
-- [ ] **A7 — Tests for A2, A3, A4, A5.** Unit tests for the new migrations, new store functions, new generator. Use the existing test patterns (in-memory store, fixture seeds).
+**Reference findings from the Session 1 codebase research** (do not re-research these):
+
+- Team schema lives in `dashboard/lib/workshop-data.ts` around line 501 (search for `type Team = `). `checkpoint: string` is the field to replace.
+- Storage is JSONB payload in the `teams` table. Migration file: `dashboard/db/migrations/2026-04-06-private-workshop-instance-runtime.sql`.
+- `seedWorkshopState` in `workshop-data.ts` has example team shapes that must be updated in lockstep.
+- Existing data fixtures at `dashboard/data/workshop-state.json` and `dashboard/data/sample-*/workshop-state.json` have the old `checkpoint: "..."` shape. Update these to the new shape (or delete and let them regenerate from seed — check how instance bootstrapping works).
+- Test files with hardcoded `checkpoint: "string"` in team fixtures: at least `__tests__/api/admin/teams/route.test.ts` line 73. Grep for more: `grep -rn "checkpoint:" __tests__ lib/*.test.ts dashboard/data`.
+- Brief markdown files live at `content/project-briefs/locales/en/*.md` (English canonical) and `content/project-briefs/*.md` (Czech source). The existing generator is `scripts/content/generate-views.ts` — study its pattern before writing the brief generator.
+- Schema version is 3 (`BilingualAgenda.schemaVersion`). Additive changes only; do not bump.
+- Valid `sceneType` values: `briefing`, `demo`, `participant-view`, `checkpoint`, `reflection`, `transition`, `custom`.
+- Valid `chromePreset` values (after A2): `minimal`, `agenda`, `checkpoint`, `participant`, `team-trail`.
+- Block types: `hero`, `rich-text`, `bullet-list`, `quote`, `steps`, `checklist`, `image`, `link-list`, `callout`, `participant-preview`.
+
+**Verification commands run from `dashboard/`** (working directory matters — scripts resolve paths relative to `dashboard/`):
+
+- Typecheck: `./node_modules/.bin/tsc --noEmit`
+- Unit tests: `./node_modules/.bin/vitest run`
+- Lint: `./node_modules/.bin/eslint .`
+- Content generation + verification: `npm run verify:content` (runs `generate-views.ts --verify` against the committed per-language views)
+
+#### A1 — Build 2 split schema decision ✅ DONE (commit 46e0da8)
+
+ADR at `docs/adr/2026-04-12-build-2-sibling-phases.md`. No code change — the decision doc justifies splitting Phase 8 into two sibling phases around Intermezzo 2 rather than introducing phase nesting. When Phase B lands the content edit, it will add a new phase row to the `phases` array in `workshop-content/agenda.json` with `order: 9` (after the Intermezzo 2 pause) and re-number Reveal from 10 to 11.
+
+#### A2 — Add new chromePreset value for team trails ✅ DONE (commit 46e0da8)
+
+Added `"team-trail"` to the `PresenterChromePreset` union in `dashboard/lib/workshop-data.ts` (lines 146–151) and to the runtime `presenterChromePresets` array (lines 404–410). Also added to `presenterChromePresetOptions` in `dashboard/app/admin/instances/[id]/page.tsx` so it appears in the facilitator scene-editor dropdown.
+
+No exhaustive switch statement on `chromePreset` exists — `deriveSceneChromePreset` in `workshop-store.ts` has a `default: return "minimal"` so new values fall through safely. Scenes set the preset explicitly; nothing derives it from `sceneType`.
+
+Verification: `tsc --noEmit` → 0 errors. `eslint .` → 0 warnings. `vitest run` → 280 passed.
+
+#### A3 — Team check-in append-only migration (PENDING — NEXT TASK)
+
+**Goal:** Replace `Team.checkpoint: string` with `Team.checkIns: Array<CheckIn>` across the entire surface. Clean break — no backwards-compat wrapping per Decision 3 directive.
+
+**New types** (in `dashboard/lib/workshop-data.ts`, near the existing `Team` type):
+
+```ts
+export type TeamCheckIn = {
+  phaseId: string;
+  content: string;
+  writtenAt: string; // ISO 8601
+  writtenBy: string | null; // free-text participant label; null for facilitator
+};
+
+export type Team = {
+  id: string;
+  name: string;
+  city: string;
+  members: string[];
+  repoUrl: string;
+  projectBriefId: string;
+  checkIns: TeamCheckIn[]; // was: checkpoint: string
+};
+```
+
+**Store surface** (in `dashboard/lib/workshop-store.ts`):
+
+- Remove the old `updateCheckpoint(teamId, checkpoint)` function entirely. No wrapper.
+- Add new `appendCheckIn(teamId: string, entry: Omit<TeamCheckIn, "writtenAt">, instanceId?: string): Promise<WorkshopState>`. Implementation calls `updateWorkshopState` and pushes a new entry onto the team's `checkIns` array with `writtenAt: new Date().toISOString()`.
+- Any callers of `updateCheckpoint` need to be found and switched to `appendCheckIn`. Grep: `grep -rn "updateCheckpoint" lib app __tests__`.
+
+**Files that touch the team shape and need updates:**
+
+- `dashboard/lib/workshop-data.ts` — type definition, `seedWorkshopState` team entries (search for `"Anna"`, `"Tým"`, `checkpoint:`).
+- `dashboard/lib/workshop-store.ts` — `updateCheckpoint` removal, `appendCheckIn` addition, any code path that reads `team.checkpoint`.
+- `dashboard/lib/runtime-contracts.ts` — `TeamRecord` is a type alias for `Team`; no direct change expected but grep to confirm.
+- `dashboard/app/components/participant-room-surface.tsx` — line 121 renders `team.checkpoint`; change to render the latest check-in or the full trail.
+- `dashboard/app/admin/instances/[id]/page.tsx` — admin team editor form submits a `checkpoint` field; switch to posting a new check-in.
+- `dashboard/app/api/admin/teams/route.ts` — mutation handler uses `updateCheckpoint`; switch to `appendCheckIn`.
+- `dashboard/app/api/checkpoints/route.ts` — sprint updates API; may or may not read `team.checkpoint`; audit.
+- Data files: `dashboard/data/workshop-state.json`, `dashboard/data/sample-studio-a/workshop-state.json`, `dashboard/data/sample-studio-b/workshop-state.json`, `dashboard/data/sample-lab-c/workshop-state.json`, `dashboard/data/sample-lab-d/workshop-state.json`, and any `archives.json` in those directories. Convert `checkpoint: "..."` to `checkIns: []` or a single seeded entry. For seed data, an empty array is fine — real check-ins get written at runtime.
+- Test files with hardcoded team fixtures referencing `checkpoint:`. Known files from earlier grep: all test files that construct a team in `__tests__/api/admin/teams/route.test.ts`. Full list: `grep -l "checkpoint:" __tests__ lib/*.test.ts`.
+
+**Tests to add or update (in `dashboard/lib/workshop-store.test.ts` or a new focused test file):**
+
+1. `appendCheckIn` adds a new entry with the current timestamp.
+2. `appendCheckIn` preserves existing entries (does not overwrite).
+3. `appendCheckIn` throws or returns an error when `teamId` does not exist.
+4. `appendCheckIn` accepts `writtenBy: null` and stores it.
+5. Multiple `appendCheckIn` calls across different phase ids all show up in the final array, in insertion order.
+6. Reading a fresh team from `seedWorkshopState` shows `checkIns: []` (no legacy data).
+
+**Tests to update for the shape change** (not new logic, just fixture updates):
+
+- `__tests__/api/admin/teams/route.test.ts` line 73: change the seeded team fixture from `checkpoint: "Původní checkpoint"` to `checkIns: []` or `checkIns: [{ phaseId: "opening", content: "Původní checkpoint", writtenAt: "2026-04-06T12:00:00.000Z", writtenBy: null }]`.
+- Any test that asserts on `team.checkpoint` becomes an assertion on `team.checkIns[team.checkIns.length - 1].content` or similar.
+- Grep checklist: `grep -rn "team.checkpoint\|\.checkpoint =" dashboard`.
+
+**Verification:**
+
+- `./node_modules/.bin/tsc --noEmit` — 0 errors.
+- `./node_modules/.bin/eslint .` — 0 warnings.
+- `./node_modules/.bin/vitest run` — all passing, including the new `appendCheckIn` tests.
+- Manual smoke test: `npm run dev`, open the admin team editor, submit a check-in, refresh the participant view, verify it appears.
+
+**Commit message template:**
+```
+Migrate Team.checkpoint to append-only checkIns array
+
+[short description of the shape change]
+[short description of the API change]
+[note that fixtures and data files are updated in lockstep]
+```
+
+#### A4 — Team anchor field migration (PENDING)
+
+**Goal:** Add `Team.anchor: string | null` to the team payload so facilitators can record a physical marker for each team during Phase 1 formation.
+
+**Type update** (in `dashboard/lib/workshop-data.ts`):
+
+```ts
+export type Team = {
+  // ... existing fields ...
+  anchor: string | null; // "red brick", "numbered card 3", "blue duck"
+};
+```
+
+**Files that need updates:**
+
+- `dashboard/lib/workshop-data.ts` — type and `seedWorkshopState` (add `anchor: null` or a sample value to each seeded team).
+- Data files (same list as A3) — add `anchor: null` to each team payload.
+- `dashboard/app/admin/instances/[id]/page.tsx` — admin team editor form; add an `anchor` text input next to the existing fields.
+- `dashboard/app/api/admin/teams/route.ts` — accept `anchor` in the POST/PATCH body.
+
+**Tests to add:**
+
+1. New team creation accepts and persists `anchor`.
+2. Existing team update accepts and persists a new `anchor`.
+3. `anchor: null` is valid and persists.
+
+**Tests to update:**
+
+- Any team fixture in tests needs `anchor: null` (or a sample value) added. Grep: `grep -rn "city:\s*\"" __tests__ lib/*.test.ts` to find team literals.
+
+**Verification:** same three commands as A3.
+
+#### A5 — Markdown-to-inventory brief generator (PENDING)
+
+**Goal:** Replace the hand-maintained `inventory.briefs[]` in `workshop-content/agenda.json` with a generator that reads canonical English markdown from `content/project-briefs/locales/en/*.md` and reviewed Czech from `content/project-briefs/*.md`, then writes both into the agenda's inventory section.
+
+**New file:** `scripts/content/generate-briefs-inventory.ts`
+
+**Expected inputs:**
+- `content/project-briefs/locales/en/*.md` (English canonical)
+- `content/project-briefs/*.md` (Czech source)
+
+**Expected output:**
+- Writes to `workshop-content/agenda.json` at the `.inventory.briefs` path.
+- Matches the existing `BilingualProjectBrief` shape from `dashboard/lib/types/bilingual-agenda.ts` (read this file to confirm the shape).
+
+**Parser design:**
+- Use plain Markdown section-header parsing (no frontmatter today). Section map:
+  - `## Problem` → `problem`
+  - `## User stories` → `userStories` (split bullet list)
+  - `## Architecture notes` → `architectureNotes` (split bullet list)
+  - `## Done when` → `acceptanceCriteria` (split bullet list)
+  - `## First step for the agent` → `firstAgentPrompt` (prose)
+  - Czech equivalents (`## Problém`, `## User stories`, `## Architektonické poznámky`, `## Hotovo když`, `## První krok pro agenta`) for the Czech side.
+- ID derivation: the markdown filename (without extension) becomes the brief `id`. The `# Title` header becomes `title`.
+- Keep the parser deterministic — same input always produces the same output, sorted by filename.
+
+**`cs_reviewed` flag handling:**
+- If the English brief's content hash changed since the last generation and the Czech side did not, set `cs_reviewed: false` on the brief inventory entry.
+- Store the hash somewhere stable — inline in the generator output as a comment is fine, or in a separate lockfile like `workshop-content/.brief-hashes.json`.
+
+**Integration:**
+- Before rewriting `agenda.json`, read the current file, parse it, replace only the `inventory.briefs` section, and write it back. Preserve formatting as much as possible (use the same JSON indentation as `generate-views.ts`).
+- Alternatively: treat `agenda.json` as the canonical source for non-brief content, and have the generator write briefs to a separate file that gets merged at `generate-views.ts` time. (Flag this as a design question — needs alignment with `generate-views.ts` patterns.)
+
+**Tests (new file `scripts/content/generate-briefs-inventory.test.ts`):**
+
+1. Parser extracts problem, user stories, architecture notes, done-when, first-agent prompt from a sample markdown file.
+2. Parser handles multi-line bullet items correctly.
+3. Parser produces the same output for the same input twice (deterministic).
+4. Full pipeline: fixture markdown files → generator → expected JSON structure matching `BilingualProjectBrief`.
+5. `cs_reviewed: false` is set when English hash changes and Czech hash does not.
+6. `cs_reviewed: true` is preserved when neither side changed.
+
+**Verification:**
+
+- `./node_modules/.bin/tsc --noEmit` — 0 errors.
+- `./node_modules/.bin/vitest run` — new generator tests pass.
+- Manual run: `npx tsx scripts/content/generate-briefs-inventory.ts` from the repo root, diff the output against the current hand-maintained inventory. Expected differences: doc-generator brief gets added (it's currently orphaned), and the inventory now has 5 entries instead of 4. Content differences beyond that should match the revised briefs once Phase B applies them.
+
+#### A6 — Wire A5 into the content pipeline (PENDING)
+
+**Goal:** Add the brief generator to the content pipeline so it runs as part of `npm run generate:content` and `npm run verify:content` catches drift.
+
+**Files to update:**
+
+- `dashboard/package.json` — add `"generate:briefs": "tsx ../scripts/content/generate-briefs-inventory.ts"` to scripts. Make `generate:content` run `generate:briefs` first. Make `verify:content` diff the generated briefs inventory against the committed version.
+- Root `package.json` if scripts also live there (check first).
+
+**Tests:** none new — the A5 tests cover the generator's correctness; this task just wires it in. Verify by running `npm run generate:content` and `npm run verify:content` manually.
+
+#### A7 — Test coverage audit for Phase A (PENDING)
+
+**Goal:** Make sure Phase A's test coverage is complete. Not a new task list — a review pass to catch anything A3/A4/A5 missed.
+
+**Checklist:**
+- [ ] A3: `appendCheckIn` covered in at least 5 scenarios (happy path, multiple appends, not-found error, `writtenBy: null`, empty initial state).
+- [ ] A3: Data file seed roundtrip test — load `seedWorkshopState`, assert every team has `checkIns: []`.
+- [ ] A4: Admin form round-trip — submit anchor, verify it persists in store state.
+- [ ] A5: Parser tests cover at least happy path, multi-line bullets, deterministic output, `cs_reviewed` flag transitions.
+- [ ] A5: Integration test — generator output matches a frozen fixture.
+- [ ] All new tests use the existing in-memory repository pattern (`setXForTests`, `MemoryXRepository` mocks).
+- [ ] No new tests reference specific scene IDs or scene titles from the brainstorm content — those come in Phase B and should not couple to Phase A tests.
+
+**Verification when A3/A4/A5 are all landed:**
+
+```
+./node_modules/.bin/tsc --noEmit  # 0 errors
+./node_modules/.bin/eslint .       # 0 warnings
+./node_modules/.bin/vitest run     # all green, coverage went up
+```
 
 **Exit criteria for Phase A:**
-- All migrations applied and tested.
-- `npm run generate:briefs` produces a valid `agenda.json` inventory from markdowns.
-- `npm run verify:content` still passes with the old content (no regressions).
+- A1 ✅ committed.
+- A2 ✅ committed.
+- A3, A4 migrations applied and tested, fixtures and data files updated in lockstep.
+- A5 generator produces a valid `agenda.json` inventory from markdowns, deterministically.
+- A6 wires the generator into the content pipeline.
+- A7 coverage audit clean.
+- `npm run verify:content` passes with the new pipeline.
+- All three quality gates (tsc, eslint, vitest) are clean.
 
 ### Phase B — Content Pipeline
 
@@ -339,7 +557,7 @@ This plan is done when every one of these is measurable true:
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
 | **Czech translations lag behind English content.** Content edits are extensive; Czech review takes time. If Czech falls behind, `cs_reviewed: false` on many scenes may trigger verification failures or show untranslated content in Czech instances. | High | Medium | Either block Phase B completion on Czech review, or accept `cs_reviewed: false` state and add a separate follow-up task for Czech review with clear timelines. The generator must support the stale-flag state. Explicitly decide before starting B. |
-| **Team check-in migration breaks existing running instances.** If an instance already has team data with `checkpoint: "some string"` in the payload, the new code expecting `checkIns: array` will crash or silently drop data. | High | High | Migration code MUST read both shapes — wrap a legacy string in `[{ phaseId: "legacy", content: <string>, writtenAt: <instance.createdAt>, writtenBy: null }]`. Test this path explicitly with a fixture containing old-shape data. |
+| **Team check-in migration drops existing data.** Since we are not wrapping legacy single-string checkpoints, any existing instance with the old shape will fail to load after the migration. | Medium | Medium (accepted) | Per Decision 3 directive: no backwards compatibility. All fixtures and data files are updated in place as part of A3. Any running instance with old-shape data is expected to be reset before the next workshop. Document the expected "before first workshop, reset all instances" step in the handoff. |
 | **The new chromePreset breaks exhaustive switch statements.** TypeScript's `never` checks in presenter rendering may fail to compile when a new value is added to the union. | Medium | Low | Grep for exhaustive switches on `chromePreset` after A2. Add case handlers. Let the TS compiler enforce completeness. |
 | **The brief generator produces inventory that drifts from what the dashboard expects.** Hand-written inventory had subtle field ordering, optional fields, or structural quirks that the generator may not reproduce exactly. | Medium | Medium | Before A5 is complete, diff the generator output against the current hand-written inventory. Any unexpected differences are either bugs in the generator or data to preserve. Iterate until they match (minus the intentional revisions from B12). |
 | **The Build 2 sibling-phase split breaks phase-count assumptions elsewhere in the code.** Something somewhere may loop `for i in 1..10` instead of using `phases.length`. | Medium | Medium | Grep for hardcoded phase counts, `.length === 10`, `slice(0, 10)`, etc. Fix found instances. Run all tests after B8 lands. |
@@ -449,3 +667,108 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 - `workshop-blueprint/operator-guide.md` — facilitator operations (extended in E1–E3)
 - `content/project-briefs/locales/en/*.md` — canonical English briefs (revised in B12)
 - `content/talks/locales/en/*.md` — canonical English talks (completed in B14)
+
+---
+
+## Session 1 Handoff Notes
+
+**Session date:** 2026-04-12
+**Branch:** `main` (trunk-based — all commits go directly to main per `CLAUDE.md`)
+**Working directory for commands:** `dashboard/` (npm scripts resolve paths relative to this dir)
+
+### What was completed
+
+**A1 — Build 2 split ADR** (commit `46e0da8`)
+- Decision documented at `docs/adr/2026-04-12-build-2-sibling-phases.md`
+- Decision: sibling phases, not nested. Phase 8 Build 2 splits into two entries around Intermezzo 2. Reveal renumbers from 10 to 11.
+- No code change in this commit — just the decision doc.
+
+**A2 — New chromePreset for team trails** (commit `46e0da8`, same commit as A1)
+- Added `"team-trail"` to `PresenterChromePreset` union in `dashboard/lib/workshop-data.ts` (lines 146–151 type, 404–410 runtime array).
+- Added to `presenterChromePresetOptions` in `dashboard/app/admin/instances/[id]/page.tsx` (line 2501) so it appears in the facilitator scene-editor dropdown.
+- No exhaustive switches on `chromePreset` exist in the codebase — `deriveSceneChromePreset` in `workshop-store.ts` has a `default: return "minimal"` fallback. Safe to extend.
+- Intended consumers: Intermezzo 1 Scene 5.3, Intermezzo 2 Scene 9.3, Reveal Scene 10.3 (from the brainstorm). These scenes are written in Phase B.
+
+**Bonus: pre-existing TypeScript error cleanup** (commit `405a534`)
+- The baseline `tsc --noEmit` was carrying 92 errors from stale test imports and incomplete mocks when I started. User directive: "I want you to actually fix that." All 92 fixed in one commit.
+- **Type re-exports added** in seven repository modules so test imports work: `audit-log-repository.ts`, `checkpoint-repository.ts`, `facilitator-auth-service.ts`, `instance-archive-repository.ts`, `monitoring-snapshot-repository.ts`, `redeem-attempt-repository.ts`, `team-repository.ts`. Each module now has `export type { X } from "./runtime-contracts";` after its internal import.
+- **Mock class completeness** — added missing `hasValidSession` to `AllowFacilitatorAuthService` (5 files) and missing `deleteOlderThan` to `MemoryAuditLogRepository` (5 files), `MemoryRedeemAttemptRepository` (1 file), `MemoryMonitoringSnapshotRepository` (1 file). All stubs are no-op async functions returning `false` / void.
+- **`updateAgendaItem` signature** in `dashboard/lib/workshop-store.ts` line 537–544 changed from `Pick<...>` to `Partial<Pick<...>>` because the implementation was already treating fields as optional via `?? item.X` fallbacks.
+- **`app/page.test.tsx`** fixtures dropped the obsolete `token` field from `participantSession` and added required `absoluteExpiresAt`.
+- **`workshop-store.test.ts`** legacy-item simulation now casts to `Partial<typeof item>` before `delete` rather than calling `delete` on required fields.
+- **`catchall-route.test.ts`** now passes mock Request and context to `GET`/`POST` so the union-typed handler accepts the call.
+- **`scripts/run-migrations.d.mts`** — new declaration file for the `.mjs` module so tsc can resolve it (`allowJs: false` in tsconfig).
+
+**Plan strengthening** (this session)
+- Decision 3 rewritten: no backwards-compat wrapping on the check-in migration, per your directive. Existing instances with old-shape data will need a reset before the next workshop — acceptable because no real workshops have run.
+- Risk Analysis entry for "team check-in migration" updated to reflect the clean-break approach.
+- Phase A tasks A3–A7 expanded with concrete file lists, test specs, verification commands, and commit templates.
+- Phase A now has inline research findings so a fresh session doesn't need to rediscover the team schema location, the chromePreset values, the valid sceneTypes, or the generator pipeline.
+
+### Current quality state (end of Session 1)
+
+All commands run from `dashboard/`:
+
+| Check | Result |
+|---|---|
+| `./node_modules/.bin/tsc --noEmit` | ✅ 0 errors |
+| `./node_modules/.bin/eslint .` | ✅ 0 errors, 0 warnings |
+| `./node_modules/.bin/vitest run` | ✅ 67 files, 280 passed, 2 files / 15 tests skipped (skipped count unchanged from baseline) |
+
+### Commits in this session (on `main`)
+
+```
+405a534 Fix pre-existing TypeScript errors across test suite
+46e0da8 Add Build 2 sibling-phase ADR and team-trail chromePreset
+15bed5a Add brainstorm and plan for workshop content and infrastructure update
+```
+
+### What's in the working tree at handoff
+
+Uncommitted files (this plan document only):
+- `docs/plans/2026-04-12-feat-workshop-content-and-infrastructure-update-plan.md` — the plan with A1/A2 marked done and the handoff section you're reading now. Commit this before continuing with A3.
+
+Pre-existing uncommitted files **NOT mine** (do not touch):
+- `docs/plans/2026-04-10-feat-participant-page-redesign-plan.md` (modified)
+- `docs/plans/2026-04-11-refactor-participant-route-separation-plan.md` (modified)
+- `harness-cli/assets/workshop-bundle/bundle-manifest.json` (modified)
+- `.claude/skills/workshop-facilitator/`, `.claude/skills/workshop/workshop-skill/`, `.copy-editor.lock.json` (untracked)
+- `docs/reviews/workshop-content/2026-04-12-locale-segmentation-rollout.md` (untracked)
+
+### Where to pick up in Session 2
+
+**Next task: A3 — Team check-in append-only migration.**
+
+Read the updated Phase A section of this plan (`Phased Implementation → Phase A → A3`) — it lists every file that touches the team shape, the new types, the new store surface, the tests to add, and the fixtures to update.
+
+**Recommended sequence inside A3:**
+
+1. Update the type definition in `dashboard/lib/workshop-data.ts` — add `TeamCheckIn` type, replace `checkpoint: string` with `checkIns: TeamCheckIn[]` in the `Team` type.
+2. Run `./node_modules/.bin/tsc --noEmit` to get a list of every site that breaks — this is your worklist.
+3. Work through the worklist file by file: `seedWorkshopState`, `workshop-store.ts` (remove `updateCheckpoint`, add `appendCheckIn`), consumers in `app/api/admin/teams/route.ts`, `app/components/participant-room-surface.tsx`, `app/admin/instances/[id]/page.tsx`, data fixtures, test fixtures.
+4. Add the new `appendCheckIn` tests in `dashboard/lib/workshop-store.test.ts`. Target the 6 scenarios listed in the A3 task.
+5. Re-run the three quality gates. All should be clean.
+6. Commit with the template in the A3 task description.
+
+**After A3, proceed in order: A4 → A5 → A6 → A7.** A5 is the second-biggest task after A3 and touches the content pipeline; give it its own session if context is tight.
+
+### Open decisions carried forward from Session 1
+
+These are captured elsewhere in the plan but worth surfacing at the handoff:
+
+- **Phase A5 generator integration path** — does the brief generator rewrite `agenda.json` directly, or does it write a sidecar file that `generate-views.ts` merges? Design question. See the A5 task for both options. Default: write directly into `agenda.json`'s `inventory.briefs` section, preserving surrounding formatting, because `generate-views.ts` currently treats `agenda.json` as the canonical source.
+- **Czech regeneration workflow in Phase B15** — either retranslate directly (needs a native Czech speaker) or mark `cs_reviewed: false` for all changed scenes and defer review as a separate workstream. Default for first session: set `cs_reviewed: false`, file a follow-up.
+- **`.agents/notes/` storage path for the D3 commitment command** — unverified assumption that this convention works at skill runtime. A3 task to investigate. If it doesn't, fall back to the four-option pattern from Scene 10.4.
+- **Cold-read facilitator gate for opening (F1)** — requires a human facilitator not involved in the rewrite to read the revised Phase 1 content cold. Out of scope for any AI session. Schedule separately.
+
+### Session 1 lessons worth carrying forward
+
+1. **Run `tsc --noEmit` early and often.** Catching type errors before commit is cheaper than fixing them in bulk later. The 92-error baseline is what happens when tests drift without the compiler's feedback.
+2. **Repository modules should re-export their interface types.** The pattern `import type { X } from "./runtime-contracts"; export type { X } from "./runtime-contracts";` is idiomatic for modules that both implement and expose the interface. New repository modules added in this plan should follow the same pattern.
+3. **The `dashboard/` working directory trap.** Several tools (`npx tsc`, `npm run X`) behave differently from inside `dashboard/` versus the repo root. Always run from `dashboard/`. Consider adding this to `dashboard/AGENTS.md` as a note.
+4. **Commit message style.** No prefix (no `feat:`, no `fix:`). Short imperative subject. Body describes what and why. Co-authored trailer with `Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>`. See session 1 commits as templates.
+5. **User directive on backwards compat: don't.** For this plan, clean schema migrations without legacy wrappers. Update fixtures and data files in lockstep. Existing instances with old data are expendable — reset before the next workshop.
+
+---
+
+*End of plan. Next session starts with A3.*
