@@ -45,6 +45,7 @@ import {
   addPresenterScene,
   addAgendaItem,
   addSprintUpdate,
+  appendCheckIn,
   createWorkshopArchive,
   completeChallenge,
   getWorkshopState,
@@ -595,7 +596,7 @@ async function registerTeamAction(formData: FormData) {
   const city = String(formData.get("city") ?? "Studio A").trim();
   const repoUrl = String(formData.get("repoUrl") ?? "").trim();
   const projectBriefId = String(formData.get("projectBriefId") ?? "").trim();
-  const checkpoint = buildEvidenceSummary({
+  const checkpointText = buildEvidenceSummary({
     changed: String(formData.get("checkpointChanged") ?? "").trim(),
     verified: String(formData.get("checkpointVerified") ?? "").trim(),
     nextStep: String(formData.get("checkpointNextStep") ?? "").trim(),
@@ -604,6 +605,7 @@ async function registerTeamAction(formData: FormData) {
   const membersRaw = String(formData.get("members") ?? "").trim();
 
   if (id && name && repoUrl && projectBriefId) {
+    const existing = state.teams.find((team) => team.id === id);
     await upsertTeam(
       {
         id,
@@ -611,7 +613,7 @@ async function registerTeamAction(formData: FormData) {
         city,
         repoUrl,
         projectBriefId,
-        checkpoint,
+        checkIns: existing?.checkIns ?? [],
         members: membersRaw
           .split(",")
           .map((value) => value.trim())
@@ -619,6 +621,14 @@ async function registerTeamAction(formData: FormData) {
       },
       instanceId,
     );
+    if (checkpointText) {
+      const currentPhaseId = state.agenda.find((item) => item.status === "current")?.id ?? state.agenda[0]?.id ?? "opening";
+      await appendCheckIn(
+        id,
+        { phaseId: currentPhaseId, content: checkpointText, writtenBy: null },
+        instanceId,
+      );
+    }
   }
   redirect(buildAdminHref({ lang, section, instanceId, teamId: id || null }));
 }
@@ -864,7 +874,8 @@ export default async function AdminPage({
     participantScenes[0] ??
     null;
   const selectedTeam = state.teams.find((team: Team) => team.id === query?.team) ?? state.teams[0] ?? null;
-  const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeam?.checkpoint ?? "");
+  const selectedTeamLatestCheckIn = selectedTeam?.checkIns[selectedTeam.checkIns.length - 1]?.content ?? "";
+  const selectedTeamCheckpoint = parseEvidenceSummary(selectedTeamLatestCheckIn);
   const isOwner = currentFacilitator?.grant.role === "owner";
   const signedInEmail = authSession?.data?.user?.email ?? null;
   const signedInName = authSession?.data?.user?.name ?? null;
@@ -1603,7 +1614,9 @@ export default async function AdminPage({
                         </AdminRouteLink>
                       </div>
                     </div>
-                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
+                      {team.checkIns[team.checkIns.length - 1]?.content ?? ""}
+                    </p>
                     <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{team.members.join(", ")}</p>
                   </div>
                 ))}

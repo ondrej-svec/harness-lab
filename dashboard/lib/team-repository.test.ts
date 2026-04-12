@@ -11,7 +11,7 @@ const team: TeamRecord = {
   members: ["Anna"],
   repoUrl: "https://example.com/repo",
   projectBriefId: "brief-1",
-  checkpoint: "Ready",
+  checkIns: [],
 };
 
 describe("team-repository", () => {
@@ -39,8 +39,14 @@ describe("team-repository", () => {
     await repository.upsertTeam("instance-a", team);
     await expect(repository.listTeams("instance-a")).resolves.toEqual([team]);
 
-    await repository.upsertTeam("instance-a", { ...team, checkpoint: "Updated" });
-    await expect(repository.listTeams("instance-a")).resolves.toEqual([{ ...team, checkpoint: "Updated" }]);
+    const updatedTeam = {
+      ...team,
+      checkIns: [
+        { phaseId: "opening", content: "Updated", writtenAt: "2026-04-06T12:00:00.000Z", writtenBy: null },
+      ],
+    };
+    await repository.upsertTeam("instance-a", updatedTeam);
+    await expect(repository.listTeams("instance-a")).resolves.toEqual([updatedTeam]);
 
     await repository.replaceTeams("instance-a", [{ ...team, id: "t2", name: "Team Two" }]);
     await expect(repository.listTeams("instance-a")).resolves.toEqual([

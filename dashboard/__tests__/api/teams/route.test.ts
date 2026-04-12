@@ -126,7 +126,7 @@ describe("teams route", () => {
           members: ["Iva", "Milan"],
           repoUrl: "https://github.com/example/runtime-team",
           projectBriefId: "standup-bot",
-          checkpoint: "Repo pro tým je normalizovaný.",
+          checkIns: [],
         },
       ]),
     );

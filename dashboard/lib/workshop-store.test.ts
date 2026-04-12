@@ -56,7 +56,7 @@ import {
   setRotationReveal,
   updateAgendaItem,
   updatePresenterScene,
-  updateCheckpoint,
+  appendCheckIn,
   upsertTeam,
 } from "./workshop-store";
 
@@ -543,10 +543,11 @@ describe("workshop-store", () => {
     expect(state.ticker[0]?.label).toBe("Team 3 just added its first custom skill.");
   });
 
-  it("updates facilitator-controlled team and checkpoint state", async () => {
-    await updateCheckpoint("t1", "Checkpoint po facilitaci");
+  it("updates facilitator-controlled team and check-in state", async () => {
+    await appendCheckIn("t1", { phaseId: "opening", content: "Checkpoint po facilitaci", writtenBy: null });
     let state = await getWorkshopState();
-    expect(state.teams.find((team) => team.id === "t1")?.checkpoint).toBe("Checkpoint po facilitaci");
+    const t1Latest = state.teams.find((team) => team.id === "t1")?.checkIns.at(-1);
+    expect(t1Latest?.content).toBe("Checkpoint po facilitaci");
 
     await upsertTeam({
       id: "t9",
@@ -555,17 +556,40 @@ describe("workshop-store", () => {
       members: ["Iva", "Milan"],
       repoUrl: "https://github.com/example/new-team",
       projectBriefId: "standup-bot",
-      checkpoint: "Nový tým zaregistrován",
+      checkIns: [],
     });
 
     state = await getWorkshopState();
     expect(state.teams.find((team) => team.id === "t9")?.name).toBe("Tým 9");
-    await expect(teamRepository.listTeams("sample-studio-a")).resolves.toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ id: "t1", checkpoint: "Checkpoint po facilitaci" }),
-        expect.objectContaining({ id: "t9", name: "Tým 9" }),
-      ]),
-    );
+    const teams = await teamRepository.listTeams("sample-studio-a");
+    const t1 = teams.find((team) => team.id === "t1");
+    expect(t1?.checkIns.at(-1)?.content).toBe("Checkpoint po facilitaci");
+    expect(teams.some((team) => team.id === "t9" && team.name === "Tým 9")).toBe(true);
+  });
+
+  it("appendCheckIn preserves existing entries and adds timestamp", async () => {
+    await appendCheckIn("t1", { phaseId: "opening", content: "První", writtenBy: "Anna" });
+    await appendCheckIn("t1", { phaseId: "intermezzo-1", content: "Druhý", writtenBy: null });
+    const teams = await teamRepository.listTeams("sample-studio-a");
+    const team = teams.find((t) => t.id === "t1");
+    expect(team?.checkIns).toHaveLength(2);
+    expect(team?.checkIns[0]).toMatchObject({ phaseId: "opening", content: "První", writtenBy: "Anna" });
+    expect(team?.checkIns[1]).toMatchObject({ phaseId: "intermezzo-1", content: "Druhý", writtenBy: null });
+    expect(team?.checkIns[0].writtenAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(team?.checkIns[1].writtenAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+  });
+
+  it("appendCheckIn throws when teamId is unknown", async () => {
+    await expect(
+      appendCheckIn("t-missing", { phaseId: "opening", content: "x", writtenBy: null }),
+    ).rejects.toThrow(/Team not found/);
+  });
+
+  it("seedWorkshopState teams start with empty checkIns", async () => {
+    const state = await getWorkshopState();
+    for (const team of state.teams) {
+      expect(team.checkIns).toEqual([]);
+    }
   });
 
   it("captures a rotation signal to both instance-local and learnings log", async () => {
@@ -681,7 +705,7 @@ describe("workshop-store", () => {
         members: ["Anna"],
         repoUrl: "https://github.com/example/existing-team",
         projectBriefId: "standup-bot",
-        checkpoint: "Keep me intact.",
+        checkIns: [],
       },
     ]);
 
@@ -708,7 +732,7 @@ describe("workshop-store", () => {
         members: ["Daniel", "Hana"],
         repoUrl: "https://github.com/example/runtime-team",
         projectBriefId: "metrics-dashboard",
-        checkpoint: "Runtime team repository",
+        checkIns: [],
       },
     ]);
     await checkpointRepository.replaceCheckpoints("sample-studio-a", [

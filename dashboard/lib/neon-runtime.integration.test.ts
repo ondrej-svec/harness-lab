@@ -122,7 +122,7 @@ describe.skipIf(!hasNeonTestDatabase)("neon runtime adapters", () => {
       members: ["Anna", "David"],
       repoUrl: "https://github.com/example/neon-team",
       projectBriefId: "standup-bot",
-      checkpoint: "Team repository přes Neon",
+      checkIns: [],
     });
 
     await expect(checkpointRepository.listCheckpoints(instanceId)).resolves.toMatchObject([{ id: "u-neon" }]);

@@ -118,7 +118,11 @@ export function ParticipantRoomSurface({
                   {"members" in team && Array.isArray(team.members) && team.members.length > 0 ? (
                     <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
                   ) : null}
-                  <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">{team.checkpoint}</p>
+                  <p className="mt-4 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
+                    {Array.isArray(team.checkIns) && team.checkIns.length > 0
+                      ? team.checkIns[team.checkIns.length - 1].content
+                      : ""}
+                  </p>
                   {team.repoUrl ? (
                     <a
                       className="mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"

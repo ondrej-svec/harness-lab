@@ -500,6 +500,13 @@ function normalizePresenterChromePreset(value: string): PresenterChromePreset {
   return presenterChromePresets.includes(value as PresenterChromePreset) ? (value as PresenterChromePreset) : "minimal";
 }
 
+export type TeamCheckIn = {
+  phaseId: string;
+  content: string;
+  writtenAt: string;
+  writtenBy: string | null;
+};
+
 export type Team = {
   id: string;
   name: string;
@@ -507,7 +514,7 @@ export type Team = {
   members: string[];
   repoUrl: string;
   projectBriefId: string;
-  checkpoint: string;
+  checkIns: TeamCheckIn[];
 };
 
 export type ProjectBrief = {
@@ -1281,7 +1288,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Anna", "David", "Eva", "Marek", "Tomáš"],
       repoUrl: "https://github.com/example/standup-bot",
       projectBriefId: "standup-bot",
-      checkpoint: "AGENTS.md je hotové jako krátká mapa, build flow je popsaný a další safe move je dopsat první ověření.",
+      checkIns: [],
     },
     {
       id: "t2",
@@ -1290,7 +1297,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Jana", "Karel", "Lucie", "Petr", "Veronika"],
       repoUrl: "https://github.com/example/devtoolbox-cli",
       projectBriefId: "devtoolbox-cli",
-      checkpoint: "První slash command flow funguje, ale chybí jasné ověření a runbook pro tým po rotaci.",
+      checkIns: [],
     },
     {
       id: "t3",
@@ -1299,7 +1306,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Adam", "Barbora", "Filip", "Lenka"],
       repoUrl: "https://github.com/example/code-review-helper",
       projectBriefId: "code-review-helper",
-      checkpoint: "Skill kostra hotová, heuristiky jsou sepsané a další safe move je dopsat runbook pro další tým.",
+      checkIns: [],
     },
     {
       id: "t4",
@@ -1308,7 +1315,7 @@ export const seedWorkshopState: WorkshopState = {
       members: ["Daniel", "Hana", "Jakub", "Zuzana"],
       repoUrl: "https://github.com/example/metrics-dashboard",
       projectBriefId: "metrics-dashboard",
-      checkpoint: "Dashboard žije, ale zatím není dohledatelné, co je skutečně ověřené a jak spustit seed data lokálně.",
+      checkIns: [],
     },
   ],
   briefs: seedWorkshopBriefs.map(cloneProjectBrief),

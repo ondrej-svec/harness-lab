@@ -19,6 +19,7 @@ import {
   type PresenterSceneSurface,
   type SprintUpdate,
   type Team,
+  type TeamCheckIn,
   type WorkshopContentLanguage,
   type WorkshopInstanceRecord,
   type WorkshopState,
@@ -936,11 +937,21 @@ export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopIns
   return getWorkshopState(instanceId);
 }
 
-export async function updateCheckpoint(teamId: string, checkpoint: string, instanceId = getCurrentWorkshopInstanceId()) {
+export async function appendCheckIn(
+  teamId: string,
+  entry: Omit<TeamCheckIn, "writtenAt">,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
   const repository = getTeamRepository();
   const teams = await repository.listTeams(instanceId);
   const baselineTeams = teams.length > 0 ? teams : (await getBaseWorkshopState(instanceId)).teams;
-  const nextTeams = baselineTeams.map((team) => (team.id === teamId ? { ...team, checkpoint } : team));
+  if (!baselineTeams.some((team) => team.id === teamId)) {
+    throw new Error(`Team not found: ${teamId}`);
+  }
+  const checkIn: TeamCheckIn = { ...entry, writtenAt: new Date().toISOString() };
+  const nextTeams = baselineTeams.map((team) =>
+    team.id === teamId ? { ...team, checkIns: [...team.checkIns, checkIn] } : team,
+  );
   await repository.replaceTeams(instanceId, nextTeams);
 
   // Keep the workshop-state projection aligned during the migration window.

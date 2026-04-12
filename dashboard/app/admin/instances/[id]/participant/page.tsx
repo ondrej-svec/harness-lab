@@ -67,7 +67,7 @@ export default async function AdminParticipantMirrorPage({
               city: team.city,
               members: team.members,
               repoUrl: team.repoUrl,
-              checkpoint: team.checkpoint,
+              checkIns: team.checkIns,
             })),
           }}
           publicNotes={participantNotes}

@@ -74,7 +74,7 @@ describe("admin teams route", () => {
         members: ["Anna"],
         repoUrl: "https://github.com/example/standup-bot",
         projectBriefId: "standup-bot",
-        checkpoint: "Původní checkpoint",
+        checkIns: [],
       },
     ]);
 
@@ -109,7 +109,7 @@ describe("admin teams route", () => {
           members: ["Iva", "Milan"],
           repoUrl: "https://github.com/example/new-team",
           projectBriefId: "standup-bot",
-          checkpoint: "Nový tým",
+          checkIns: [],
         }),
       }),
     );
@@ -143,7 +143,7 @@ describe("admin teams route", () => {
     });
   });
 
-  it("updates team checkpoints through the dedicated team repository", async () => {
+  it("appends a team check-in through the dedicated team repository", async () => {
     const response = await PATCH(
       new Request("http://localhost/api/admin/teams", {
         method: "PATCH",
@@ -153,18 +153,26 @@ describe("admin teams route", () => {
         },
         body: JSON.stringify({
           teamId: "t1",
-          checkpoint: "Checkpoint po facilitaci",
+          phaseId: "opening",
+          content: "Checkpoint po facilitaci",
+          writtenBy: null,
         }),
       }),
     );
 
     expect(response.status).toBe(200);
-    await expect(teamRepository.listTeams("sample-studio-a")).resolves.toMatchObject([
-      { id: "t1", checkpoint: "Checkpoint po facilitaci" },
+    const teams = await teamRepository.listTeams("sample-studio-a");
+    expect(teams).toMatchObject([
+      {
+        id: "t1",
+        checkIns: [
+          { phaseId: "opening", content: "Checkpoint po facilitaci", writtenBy: null },
+        ],
+      },
     ]);
   });
 
-  it("rejects incomplete checkpoint updates", async () => {
+  it("rejects incomplete check-in appends", async () => {
     const response = await PATCH(
       new Request("http://localhost/api/admin/teams", {
         method: "PATCH",
@@ -181,7 +189,7 @@ describe("admin teams route", () => {
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toMatchObject({
       ok: false,
-      error: "teamId and checkpoint are required",
+      error: "teamId, phaseId and content are required",
     });
   });
 });

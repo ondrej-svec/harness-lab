@@ -577,7 +577,7 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 ### Phase A — Foundations
 - [x] A1 — Build 2 split ADR
 - [x] A2 — New chromePreset for team trails
-- [ ] A3 — Team check-in append-only migration
+- [x] A3 — Team check-in append-only migration
 - [ ] A4 — Team anchor field migration
 - [ ] A5 — Markdown-to-inventory brief generator
 - [ ] A6 — Wire A5 into content pipeline (`generate:briefs`, `verify:content`)
