@@ -27,9 +27,9 @@ The default participant pattern this kit should reinforce is:
 
 Primary participant interface:
 - [`SKILL.md`](../../../SKILL.md)
-- [`workshop-skill/locales/en/setup.md`](../../../workshop-skill/locales/en/setup.md)
-- [`workshop-skill/locales/en/reference.md`](../../../workshop-skill/locales/en/reference.md)
-- [`workshop-skill/locales/en/recap.md`](../../../workshop-skill/locales/en/recap.md)
+- [`workshop-skill/setup.md`](../../../workshop-skill/setup.md)
+- [`workshop-skill/reference.md`](../../../workshop-skill/reference.md)
+- [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
 
 Why it belongs here:
 - it shows how a participant-facing skill can guide setup, workflow, and verification in reviewed workshop language
@@ -65,7 +65,7 @@ Use:
 ### 5. Follow-up package
 
 Post-workshop reinforcement:
-- [`workshop-skill/locales/en/follow-up-package.md`](../../../workshop-skill/locales/en/follow-up-package.md)
+- [`workshop-skill/follow-up-package.md`](../../../workshop-skill/follow-up-package.md)
 - [`materials/locales/en/participant-resource-kit.md`](../../../materials/locales/en/participant-resource-kit.md)
 
 Why it belongs here:
@@ -77,8 +77,8 @@ Why it belongs here:
 ### During setup
 
 Use:
-- [`workshop-skill/locales/en/setup.md`](../../../workshop-skill/locales/en/setup.md)
-- [`workshop-skill/locales/en/reference.md`](../../../workshop-skill/locales/en/reference.md)
+- [`workshop-skill/setup.md`](../../../workshop-skill/setup.md)
+- [`workshop-skill/reference.md`](../../../workshop-skill/reference.md)
 
 ### During Build Phase 1
 
@@ -95,8 +95,8 @@ Use:
 ### After the workshop
 
 Use:
-- [`workshop-skill/locales/en/recap.md`](../../../workshop-skill/locales/en/recap.md)
-- [`workshop-skill/locales/en/follow-up-package.md`](../../../workshop-skill/locales/en/follow-up-package.md)
+- [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
+- [`workshop-skill/follow-up-package.md`](../../../workshop-skill/follow-up-package.md)
 - [`materials/locales/en/participant-resource-kit.md`](../../../materials/locales/en/participant-resource-kit.md)
 - [`learner-reference-gallery.md`](learner-reference-gallery.md)
 

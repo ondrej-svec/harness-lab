@@ -1,84 +1,84 @@
 # Workshop Setup
 
-## Cíl
+## Goal
 
-Do 10:30 potřebujete jednu funkční cestu do Codexu nebo pi. Ne perfektní setup. Funkční cestu.
+By 10:30, you need one working path into Codex or pi. Not a perfect setup. A working path.
 
-První cíl po setupu není feature. Je to orientace:
+The first goal after setup is not a feature. It is orientation:
 
-- otevřít repo
-- načíst workshopové pokyny
-- vytvořit krátké `AGENTS.md`
-- pojmenovat první ověřitelný krok
+- open the repo
+- load the workshop guidance
+- create a short `AGENTS.md`
+- name the first verifiable step
 
-Garantovaný výchozí nástroj pro dnešek je `workshop` skill. Další workflow skills nebo externí toolkity jsou volitelné zrychlení, ne podmínka účasti.
+The guaranteed default for today is the `workshop` skill. Additional workflow skills or external toolkits are optional accelerators, not a requirement for participation.
 
-## Nejrychlejší volba
+## Fastest choice
 
-- terminálový, hackovatelný multi-model setup: `pi`
+- terminal-first, hackable multi-model setup: `pi`
 - macOS / Linux: `Codex CLI`
-- Windows nebo macOS: `Codex App`
-- Když se zaseknete: web fallback nebo pairing s někým, komu už setup běží
+- Windows or macOS: `Codex App`
+- if you get blocked: web fallback or pair with someone whose setup already works
 
 ## pi
 
-1. Nainstalujte `pi`:
+1. Install `pi`:
 
 ```bash
 npm install -g @mariozechner/pi-coding-agent
 ```
 
-2. Přihlaste provider nebo účet, který chcete používat.
-3. Otevřete repozitář.
-4. Spusťte `pi`.
-5. Načtěte workshop skill přes `/skill:workshop` a řekněte si o `setup`, `reference` nebo `brief`.
+2. Sign in to the provider or account you want to use.
+3. Open the repository.
+4. Run `pi`.
+5. Load the workshop skill with `/skill:workshop` and ask for `setup`, `reference`, or `brief`.
 
 ## Codex CLI
 
-1. Ověřte, že máte přístup ke svému Codex účtu.
-2. Nainstalujte CLI podle interního setup flow vaší organizace.
-3. Přihlaste se.
-4. Otevřete repozitář.
-5. Pošlete první smysluplný prompt a ověřte, že dostáváte odpověď.
+1. Confirm that you have access to your Codex account.
+2. Install the CLI using your organization's setup flow.
+3. Sign in.
+4. Open the repository.
+5. Send the first meaningful prompt and confirm that you get a response.
 
 ## Codex App
 
-1. Nainstalujte aplikaci.
-2. Přihlaste se stejným účtem.
-3. Otevřete workshop repo nebo týmový projekt.
-4. Pošlete první prompt.
-5. Ověřte, že můžete pokračovat bez další blokace.
+1. Install the app.
+2. Sign in with the same account.
+3. Open the workshop repo or your team project.
+4. Send the first prompt.
+5. Confirm that you can continue without another blocker.
 
-## Když něco nefunguje
+## If something does not work
 
-- Neztrácejte 20 minut sólo debugováním setupu.
-- Po 7 minutách blokace přepněte na App, web fallback nebo pairing.
-- Když nefunguje autentizace, pokračujte s někým od stolu a vraťte se k vlastnímu setupu později.
-- Když si nejste jistí dalším krokem, použijte v Codexu `$workshop setup`. V pi načtěte `/skill:workshop` a řekněte si o setup pomoc. Nebo si zavolejte facilitátora.
+- Do not spend 20 minutes debugging setup alone.
+- After 7 minutes of being blocked, switch to App, web fallback, or pairing.
+- If authentication fails, continue with someone at your table and come back to your own setup later.
+- If you are unsure about the next step, use `$workshop setup` in Codex. In pi, load `/skill:workshop` and ask for setup help. Or call a facilitator.
 
-## Prvních 15 minut po setupu
+## First 15 minutes after setup
 
-1. Spusťte `workshop` reference:
+1. Open workshop reference:
    - Codex: `$workshop reference`
-   - pi: `/skill:workshop`, potom si řekněte o `reference`
-   - když chcete rychlý přehled toho, co skill umí: `Codex: $workshop commands`
-2. Otevřete brief:
+   - pi: `/skill:workshop`, then ask for `reference`
+   - if you want a fast overview of the skill surface: `Codex: $workshop commands`
+2. Open the brief:
    - Codex: `$workshop brief`
-   - pi: `/skill:workshop`, potom si řekněte o `brief`
-3. Doplňte krátké `AGENTS.md`:
+   - pi: `/skill:workshop`, then ask for `brief`
+3. Add a short `AGENTS.md`:
    - Codex: `$workshop template`
-4. Pojmenujte první bezpečný krok:
-   - ideálně přes `$plan`, případně `brainstorm`, když scope ještě není jasný
-5. Přidejte jedno spustitelné ověření:
-   - unit test, tracer bullet nebo aspoň jasný review/checklist krok
-6. Když chcete materiály i po workshopu:
+4. Name the first safe move:
+   - ideally through `plan`, or `brainstorm` if the scope is still unclear
+5. Add one executable check:
+   - an executable check (unit test, tracer bullet), or at least a clear review or checklist step
+6. If you want materials for later too:
    - `Codex: $workshop resources`
    - `Codex: $workshop gallery`
    - `Codex: $workshop follow-up`
 
-## Hotovo když
+## Done when
 
-- Umíte otevřít repo.
-- Umíte poslat prompt.
-- Máte jednu funkční cestu, jak během workshopu pracovat s agentem.
-- Víte, jaký je první bezpečný krok v repu po setupu.
+- You can open the repo.
+- You can send a prompt.
+- You have one working path for using an agent during the workshop.
+- You know the first safe move in the repo after setup.

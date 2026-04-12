@@ -1,35 +1,35 @@
 # AGENTS.md Starter
 
-Použijte to jako krátkou mapu repa. Ne jako encyklopedii. Když detail patří jinam, odkažte na konkrétní soubor místo kopírování dlouhého textu.
+Use this as a short map of the repo. Not as an encyclopedia. When a detail belongs elsewhere, link to the specific file instead of copying long text.
 
-Nejdůležitější pravidlo:
-- napište, kam má agent sáhnout jako první
-- napište, co je zdroj pravdy
-- napište, jak se práce ověří
-- když se text nafukuje, přidejte navazující dokument a odkažte na něj
+The most important rule:
+- write where the agent should look first
+- write what is the source of truth
+- write how the work is verified
+- when the text starts to bloat, add a follow-up document and link to it
 
 ## Goal
 
-Popiš, co má agent v tomto repozitáři vytvořit nebo udržovat.
+Describe what the agent should create or maintain in this repository.
 
 ## Context
 
-- Klíčové soubory a složky
-- Rozhodnutí, která už padla
-- Systémy nebo integrace, na které se navazuje
-- Kam má agent sáhnout jako první
-- Které docs nebo runbooky jsou zdroj pravdy
+- Key files and folders
+- Decisions that have already been made
+- Systems or integrations this work builds on
+- Where the agent should look first
+- Which docs or runbooks are the source of truth
 
 ## Constraints
 
-- Build/test/lint příkazy
-- Jazykové, architektonické a bezpečnostní standardy
-- Co agent nesmí dělat bez explicitního souhlasu
-- Public/private nebo auth boundary, pokud existuje
+- Build, test, and lint commands
+- Language, architecture, and security standards
+- What the agent must not do without explicit approval
+- Public/private or auth boundary, if any
 
 ## Done When
 
-- Jak poznáme, že je práce hotová
-- Jaké ověření musí proběhnout
-- Jak má vypadat handoff pro dalšího člověka nebo agenta
-- Jaký bude další bezpečný krok, pokud práce zůstane rozdělaná
+- How we know the work is finished
+- What verification must pass
+- What the handoff to the next person or agent should look like
+- What the next safe move is if the work stays in progress

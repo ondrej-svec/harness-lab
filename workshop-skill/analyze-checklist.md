@@ -1,22 +1,22 @@
 # Workshop Analyze Checklist
 
-Když agent dělá `/workshop analyze`, měl by projít:
+When an agent runs `/workshop analyze`, it should walk through:
 
-- existenci a kvalitu `AGENTS.md`
-- jestli je `AGENTS.md` mapa nebo přerostlý dump
-- jestli `AGENTS.md` říká, co číst jako první
-- jestli `AGENTS.md` odkazuje na skutečné source-of-truth docs
-- přítomnost build/test příkazů
-- jestli repo rozlišuje hotové vs. rozpracované části
-- jestli je v repu plán nebo runbook pro další tým
-- jestli je dohledatelné, co bylo skutečně ověřeno
-- jestli existuje záznam stavu session — co bylo ověřeno, co je rozpracované, jaký je další bezpečný krok
-- kolik pravidel žije jen v promptu a ne v repu
-- jak snadné by bylo pokračovat po rotaci bez ústního handoffu
-- jestli je zřejmý další bezpečný krok
+- whether `AGENTS.md` exists and how good it is
+- whether `AGENTS.md` reads as a map or as an overgrown dump
+- whether `AGENTS.md` says what to read first
+- whether `AGENTS.md` points at real source-of-truth docs
+- whether build and test commands are present
+- whether the repo distinguishes finished parts from in-progress parts
+- whether a plan or runbook for the next team lives in the repo
+- whether it is possible to find what was actually verified
+- whether there is a record of the session state — what is verified, what is in progress, what is the next safe move
+- how many rules live only in the prompt instead of in the repo
+- how easy it would be to continue after rotation without a verbal handoff
+- whether the next safe move is obvious
 
-## Výstup
+## Output
 
-1. Co pomohlo pokračovat
-2. Co chybělo
-3. Co přidat před dalším handoffem
+1. What helped continuation
+2. What was missing
+3. What to add before the next handoff

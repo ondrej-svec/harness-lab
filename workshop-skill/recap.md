@@ -1,29 +1,29 @@
 # Workshop Recap
 
-## Co si odnést
+## What to keep
 
-- Kontext není kosmetika. Je to pracovní systém.
-- `AGENTS.md`, skills a runbooky nejsou doplněk navíc. Jsou to nástroje, díky kterým tým drží směr.
-- Dobrý handoff poznáte podle toho, že nový tým začne pracovat bez ústního dovysvětlování.
+- Context is not cosmetics. It is a working system.
+- `AGENTS.md`, skills, and runbooks are not extra garnish. They are tools that help a team keep direction.
+- A good handoff is visible when the next team can start work without verbal backfilling.
 
-## 3 věci, které si máte odnést z místnosti
+## 3 things to take out of the room
 
-- Jeden signál, který chcete zavést natrvalo ve vlastním repu.
-- Jednu slabinu, kterou už příště nenecháte žít jen v hovoru.
-- Jeden konkrétní tah pro příští týden.
+- One signal you want to install permanently in your own repo.
+- One weakness you do not want to leave in conversation next time.
+- One concrete move for next week.
 
-## Zkuste tento týden
+## Try this this week
 
-- Přidejte `AGENTS.md` do jednoho reálného projektu.
-- Doplňte build/test příkazy a sekci `Done When`.
-- Jedno trvalé pravidlo přesuňte z promptu do repa.
-- Po větší změně zkuste udělat krátký runbook pro dalšího člověka.
-- Po jednom handoffu nebo review si napište, co další tým skutečně potřeboval a co mu chybělo.
+- Add `AGENTS.md` to one real project.
+- Add build and test commands plus a `Done When` section.
+- Move one durable rule from a prompt into the repo.
+- After a larger change, try writing a short runbook for the next person.
+- After one handoff or review, write down what the next team actually needed and what was missing.
 
-## Váš závazek
+## Your commitment
 
-Vraťte se ke sticky note z části `A teď?` a převeďte ji na první konkrétní commit, pull request nebo task v repu.
+Return to the sticky note from the `And now?` segment and turn it into the first concrete commit, pull request, or task in the repo.
 
-## Až si nebudete jistí
+## When you are not sure
 
-Začněte jednoduše: napište, co chcete udělat, kde je kontext, jaká jsou omezení, podle čeho poznáte hotovo a jaký je další bezpečný krok, když práce zůstane rozdělaná.
+Start simply: write down what you want to do, where the context is, what the constraints are, how you will know it is done, and what the next safe move is if the work stays unfinished.

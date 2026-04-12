@@ -75,12 +75,12 @@ If you touch these areas, read these files first:
 ## Language
 
 - Dev-facing docs and architecture notes: **English**
-- Shared structured workshop content: canonical English authoring with reviewed localized delivery
-- Participant-facing workshop delivery: per-workshop `contentLang` such as Czech or English
-- Czech remains a first-class reviewed locale for real workshop runs
+- Shared structured workshop content that is rendered verbatim on a screen (agenda scenes, project briefs, challenge cards, facilitation guides): canonical English authoring with reviewed localized delivery. Czech remains a first-class reviewed locale for real workshop runs.
+- **Workshop skill reference docs** (`workshop-skill/*.md`): **English only**. The skill is consumed by an AI agent (Codex, Claude Code, pi) that translates on the fly for non-English participants. Do not maintain parallel Czech copies. See [`docs/adr/2026-04-12-skill-docs-english-canonical.md`](docs/adr/2026-04-12-skill-docs-english-canonical.md).
+- Participant-facing workshop delivery: per-workshop `contentLang` such as Czech or English. This still applies to agenda rendering; it does not apply to skill reference files.
 - Technical terms (AGENTS.md, skills, slash commands): English
 - Code and configuration: English
-- Participant-facing Czech copy should follow `content/style-guide.md` and `content/style-examples.md`
+- Participant-facing Czech copy in agenda/briefs should follow `content/style-guide.md` and `content/style-examples.md`
 - Language architecture details live in [`docs/workshop-content-language-architecture.md`](docs/workshop-content-language-architecture.md)
 
 ## Working Rules

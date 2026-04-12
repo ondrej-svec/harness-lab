@@ -1,33 +1,33 @@
 # Follow-up Package
 
-## 48 hodin po workshopu
+## 48 hours after the workshop
 
-### Váš závazek
+### Your commitment
 
-Pokud máš fotku sticky notes z části „A teď?", pošli každému jeho vlastní závazek jako osobní připomínku. Závazek ze sticky note je to jediné, co je specifické právě pro tebe, právě z tohoto dne. Začni tím.
+If you have a photo of the sticky notes from the "And now?" section, send each person their own commitment as a personal reminder. The sticky-note commitment is the only thing specific to you, from this day. Start there.
 
-**Jedna věc do pátku:** Splňte svůj závazek ze sticky note. Jeden commit, jeden PR, jeden task — cokoli, co z vašeho závazku udělá realitu.
+**One thing before Friday:** Complete your sticky-note commitment. One commit, one PR, one task — anything that turns your commitment into reality.
 
-### Anchor cvičení
+### Anchor exercise
 
-Zapište si tři momenty z vašeho běžného pracovního týdne, kdy otevíráte nový úkol nebo novou session — to jsou vaše Anchor momenty pro „Map before motion." Když se tyto momenty stanou vaším spouštěčem, návyk se udrží sám.
+Write down three moments in your normal work week when you open a new task or a new session — these are your Anchor moments for "Map before motion." When these moments become your trigger, the habit sustains itself.
 
-### Zdroje
+### Resources
 
-- Připomínka principů: Kontext je pracovní systém. `AGENTS.md` je týmová infrastruktura. `Done When` a build/test příkazy zvyšují šanci na dobrý handoff.
-- Odkaz na `/workshop recap`
-- Odkaz nebo výřez z `workshop-skill/template-agents.md`
+- Principle reminder: Context is a working system. `AGENTS.md` is team infrastructure. `Done When` and build/test commands improve the chances of a good handoff.
+- Pointer to `/workshop recap`
+- Link to or excerpt from `workshop-skill/template-agents.md`
 - Learner kit: [`docs/learner-resource-kit.md`](../docs/learner-resource-kit.md), [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md), [`materials/participant-resource-kit.md`](../materials/participant-resource-kit.md)
-- Skill příkazy: `workshop resources`, `workshop gallery`, `workshop follow-up`
+- Skill commands: `workshop resources`, `workshop gallery`, `workshop follow-up`
 
-## Týdenní generační prompty
+## Weekly generation prompts
 
-Místo checklistů — jeden prompt týdně, který vás přiměje popsat konkrétní zkušenost:
+Instead of checklists — one prompt per week that asks you to describe a concrete experience:
 
-**Týden 1:** Popište konkrétní moment z tohoto týdne, kdy jste potřebovali ověřit výstup agenta. Co jste použili jako kontrolu a co byste příště změnili?
+**Week 1:** Describe a specific moment this week when you needed to verify agent output. What did you use as the check, and what would you change next time?
 
-**Týden 2:** Popište rozhodnutí, které jste tento týden zapsali do repozitáře místo toho, abyste ho nechali v chatu. Co vás přimělo ho zapsat?
+**Week 2:** Describe a decision you wrote into the repository this week instead of leaving it in chat. What made you decide to write it down?
 
-**Týden 3:** Popište moment, kdy jste agentovi dali omezení předem a ušetřilo vám to opravu. Jaké to bylo omezení?
+**Week 3:** Describe a moment when you gave the agent a constraint upfront and it saved you a correction. What was the constraint?
 
-**Týden 4:** Popište situaci, kdy se stejný problém opakoval. Změnili jste systém (template, check, pravidlo), nebo jen výstup?
+**Week 4:** Describe a situation where the same problem repeated. Did you change the system (template, check, rule), or just the output?

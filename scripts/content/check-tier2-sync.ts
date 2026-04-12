@@ -14,8 +14,11 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 
 const ROOT = resolve(import.meta.dir, "../..");
 
-// Directories to scan for Tier 2 content
-const TIER2_DIRS = ["content", "workshop-skill", "materials"];
+// Directories to scan for Tier 2 content.
+// workshop-skill/ is excluded as of 2026-04-12: skill reference docs are
+// English-canonical per docs/adr/2026-04-12-skill-docs-english-canonical.md
+// and the agent translates on the fly. No bilingual pair to sync.
+const TIER2_DIRS = ["content", "materials"];
 
 // Files/directories to skip entirely
 const SKIP_PATTERNS = [
@@ -25,19 +28,15 @@ const SKIP_PATTERNS = [
   "SKILL.md", // workshop-skill internal, not bilingual
 ];
 
-// Files that are genuinely Czech-only (no English counterpart needed)
+// Files that are genuinely single-language (no bilingual counterpart needed).
+// workshop-skill/ entries are removed because the whole directory no longer
+// participates in the bilingual sync contract — see TIER2_DIRS comment.
 const CZECH_ONLY = new Set([
   "content/czech-reject-list.md",
   "content/czech-editorial-review-checklist.md",
   "content/style-guide.md",
   "content/style-examples.md",
   "content/codex-craft.md",
-  "workshop-skill/closing-skill.md",
-  "workshop-skill/facilitator.md",
-  "workshop-skill/template-agents.md",
-  "workshop-skill/install.md",
-  "workshop-skill/SKILL-facilitator.md",
-  "workshop-skill/analyze-checklist.md",
   "materials/README.md",
   "materials/coaching-codex.md",
   "content/challenge-cards/print-spec.md",

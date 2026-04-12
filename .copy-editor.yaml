@@ -54,8 +54,11 @@ paths:
     - content/czech-editorial-review-checklist.md
     - content/czech-reject-list.md
 
-    # Workshop skill (participant-facing text).
-    - workshop-skill/**/*.md
+    # workshop-skill/ is intentionally NOT in the include list. Skill
+    # reference docs are English-canonical per
+    # docs/adr/2026-04-12-skill-docs-english-canonical.md. The agent
+    # translates on the fly for non-English participants, so the
+    # Czech typography gate does not apply.
 
     # Participant materials.
     - materials/**/*.md
@@ -85,13 +88,10 @@ paths:
     # that assert on specific phrases break in ways that are hard to
     # diagnose. Keep this list tight — only add files here that are truly
     # English-only.
-    - "workshop-skill/SKILL.md"
-    - "workshop-skill/facilitator.md"
-    # workshop-skill/reference.md is English-canonical per ADR
-    # 2026-04-12-skill-docs-english-canonical.md. The agent translates on
-    # the fly for non-English participants; no reviewed Czech copy lives in
-    # the repo for this file.
-    - "workshop-skill/reference.md"
+    #
+    # Note: the entire workshop-skill/ directory is excluded via the
+    # include-list exclusion above (it is no longer in the include list),
+    # so individual workshop-skill/*.md entries are unnecessary here.
     - "materials/coaching-codex.md"
     - "content/codex-craft.md"
     # Tests and generated artifacts.
@@ -114,7 +114,6 @@ paths:
     # Participant-facing (strict clarity)
     "content/project-briefs/**": participant
     "content/challenge-cards/**": participant
-    "workshop-skill/**": participant
     "materials/**": participant
 
     # Presenter-facing (outline tone OK)

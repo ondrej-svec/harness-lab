@@ -1,13 +1,13 @@
 # Workshop Commands
 
-## Jak skill používat
+## How to use the skill
 
-- V Codexu používejte `$workshop ...`
-- V pi načtěte `/skill:workshop` a potom si řekněte o konkrétní akci přirozeně nebo přes název příkazu
-- Skill má být nainstalovaný přímo ve vašem pracovním repu přes `harness skill install`. Nemusíte kvůli tomu klonovat Harness Lab repo.
-- Když si nejste jistí, začněte `workshop commands` nebo `workshop reference`
+- In Codex, use `$workshop ...`
+- In pi, load `/skill:workshop` and then ask for the relevant action naturally or by command name
+- The skill should be installed directly in your working repo via `harness skill install`. You do not need to clone the Harness Lab source repo for that.
+- If you are not sure where to start, begin with `workshop commands` or `workshop reference`
 
-## Nejkratší pracovní postup
+## Shortest participant flow
 
 1. `workshop reference`
 2. `workshop brief`
@@ -15,30 +15,30 @@
 4. `workshop help`
 5. `workshop resources`
 
-## Co který příkaz dělá
+## What each command does
 
-- `workshop` - kde v workshopu právě jste a co je další bezpečný krok
-- `workshop setup` - jak se co nejrychleji rozběhnout v Codexu nebo pi
-- `workshop brief` - zadání týmu a první ukotvení scope
-- `workshop challenges` - challenge cards pro další posun
-- `workshop team` - tým, repo a checkpoint
-- `workshop reference` - krátká karta pracovních výchozích bodů pro dnešek
-- `workshop help` - coaching podle fáze dne nebo podle problému, na kterém jste zaseknutí
+- `workshop` - where you are in the workshop right now and what the next safe move is
+- `workshop setup` - the fastest viable path into Codex or pi
+- `workshop brief` - your team brief and the first scope anchor
+- `workshop challenges` - challenge cards for the next step forward
+- `workshop team` - team, repo, and checkpoint
+- `workshop reference` - the short working-defaults card for today
+- `workshop help` - coaching based on the phase of the day or the problem you are stuck on
 - `workshop template` - starter `AGENTS.md`
-- `workshop analyze` - rychlá kontrola handoffu v repu
-- `workshop resources` - účastnický kit, learner kit a další navazující materiály
-- `workshop follow-up` - co si odnést a co udělat 48 hodin až 1 týden po workshopu
-- `workshop gallery` - ověřené externí docs a veřejné repozitáře pro další učení
-- `workshop recap` - krátké uzavření nebo připomínka po workshopu
+- `workshop analyze` - a fast handoff check of the repo
+- `workshop resources` - participant resource kit, learner kit, and follow-on materials
+- `workshop follow-up` - what to keep and what to do 48 hours to 1 week after the workshop
+- `workshop gallery` - verified external docs and public repos for continued learning
+- `workshop recap` - a short close or reminder after the workshop
 
-## Kdy co použít
+## When to use what
 
-- Když nevíte, kde začít: `workshop reference`
-- Když je zadání rozmazané: `workshop brief`, potom `brainstorm` nebo `$plan`
-- Když repu chybí kontext: `workshop template`
-- Když si nejste jistí workflow: `workshop commands`
-- Když chcete materiály i po workshopu: `workshop resources`, `workshop follow-up`, `workshop gallery`
+- If you do not know where to start: `workshop reference`
+- If the brief feels blurry: `workshop brief`, then `brainstorm` or `plan`
+- If the repo lacks context: `workshop template`
+- If you are unsure about workflow: `workshop commands`
+- If you want materials after the workshop too: `workshop resources`, `workshop follow-up`, `workshop gallery`
 
-## Důležitá poznámka
+## Important note
 
-`workshop` skill je garantovaný výchozí nástroj workshopu. Další workflow skills a veřejné toolkity jsou doporučené rozšíření, ne podmínka účasti.
+The `workshop` skill is the guaranteed workshop default. Additional workflow skills and public toolkits are recommended accelerators, not a requirement for participation.

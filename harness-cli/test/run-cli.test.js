@@ -1122,9 +1122,14 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.equal(exitCode, 0);
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "setup.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "reference.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "follow-up-package.md"));
+  // workshop-skill/ no longer maintains a locales/en/ parallel tree — the
+  // root files are English-canonical per
+  // docs/adr/2026-04-12-skill-docs-english-canonical.md.
+  await assert.rejects(
+    fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales")),
+    /ENOENT/,
+    "workshop-skill/locales/ must not exist after the D-FU1 migration",
+  );
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "locales", "en", "deck.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"));
@@ -1164,11 +1169,9 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   );
   assert.match(installedFacilitator, /Commands for facilitators who manage workshop instances through an AI agent\./);
   assert.doesNotMatch(installedFacilitator, /Příkazy pro facilitátory/);
-  const installedEnglishReference = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales", "en", "reference.md"),
-    "utf8",
-  );
-  assert.match(installedEnglishReference, /4 working defaults for today/);
+  // The English "working defaults" section now lives in the single
+  // canonical workshop-skill/reference.md, checked above.
+  assert.match(installedReference, /4 working defaults for today/);
   const installedEnglishBrief = await fs.readFile(
     path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"),
     "utf8",

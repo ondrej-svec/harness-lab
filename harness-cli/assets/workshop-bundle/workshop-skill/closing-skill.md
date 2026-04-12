@@ -1,30 +1,30 @@
 # Workshop Closing
 
-## Úkol
+## Task
 
-Po posledním bloku vytvoř krátké shrnutí workshopu, které je:
+After the final block, produce a short workshop summary that is:
 
-- konkrétní
-- systémové, ne osobní
-- lehce meta: ukazuje, že agent umí shrnout práci agentů i lidí dohromady
+- concrete
+- systemic, not personal
+- lightly meta: shows the agent can summarize the work of agents and humans together
 
-## Vstupy
+## Inputs
 
-- sprint checkpoint feed z dashboardu
-- monitoring summary nebo manuální scan
-- W³ sticky notes nebo přepsané commitments
-- případně poznámky z intermezz
+- sprint checkpoint feed from the dashboard
+- monitoring summary or a manual scan
+- 1-2-4-All sticky notes or transcribed commitments
+- optionally, intermezzo notes
 
-## Výstup
+## Output
 
-1. Co pomohlo týmům pokračovat po handoffu
-2. Co opakovaně chybělo
-3. Jaké 2–3 principy si má místnost odnést do příštího týdne
-4. Jedna závěrečná věta, která propojí workshop s reálnou prací v týmu
+1. What helped teams continue after handoff
+2. What was repeatedly missing
+3. The 2–3 principles the room should carry into next week
+4. One closing sentence that connects the workshop to real team work
 
-## Styl
+## Style
 
-- česky
-- věcně
-- bez oslavného tónu
-- zjištění opírej o konkrétní signály z dne
+- match the participant's language (the skill responds in whatever the participant is using)
+- direct, concrete
+- no victory-lap tone
+- ground findings in specific signals from the day

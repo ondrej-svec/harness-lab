@@ -1,58 +1,58 @@
 # Workshop Skill Install
 
-## Doporučená distribuce
+## Recommended distribution
 
-Výchozí doporučení pro Harness Lab je instalace přes `@harness-lab/cli` do vašeho aktuálního pracovního repa.
+The default Harness Lab recommendation is to install the skill via `@harness-lab/cli` into your current working repo.
 
-Proč:
-- skill je pořád obsah opřený o repo, ale nemá záviset na tom, že máte zrovna klon tohoto veřejného repa
-- stejné soubory slouží jako fallback i jako dokumentace
-- účastník má mít funkční workshop companion přímo v týmovém repu
+Why:
+- the skill is still repo-backed content, but it should not depend on you having a clone of this public repo available
+- the same files serve as both fallback content and documentation
+- a participant should have a working workshop companion directly inside their team repo
 
-## Doporučený postup pro účastníka
+## Recommended participant flow
 
-1. otevřít svůj týmový nebo workshopový repo
-2. nainstalovat Harness CLI:
+1. open your team or workshop repo
+2. install the Harness CLI:
 
 ```bash
 npm install -g @harness-lab/cli
 ```
 
-3. nainstalovat workshop skill do aktuálního repa:
+3. install the workshop skill into the current repo:
 
 ```bash
 harness skill install
 ```
 
-Volitelně můžete cílit jinam:
+Optionally, point the install at a different path:
 
 ```bash
-harness skill install --target /cesta/k/repu
+harness skill install --target /path/to/repo
 ```
 
-4. otevřít agent nástroj nad tímto repem
-5. ověřit, že fungují minimálně:
+4. open your agent tool on top of that repo
+5. verify that at minimum these work:
    - Codex: `$workshop commands`, `$workshop reference`, `$workshop brief`
-   - pi: `/skill:workshop`, potom si říct o `commands`, `reference` nebo `brief`
+   - pi: `/skill:workshop`, then ask for `commands`, `reference`, or `brief`
 
-Po úspěšné instalaci `harness skill install` rovnou vypíše doporučené první kroky, aby účastník věděl, že může začít buď v Codexu přes `$workshop ...`, nebo v pi přes `/skill:workshop`.
-Když příkaz pustíte znovu později, CLI zkontroluje, jestli je bundle v cílovém repu aktuální. Pokud je zastaralý, rovnou ho obnoví. `--force` používejte jen tehdy, když chcete vynutit plný reinstall.
+After a successful install, `harness skill install` prints the recommended first steps so the participant knows they can start either in Codex via `$workshop ...` or in pi via `/skill:workshop`.
+If you re-run the command later, the CLI checks whether the bundle in the target repo is up to date. If it is stale, it refreshes it in place. Use `--force` only when you want to force a full reinstall.
 
-## Co čekat dál
+## What to expect next
 
-`harness skill install` instaluje garantovaný workshop bundle. Neinstaluje za vás další workflow skills ani externí toolkity.
+`harness skill install` installs the guaranteed workshop bundle. It does not install additional workflow skills or external toolkits for you.
 
-Doporučený další postup:
+Recommended next steps:
 
-1. rozběhnout `workshop` skill
-2. otevřít `commands`, `reference` a `brief`
-3. doplnit `AGENTS.md`
-4. podle potřeby použít `brainstorm`, `$plan`, `$work`, `$review` nebo `$compound`, pokud je ve svém agent setupu máte k dispozici
-5. když chcete materiály pro účastníky bez hledání v GitHubu, použijte `workshop resources`, `workshop gallery` a `workshop follow-up`
+1. run the `workshop` skill
+2. open `commands`, `reference`, and `brief`
+3. fill in `AGENTS.md`
+4. as needed, use `brainstorm`, `$plan`, `$work`, `$review`, or `$compound` if they are available in your agent setup
+5. when you want participant materials without hunting in GitHub, use `workshop resources`, `workshop gallery`, and `workshop follow-up`
 
-## Poznámka
+## Note
 
-`harness skill install` vytvoří projektový bundle v `.agents/skills/harness-lab-workshop`, aby skill šel objevit v repu bez další distribuční vrstvy.
-Tuto složku berte jako generovaný workshop bundle, ne jako hlavní autorský zdroj.
+`harness skill install` creates a project bundle at `.agents/skills/harness-lab-workshop` so the skill is discoverable inside the repo without an extra distribution layer.
+Treat that folder as a generated workshop bundle, not as the primary authoring source.
 
-Přihlášení účastníka není potřeba pro samotnou existenci skillu. `workshop login` je až krok pro odemčení live event contextu.
+Participant login is not required for the skill to exist. `workshop login` is a later step to unlock the live event context.

@@ -56,8 +56,8 @@ Do not let the model drive your normal signed-in browser by default without sand
 
 ## 6. What to revisit after the workshop
 
-- [`workshop-skill/locales/en/reference.md`](../../../workshop-skill/locales/en/reference.md)
-- [`workshop-skill/locales/en/recap.md`](../../../workshop-skill/locales/en/recap.md)
+- [`workshop-skill/reference.md`](../../../workshop-skill/reference.md)
+- [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
 - [`docs/locales/en/learner-reference-gallery.md`](../../../docs/locales/en/learner-reference-gallery.md)
 - [`content/codex-craft.md`](../../../content/codex-craft.md) — Codex-specific craft: approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough
 - [`materials/coaching-codex.md`](../../coaching-codex.md) — the one-page pocket card of conversational moves for coaching an agent
