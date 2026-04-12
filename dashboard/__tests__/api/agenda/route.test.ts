@@ -33,6 +33,10 @@ class AllowFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials() {
     return true;
   }
+
+  async hasValidSession() {
+    return false;
+  }
 }
 
 describe("agenda route", () => {

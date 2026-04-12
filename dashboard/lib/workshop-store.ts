@@ -536,7 +536,7 @@ export async function setCurrentAgendaItem(itemId: string, instanceId = getCurre
 
 export async function updateAgendaItem(
   itemId: string,
-  updates: Pick<AgendaItem, "title" | "time" | "description" | "goal" | "roomSummary"> & {
+  updates: Partial<Pick<AgendaItem, "title" | "time" | "description" | "goal" | "roomSummary">> & {
     facilitatorPrompts?: string[];
     watchFors?: string[];
     checkpointQuestions?: string[];

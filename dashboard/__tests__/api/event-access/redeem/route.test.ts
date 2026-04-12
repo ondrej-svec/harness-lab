@@ -47,6 +47,11 @@ class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
   async appendAttempt(attempt: RedeemAttemptRecord) {
     this.attempts.push(structuredClone(attempt));
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
+  }
 }
 
 function fingerprint(value: string) {
@@ -56,6 +61,11 @@ function fingerprint(value: string) {
 class MemoryAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     void record;
+  }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
   }
 }
 

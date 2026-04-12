@@ -117,11 +117,20 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     void record;
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
+  }
 }
 
 class AllowFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials() {
     return true;
+  }
+
+  async hasValidSession() {
+    return false;
   }
 }
 

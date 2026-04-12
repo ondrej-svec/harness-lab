@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
+const mockRequest = () => new Request("http://localhost/api/auth/callback");
+const mockContext = () => ({ params: Promise.resolve({ path: [] as string[] }) });
+
 describe("auth catchall route", () => {
   it("returns 503 handlers when Neon Auth is not configured", async () => {
     vi.resetModules();
@@ -8,8 +11,8 @@ describe("auth catchall route", () => {
     }));
 
     const routeModule = await import("./[...path]/route");
-    const getResponse = await routeModule.GET();
-    const postResponse = await routeModule.POST();
+    const getResponse = await routeModule.GET(mockRequest(), mockContext());
+    const postResponse = await routeModule.POST(mockRequest(), mockContext());
 
     expect(getResponse.status).toBe(503);
     expect(postResponse.status).toBe(503);
@@ -31,8 +34,8 @@ describe("auth catchall route", () => {
     }));
 
     const routeModule = await import("./[...path]/route");
-    const getResponse = await routeModule.GET();
-    const postResponse = await routeModule.POST();
+    const getResponse = await routeModule.GET(mockRequest(), mockContext());
+    const postResponse = await routeModule.POST(mockRequest(), mockContext());
 
     expect(getHandler).toHaveBeenCalledTimes(1);
     expect(postHandler).toHaveBeenCalledTimes(1);

@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { InstanceArchiveRecord, InstanceArchiveRepository } from "./runtime-contracts";
 
+export type { InstanceArchiveRepository } from "./runtime-contracts";
+
 type StoredArchives = {
   items: InstanceArchiveRecord[];
 };

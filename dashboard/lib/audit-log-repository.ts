@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { AuditLogRecord, AuditLogRepository } from "./runtime-contracts";
 
+export type { AuditLogRepository } from "./runtime-contracts";
+
 type StoredAuditLog = {
   items: AuditLogRecord[];
 };

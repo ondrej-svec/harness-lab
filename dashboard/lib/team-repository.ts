@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { TeamRecord, TeamRepository } from "./runtime-contracts";
 
+export type { TeamRepository } from "./runtime-contracts";
+
 type StoredTeams = {
   items: TeamRecord[];
 };

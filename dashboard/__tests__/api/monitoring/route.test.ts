@@ -35,11 +35,20 @@ class MemoryMonitoringSnapshotRepository implements MonitoringSnapshotRepository
   async replaceSnapshots(_instanceId: string, snapshots: WorkshopState["monitoring"]) {
     this.items = structuredClone(snapshots);
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
+  }
 }
 
 class AllowFacilitatorAuthService implements FacilitatorAuthService {
   async hasValidRequestCredentials() {
     return true;
+  }
+
+  async hasValidSession() {
+    return false;
   }
 }
 

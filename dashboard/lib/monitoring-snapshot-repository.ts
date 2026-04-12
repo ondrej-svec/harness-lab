@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { MonitoringSnapshotRepository } from "./runtime-contracts";
 
+export type { MonitoringSnapshotRepository } from "./runtime-contracts";
+
 type StoredMonitoringSnapshots = {
   items: Awaited<ReturnType<MonitoringSnapshotRepository["getSnapshots"]>>;
 };

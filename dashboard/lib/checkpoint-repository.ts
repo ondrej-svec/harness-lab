@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { CheckpointRecord, CheckpointRepository } from "./runtime-contracts";
 
+export type { CheckpointRepository } from "./runtime-contracts";
+
 type StoredCheckpoints = {
   items: CheckpointRecord[];
 };

@@ -84,6 +84,11 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     this.records.push(structuredClone(record));
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
+  }
 }
 
 describe("event-access", () => {

@@ -1,4 +1,6 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
+
+export type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getAuthenticatedFacilitator, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";

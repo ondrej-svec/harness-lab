@@ -132,10 +132,10 @@ describe("public page helpers", () => {
         currentAgendaItem: seedWorkshopState.agenda[0],
         nextAgendaItem: seedWorkshopState.agenda[1],
         participantSession: {
-          token: "session-token",
           instanceId: "sample-studio-a",
           expiresAt: "2026-04-06T16:30:00.000Z",
           lastValidatedAt: "2026-04-06T10:30:00.000Z",
+          absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
         },
         rotationRevealed: false,
       }).body,
@@ -147,10 +147,10 @@ describe("public page helpers", () => {
       currentAgendaItem: repoLinkedState.agenda.find((item) => item.id === "build-1"),
       nextAgendaItem: repoLinkedState.agenda.find((item) => item.id === "intermezzo-1"),
       participantSession: {
-        token: "session-token",
         instanceId: "sample-studio-a",
         expiresAt: "2026-04-06T16:30:00.000Z",
         lastValidatedAt: "2026-04-06T10:30:00.000Z",
+        absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
       },
       rotationRevealed: false,
     });
@@ -173,10 +173,10 @@ describe("public page helpers", () => {
       currentAgendaItem: customFallbackAgendaItem,
       nextAgendaItem: seedWorkshopState.agenda.find((item) => item.id === "talk"),
       participantSession: {
-        token: "session-token",
         instanceId: "sample-studio-a",
         expiresAt: "2026-04-06T16:30:00.000Z",
         lastValidatedAt: "2026-04-06T10:30:00.000Z",
+        absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
       },
       rotationRevealed: false,
     });

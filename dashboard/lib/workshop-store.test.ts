@@ -492,13 +492,14 @@ describe("workshop-store", () => {
     repository = new MemoryWorkshopStateRepository({
       ...structuredClone(seedWorkshopState),
       agenda: seedWorkshopState.agenda.map((item) => {
-        const legacyItem = { ...item };
+        // Simulate legacy state by stripping fields added in later schema revisions.
+        const legacyItem = { ...item } as Partial<typeof item>;
         delete legacyItem.defaultPresenterSceneId;
         delete legacyItem.presenterScenes;
         delete legacyItem.order;
         delete legacyItem.sourceBlueprintPhaseId;
         delete legacyItem.kind;
-        return legacyItem;
+        return legacyItem as typeof item;
       }),
     } as WorkshopState);
     setWorkshopStateRepositoryForTests(repository);

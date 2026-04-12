@@ -69,6 +69,11 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async append(record: AuditLogRecord) {
     void record;
   }
+
+  async deleteOlderThan(instanceId: string, olderThan: string) {
+    void instanceId;
+    void olderThan;
+  }
 }
 
 describe("GET /api/event-context/core", () => {

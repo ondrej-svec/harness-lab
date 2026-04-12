@@ -5,6 +5,8 @@ import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { RedeemAttemptRecord, RedeemAttemptRepository } from "./runtime-contracts";
 
+export type { RedeemAttemptRepository } from "./runtime-contracts";
+
 type StoredRedeemAttempts = {
   items: RedeemAttemptRecord[];
 };
