@@ -54,7 +54,9 @@ describe("PresenterPage", () => {
     expect(getInstance).toHaveBeenCalledWith("sample-studio-a");
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain("Your repo is not yours anymore");
+    // seedWorkshopState is a Czech-content instance, so the default scene
+    // renders its Czech hero title from the 2026-04-12 Phase B translation.
+    expect(html).toContain("Tvoje repo už není tvoje");
     expect(html).not.toContain(adminCopy.en.presenterBack);
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
   });

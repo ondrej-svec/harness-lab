@@ -626,26 +626,13 @@ the `workshop-skill/locales/` parallel tree is legacy and needs to be retired
 in a follow-up. This session only migrated `reference.md` and updated `SKILL.md`.
 The rest is tracked here so it is not lost:
 
-- [ ] D-FU1 — Migrate the remaining Czech root files to English canonical:
-  `workshop-skill/commands.md`, `recap.md`, `setup.md`, `follow-up-package.md`,
-  `analyze-checklist.md`. Each one: read the English version in
-  `workshop-skill/locales/en/` where it exists, promote it to the root, fix
-  relative paths (drop the `../../../` prefix), delete the Czech root file.
-- [ ] D-FU2 — Delete the `workshop-skill/locales/` parallel tree entirely after
-  D-FU1 lands. Keep the directory structure only if some other non-English locale
-  is later authored. English is not a "locale" under this model — it is the root.
-- [ ] D-FU3 — Rerun the harness-cli bundle tests after D-FU1 and D-FU2. Existing
-  tests around installed skill content reference specific Czech strings; update
-  them in lockstep to match the English canonical content.
-- [ ] D-FU4 — Update `README.md`, `AGENTS.md`, and any contributor doc that still
-  refers to "Czech-authored fallback" or "reviewed locales" for skill reference
-  content specifically. The distinction matters: participant-facing presenter
-  copy (agenda scenes, briefs, challenge cards) still needs reviewed Czech;
-  skill reference docs do not.
-- [ ] D-FU5 — Confirm `scripts/content/check-tier2-sync.ts` still passes after
-  D-FU1/D-FU2. The tier-2 sync check currently matches skill docs between root
-  and `locales/en/`; after the migration those pairs disappear and the sync
-  contract should narrow to participant-facing content only.
+- [x] D-FU1 — Migrate the remaining Czech root files to English canonical. Scope expanded mid-stream to include four Czech-only skill files with no English pair (`analyze-checklist.md`, `closing-skill.md`, `install.md`, `template-agents.md`), rewritten as English source.
+- [x] D-FU2 — `workshop-skill/locales/` deleted entirely.
+- [x] D-FU3 — harness-cli test assertions rewritten to match the new single-source shape. 67/67 tests pass.
+- [x] D-FU4 — `AGENTS.md` Language section split: presenter copy stays canonical-English-with-reviewed-Czech, skill reference docs are English-only with pointer to the ADR. `.copy-editor.yaml` no longer includes `workshop-skill/**/*.md`.
+- [x] D-FU5 — `scripts/content/check-tier2-sync.ts` drops `workshop-skill` from `TIER2_DIRS`. The tier-2 sync contract now covers `content/` and `materials/` only.
+- [ ] D-FU6 — **Re-segment `workshop-content/agenda.json` for the copy-editor** after the 2026-04-12 Czech translation landed. The `.copy-editor.lock.json` is keyed to the pre-translation content hash and its per-span language tags no longer map to the rewritten file. Until a fresh agent-side segmentation pass runs via the `marvin:copy-editor` skill loop, the Czech rule produces false positives on English prose inside the bilingual source. `agenda.json` is temporarily excluded from `.copy-editor.yaml`; re-include it after segmentation. Human-in-the-loop (the segmentation skill needs Ondrej's review sweep).
+- [ ] D-FU7 — **Native Czech review sweep for the Phase B content.** Every scene touched in Phase B currently has `cs_reviewed: false`. The Czech translations shipped in this session are machine-authored best-effort that preserve idiomatic Czech word order, imperative voice, and standard technical terms in English. They still need a native-speaker pass before the first real workshop runs. After review, flip `cs_reviewed: true` per scene. Focus the sweep on hero titles, hero bodies, and top-level callouts — those are what participants read first. Facilitator-only notes can stay as-is unless they mislead the facilitator.
 
 ### Phase E — Operator Docs
 - [x] E1 — Operator guide: silent-gate practice
