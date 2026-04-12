@@ -54,7 +54,7 @@ describe("PresenterPage", () => {
     expect(getInstance).toHaveBeenCalledWith("sample-studio-a");
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain("Tichý start po rotaci");
+    expect(html).toContain("Your repo is not yours anymore");
     expect(html).not.toContain(adminCopy.en.presenterBack);
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
   });
@@ -64,18 +64,18 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-instructions" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-read-the-room" }),
     });
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain(adminCopy.en.presenterScenePagerLabel);
     expect(html).toContain(adminCopy.en.presenterPreviousSceneButton);
     expect(html).not.toContain(adminCopy.en.presenterNextSceneButton);
-    expect(html).toContain("scene 2/2");
-    expect(html).toContain("scene=rotation-framing");
+    expect(html).toContain("scene 3/3");
+    expect(html).toContain("scene=rotation-line-up");
   });
 
-  it("renders an explicitly requested participant walkthrough scene without backstage chrome", async () => {
+  it("renders the new Phase 2 engine-and-chassis reveal scene on the presenter surface", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     getWorkshopState.mockResolvedValue(state);
@@ -86,17 +86,13 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "talk", scene: "talk-participant-view" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "talk", scene: "talk-got-a-name" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Go back to the repo with three things");
-    expect(html).toContain("Build 1 contract");
-    expect(html).toContain("What to do in the first minutes");
-    expect(html).toContain("Open install and first commands");
-    expect(html).toContain("harness skill install");
-    expect(html).toContain(adminCopy.en.presenterParticipantPreviewLabel);
-    expect(html).not.toContain("Participant walkthrough");
+    expect(html).toContain("Last week, it got a name");
+    expect(html).toContain("Agent = Model + Harness");
+    expect(html).toContain("Birgitta Böckeler, Thoughtworks");
     expect(html).not.toContain("What the room should see now");
   });
 
@@ -188,7 +184,7 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Today we are building a working system, not prompt theatre");
+    expect(html).toContain("Today you learn to shape the work so anyone");
     expect(html).toContain("The main line for today");
     expect(html).toContain("What should change today");
     expect(html).toContain("data-tone=\"info\"");
@@ -230,11 +226,11 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-instructions" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "rotation", scene: "rotation-read-the-room" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Instructions for the new team");
-    expect(html).toContain("Start with the README, AGENTS.md, and the plan");
+    expect(html).toContain("Every fresh agent session is a rotation");
+    expect(html).toContain("If this is confusing, that&#x27;s the point.");
   });
 });

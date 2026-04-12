@@ -48,25 +48,27 @@ describe("workshop-data", () => {
   it("resolves localized agenda and presenter content for an English-content instance", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const opening = state.agenda[0];
-    const handoffScene = opening?.presenterScenes.find((scene) => scene.id === "opening-handoff-loop");
-    const participantScene = opening?.presenterScenes.find((scene) => scene.id === "opening-participant-view");
+    const framingScene = opening?.presenterScenes.find((scene) => scene.id === "opening-framing");
+    const teamFormationScene = opening?.presenterScenes.find((scene) => scene.id === "opening-team-formation");
 
     expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
     expect(opening?.title).toBe("Opening and orientation");
     expect(opening?.goal).toContain("Open the day as a shared start");
     expect(opening?.facilitatorRunner.goal).toBe("Open the day as a shared room start, not as an operating brief.");
-    expect(handoffScene?.title).toBe("The day has one arc: learn, build, hand off, continue");
-    expect(handoffScene?.blocks[0]).toMatchObject({
-      id: "opening-loop-steps",
-      title: "What you are actually going to experience today",
+    expect(framingScene?.title).toBe(
+      "Today you learn to shape the work so anyone — or any agent — can carry it",
+    );
+    expect(framingScene?.blocks[0]).toMatchObject({
+      id: "opening-hero",
+      type: "hero",
     });
-    expect(handoffScene?.surface).toBe("room");
-    expect(participantScene?.title).toBe("The day starts now \u2014 here is where you are heading");
-    expect(participantScene?.surface).toBe("participant");
-    expect(participantScene?.blocks[0]).toMatchObject({
-      id: "opening-participant-hero",
-      title: "Today you build so another team can continue",
+    expect(framingScene?.surface).toBe("room");
+    expect(teamFormationScene?.title).toBe("Form the line. Count off. Claim your anchor.");
+    expect(teamFormationScene?.surface).toBe("participant");
+    expect(teamFormationScene?.blocks[0]).toMatchObject({
+      id: "opening-team-hero",
+      title: "Form the line. Count off. Claim your anchor.",
     });
     expect(state.briefs[0]?.problem).toContain("Developers lose time");
     expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
@@ -119,18 +121,21 @@ describe("workshop-data", () => {
       expect.arrayContaining([
         expect.objectContaining({
           id: blueprintAgenda.phases[0]?.scenes[0]?.id,
-          title: "Today we are building a working system, not prompt theatre",
         }),
       ]),
     );
+    expect(state.agenda[0]?.presenterScenes[0]?.title).toContain("shape the work");
   });
 
-  it("includes an explicit participant-view scene for every blueprint phase", () => {
-    expect(
-      seedWorkshopState.agenda.every((item) =>
-        item.presenterScenes.some((scene) => scene.surface === "participant"),
-      ),
-    ).toBe(true);
+  it("includes the new Build Phase 2 second push as a sibling phase", () => {
+    // The brainstorm splits Build 2 into two pushes around Intermezzo 2. After
+    // the rewrite, the day has 11 phases and Reveal is order 11.
+    expect(seedWorkshopState.agenda.length).toBe(11);
+    const secondPush = seedWorkshopState.agenda.find((item) => item.id === "build-2-second-push");
+    expect(secondPush).toBeDefined();
+    expect(secondPush?.order).toBe(10);
+    const reveal = seedWorkshopState.agenda.find((item) => item.id === "reveal");
+    expect(reveal?.order).toBe(11);
   });
 
   it("keeps default presenter scenes on the room-facing surface", () => {
@@ -145,59 +150,43 @@ describe("workshop-data", () => {
   it("keeps the rewritten talk and reveal flagship scenes structurally richer in English content", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const talk = state.agenda.find((item) => item.id === "talk");
-    const rotation = state.agenda.find((item) => item.id === "rotation");
     const reveal = state.agenda.find((item) => item.id === "reveal");
-    const talkScene = talk?.presenterScenes.find((scene) => scene.id === "talk-framing");
-    const talkParticipantScene = talk?.presenterScenes.find((scene) => scene.id === "talk-participant-view");
-    const rotationParticipantScene = rotation?.presenterScenes.find((scene) => scene.id === "rotation-participant-view");
+    const talkHowScene = talk?.presenterScenes.find((scene) => scene.id === "talk-how-to-build");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
-    const revealParticipantScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-participant-view");
 
-    expect(talkScene?.blocks).toEqual(
+    expect(talkHowScene?.blocks).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-hero", type: "hero" }),
+        expect.objectContaining({ id: "talk-how-hero", type: "hero" }),
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
-    expect(talkParticipantScene?.ctaLabel).toBe("Open install and first commands");
-    expect(rotationParticipantScene?.ctaLabel).toBe("Open analyze checklist");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),
         expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
       ]),
     );
-    expect(revealParticipantScene?.ctaLabel).toBe("Open recap and follow-up");
   });
 
   it("keeps the rewritten talk and reveal flagship scenes structurally richer in the default Czech blueprint", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default");
     const talk = state.agenda.find((item) => item.id === "talk");
-    const rotation = state.agenda.find((item) => item.id === "rotation");
     const reveal = state.agenda.find((item) => item.id === "reveal");
-    const talkScene = talk?.presenterScenes.find((scene) => scene.id === "talk-framing");
-    const talkParticipantScene = talk?.presenterScenes.find((scene) => scene.id === "talk-participant-view");
-    const rotationParticipantScene = rotation?.presenterScenes.find((scene) => scene.id === "rotation-participant-view");
+    const talkHowScene = talk?.presenterScenes.find((scene) => scene.id === "talk-how-to-build");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
-    const revealParticipantScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-participant-view");
 
-    expect(talkScene?.blocks).toEqual(
+    expect(talkHowScene?.blocks).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-hero", type: "hero" }),
+        expect.objectContaining({ id: "talk-how-hero", type: "hero" }),
         expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
       ]),
     );
-    // Czech typography baseline pass binds single-letter "a" to the next
-    // word with a non-breaking space. Match the blueprint source exactly.
-    expect(talkParticipantScene?.ctaLabel).toBe("Otevřít install a\u00a0první příkazy");
-    expect(rotationParticipantScene?.ctaLabel).toBe("Otevřít analyze checklist");
     expect(revealScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "reveal-steps", type: "steps" }),
         expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
       ]),
     );
-    expect(revealParticipantScene?.ctaLabel).toBe("Otevřít recap a\u00a0follow-up");
   });
 
   it("returns the team name when present and the id otherwise", () => {

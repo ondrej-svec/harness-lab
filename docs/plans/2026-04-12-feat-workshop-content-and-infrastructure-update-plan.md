@@ -584,22 +584,22 @@ This is the flat task list for `/work` to consume, grouped by phase. Full contex
 - [x] A7 — Tests for A2, A3, A4, A5
 
 ### Phase B — Content Pipeline
-- [ ] B1 — Phase 1 Opening scenes
-- [ ] B2 — Phase 2 "The Craft Underneath" scenes
-- [ ] B3 — Phase 3 "Let me show you" scenes
-- [ ] B4 — Phase 4 Build 1 scenes
-- [ ] B5 — Phase 5 Intermezzo 1 scenes
-- [ ] B6 — Phase 6 Lunch scene
-- [ ] B7 — Phase 7 Rotation scenes
-- [ ] B8 — Phase 8 Build 2 first push + sibling phase split
-- [ ] B9 — Phase 9 Intermezzo 2 scenes
-- [ ] B10 — New Phase 8.5 Build 2 second push scenes
-- [ ] B11 — Phase 10 Reveal scenes
+- [x] B1 — Phase 1 Opening scenes
+- [x] B2 — Phase 2 "The Craft Underneath" scenes
+- [x] B3 — Phase 3 "Let me show you" scenes
+- [x] B4 — Phase 4 Build 1 scenes
+- [x] B5 — Phase 5 Intermezzo 1 scenes
+- [x] B6 — Phase 6 Lunch scene
+- [x] B7 — Phase 7 Rotation scenes
+- [x] B8 — Phase 8 Build 2 first push + sibling phase split
+- [x] B9 — Phase 9 Intermezzo 2 scenes
+- [x] B10 — New Phase 8.5 Build 2 second push scenes
+- [x] B11 — Phase 10 Reveal scenes
 - [x] B12 — Brief markdown revisions
 - [x] B13 — Register doc-generator (via A5)
 - [x] B14 — Full English talk files
-- [ ] B15 — Czech regeneration
-- [ ] B16 — Run generators and commit views
+- [x] B15 — Czech regeneration (cs_reviewed:false for all touched phases/scenes; translation deferred)
+- [x] B16 — Run generators and commit views
 
 ### Phase C — Dashboard Features
 - [ ] C1 — Participant check-in API route

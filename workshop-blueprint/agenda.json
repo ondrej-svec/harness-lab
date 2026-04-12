@@ -22,7 +22,7 @@
     {
       "id": "talk",
       "order": 2,
-      "label": "Context is King",
+      "label": "The Craft Underneath",
       "startTime": "09:40",
       "kind": "shared",
       "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt."
@@ -30,7 +30,7 @@
     {
       "id": "demo",
       "order": 3,
-      "label": "Codex demo",
+      "label": "Let me show you",
       "startTime": "10:05",
       "kind": "shared",
       "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong."
@@ -54,7 +54,7 @@
     {
       "id": "lunch-reset",
       "order": 6,
-      "label": "Lunch and handoff prep",
+      "label": "Lunch",
       "startTime": "12:15",
       "kind": "shared",
       "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read."
@@ -70,7 +70,7 @@
     {
       "id": "build-2",
       "order": 8,
-      "label": "Build fáze 2",
+      "label": "Build Phase 2 · first push",
       "startTime": "13:45",
       "kind": "team",
       "goal": "Continue from repo-native signals only, then turn the friction of the handoff into stronger maps, stronger checks, and stronger continuation guidance."
@@ -84,8 +84,16 @@
       "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
     },
     {
-      "id": "reveal",
+      "id": "build-2-second-push",
       "order": 10,
+      "label": "Build Phase 2 · second push",
+      "startTime": "14:50",
+      "kind": "shared",
+      "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal."
+    },
+    {
+      "id": "reveal",
+      "order": 11,
       "label": "Reveal and reflection",
       "startTime": "15:45",
       "kind": "shared",

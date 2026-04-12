@@ -509,12 +509,11 @@ describe("workshop-store", () => {
 
     expect(talkItem?.presenterScenes).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ id: "talk-micro-exercise", sceneType: "demo" }),
-        expect.objectContaining({ id: "talk-framing", sceneType: "briefing" }),
-        expect.objectContaining({ id: "talk-participant-view", sceneType: "participant-view" }),
+        expect.objectContaining({ id: "talk-argued-about-prompts", sceneType: "briefing" }),
+        expect.objectContaining({ id: "talk-how-to-build", sceneType: "briefing" }),
       ]),
     );
-    expect(talkItem?.defaultPresenterSceneId).toBe("talk-micro-exercise");
+    expect(talkItem?.defaultPresenterSceneId).toBe("talk-argued-about-prompts");
     expect(state.agenda.every((item) => typeof item.order === "number")).toBe(true);
   });
 

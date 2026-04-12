@@ -210,15 +210,19 @@ describe("Admin control room page", () => {
     expect(html).toContain('value="talk"');
     expect(html).toContain('name="returnTo"');
     expect(html).toContain('value="detail"');
-    expect(html).toContain('value="Context is King"');
+    expect(html).toContain('value="The Craft Underneath"');
   });
 
   it("renders the selected agenda moment as a dedicated detail workbench", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
+    // Use the Opening phase so the workbench still resolves a participant-view
+    // scene (opening-team-formation); the Talk phase no longer carries one
+    // after the 2026-04-12 content review retired dedicated participant-view
+    // scenes from every phase.
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "opening" }),
     });
     const html = renderToStaticMarkup(view);
 
@@ -231,7 +235,7 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.agendaDetailSourceMaterialTitle);
     expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
     expect(html).toContain(adminCopy.en.presenterOpenParticipantButton);
-    expect(html).toContain("Context is King");
+    expect(html).toContain("Úvod a\u00a0naladění");
     expect(html).not.toContain(adminCopy.en.openAgendaDetailButton);
   });
 
@@ -244,7 +248,7 @@ describe("Admin control room page", () => {
         lang: "en",
         section: "agenda",
         agendaItem: "talk",
-        scene: "talk-framing",
+        scene: "talk-argued-about-prompts",
         overlay: "scene-edit",
       }),
     });
@@ -256,7 +260,7 @@ describe("Admin control room page", () => {
     expect(html).toContain("Add block");
     expect(html).toContain(adminCopy.en.presenterSetDefaultSceneButton);
     expect(html).toContain('name="sceneId"');
-    expect(html).toContain('value="talk-framing"');
+    expect(html).toContain('value="talk-argued-about-prompts"');
   });
 
   it("keeps persistent runtime context visible outside the live section", async () => {
