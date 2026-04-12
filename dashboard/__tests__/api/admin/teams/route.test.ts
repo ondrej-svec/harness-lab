@@ -75,6 +75,7 @@ describe("admin teams route", () => {
         repoUrl: "https://github.com/example/standup-bot",
         projectBriefId: "standup-bot",
         checkIns: [],
+        anchor: null,
       },
     ]);
 

@@ -515,6 +515,7 @@ export type Team = {
   repoUrl: string;
   projectBriefId: string;
   checkIns: TeamCheckIn[];
+  anchor: string | null;
 };
 
 export type ProjectBrief = {
@@ -1289,6 +1290,7 @@ export const seedWorkshopState: WorkshopState = {
       repoUrl: "https://github.com/example/standup-bot",
       projectBriefId: "standup-bot",
       checkIns: [],
+      anchor: null,
     },
     {
       id: "t2",
@@ -1298,6 +1300,7 @@ export const seedWorkshopState: WorkshopState = {
       repoUrl: "https://github.com/example/devtoolbox-cli",
       projectBriefId: "devtoolbox-cli",
       checkIns: [],
+      anchor: null,
     },
     {
       id: "t3",
@@ -1307,6 +1310,7 @@ export const seedWorkshopState: WorkshopState = {
       repoUrl: "https://github.com/example/code-review-helper",
       projectBriefId: "code-review-helper",
       checkIns: [],
+      anchor: null,
     },
     {
       id: "t4",
@@ -1316,6 +1320,7 @@ export const seedWorkshopState: WorkshopState = {
       repoUrl: "https://github.com/example/metrics-dashboard",
       projectBriefId: "metrics-dashboard",
       checkIns: [],
+      anchor: null,
     },
   ],
   briefs: seedWorkshopBriefs.map(cloneProjectBrief),

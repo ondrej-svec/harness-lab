@@ -557,6 +557,7 @@ describe("workshop-store", () => {
       repoUrl: "https://github.com/example/new-team",
       projectBriefId: "standup-bot",
       checkIns: [],
+      anchor: null,
     });
 
     state = await getWorkshopState();
@@ -590,6 +591,42 @@ describe("workshop-store", () => {
     for (const team of state.teams) {
       expect(team.checkIns).toEqual([]);
     }
+  });
+
+  it("seedWorkshopState teams start with null anchor", async () => {
+    const state = await getWorkshopState();
+    for (const team of state.teams) {
+      expect(team.anchor).toBeNull();
+    }
+  });
+
+  it("upsertTeam persists a team anchor and leaves it round-trippable", async () => {
+    await upsertTeam({
+      id: "t-anchor",
+      name: "Tým Anchor",
+      city: "Studio A",
+      members: ["Kryštof"],
+      repoUrl: "https://github.com/example/anchor-team",
+      projectBriefId: "standup-bot",
+      checkIns: [],
+      anchor: "red brick",
+    });
+    const teams = await teamRepository.listTeams("sample-studio-a");
+    const anchored = teams.find((team) => team.id === "t-anchor");
+    expect(anchored?.anchor).toBe("red brick");
+
+    await upsertTeam({
+      id: "t-anchor",
+      name: "Tým Anchor",
+      city: "Studio A",
+      members: ["Kryštof"],
+      repoUrl: "https://github.com/example/anchor-team",
+      projectBriefId: "standup-bot",
+      checkIns: [],
+      anchor: null,
+    });
+    const after = (await teamRepository.listTeams("sample-studio-a")).find((team) => team.id === "t-anchor");
+    expect(after?.anchor).toBeNull();
   });
 
   it("captures a rotation signal to both instance-local and learnings log", async () => {
@@ -706,6 +743,7 @@ describe("workshop-store", () => {
         repoUrl: "https://github.com/example/existing-team",
         projectBriefId: "standup-bot",
         checkIns: [],
+        anchor: null,
       },
     ]);
 
@@ -733,6 +771,7 @@ describe("workshop-store", () => {
         repoUrl: "https://github.com/example/runtime-team",
         projectBriefId: "metrics-dashboard",
         checkIns: [],
+        anchor: null,
       },
     ]);
     await checkpointRepository.replaceCheckpoints("sample-studio-a", [

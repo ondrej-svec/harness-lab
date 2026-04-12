@@ -17,6 +17,9 @@ export async function POST(request: Request) {
   if (!Array.isArray(body.checkIns)) {
     body.checkIns = [];
   }
+  if (body.anchor === undefined) {
+    body.anchor = null;
+  }
 
   try {
     const state = await upsertTeam(body);

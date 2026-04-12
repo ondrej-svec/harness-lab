@@ -127,6 +127,7 @@ describe("teams route", () => {
           repoUrl: "https://github.com/example/runtime-team",
           projectBriefId: "standup-bot",
           checkIns: [],
+          anchor: null,
         },
       ]),
     );

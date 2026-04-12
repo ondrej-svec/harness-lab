@@ -12,6 +12,7 @@ const team: TeamRecord = {
   repoUrl: "https://example.com/repo",
   projectBriefId: "brief-1",
   checkIns: [],
+  anchor: null,
 };
 
 describe("team-repository", () => {

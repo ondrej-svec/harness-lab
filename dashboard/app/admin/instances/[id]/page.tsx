@@ -603,6 +603,7 @@ async function registerTeamAction(formData: FormData) {
     fallback: String(formData.get("checkpoint") ?? "").trim(),
   });
   const membersRaw = String(formData.get("members") ?? "").trim();
+  const anchorRaw = String(formData.get("anchor") ?? "").trim();
 
   if (id && name && repoUrl && projectBriefId) {
     const existing = state.teams.find((team) => team.id === id);
@@ -614,6 +615,7 @@ async function registerTeamAction(formData: FormData) {
         repoUrl,
         projectBriefId,
         checkIns: existing?.checkIns ?? [],
+        anchor: anchorRaw ? anchorRaw : existing?.anchor ?? null,
         members: membersRaw
           .split(",")
           .map((value) => value.trim())
@@ -1538,6 +1540,12 @@ export default async function AdminPage({
                     name="members"
                     placeholder="Anna, David, Eva"
                     defaultValue={selectedTeam?.members.join(", ") ?? ""}
+                    className={adminInputClassName}
+                  />
+                  <input
+                    name="anchor"
+                    placeholder="red brick / numbered card 3"
+                    defaultValue={selectedTeam?.anchor ?? ""}
                     className={adminInputClassName}
                   />
                   <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
