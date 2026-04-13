@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   experimental: {
     externalDir: true,
+    // View Transitions API integration — enables `<ViewTransition>` from `react`
+    // via Next's bundled react-experimental. See
+    // docs/plans/2026-04-13-one-canvas-research-notes.md §2.
+    // WARNING: do not also enable `cacheComponents` — see Next.js issue #85693.
+    viewTransition: true,
   },
   headers: async () => [
     {

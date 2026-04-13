@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { signOutAction } from "./_actions/operations";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
@@ -252,15 +253,6 @@ function parseParticipantAccessFlash(value: string | undefined, instanceId: stri
   }
 
   return null;
-}
-
-async function signOutAction(formData: FormData) {
-  "use server";
-  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-  if (auth) {
-    await auth.signOut();
-  }
-  redirect(withLang("/admin/sign-in", lang));
 }
 
 async function setAgendaAction(formData: FormData) {
