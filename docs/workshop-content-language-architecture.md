@@ -60,6 +60,19 @@ Target model:
 - Czech remains a first-class reviewed delivery locale
 - runtime machine translation is not the default path for workshop-copy delivery
 
+### Directory convention — enforced 2026-04-13
+
+The file system matches the rule verbatim. Every bilingual participant-facing file follows this layout:
+
+- **English canonical at the root:** `content/talks/context-is-king.md`, `content/project-briefs/standup-bot.md`, `materials/coaching-codex.md`, and so on.
+- **Czech reviewed translation in `locales/cs/`:** `content/talks/locales/cs/context-is-king.md`, `content/project-briefs/locales/cs/standup-bot.md`, `materials/locales/cs/coaching-codex.md`.
+
+When you edit content, start with the English root file. Then apply the same change to the Czech translation under `locales/cs/`. A contributor opening the directory should see English first — the architecture rule is encoded in the file system, not only in this document.
+
+Four Czech-only meta-references stay at the root as exceptions because they are *about* Czech writing and would be nonsensical in English: `content/style-guide.md`, `content/style-examples.md`, `content/czech-reject-list.md`, `content/czech-editorial-review-checklist.md`. `content/codex-craft.md` and `materials/README.md` are likewise single-language at the root by design.
+
+**Verified 2026-04-13.** Completed under `docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md`. The flip moved 12 bilingual pairs via `git mv` (preserving history), updated `scripts/content/check-tier2-sync.ts` and `scripts/content/generate-briefs-inventory.ts`, and re-segmented `.copy-editor.lock.json`. The full Czech review covered 28 agenda scenes across 3 batches plus standalone reviews of the 12 flipped files — seven memos live under `docs/reviews/workshop-content/2026-04-13-czech-*.md`.
+
 ## Bilingual Content Source
 
 The single bilingual source for structured workshop content is:

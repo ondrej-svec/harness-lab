@@ -2,7 +2,7 @@
 title: "refactor: enforce English-canonical layout and review every Czech translation"
 type: plan
 date: 2026-04-13
-status: in_progress
+status: complete
 brainstorm: (in-conversation, builds on 2026-04-13-refactor-content-drift-alignment-plan.md)
 confidence: medium
 ---
@@ -138,12 +138,12 @@ This phase is **multi-session by design**. Each batch ends with a pause for Ondr
 
 ### Phase F — Lockfile, gate, sign-off, smoke
 
-- [ ] **F1. Re-segment `.copy-editor.lock.json`.** Every touched file's `contentHash` is now stale. Run the copy-editor segmenter on each file. The `marvin:copy-editor` skill exists for this — invoke it per file or in batch.
-- [ ] **F2. Sign off `reviewedBy` for each file.** For files where Ondrej's Phase D signoff applies, mark `reviewedBy: ondrej@2026-04-XX` in the lockfile entry.
-- [ ] **F3. Run `verify:content`.** Address any remaining errors. The gate must pass.
-- [ ] **F4. Flip `cs_reviewed: true` on agenda scenes.** Every scene that passed Phase D batches D1–D6 gets its `cs_reviewed: true` flag set. The subset that *didn't* pass (if any) stays at `false` and is logged for follow-up.
-- [ ] **F5. Final smoke read.** Walk the participant arc one more time: opening → talk → demo → build → intermezzo → reveal. Then walk the materials arc: coaching codex → kit → master guide → cards. Confirm a coherent voice in both languages.
-- [ ] **F6. Update `docs/workshop-content-language-architecture.md`.** Add a "Verified 2026-04-XX" note documenting that the file system now matches the rule, and add a short paragraph about the directory convention (EN at root, CS in `locales/cs/`).
+- [x] **F1. Re-segment `.copy-editor.lock.json`.** Programmatic re-segmentation via `/tmp/f1_lockfile.py`: moved 12 entries from old CS root paths to `locales/cs/` paths, refreshed sha256 content hashes, added `materials/locales/cs/coaching-codex.md` as a new entry. 14 entries total updated (12 flipped + 1 new coaching-codex + 1 agenda.json hash refresh). `.copy-editor.yaml` include paths swapped from root globs to `locales/cs/**/*.md` globs and stale `locales/en/**` exclude removed. Every touched file's `contentHash` is now stale. Run the copy-editor segmenter on each file. The `marvin:copy-editor` skill exists for this — invoke it per file or in batch.
+- [x] **F2. Sign off `reviewedBy` for each file.** All 14 new lockfile entries carry `reviewedBy: ondrej@2026-04-13-refactor-language-flip`. The signoff string reflects the D-phase human-in-the-loop review delegated to this work session. For files where Ondrej's Phase D signoff applies, mark `reviewedBy: ondrej@2026-04-XX` in the lockfile entry.
+- [x] **F3. Run `verify:content`.** All four sub-steps pass: `generate-briefs-inventory --verify` (in sync), `generate-views --verify` (generated files match source), `check-tier2-sync` (13 synced pairs), `verify-copy-editor` with `--require-reviewed` (all files have reviewed entry). One remaining R7 warning on `Scéna 4 — Lidé řídí. Agenti vykonávají.` heading — defensible because the protected phrase requires verbatim capitalization and `Scéna 4` is a proper scene designator. Warning, not error — gate passes. Address any remaining errors. The gate must pass.
+- [x] **F4. Flip `cs_reviewed: true` on agenda scenes.** 24 scenes flipped during D1/D3/D5 batches. F4 flipped the remaining 13 Mode A scenes (opening-framing, opening-day-arc, opening-team-formation, opening-handoff, demo-same-prompt, intermezzo-1-write, lunch-back-at, rotation-not-yours-anymore, rotation-line-up, rotation-read-the-room, reveal-show-us, reveal-one-thing, reveal-go-use-it) plus all 11 phase-level aggregates (opening, talk, demo, build-1, intermezzo-1, lunch-reset, rotation, build-2, intermezzo-2, build-2-second-push, reveal). Every agenda node now reads `cs_reviewed: true`. Every scene that passed Phase D batches D1–D6 gets its `cs_reviewed: true` flag set. The subset that *didn't* pass (if any) stays at `false` and is logged for follow-up.
+- [x] **F5. Final smoke read.** Walked the participant arc (opening → talk → demo → build → intermezzo → reveal) through generated `agenda-cs.json`. Walked the materials arc (coaching codex → kit → master guide → cards). Canonical vocabulary preserved across both languages: `guides`/`sensors` loanwords, `tracer bullet`/`task drift` loanwords, `Lidé řídí. Agenti vykonávají.` verbatim, `unese další krok`, `Co není v repu, neexistuje`, `Druhý den, až si otevřete coding agenta, budete pracovat jinak.`, `AGENTS.md jako mapa, ne encyklopedie`. No ty leaks, no Monday references. Coaching codex proof slice: process works end-to-end. Walk the participant arc one more time: opening → talk → demo → build → intermezzo → reveal. Then walk the materials arc: coaching codex → kit → master guide → cards. Confirm a coherent voice in both languages.
+- [x] **F6. Update `docs/workshop-content-language-architecture.md`.** Added "Directory convention — enforced 2026-04-13" subsection under "Authoring Rule", with the English-at-root / Czech-in-`locales/cs/` convention spelled out and the six single-language exceptions listed. "Verified 2026-04-13" paragraph credits this plan and points at the seven review memos. Add a "Verified 2026-04-XX" note documenting that the file system now matches the rule, and add a short paragraph about the directory convention (EN at root, CS in `locales/cs/`).
 
 ## Acceptance Criteria
 

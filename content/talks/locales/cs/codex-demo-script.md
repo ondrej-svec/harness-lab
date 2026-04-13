@@ -2,7 +2,7 @@
 
 ## Cíl
 
-Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem a proč tenhle repozitář drží pohromadě díky harnessu, ne díky improvizaci.
+Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem a proč tenhle repozitář drží pohromadě díky harnessu, ne díky improvizaci.
 
 ## Repo-Readiness Contrast (talk micro-exercise)
 
@@ -16,14 +16,14 @@ Připravte si před workshopem dvě složky:
 - Jen zadání projektu (krátký popis úkolu)
 - Žádný AGENTS.md
 - Žádné kontextové soubory, žádné mantinely, žádný plán
-- Agent dostane jednoduchý prompt a driftuje — udělá věrohodná, ale špatná architektonická rozhodnutí.
+- Agent dostane jednoduchý prompt a driftuje — udělá věrohodná, ale špatná architektonická rozhodnutí.
 
-**Folder B: repo s harnessem**
+**Folder B: repo s harnessem**
 - Stejné zadání projektu
-- AGENTS.md s Goal, Context, Constraints, Done When
+- AGENTS.md s Goal, Context, Constraints, Done When
 - Krátký plán nebo seznam kroků
 - Workshop skill nainstalovaný (`harness skill install`)
-- Agent dostane stejný prompt a vytvoří zarovnaný výstup.
+- Agent dostane stejný prompt a vytvoří zarovnaný výstup.
 
 ### Narration flow
 
@@ -37,15 +37,15 @@ Připravte si před workshopem dvě složky:
 ### Honest failure narration
 
 Když ukazujete Variantu A, explicitně pojmenujte způsob, jakým to selhalo:
-- „Agent začal bez mantinelů a udělal věrohodná, ale špatná architektonická rozhodnutí."
-- „Tohle se stane v každém repu bez AGENTS.md — agent si doplní mezery vlastními předpoklady."
+- „Agent začal bez mantinelů a udělal věrohodná, ale špatná architektonická rozhodnutí."
+- „Tohle se stane v každém repu bez AGENTS.md — agent si doplní mezery vlastními předpoklady."
 - Používejte termín **task drift** — přesně pojmenovává ten vzor.
 
 ### Tool-specific realities to mention during the demo
 
 - Codex nemá rewind/undo — jakmile agent commitne, musíte zpátky přes git.
 - MCP servery vs. skills: jiné balení, stejná myšlenka (strukturované schopnosti).
-- Principy jsou tool-agnostic: AGENTS.md funguje s Codexem, Claude Codem, Cursorem i Copilotem.
+- Principy jsou tool-agnostic: AGENTS.md funguje s Codexem, Claude Codem, Cursorem i Copilotem.
 
 ### Open question
 
@@ -53,14 +53,14 @@ Jestli má `harness` CLI mít `demo-setup` příkaz, který obě složky vygener
 
 ## Flow (after contrast)
 
-1. Otevřete Folder B a ukažte `README`, `AGENTS.md`, rozpad práce do kroků a způsob kontroly změny.
+1. Otevřete Folder B a ukažte `README`, `AGENTS.md`, rozpad práce do kroků a způsob kontroly změny.
 2. Spusťte `/plan`, aby agent rozpadl práci na kroky.
-3. Krátce ukažte, jak se v repu propisuje záměr: kde je mapa, kde je další bezpečný krok a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
+3. Krátce ukažte, jak se v repu propisuje záměr: kde je mapa, kde je další bezpečný krok a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
 4. Nechte agenta napsat malý kus.
-5. Spusťte `/review` a ukažte, že kontrola je součást workflow, ne nouzová brzda na konci.
+5. Spusťte `/review` a ukažte, že kontrola je součást workflow, ne nouzová brzda na konci.
 6. Krátce ukažte workshop skill:
    - jak se instaluje přes `harness skill install`
-   - jak z něj plyne první použitelný krok v Codexu nebo v pi
+   - jak z něj plyne první použitelný krok v Codexu nebo v pi
 7. Zavřete to větou:
    - „Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj."
 
@@ -80,4 +80,4 @@ Jestli má `harness` CLI mít `demo-setup` příkaz, který obě složky vygener
 
 ## Pointa pro místnost
 
-Nejde o to ukázat „zázračný výsledek". Jde o to ukázat, jak rychle roste kvalita, když přidáte kontext, plán, review a repo, ve kterém se dá pokračovat.
+Nejde o to ukázat „zázračný výsledek". Jde o to ukázat, jak rychle roste kvalita, když přidáte kontext, plán, review a repo, ve kterém se dá pokračovat.

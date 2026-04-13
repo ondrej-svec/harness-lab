@@ -44,11 +44,17 @@ paths:
     # Canonical bilingual source — highest priority.
     - workshop-content/agenda.json
 
-    # Participant-facing authored content.
-    - content/project-briefs/**/*.md
-    - content/challenge-cards/**/*.md
-    - content/facilitation/**/*.md
-    - content/talks/**/*.md
+    # Participant-facing Czech translations (post-2026-04-13 layout flip:
+    # English is canonical at the root, Czech lives in locales/cs/).
+    - content/project-briefs/locales/cs/**/*.md
+    - content/challenge-cards/locales/cs/**/*.md
+    - content/facilitation/locales/cs/**/*.md
+    - content/talks/locales/cs/**/*.md
+    - materials/locales/cs/**/*.md
+
+    # Czech-only root references (not bilingual pairs — these are
+    # meta-documents about Czech writing). Still subject to the gate
+    # when referenced directly, though most are excluded as rule sources.
     - content/style-guide.md
     - content/style-examples.md
     - content/czech-editorial-review-checklist.md
@@ -60,12 +66,10 @@ paths:
     # translates on the fly for non-English participants, so the
     # Czech typography gate does not apply.
 
-    # Participant materials.
-    - materials/**/*.md
-
   exclude:
-    # English fallback locales — reviewed separately, not by the Czech profile.
-    - "**/locales/en/**"
+    # English-canonical content at the root — Czech typography rules
+    # must not be applied to English prose (would break greps and
+    # introduce invisible non-breaking spaces on the English surface).
 
     # Generated bundle mirror — review the canonical source instead.
     - "harness-cli/assets/workshop-bundle/**"
