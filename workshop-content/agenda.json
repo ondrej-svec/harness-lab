@@ -857,6 +857,99 @@
           "cs_reviewed": true
         },
         {
+          "id": "opening-team-formation-room",
+          "sceneType": "briefing",
+          "intent": "activation",
+          "chromePreset": "minimal",
+          "en": {
+            "label": "Team formation (room)",
+            "title": "Form the line. Count off. Claim your anchor.",
+            "body": "Wall scene that holds for the full nine minutes of team formation.",
+            "facilitatorNotes": [
+              "Hold this on the wall for the full nine minutes of team formation.",
+              "Participants work from the steps on their phones; the wall is the shared anchor the whole room can glance at.",
+              "Advance to the handoff only once every team has both a name and an anchor on the board."
+            ],
+            "blocks": [
+              {
+                "id": "opening-team-room-hero",
+                "type": "hero",
+                "eyebrow": "Your team · 9 min",
+                "title": "Form the line. Count off. Claim your anchor.",
+                "body": "Everyone stands. Experience line along the wall. Count off into mixed teams. Sit, introduce, name the team, anchor it."
+              },
+              {
+                "id": "opening-team-room-steps",
+                "type": "bullet-list",
+                "items": [
+                  "1 · Line up by experience (3 min)",
+                  "2 · Count off into teams (1 min)",
+                  "3 · Sit, introduce, name the team (4 min)",
+                  "4 · Claim an anchor",
+                  "5 · Raise a hand — we record the team live"
+                ]
+              },
+              {
+                "id": "opening-team-room-callout",
+                "type": "callout",
+                "tone": "info",
+                "title": "Check your phone.",
+                "body": "Full instructions are on the participant board in front of you."
+              }
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitation guide: Opening and welcome",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ]
+          },
+          "cs": {
+            "label": "Formování týmů (sál)",
+            "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
+            "body": "Scéna na plátně pro sál. Drží po celé cvičení – devět minut.",
+            "facilitatorNotes": [
+              "Nechte tuhle scénu na plátně po celých devět minut formování týmů.",
+              "Účastníci postupují podle kroků na telefonu; plátno je společná kotva, na kterou se celá místnost kouká.",
+              "Na přechod do talku přepínejte teprve ve chvíli, kdy má každý tým jméno i kotvu na boardu."
+            ],
+            "blocks": [
+              {
+                "id": "opening-team-room-hero",
+                "type": "hero",
+                "eyebrow": "Váš tým · 9 minut",
+                "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
+                "body": "Všichni vstaňte. Řada podle zkušeností podél stěny. Rozpočítejte se do smíšených týmů. Sedněte si, představte se, pojmenujte tým a zakotvěte."
+              },
+              {
+                "id": "opening-team-room-steps",
+                "type": "bullet-list",
+                "items": [
+                  "1 · Postavte se do řady podle zkušeností (3 min)",
+                  "2 · Rozpočítejte se do týmů (1 min)",
+                  "3 · Sedněte si, představte se, pojmenujte tým (4 min)",
+                  "4 · Vyberte si kotvu",
+                  "5 · Zvedněte ruku – tým zapíšeme naživo"
+                ]
+              },
+              {
+                "id": "opening-team-room-callout",
+                "type": "callout",
+                "tone": "info",
+                "title": "Mrkněte na telefon.",
+                "body": "Celé zadání máte na participant boardu před sebou."
+              }
+            ],
+            "sourceRefs": [
+              {
+                "label": "Facilitační průvodce: Otevření a welcome",
+                "path": "content/facilitation/master-guide.md"
+              }
+            ]
+          },
+          "cs_reviewed": false
+        },
+        {
           "id": "opening-team-formation",
           "sceneType": "participant-view",
           "intent": "activation",
@@ -927,7 +1020,7 @@
           },
           "cs": {
             "label": "Řada zkušeností a formování týmů",
-            "title": "Postavte se do řady. Rozpočítejte se. Zaberte si kotvu.",
+            "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
             "body": "Devět minut. Takhle si dnes tvoříme týmy – podle řady zkušeností a odpočítávání. Stejný postup použijeme znovu při rotaci po obědě.",
             "facilitatorNotes": [
               "Nechej všechny vstát a postavit se do jedné řady podle zkušeností s AI agenty.",
@@ -940,7 +1033,7 @@
                 "id": "opening-team-hero",
                 "type": "hero",
                 "eyebrow": "Váš tým",
-                "title": "Postavte se do řady. Rozpočítejte se. Zaberte si kotvu.",
+                "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
                 "body": "Devět minut. Takhle si dnes tvoříme týmy – podle řady zkušeností a odpočítávání. Stejný postup použijeme znovu při rotaci po obědě."
               },
               {
@@ -964,7 +1057,7 @@
                   },
                   {
                     "id": "team-anchor",
-                    "title": "Zaberte si kotvu.",
+                    "title": "Vyberte si kotvu.",
                     "body": "Vyberte si jednu z kotev na stole – kostku LEGO, očíslovanou kartu, cokoli, co máte před sebou. Kotva zůstává u stolu. Váš tým, vaše repo i vaše dnešní check-iny žijí s ní po zbytek dne."
                   },
                   {
