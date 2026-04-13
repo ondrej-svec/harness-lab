@@ -5,6 +5,67 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.6.0 — 2026-04-10
+
+### Added
+
+- **Participant team write commands.** `harness workshop team set-repo`,
+  `set-members`, and `set-name`. Sent as authenticated PATCH requests against
+  `/api/event-context/teams/<teamId>`. Changelog back-filled in 0.7.0.
+
+## 0.7.0 — 2026-04-13
+
+### Added
+
+- **`harness demo-setup` command.** Scaffolds two folders for the Phase 3
+  contrast demo: Folder A (bare repo, brief only) and Folder B (harnessed
+  repo with `AGENTS.md`, a short plan, seed data). Accepts `--target <path>`.
+  Facilitators run it before the workshop so the live contrast demo has
+  stable starting state.
+- **`workshop briefs` (plural) skill command.** Lists every brief available
+  in the active instance so teams can browse before picking one in Phase 3.
+  Exposed as a CLI alias over the existing briefs handler and documented in
+  `workshop-skill/SKILL.md`.
+- **`workshop commitment` skill command.** Stores a personal Phase 10 Reveal
+  commitment on the participant's machine (local-only by default; optional
+  anonymous push is deferred). Documented in `workshop-skill/SKILL.md`.
+- **Verification ladder reference** appended to `workshop-skill/reference.md`
+  covering tracer bullets, end-to-end tests, automated reviews, human review,
+  holistic-beats-granular, and the self-validation trap.
+
+### Changed
+
+- **Skill reference docs are now English-canonical** per ADR
+  `docs/adr/2026-04-12-skill-docs-english-canonical.md`. The entire
+  `workshop-skill/locales/` parallel tree is removed from the shipped bundle.
+  The agent translates reference material on the fly when a participant asks
+  in another language. Participant-facing presenter copy (agenda scenes,
+  project briefs, challenge cards) is unaffected and still ships with
+  reviewed Czech translations.
+- **Workshop agenda rewritten** across all 11 phases from the 2026-04-12
+  brainstorm: new Phase 1 framing hero, Phase 2 "The Craft Underneath",
+  Phase 3 "Let me show you", Phase 4 Build 1 timeline with tracer-first
+  framing, Phase 5/9 intermezzos with append-only team check-ins, Phase 7
+  rotation via scatter count-off, Phase 8 Build 2 split into first-push and
+  second-push sibling phases around Intermezzo 2, Phase 11 Reveal with
+  four-layer 1-2-4-All and tool-agnostic commitment framing. Day count goes
+  from 10 to 11 phases.
+- **Project briefs revised** — handoff test promoted to Done-when #1 on all
+  five briefs; problem statements tightened; first-agent prompts sharpened.
+  `doc-generator` is now registered in the bundle inventory (previously
+  orphaned).
+- **Talk files** — English canonical versions of `context-is-king.md` and
+  `codex-demo-script.md` now ship in the bundle (replacing 7-line stubs).
+- **Czech translations** for every scene touched by the content refresh.
+  Each phase and scene ships with `cs_reviewed: false` pending a
+  native-speaker review sweep before the first real workshop.
+
+### Security
+
+- Skill bundle ships with the new English-canonical skill docs; the
+  pre-existing `npm audit` and Gitleaks/Semgrep gates in the publish workflow
+  continue to pass.
+
 ## 0.5.9 — 2026-04-10
 
 ### Changed
