@@ -286,7 +286,7 @@ describe("Admin control room page", () => {
     expect(html).toContain("20-participants");
   });
 
-  it("renders team editing in the teams section", async () => {
+  it("renders team cards with inline editing in the teams section", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
@@ -295,14 +295,12 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.editTeamTitle);
-    expect(html).toContain(adminCopy.en.createAnotherTeamLabel);
-    expect(html).toContain(adminCopy.en.checkpointChangedLabel);
-    expect(html).toContain(adminCopy.en.checkpointVerifiedLabel);
-    expect(html).toContain(adminCopy.en.checkpointNextStepLabel);
-    expect(html).toContain('value="t3"');
-    expect(html).toContain('value="Tým 3"');
+    expect(html).toContain(adminCopy.en.registerTeamTitle);
+    expect(html).toContain(adminCopy.en.createTeamButton);
+    expect(html).toContain("Tým 3");
     expect(html).toContain("https://github.com/example/code-review-helper");
+    expect(html).toContain('value="t3"');
+    expect(html).toContain(adminCopy.en.checkpointFormHint);
   });
 
   it("renders structured evidence fields in the signals section", async () => {

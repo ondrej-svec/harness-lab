@@ -94,24 +94,25 @@ export async function registerTeamAction(formData: FormData) {
  * onto the current team shape, so nested data (checkIns, members,
  * projectBriefId) stays untouched.
  */
-type UpdatableTeamField = "name" | "city" | "repoUrl" | "anchor";
+type UpdatableTeamField = "name" | "city" | "repoUrl" | "anchor" | "members";
 const UPDATABLE_TEAM_FIELDS: readonly UpdatableTeamField[] = [
   "name",
   "city",
   "repoUrl",
   "anchor",
+  "members",
 ];
 
 export async function updateTeamFieldAction(formData: FormData) {
   const instanceId = String(formData.get("instanceId") ?? "");
   const teamId = String(formData.get("teamId") ?? "");
-  const fieldName = String(formData.get("fieldName") ?? "");
+  const fieldName = String(formData.get("fieldName") ?? "") as UpdatableTeamField;
   const fieldValue = String(formData.get(fieldName) ?? "").trim();
 
   if (!instanceId || !teamId || !fieldName || !fieldValue) {
     return;
   }
-  if (!UPDATABLE_TEAM_FIELDS.includes(fieldName as UpdatableTeamField)) {
+  if (!UPDATABLE_TEAM_FIELDS.includes(fieldName)) {
     return;
   }
 
@@ -122,11 +123,46 @@ export async function updateTeamFieldAction(formData: FormData) {
     return;
   }
 
-  await upsertTeam(
-    {
-      ...team,
-      [fieldName]: fieldValue,
-    },
+  const next = { ...team };
+  if (fieldName === "members") {
+    next.members = fieldValue
+      .split(",")
+      .map((member) => member.trim())
+      .filter(Boolean);
+  } else if (fieldName === "anchor") {
+    next.anchor = fieldValue;
+  } else {
+    (next as Record<string, unknown>)[fieldName] = fieldValue;
+  }
+
+  await upsertTeam(next, instanceId);
+  revalidatePath(`/admin/instances/${instanceId}`);
+}
+
+/**
+ * Append-only checkpoint entry. Takes the raw textarea content from an
+ * InlineField (empty value means "don't add") and calls appendCheckIn
+ * against the team's current phase. Mirrors the registerTeamAction
+ * buildEvidenceSummary output shape when the client sends structured
+ * checkpointChanged / checkpointVerified / checkpointNextStep, but
+ * also accepts a plain `checkpoint` field so a simple textarea works.
+ */
+export async function appendTeamCheckpointAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const teamId = String(formData.get("teamId") ?? "");
+  const checkpoint = String(formData.get("checkpoint") ?? "").trim();
+
+  if (!instanceId || !teamId || !checkpoint) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  const state = await getWorkshopState(instanceId);
+  const currentPhaseId =
+    state.agenda.find((item) => item.status === "current")?.id ?? state.agenda[0]?.id ?? "opening";
+  await appendCheckIn(
+    teamId,
+    { phaseId: currentPhaseId, content: checkpoint, writtenBy: null },
     instanceId,
   );
   revalidatePath(`/admin/instances/${instanceId}`);

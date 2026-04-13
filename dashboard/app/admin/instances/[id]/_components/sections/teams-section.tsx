@@ -1,6 +1,4 @@
-import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
-import { buildAdminHref } from "@/lib/admin-page-view-model";
 import type { Team, WorkshopState } from "@/lib/workshop-data";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
 import {
@@ -9,7 +7,11 @@ import {
   adminInputClassName,
   adminPrimaryButtonClassName,
 } from "../../../../admin-ui";
-import { registerTeamAction, updateTeamFieldAction } from "../../_actions/teams";
+import {
+  appendTeamCheckpointAction,
+  registerTeamAction,
+  updateTeamFieldAction,
+} from "../../_actions/teams";
 import { InlineField } from "../inline-field";
 
 type Copy = (typeof adminCopy)[UiLanguage];
@@ -19,164 +21,135 @@ export function TeamsSection({
   copy,
   instanceId,
   state,
-  selectedTeam,
-  selectedTeamCheckpoint,
 }: {
   lang: UiLanguage;
   copy: Copy;
   instanceId: string;
   state: Pick<WorkshopState, "teams">;
-  selectedTeam: Team | null;
-  selectedTeamCheckpoint: { changed: string; verified: string; nextStep: string };
+  /** @deprecated retained for page.tsx prop parity; no longer consumed. */
+  selectedTeam?: Team | null;
+  /** @deprecated retained for page.tsx prop parity; no longer consumed. */
+  selectedTeamCheckpoint?: { changed: string; verified: string; nextStep: string };
 }) {
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
       <AdminPanel
         eyebrow={copy.teamOpsEyebrow}
-        title={selectedTeam ? copy.editTeamTitle : copy.registerTeamTitle}
-        description={selectedTeam ? copy.editTeamDescription : copy.teamOpsDescription}
+        title={copy.registerTeamTitle}
+        description={copy.teamOpsDescription}
       >
-        <div className="space-y-4">
-          {selectedTeam ? (
-            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-[var(--text-primary)]">{selectedTeam.name}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{selectedTeam.id}</p>
-                </div>
-                <AdminRouteLink
-                  href={buildAdminHref({ lang, section: "teams", instanceId })}
-                  className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                >
-                  {copy.createAnotherTeamLabel}
-                </AdminRouteLink>
-              </div>
-              <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{selectedTeam.repoUrl}</p>
-            </div>
-          ) : null}
-
-          <form action={registerTeamAction} className="grid gap-3 lg:grid-cols-2">
-            <input name="lang" type="hidden" value={lang} />
-            <input name="section" type="hidden" value="teams" />
-            <input name="instanceId" type="hidden" value={instanceId} />
-            <input name="id" type="hidden" value={selectedTeam?.id ?? ""} />
-            <input name="name" placeholder={copy.teamNamePlaceholder} defaultValue={selectedTeam?.name ?? ""} className={adminInputClassName} />
-            <input name="city" placeholder="Studio A" defaultValue={selectedTeam?.city ?? ""} className={adminInputClassName} />
-            <input
-              name="repoUrl"
-              placeholder="https://github.com/..."
-              defaultValue={selectedTeam?.repoUrl ?? ""}
-              className={`${adminInputClassName} lg:col-span-2`}
-            />
-            <input name="projectBriefId" placeholder="standup-bot" defaultValue={selectedTeam?.projectBriefId ?? ""} className={adminInputClassName} />
-            <input
-              name="members"
-              placeholder="Anna, David, Eva"
-              defaultValue={selectedTeam?.members.join(", ") ?? ""}
-              className={adminInputClassName}
-            />
-            <input
-              name="anchor"
-              placeholder="red brick / numbered card 3"
-              defaultValue={selectedTeam?.anchor ?? ""}
-              className={adminInputClassName}
-            />
-            <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
-              {copy.checkpointFormHint}
-            </div>
-            <div className="lg:col-span-2">
-              <FieldLabel htmlFor="checkpoint-changed">{copy.checkpointChangedLabel}</FieldLabel>
-              <textarea
-                id="checkpoint-changed"
-                name="checkpointChanged"
-                rows={3}
-                placeholder={copy.checkpointChangedLabel}
-                defaultValue={selectedTeamCheckpoint.changed}
-                className={`${adminInputClassName} mt-2`}
-              />
-            </div>
-            <div className="lg:col-span-2">
-              <FieldLabel htmlFor="checkpoint-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
-              <textarea
-                id="checkpoint-verified"
-                name="checkpointVerified"
-                rows={3}
-                placeholder={copy.checkpointVerifiedLabel}
-                defaultValue={selectedTeamCheckpoint.verified}
-                className={`${adminInputClassName} mt-2`}
-              />
-            </div>
-            <div className="lg:col-span-2">
-              <FieldLabel htmlFor="checkpoint-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
-              <textarea
-                id="checkpoint-next-step"
-                name="checkpointNextStep"
-                rows={3}
-                placeholder={copy.checkpointNextStepLabel}
-                defaultValue={selectedTeamCheckpoint.nextStep}
-                className={`${adminInputClassName} mt-2`}
-              />
-            </div>
-            <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
-              {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
-            </AdminSubmitButton>
-          </form>
-        </div>
+        <form action={registerTeamAction} className="grid gap-3 lg:grid-cols-2">
+          <input name="lang" type="hidden" value={lang} />
+          <input name="section" type="hidden" value="teams" />
+          <input name="instanceId" type="hidden" value={instanceId} />
+          <input name="name" placeholder={copy.teamNamePlaceholder} className={adminInputClassName} />
+          <input name="city" placeholder="Studio A" className={adminInputClassName} />
+          <input
+            name="repoUrl"
+            placeholder="https://github.com/..."
+            className={`${adminInputClassName} lg:col-span-2`}
+          />
+          <input name="projectBriefId" placeholder="standup-bot" className={adminInputClassName} />
+          <input name="members" placeholder="Anna, David, Eva" className={adminInputClassName} />
+          <input
+            name="anchor"
+            placeholder="red brick / numbered card 3"
+            className={`${adminInputClassName} lg:col-span-2`}
+          />
+          <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
+            {copy.createTeamButton}
+          </AdminSubmitButton>
+        </form>
       </AdminPanel>
 
       <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
         <div className="grid gap-3 2xl:grid-cols-2">
-          {state.teams.map((team) => (
-            <div
-              key={team.id}
-              className={`rounded-[20px] border p-4 ${
-                selectedTeam?.id === team.id
-                  ? "border-[var(--text-primary)] bg-[var(--surface)]"
-                  : "border-[var(--border)] bg-[var(--surface-soft)]"
-              }`}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-[var(--text-primary)]">
-                    <InlineField
-                      value={team.name}
-                      fieldName="name"
-                      label={copy.teamNamePlaceholder}
-                      action={updateTeamFieldAction}
-                      hiddenFields={{ instanceId, teamId: team.id, fieldName: "name" }}
-                    />
+          {state.teams.map((team) => {
+            const latestCheckIn = team.checkIns[team.checkIns.length - 1]?.content ?? "";
+            return (
+              <div
+                key={team.id}
+                className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-[var(--text-primary)]">
+                      <InlineField
+                        value={team.name}
+                        fieldName="name"
+                        label={copy.teamNamePlaceholder}
+                        action={updateTeamFieldAction}
+                        hiddenFields={{ instanceId, teamId: team.id, fieldName: "name" }}
+                      />
+                    </div>
+                    <div className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                      <InlineField
+                        value={team.repoUrl}
+                        fieldName="repoUrl"
+                        label="repo url"
+                        action={updateTeamFieldAction}
+                        hiddenFields={{ instanceId, teamId: team.id, fieldName: "repoUrl" }}
+                      />
+                    </div>
+                    <div className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                      <InlineField
+                        value={team.city}
+                        fieldName="city"
+                        label="city"
+                        action={updateTeamFieldAction}
+                        hiddenFields={{ instanceId, teamId: team.id, fieldName: "city" }}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
-                    <InlineField
-                      value={team.repoUrl}
-                      fieldName="repoUrl"
-                      label="repo url"
-                      action={updateTeamFieldAction}
-                      hiddenFields={{ instanceId, teamId: team.id, fieldName: "repoUrl" }}
-                    />
-                  </div>
-                </div>
-                <div className="text-right">
                   <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
-                  <AdminRouteLink
-                    href={buildAdminHref({
-                      lang,
-                      section: "teams",
-                      instanceId,
-                      teamId: team.id,
-                    })}
-                    className="mt-2 inline-flex text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+                </div>
+                <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                  <FieldLabel htmlFor={`team-${team.id}-checkpoint`}>{copy.checkpointFormHint}</FieldLabel>
+                  <form
+                    action={appendTeamCheckpointAction}
+                    id={`team-${team.id}-checkpoint`}
+                    className="mt-2 flex items-start gap-2"
                   >
-                    {copy.editActionLabel}
-                  </AdminRouteLink>
+                    <input name="instanceId" type="hidden" value={instanceId} />
+                    <input name="teamId" type="hidden" value={team.id} />
+                    <textarea
+                      name="checkpoint"
+                      rows={2}
+                      placeholder={latestCheckIn || copy.checkpointFormHint}
+                      className={`${adminInputClassName} flex-1`}
+                    />
+                    <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                      +
+                    </AdminSubmitButton>
+                  </form>
+                  {latestCheckIn ? (
+                    <p className="mt-2 whitespace-pre-line text-xs leading-5 text-[var(--text-muted)]">
+                      {latestCheckIn}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+                  <InlineField
+                    value={team.members.join(", ")}
+                    fieldName="members"
+                    label="členové"
+                    action={updateTeamFieldAction}
+                    hiddenFields={{ instanceId, teamId: team.id, fieldName: "members" }}
+                  />
+                </div>
+                <div className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+                  <InlineField
+                    value={team.anchor ?? ""}
+                    fieldName="anchor"
+                    label="anchor"
+                    placeholder="red brick / numbered card 3"
+                    action={updateTeamFieldAction}
+                    hiddenFields={{ instanceId, teamId: team.id, fieldName: "anchor" }}
+                  />
                 </div>
               </div>
-              <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
-                {team.checkIns[team.checkIns.length - 1]?.content ?? ""}
-              </p>
-              <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{team.members.join(", ")}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </AdminPanel>
     </div>
