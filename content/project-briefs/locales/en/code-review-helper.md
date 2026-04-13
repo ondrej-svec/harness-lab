@@ -2,7 +2,7 @@
 
 ## Problem
 
-Code review quality swings with whoever's looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.
+Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.
 
 ## User stories
 

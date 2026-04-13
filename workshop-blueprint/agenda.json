@@ -89,7 +89,7 @@
       "label": "Build Phase 2 · second push",
       "startTime": "14:50",
       "kind": "shared",
-      "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal."
+      "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal."
     },
     {
       "id": "reveal",
@@ -105,7 +105,7 @@
       {
         "id": "code-review-helper",
         "title": "Code Review Helper",
-        "problem": "Code review quality swings with whoever's looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
+        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
         "userStories": [
           "As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.",
           "As the author of a change, I want to know what I should verify before the review starts.",
@@ -129,7 +129,7 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where it's obvious where the next command, test, and doc belong.",
+        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
         "userStories": [
           "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
           "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
@@ -197,7 +197,7 @@
           "The dashboard shows at least 3 metrics and one trend or comparison.",
           "Seed data and UI logic are cleanly separated — a facilitator can swap seed data without touching the UI.",
           "The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.",
-          "The `README` documents what's real, what's mocked, and what's missing."
+          "The `README` documents which parts are real, which are mocked, and which are still missing."
         ],
         "firstAgentPrompt": "Don't start with the UI. Start with the data model, the component boundaries, the layout rules, and a `Done When` in `AGENTS.md`. Only then touch any visual code."
       },

@@ -2,7 +2,7 @@
 
 ## Problem
 
-Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where it's obvious where the next command, test, and doc belong.
+Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.
 
 ## User stories
 

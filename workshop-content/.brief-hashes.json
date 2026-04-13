@@ -1,11 +1,11 @@
 {
   "code-review-helper": {
-    "en": "949cab1382ef8c04fdadad926ecd9d7594dab337",
+    "en": "2a298d8b60053c2f54f555fc72aafa711e593549",
     "cs": "4c03a252fc9ad5e8ecab2d8b5bd137871a4253a6",
     "cs_reviewed": false
   },
   "devtoolbox-cli": {
-    "en": "321c74c8b16aabbf55f7dedceb9cb31411e380e7",
+    "en": "3c71c4af30c1b4037ba5aa66b878c861012bd884",
     "cs": "e7782d3f0b570c80cd0d6ec4e9674439de5a2060",
     "cs_reviewed": false
   },
@@ -15,7 +15,7 @@
     "cs_reviewed": false
   },
   "metrics-dashboard": {
-    "en": "ae9924b1cf05d1d00852b63f95f95076e7f7c013",
+    "en": "1678552dcfc9843a8b89d6da224323638888280a",
     "cs": "5616abfdd298a17d55a008b945ab4a88496df2c0",
     "cs_reviewed": false
   },

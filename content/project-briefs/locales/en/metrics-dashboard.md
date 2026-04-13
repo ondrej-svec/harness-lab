@@ -24,7 +24,7 @@ Every team has the data — user signups, deploy frequency, error rates, feature
 - The dashboard shows at least 3 metrics and one trend or comparison.
 - Seed data and UI logic are cleanly separated — a facilitator can swap seed data without touching the UI.
 - The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.
-- The `README` documents what's real, what's mocked, and what's missing.
+- The `README` documents which parts are real, which are mocked, and which are still missing.
 
 ## First step for the agent
 
