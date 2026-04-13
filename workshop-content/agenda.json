@@ -3780,7 +3780,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "build-2a-eighty-five",
@@ -3878,9 +3878,9 @@
           "cs": {
             "label": "Osmdesát pět minut na ship",
             "title": "Osmdesát pět minut na ship, rozdělené na dva pushe",
-            "body": "Stejný cíl jako ráno – shipnout funkční slice, ověřený, commitnutý. Stejná disciplína – nejdřív tým, pak mapa, pak tracer. Jeden nový pohyb: když tě zděděné repo podrazí, zachyť to tření rovnou do repa. Osmdesát pět minut stavění, rozdělené dvacetiminutovou pauzou uprostřed. Build je cíl. Zachycování frikce je, jak se staví bez toho, aby ses o totéž podrazil dvakrát.",
+            "body": "Stejný cíl jako ráno – shipnout funkční slice, ověřený, commitnutý. Stejná disciplína – nejdřív tým, pak mapa, pak tracer. Jeden nový pohyb: když vás zděděné repo podrazí, zachyťte tření přímo v repu. Osmdesát pět minut práce, rozdělených dvacetiminutovou pauzou. Build je cíl. Tření, které zapíšete, už vás podruhé nepodrazí.",
             "facilitatorNotes": [
-              "Výchozí ambient scéna pro první push Buildu 2. Hlídej past self-validation."
+              "Výchozí ambient scéna pro první push Buildu 2. Hlídejte past self-validation."
             ],
             "blocks": [
               {
@@ -3897,7 +3897,7 @@
                   {
                     "id": "b2a-quiet",
                     "title": "13:45–13:55 · Tiché čtení.",
-                    "body": "Deset minut, bez klávesnice. Přečti repo, napiš diagnózu a nové složení týmu do karty."
+                    "body": "Deset minut, bez klávesnice. Přečtěte repo, napište diagnózu a nové složení týmu do karty."
                   },
                   {
                     "id": "b2a-friction",
@@ -3912,7 +3912,7 @@
                   {
                     "id": "b2a-pause",
                     "title": "14:30–14:50 · Pauza uprostřed (Intermezzo 2).",
-                    "body": "Dvacet minut. Couvni s místností, udělej check-in, a pak zpátky do týmu. Je to pauza, ne konec."
+                    "body": "Dvacet minut. Couvněte s místností, udělejte check-in, a pak zpátky do týmu. Je to pauza, ne konec."
                   },
                   {
                     "id": "b2a-second-push",
@@ -3922,7 +3922,7 @@
                   {
                     "id": "b2a-cleanup",
                     "title": "15:20–15:30 · Závěrečný úklid.",
-                    "body": "Deset minut. Commitni. Udělej repo čitelné. Rozhodni, co ukážeš na Závěru."
+                    "body": "Deset minut. Commit. Udělejte repo čitelné. Rozhodněte, co ukážete na Závěru."
                   }
                 ]
               },
@@ -3963,7 +3963,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "build-2a-return-to-proof",
@@ -4048,7 +4048,7 @@
                   {
                     "id": "b2a-return-blind",
                     "title": "Najděte slepé místo v repu.",
-                    "body": "Místo, kde vám repo neodpoví na otázku, je místo, které opravit."
+                    "body": "Místo, kde vám repo neodpoví na otázku, je místo, které musíte opravit."
                   },
                   {
                     "id": "b2a-return-check",
@@ -4072,7 +4072,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         }
       ]
     },
@@ -4214,7 +4214,7 @@
           "cs": {
             "label": "Pište, než promluvíte",
             "title": "Pište, než promluvíte",
-            "body": "Tři minuty. Sami. Nemluvíme. Stejné pravidlo jako u prvního intermezza – nejdřív vyrobíš, pak sdílíš. Tohle je pauza, ne konec. Napište něco, s čím chcete v příštích čtyřiceti minutách něco udělat.",
+            "body": "Tři minuty. Sami. Nemluvíme. Stejné pravidlo jako u prvního intermezza – nejdřív produkce, pak sdílení. Tohle je pauza, ne konec. Napište něco, s čím chcete v příštích čtyřiceti minutách něco udělat.",
             "facilitatorNotes": [
               "Stejná disciplína tichého retrievalu jako v Intermezzu 1."
             ],
@@ -4241,7 +4241,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "intermezzo-2-check-in",
@@ -4321,7 +4321,7 @@
                   {
                     "id": "i2-share",
                     "title": "Sdílejte, co jste napsali (3 min).",
-                    "body": "Jdete kolem stolu. Přečtete si navzájem, co jste napsali. Bez debaty."
+                    "body": "Jděte kolem stolu. Přečtěte si navzájem, co jste napsali. Bez debaty."
                   },
                   {
                     "id": "i2-agree",
@@ -4331,7 +4331,7 @@
                   {
                     "id": "i2-write",
                     "title": "Jeden z vás to napíše (1 min).",
-                    "body": "Na participant boardu, připojené k check-inu z Intermezza 1 a k diagnóze z prvního okamžiku Buildu 2."
+                    "body": "Na participant boardu, připojené k check-inu z Intermezza 1 a k diagnóze z prvního beatu Buildu 2."
                   }
                 ]
               },
@@ -4350,7 +4350,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "intermezzo-2-back-to-work",
@@ -4413,7 +4413,7 @@
             "title": "Zpátky k práci",
             "body": "Vaše check-iny jsou na plátně. Přečtu je, vytáhnu nit a pošlu vás zpátky do týmu s jednou věcí, kterou chcete ve druhém pushi zkusit.",
             "facilitatorNotes": [
-              "Nedovol, aby se z Intermezza 2 stal mini-Závěr. Drž okamžik svižný."
+              "Nedovolte, aby se z Intermezza 2 stal mini-Závěr. Držte tempo svižné."
             ],
             "blocks": [
               {
@@ -4459,7 +4459,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         }
       ]
     },
@@ -4539,24 +4539,24 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Hold the tempo from the first push. The work is the same; the test is whether the team can act on the intermezzo signal.",
+          "goal": "Držte tempo z prvního pushe. Práce je stejná; test je, jestli tým umí jednat podle signálu z intermezza.",
           "say": [
-            "Forty minutes. Back to the work.",
-            "Apply what you surfaced in the intermezzo.",
-            "At 15:30, commit and decide what you'll show."
+            "Čtyřicet minut. Zpátky k práci.",
+            "Aplikujte, co jste zvedli v intermezzu.",
+            "V 15:30 commitněte a rozhodněte, co ukážete."
           ],
           "show": [
-            "Ambient timeline scene. Recovery pattern one flip away."
+            "Ambientní timeline scéna. Recovery pattern na jedno kliknutí."
           ],
           "do": [
-            "Walk the room. Watch for teams skipping the final cleanup."
+            "Procházejte místnost. Hlídejte týmy, které vynechávají final cleanup."
           ],
           "watch": [
-            "Teams over-extend instead of closing the slice cleanly.",
-            "Self-validation trap re-appearing in the second push."
+            "Týmy místo čistého uzavření slice přepíšou příliš mnoho.",
+            "Self-validation past se vrací ve druhém pushi."
           ],
           "fallback": [
-            "If a team loses the thread, flip to the recovery scene and coach them back to the proof."
+            "Když tým ztratí nit, přepněte na recovery scénu a koučujte ho zpátky k důkazu."
           ]
         }
       },
@@ -4595,7 +4595,7 @@
             "title": "Druhý push. Čtyřicet minut. Zpátky k práci.",
             "body": "Aplikujte, co jste zvedli v intermezzu. Iterujte, rozšiřujte, tlačte dál. V 15:30 commit, udělejte repo čitelné, rozhodněte, co ukážete na Závěru.",
             "facilitatorNotes": [
-              "30vteřinový okamžik. Drž tempo, které místnost už zná z Buildu 1 a z prvního pushe Buildu 2."
+              "30vteřinový beat. Držte tempo, které místnost už zná z Buildu 1 a z prvního pushe Buildu 2."
             ],
             "blocks": [
               {
@@ -4613,7 +4613,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "build-2b-second-push-timeline",
@@ -4714,7 +4714,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         }
       ]
     },
@@ -4798,11 +4798,11 @@
         "facilitatorRunner": {
           "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít předání, a převést je do další praxe i do lepšího workshopového systému.",
           "say": [
-            "Tyhle postupy jsou nezávislé na nástroji. Když v pondělí budete pracovat s jiným toolchainem, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
+            "Tyhle postupy jsou nezávislé na nástroji. Až si příště sáhnete po jakémkoli toolchainu, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
           ],
           "show": [],
           "do": [
-            "Po W3 spusťte pondělní závazky: každý napíše jednu větu. Seberte je."
+            "Po W3 spusťte závazky pro další den u klávesnice: každý napíše jednu větu. Seberte je."
           ],
           "watch": [],
           "fallback": []
@@ -4872,8 +4872,8 @@
             ]
           },
           "cs": {
-            "label": "Sám, páry, čtyřky, všichni",
-            "title": "Sám, páry, čtyřky, všichni",
+            "label": "Samostatně, páry, čtyřky, všichni",
+            "title": "Samostatně, páry, čtyřky, všichni",
             "body": "Čtyři vrstvy reflexe. Každá o něco širší než ta předchozí. Tohle je nejdůležitějších dvacet minut dne – nespěchejte.",
             "facilitatorNotes": [
               "Celé 1-2-4-All. Reálný čas v každé vrstvě (3 + 4 + 5 + 10 min)."
@@ -4883,7 +4883,7 @@
                 "id": "reveal-hero",
                 "type": "hero",
                 "eyebrow": "Reflexe",
-                "title": "Sám, páry, čtyřky, všichni",
+                "title": "Samostatně, páry, čtyřky, všichni",
                 "body": "Čtyři vrstvy reflexe. Každá o něco širší než ta předchozí."
               },
               {
@@ -4892,7 +4892,7 @@
                 "items": [
                   {
                     "id": "reveal-alone",
-                    "title": "Sám · 3 minuty.",
+                    "title": "Samostatně · 3 minuty.",
                     "body": "Individuální psaní. Jaký signál vám pomohl pokračovat po rotaci? Co chybělo? Jakou jednu věc z dnešního dne chcete mít příště ve vlastní práci?"
                   },
                   {
@@ -4927,7 +4927,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "reveal-show-us",
@@ -5081,7 +5081,7 @@
             "title": "Co jsem dnes viděl",
             "body": "Teď moje část. Celý den jsem chodil po místnosti. Četl jsem kartu každého týmu, jak odpoledne postupovalo. Tady je to, co jsem viděl zvenčí – vzorce, překvapení a věci, které jste společně vyřešili, i když je možná nikdo necítil sám.",
             "facilitatorNotes": [
-              "Nejtěžší okamžik celého dne. Připrav se čtením karet týmů během bufferu před Závěrem, ne obecnými závěrečnými poznámkami.",
+              "Nejtěžší okamžik celého dne. Připravte se čtením karet týmů během bufferu před Závěrem, ne obecnými závěrečnými poznámkami.",
               "Používá team-trail chrome preset, takže facilitátor může ukazovat na konkrétní zápisy v kartách jako důkaz."
             ],
             "blocks": [
@@ -5107,7 +5107,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "reveal-one-thing",
