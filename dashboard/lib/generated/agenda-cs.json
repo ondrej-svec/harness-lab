@@ -979,7 +979,7 @@
           "title": "Čas běží. Jste na řadě.",
           "body": "Nejdřív tým. Pak mapa. Pak tracer. Facilitátoři chodí po místnosti – ptejte se na otázky, ne na odpovědi. Když se zaseknete, recovery pattern je na jedno kliknutí. V 11:35 se zastavíme společně.",
           "facilitatorNotes": [
-            "30vteřinový okamžik. Řekni „jedeme“ nahlas, když je tohle na plátně, a pak přepni na 4.2."
+            "30vteřinový beat. Řekněte „jedeme“ nahlas, když je tohle na plátně, a pak přepněte na 4.2."
           ],
           "sourceRefs": [
             {
@@ -1004,7 +1004,7 @@
           "intent": "build",
           "chromePreset": "participant",
           "title": "Dalších 65 minut",
-          "body": "Tady je oblouk, na který tým směřuje. Nemusíte trefit každý okamžik na přesnou minutu. Ale do oběda by repo mělo držet celý tvar práce – ne vaše rozhovory, ne vaše hlavy, repo.",
+          "body": "Tady je oblouk, na který tým směřuje. Nemusíte trefit každý milník na přesnou minutu. Ale do oběda by repo mělo držet celý tvar práce – ne vaše rozhovory, ne vaše hlavy, repo.",
           "facilitatorNotes": [
             "Výchozí ambient scéna pro Build 1 – zůstává na velkém plátně i na participant boardu, dokud facilitátor nepřepne na 4.3."
           ],
@@ -1079,7 +1079,7 @@
               "id": "build-1-holistic-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Holistické vítězí nad granulárním.",
+              "title": "Celek nad detailem.",
               "body": "S agenty musí ověření dokázat, že drží celek, ne že jedna funkce vrátila 4. Začněte tracerem – tenkou end-to-end cestou, kterou spustíte. Potom přidejte automatizaci, aby tracer běžel při každé změně. Přidejte review – automatizované nebo lidské – jen tam, kde je potřeba úsudek. Unit testy jsou v pořádku, ale nejsou pointa. Čím víc dělá agent, tím holističtější musí být vaše kontroly."
             }
           ]
@@ -1093,7 +1093,7 @@
           "title": "Zpátky k důkazu",
           "body": "Víc promptování vás neodlepí. Couvněte. Odpověď už leží v jednom ze tří míst.",
           "facilitatorNotes": [
-            "Přepni na tuhle scénu, když se tým zasekne, nebo ji promítni celé místnosti v checkpoint okamžiku.",
+            "Přepněte na tuhle scénu, když se tým zasekne. Nebo ji promítněte celé místnosti v checkpointovém momentu.",
             "Nejdřív coach, potom mentor, učitel až jako poslední možnost."
           ],
           "sourceRefs": [
@@ -1136,7 +1136,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Když vám facilitátor dá odpověď, nepomohl.",
-              "body": "Ptejte se na otázku, ne na odpověď. Pokud z konverzace odejdete se ztraceným řešením bez repo artefaktu, problém se za hodinu vrátí. Vraťte opravu do repa."
+              "body": "Ptejte se na otázku, ne na odpověď. Pokud z konverzace odejdete s řešením, které existuje jen v hlavách, bez repo artefaktu, problém se za hodinu vrátí. Vraťte opravu do repa."
             }
           ]
         }
@@ -1177,10 +1177,10 @@
         "say": [],
         "show": [],
         "do": [
-          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          "Začněte tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
         ],
         "watch": [
-          "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
+          "Když někdo začne mluvit během tiché fáze, přesměrujte. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
         ],
         "fallback": []
       },
@@ -1252,7 +1252,7 @@
                 {
                   "id": "checkin-share",
                   "title": "Sdílejte, co jste napsali (3 min).",
-                  "body": "Jdete kolem stolu. Přečtete si navzájem, co jste napsali. Bez debaty, jen posloucháte."
+                  "body": "Jděte kolem stolu. Přečtěte si navzájem, co jste napsali. Bez debaty, jen poslouchejte."
                 },
                 {
                   "id": "checkin-agree",
@@ -1326,7 +1326,7 @@
               "id": "intermezzo-1-evidence-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Princip jde z plátna, ne z pocitů.",
+              "title": "Princip jde z plátna, ne z dojmů.",
               "body": "Každý check-in je na plátně. Nit je to, co tam skutečně je – ne to, v co facilitátor doufá."
             }
           ]
@@ -1372,7 +1372,7 @@
         "say": [],
         "show": [],
         "do": [
-          "Během oběda tiše zkontroluj repo každého týmu. Když je repo opravdu nepoužitelné (vůbec žádné AGENTS.md, žádný kód, rozbitý setup), pomozte týmu napsat minimum. Rámujte to jako běžné koučování, ne jako bránu."
+          "Během oběda tiše zkontrolujte repo každého týmu. Když je repo opravdu nepoužitelné (vůbec žádné AGENTS.md, žádný kód, rozbitý setup), pomozte týmu napsat minimum. Rámujte to jako běžné koučování, ne jako bránu."
         ],
         "watch": [
           "Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasahujte jen u opravdu rozbitých repozitářů, ne u slabých."
@@ -1463,7 +1463,7 @@
           "title": "Vaše repo už není vaše",
           "body": "Po zbytek dne pracujete v repu, které postavil jiný tým ráno. Jiný tým pracuje ve vašem. Jména týmů – a kotvy, které je značí – zůstávají na svých místech. Lidé se pohybují. Všechno, co jste přes oběd nechali v repu, je všechno, co nový tým má.",
           "facilitatorNotes": [
-            "Odhalovací okamžik. Drž ho klidný a přímý."
+            "Odhalovací moment. Držte ho klidný a přímý."
           ],
           "sourceRefs": [
             {
@@ -1497,7 +1497,7 @@
           "title": "Postavte se do řady, rozpočítejte se, jděte ke kotvě",
           "body": "Vyvolám odpočítávání – stejný tvar jako ráno. Postavte se u své staré kotvy, odpočítejte se jedna až N a zapamatujte si své číslo. Když řeknu „jedeme“, všichni se stejným číslem si u odpovídající kotvy utvoří nový tým. Repo, historie i check-in už tam čekají.",
           "facilitatorNotes": [
-            "Fyzický pohyb. Pravidlo ticha vynucuj jemně, ale důsledně."
+            "Fyzický pohyb. Pravidlo ticha vynucujte jemně, ale důsledně."
           ],
           "sourceRefs": [
             {
@@ -1519,13 +1519,13 @@
               "items": [
                 {
                   "id": "move-stand",
-                  "title": "Postav se u své staré kotvy.",
+                  "title": "Postavte se u své staré kotvy.",
                   "body": "Laptop, blok, cokoli budete potřebovat – vezměte si to s sebou."
                 },
                 {
                   "id": "move-count",
                   "title": "Rozpočítejte se podél týmu.",
-                  "body": "Jedna, dva, tři, čtyři, pět. Zapamatuj si svoje číslo."
+                  "body": "Jedna, dva, tři, čtyři, pět. Zapamatujte si svoje číslo."
                 },
                 {
                   "id": "move-walk",
@@ -1873,10 +1873,10 @@
         "say": [],
         "show": [],
         "do": [
-          "Začni tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
+          "Začněte tichou retrieval scénou. 3 minuty individuální psaní, pak 2 minuty týmová diskuze, pak sdílení v místnosti."
         ],
         "watch": [
-          "Když někdo začne mluvit během tiché fáze, přesměruj. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
+          "Když někdo začne mluvit během tiché fáze, přesměrujte. Přínos retrieval cvičení vyžaduje individuální produkci před sdílením."
         ],
         "fallback": []
       },
