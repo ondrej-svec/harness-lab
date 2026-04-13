@@ -59,7 +59,7 @@ This is your **sensor** moment — the feedback loop that catches the agent afte
 1. **"Show me the diff."** Read it. If you don't want to read it, the agent isn't done — you are.
 2. **"What test covers the change?"** If none, the change isn't covered. That's not a moral judgment; it's a statement about tomorrow's bug.
 3. **"What could the next team misread about this?"** This is your handoff check. The agent's answer is where your next `AGENTS.md` update comes from.
-4. **"What is the next safe step if we continue from here?"** If the answer is "I'm not sure", you haven't left a harness; you've left debris.
+4. **"What is the next safe step if we continue from here?"** If the answer is "I'm not sure", you haven't left a harness — you've left something the next person can't safely continue from.
 5. **Write a session-state note.** What was proved, what's in progress, what's the next safe action. This is not AGENTS.md (that's the map). This is the progress log.
 
 ---

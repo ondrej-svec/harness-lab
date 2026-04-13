@@ -59,7 +59,7 @@ Tohle je váš **sensor** moment — feedback loop, který agenta chytí po tom,
 1. **„Ukažte mi diff."** Přečtěte si ho. Pokud se vám ho nechce číst, hotový není agent — hotoví jste vy.
 2. **„Jaký test tu změnu pokrývá?"** Když žádný, změna pokrytá není. Není to morální soud; je to věta o zítřejším bugu.
 3. **„Co si o tomhle další tým mohl špatně přečíst?"** Tohle je váš handoff check. Agentova odpověď je tam, odkud přijde další update do `AGENTS.md`.
-4. **„Jaký je další bezpečný krok, když odtud pokračujeme?"** Když odpověď zní „nejsem si jistý“, nenechali jste za sebou harness; nechali jste suť.
+4. **„Jaký je další bezpečný krok, když odtud pokračujeme?"** Když odpověď zní „nejsem si jistý“, za sebou nenecháváte harness — necháváte něco, na co další člověk nedokáže bezpečně navázat.
 5. **Napište session-state poznámku.** Co je dokázané, co je rozpracované, co je další bezpečný tah. Tohle není AGENTS.md (to je mapa). Tohle je pracovní log.
 
 ---
