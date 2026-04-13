@@ -5,7 +5,7 @@ import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presente
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
-import { SceneBlocks, SceneCta, buildFallbackBlocks } from "../../presenter/page";
+import { SceneBlocks, SceneCta, TeamTrailScene, buildFallbackBlocks } from "../../presenter/page";
 import { SceneMorphOverlay } from "../../_components/scene-morph-overlay";
 import { SceneRail, type SceneRailItem } from "../../_components/scene-rail";
 import { SceneSwiper } from "../../_components/scene-swiper";
@@ -33,6 +33,7 @@ export default async function InterceptedPresenterPage({
   await requireFacilitatorPageAccess(instanceId);
 
   const state = await getWorkshopState(instanceId);
+  const teams = state.teams;
   const presenterState = buildPresenterPageState({
     state,
     requestedAgendaItemId: query?.agendaItem ?? null,
@@ -68,6 +69,7 @@ export default async function InterceptedPresenterPage({
   const morphName = `scene-${activeAgendaItem.id}-${selectedScene.id}`;
 
   const blocks = selectedScene.blocks.length > 0 ? selectedScene.blocks : buildFallbackBlocks(selectedScene);
+  const isTeamTrail = selectedScene.chromePreset === "team-trail";
 
   const previousHref = previousScene ? hrefForScene(previousScene.id) : null;
   const nextHref = nextScene ? hrefForScene(nextScene.id) : null;
@@ -78,32 +80,47 @@ export default async function InterceptedPresenterPage({
         <main className="relative flex h-full min-h-screen w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
           <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-col justify-center">
             <ViewTransitionCard name={morphName}>
-              <article className="space-y-10">
-                <header>
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                    {activeAgendaItem.title} · {copy.presenterCardTitle}
-                  </p>
-                  <h1 className="mt-4 text-4xl font-medium leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-                    {selectedScene.label}
-                  </h1>
-                </header>
-                <SceneBlocks
-                  blocks={blocks}
+              {isTeamTrail ? (
+                <TeamTrailScene
                   copy={copy}
-                  activeAgendaItem={activeAgendaItem}
-                  participantCueFirst={selectedScene.chromePreset === "participant"}
+                  scene={selectedScene}
+                  teams={teams}
+                  lang={lang}
+                  instanceId={instanceId}
+                  agendaItem={activeAgendaItem}
+                  previousScene={previousScene}
+                  nextScene={nextScene}
+                  sceneIndex={selectedIndex}
+                  sceneCount={scenePack.length}
                 />
-                {selectedScene.ctaLabel ? (
-                  <SceneCta
-                    href={selectedScene.ctaHref}
-                    label={selectedScene.ctaLabel}
-                    openLabel={copy.openLinkLabel}
+              ) : (
+                <article className="space-y-10">
+                  <header>
+                    <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                      {activeAgendaItem.title} · {copy.presenterCardTitle}
+                    </p>
+                    <h1 className="mt-4 text-4xl font-medium leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+                      {selectedScene.label}
+                    </h1>
+                  </header>
+                  <SceneBlocks
+                    blocks={blocks}
+                    copy={copy}
+                    activeAgendaItem={activeAgendaItem}
+                    participantCueFirst={selectedScene.chromePreset === "participant"}
                   />
-                ) : null}
-                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                  {selectedIndex + 1} / {scenePack.length}
-                </p>
-              </article>
+                  {selectedScene.ctaLabel ? (
+                    <SceneCta
+                      href={selectedScene.ctaHref}
+                      label={selectedScene.ctaLabel}
+                      openLabel={copy.openLinkLabel}
+                    />
+                  ) : null}
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                    {selectedIndex + 1} / {scenePack.length}
+                  </p>
+                </article>
+              )}
             </ViewTransitionCard>
           </div>
         </main>

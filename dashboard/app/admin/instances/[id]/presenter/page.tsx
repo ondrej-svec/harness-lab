@@ -133,7 +133,7 @@ function RoomScene({
   );
 }
 
-function TeamTrailScene({
+export function TeamTrailScene({
   copy,
   scene,
   teams,

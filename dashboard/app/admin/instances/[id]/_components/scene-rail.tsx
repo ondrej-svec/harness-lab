@@ -36,8 +36,8 @@ export function SceneRail({
   useEffect(() => {
     coarseRef.current = isCoarsePointer();
     if (!coarseRef.current) {
-      // On pointer:fine (mouse/desktop), rail stays visible.
-      setVisible(true);
+      // On pointer:fine (mouse/desktop), rail stays visible —
+      // `useState(true)` above is already the desired value.
       return;
     }
 

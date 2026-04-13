@@ -33,7 +33,7 @@ import {
   getFacilitatorParticipantAccessState,
   issueParticipantEventAccess,
 } from "@/lib/participant-access-management";
-import { adminCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
+import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import {
