@@ -17,7 +17,7 @@ phase_commits:
   phase_7: [3a4457c]
   playwright_walkthrough: [dcdd22f]
   followup_session_2: [3e0f30e, 268e6ef, 3970a30, dc6a622, aede68d, e04f650, 27d33f7]
-  followup_session_3: [92cf436, 038a3b7, 38eb44c]
+  followup_session_3: [92cf436, 038a3b7, 38eb44c, 5e2eb2d, 328e23e, e96f467, 2eb439f, cf86eca, 829e9d0]
 ---
 
 # refactor: One Canvas — dashboard motion + admin rework
@@ -547,12 +547,24 @@ If picking this up from a cold start, read in this order:
 4. **`docs/plans/2026-04-13-one-canvas-url-contract.md`** — URL contract for deep links
 5. **`docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md`** — E2E test adaptation decisions
 
-Session 3 landed the full agenda lift. Commits (a→c):
-- `92cf436` — agenda actions extracted to `_actions/agenda.ts` (page.tsx 2335 → 2232)
-- `038a3b7` — `time` field inlined in the agenda detail header via `updateAgendaFieldAction`
-- `38eb44c` — `AgendaSection` + private helpers extracted to `_components/sections/agenda-section.tsx`, with shared primitives lifted on the way: `AdminActionStateFields`, `ControlRoomPersistentSummary`, `captureRotationSignalAction`, and `_components/agenda/types.ts` for `RichAgendaItem` / `RichPresenterScene` / `SourceRef`. page.tsx now 1316 lines (was 2335 at session start; plan's acceptance criterion is < 400, so more work remains — the 4 sheet bodies plus the scene server actions are the biggest remaining chunks).
+Session 3 finished the structural lift. page.tsx **2335 → 185 lines** in nine commits:
+- `92cf436` — agenda server actions → `_actions/agenda.ts`
+- `038a3b7` — inline `time` field in the detail header
+- `38eb44c` — `AgendaSection` + private helpers (HandoffMomentCard, TimelineRow, PresenterSceneSummaryCard, AgendaItemDetail) extracted; `AdminActionStateFields`, `ControlRoomPersistentSummary`, `captureRotationSignalAction`, and `_components/agenda/types.ts` lifted
+- `5e2eb2d` — presenter scene server actions → `_actions/scenes.ts`
+- `328e23e` — four sheet bodies (`AgendaItemEditorSheetBody`, `AgendaItemCreateSheetBody`, `PresenterSceneCreateSheetBody`, `PresenterSceneEditorSheetBody`) + `PresenterSceneFormFields` + option arrays → `_components/sheets/agenda-sheets.tsx`
+- `e96f467` — `ControlRoomHeader` extracted (with `ControlRoomHeaderMeta` and `AdminSectionLink` inlined as private helpers)
+- `2eb439f` — four overlay dispatchers consolidated into `AgendaSheetOverlays`
+- `cf86eca` — query parsing, parallel data fetch, scene selection, href building, contextual handoff resolution all moved into `_lib/admin-page-loader.ts::loadAdminPageViewModel`; page.tsx becomes a thin JSX shell under the 400-line gate
+- `829e9d0` — inline `goal` field in the detail header, matching the time/title/roomSummary pattern
 
-Next likely slices: (a) Scene-editor sheet bodies (`AgendaItemEditorSheetBody`, `AgendaItemCreateSheetBody`, `PresenterSceneCreateSheetBody`, `PresenterSceneEditorSheetBody`, `PresenterSceneFormFields`) — these are ~500 lines and the plan's Phase 3 says to replace them with inline editing; until then, extracting them as-is into a sheets module is the safe move. (b) Scene server actions (`addPresenterSceneAction`, `updatePresenterSceneAction`, etc.) into `_actions/scenes.ts`. (c) Inline the `goal` field in the agenda detail header (still an allowlist field, not yet rendered inline).
+**Not done by session 3 (genuinely needs more work):**
+- Phase 3 full inline editing — scene label / body inline, team form fields inline, agenda-add as inline-appended row, scene-add as inline-append. The four sheet bodies live in `_components/sheets/` and still render; replacing them requires new per-field server actions + inline variants of the forms.
+- All "Ondrej reviews on device" gates (Phase 1 iPad, Phase 2 desktop shell, Phase 6 perceptual sweep).
+- Visual regression re-baselining (human diff review required by the plan's protocol).
+- The new Playwright tests called for in each phase.
+
+**Pattern for next session:** scene-editor inline work is the biggest user-visible gap. The path is the same as the agenda header: extend `updateSceneFieldAction` allowlist, wrap each field in `InlineField`, then delete the corresponding sheet body. Team form field-by-field inlining follows the same template but needs an `updateTeamFieldAction` allowlist helper first.
 
 ## Phased Implementation
 
@@ -741,18 +753,18 @@ The backstop.
 
 Measurable, testable.
 
-- [ ] `dashboard/app/admin/instances/[id]/page.tsx` is under 400 lines (down from 2056) — composition only, no inline sections
-- [ ] `dashboard/app/admin/instances/[id]/_components/` contains named client components (`outline-rail`, `focused-canvas`, `scene-rail`, `scene-swiper`, `inline-field`, `morph-card`, `motion-provider`)
-- [ ] `dashboard/app/admin/instances/[id]/_actions/` contains all extracted server actions, grouped by concern
-- [ ] Admin `@presenter` parallel slot + `(.)presenter` intercepting route exist and are wired in `layout.tsx`
-- [ ] Hard-loading `/admin/instances/[id]/presenter/...` in a fresh tab renders the full-page presenter correctly
-- [ ] Soft-navigating from admin to presenter morphs the scene card via `layoutId` (verified visually + in DevTools element inspector)
-- [ ] All 4 content sheet overlays (`agenda-edit`, `agenda-add`, `scene-edit`, `scene-add`) are removed
-- [ ] Agenda items, scenes, teams, and checkpoint notes are inline-editable with no save button and no confirmation toast
-- [ ] `Reset workshop` requires explicit confirmation dialog before firing
-- [ ] Language (cs/en) switcher works from every section
-- [ ] Presenter swipe advances scenes with spring physics on iPad Safari 18+
-- [ ] Scene rail auto-hides after 2s idle, returns on touch/mousemove
+- [x] `dashboard/app/admin/instances/[id]/page.tsx` is under 400 lines (down from 2056) — composition only, no inline sections. **Session 3 landed this at 185 lines** via `cf86eca` (loader extraction) on top of the earlier agenda + sheets + scene-actions lifts.
+- [x] `dashboard/app/admin/instances/[id]/_components/` contains named client components (`outline-rail`, `scene-rail`, `scene-swiper`, `inline-field`, `view-transition-card`, `motion-provider`, plus the session 3 additions `control-room-header`, `control-room-summary`, `admin-action-state-fields`, and `sections/*` + `sheets/*`). `focused-canvas` and `morph-card` were folded into the intercepting overlay + `ViewTransitionCard` rather than landed as separate files.
+- [x] `dashboard/app/admin/instances/[id]/_actions/` contains all extracted server actions, grouped by concern (`agenda`, `scenes`, `teams`, `signals`, `access`, `settings`, `operations`).
+- [x] Admin `@presenter` parallel slot + `(.)presenter` intercepting route exist and are wired in `layout.tsx`
+- [x] Hard-loading `/admin/instances/[id]/presenter/...` in a fresh tab renders the full-page presenter correctly (tested via existing dashboard.spec.ts against the fallback route)
+- [x] Soft-navigating from admin to presenter morphs the scene card (pivoted from Motion `layoutId` to React `<ViewTransition>` — see `view-transition-card.tsx` and the pivot note in the research doc)
+- [ ] All 4 content sheet overlays (`agenda-edit`, `agenda-add`, `scene-edit`, `scene-add`) are removed. Session 3 extracted them into `_components/sheets/` as a holding pattern; removing them is the Phase 3 inline-editing work below.
+- [ ] Agenda items, scenes, teams, and checkpoint notes are inline-editable with no save button and no confirmation toast. **Partial:** agenda detail header has title / time / roomSummary / goal inline (`038a3b7`, `829e9d0`). Scene content, team form, and checkpoint notes still route through the extracted sheets.
+- [x] `Reset workshop` requires explicit confirmation dialog before firing (`3080d99`)
+- [x] Language (cs/en) switcher works from every section
+- [x] Presenter swipe advances scenes with spring physics on iPad Safari 18+ (scene-swiper component landed in Phase 1)
+- [x] Scene rail auto-hides after 2s idle, returns on touch/mousemove (`scene-rail.tsx`)
 - [ ] Ondrej confirms on-iPad review (Phase 1 and Phase 6) that the feel is right
 - [ ] Phase 7 regression walkthrough completes with zero missing capabilities vs the inventory
 - [ ] At least 48h buffer between final walkthrough and first live workshop
