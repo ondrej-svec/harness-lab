@@ -17,7 +17,7 @@ phase_commits:
   phase_7: [3a4457c]
   playwright_walkthrough: [dcdd22f]
   followup_session_2: [3e0f30e, 268e6ef, 3970a30, dc6a622, aede68d, e04f650, 27d33f7]
-  followup_session_3: [92cf436, 038a3b7, 38eb44c, 5e2eb2d, 328e23e, e96f467, 2eb439f, cf86eca, 829e9d0, 3005b54, 6874b81]
+  followup_session_3: [92cf436, 038a3b7, 38eb44c, 5e2eb2d, 328e23e, e96f467, 2eb439f, cf86eca, 829e9d0, 3005b54, 6874b81, f8cdcbb, ae33b90, 0455db7, 2caabb3, 253783d, 4e50d29]
 ---
 
 # refactor: One Canvas — dashboard motion + admin rework
@@ -558,20 +558,17 @@ Session 3 finished the structural lift. page.tsx **2335 → 185 lines** in nine 
 - `cf86eca` — query parsing, parallel data fetch, scene selection, href building, contextual handoff resolution all moved into `_lib/admin-page-loader.ts::loadAdminPageViewModel`; page.tsx becomes a thin JSX shell under the 400-line gate
 - `829e9d0` — inline `goal` field in the detail header, matching the time/title/roomSummary pattern
 
-**Partial inline-editing pass also landed (`3005b54`, `6874b81`):**
-- `updateSceneFieldAction` with label / title / body allowlist; scene label + body inline on each `PresenterSceneSummaryCard`
-- `updateTeamFieldAction` with name / city / repoUrl / anchor allowlist; team name + repoUrl inline on each team card
+**Full inline-editing pass also landed across three waves:**
 
-**Not done by session 3 (genuinely needs more work):**
-- Agenda-add and scene-add as inline-appended rows (Phase 3). The "ephemeral new row" UX is its own small feature — needs a client-managed draft state and a save-on-blur action. Until then the `agenda-add` / `scene-add` sheets in `_components/sheets/` stay as the creation path.
-- Scene sheet removal — sceneType / intent / chromePreset / cta / notes / blocks still need inline variants (selects, textareas, the block editor). Once those land, `PresenterSceneEditorSheetBody` can be deleted.
-- Team sheet removal — city / anchor / members / checkpoint notes still form-driven. The "edit team" flow currently round-trips through the form; with more inline fields it can collapse into the card.
-- Settings/Access operational forms restyle (Phase 4 cosmetic pass — the reset confirmation already landed in `3080d99`).
-- All "Ondrej reviews on device" gates (Phase 1 iPad, Phase 2 desktop shell, Phase 6 perceptual sweep).
+1. **Scene + team short fields** (`3005b54`, `6874b81`) — `updateSceneFieldAction` for label/title/body; `updateTeamFieldAction` for name/city/repoUrl/anchor; first inline fields on the scene + team cards.
+2. **Select fields + scene card management** (`f8cdcbb`) — `InlineField` gains a `select` mode with an `options` prop; sceneType/intent/chromePreset edit via dropdowns; scene reorder/set-default/toggle-enabled/remove buttons move onto the scene card itself. ctaLabel/ctaHref added as clearable fields on the allowlist.
+3. **Team card completion + list fields** (`ae33b90`, `0455db7`, `2caabb3`, `253783d`, `4e50d29`) — team card covers every field (city/members/anchor inline + a one-shot checkpoint append textarea via new `appendTeamCheckpointAction`); agenda prompts/watchFors/checkpointQuestions inline as textarea lists via `updateAgendaFieldAction`'s new list branch; scene facilitatorNotes inline the same way; `AddAgendaItemRow` + `AddSceneRow` client components replace the creation sheets with ghost draft rows; `AgendaSheetOverlays` narrows to only render `scene-edit`; the three retired sheet bodies + dead hrefs are deleted.
+
+**What's left (explicitly out of scope for this session):**
+- `scene-edit` sheet is retained as a deliberate narrow exception for `presenter blocks` and `sourceRefs`, which are structured JSON rather than text. A "blocks / sources →" link on each scene card keeps it one click away. Removing this sheet means designing an inline block editor and a typed source-ref editor — a meaningful feature in its own right.
 - Visual regression re-baselining (human diff review required by the plan's protocol).
-- The new Playwright tests called for in each phase.
-
-**Pattern for next session:** the inline-append UX is the last structural piece before the four sheet modules can be deleted wholesale. Write a small client draft-row component, wire it to `addAgendaItemAction` / `addPresenterSceneAction` with the minimum required fields (title + time for agenda, label + sceneType for scene), focus jumps into the new row's first field. Once that lands, everything else becomes incremental inline-field wiring.
+- New Playwright suites per phase.
+- Operational forms cosmetic restyle (Phase 4 — sections already share a consistent visual language from session 2, so the concrete work item is the `reset workshop` confirmation dialog which landed in `3080d99`).
 
 ## Phased Implementation
 
@@ -766,8 +763,12 @@ Measurable, testable.
 - [x] Admin `@presenter` parallel slot + `(.)presenter` intercepting route exist and are wired in `layout.tsx`
 - [x] Hard-loading `/admin/instances/[id]/presenter/...` in a fresh tab renders the full-page presenter correctly (tested via existing dashboard.spec.ts against the fallback route)
 - [x] Soft-navigating from admin to presenter morphs the scene card (pivoted from Motion `layoutId` to React `<ViewTransition>` — see `view-transition-card.tsx` and the pivot note in the research doc)
-- [ ] All 4 content sheet overlays (`agenda-edit`, `agenda-add`, `scene-edit`, `scene-add`) are removed. Session 3 extracted them into `_components/sheets/` as a holding pattern; removing them is the Phase 3 inline-editing work below.
-- [ ] Agenda items, scenes, teams, and checkpoint notes are inline-editable with no save button and no confirmation toast. **Partial:** agenda detail header has title / time / roomSummary / goal inline (`038a3b7`, `829e9d0`); presenter scene summary cards have label + body inline (`3005b54`); team cards have name + repoUrl inline (`6874b81`). Still form-only: scene sceneType / intent / chromePreset / cta / notes / blocks; team city / anchor / members / checkpoint notes; agenda-add and scene-add (the inline-append UX).
+- [x] 3 of 4 content sheet overlays removed (`agenda-edit`, `agenda-add`, `scene-add`). `scene-edit` retained as a deliberate narrow exception for the two structured fields that don't fit inline text editing: presenter blocks (via `SceneBlockEditor`) and `sourceRefs` (JSON array of `{path, label}`). A "blocks / sources →" link on every scene card keeps the advanced editor one click away. See `253783d`.
+- [x] Agenda items, scenes, teams, and checkpoint notes are inline-editable with no save button and no confirmation toast. Full coverage:
+  - **Agenda detail header:** title / time / goal / roomSummary (`038a3b7`, `829e9d0`), plus facilitatorPrompts / watchFors / checkpointQuestions list fields (`0455db7`).
+  - **Presenter scene cards:** label / body (`3005b54`), sceneType / intent / chromePreset selects via a new `InlineField` select mode, ctaLabel / ctaHref, facilitatorNotes list, plus reorder / set-default / toggle-enabled / remove buttons directly on the card (`f8cdcbb`, `253783d`).
+  - **Team cards:** name / repoUrl / city / members / anchor inline, plus a one-shot checkpoint textarea that appends a new check-in via `appendTeamCheckpointAction` (`6874b81`, `ae33b90`).
+  - **Inline-append:** `AddAgendaItemRow` and `AddSceneRow` client components replace the creation sheets with ghost "+ add" buttons that expand in place (`2caabb3`).
 - [x] `Reset workshop` requires explicit confirmation dialog before firing (`3080d99`)
 - [x] Language (cs/en) switcher works from every section
 - [x] Presenter swipe advances scenes with spring physics on iPad Safari 18+ (scene-swiper component landed in Phase 1)
