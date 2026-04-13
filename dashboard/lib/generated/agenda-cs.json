@@ -519,7 +519,7 @@
             {
               "id": "talk-engine-chassis",
               "type": "rich-text",
-              "content": "Představte si syrový motor. Silný – čtyři stovky koní, víc, než většina řidičů zvládne. Přišroubujte ho k nákupnímu vozíku a máte velmi drahý způsob, jak rozbít parkoviště. Přišroubujte ho k dobře navrženému podvozku – rám, odpružení, brzdy, převodovka, pořádné pneumatiky – a najednou to auto může řídit někdo, kdo není profík. Podvozek neudělal motor slabším. Udělal tu sílu dostupnou, předvídatelnou a přežitelnou. To je model. To je harness."
+              "content": "Představte si holý motor. Silný – čtyři stovky koní, víc, než zvládne většina řidičů. Přišroubujte ho k nákupnímu vozíku a máte velmi drahý způsob, jak rozbít parkoviště. Přišroubujte ho k dobře navrženému podvozku – rám, odpružení, brzdy, převodovka, pořádné pneumatiky – a auto najednou zvládne i někdo, kdo není profík. Podvozek motor neoslabil. Udělal tu sílu dostupnou, předvídatelnou, zvládnutelnou. To je model. To je harness."
             },
             {
               "id": "talk-reframe-callout",
@@ -592,10 +592,10 @@
               "id": "talk-adopt",
               "type": "checklist",
               "items": [
-                "Kontext jako infrastruktura – ne dokumentace.",
-                "Guides, které směrují dřív, než agent jedná.",
-                "Sensors, které zachytí potom, co agent jedná.",
-                "Managing místo chatování."
+                "Kontext jako infrastruktura – ne dokumentace.",
+                "Vodítka, která nastaví směr dřív, než agent vyrazí.",
+                "Senzory, které chytí chybu hned, jak ji agent udělá.",
+                "Agent je kolega, ne chatbot."
               ]
             }
           ]
