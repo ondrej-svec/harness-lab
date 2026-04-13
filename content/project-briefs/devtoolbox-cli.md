@@ -4,7 +4,7 @@
 
 Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.
 
-Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil handoff na jiný tým a nerozsypal se po přidání dalšího commandu.
+Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil předání na jiný tým a nerozsypal se po přidání dalšího commandu.
 
 ## User stories
 
@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 
 ## První krok pro agenta
 
-Nejdřív navrhni minimální architekturu, která přežije handoff. Začni `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementuj první command.
+Nejdřív navrhni minimální architekturu, která přežije předání. Začni `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementuj první command.

@@ -2,7 +2,7 @@
 
 ## Problém
 
-Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po handoffu pak nový tým neví, čemu má věřit a co je jen odhad.
+Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po předání pak nový tým neví, čemu má věřit a co je jen odhad.
 
 Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.
 
@@ -18,7 +18,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 - Výstup může být Markdown, HTML nebo jednoduchý textový report.
 - Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.
 - Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.
-- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po handoffu.
+- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po předání.
 
 ## Hotovo když
 

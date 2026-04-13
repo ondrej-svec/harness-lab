@@ -73,7 +73,7 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Today you learn to shape the work so anyone — or any agent — can carry it",
-          "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently.",
+          "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. The next day you open a coding agent, you'll know what to do differently.",
           "facilitatorNotes": [
             "Open with ambition and the participant destination, not logistics.",
             "The hero title is the day's spine — read it out loud, then pause.",
@@ -91,21 +91,21 @@
               "type": "hero",
               "eyebrow": "Harness Lab",
               "title": "Today you learn to shape the work so anyone — or any agent — can carry it",
-              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. Monday morning, you'll open your editor and know what to build differently."
+              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, handed it to another team, and seen what survives. The next day you open a coding agent, you'll know what to do differently."
             },
             {
               "id": "opening-main-line",
               "type": "callout",
               "tone": "info",
               "title": "The main line for today",
-              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is a teammate who joined today or a fresh agent you open on Monday."
+              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is a teammate who joined today or a fresh agent you open the next day."
             },
             {
               "id": "opening-what-should-change",
               "type": "callout",
               "tone": "info",
               "title": "What should change today",
-              "body": "Monday morning you open a fresh agent in your own repo. That agent arrives without your memory. What you practice today is how you treat every session — not once, for every session."
+              "body": "The next morning you open a fresh agent in your own repo. That agent arrives without your memory. What you practice today is how you treat every session — not once, for every session."
             }
           ]
         },
@@ -131,7 +131,7 @@
             {
               "id": "opening-day-arc-hero",
               "type": "hero",
-              "eyebrow": "The day has one arc",
+              "eyebrow": "Den má jeden oblouk",
               "title": "Learn. Build. Hand off. Continue.",
               "body": "This is not a prompting contest. It is a day where you will learn the craft, build something real, hand it to another team, and watch what continues without you."
             },
@@ -185,7 +185,7 @@
             {
               "id": "opening-schedule-hero",
               "type": "hero",
-              "eyebrow": "Today's schedule",
+              "eyebrow": "Dnešní rozvrh",
               "title": "The shape of the day",
               "body": "Guides, not deadlines. Lunch timing is negotiated on the day based on room energy."
             },
@@ -239,7 +239,7 @@
             {
               "id": "opening-team-hero",
               "type": "hero",
-              "eyebrow": "Your team",
+              "eyebrow": "Váš tým",
               "title": "Form the line. Count off. Claim your anchor.",
               "body": "Nine minutes. This is how we form teams for the day — by experience line and count-off, the same mechanic we'll use again at rotation after lunch."
             },
@@ -305,7 +305,7 @@
             {
               "id": "opening-handoff-hero",
               "type": "hero",
-              "eyebrow": "Next",
+              "eyebrow": "A teď",
               "title": "Your team is on the board. Look up.",
               "body": "Next: the talk. We start by naming the craft underneath all the agent hype."
             }
@@ -572,7 +572,7 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Humans steer. Agents execute.",
-          "body": "Four words from Ryan Lopopolo, the OpenAI engineer who led the team that shipped a million lines of production code in five months with zero lines written by hand. This is his foundational principle — the one he says everything else rests on. I want you to carry these four words back to Monday. Everything else you learn today is a way of making them real.",
+          "body": "Four words from Ryan Lopopolo, the OpenAI engineer who led the team that shipped a million lines of production code in five months with zero lines written by hand. This is his foundational principle — the one he says everything else rests on. I want you to carry these four words into next week. Everything else you learn today is a way of making them real.",
           "facilitatorNotes": [
             "This is the most memorable line in the whole workshop. Protect it."
           ],
@@ -606,7 +606,7 @@
               "id": "talk-monday-promise",
               "type": "callout",
               "tone": "info",
-              "title": "Monday morning, you'll open your editor and work differently.",
+              "title": "The next day you open a coding agent, you'll work differently.",
               "body": "Not with a new tool. With a different role. You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into."
             }
           ]
@@ -930,7 +930,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Your ambition is welcome — once the harness holds.",
-              "body": "These briefs describe a shape. How far you take it is up to your team. If you want to plug your standup bot into your actual Slack, do it. If you want your metrics dashboard on your real data, do it. The harness comes first — but once the harness holds, go as far as your team can reach. Monday is the point."
+              "body": "These briefs describe a shape. How far you take it is up to your team. If you want to plug your standup bot into your actual Slack, do it. If you want your metrics dashboard on your real data, do it. The harness comes first — but once the harness holds, go as far as your team can reach. The day after is the point."
             }
           ]
         }
@@ -1591,7 +1591,7 @@
           "intent": "framing",
           "chromePreset": "participant",
           "title": "Every fresh agent session is a rotation",
-          "body": "A new agent has no memory of the previous session. A new teammate next month opens your repo the same way. The exercise you're about to do — reading a stranger's repo cold — is what every fresh agent session looks like. Monday morning, every morning, it's the same move. We're just practicing it out loud, with humans, at scale.",
+          "body": "A new agent has no memory of the previous session. A new teammate next month opens your repo the same way. The exercise you're about to do — reading a stranger's repo cold — is what every fresh agent session looks like. Tomorrow morning, every morning, it's the same move. We're just practicing it out loud, with humans, at scale.",
           "facilitatorNotes": [
             "This is where rotation stops being a gimmick and becomes daily practice."
           ],
@@ -1607,7 +1607,7 @@
               "type": "hero",
               "eyebrow": "Now you sit in the other team's work",
               "title": "Every fresh agent session is a rotation",
-              "body": "Reading a stranger's repo cold is what every fresh agent session looks like. Monday morning, every morning, it's the same move."
+              "body": "Reading a stranger's repo cold is what every fresh agent session looks like. Tomorrow morning, every morning, it's the same move."
             },
             {
               "id": "rotation-quiet-start-steps",

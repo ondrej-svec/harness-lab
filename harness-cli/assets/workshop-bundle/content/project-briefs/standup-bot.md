@@ -10,7 +10,7 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 
 - Jako team lead chci sesbírat standup odpovědi do jednoho přehledného souhrnu.
 - Jako vývojář chci rychle vidět blokery, dependency a témata, která potřebují domluvu.
-- Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního handoffu.
+- Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního předání.
 
 ## Architektonické poznámky
 
@@ -22,10 +22,10 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 
 ## Hotovo když
 
-- Nástroj umí ingestovat seed data a vytvořit čitelný souhrn.
+- Nástroj umí ingestovat vzorová data a vytvořit čitelný souhrn.
 - Výstup zvýrazní blokery nebo položky, které potřebují pozornost.
 - Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.
-- Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního handoffu.
+- Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního předání.
 - Je jasné, co je jisté shrnutí a co je jen heuristika nebo návrh.
 
 ## První krok pro agenta
