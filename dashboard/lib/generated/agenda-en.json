@@ -513,13 +513,13 @@
             {
               "id": "talk-bockeler-quote",
               "type": "quote",
-              "body": "A good harness doesn't aim to eliminate human input. It directs human input to where it matters most.",
-              "attribution": "Birgitta Böckeler, Thoughtworks"
+              "attribution": "Birgitta Böckeler, Thoughtworks",
+              "quote": "A good harness doesn't aim to eliminate human input. It directs human input to where it matters most."
             },
             {
               "id": "talk-engine-chassis",
               "type": "rich-text",
-              "body": "Think of a raw engine. A powerful one — four hundred horsepower, capable of more than most drivers can handle. Bolt it to a shopping cart and you have a very expensive way to destroy a parking lot. Bolt it to a well-designed chassis — frame, suspension, brakes, transmission, proper tires — and suddenly the car becomes drivable by someone who isn't a professional. The chassis didn't make the engine less powerful. It made the power accessible, predictable, survivable. That's the model. That's the harness."
+              "content": "Think of a raw engine. A powerful one — four hundred horsepower, capable of more than most drivers can handle. Bolt it to a shopping cart and you have a very expensive way to destroy a parking lot. Bolt it to a well-designed chassis — frame, suspension, brakes, transmission, proper tires — and suddenly the car becomes drivable by someone who isn't a professional. The chassis didn't make the engine less powerful. It made the power accessible, predictable, survivable. That's the model. That's the harness."
             },
             {
               "id": "talk-reframe-callout",
@@ -592,22 +592,10 @@
               "id": "talk-adopt",
               "type": "checklist",
               "items": [
-                {
-                  "id": "adopt-context",
-                  "text": "Context as infrastructure — not documentation."
-                },
-                {
-                  "id": "adopt-guides",
-                  "text": "Guides that steer before the agent acts."
-                },
-                {
-                  "id": "adopt-sensors",
-                  "text": "Sensors that catch after the agent acts."
-                },
-                {
-                  "id": "adopt-managing",
-                  "text": "Managing instead of chatting."
-                }
+                "Context as infrastructure — not documentation.",
+                "Guides that steer before the agent acts.",
+                "Sensors that catch after the agent acts.",
+                "Managing instead of chatting."
               ]
             }
           ]
@@ -640,14 +628,14 @@
             {
               "id": "talk-lopopolo-quote",
               "type": "quote",
-              "body": "Give Codex a map, not a 1,000-page instruction manual.",
-              "attribution": "Ryan Lopopolo, OpenAI"
+              "attribution": "Ryan Lopopolo, OpenAI",
+              "quote": "Give Codex a map, not a 1,000-page instruction manual."
             },
             {
               "id": "talk-hashimoto-quote",
               "type": "quote",
-              "body": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again.",
-              "attribution": "Mitchell Hashimoto, HashiCorp"
+              "attribution": "Mitchell Hashimoto, HashiCorp",
+              "quote": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again."
             },
             {
               "id": "talk-monday-promise",
@@ -1119,22 +1107,10 @@
               "id": "build-1-baseline",
               "type": "checklist",
               "items": [
-                {
-                  "id": "base-map",
-                  "text": "AGENTS.md — a map. Goal, context, done-when, pointers. Not a warehouse."
-                },
-                {
-                  "id": "base-plan",
-                  "text": "A plan. Short, followable. Wherever it makes sense."
-                },
-                {
-                  "id": "base-slice",
-                  "text": "A working slice with its tracer. One bounded piece of code plus the end-to-end path that proves it runs."
-                },
-                {
-                  "id": "base-next",
-                  "text": "A next-move note. What to do next, in the repo, not in your heads."
-                }
+                "AGENTS.md — a map. Goal, context, done-when, pointers. Not a warehouse.",
+                "A plan. Short, followable. Wherever it makes sense.",
+                "A working slice with its tracer. One bounded piece of code plus the end-to-end path that proves it runs.",
+                "A next-move note. What to do next, in the repo, not in your heads."
               ]
             },
             {
@@ -1840,22 +1816,10 @@
               "id": "build-2a-baseline",
               "type": "checklist",
               "items": [
-                {
-                  "id": "b2a-base-map",
-                  "text": "AGENTS.md as a map. Goal, context, done-when, pointers. Not a warehouse."
-                },
-                {
-                  "id": "b2a-base-plan",
-                  "text": "A plan. Short, followable."
-                },
-                {
-                  "id": "b2a-base-slice",
-                  "text": "A working slice with its tracer. One bounded piece of code, plus the end-to-end path that proves it runs."
-                },
-                {
-                  "id": "b2a-base-next",
-                  "text": "A next-move note. What to do next, in the repo, not in your heads."
-                }
+                "AGENTS.md as a map. Goal, context, done-when, pointers. Not a warehouse.",
+                "A plan. Short, followable.",
+                "A working slice with its tracer. One bounded piece of code, plus the end-to-end path that proves it runs.",
+                "A next-move note. What to do next, in the repo, not in your heads."
               ]
             },
             {

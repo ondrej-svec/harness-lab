@@ -513,13 +513,13 @@
             {
               "id": "talk-bockeler-quote",
               "type": "quote",
-              "body": "Dobrý harness neusiluje o to, aby odstranil lidský vstup. Směruje lidský vstup tam, kde nejvíc záleží.",
-              "attribution": "Birgitta Böckeler, Thoughtworks"
+              "attribution": "Birgitta Böckeler, Thoughtworks",
+              "quote": "A good harness doesn’t aim to eliminate human input. It directs human input to where it matters most."
             },
             {
               "id": "talk-engine-chassis",
               "type": "rich-text",
-              "body": "Představte si syrový motor. Silný – čtyři stovky koní, víc, než většina řidičů zvládne. Přišroubujte ho k nákupnímu vozíku a máte velmi drahý způsob, jak rozbít parkoviště. Přišroubujte ho k dobře navrženému podvozku – rám, odpružení, brzdy, převodovka, pořádné pneumatiky – a najednou to auto může řídit někdo, kdo není profík. Podvozek neudělal motor slabším. Udělal tu sílu dostupnou, předvídatelnou a přežitelnou. To je model. To je harness."
+              "content": "Představte si syrový motor. Silný – čtyři stovky koní, víc, než většina řidičů zvládne. Přišroubujte ho k nákupnímu vozíku a máte velmi drahý způsob, jak rozbít parkoviště. Přišroubujte ho k dobře navrženému podvozku – rám, odpružení, brzdy, převodovka, pořádné pneumatiky – a najednou to auto může řídit někdo, kdo není profík. Podvozek neudělal motor slabším. Udělal tu sílu dostupnou, předvídatelnou a přežitelnou. To je model. To je harness."
             },
             {
               "id": "talk-reframe-callout",
@@ -592,22 +592,10 @@
               "id": "talk-adopt",
               "type": "checklist",
               "items": [
-                {
-                  "id": "adopt-context",
-                  "text": "Kontext jako infrastruktura – ne dokumentace."
-                },
-                {
-                  "id": "adopt-guides",
-                  "text": "Guides, které směrují dřív, než agent jedná."
-                },
-                {
-                  "id": "adopt-sensors",
-                  "text": "Sensors, které zachytí potom, co agent jedná."
-                },
-                {
-                  "id": "adopt-managing",
-                  "text": "Managing místo chatování."
-                }
+                "Kontext jako infrastruktura – ne dokumentace.",
+                "Guides, které směrují dřív, než agent jedná.",
+                "Sensors, které zachytí potom, co agent jedná.",
+                "Managing místo chatování."
               ]
             }
           ]
@@ -640,14 +628,14 @@
             {
               "id": "talk-lopopolo-quote",
               "type": "quote",
-              "body": "Dejte Codexu mapu, ne tisícistránkový návod.",
-              "attribution": "Ryan Lopopolo, OpenAI"
+              "attribution": "Ryan Lopopolo, OpenAI",
+              "quote": "Give Codex a map, not a 1,000-page instruction manual."
             },
             {
               "id": "talk-hashimoto-quote",
               "type": "quote",
-              "body": "Pokaždé, když zjistíte, že agent udělá chybu, vezměte si čas a postavte takové řešení, aby tu chybu už nikdy neudělal.",
-              "attribution": "Mitchell Hashimoto, HashiCorp"
+              "attribution": "Mitchell Hashimoto, HashiCorp",
+              "quote": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again."
             },
             {
               "id": "talk-monday-promise",
@@ -1104,22 +1092,10 @@
               "id": "build-1-baseline",
               "type": "checklist",
               "items": [
-                {
-                  "id": "base-map",
-                  "text": "AGENTS.md – mapa. Goal, context, done-when, ukazatele. Ne skladiště."
-                },
-                {
-                  "id": "base-plan",
-                  "text": "Plán. Krátký, sledovatelný. Kamkoli, kde dává smysl."
-                },
-                {
-                  "id": "base-slice",
-                  "text": "Funkční slice a jeho tracer. Jeden ohraničený kus kódu a end-to-end cesta, která dokazuje, že běží."
-                },
-                {
-                  "id": "base-next",
-                  "text": "Poznámka o dalším kroku. Co dál – v repu, ne v hlavách."
-                }
+                "AGENTS.md – mapa. Goal, context, done-when, ukazatele. Ne skladiště.",
+                "Plán. Krátký, sledovatelný. Kamkoli, kde dává smysl.",
+                "Funkční slice a jeho tracer. Jeden ohraničený kus kódu a end-to-end cesta, která dokazuje, že běží.",
+                "Poznámka o dalším kroku. Co dál – v repu, ne v hlavách."
               ]
             },
             {
@@ -1797,22 +1773,10 @@
               "id": "build-2a-baseline",
               "type": "checklist",
               "items": [
-                {
-                  "id": "b2a-base-map",
-                  "text": "AGENTS.md jako mapa. Goal, context, done-when, ukazatele. Ne skladiště."
-                },
-                {
-                  "id": "b2a-base-plan",
-                  "text": "Plán. Krátký, sledovatelný."
-                },
-                {
-                  "id": "b2a-base-slice",
-                  "text": "Funkční slice a jeho tracer. Jeden ohraničený kus kódu a end-to-end cesta, která dokazuje, že běží."
-                },
-                {
-                  "id": "b2a-base-next",
-                  "text": "Poznámka o dalším kroku. Co dál – v repu, ne v hlavách."
-                }
+                "AGENTS.md jako mapa. Goal, context, done-when, ukazatele. Ne skladiště.",
+                "Plán. Krátký, sledovatelný.",
+                "Funkční slice a jeho tracer. Jeden ohraničený kus kódu a end-to-end cesta, která dokazuje, že běží.",
+                "Poznámka o dalším kroku. Co dál – v repu, ne v hlavách."
               ]
             },
             {
