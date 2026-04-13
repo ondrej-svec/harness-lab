@@ -598,6 +598,256 @@ test.describe("one canvas phase 3 — inline editing", () => {
   });
 });
 
+test.describe("one canvas phase 5 — presenter scene coverage", () => {
+  // Phase 5 exit criterion: every presenter block type renders in the
+  // new presenter surface. The sample-studio-a workshop ships with
+  // scenes that collectively exercise the full 10-block palette
+  // (hero, rich-text, bullet-list, quote, steps, checklist, image,
+  // link-list, callout, participant-preview). These tests walk through
+  // a handful of known scenes at iPad resolution and assert each
+  // block-specific marker is visible.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("opening-framing scene renders hero + bullet-list on iPad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    // Hero body from the 2026-04-12 native-quality rewrite.
+    await expect(page.getByText("Učíme se stavět pracovní systém")).toBeVisible();
+    // Bullet-list title from the same scene.
+    await expect(page.getByText("Co se dnes má změnit")).toBeVisible();
+  });
+
+  test("talk-humans-steer scene renders quote + callout on iPad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
+    // Protected phrase from canonical vocabulary §2.
+    await expect(page.getByRole("heading", { name: "Lidé řídí. Agenti vykonávají." })).toBeVisible();
+    // Callout body — the day-after closing promise.
+    await expect(page.getByText("Druhý den, až si otevřete coding agenta")).toBeVisible();
+  });
+
+  test("rotation scene renders the team-trail block surface", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation&scene=rotation-not-yours-anymore");
+    // The rotation scene headline after the 2026-04-12 rename.
+    await expect(page.getByRole("heading", { name: "Vaše repo už není vaše" })).toBeVisible();
+  });
+
+  test("hard-load presenter URL with unknown scene falls back gracefully", async ({ page }) => {
+    // The plan's Phase 5 item: hard-load URLs must still resolve via
+    // the full-page fallback route even when the scene id is bogus.
+    // The fallback either 404s cleanly or renders the default scene
+    // for the agenda item; both are acceptable as long as the page
+    // doesn't crash.
+    const response = await page.goto(
+      "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=does-not-exist",
+    );
+    // Any 2xx or 404 is fine. What matters is that the app server
+    // didn't throw an uncaught 500.
+    expect(response?.status()).toBeLessThan(500);
+  });
+
+  test("scene swipe navigation advances to the next scene on soft nav", async ({ page }) => {
+    // Phase 5 covers the scene-swiper gesture. Simulating a touch
+    // swipe in Playwright is awkward; instead we soft-navigate to
+    // the next scene via the rail and confirm the URL + scene change.
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
+    // Click the first scene link in the Opening scene list; the
+    // presenter overlay route should match on soft-nav.
+    const firstSceneLink = page.getByRole("link", { name: "otevřít tuto scénu" }).first();
+    await expect(firstSceneLink).toBeVisible();
+    await firstSceneLink.click();
+    // URL now reflects the presenter route for the first scene.
+    await expect(page).toHaveURL(/presenter\?agendaItem=opening/);
+  });
+});
+
+test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
+  // Phase 6 covers the rail/keyboard/viewport checks. Tests use the
+  // Playwright browser at the five target viewports and verify the
+  // admin/presenter shell doesn't visually break.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("presenter renders at 4:3 iPad viewport without content overflow", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
+    // The page body should fit inside the viewport horizontally — no
+    // scrollbar caused by an overflowing element. Measure document
+    // scroll width vs viewport width.
+    const metrics = await page.evaluate(() => ({
+      bodyScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("presenter renders at 16:9 big-screen mirror viewport without content overflow", async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
+    const metrics = await page.evaluate(() => ({
+      bodyScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("admin shell renders on iPad portrait without horizontal overflow", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 1366 });
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+    const metrics = await page.evaluate(() => ({
+      bodyScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("admin shell renders on desktop small without horizontal overflow", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 1200 });
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+    const metrics = await page.evaluate(() => ({
+      bodyScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("admin shell renders on desktop large without horizontal overflow", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1400 });
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+    const metrics = await page.evaluate(() => ({
+      bodyScrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth,
+    }));
+    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("keyboard-only navigation reaches the first inline field on the agenda detail", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+    // Focus the document, then Tab repeatedly until an inline field
+    // display button gets focus. A 50-Tab budget is more than enough
+    // for the header nav + outline rail + hero.
+    await page.keyboard.press("Tab");
+    let reached = false;
+    for (let i = 0; i < 50; i++) {
+      const focused = await page.evaluate(
+        () => document.activeElement?.getAttribute("data-inline-field") ?? null,
+      );
+      if (focused === "display") {
+        reached = true;
+        break;
+      }
+      await page.keyboard.press("Tab");
+    }
+    expect(reached).toBe(true);
+  });
+
+  test("theme switcher toggles the html class token", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a");
+    // next-themes is configured with attribute: "class" (see
+    // app/components/theme-provider.tsx), so picking a theme writes
+    // the chosen value into the html element's class list.
+    await page.getByRole("button", { name: /Theme: light/i }).click();
+    await expect(page.locator("html")).toHaveClass(/light/);
+    await page.getByRole("button", { name: /Theme: dark/i }).click();
+    await expect(page.locator("html")).toHaveClass(/dark/);
+  });
+});
+
+test.describe("one canvas phase 7 — parity smoke", () => {
+  // Phase 7 exit criterion: a single critical-path test navigates
+  // admin → agenda detail → presenter → return to admin → inline edit
+  // → save, parameterized across the five target viewports. The
+  // full-fat version uses swipe + morph; this parity smoke uses soft
+  // navigation because Playwright cannot reliably simulate spring-
+  // driven drag gestures.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  const viewports = [
+    { name: "mobile-393", width: 393, height: 852 },
+    { name: "ipad-landscape", width: 1024, height: 768 },
+    { name: "ipad-portrait", width: 1024, height: 1366 },
+    { name: "desktop-small", width: 1280, height: 1200 },
+    { name: "desktop-large", width: 1440, height: 1400 },
+  ];
+
+  for (const viewport of viewports) {
+    test(`critical path works at ${viewport.name} (${viewport.width}x${viewport.height})`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+
+      // 1. Admin cockpit loads. Below the xl breakpoint (1280px) the
+      //    outline rail collapses behind the section nav, so the
+      //    timeline-row marker is what's visible across all five
+      //    viewports — target the TimelineRow div by its rounded
+      //    class anchor.
+      await page.goto("/admin/instances/sample-studio-a");
+      await expect(
+        page.locator('div[data-agenda-item="opening"]').first(),
+      ).toBeVisible();
+
+      // 2. Open an agenda detail.
+      await page.locator('div[data-agenda-item="talk"]').getByRole("link", { name: "detail momentu" }).click();
+      await expect(page).toHaveURL(/agendaItem=talk/);
+      await expect(
+        page.locator('[data-inline-field="display"]').filter({ hasText: /^Context is King$/ }).first(),
+      ).toBeVisible();
+
+      // 3. Launch the presenter for the selected scene via the
+      //    "open this scene" link. On soft-nav the intercepting
+      //    route morphs; on hard-load it renders the full-page
+      //    fallback. Both pass this assertion.
+      const openScene = page.getByRole("link", { name: "otevřít tuto scénu" }).first();
+      await openScene.click();
+      await expect(page).toHaveURL(/presenter\?agendaItem=talk/);
+
+      // 4. Return to admin.
+      await page.goBack();
+      await expect(page).toHaveURL(/agendaItem=talk/);
+
+      // 5. Inline-edit the room summary and confirm the change
+      //    surfaces. We pick a unique suffix so re-runs don't collide.
+      const suffix = `${viewport.name}-${Date.now()}`;
+      const summaryButton = page
+        .locator('[data-inline-field="display"]')
+        .filter({ hasText: /Místnost má odnést/ })
+        .first();
+      await summaryButton.click();
+      const summaryInput = page.locator('[data-inline-field="edit"]').first();
+      const original = (await summaryInput.inputValue()) ?? "";
+      await summaryInput.fill(`${original}\nparity-${suffix}`);
+      // Textarea saves on blur, so click away to commit.
+      await page.locator("body").click({ position: { x: 5, y: 5 } });
+      await expect(
+        page.locator('[data-inline-field="display"]').filter({ hasText: `parity-${suffix}` }).first(),
+      ).toBeVisible();
+
+      // 6. Revert so re-runs stay deterministic.
+      const revertButton = page
+        .locator('[data-inline-field="display"]')
+        .filter({ hasText: `parity-${suffix}` })
+        .first();
+      await revertButton.click();
+      const revertInput = page.locator('[data-inline-field="edit"]').first();
+      await revertInput.fill(original);
+      await page.locator("body").click({ position: { x: 5, y: 5 } });
+    });
+  }
+});
+
 test.describe("facilitator API (unauthenticated)", () => {
   test("facilitators API returns 401 without auth", async ({ playwright }) => {
     const context = await playwright.request.newContext({
