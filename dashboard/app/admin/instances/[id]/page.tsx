@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { renameAgendaItemAction, signOutAction, updateAgendaFieldAction } from "./_actions/operations";
 import { InlineField } from "./_components/inline-field";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
+import { SignalsSection } from "./_components/sections/signals-section";
 import { ViewTransitionCard } from "./_components/view-transition-card";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
@@ -540,44 +541,6 @@ async function captureRotationSignalAction(formData: FormData) {
   const teamId = teamIdRaw.length > 0 ? teamIdRaw : undefined;
 
   await captureRotationSignal({ freeText, tags, teamId }, instanceId);
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function addCheckpointFeedAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const teamId = String(formData.get("teamId") ?? "");
-  const text = buildEvidenceSummary({
-    changed: String(formData.get("checkpointChanged") ?? "").trim(),
-    verified: String(formData.get("checkpointVerified") ?? "").trim(),
-    nextStep: String(formData.get("checkpointNextStep") ?? "").trim(),
-    fallback: String(formData.get("text") ?? "").trim(),
-  });
-  const at = String(formData.get("at") ?? "");
-  if (teamId && text && at) {
-    await addSprintUpdate(
-      {
-        id: `u-${Date.now()}`,
-        teamId,
-        text,
-        at,
-      },
-      instanceId,
-    );
-  }
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function completeChallengeAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const teamId = String(formData.get("teamId") ?? "");
-  const challengeId = String(formData.get("challengeId") ?? "");
-  if (teamId && challengeId) {
-    await completeChallenge(challengeId, teamId, instanceId);
-  }
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
@@ -1626,65 +1589,7 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "signals" ? (
-          <div className="grid gap-6 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
-            <AdminPanel eyebrow={copy.signalEyebrow} title={copy.sprintFeedTitle} description={copy.signalDescription}>
-              <form action={addCheckpointFeedAction} className="grid gap-3 lg:grid-cols-2">
-                <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                <select name="teamId" className={adminInputClassName}>
-                  {state.teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-                <div>
-                  <FieldLabel htmlFor="signal-at">{copy.checkpointAtLabel}</FieldLabel>
-                  <input id="signal-at" name="at" defaultValue="11:15" className={`${adminInputClassName} mt-2`} />
-                </div>
-                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
-                  {copy.checkpointFormHint}
-                </div>
-                <div className="lg:col-span-2">
-                  <FieldLabel htmlFor="signal-changed">{copy.checkpointChangedLabel}</FieldLabel>
-                  <textarea id="signal-changed" name="checkpointChanged" rows={3} className={`${adminInputClassName} mt-2`} />
-                </div>
-                <div className="lg:col-span-2">
-                  <FieldLabel htmlFor="signal-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
-                  <textarea id="signal-verified" name="checkpointVerified" rows={3} className={`${adminInputClassName} mt-2`} />
-                </div>
-                <div className="lg:col-span-2">
-                  <FieldLabel htmlFor="signal-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
-                  <textarea id="signal-next-step" name="checkpointNextStep" rows={3} className={`${adminInputClassName} mt-2`} />
-                </div>
-                <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
-                  {copy.addUpdateButton}
-                </AdminSubmitButton>
-              </form>
-            </AdminPanel>
-
-            <AdminPanel eyebrow={copy.signalEyebrow} title={copy.completeChallengeTitle} description={copy.signalDescription}>
-              <form action={completeChallengeAction} className="space-y-3">
-                <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                <select name="teamId" className={adminInputClassName}>
-                  {state.teams.map((team) => (
-                    <option key={team.id} value={team.id}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-                <select name="challengeId" className={adminInputClassName}>
-                  {state.challenges.map((challenge) => (
-                    <option key={challenge.id} value={challenge.id}>
-                      {challenge.title}
-                    </option>
-                  ))}
-                </select>
-                <AdminSubmitButton className={adminPrimaryButtonClassName}>
-                  {copy.recordCompletionButton}
-                </AdminSubmitButton>
-              </form>
-            </AdminPanel>
-          </div>
+          <SignalsSection lang={lang} copy={copy} instanceId={activeInstanceId} state={state} />
         ) : null}
 
         {activeSection === "access" ? (
