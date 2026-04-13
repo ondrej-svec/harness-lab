@@ -233,7 +233,6 @@ describe("Admin control room page", () => {
 
     expect(html).toContain(adminCopy.en.agendaTimelineTitle);
     expect(html).toContain(adminCopy.en.presenterOpenParticipantSurfaceButton);
-    expect(html).toContain(adminCopy.en.openEditSheetButton);
     expect(html).toContain(adminCopy.en.agendaRunnerTitle);
     expect(html).toContain(adminCopy.en.agendaRunnerSayTitle);
     expect(html).toContain(adminCopy.en.agendaRunnerShowTitle);

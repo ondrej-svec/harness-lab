@@ -34,6 +34,8 @@ import {
 } from "../../_actions/scenes";
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
+import { AddAgendaItemRow } from "../agenda/add-agenda-item-row";
+import { AddSceneRow } from "../agenda/add-scene-row";
 import type {
   RichAgendaItem,
   RichPresenterScene,
@@ -283,16 +285,13 @@ export function AgendaSection({
                 </a>
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-3">
-                <AdminRouteLink className={adminGhostButtonClassName} href={agendaEditHref}>
-                  {copy.openEditSheetButton}
-                </AdminRouteLink>
-                {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
+              {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
+                <div className="mt-3 flex flex-wrap gap-3">
                   <AdminRouteLink className={adminGhostButtonClassName} href={liveAgendaHref}>
                     {copy.agendaJumpToLiveButton}
                   </AdminRouteLink>
-                ) : null}
-              </div>
+                </div>
+              ) : null}
 
               <div className="mt-5 rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3">
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{copy.presenterCurrentSceneLabel}</p>
@@ -331,16 +330,6 @@ export function AgendaSection({
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterCardDescription}</p>
                 </div>
-                <div className="flex flex-wrap gap-3">
-                  <AdminRouteLink className={adminSecondaryButtonClassName} href={sceneAddHref}>
-                    {copy.presenterAddSceneButton}
-                  </AdminRouteLink>
-                  {selectedScene ? (
-                    <AdminRouteLink className={adminGhostButtonClassName} href={roomSceneEditHref}>
-                      {copy.presenterEditSceneButton}
-                    </AdminRouteLink>
-                  ) : null}
-                </div>
               </div>
               <div className="mt-4 space-y-3">
                 {roomScenes.length > 0 ? (
@@ -359,6 +348,12 @@ export function AgendaSection({
                 ) : (
                   <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
                 )}
+                <AddSceneRow
+                  lang={lang}
+                  instanceId={instanceId}
+                  agendaItemId={selectedAgendaItem.id}
+                  addLabel={copy.presenterAddSceneButton}
+                />
               </div>
             </section>
 
@@ -380,11 +375,6 @@ export function AgendaSection({
                   >
                     {copy.presenterOpenParticipantSurfaceButton}
                   </a>
-                  {selectedParticipantScene ? (
-                    <AdminRouteLink className={adminGhostButtonClassName} href={participantSceneEditHref}>
-                      {copy.presenterEditSceneButton}
-                    </AdminRouteLink>
-                  ) : null}
                 </div>
               </div>
               <div className="mt-4 space-y-3">
@@ -405,6 +395,12 @@ export function AgendaSection({
                 ) : (
                   <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceRecoveryHint}</p>
                 )}
+                <AddSceneRow
+                  lang={lang}
+                  instanceId={instanceId}
+                  agendaItemId={selectedAgendaItem.id}
+                  addLabel={copy.presenterAddSceneButton}
+                />
               </div>
             </section>
 
@@ -477,9 +473,6 @@ export function AgendaSection({
                   <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
                   <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaIndexDescription}</p>
                 </div>
-                <AdminRouteLink className={adminSecondaryButtonClassName} href={agendaAddHref}>
-                  {copy.openAddAgendaItemButton}
-                </AdminRouteLink>
               </div>
               <div className="space-y-3">
                 {state.agenda.map((item) => {
@@ -502,6 +495,12 @@ export function AgendaSection({
                     />
                   );
                 })}
+                <AddAgendaItemRow
+                  lang={lang}
+                  instanceId={instanceId}
+                  afterItemId={state.agenda[state.agenda.length - 1]?.id ?? null}
+                  addLabel={copy.addAgendaItemTitle}
+                />
               </div>
             </section>
           </>
