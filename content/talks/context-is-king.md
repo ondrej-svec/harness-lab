@@ -59,7 +59,11 @@ Pak Böckeler citát z hero bloku: „Dobrý harness neusiluje o to, aby odstr
 
 Tohle je jediná analogie v celém talku, kterou můžete protáhnout. Ostatní mají být rychlé.
 
-Klíč je kontrast: motor o 400 koních přišroubovaný k nákupnímu vozíku vs. ke dobře navrženému podvozku. Ne „motor je špatný“ — motor je silný. Podvozek tu sílu **zpřístupňuje**. Tu sílu dělá dostupnou, předvídatelnou, přežitelnou. Model je motor. Harness je podvozek.
+Plnou prózu má agenda v hero bloku scény — vy doručujete strukturu, ne text. Drží se na třech bodech:
+
+1. **Stejný motor, dva podvozky.** Čtyři stovky koní. Přišroubujte je k nákupnímu vozíku — máte drahý způsob, jak rozbít parkoviště. Přišroubujte je k pořádně navrženému podvozku — auto najednou zvládne řídit i někdo, kdo není profík.
+2. **Motor se nezměnil.** Podvozek ho neoslabil. Tu sílu jenom zpřístupnil — dal jí rám, brzdy, předvídatelnost.
+3. **Model je motor. Harness je podvozek.** Dvě věty, pauza, dál.
 
 Když analogii použijete jednou, držte ji. Nepoužívejte druhou analogii („je to jako tým, je to jako kuchyně, je to jako…“). Jedna analogie, pořádně.
 
