@@ -786,7 +786,18 @@ export default async function AdminPage({
                     </div>
                     <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[var(--hero-muted)]">{copy.agendaCurrentTitle}</p>
                     <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
-                      <span>{selectedAgendaItem.time} •</span>
+                      <InlineField
+                        value={selectedAgendaItem.time}
+                        fieldName="time"
+                        label={copy.agendaFieldTime}
+                        action={updateAgendaFieldAction}
+                        hiddenFields={{
+                          instanceId: activeInstanceId,
+                          agendaId: selectedAgendaItem.id,
+                          fieldName: "time",
+                        }}
+                      />
+                      <span aria-hidden="true">•</span>
                       <InlineField
                         value={selectedAgendaItem.title}
                         fieldName="title"
