@@ -9,12 +9,7 @@ import { AgendaSection } from "./_components/sections/agenda-section";
 import { SettingsSection } from "./_components/sections/settings-section";
 import { SignalsSection } from "./_components/sections/signals-section";
 import { TeamsSection } from "./_components/sections/teams-section";
-import {
-  AgendaItemCreateSheetBody,
-  AgendaItemEditorSheetBody,
-  PresenterSceneCreateSheetBody,
-  PresenterSceneEditorSheetBody,
-} from "./_components/sheets/agenda-sheets";
+import { AgendaSheetOverlays } from "./_components/sheets/agenda-sheet-overlays";
 import {
   participantAccessFlashCookieName,
   parseParticipantAccessFlash,
@@ -49,7 +44,6 @@ import {
   listRotationSignals,
 } from "@/lib/workshop-store";
 import type { RotationSignal } from "@/lib/runtime-contracts";
-import { AdminSheet } from "../../admin-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -489,69 +483,19 @@ export default async function AdminPage({
           </div>
         </div>
       </div>
-      {visibleSection === "agenda" && activeOverlay === "agenda-edit" && showAgendaDetail && selectedAgendaItem ? (
-        <AdminSheet
-          eyebrow={copy.agendaEditEyebrow}
-          title={copy.agendaEditTitle}
-          description={copy.agendaEditDescription}
-          closeHref={agendaBaseHref}
-          closeLabel={copy.closePanelButton}
-        >
-          <AgendaItemEditorSheetBody item={selectedAgendaItem} lang={lang} section="agenda" instanceId={activeInstanceId} copy={copy} />
-        </AdminSheet>
-      ) : null}
-      {visibleSection === "agenda" && activeOverlay === "agenda-add" ? (
-        <AdminSheet
-          eyebrow={copy.agendaEditEyebrow}
-          title={copy.addAgendaItemTitle}
-          description={copy.addAgendaItemDescription}
-          closeHref={agendaBaseHref}
-          closeLabel={copy.closePanelButton}
-        >
-          <AgendaItemCreateSheetBody
-            agenda={state.agenda}
-            selectedAgendaItemId={selectedAgendaItem?.id ?? null}
-            lang={lang}
-            section="agenda"
-            instanceId={activeInstanceId}
-            copy={copy}
-          />
-        </AdminSheet>
-      ) : null}
-      {visibleSection === "agenda" && activeOverlay === "scene-edit" && selectedAgendaItem && selectedScene ? (
-        <AdminSheet
-          eyebrow={copy.agendaPresenterGroupTitle}
-          title={copy.sceneEditTitle}
-          description={copy.sceneEditDescription}
-          closeHref={sceneBaseHref}
-          closeLabel={copy.closePanelButton}
-        >
-          <PresenterSceneEditorSheetBody
-            item={selectedAgendaItem}
-            scene={selectedScene}
-            lang={lang}
-            section="agenda"
-            instanceId={activeInstanceId}
-            copy={copy}
-          />
-        </AdminSheet>
-      ) : null}
-      {visibleSection === "agenda" && activeOverlay === "scene-add" && selectedAgendaItem ? (
-        <AdminSheet
-          eyebrow={copy.agendaPresenterGroupTitle}
-          title={copy.sceneAddTitle}
-          description={copy.sceneAddDescription}
-          closeHref={sceneBaseHref}
-          closeLabel={copy.closePanelButton}
-        >
-          <PresenterSceneCreateSheetBody
-            item={selectedAgendaItem}
-            lang={lang}
-            section="agenda"
-            instanceId={activeInstanceId}
-            copy={copy}
-          />
-        </AdminSheet>
+      {visibleSection === "agenda" ? (
+        <AgendaSheetOverlays
+          lang={lang}
+          copy={copy}
+          instanceId={activeInstanceId}
+          activeOverlay={activeOverlay}
+          showAgendaDetail={showAgendaDetail}
+          selectedAgendaItem={selectedAgendaItem}
+          selectedScene={selectedScene}
+          agenda={state.agenda}
+          agendaBaseHref={agendaBaseHref}
+          sceneBaseHref={sceneBaseHref}
+        />
       ) : null}
     </main>
   );
