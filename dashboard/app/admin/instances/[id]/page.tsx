@@ -1,5 +1,12 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  addAgendaItemAction,
+  moveAgendaItemAction,
+  removeAgendaItemAction,
+  saveAgendaDetailsAction,
+  setAgendaAction,
+} from "./_actions/agenda";
 import { renameAgendaItemAction, signOutAction, updateAgendaFieldAction } from "./_actions/operations";
 import { toggleRotationAction } from "./_actions/settings";
 import { InlineField } from "./_components/inline-field";
@@ -50,19 +57,14 @@ import {
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   addPresenterScene,
-  addAgendaItem,
   getWorkshopState,
   getLatestWorkshopArchive,
-  moveAgendaItem,
   movePresenterScene,
-  removeAgendaItem,
   captureRotationSignal,
   listRotationSignals,
   removePresenterScene,
-  setCurrentAgendaItem,
   setDefaultPresenterScene,
   setPresenterSceneEnabled,
-  updateAgendaItem,
   updatePresenterScene,
 } from "@/lib/workshop-store";
 import type { RotationSignal } from "@/lib/runtime-contracts";
@@ -194,111 +196,6 @@ function buildRepoSourceHref(path: string) {
 
 function isHandoffAgendaItem(item: Partial<AgendaItem> | null | undefined) {
   return item?.intent === "handoff" || item?.id === "rotation";
-}
-
-async function setAgendaAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaId = String(formData.get("agendaId") ?? "");
-  const returnTo = String(formData.get("returnTo") ?? "").trim();
-  if (agendaId) {
-    await setCurrentAgendaItem(agendaId, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: returnTo === "detail" ? agendaId || null : null }));
-}
-
-async function saveAgendaDetailsAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaId = String(formData.get("agendaId") ?? "");
-  const title = String(formData.get("title") ?? "").trim();
-  const time = String(formData.get("time") ?? "").trim();
-  const goal = String(formData.get("goal") ?? "").trim();
-  const roomSummary = String(formData.get("roomSummary") ?? "").trim();
-  const facilitatorPrompts = parseTextareaList(String(formData.get("facilitatorPrompts") ?? ""));
-  const watchFors = parseTextareaList(String(formData.get("watchFors") ?? ""));
-  const checkpointQuestions = parseTextareaList(String(formData.get("checkpointQuestions") ?? ""));
-  const description = roomSummary || goal;
-
-  if (agendaId && title && time && description) {
-    await updateAgendaItem(
-      agendaId,
-      {
-        title,
-        time,
-        description,
-        goal: goal || description,
-        roomSummary: roomSummary || description,
-        facilitatorPrompts,
-        watchFors,
-        checkpointQuestions,
-      },
-      instanceId,
-    );
-  }
-
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
-}
-
-async function addAgendaItemAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const title = String(formData.get("title") ?? "").trim();
-  const time = String(formData.get("time") ?? "").trim();
-  const goal = String(formData.get("goal") ?? "").trim();
-  const roomSummary = String(formData.get("roomSummary") ?? "").trim();
-  const facilitatorPrompts = parseTextareaList(String(formData.get("facilitatorPrompts") ?? ""));
-  const watchFors = parseTextareaList(String(formData.get("watchFors") ?? ""));
-  const checkpointQuestions = parseTextareaList(String(formData.get("checkpointQuestions") ?? ""));
-  const description = roomSummary || goal || String(formData.get("description") ?? "").trim();
-  const afterItemId = String(formData.get("afterItemId") ?? "").trim();
-
-  if (title && time && description) {
-    const state = await addAgendaItem(
-      {
-        title,
-        time,
-        description,
-        goal: goal || description,
-        roomSummary: roomSummary || description,
-        facilitatorPrompts,
-        watchFors,
-        checkpointQuestions,
-        afterItemId: afterItemId || null,
-      },
-      instanceId,
-    );
-    const createdItem = state.agenda.find((item) => item.kind === "custom" && item.title === title && item.time === time);
-    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: createdItem?.id ?? null }));
-  }
-
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function moveAgendaItemAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaId = String(formData.get("agendaId") ?? "");
-  const direction = String(formData.get("direction") ?? "") as "up" | "down";
-  if (agendaId && (direction === "up" || direction === "down")) {
-    await moveAgendaItem(agendaId, direction, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
-}
-
-async function removeAgendaItemAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaId = String(formData.get("agendaId") ?? "");
-  if (agendaId) {
-    await removeAgendaItem(agendaId, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
 async function addPresenterSceneAction(formData: FormData) {
