@@ -59,7 +59,7 @@ Pak Böckeler citát z hero bloku: „Dobrý harness neusiluje o to, aby odstr
 
 Tohle je jediná analogie v celém talku, kterou můžete protáhnout. Ostatní mají být rychlé.
 
-Klíč je kontrast: motor o 400 koních přišroubovaný k nákupnímu vozíku vs. ke dobře navrženému podvozku. Ne „motor je špatný“ — motor je silný. Podvozek tu sílu **zpřístupňuje**. Ta sílu dělá dostupnou, předvídatelnou, přežitelnou. Model je motor. Harness je podvozek.
+Klíč je kontrast: motor o 400 koních přišroubovaný k nákupnímu vozíku vs. ke dobře navrženému podvozku. Ne „motor je špatný“ — motor je silný. Podvozek tu sílu **zpřístupňuje**. Tu sílu dělá dostupnou, předvídatelnou, přežitelnou. Model je motor. Harness je podvozek.
 
 Když analogii použijete jednou, držte ji. Nepoužívejte druhou analogii („je to jako tým, je to jako kuchyně, je to jako…“). Jedna analogie, pořádně.
 
@@ -85,7 +85,7 @@ Pak **čtyři sloupy.** Každý sloup čtěte z agendy, ale přidejte jednu kon
 3. **Sensors — zachycení potom, co agent jedná.** Tracer bullets, end-to-end testy, holistické ověření. Hlavní věta navíc: **„Když agent dělá víc, vaše ověření musí dokázat, že drží celek, ne že jedna funkce vrátila 4.“** Tohle je místo, kde si místnost poprvé uvědomí, že granularita je problém, ne cíl.
 4. **Managing, ne chatování.** „Přestáváte být pair-programmer a stáváte se režisérem s týmem.“ Tohle je ta nejkratší z čtyř scén — neprotahujte.
 
-Pak callout **„Team lead staví systém, ve kterém tým běží.“** Tohle je most k vaší roli — vy jako facilitátor, oni jako team leads pro své agenty. Analogie dopadne, pokud v místnosti jsou seniorní inženýři; s juniorní místností ji můžete zkrátit.
+Pak callout **„Team lead staví systém, ve kterém tým běží.“** Tohle je most k vaší roli — vy jako facilitátor, oni jako team leads pro své agenty. Analogie zabere, pokud v místnosti sedí seniorní inženýři; s juniorní místností ji můžete zkrátit.
 
 Scéna končí checklistem čtyř věcí k adopci. Ty jsou v agendě — neříkejte je nahlas celé, nechte je jen zobrazené. Řekněte jen „Tohle jsou čtyři pohyby, které budete dnes trénovat.“
 
@@ -164,7 +164,7 @@ Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/code
 ## Fallbacky
 
 - **Pokud jste nad 10 minut:** spojte sloupy 2 a 3 (guides + sensors) do jednoho. Scéna 3 je sekce, která snese kompresi bez ztráty hlavní věty.
-- **Pokud je místnost unavená:** z scény 1 vypadne weather callout (Willison/Gartner). Zkraťte ji na pět hlasů + přechod.
+- **Pokud je místnost unavená:** ze scény 1 vynechejte weather callout (Willison/Gartner). Zkraťte ji na pět hlasů + přechod.
 - **Pokud jste pod časem a na hranici:** chráněné je scéna 4 a čtyři sloupy. Všechno ostatní je volitelné.
 - **Pokud jste někde ztratili rytmus:** vraťte se na `team-lead staví systém` callout (scéna 3) a na **Lidé řídí. Agenti vykonávají.** (scéna 4). Ty dvě věty stačí na to, aby místnost pochopila, o co dnes jde.
 

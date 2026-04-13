@@ -1596,9 +1596,9 @@
           "cs": {
             "label": "Klíčová věta",
             "title": "Lidé řídí. Agenti vykonávají.",
-            "body": "Čtyři slova od Ryana Lopopola, inženýra OpenAI, který vedl tým shipující milion řádků produkčního kódu za pět měsíců bez jediného ručně psaného řádku. Tohle je jeho základní princip – ten, o kterém říká, že na něm všechno ostatní stojí. Odneste si tyhle čtyři slova do příštího dne u klávesnice. Všechno ostatní, co se dnes naučíte, je způsob, jak je uvést do praxe.",
+            "body": "Čtyři slova od Ryana Lopopola, inženýra OpenAI, který vedl tým shipující milion řádků produkčního kódu za pět měsíců bez jediného ručně psaného řádku. Tohle je jeho základní princip – ten, o kterém říká, že na něm všechno ostatní stojí. Odneste si tyhle čtyři slova na příště, až si otevřete agenta. Všechno ostatní, co se dnes naučíte, je způsob, jak je uvést do praxe.",
             "facilitatorNotes": [
-              "Nejzapamatovatelnější věta celého workshopu. Chraň ji."
+              "Nejzapamatovatelnější věta celého workshopu. Chraňte ji."
             ],
             "blocks": [
               {
@@ -1625,7 +1625,7 @@
                 "type": "callout",
                 "tone": "info",
                 "title": "Druhý den, až si otevřete coding agenta, budete pracovat jinak.",
-                "body": "Ne s novým nástrojem. S jinou rolí. Přestaneš být ten, koho se agent ptá, a staneš se tím, kdo staví prostředí, do kterého agent vchází."
+                "body": "Ne s novým nástrojem. S jinou rolí. Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází."
               }
             ],
             "sourceRefs": [
