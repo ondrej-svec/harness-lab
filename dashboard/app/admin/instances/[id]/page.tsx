@@ -8,8 +8,16 @@ import {
   setAgendaAction,
 } from "./_actions/agenda";
 import { signOutAction } from "./_actions/operations";
+import {
+  addPresenterSceneAction,
+  movePresenterSceneAction,
+  removePresenterSceneAction,
+  setDefaultPresenterSceneAction,
+  togglePresenterSceneEnabledAction,
+  updatePresenterSceneAction,
+} from "./_actions/scenes";
 import { AdminActionStateFields } from "./_components/admin-action-state-fields";
-import type { RichAgendaItem, RichPresenterScene, SourceRef } from "./_components/agenda/types";
+import type { RichAgendaItem, RichPresenterScene } from "./_components/agenda/types";
 import { ControlRoomPersistentSummary } from "./_components/control-room-summary";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
 import { AccessSection } from "./_components/sections/access-section";
@@ -23,7 +31,7 @@ import {
 } from "./_lib/participant-access-flash";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
-import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
+import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { auth } from "@/lib/auth/server";
 import {
   buildAdminHref,
@@ -35,7 +43,6 @@ import {
   deriveAdminPageState,
   getWorkshopDisplayTitle,
   getWorkshopLocationLines,
-  readActionState,
   resolveControlRoomOverlay,
   resolveAdminSection,
   type AdminSection,
@@ -49,21 +56,14 @@ import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import {
   type AgendaItem,
-  type PresenterBlock as WorkshopPresenterBlock,
   type PresenterScene,
   type Team,
 } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
-  addPresenterScene,
   getWorkshopState,
   getLatestWorkshopArchive,
-  movePresenterScene,
   listRotationSignals,
-  removePresenterScene,
-  setDefaultPresenterScene,
-  setPresenterSceneEnabled,
-  updatePresenterScene,
 } from "@/lib/workshop-store";
 import type { RotationSignal } from "@/lib/runtime-contracts";
 import {
@@ -132,180 +132,14 @@ function listToTextareaValue(items?: string[]) {
   return (items ?? []).join("\n");
 }
 
-function parseTextareaList(value: string) {
-  return value
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
 function stringifyJson(value: unknown) {
   return JSON.stringify(value ?? [], null, 2);
-}
-
-function parseJsonArray<T>(value: string): T[] | undefined {
-  const normalized = value.trim();
-  if (!normalized) {
-    return undefined;
-  }
-
-  try {
-    const parsed = JSON.parse(normalized);
-    return Array.isArray(parsed) ? (parsed as T[]) : undefined;
-  } catch {
-    return undefined;
-  }
 }
 
 function isHandoffAgendaItem(item: Partial<AgendaItem> | null | undefined) {
   return item?.intent === "handoff" || item?.id === "rotation";
 }
 
-async function addPresenterSceneAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const label = String(formData.get("label") ?? "").trim();
-  const sceneType = String(formData.get("sceneType") ?? "").trim();
-  const title = String(formData.get("title") ?? "").trim();
-  const body = String(formData.get("body") ?? "").trim();
-  const intent = String(formData.get("intent") ?? "").trim();
-  const chromePreset = String(formData.get("chromePreset") ?? "").trim();
-  const ctaLabel = String(formData.get("ctaLabel") ?? "").trim();
-  const ctaHref = String(formData.get("ctaHref") ?? "").trim();
-  const facilitatorNotes = parseTextareaList(String(formData.get("facilitatorNotes") ?? ""));
-  const sourceRefs = parseJsonArray<SourceRef>(String(formData.get("sourceRefs") ?? ""));
-  const blocks = parseJsonArray<WorkshopPresenterBlock>(String(formData.get("blocks") ?? ""));
-
-  if (!agendaItemId || !label || !sceneType) {
-    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, overlay: "scene-add" }));
-  }
-
-  const state = await addPresenterScene(
-    agendaItemId,
-    {
-      label,
-      sceneType: sceneType as PresenterScene["sceneType"],
-      title,
-      body,
-      intent: (intent || undefined) as PresenterScene["intent"] | undefined,
-      chromePreset: (chromePreset || undefined) as PresenterScene["chromePreset"] | undefined,
-      ctaLabel: ctaLabel || null,
-      ctaHref: ctaHref || null,
-      facilitatorNotes,
-      sourceRefs,
-      blocks,
-    },
-    instanceId,
-  );
-  const agendaItem = state.agenda.find((item) => item.id === agendaItemId);
-  const createdScene = [...(agendaItem?.presenterScenes ?? [])].sort((left, right) => right.order - left.order)[0] ?? null;
-
-  redirect(
-    buildAdminHref({
-      lang,
-      section,
-      instanceId,
-      agendaItemId,
-      sceneId: createdScene?.id ?? null,
-    }),
-  );
-}
-
-async function updatePresenterSceneAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const sceneId = String(formData.get("sceneId") ?? "").trim();
-  const label = String(formData.get("label") ?? "").trim();
-  const sceneType = String(formData.get("sceneType") ?? "").trim();
-  const title = String(formData.get("title") ?? "").trim();
-  const body = String(formData.get("body") ?? "").trim();
-  const intent = String(formData.get("intent") ?? "").trim();
-  const chromePreset = String(formData.get("chromePreset") ?? "").trim();
-  const ctaLabel = String(formData.get("ctaLabel") ?? "").trim();
-  const ctaHref = String(formData.get("ctaHref") ?? "").trim();
-  const facilitatorNotes = parseTextareaList(String(formData.get("facilitatorNotes") ?? ""));
-  const sourceRefs = parseJsonArray<SourceRef>(String(formData.get("sourceRefs") ?? ""));
-  const blocks = parseJsonArray<WorkshopPresenterBlock>(String(formData.get("blocks") ?? ""));
-
-  if (!agendaItemId || !sceneId || !label || !sceneType) {
-    redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId, overlay: "scene-edit" }));
-  }
-
-  await updatePresenterScene(
-    agendaItemId,
-    sceneId,
-    {
-      label,
-      sceneType: sceneType as PresenterScene["sceneType"],
-      title,
-      body,
-      intent: (intent || undefined) as PresenterScene["intent"] | undefined,
-      chromePreset: (chromePreset || undefined) as PresenterScene["chromePreset"] | undefined,
-      ctaLabel: ctaLabel || null,
-      ctaHref: ctaHref || null,
-      facilitatorNotes,
-      sourceRefs,
-      blocks,
-    },
-    instanceId,
-  );
-
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
-}
-
-async function movePresenterSceneAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const sceneId = String(formData.get("sceneId") ?? "").trim();
-  const direction = String(formData.get("direction") ?? "").trim() as "up" | "down";
-  if (agendaItemId && sceneId && (direction === "up" || direction === "down")) {
-    await movePresenterScene(agendaItemId, sceneId, direction, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
-}
-
-async function setDefaultPresenterSceneAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const sceneId = String(formData.get("sceneId") ?? "").trim();
-  if (agendaItemId && sceneId) {
-    await setDefaultPresenterScene(agendaItemId, sceneId, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
-}
-
-async function togglePresenterSceneEnabledAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const sceneId = String(formData.get("sceneId") ?? "").trim();
-  const enabled = String(formData.get("enabled") ?? "").trim() === "true";
-  if (agendaItemId && sceneId) {
-    await setPresenterSceneEnabled(agendaItemId, sceneId, enabled, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId, sceneId }));
-}
-
-async function removePresenterSceneAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const agendaItemId = String(formData.get("agendaItemId") ?? "").trim();
-  const sceneId = String(formData.get("sceneId") ?? "").trim();
-  if (agendaItemId && sceneId) {
-    await removePresenterScene(agendaItemId, sceneId, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId }));
-}
 
 export default async function AdminPage({
   params,
