@@ -17,7 +17,7 @@ phase_commits:
   phase_7: [3a4457c]
   playwright_walkthrough: [dcdd22f]
   followup_session_2: [3e0f30e, 268e6ef, 3970a30, dc6a622, aede68d, e04f650, 27d33f7]
-  followup_session_3: [92cf436, 038a3b7]
+  followup_session_3: [92cf436, 038a3b7, 38eb44c]
 ---
 
 # refactor: One Canvas — dashboard motion + admin rework
@@ -547,7 +547,12 @@ If picking this up from a cold start, read in this order:
 4. **`docs/plans/2026-04-13-one-canvas-url-contract.md`** — URL contract for deep links
 5. **`docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md`** — E2E test adaptation decisions
 
-Most likely next tasks: (a) Agenda section JSX extraction — blocked by tight coupling to ~6 internal helpers (`HandoffMomentCard`, `TimelineRow`, `PresenterSceneSummaryCard`, `AgendaItemDetail`, `ControlRoomPersistentSummary`, `AdminActionStateFields`); several are used outside the agenda block, so a clean move needs a shared helper file first. Session 3 took the smaller wins instead: agenda actions → `_actions/agenda.ts` (`92cf436`, −103 lines from page.tsx) and inline `time` field in the detail header (`038a3b7`). (b) Scene label/body inline editing — unblocked and next. (c) Full JSX extraction — schedule once the shared helpers are lifted.
+Session 3 landed the full agenda lift. Commits (a→c):
+- `92cf436` — agenda actions extracted to `_actions/agenda.ts` (page.tsx 2335 → 2232)
+- `038a3b7` — `time` field inlined in the agenda detail header via `updateAgendaFieldAction`
+- `38eb44c` — `AgendaSection` + private helpers extracted to `_components/sections/agenda-section.tsx`, with shared primitives lifted on the way: `AdminActionStateFields`, `ControlRoomPersistentSummary`, `captureRotationSignalAction`, and `_components/agenda/types.ts` for `RichAgendaItem` / `RichPresenterScene` / `SourceRef`. page.tsx now 1316 lines (was 2335 at session start; plan's acceptance criterion is < 400, so more work remains — the 4 sheet bodies plus the scene server actions are the biggest remaining chunks).
+
+Next likely slices: (a) Scene-editor sheet bodies (`AgendaItemEditorSheetBody`, `AgendaItemCreateSheetBody`, `PresenterSceneCreateSheetBody`, `PresenterSceneEditorSheetBody`, `PresenterSceneFormFields`) — these are ~500 lines and the plan's Phase 3 says to replace them with inline editing; until then, extracting them as-is into a sheets module is the safe move. (b) Scene server actions (`addPresenterSceneAction`, `updatePresenterSceneAction`, etc.) into `_actions/scenes.ts`. (c) Inline the `goal` field in the agenda detail header (still an allowlist field, not yet rendered inline).
 
 ## Phased Implementation
 
