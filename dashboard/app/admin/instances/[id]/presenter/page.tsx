@@ -257,7 +257,7 @@ function EmptyScene({ copy }: { copy: (typeof adminCopy)["cs" | "en"] }) {
   );
 }
 
-function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
+export function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
   if (scene.sceneType === "participant-view") {
     return [
       {
@@ -286,7 +286,7 @@ function buildFallbackBlocks(scene: PresenterScene): PresenterBlock[] {
   return blocks;
 }
 
-function SceneBlocks({
+export function SceneBlocks({
   blocks,
   copy,
   activeAgendaItem,
@@ -477,7 +477,7 @@ function BlockCard({
   );
 }
 
-function SceneCta({
+export function SceneCta({
   href,
   label,
   openLabel,

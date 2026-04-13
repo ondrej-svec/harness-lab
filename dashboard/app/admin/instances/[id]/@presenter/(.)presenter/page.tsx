@@ -5,6 +5,7 @@ import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presente
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
+import { SceneBlocks, SceneCta, buildFallbackBlocks } from "../../presenter/page";
 import { SceneMorphOverlay } from "../../_components/scene-morph-overlay";
 import { SceneRail, type SceneRailItem } from "../../_components/scene-rail";
 import { SceneSwiper } from "../../_components/scene-swiper";
@@ -66,31 +67,45 @@ export default async function InterceptedPresenterPage({
   const closeHref = withLang(`/admin/instances/${instanceId}`, lang);
   const morphName = `scene-${activeAgendaItem.id}-${selectedScene.id}`;
 
+  const blocks = selectedScene.blocks.length > 0 ? selectedScene.blocks : buildFallbackBlocks(selectedScene);
+
   return (
     <SceneMorphOverlay closeHref={closeHref}>
       <SceneSwiper
         previousHref={previousScene ? hrefForScene(previousScene.id) : null}
         nextHref={nextScene ? hrefForScene(nextScene.id) : null}
       >
-        <main className="flex h-full min-h-screen w-full items-center justify-center px-6 py-12 sm:px-12 lg:px-20">
-          <ViewTransitionCard name={morphName}>
-            <article className="max-w-[70rem] rounded-[32px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] p-10 shadow-[0_30px_80px_rgba(28,25,23,0.25)] sm:p-14">
-              <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                {activeAgendaItem.title} · {copy.presenterCardTitle}
-              </p>
-              <h1 className="mt-4 text-4xl font-medium leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-                {selectedScene.label}
-              </h1>
-              {selectedScene.body ? (
-                <p className="mt-6 max-w-[52rem] text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">
-                  {selectedScene.body}
+        <main className="relative flex h-full min-h-screen w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
+          <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-col justify-center">
+            <ViewTransitionCard name={morphName}>
+              <article className="space-y-10">
+                <header>
+                  <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                    {activeAgendaItem.title} · {copy.presenterCardTitle}
+                  </p>
+                  <h1 className="mt-4 text-4xl font-medium leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
+                    {selectedScene.label}
+                  </h1>
+                </header>
+                <SceneBlocks
+                  blocks={blocks}
+                  copy={copy}
+                  activeAgendaItem={activeAgendaItem}
+                  participantCueFirst={selectedScene.chromePreset === "participant"}
+                />
+                {selectedScene.ctaLabel ? (
+                  <SceneCta
+                    href={selectedScene.ctaHref}
+                    label={selectedScene.ctaLabel}
+                    openLabel={copy.openLinkLabel}
+                  />
+                ) : null}
+                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                  {selectedIndex + 1} / {scenePack.length}
                 </p>
-              ) : null}
-              <p className="mt-10 text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                {selectedIndex + 1} / {scenePack.length}
-              </p>
-            </article>
-          </ViewTransitionCard>
+              </article>
+            </ViewTransitionCard>
+          </div>
         </main>
       </SceneSwiper>
       <SceneRail items={railItems} activeSceneId={selectedScene.id} />
