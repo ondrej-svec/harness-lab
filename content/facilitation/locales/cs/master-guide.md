@@ -1,26 +1,26 @@
 # Facilitační průvodce
 
-## Otevření a welcome
+## Otevření a uvítání
 
 ### Cíl
 
 Spustit den jako společný start pro celý workshop, ne jako provozní brief k dopoledni.
 
-### Klíčová message
+### Hlavní sdělení
 
 > „Dnes nejde o to být nejrychlejší. Jde o to postavit práci tak, aby ji cizí tým dokázal převzít a posunout dál.“
 
 ### Co potřebuje zaznít
 
-- Nezačínáme tool demo ani soutěž v promptování.
+- Nezačínáme demo nástroje ani soutěž v promptování.
 - Budeme se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.
 - Jde o práci s agentem tak, aby po vás zůstával použitelný kontext.
 - Odpolední část prověří, jestli repo opravdu unese převzetí dalším týmem.
 - Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.
 
-### Doporučený sled beatů
+### Doporučené pořadí
 
-1. day-opening promise
+1. společný začátek dne
 2. proč na tom záleží právě teď
 3. analogie typu Lego duck: stejné ingredience, různé použitelné výsledky
 4. krátká pohybová aktivace podle zkušenosti s AI agenty
@@ -80,7 +80,7 @@ Do oběda má být vidět:
 
 Proměnit energii z openingu v přesnou tezi a čistý most do build fáze 1.
 
-### Klíčová message
+### Hlavní sdělení
 
 > „Kontext je páka, ne kosmetika.“
 
@@ -100,14 +100,14 @@ Tohle jsou čtyři slova, která talk končí a která si má místnost odnést
 
 ### Repo-readiness kontrast (mikro-cvičení)
 
-Tohle je krátká facilitátorova ukázka, ne zadání pro celý room.
+Tohle je krátká facilitátorova ukázka, ne úkol pro celou místnost.
 
 Použijte **stejný prompt ve dvou repech**:
 
 1. **Varianta A: holé repo** — žádné AGENTS.md, žádné mantinely, žádný kontext. Agent tápe — dělá uvěřitelná, ale špatná rozhodnutí (task drift).
 2. **Varianta B: repo s harnessem** — AGENTS.md s Goal, Context, Constraints, Done When, plán, workshop skill. Stejný prompt, srovnaný výstup.
 
-Flow:
+Postup:
 1. Ukažte Variantu A. Pojmenujte task drift.
 2. Ukažte Variantu B se stejným promptem.
 3. Pauza. Zeptejte se: „Co se změnilo?"
@@ -116,7 +116,7 @@ Flow:
 
 Nenechte to sklouznout do debaty o tom, který model je chytřejší. Pointa je, že výstup se změnil, protože se změnil kontext v repu — ne prompt.
 
-Viz `content/talks/codex-demo-script.md` pro detailní two-folder setup.
+Viz `content/talks/codex-demo-script.md` pro detailní setup se dvěma složkami.
 
 ### Co si odnesete do build fáze
 
@@ -163,7 +163,7 @@ Do oběda má být v repu vidět pět základních věcí:
 - Jakmile agent dostává větší autonomii, tým musí zvýšit kvalitu ověřování.
 - Test-first přístup není dogma pro čistotu. Je to praktický způsob, jak převést záměr do formy, kterou agent umí opakovaně trefovat.
 - Když tým žádné ověření nemá, facilitátor má tlačit na nejmenší možný test nebo tracer bullet, ne na další generování funkcí.
-- U UI práce připomínejte pattern: rychlá agent exploration v izolovaném prostředí, potom browser test, potom lidské review.
+- U UI práce připomínejte postup: rychlý průzkum s agentem v izolovaném prostředí, potom browser test, potom lidské review.
 - Pokud tým mluví o tom, že „agent to prostě nakliká v mém browseru“, vraťte debatu k sandboxu, nízkému riziku a explicitní kontrole.
 
 ### Co normalizovat
@@ -268,7 +268,7 @@ Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasah
 - Začněte u `README`, `AGENTS.md` a plánu.
 - Needitujte hned první soubor, který otevřete.
 - Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.
-- Když tým neví, po čem sáhnout, vraťte ho k learner kitu: `template-agents`, `reference`, `analyze-checklist` a challenge cards.
+- Když tým neví, po čem sáhnout, vraťte ho k balíčku pro účastníky: `template-agents`, `reference`, `analyze-checklist` a karty výzev.
 
 ### Facilitační pointa k rotaci
 
@@ -311,7 +311,7 @@ Na konci dne chceme, aby si lidé odnesli tři věci:
 2. jednu slabinu, kterou už příště nenechají jen v hovoru
 3. jeden konkrétní tah pro příští den u klávesnice
 
-### `next-day commitments` — sdílený artefakt
+### Závazek pro příště — sdílený artefakt
 
 Reflexe bez zápisu se většinou neudrží. Proto na samém konci dne:
 
@@ -323,4 +323,4 @@ Reflexe bez zápisu se většinou neudrží. Proto na samém konci dne:
 Facilitátorův tah:
 - věty vybízejte k tomu, aby byly konkrétní (ne „budu lépe pracovat s agenty“, ale „do AGENTS.md svého hlavního repa napíšu čtyři prvky: goal, context, constraints, done when“)
 - když někdo napíše něco velmi obecného, zeptejte se: „Jaký je první konkrétní tah, který to spustí?"
-- commitmenty nepublikujte jmenovitě mimo room; artefakt patří týmu, ne marketingu
+- závazky nepublikujte jmenovitě mimo místnost; artefakt patří týmu, ne marketingu

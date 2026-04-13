@@ -16,7 +16,7 @@ Cíl není perfektní instalace. Cíl je dostat každého co nejdřív do práce
 ### macOS / Linux
 
 1. Otevřete terminál.
-2. Přihlaste se do Codex prostředí podle firemního flow.
+2. Přihlaste se do Codex prostředí podle firemního postupu.
 3. Otevřete repozitář.
 4. Pošlete první prompt.
 
@@ -40,7 +40,7 @@ Cíl není perfektní instalace. Cíl je dostat každého co nejdřív do práce
 
 Použijte ho ve chvíli, kdy vás blokuje instalace, firemní politika nebo autentizace. Nečekejte na ideální setup, když už můžete pracovat.
 
-## Troubleshooting checklist
+## Co dělat, když něco nefunguje
 
 - Nejde login → přejděte na `App` nebo web fallback a pokračujte.
 - Nejde CLI instalace → nenechte se blokovat déle než 7 minut.

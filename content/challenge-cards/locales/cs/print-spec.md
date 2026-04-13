@@ -8,9 +8,9 @@
 
 ## Barevné rozlišení
 
-- Context Engineering: písková / žlutá
+- Práce s kontextem: písková / žlutá
 - Workflow: modrozelená
-- Advanced: cihlová
+- Pokročilé: cihlová
 - Meta: šedá
 
 ## Layout

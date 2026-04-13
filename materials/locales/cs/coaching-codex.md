@@ -2,7 +2,7 @@
 
 > Jedna strana. Tahy si klidně ukradněte. Když chcete, vytiskněte si ji.
 
-Workshop učí harness engineering: repo, workflow a kontext, který **unese další krok** bez toho, abyste u toho museli stát. Tahle karta je jeho druhá polovina — tahy, které drží agenta uvnitř funkčního harnessu, jakmile session jednou běží. Talk a briefy staví guides, které si agent čte. Tahle karta je o tom, co řeknete, když už se něco hýbe a něco se chystá uklouznout.
+Workshop učí harness engineering: repo, workflow a kontext, který **unese další krok** bez toho, abyste u toho museli stát. Tahle karta je jeho druhá polovina — tahy, které drží agenta uvnitř funkčního harnessu, jakmile session jednou běží. Talk a briefy agentovi dávají guides, podle kterých se orientuje. Tahle karta je o tom, co řeknete, když už se něco hýbe a něco se chystá uklouznout.
 
 ---
 
@@ -54,13 +54,13 @@ Tohle je místo, kde chytáte **task drift** — failure mode, kdy agent dělá 
 
 ## Když agent říká, že je hotovo
 
-Tohle je váš **sensor** moment — feedback loop, který agenta chytí po tom, co jednal. Verifikace je hranice důvěry. Když agent dělá víc, vy ověřujete líp — a ověřujete celkově. Pustíte tenhle krátký script, vždycky:
+Tady nastupuje **sensor** — zpětná vazba, která agenta chytí po tom, co jednal. Verifikace je hranice důvěry. Když agent dělá víc, vy ověřujete líp — a ověřujete celek. Pokaždé si projděte těchto pár otázek:
 
 1. **„Ukažte mi diff."** Přečtěte si ho. Pokud se vám ho nechce číst, hotový není agent — hotoví jste vy.
 2. **„Jaký test tu změnu pokrývá?"** Když žádný, změna pokrytá není. Není to morální soud; je to věta o zítřejším bugu.
 3. **„Co si o tomhle další tým mohl špatně přečíst?"** Tohle je váš handoff check. Agentova odpověď je tam, odkud přijde další update do `AGENTS.md`.
 4. **„Jaký je další bezpečný krok, když odtud pokračujeme?"** Když odpověď zní „nejsem si jistý“, za sebou nenecháváte harness — necháváte něco, na co další člověk nedokáže bezpečně navázat.
-5. **Napište session-state poznámku.** Co je dokázané, co je rozpracované, co je další bezpečný tah. Tohle není AGENTS.md (to je mapa). Tohle je pracovní log.
+5. **Napište krátkou poznámku o stavu session.** Co je dokázané, co je rozpracované, co je další bezpečný tah. Tohle není AGENTS.md (to je mapa). Tohle je pracovní log.
 
 ---
 

@@ -16,7 +16,7 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 
 - Jazyk i framework si zvolte sami, ale CLI musí být snadno spustitelné a snadno objevitelné.
 - Od začátku oddělte samotné příkazy od pomocných utilit a konfigurace.
-- `AGENTS.md` má popsat build/test flow, konvence pro výstupy a pravidla pro další rozšiřování.
+- `AGENTS.md` má popsat build/test postup, konvence pro výstupy a pravidla pro další rozšiřování.
 - Stejně důležitý jako funkční příkaz je i runbook pro tým, který projekt převezme po obědě.
 - Nejde o pytel skriptů. Jde o malý systém, ve kterém je jasné, kde přibude další command, test a dokumentace.
 
@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 
 ## První krok pro agenta
 
-Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.
+Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.

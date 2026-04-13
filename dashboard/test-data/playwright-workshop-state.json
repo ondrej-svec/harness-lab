@@ -114,7 +114,9 @@
       ],
       "repoUrl": "https://github.com/example/standup-bot",
       "projectBriefId": "standup-bot",
-      "checkpoint": "AGENTS.md je hotové jako krátká mapa, build flow je popsaný a další safe move je dopsat první ověření."
+      "checkpoint": "AGENTS.md je hotové jako krátká mapa, build flow je popsaný a další safe move je dopsat první ověření.",
+      "checkIns": [],
+      "anchor": null
     },
     {
       "id": "t2",
@@ -129,7 +131,9 @@
       ],
       "repoUrl": "https://github.com/example/devtoolbox-cli",
       "projectBriefId": "devtoolbox-cli",
-      "checkpoint": "První slash command flow funguje, ale chybí jasné ověření a runbook pro tým po rotaci."
+      "checkpoint": "První slash command flow funguje, ale chybí jasné ověření a runbook pro tým po rotaci.",
+      "checkIns": [],
+      "anchor": null
     },
     {
       "id": "t3",
@@ -143,7 +147,9 @@
       ],
       "repoUrl": "https://github.com/example/code-review-helper",
       "projectBriefId": "code-review-helper",
-      "checkpoint": "Skill kostra hotová, heuristiky jsou sepsané a další safe move je dopsat runbook pro další tým."
+      "checkpoint": "Skill kostra hotová, heuristiky jsou sepsané a další safe move je dopsat runbook pro další tým.",
+      "checkIns": [],
+      "anchor": null
     },
     {
       "id": "t4",
@@ -157,7 +163,9 @@
       ],
       "repoUrl": "https://github.com/example/metrics-dashboard",
       "projectBriefId": "metrics-dashboard",
-      "checkpoint": "Dashboard žije, ale zatím není dohledatelné, co je skutečně ověřené a jak spustit seed data lokálně."
+      "checkpoint": "Dashboard žije, ale zatím není dohledatelné, co je skutečně ověřené a jak spustit seed data lokálně.",
+      "checkIns": [],
+      "anchor": null
     }
   ],
   "briefs": [

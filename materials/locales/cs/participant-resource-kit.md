@@ -1,6 +1,6 @@
 # Participant Resource Kit
 
-Post-workshop reference — krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu: odkazy, šablony a pět pracovních návyků. Pro in-session coaching moves (co říct, když agent sklouzává) sáhněte po [`coaching-codex.md`](../../coaching-codex.md).
+Tahák po workshopu — krátká sada věcí, které si můžete odnést z Harness Lab do vlastního projektu: odkazy, šablony a pět pracovních návyků. Pro konkrétní tahy do běžící session (co říct, když agent sklouzává) sáhněte po [`coaching-codex.md`](../../coaching-codex.md).
 
 Cíl kitu: postavit si vlastní **harness** — repo, workflow a kontext, který **unese další krok** bez vás.
 
@@ -49,10 +49,10 @@ Typické kandidáty:
 
 ## 5. Pro UI práci držte bezpečný postup
 
-Výchozí pattern:
-- `agent exploration`
-- `Playwright regression`
-- `human review`
+Výchozí postup:
+- průzkum s agentem
+- `Playwright` regresní test
+- lidské review
 
 Ve výchozím nastavení nenechávejte model ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
 
@@ -61,12 +61,12 @@ Ve výchozím nastavení nenechávejte model ovládat váš běžný přihláš
 - [`workshop-skill/reference.md`](../../../workshop-skill/reference.md)
 - [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
 - [`docs/learner-reference-gallery.md`](../../../docs/learner-reference-gallery.md)
-- [`content/codex-craft.md`](../../../content/codex-craft.md) — Codex-specific craft (approval módy, sandboxing, long-horizon drift, před/po příklad, failure recovery)
+- [`content/codex-craft.md`](../../../content/codex-craft.md) — Codex-specific craft (režimy schvalování, sandboxing, long-horizon drift, ukázka před a po, obnova po chybě)
 - [`materials/coaching-codex.md`](../../coaching-codex.md) — jednostránkový pocket card konverzačních tahů pro coaching agenta
 
 Poznámka:
 - `workshop` skill je garantovaný výchozí nástroj workshopu
-- další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
+- další skilly pro workflow a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
 
 ## Kdy se návyky spustí — pět návyků, pět spouštěčů
 
@@ -104,8 +104,8 @@ Jednou za měsíc si přečtěte svůj `AGENTS.md` skeptickým okem. Smažte, c
 Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
 
 - **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
-- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — praktický zdroj o Codexu, Claude Code a dalších agentech. Píše z vlastní každodenní praxe.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — praktický zdroj o Codexu, Claude Code a dalších agentech. Píše z každodenní praxe.
 - **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
-- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
+- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální příspěvky.
 - **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si ho znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
 - **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.

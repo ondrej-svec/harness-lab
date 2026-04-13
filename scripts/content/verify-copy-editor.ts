@@ -4,8 +4,15 @@
  *
  * Discovers the copy-audit script from the marvin plugin (installed
  * either as a sibling repo, via the `HEART_OF_GOLD_TOOLKIT` env var,
- * or from the default Claude plugin marketplace cache) and runs it
- * with `--require-reviewed`. The gate fails if any included file:
+ * or from the default Claude plugin marketplace cache) and runs it on
+ * the reviewed Czech locale markdown scope. The current copy-audit
+ * engine is not locale-aware inside the mixed `en`/`cs` branches of
+ * `workshop-content/agenda.json`; running Czech typography over that
+ * bilingual JSON binds English strings as if they were Czech and
+ * produces false positives. The CI gate therefore audits the reviewed
+ * Czech locale files directly and leaves agenda Czech to generated-view
+ * sync plus human Czech signoff in the review notes. The gate fails if
+ * any included file:
  *
  *   - has no lockfile entry,
  *   - has a stale contentHash (file changed since segmentation),
@@ -31,6 +38,17 @@ import { homedir } from "node:os";
 
 const __filename = fileURLToPath(import.meta.url);
 const repoRoot = resolve(dirname(__filename), "..", "..");
+const reviewedMarkdownPaths = [
+  "materials/locales/cs/**/*.md",
+  "content/project-briefs/locales/cs/**/*.md",
+  "content/challenge-cards/locales/cs/**/*.md",
+  "content/facilitation/locales/cs/**/*.md",
+  "content/talks/locales/cs/**/*.md",
+  "content/style-guide.md",
+  "content/style-examples.md",
+  "content/czech-editorial-review-checklist.md",
+  "content/czech-reject-list.md",
+].join(",");
 
 function candidatePaths(): string[] {
   const relFromRepo =
@@ -66,6 +84,17 @@ function findCopyAudit(): string | null {
   return null;
 }
 
+function runAudit(script: string, args: string[]): number {
+  const result = spawnSync("bun", [script, ...args], { stdio: "inherit" });
+
+  if (result.error) {
+    console.error(`verify-copy-editor: failed to spawn bun: ${result.error.message}`);
+    return 2;
+  }
+
+  return result.status ?? 1;
+}
+
 function main(): void {
   const script = findCopyAudit();
   if (!script) {
@@ -86,18 +115,15 @@ function main(): void {
   }
 
   console.log(`verify-copy-editor: using ${script}`);
-  const result = spawnSync(
-    "bun",
-    [script, "--config", configPath, "--require-reviewed"],
-    { stdio: "inherit" },
-  );
+  const status = runAudit(script, [
+    "--config",
+    configPath,
+    "--paths",
+    reviewedMarkdownPaths,
+    "--require-reviewed",
+  ]);
 
-  if (result.error) {
-    console.error(`verify-copy-editor: failed to spawn bun: ${result.error.message}`);
-    process.exit(2);
-  }
-
-  process.exit(result.status ?? 1);
+  process.exit(status);
 }
 
 main();

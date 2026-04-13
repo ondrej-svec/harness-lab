@@ -22,6 +22,12 @@ Every meaningful content slice should be reviewed for:
 
 AI-assisted review is allowed as a detection aid, but it does not satisfy blocking Czech language gates on its own **except for the deterministic typography layer**, which is by design the one layer scripted tooling can close. Spoken-readability, visible-surface Czech signoff, and Layer 2 judgment suggestions all require a Czech-fluent human reviewer.
 
+Current CI limitation:
+
+- `verify-copy-editor.ts` runs the deterministic gate on reviewed Czech locale markdown files, not directly on the bilingual `workshop-content/agenda.json`.
+- Reason: the current Layer 1 engine is not locale-aware inside mixed `en`/`cs` JSON and produces false-positive Czech typography findings on English branches.
+- Agenda Czech still remains in scope for human review, generated-view sync, and review-note signoff. Do not treat this limitation as permission to skip Czech review on `workshop-content/agenda.json`.
+
 ## Layer 2 is in-slice, not deferred
 
 When an agent edits or creates any file in the `.copy-editor.yaml` scope, Layer 2 judgment runs in the same slice as the edit. Deferring it to "a later review session" is not a valid handoff on a closing slice.

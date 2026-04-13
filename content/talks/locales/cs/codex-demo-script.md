@@ -1,14 +1,14 @@
-# Codex Demo Script
+# Podklad pro demo Codexu
 
 ## Cíl
 
 Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem a proč tenhle repozitář drží pohromadě díky harnessu, ne díky improvizaci.
 
-## Repo-Readiness Contrast (talk micro-exercise)
+## Kontrast připravenosti repa (mikro-cvičení v talku)
 
-Facilitátor před samotným demo ukazuje krátký kontrast: **stejný prompt, dvě repa, jiný výsledek**.
+Facilitátor před samotným demem ukazuje krátký kontrast: **stejný prompt, dvě repa, jiný výsledek**.
 
-### Two-Folder Setup
+### Setup se dvěma složkami
 
 Připravte si před workshopem dvě složky:
 
@@ -25,7 +25,7 @@ Připravte si před workshopem dvě složky:
 - Workshop skill nainstalovaný (`harness skill install`)
 - Agent dostane stejný prompt a vytvoří zarovnaný výstup.
 
-### Narration flow
+### Postup vyprávění
 
 1. Nejdřív ukažte Folder A. Spusťte jednoduchý prompt. Nechte agenta viditelně driftovat.
 2. Pojmenujte, co vidíte: „Tohle je **task drift**. Agent udělal věrohodná rozhodnutí, ale bez mantinelů se vydal špatným směrem."
@@ -34,24 +34,24 @@ Připravte si před workshopem dvě složky:
 5. Nechte odpovědět dva hlasy, teprve potom to pojmenujte.
 6. Doručte tezi: „Prompt se nezměnil. Repo ano."
 
-### Honest failure narration
+### Jak poctivě popsat selhání
 
 Když ukazujete Variantu A, explicitně pojmenujte způsob, jakým to selhalo:
 - „Agent začal bez mantinelů a udělal věrohodná, ale špatná architektonická rozhodnutí."
 - „Tohle se stane v každém repu bez AGENTS.md — agent si doplní mezery vlastními předpoklady."
 - Používejte termín **task drift** — přesně pojmenovává ten vzor.
 
-### Tool-specific realities to mention during the demo
+### Co během dema říct o nástrojích
 
 - Codex nemá rewind/undo — jakmile agent commitne, musíte zpátky přes git.
 - MCP servery vs. skills: jiné balení, stejná myšlenka (strukturované schopnosti).
-- Principy jsou tool-agnostic: AGENTS.md funguje s Codexem, Claude Codem, Cursorem i Copilotem.
+- Principy nejsou vázané na konkrétní nástroj: AGENTS.md funguje stejně v Codexu, Claude Code, Cursoru i Copilotu.
 
-### Open question
+### Otevřená otázka
 
 Jestli má `harness` CLI mít `demo-setup` příkaz, který obě složky vygeneruje automaticky.
 
-## Flow (after contrast)
+## Průběh po kontrastu
 
 1. Otevřete Folder B a ukažte `README`, `AGENTS.md`, rozpad práce do kroků a způsob kontroly změny.
 2. Spusťte `/plan`, aby agent rozpadl práci na kroky.

@@ -1,8 +1,8 @@
 # Context is King — Facilitator Delivery Script
 
-## Jak tento script číst
+## Jak tenhle podklad číst
 
-Tenhle soubor není samostatný obsah talku. Je to delivery script pro facilitátora — to, co říkáte mezi scénami, pacing a watch-fors. Plný text titulků, body a callouts je v `workshop-content/agenda.json`, scény `talk-argued-about-prompts`, `talk-got-a-name`, `talk-how-to-build`, `talk-humans-steer`, `talk-sitting-inside`. Agenda je source of truth; tento soubor je stage manager.
+Tenhle soubor není samostatný obsah talku. Je to podklad pro facilitátora — co říkat mezi scénami, jak držet tempo a na co si dát pozor. Plný text titulků, body a zdůrazněné boxy jsou v `workshop-content/agenda.json`, scény `talk-argued-about-prompts`, `talk-got-a-name`, `talk-how-to-build`, `talk-humans-steer`, `talk-sitting-inside`. Agenda je zdroj pravdy; tenhle soubor je režijní podklad.
 
 Kanonická slovní zásoba, kterou tady používáte, je v `docs/workshop-content-canonical-vocabulary.md`. Když nevíte, jestli nějaké slovo „smíte“ použít, podívejte se tam.
 
@@ -10,7 +10,7 @@ Kanonická slovní zásoba, kterou tady používáte, je v `docs/workshop-conte
 
 - Pět scén, cíl 8–10 minut, hlavní čára je scéna 4.
 - Jedna věta, kterou chráníte nade vše ostatní: **Lidé řídí. Agenti vykonávají.**
-- Talk nekončí tezí. Končí mostem do dema (scéna 5). Demo pak běží podle `content/talks/codex-demo-script.md` — tam žije repo-readiness contrast, tady ne.
+- Talk nekončí tezí. Končí mostem do dema (scéna 5). Demo pak běží podle `content/talks/codex-demo-script.md` — tam žije kontrast připravenosti repa, tady ne.
 - Nejhustší scéna je scéna 1 (pět hlasů). Nejdůležitější je scéna 4. Nejhubenější je scéna 5.
 
 ## Scéna 1 — Zatímco jsme se přeli o prompty
@@ -29,7 +29,7 @@ Pak čtěte pět hlasů jako příběh, ne jako seznam odrážek. Po každém jm
 4. **Mitchell Hashimoto (HashiCorp, začátkem roku).** Jeho test řemesla: „Pokaždé, když agent udělá chybu, vezměte si čas a postavte řešení, aby tu chybu už nikdy neudělal.“ Řekněte, že tohle je jednovětná definice sensoru. (Druhá poloviční vazba k Böckeler, propojte.)
 5. **Stripe Minions.** Přes tisíc PR týdně, žádný člověk mezi úkolem a PR. „Není to demo. Je to produkce.“ Tohle je jediné místo v scéně, kde můžete mírně zvýšit hlas.
 
-Pak callout o počasí (Simon Willison, analytické firmy, „nikdo neví, jak bude vypadat prosinec“). Tohle je nejslabší beat scény — je první na řadě, pokud je místnost unavená. V tu chvíli přeskočte rovnou do scény 2.
+Pak přijde zmínka o počasí (Simon Willison, analytické firmy, „nikdo neví, jak bude vypadat prosinec“). Tohle je nejslabší beat scény — je první na řadě, pokud je místnost unavená. V tu chvíli přeskočte rovnou do scény 2.
 
 ### Jak to načasovat
 
@@ -67,7 +67,7 @@ Plnou prózu má agenda v hero bloku scény — vy doručujete strukturu, ne te
 
 Když analogii použijete jednou, držte ji. Nepoužívejte druhou analogii („je to jako tým, je to jako kuchyně, je to jako…“). Jedna analogie, pořádně.
 
-Pak reframe callout: **Mezera mezi modely se zužuje. Mezera mezi harnessy roste.** Tohle je druhá nejdůležitější věta talku. Řekněte ji pomalu. Nechte ji dosednout dřív, než přejdete na scénu 3.
+Pak přijde klíčová věta obratu: **Mezera mezi modely se zužuje. Mezera mezi harnessy roste.** Tohle je druhá nejdůležitější věta talku. Řekněte ji pomalu. Nechte ji dosednout dřív, než přejdete na scénu 3.
 
 ### Co hlídat
 
@@ -89,7 +89,7 @@ Pak **čtyři sloupy.** Každý sloup čtěte z agendy, ale přidejte jednu kon
 3. **Sensors — zachycení potom, co agent jedná.** Tracer bullets, end-to-end testy, holistické ověření. Hlavní věta navíc: **„Když agent dělá víc, ověřujete celek. Ne že jedna funkce vrátila 4.“** Tohle je místo, kde si místnost poprvé uvědomí, že granularita je problém, ne cíl.
 4. **Managing, ne chatování.** „Přestáváte být pair-programmer a stáváte se režisérem s týmem.“ Tohle je ta nejkratší z čtyř scén — neprotahujte.
 
-Pak callout **„Team lead staví prostředí, ve kterém tým funguje.“** Tohle je most k vaší roli — vy jako facilitátor, oni jako team leads pro své agenty. Analogie zabere, pokud v místnosti sedí seniorní inženýři; s juniorní místností ji můžete zkrátit.
+Pak zdůrazněte větu **„Team lead staví prostředí, ve kterém tým funguje.“** Tohle je most k vaší roli — vy jako facilitátor, oni jako lidé, kteří staví prostředí pro své agenty. Analogie zabere, pokud v místnosti sedí seniorní inženýři; s juniorní místností ji můžete zkrátit.
 
 Scéna končí checklistem čtyř věcí k adopci. Ty jsou v agendě — neříkejte je nahlas celé, nechte je jen zobrazené. Řekněte jen „Tohle jsou čtyři pohyby, které budete dnes trénovat.“
 
@@ -116,7 +116,7 @@ Otevřete připomenutím Lopopola ze scény 1. Pak přečtěte hlavní větu: **
 
 Pak Lopopolův citát o mapě: „Dejte Codexu mapu, ne tisícistránkový návod.“ Pak Hashimotův citát o fixování chyb. Oba jsou v hero blocích — čtěte je.
 
-Pak **Druhý den callout**. Tahle věta zavírá talk — v obou jazycích je day-neutral, žádný den v týdnu:
+Pak přijde věta pro druhý den. Tahle věta zavírá talk — v obou jazycích je day-neutral, žádný den v týdnu:
 
 > Druhý den, až si otevřete coding agenta, budete pracovat jinak. Ne s novým nástrojem. S jinou rolí. Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází.
 
@@ -142,13 +142,13 @@ Poslední věta je ta, kterou chcete, aby si odnesli. Řekněte ji, pauza, nic n
 
 ### Most do dema
 
-Tahle scéna je krátká a má jeden úkol: říct místnosti, že workshop skill, dashboard, participant board a repo, které za chvíli otevřou, jsou reálné ukázky toho, o čem celý talk byl.
+Tahle scéna je krátká a má jeden úkol: říct místnosti, že workshop skill, dashboard, plátno před vámi a repo, které za chvíli otevřou, jsou reálné ukázky toho, o čem celý talk byl.
 
-Text z hero bloku: „Workshop skill, dashboard, participant board, repo, které za chvíli otevřete — to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance.“
+Text z hero bloku: „Workshop skill, dashboard, plátno před vámi, repo, které za chvíli otevřete — to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance.“
 
 Facilitátorova přechodová věta (pokud chcete): **„Ukážu vám, co tím myslím — takhle vypadá funkční session s agentem, když harness dělá svou práci.“**
 
-Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/codex-demo-script.md`.
+Pak přejděte do dema. Demo má vlastní podklad v `content/talks/codex-demo-script.md`.
 
 ### Co hlídat
 
@@ -157,10 +157,10 @@ Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/code
 
 ## Co explicitně neříkat
 
-- Nepoužívejte termín „prompt blob“ a nevěnujte se mu. Repo-readiness contrast je v demu, ne v talku.
+- Nepoužívejte termín „prompt blob“ a nevěnujte se mu. Kontrast připravenosti repa je v demu, ne v talku.
 - Neparafrázujte **Lidé řídí. Agenti vykonávají.** Ani jednou.
-- Neříkejte „v pondělí ráno“. V obou jazycích se tenhle workshop loučí s posluchači větou o **druhém dni, až si otevřete coding agenta / the next day you open a coding agent** — je to role change, ne kalendářní událost.
-- Nepředvádějte funkce Codexu nebo jiných nástrojů. Tohle není tool demo.
+- Neříkejte „v pondělí ráno“. V obou jazycích se tenhle workshop loučí s posluchači větou o **druhém dni, až si otevřete coding agenta / the next day you open a coding agent** — je to změna role, ne kalendářní událost.
+- Nepředvádějte funkce Codexu nebo jiných nástrojů. Tohle není demo nástroje.
 - Nepřidávejte šestou odrážku do čtyř sloupů. Čtyři, ne pět, ne šest.
 - Nepopisujte habit taxonomii. Pět habit tagů patří na karty, ne do talku.
 - Neříkejte „one function plus one test“ ani v žádné variantě. Sloup 3 je o **holistickém ověření** — tracer bullet, end-to-end, ne unit test na jednu funkci.
@@ -168,9 +168,9 @@ Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/code
 ## Fallbacky
 
 - **Pokud jste nad 10 minut:** spojte sloupy 2 a 3 (guides + sensors) do jednoho. Scéna 3 je sekce, která snese kompresi bez ztráty hlavní věty.
-- **Pokud je místnost unavená:** ze scény 1 vynechejte weather callout (Willison/Gartner). Zkraťte ji na pět hlasů + přechod.
+- **Pokud je místnost unavená:** ze scény 1 vynechejte zmínku o počasí (Willison/Gartner). Zkraťte ji na pět hlasů + přechod.
 - **Pokud jste pod časem a na hranici:** chráněné je scéna 4 a čtyři sloupy. Všechno ostatní je volitelné.
-- **Pokud jste někde ztratili rytmus:** vraťte se na `team-lead staví systém` callout (scéna 3) a na **Lidé řídí. Agenti vykonávají.** (scéna 4). Ty dvě věty stačí na to, aby místnost pochopila, o co dnes jde.
+- **Pokud jste někde ztratili rytmus:** vraťte se k větě `team lead staví systém` (scéna 3) a k **Lidé řídí. Agenti vykonávají.** (scéna 4). Ty dvě věty stačí na to, aby místnost pochopila, o co dnes jde.
 
 ## Co si odnesete do build fáze
 
