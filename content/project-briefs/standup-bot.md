@@ -26,8 +26,8 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 - Výstup zvýrazní blokery nebo položky, které potřebují pozornost.
 - Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.
 - Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního předání.
-- Je jasné, co je jisté shrnutí a co je jen heuristika nebo návrh.
+- Výstup jasně odliší, co nástroj ví jistě a co je jen heuristický návrh.
 
 ## První krok pro agenta
 
-Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhněte implementační kroky.
+Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který nový tým otevře jako první. Až potom navrhněte implementační kroky.

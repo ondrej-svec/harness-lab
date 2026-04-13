@@ -23,7 +23,7 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 ## Hotovo když
 
 - Existují alespoň 3 užitečné příkazy nebo subcommands.
-- `README` i `AGENTS.md` popisují lokální spuštění a způsob ověření.
+- `README` i `AGENTS.md` popisují, jak projekt spustit a ověřit lokálně.
 - Je jasné, kde přidat další příkaz bez rozbití struktury projektu.
 - Nový tým zvládne během 10 minut přidat nebo opravit další command.
 - Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu.

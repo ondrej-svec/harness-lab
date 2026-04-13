@@ -57,7 +57,7 @@ Pravidla:
 
 - „Kde by to našel další tým bez vás?“
 - „Co je tady skutečně ověřené?“
-- „Je `AGENTS.md` mapa, nebo už se z něj stává dump?“
+- „Je `AGENTS.md` mapa, nebo už se z něj stává encyklopedie?“
 - „Jaký je další bezpečný krok pro cizího člověka nebo agenta?“
 
 ### První pracovní kontrakt
@@ -96,7 +96,7 @@ Proměnit energii z openingu v přesnou tezi a čistý most do build fáze 1.
 
 > **Lidé řídí. Agenti vykonávají.**
 
-Tohle jsou čtyři slova, která talk končí a která si má místnost odnést. Facilitátor je nikdy neparafrázuje, neříká je dřív než ve scéně 4 a nedělá z nich motivační sloganku. Je to princip, ne hashtag. Detailní delivery viz `content/talks/context-is-king.md`.
+Tohle jsou čtyři slova, která talk končí a která si má místnost odnést. Facilitátor je nikdy neparafrázuje, neříká je dřív než ve scéně 4 a nedělá z nich motivační slogan. Je to princip, ne hashtag. Detailní delivery viz `content/talks/context-is-king.md`.
 
 ### Repo-readiness kontrast (mikro-cvičení)
 
@@ -114,7 +114,7 @@ Flow:
 4. Nechte dva hlasy odpovědět.
 5. Pojmenujte tezi: „Prompt se nezměnil. Repo ano."
 
-Nenechte to sklouznout do debaty o tom, který model je chytřejší. Pointa je, že výsledek změnil kontext v repu, ne prompt.
+Nenechte to sklouznout do debaty o tom, který model je chytřejší. Pointa je, že výstup se změnil, protože se změnil kontext v repu — ne prompt.
 
 Viz `content/talks/codex-demo-script.md` pro detailní two-folder setup.
 
@@ -200,9 +200,9 @@ Ukázat Codex jako součást pracovního systému, ne jako samostatné kouzlo. D
 
 ## Intermezza
 
-### Tiché retrieval cvičení (povinné)
+### Tiché retrievalové cvičení (povinné)
 
-Každé intermezzo začíná 3minutovým tichým retrieval cvičením. Toto je povinný první krok, ne volitelný doplněk.
+Každé intermezzo začíná 3minutovým tichým retrievalovým cvičením. Toto je povinný první krok, ne volitelný doplněk.
 
 Flow:
 1. **3 minuty individuální psaní** — každý píše sám, žádné sdílení
@@ -213,9 +213,9 @@ Otázky pro retrieval:
 - **Intermezzo 1:** „Co vás dnes ráno při práci s agentem překvapilo – a co vás to nutí příště zkusit jinak? Tři minuty. Zatím nemluvte."
 - **Intermezzo 2:** „Co vás dosud zděděné repo překvapilo – a co chcete zkusit jinak ve druhém pushi? Tři minuty. Zatím nemluvte."
 
-Když někdo začne mluvit během tiché fáze, přesměrujte: „Nejdřív napište, pak budeme sdílet." Přínos retrieval cvičení vyžaduje individuální produkci před sdílením.
+Když někdo začne mluvit během tiché fáze, přesměrujte: „Nejdřív napište, pak budeme sdílet." Přínos retrievalového cvičení vyžaduje individuální produkci před sdílením.
 
-### Po retrieval cvičení
+### Po retrievalovém cvičení
 
 Každé intermezzo pokračuje třemi kroky:
 
@@ -226,7 +226,7 @@ Každé intermezzo pokračuje třemi kroky:
 Preferované checkpoint otázky:
 
 - Co jste přesunuli z chatu nebo z hlavy do repa?
-- Co dnes ověřujete pomocí spustitelného ověření?
+- Co dnes ověřujete spustitelným testem?
 - Co by měl číst další tým jako první?
 
 ### Smysl intermezz
@@ -234,7 +234,7 @@ Preferované checkpoint otázky:
 - zviditelnit učení napříč týmy
 - udělat z průběhu dne sérii krátkých checkpointů
 - připomenout, že workflow je stejně důležité jako samotný výsledek
-- vracet týmy k tomu, že bez ověření jen akcelerují nejistotu
+- vracet týmy k tomu, že bez ověření jen zrychlují nejistotu
 
 Nevést intermezzo jako status meeting.
 Vést ho jako krátký checkpoint, ze kterého si týmy odnesou jednu věc, kterou ještě ten den dopíšou, zpřesní nebo ověří.
@@ -265,7 +265,7 @@ Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasah
 
 ### Instrukce pro nový tým
 
-- Začněte `README`, `AGENTS.md` a planem.
+- Začněte u `README`, `AGENTS.md` a plánu.
 - Needitujte hned první soubor, který otevřete.
 - Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.
 - Když tým neví, po čem sáhnout, vraťte ho k learner kitu: `template-agents`, `reference`, `analyze-checklist` a challenge cards.
@@ -321,6 +321,6 @@ Reflexe bez zápisu se většinou neudrží. Proto na samém konci dne:
 - seznam není hodnocení ani soutěž. Je to jediný artefakt z dnešního dne, který prokáže, že reflexe skutečně něco změnila
 
 Facilitátorův tah:
-- věty vybízejte k tomu, aby byly konkrétní (ne „budu lépe pracovat s agenty“, ale „do AGENTS.md svého hlavního repa napíšu 4 elementy: goal, context, constraints, done when“)
+- věty vybízejte k tomu, aby byly konkrétní (ne „budu lépe pracovat s agenty“, ale „do AGENTS.md svého hlavního repa napíšu čtyři prvky: goal, context, constraints, done when“)
 - když někdo napíše něco velmi obecného, zeptejte se: „Jaký je první konkrétní tah, který to spustí?"
 - commitmenty nepublikujte jmenovitě mimo room; artefakt patří týmu, ne marketingu

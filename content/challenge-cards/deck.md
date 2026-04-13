@@ -12,7 +12,7 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 - `AGENTS.md jako mapa` — Váš agent právě dostal úkol, ale nezná architekturu, pravidla ani co testovat. Vytvořte AGENTS.md se čtyřmi sekcemi: Goal / Context / Constraints / Done When. [Habit: Map before motion]
 
-- `Build/test příkazy` — Agent napsal kód, ale neumí ho ověřit bez vašeho ručního dovysvětlování. Přidejte build a test příkazy tak, aby agent i další tým uměl spustit kontrolu sám. [Habit: Verification is the trust boundary]
+- `Build/test příkazy` — Agent napsal kód, ale neumí ho ověřit bez vašeho ručního dovysvětlování. Přidejte build a test příkazy tak, aby si agent i další tým kontrolu spustili sami. [Habit: Verification is the trust boundary]
 
 - `Skill pro code review` — Tým opakuje v review vždy stejné připomínky. Formalizujte jednu review rutinu do skillu nebo checklistu, který by uměl použít i cizí tým. [Habit: Cleanup is part of build]
 
@@ -22,7 +22,7 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 - `Diagnóza po handoffu` — Právě jste zdědili repo, které jste nikdy neviděli. Napište, co vám pomohlo, co chybělo, co je rizikové a jaký je další bezpečný krok. [Habit: Map before motion]
 
-- `/plan před kódováním` — Tým se chce rovnou pustit do kódu, ale nikdo nevidí celkový plán. Použijte /plan, ukažte kroky, co plníte a jaký je další bezpečný krok. [Habit: Boundaries create speed]
+- `/plan před kódováním` — Tým se chce rovnou pustit do kódu, ale nikdo nevidí celkový plán. Použijte /plan, ukažte kroky, co právě děláte a jaký je další bezpečný krok. [Habit: Boundaries create speed]
 
 - `Rozdělte práci do více vláken` — Všichni v týmu pracují na jedné věci najednou. Zkuste dvě nezávislé linie práce a jednoho člověka na integraci. [Habit: Boundaries create speed]
 

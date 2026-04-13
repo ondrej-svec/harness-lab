@@ -14,7 +14,7 @@ Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří pou
 
 ## Architektonické poznámky
 
-- Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → hodnoticí schéma → checklist`.
+- Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → rozbor → checklist`.
 - Musí být zřejmé, jaké vstupy nástroj očekává, co umí označit jistě a co naopak zůstává heuristické.
 - Přidejte seed diff nebo `examples/`, aby šlo workflow lokálně ověřit a další tým rychle přidal nové pravidlo.
 - Nástroj má pomáhat reviewerovi, ne předstírat neomylnost.
@@ -28,4 +28,4 @@ Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří pou
 
 ## První krok pro agenta
 
-Nezačínejte kódem. Nejdřív napište review hodnoticí schéma, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice.
+Nezačínejte kódem. Nejdřív napište pravidla pro review, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice.

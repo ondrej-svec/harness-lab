@@ -14,7 +14,7 @@ Když cítíte, že session jede stranou, zastavte se a položte je nahlas, nejd
 
 1. **Co teď vlastně zkoušíme dokázat?**
 2. **Který artefakt v repu chybí, aby se tomuhle předešlo?**
-3. **Jaký je nejmenší check, který tuhle práci vrátí z pocitu zpátky do reality?**
+3. **Jaký je nejmenší check, který tuhle práci vrátí z jistoty zpátky do reality?**
 
 Když na žádnou z těch tří nedokážete odpovědět, session skončila. Zavřete ji. Vraťte se, až odpovědi budete mít.
 
@@ -30,14 +30,14 @@ Projděte tohle v tomhle pořadí. Nepřeskakujte.
 2. **„Jaká je nejmenší změna, která by mohla dokázat, že tenhle přístup funguje?"**
    Vynutí si tracer bullet — tenký end-to-end řez, který ukáže, že celá věc drží — místo přepsání specifikace. Celek nad detailem: chcete řez, který ukáže další krok, ne unit test na jedné funkci.
 
-3. **„Jaká je done kriteria — příkaz, který spustím, nebo soubor, na který se podívám, — který nám řekne, že je hotovo?"**
+3. **„Jaká je definice hotovo — příkaz, který spustím, nebo soubor, na který se podívám — a která nám řekne, že je skutečně hotovo?"**
    Když to agent neumí pojmenovat, nikdo z vás neví, co „hotovo" znamená. Stop.
 
 4. **„Co se může pokazit? Pojmenujte jeden failure mode, o kterém jsem vám neřekl."**
    Tohle je nejlepší detektor task driftu. Když agent řekne „nic", berte to jako žlutou vlajku a zatlačte.
 
 5. **„Ukažte plán ve třech krocích. Ne kód. Plán."**
-   Je levné přesměrovat plán. Je drahé přesměrovat 300 řádků kódu.
+   Přesměrovat plán stojí minutu. Přesměrovat 300 řádků kódu stojí odpoledne.
 
 ---
 
@@ -74,7 +74,7 @@ Tohle je váš **sensor** moment — feedback loop, který agenta chytí po tom,
 
 ## Jedno pravidlo, které si pamatujete
 
-**Nepromptujete agenta. Koučujete spolupracovníka, který mezi sessions všechno zapomíná.** Jediná paměť, kterou sdílíte, je repo. Chovejte se podle toho.
+**Nepromptujete agenta. Koučujete spolupracovníka, který mezi sessions všechno zapomíná.** Jediná paměť, kterou sdílíte, je repo. Podle toho.
 
 Co není v repu, neexistuje.
 

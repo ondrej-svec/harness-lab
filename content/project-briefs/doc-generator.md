@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 
 ## První krok pro agenta
 
-Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Teprve potom navrhněte první implementační slice.
+Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Tu specifikaci vložte do `AGENTS.md`. Teprve potom navrhněte první implementační slice.

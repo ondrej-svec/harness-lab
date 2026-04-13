@@ -1,27 +1,27 @@
 {
   "code-review-helper": {
     "en": "2a298d8b60053c2f54f555fc72aafa711e593549",
-    "cs": "4c03a252fc9ad5e8ecab2d8b5bd137871a4253a6",
+    "cs": "2a45a64b060b885b1e304575673cc3c6140d1f8e",
     "cs_reviewed": false
   },
   "devtoolbox-cli": {
     "en": "3c71c4af30c1b4037ba5aa66b878c861012bd884",
-    "cs": "e7782d3f0b570c80cd0d6ec4e9674439de5a2060",
+    "cs": "cb613993b486b7b8a804d6b3985f71206bdfe266",
     "cs_reviewed": false
   },
   "doc-generator": {
     "en": "badb0a920834f32522c5591604a8f93f8a678e3e",
-    "cs": "c2f6c4331c35bf342c385890ab8ad481af0ed095",
+    "cs": "91fad85d100636d937370c2e3a651dc0d1f2ab18",
     "cs_reviewed": false
   },
   "metrics-dashboard": {
     "en": "1678552dcfc9843a8b89d6da224323638888280a",
-    "cs": "5616abfdd298a17d55a008b945ab4a88496df2c0",
+    "cs": "6a507978044c67261bffe2588ad2708cbcacc302",
     "cs_reviewed": false
   },
   "standup-bot": {
     "en": "184c5f507af513fdcc0a0e29c40d54ef21044f52",
-    "cs": "5dbb2cf47c111859ade0d4e3bd573ba198abfdd5",
+    "cs": "f9af5d68ed01bb999f974393b104762a8bb8839e",
     "cs_reviewed": false
   }
 }

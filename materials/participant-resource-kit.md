@@ -54,7 +54,7 @@ Výchozí pattern:
 - `Playwright regression`
 - `human review`
 
-Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
+Ve výchozím nastavení nenechávejte model ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
 
 ## 6. Co si projít po workshopu
 
@@ -75,7 +75,7 @@ Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem
 - Když **otevíráte nový repo, nový úkol nebo novou agent session** → **Map before motion** — uděláte z repa mapu, než začnete generovat.
 - Když **agent dostává úkol a vy chystáte prompt** → **Boundaries create speed** — napíšete omezení dřív než prompt. Mantinely jsou důvod, proč práce jede rychleji, ne proč jede pomaleji.
 - Když **cítíte dost jistoty na to, abyste šli dál** → **Verification is the trust boundary** — ta jistota je spouštěč k ověření, ne k přeskočení. Holisticky: dokažte, že drží celek, ne že jedna funkce vrátila 4.
-- Když **zavíráte chat, končíte hovor nebo pairing, kde padlo rozhodnutí** → **If it is not in the repo, it does not exist** — zapíšete rozhodnutí do repa, než se na něj do zítřka zapomene.
+- Když **zavíráte chat, končíte hovor nebo pairing, kde padlo rozhodnutí** → **If it is not in the repo, it does not exist** — zapíšete rozhodnutí do repa — do zítřka by se jinak rozplynulo.
 - Když **se stejná třecí plocha, ruční krok nebo drobnost objeví podruhé** → **Cleanup is part of build** — proměníte to v check, template nebo pravidlo na místě, ne „později".
 
 ## Výzva na příště
@@ -95,9 +95,9 @@ Nejmenší verze, která přežije skeptické code review:
 1. **Jeden `AGENTS.md`** — goal, build/test příkazy, jedno explicitní omezení. **Mapa, ne encyklopedie.** Nic víc.
 2. **Jeden spustitelný check** — tracer bullet nebo end-to-end smoke test, který ověří, že celek drží. Ne jednu funkci.
 
-Když se někdo zeptá „proč to děláme?“, odpověď je: „Aby se další člověk nemusel ptát tebe.“
+Když se někdo zeptá „proč to děláme?“, odpověď je: „Aby se další člověk nemusel ptát vás.“
 
-Měsíční rytmus: každý měsíc si přečtěte svůj `AGENTS.md` skeptickým okem. Smažte, co už není nosné. Přidejte, co tým říká nahlas podruhé.
+Jednou za měsíc si přečtěte svůj `AGENTS.md` skeptickým okem. Smažte, co už není nosné. Přidejte, co tým říká nahlas podruhé.
 
 ## Co číst po workshopu, abyste zůstali aktuální
 
@@ -107,5 +107,5 @@ Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmraz
 - **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — praktický zdroj o Codexu, Claude Code a dalších agentech. Píše z vlastní každodenní praxe.
 - **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
 - **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
-- **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si je znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
+- **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si ho znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
 - **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.
