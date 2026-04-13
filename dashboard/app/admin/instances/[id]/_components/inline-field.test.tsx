@@ -25,7 +25,6 @@ describe("InlineField (display mode)", () => {
       <InlineField value="Opening" fieldName="title" label="název" action={vi.fn()} />,
     );
     expect(html).toContain("Opening");
-    expect(html).toContain("aria-label=\"upravit název\"");
     expect(html).toContain("data-inline-field=\"display\"");
   });
 
@@ -42,11 +41,17 @@ describe("InlineField (display mode)", () => {
     expect(html).toContain("bez názvu");
   });
 
-  it("renders accessible labels using the provided label prop", () => {
+  it("keeps the display button's accessible name equal to its visible text content — no aria-label, no title", () => {
     const html = renderToStaticMarkup(
-      <InlineField value="x" fieldName="f" label="custom-label" action={vi.fn()} />,
+      <InlineField value="Rotace týmů" fieldName="f" label="custom-label" action={vi.fn()} />,
     );
-    expect(html).toContain("aria-label=\"upravit custom-label\"");
+    // Neither aria-label nor title on the button. Both would shadow the
+    // visible text content as the button's accessible name, which in
+    // turn would shadow the surrounding heading's accessible name for
+    // Playwright getByRole and for screen readers.
+    expect(html).not.toMatch(/<button[^>]*aria-label=/);
+    expect(html).not.toMatch(/<button[^>]*title=/);
+    expect(html).toContain("Rotace týmů");
   });
 
   it("preserves the value text verbatim when non-empty", () => {

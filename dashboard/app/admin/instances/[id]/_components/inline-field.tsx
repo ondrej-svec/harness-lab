@@ -117,11 +117,19 @@ export function InlineField({
 
   if (!editing) {
     const showPlaceholder = !optimisticValue;
+    // IMPORTANT: no aria-label and no title on the display button. Both
+    // shadow the button's text content in Chromium's accessible-name
+    // computation (title wins over text content in practice, even though
+    // the ARIA spec says text content should win). We want the button's
+    // accessible name to BE its visible value so surrounding headings
+    // (e.g. the agenda detail h2) keep their existing accessible names.
+    // Interactivity is conveyed via the <button> role + hover/focus
+    // styles. Visually-hidden edit affordance could be added later but
+    // is deliberately minimal to avoid re-shadowing the heading.
     return (
       <button
         type="button"
         onClick={() => setEditing(true)}
-        aria-label={`upravit ${label}`}
         data-inline-field="display"
         className={`inline-flex items-center gap-2 rounded-[10px] px-1 text-left transition hover:bg-[var(--surface-soft)] focus-visible:bg-[var(--surface-soft)] focus-visible:outline-none ${className ?? ""}`}
       >
