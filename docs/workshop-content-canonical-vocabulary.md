@@ -10,7 +10,7 @@
 
 ## 1. Canonical habit taxonomy — the five tags
 
-The five tags from `content/challenge-cards/deck.md` are the **single habit taxonomy** across the repo. Every habit, principle-as-habit, or "what to practice Monday" surface uses exactly these five names. No synonyms, no parallel taxonomies.
+The five tags from `content/challenge-cards/deck.md` are the **single habit taxonomy** across the repo. Every habit, principle-as-habit, or "what to practice after the workshop" surface uses exactly these five names. No synonyms, no parallel taxonomies.
 
 | # | Tag (canonical) | What it means | Primary moment | When it fires |
 |---|---|---|---|---|
@@ -56,10 +56,10 @@ These are the concepts the agenda teaches. Downstream content can describe them 
 | The structure taught in `talk-how-to-build` | **four pillars** (CS: **čtyři sloupy**) | "principles", "rules" |
 | The equation | **Agent = Model + Harness** | "Agent equals..." (prose form) |
 | The shift in role | **managing, not chatting** (CS: **managing, ne chatování**) | "driving the agent", "pair programming" |
-| End-of-day written commitment | **Monday commitments** (CS: **commitments na další pracovní týden**) | "action items", "next steps" |
+| End-of-day written commitment | **next-day commitments** (CS: **commitments pro další den u klávesnice**) | "action items", "next steps", "Monday commitments" |
 | `AGENTS.md` character | **AGENTS.md as a map, not a warehouse** (CS: **AGENTS.md jako mapa, ne encyklopedie**) | "documentation", "readme" |
 | Failure mode in the demo | **task drift** | "hallucination", "going off-track", "wrong answer" |
-| Principle on verification scope | **holistic beats granular** (CS: **holisticky nad granularitou** / **rámovat holisticky**) | "integration over unit" |
+| Principle on verification scope | **holistic beats granular** (CS: **Celek nad detailem** — "Ověřuj celek, ne detail") | "integration over unit", "holisticky nad granularitou" (literal loanword soup) |
 
 **Guides/sensors origin.** Both terms come from Birgitta Böckeler's `martinfowler.com` article (10 days before the workshop). The agenda credits her explicitly in `talk-argued-about-prompts` and `talk-got-a-name`.
 
@@ -81,16 +81,19 @@ Optional sixth reference (weather callout only, not a voice): **Simon Willison**
 
 ---
 
-## 5. Monday-promise language (post-`d7b9000`)
+## 5. Day-neutral closing language
 
-The Czech review pass removed "Monday morning" framing in favor of day-neutral phrasing. Use the new wording.
+The workshop ends with a role-change promise, not a calendar promise. "Monday" is banned in **both** languages — the facilitator doesn't know when the next-day-at-the-keyboard actually falls for any given participant, and the point is the role shift, not the day of the week.
 
-| Use this (CS) | Not this |
+| Use this | Not this |
 |---|---|
-| **Druhý den, až si otevřete coding agenta, budete pracovat jinak.** | ~~V pondělí ráno otevřete editor~~ |
-| **Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází.** | ~~Monday morning you'll open your editor~~ |
+| **The next day you open a coding agent, you'll work differently.** (EN) | ~~Monday morning, you'll open your editor~~ |
+| **Druhý den, až si otevřete coding agenta, budete pracovat jinak.** (CS) | ~~V pondělí ráno otevřete editor~~ |
+| **You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into.** (EN) | ~~See you Monday~~ |
+| **Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází.** (CS) | — |
+| **next-day commitments** / **commitments pro další den u klávesnice** | ~~Monday commitments~~ |
 
-The English equivalent in the agenda still uses "By tonight... Monday morning" — EN copy can keep Monday; CS copy cannot. This is an intentional asymmetry from the Czech review.
+**Why "next day"?** Because the workshop runs on any day of the week, and participants sit down to code on different schedules. "The next day you open a coding agent" is role-anchored, not calendar-anchored. It carries the urgency of "soon" without pretending you know when.
 
 **Vy-form discipline.** All Czech participant-facing surfaces use lowercase `vy` (not `ty`, not `Vy`). This is the standing rule from `content/style-guide.md` line 149–151, reinforced by the 2026-04-13 Mode A scene-card review.
 
@@ -135,9 +138,9 @@ Content is wrong if:
 - It names a habit that isn't one of the five in §1.
 - It paraphrases a §2 protected phrase.
 - It cites a voice that isn't in §4 (exception: Simon Willison in the weather callout context).
-- It uses "Monday morning" framing in Czech copy.
+- It uses "Monday" or any calendar-day framing in any language.
 - It uses `ty` form in Czech participant-facing copy.
-- It uses pre-rewrite vocabulary: "prompt blob", "one function plus one test", "smart prompt", the six-habit taxonomy.
+- It uses pre-rewrite vocabulary: "prompt blob", "one function plus one test", "smart prompt", the six-habit taxonomy, "holisticky nad granularitou".
 
 ---
 

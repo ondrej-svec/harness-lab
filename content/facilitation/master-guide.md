@@ -302,13 +302,13 @@ Na konci dne chceme, aby si lidé odnesli tři věci:
 
 1. jeden signál, který chtějí zavést natrvalo
 2. jednu slabinu, kterou už příště nenechají jen v hovoru
-3. jeden konkrétní tah pro příští týden
+3. jeden konkrétní tah pro příští den u klávesnice
 
-### `Monday commitments` — sdílený artefakt
+### `next-day commitments` — sdílený artefakt
 
-Reflexe bez zápisu se do pondělí většinou neudrží. Proto na samém konci dne:
+Reflexe bez zápisu se většinou neudrží. Proto na samém konci dne:
 
-- každý účastník napíše jednu větu ve tvaru: **„Příští týden udělám [X], protože [důvod z dnešního dne]."**
+- každý účastník napíše jednu větu ve tvaru: **„Až si příště otevřu agenta, udělám [X], protože [důvod z dnešního dne]."**
 - věty se napíší na papírek, sticky note nebo přímo do sdíleného dokumentu
 - facilitátor je sesbírá a udělá z nich jeden krátký sdílený seznam, který si tým odnese
 - seznam není hodnocení ani soutěž. Je to jediný artefakt z dnešního dne, který prokáže, že reflexe skutečně něco změnila

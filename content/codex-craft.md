@@ -161,7 +161,7 @@ Harness Lab is agent-agnostic, but in practice you will pick a specific tool for
 
 **Craft rule:** pick the tool based on the *shape* of the task, not the one you happen to have open. Every tool has an implicit harness; picking the tool is picking the harness.
 
-**None of this means you should switch tools mid-workshop.** Harness Lab cohorts should pick one tool for the day (usually Codex) so the learning accumulates. This section is about Monday morning, not about Saturday's workshop.
+**None of this means you should switch tools mid-workshop.** Harness Lab cohorts should pick one tool for the day (usually Codex) so the learning accumulates. This section is about your day-to-day work, not about today's workshop.
 
 ---
 

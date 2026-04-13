@@ -1596,7 +1596,7 @@
           "cs": {
             "label": "Klíčová věta",
             "title": "Lidé řídí. Agenti vykonávají.",
-            "body": "Čtyři slova od Ryana Lopopola, inženýra OpenAI, který vedl tým shipující milion řádků produkčního kódu za pět měsíců bez jediného ručně psaného řádku. Tohle je jeho základní princip – ten, o kterém říká, že na něm všechno ostatní stojí. Tyhle čtyři slova si odneste do dalšího pracovního týdne. Všechno ostatní, co se dnes naučíte, je způsob, jak je uvést do praxe.",
+            "body": "Čtyři slova od Ryana Lopopola, inženýra OpenAI, který vedl tým shipující milion řádků produkčního kódu za pět měsíců bez jediného ručně psaného řádku. Tohle je jeho základní princip – ten, o kterém říká, že na něm všechno ostatní stojí. Odneste si tyhle čtyři slova do příštího dne u klávesnice. Všechno ostatní, co se dnes naučíte, je způsob, jak je uvést do praxe.",
             "facilitatorNotes": [
               "Nejzapamatovatelnější věta celého workshopu. Chraň ji."
             ],
@@ -1805,7 +1805,7 @@
                   {
                     "id": "folder-a",
                     "title": "Folder A — the bare repo.",
-                    "body": "Project brief, nothing else. No AGENTS.md. No constraints. No plan. Most repos on Monday morning look exactly like this."
+                    "body": "Project brief, nothing else. No AGENTS.md. No constraints. No plan. Most repos look exactly like this when you open them."
                   },
                   {
                     "id": "folder-b",
@@ -4756,11 +4756,11 @@
             "We are not judging which team was better.",
             "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
             "Collect concrete examples, not general impressions.",
-            "These practices are tool-agnostic. If you are back in a different toolchain Monday, the principles transfer: context in tracked artifacts, plan before motion, verification before trust."
+            "These practices are tool-agnostic. The next time you pick up any toolchain, the principles transfer: context in tracked artifacts, plan before motion, verification before trust."
           ],
           "show": [],
           "do": [
-            "After W3, run the Monday commitments: each person writes one sentence. Collect them."
+            "After W3, run the next-day commitments: each person writes one sentence. Collect them."
           ],
           "watch": [
             "The reflection turns into ranking teams.",

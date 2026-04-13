@@ -112,7 +112,7 @@ Otevřete připomenutím Lopopola ze scény 1. Pak přečtěte hlavní větu: **
 
 Pak Lopopolův citát o mapě: „Dejte Codexu mapu, ne tisícistránkový návod." Pak Hashimotův citát o fixování chyb. Oba jsou v hero blocích — čtěte je.
 
-Pak **Druhý den callout**. Tohle je vaše Monday promise, i když slovo „Monday" v češtině nepoužijeme:
+Pak **Druhý den callout**. Tahle věta zavírá talk — v obou jazycích je day-neutral, žádný den v týdnu:
 
 > Druhý den, až si otevřete coding agenta, budete pracovat jinak. Ne s novým nástrojem. S jinou rolí. Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází.
 
@@ -155,7 +155,7 @@ Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/codex
 
 - Nepoužívejte termín „prompt blob" a nevěnujte se mu. Repo-readiness contrast je v demu, ne v talku.
 - Neparafrázujte **Lidé řídí. Agenti vykonávají.** Ani jednou.
-- Neříkejte „v pondělí ráno". V češtině se tenhle workshop loučí s posluchači větou o **„druhém dni, až si otevřete coding agenta"**.
+- Neříkejte „v pondělí ráno" ani „Monday morning". V obou jazycích se tenhle workshop loučí s posluchači větou o **druhém dni, až si otevřete coding agenta / the next day you open a coding agent** — je to role change, ne kalendářní událost.
 - Nepředvádějte funkce Codexu nebo jiných nástrojů. Tohle není tool demo.
 - Nepřidávejte šestou odrážku do čtyř sloupů. Čtyři, ne pět, ne šest.
 - Nepopisujte habit taxonomii. Pět habit tagů patří na karty, ne do talku.
