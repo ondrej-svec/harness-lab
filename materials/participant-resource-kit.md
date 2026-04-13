@@ -1,8 +1,8 @@
 # Participant Resource Kit
 
-Post-workshop reference — krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu: odkazy, šablony a pět pracovních návyků. Pro in-session coaching moves (co říct, když agent sklouzává) sáhněte po [`coaching-codex.md`](coaching-codex.md).
+Post-workshop reference — krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu: odkazy, šablony a pět pracovních návyků. Pro in-session coaching moves (co říct, když agent sklouzává) sáhněte po [`coaching-codex.md`](coaching-codex.md).
 
-Cíl kitu: postavit si vlastní **harness** — repo, workflow a kontext, který **unese další krok** bez vás.
+Cíl kitu: postavit si vlastní **harness** — repo, workflow a kontext, který **unese další krok** bez vás.
 
 ## 1. Začněte `AGENTS.md`
 
@@ -70,25 +70,25 @@ Poznámka:
 
 ## Kdy se návyky spustí — pět návyků, pět spouštěčů
 
-Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním dni, kdy se návyk aktivuje. Jsou to ty samé tagy, které uvidíte na challenge kartách v repu.
+Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním dni, kdy se návyk aktivuje. Jsou to ty samé tagy, které uvidíte na challenge kartách v repu.
 
-- Když **otevíráte nový repo, nový úkol nebo novou agent session** → **Map before motion** — uděláte z repa mapu, než začnete generovat.
-- Když **agent dostává úkol a vy chystáte prompt** → **Boundaries create speed** — napíšete omezení dřív než prompt. Mantinely jsou důvod, proč práce jede rychleji, ne proč jede pomaleji.
-- Když **cítíte dost jistoty na to, abyste šli dál** → **Verification is the trust boundary** — ta jistota je spouštěč k ověření, ne k přeskočení. Holisticky: dokažte, že drží celek, ne že jedna funkce vrátila 4.
+- Když **otevíráte nový repo, nový úkol nebo novou agent session** → **Map before motion** — uděláte z repa mapu, než začnete generovat.
+- Když **agent dostává úkol a vy chystáte prompt** → **Boundaries create speed** — napíšete omezení dřív než prompt. Mantinely jsou důvod, proč práce jede rychleji, ne proč jede pomaleji.
+- Když **cítíte dost jistoty na to, abyste šli dál** → **Verification is the trust boundary** — ta jistota je spouštěč k ověření, ne k přeskočení. Holisticky: dokažte, že drží celek, ne že jedna funkce vrátila 4.
 - Když **zavíráte chat, končíte hovor nebo pairing, kde padlo rozhodnutí** → **If it is not in the repo, it does not exist** — zapíšete rozhodnutí do repa, než se na něj do zítřka zapomene.
-- Když **se stejná třecí plocha, ruční krok nebo drobnost objeví podruhé** → **Cleanup is part of build** — proměníte to v check, template nebo pravidlo na místě, ne „později".
+- Když **se stejná třecí plocha, ruční krok nebo drobnost objeví podruhé** → **Cleanup is part of build** — proměníte to v check, template nebo pravidlo na místě, ne „později".
 
 ## Výzva na příště
 
 Až si **příště otevřete coding agenta**:
 
 1. Přidejte `AGENTS.md` do jednoho reálného projektu — goal, context, constraints, done when. Mapa, ne encyklopedie.
-2. Přesuňte jedno trvalé pravidlo z promptu do repa. Pokud ho říkáte podruhé, patří tam.
+2. Přesuňte jedno trvalé pravidlo z promptu do repa. Pokud ho říkáte podruhé, patří tam.
 3. Přidejte jeden review nebo handoff checklist. Nejmenší funkční verze stačí.
 
 ## Minimum viable harness pro váš tým
 
-Nemusíte tým přesvědčovat o „harness engineeringu." Stačí ukázat užitečný `AGENTS.md`, který ušetřil 20 minut onboardingu.
+Nemusíte tým přesvědčovat o „harness engineeringu." Stačí ukázat užitečný `AGENTS.md`, který ušetřil 20 minut onboardingu.
 
 Nejmenší verze, která přežije skeptické code review:
 

@@ -50,7 +50,7 @@ Použijte krátké rozdělení místnosti podle aktuální zkušenosti s AI age
 Pravidla:
 
 - ne dělat z toho networking kolo
-- stačí přesun a 2 krátké hlasy
+- stačí přesun a 2 krátké hlasy
 - pointa není seniorita, ale kalibrace místnosti a signál, že den je participativní
 
 ### Co má facilitátor průběžně vracet
@@ -88,8 +88,15 @@ Proměnit energii z openingu v přesnou tezi a čistý most do build fáze 1.
 
 - Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
 - `AGENTS.md`, skills, runbooky a ověřovací kroky jsou týmová infrastruktura, ne polish navíc.
+- Pojmenovaná slovní zásoba z Böckeler: **guides** (mantinely, které agenta směrují dřív, než něco udělá) a **sensors** (ověření, které agenta chytí potom). Obojí je součást harnessu. Tyhle dva termíny zazní v talku — facilitátor je pak v coachingu používá.
 - Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.
 - Po talku se tým vrací k repu s mapou, plánem kroků a prvním ověřením, ne s lovem na chytřejší prompt.
+
+### Chráněná věta talku
+
+> **Lidé řídí. Agenti vykonávají.**
+
+Tohle jsou čtyři slova, která talk končí a která si má místnost odnést. Facilitátor je nikdy neparafrázuje, neříká je dřív než ve scéně 4 a nedělá z nich motivační sloganku. Je to princip, ne hashtag. Detailní delivery viz `content/talks/context-is-king.md`.
 
 ### Repo-readiness kontrast (mikro-cvičení)
 
@@ -203,8 +210,8 @@ Flow:
 3. **Sdílení v místnosti** — vybrané signály pro celou místnost
 
 Otázky pro retrieval:
-- **Intermezzo 1:** „Co by další tým potřeboval najít ve vašem repu právě teď, aby mohl pokračovat bez ptaní?"
-- **Intermezzo 2:** „Pojmenujte jednu věc, která vám po rotaci opravdu pomohla pokračovat, a jednu, která chyběla."
+- **Intermezzo 1:** „Co vás dnes ráno při práci s agentem překvapilo – a co vás to nutí příště zkusit jinak? Tři minuty. Zatím nemluvte."
+- **Intermezzo 2:** „Co vás dosud zděděné repo překvapilo – a co chcete zkusit jinak ve druhém pushi? Tři minuty. Zatím nemluvte."
 
 Když někdo začne mluvit během tiché fáze, přesměrujte: „Nejdřív napište, pak budeme sdílet." Přínos retrieval cvičení vyžaduje individuální produkci před sdílením.
 
@@ -288,8 +295,8 @@ Otázky:
 ### `W³`
 
 - `Co?` — co se dnes stalo bez hodnocení
-- `A co?` — co to znamená pro práci s AI agenty
-- `A teď?` — co uděláte jinak příští týden
+- `A co?` — co to znamená pro práci s AI agenty
+- `A teď?` — co uděláte jinak příští týden
 
 ### Rámec pro facilitaci
 
@@ -302,7 +309,7 @@ Na konci dne chceme, aby si lidé odnesli tři věci:
 
 1. jeden signál, který chtějí zavést natrvalo
 2. jednu slabinu, kterou už příště nenechají jen v hovoru
-3. jeden konkrétní tah pro příští den u klávesnice
+3. jeden konkrétní tah pro příští den u klávesnice
 
 ### `next-day commitments` — sdílený artefakt
 

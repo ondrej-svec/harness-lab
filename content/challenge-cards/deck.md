@@ -28,7 +28,7 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 - `Delegujte a kontrolujte výsledek` — Skáčete agentovi do každého kroku. Dejte mu úkol s jasnými mantinely a vraťte se za 10 minut zkontrolovat výsledek, ne proces. [Habit: Verification is the trust boundary]
 
-- `Nejmenší užitečné ověření` — Agent říká, že je hotovo, ale nemáte jak to ověřit. Zapište done criteria jako spustitelný check (unit test, tracer bullet nebo browser check) dřív, než agent dostane víc autonomie. [Habit: Verification is the trust boundary]
+- `Nejmenší užitečné ověření` — Agent říká, že je hotovo, ale nemáte jak to ověřit. Zapište done criteria jako spustitelný check (tracer bullet, end-to-end check nebo browser test) dřív, než agent dostane víc autonomie. Holisticky: dokažte, že drží celek. [Habit: Verification is the trust boundary]
 
 - `Opravte jeden slabý signál` — Přebírající tým musel hádat, co je hotové a co ne. Opravte jedno místo v README, AGENTS.md, plánu, runbooku nebo checku, které by to příště vyjasnilo. [Habit: Cleanup is part of build]
 
