@@ -74,15 +74,15 @@
       ]
     },
     "content/project-briefs/code-review-helper.md": {
-      "contentHash": "sha256:47ed5dfba521f4f6f3a125dca7bc7ac44b212cd6131e4ba273eb86a3c6e2b2ca",
-      "segmentedAt": "2026-04-13T06:58:11.339Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:31cfe35b449b892aaec5dd92282d1523aa14624666dae2faeb3b8d258568f7e0",
+      "segmentedAt": "2026-04-13T07:15:58.430Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 31,
-          "endColumn": 223,
+          "endColumn": 231,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -91,15 +91,15 @@
       ]
     },
     "content/project-briefs/devtoolbox-cli.md": {
-      "contentHash": "sha256:7baa9f0888589450a29ac8c248023d65d08c7ac9977feec578127c172075431e",
-      "segmentedAt": "2026-04-13T06:58:11.389Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:843351cbbdadd92db42eeb655e3174ab080c10d3208540940259995fd066d77c",
+      "segmentedAt": "2026-04-13T07:15:58.483Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 33,
-          "endColumn": 172,
+          "endColumn": 178,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -108,15 +108,15 @@
       ]
     },
     "content/project-briefs/doc-generator.md": {
-      "contentHash": "sha256:e5507dff2c185f41601afd5d04ab13dfb61d55a3a8546129e640643036d99528",
-      "segmentedAt": "2026-04-13T06:58:11.438Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:b11a41cbbdcb1e2b953471599faa66916f21d0ed3c9ec31a521152b37fdaa5eb",
+      "segmentedAt": "2026-04-13T07:15:58.532Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 33,
-          "endColumn": 150,
+          "endColumn": 155,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -125,15 +125,15 @@
       ]
     },
     "content/project-briefs/metrics-dashboard.md": {
-      "contentHash": "sha256:057c7ece5a27b618072717bec77015da794f4312298da3319f978c4fe55c615a",
-      "segmentedAt": "2026-04-13T06:58:11.494Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:30f9348c84e8d1b309c3a6ee3c45989af680b8c0d71ed57b7833f796e3c452b2",
+      "segmentedAt": "2026-04-13T07:15:58.584Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 33,
-          "endColumn": 145,
+          "endColumn": 151,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -142,15 +142,15 @@
       ]
     },
     "content/project-briefs/standup-bot.md": {
-      "contentHash": "sha256:d19cb30a7748ec4d3d6f873a8d05ed85ac8b97c8171bdc3f6f1c2fd50db767a7",
-      "segmentedAt": "2026-04-13T06:58:11.547Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:abcf041d8e9066565a001f7eaecde8737f3e5e76ac885f4b9217aee067edac07",
+      "segmentedAt": "2026-04-13T07:15:58.637Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 33,
-          "endColumn": 198,
+          "endColumn": 204,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -287,9 +287,9 @@
       ]
     },
     "workshop-content/agenda.json": {
-      "contentHash": "sha256:a103e59d0980ea79f88ce34ef9479649dd7d11e380b45106cf921bb29d2da8e1",
-      "segmentedAt": "2026-04-13T06:58:21.695Z",
-      "reviewedBy": "ondrej@2026-04-13-mode-a",
+      "contentHash": "sha256:4c1397aeb2562b6d821aaddf8402f07d90bc6afaef66365f2fe54b551b4ed3d3",
+      "segmentedAt": "2026-04-13T07:15:31.697Z",
+      "reviewedBy": "ondrej@2026-04-13-tyleaks",
       "spans": [
         {
           "startLine": 3,
@@ -755,7 +755,7 @@
           "startLine": 77,
           "startColumn": 31,
           "endLine": 77,
-          "endColumn": 255,
+          "endColumn": 263,
           "language": "cs",
           "kind": "prose",
           "pathHint": "inventory.briefs.cs.firstAgentPrompt",
@@ -1085,7 +1085,7 @@
           "startLine": 128,
           "startColumn": 31,
           "endLine": 128,
-          "endColumn": 204,
+          "endColumn": 210,
           "language": "cs",
           "kind": "prose",
           "pathHint": "inventory.briefs.cs.firstAgentPrompt",
@@ -1415,7 +1415,7 @@
           "startLine": 179,
           "startColumn": 31,
           "endLine": 179,
-          "endColumn": 182,
+          "endColumn": 187,
           "language": "cs",
           "kind": "prose",
           "pathHint": "inventory.briefs.cs.firstAgentPrompt",
@@ -1745,7 +1745,7 @@
           "startLine": 230,
           "startColumn": 31,
           "endLine": 230,
-          "endColumn": 177,
+          "endColumn": 183,
           "language": "cs",
           "kind": "prose",
           "pathHint": "inventory.briefs.cs.firstAgentPrompt",
@@ -2075,7 +2075,7 @@
           "startLine": 281,
           "startColumn": 31,
           "endLine": 281,
-          "endColumn": 230,
+          "endColumn": 236,
           "language": "cs",
           "kind": "prose",
           "pathHint": "inventory.briefs.cs.firstAgentPrompt",
@@ -5605,7 +5605,7 @@
           "startLine": 934,
           "startColumn": 15,
           "endLine": 934,
-          "endColumn": 96,
+          "endColumn": 101,
           "language": "cs",
           "kind": "prose",
           "pathHint": "phases.scenes.cs.facilitatorNotes",
@@ -5745,7 +5745,7 @@
           "startLine": 957,
           "startColumn": 30,
           "endLine": 957,
-          "endColumn": 60,
+          "endColumn": 63,
           "language": "cs",
           "kind": "prose",
           "pathHint": "phases.scenes.cs.blocks.items.title",
@@ -6765,7 +6765,7 @@
           "startLine": 1150,
           "startColumn": 13,
           "endLine": 1150,
-          "endColumn": 94,
+          "endColumn": 98,
           "language": "cs",
           "kind": "prose",
           "pathHint": "phases.cs.facilitatorRunner.do",
@@ -19035,7 +19035,7 @@
           "startLine": 3479,
           "startColumn": 30,
           "endLine": 3479,
-          "endColumn": 55,
+          "endColumn": 58,
           "language": "cs",
           "kind": "prose",
           "pathHint": "phases.scenes.cs.blocks.items.title",
@@ -20485,7 +20485,7 @@
           "startLine": 3763,
           "startColumn": 21,
           "endLine": 3763,
-          "endColumn": 309,
+          "endColumn": 311,
           "language": "cs",
           "kind": "prose",
           "pathHint": "phases.scenes.cs.body",

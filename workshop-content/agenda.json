@@ -74,7 +74,7 @@
             "Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.",
             "Další tým může během 10 minut pokračovat v rozvoji bez chaosu."
           ],
-          "firstAgentPrompt": "Nezačínej kódem. Nejdřív napiš review hodnoticí schéma, tok vstupů a definici toho, co znamená dobrý checklist. Ukaž, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhni první implementační slice."
+          "firstAgentPrompt": "Nezačínejte kódem. Nejdřív napište review hodnoticí schéma, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice."
         }
       },
       {
@@ -125,7 +125,7 @@
             "Nový tým zvládne během 10 minut přidat nebo opravit další command.",
             "Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu."
           ],
-          "firstAgentPrompt": "Nejdřív navrhni minimální architekturu, která přežije předání. Začni `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementuj první command."
+          "firstAgentPrompt": "Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command."
         }
       },
       {
@@ -176,7 +176,7 @@
             "Další tým umí přidat nový typ výstupu bez chaosu v repu.",
             "Reviewer během 10 minut pozná, odkud které tvrzení pochází."
           ],
-          "firstAgentPrompt": "Nejdřív napiš, jaké signály budeš z projektu číst, které výstupy budou jistota a které jen heuristika. Teprve potom navrhni první implementační slice."
+          "firstAgentPrompt": "Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Teprve potom navrhněte první implementační slice."
         }
       },
       {
@@ -227,7 +227,7 @@
             "Nový tým zvládne rozšířit dashboard bez rozbití struktury.",
             "Layout je čitelný na mobilu i na větší obrazovce a je jasné, jak to ověřit."
           ],
-          "firstAgentPrompt": "Navrhni dashboard, který zvládne předání. Nejdřív popiš datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stav UI."
+          "firstAgentPrompt": "Navrhněte dashboard, který zvládne předání. Nejdřív popište datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stavte UI."
         }
       },
       {
@@ -278,7 +278,7 @@
             "Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního předání.",
             "Je jasné, co je jisté shrnutí a co je jen heuristika nebo návrh."
           ],
-          "firstAgentPrompt": "Rozděl práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napiš datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhni implementační kroky."
+          "firstAgentPrompt": "Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhněte implementační kroky."
         }
       }
     ],
@@ -931,7 +931,7 @@
             "body": "Devět minut. Takhle si dnes tvoříme týmy – podle řady zkušeností a odpočítávání. Stejný postup použijeme znovu při rotaci po obědě.",
             "facilitatorNotes": [
               "Nechej všechny vstát a postavit se do jedné řady podle zkušeností s AI agenty.",
-              "Počítej živě podle počtu lidí. Před odpočtem nahlas oznam, jak velké týmy chceš.",
+              "Počítejte živě podle počtu lidí. Před odpočtem nahlas oznamte, jak velké týmy chcete.",
               "Jména týmů jdou do admin dashboardu naživo, jak přicházejí.",
               "Pokud se formování zadrhne déle než čtyři minuty, začni přiřazovat manuálně."
             ],
@@ -954,7 +954,7 @@
                   },
                   {
                     "id": "team-count",
-                    "title": "Odpočítej se do týmů (1 min).",
+                    "title": "Rozpočítejte se do týmů (1 min).",
                     "body": "Počítejte se podél řady podle cílové velikosti týmu. Všechny jedničky tvoří jeden tým, všechny dvojky další, a tak dále. Každý tým automaticky pokrývá celé spektrum zkušeností."
                   },
                   {
@@ -1147,7 +1147,7 @@
             "Participant pohled ukaž jen jako potvrzení, že room, dashboard a repo drží stejný moment."
           ],
           "do": [
-            "Spusť kontrast: ukaž nejdřív holé repo, pak repo s harnessem a stejným promptem.",
+            "Spusťte kontrast: ukažte nejdřív holé repo, pak repo s harnessem a stejným promptem.",
             "Když kontrast dosedne, přejdi na tezi. Řekni ji jednou jasně.",
             "Pošli místnost do build fáze 1 s jedním očekáváním: nejdřív mapa a ověření, teprve potom práci na funkcích."
           ],
@@ -3476,7 +3476,7 @@
                   },
                   {
                     "id": "move-count",
-                    "title": "Odpočítej se podél týmu.",
+                    "title": "Rozpočítejte se podél týmu.",
                     "body": "Jedna, dva, tři, čtyři, pět. Zapamatuj si svoje číslo."
                   },
                   {
@@ -3760,7 +3760,7 @@
           "cs": {
             "label": "Stejné hodiny, nový kontext",
             "title": "Stejné hodiny, nový kontext",
-            "body": "Jsi u nové kotvy, s novým týmem, v novém repu. Deset minut nejdřív čtení – bez klávesnice. Potom zachytit to, co tě podrazilo, aby další hodina byla čistá. Potom stavět. Osmdesát pět minut práce, rozdělené dvacetiminutovou pauzou ve 14:30. Facilitátoři chodí, recovery na jedno kliknutí.",
+            "body": "Jste u nové kotvy, s novým týmem, v novém repu. Deset minut nejdřív čtení – bez klávesnice. Potom zachyťte to, co vás zaskočilo, aby další hodina byla čistá. Potom stavět. Osmdesát pět minut práce, rozdělené dvacetiminutovou pauzou ve 14:30. Facilitátoři chodí, recovery na jedno kliknutí.",
             "facilitatorNotes": [
               "30vteřinový kickoff. Zrcadlí Scénu 4.1."
             ],

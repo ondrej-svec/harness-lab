@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.7.0",
-  "contentHash": "6358d4f1a001715c9584cf821517773a2ca7d10cd11398a98c7fc0b8ff40084f",
+  "contentHash": "b876c77adc1b7de7e64d5d37e0423a77303b5c51edf46c341c91203680ca414f",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -50,15 +50,15 @@
     },
     {
       "path": "content/project-briefs/code-review-helper.md",
-      "sha256": "47ed5dfba521f4f6f3a125dca7bc7ac44b212cd6131e4ba273eb86a3c6e2b2ca"
+      "sha256": "31cfe35b449b892aaec5dd92282d1523aa14624666dae2faeb3b8d258568f7e0"
     },
     {
       "path": "content/project-briefs/devtoolbox-cli.md",
-      "sha256": "7baa9f0888589450a29ac8c248023d65d08c7ac9977feec578127c172075431e"
+      "sha256": "843351cbbdadd92db42eeb655e3174ab080c10d3208540940259995fd066d77c"
     },
     {
       "path": "content/project-briefs/doc-generator.md",
-      "sha256": "e5507dff2c185f41601afd5d04ab13dfb61d55a3a8546129e640643036d99528"
+      "sha256": "b11a41cbbdcb1e2b953471599faa66916f21d0ed3c9ec31a521152b37fdaa5eb"
     },
     {
       "path": "content/project-briefs/locales/en/code-review-helper.md",
@@ -82,11 +82,11 @@
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
-      "sha256": "057c7ece5a27b618072717bec77015da794f4312298da3319f978c4fe55c615a"
+      "sha256": "30f9348c84e8d1b309c3a6ee3c45989af680b8c0d71ed57b7833f796e3c452b2"
     },
     {
       "path": "content/project-briefs/standup-bot.md",
-      "sha256": "d19cb30a7748ec4d3d6f873a8d05ed85ac8b97c8171bdc3f6f1c2fd50db767a7"
+      "sha256": "abcf041d8e9066565a001f7eaecde8737f3e5e76ac885f4b9217aee067edac07"
     },
     {
       "path": "content/talks/.gitkeep",

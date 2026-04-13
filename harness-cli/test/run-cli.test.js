@@ -2020,8 +2020,14 @@ test("demo-setup reports failure with a non-zero exit code when target cannot be
   const env = await createEnv();
   const fetchFn = createFetchStub(new Map());
   const io = createMemoryIo(env);
-  // /dev/null is a character device; attempting to mkdir under it must fail.
-  const exitCode = await runCli(["demo-setup", "--target", "/dev/null/impossible"], io, { fetchFn });
+  // Create a regular file and then try to mkdir under it. Creating a
+  // directory beneath a non-directory path fails identically on Unix
+  // (ENOTDIR) and Windows (ENOENT/ENOTDIR), so this cross-platform
+  // pattern is more reliable than the /dev/null trick.
+  const blockerFile = path.join(env.HARNESS_CLI_HOME, "not-a-directory");
+  await fs.writeFile(blockerFile, "blocker");
+  const impossibleTarget = path.join(blockerFile, "impossible");
+  const exitCode = await runCli(["demo-setup", "--target", impossibleTarget], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /demo-setup failed/);
 });

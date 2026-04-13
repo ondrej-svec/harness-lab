@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 
 ## První krok pro agenta
 
-Rozděl práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napiš datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhni implementační kroky.
+Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a dokumentaci, kterou nový tým otevře jako první. Až potom navrhněte implementační kroky.

@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 
 ## První krok pro agenta
 
-Nejdřív navrhni minimální architekturu, která přežije předání. Začni `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementuj první command.
+Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.

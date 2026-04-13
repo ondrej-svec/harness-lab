@@ -28,4 +28,4 @@ Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří pou
 
 ## První krok pro agenta
 
-Nezačínej kódem. Nejdřív napiš review hodnoticí schéma, tok vstupů a definici toho, co znamená dobrý checklist. Ukaž, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhni první implementační slice.
+Nezačínejte kódem. Nejdřív napište review hodnoticí schéma, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice.

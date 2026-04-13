@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik v
 
 ## První krok pro agenta
 
-Navrhni dashboard, který zvládne předání. Nejdřív popiš datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stav UI.
+Navrhněte dashboard, který zvládne předání. Nejdřív popište datový model, komponenty, layout pravidla a kritéria `Hotovo když`, teprve potom stavte UI.
