@@ -96,7 +96,6 @@ export function AgendaSection({
   nextAgendaItem,
   roomScenes,
   participantScenes,
-  selectedScene,
   selectedRoomScene,
   selectedParticipantScene,
   selectedDefaultScene,
@@ -108,12 +107,7 @@ export function AgendaSection({
   selectedAgendaOwnsHandoffControls,
   handoffAgendaHref,
   agendaIndexHref,
-  agendaEditHref,
-  agendaAddHref,
   liveAgendaHref,
-  sceneAddHref,
-  roomSceneEditHref,
-  participantSceneEditHref,
   selectedAgendaProjectionHref,
   selectedAgendaParticipantMirrorHref,
 }: {
@@ -126,7 +120,6 @@ export function AgendaSection({
   nextAgendaItem: RichAgendaItem | null | undefined;
   roomScenes: RichPresenterScene[];
   participantScenes: RichPresenterScene[];
-  selectedScene: RichPresenterScene | null;
   selectedRoomScene: RichPresenterScene | null;
   selectedParticipantScene: RichPresenterScene | null;
   selectedDefaultScene: RichPresenterScene | null;
@@ -138,12 +131,7 @@ export function AgendaSection({
   selectedAgendaOwnsHandoffControls: boolean;
   handoffAgendaHref: string | null;
   agendaIndexHref: string;
-  agendaEditHref: string;
-  agendaAddHref: string;
   liveAgendaHref: string;
-  sceneAddHref: string;
-  roomSceneEditHref: string;
-  participantSceneEditHref: string;
   selectedAgendaProjectionHref: string | null;
   selectedAgendaParticipantMirrorHref: string;
 }) {
@@ -843,6 +831,14 @@ function PresenterSceneSummaryCard({
 }) {
   const sceneBlocks = scene.blocks ?? [];
   const surfaceLabel = participantOnly ? copy.participantSurfaceCardTitle : copy.presenterCardTitle;
+  const sceneEditorHref = buildAdminHref({
+    lang,
+    section: "agenda",
+    instanceId: activeInstanceId,
+    agendaItemId,
+    sceneId: scene.id,
+    overlay: "scene-edit",
+  });
 
   const presenterHref = buildPresenterRouteHref({
     lang,
@@ -993,6 +989,12 @@ function PresenterSceneSummaryCard({
               {copy.presenterRemoveSceneButton}
             </AdminSubmitButton>
           </form>
+          <AdminRouteLink
+            href={sceneEditorHref}
+            className="inline-flex items-center text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
+          >
+            blocks / sources →
+          </AdminRouteLink>
         </div>
       </div>
       <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
@@ -1025,16 +1027,25 @@ function PresenterSceneSummaryCard({
           </div>
         </div>
       ) : null}
-      {(scene.facilitatorNotes ?? []).length > 0 ? (
-        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterFacilitatorNotesTitle}</p>
-          <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-            {(scene.facilitatorNotes ?? []).map((note) => (
-              <li key={note}>• {note}</li>
-            ))}
-          </ul>
+      <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterFacilitatorNotesTitle}</p>
+        <div className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
+          <InlineField
+            value={(scene.facilitatorNotes ?? []).join("\n")}
+            fieldName="facilitatorNotes"
+            label={copy.presenterFacilitatorNotesTitle}
+            mode="textarea"
+            placeholder={copy.presenterFacilitatorNotesTitle}
+            action={updateSceneFieldAction}
+            hiddenFields={{
+              instanceId: activeInstanceId,
+              agendaItemId,
+              sceneId: scene.id,
+              fieldName: "facilitatorNotes",
+            }}
+          />
         </div>
-      ) : null}
+      </div>
       {(scene.sourceRefs ?? []).length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>

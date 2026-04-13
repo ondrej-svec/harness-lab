@@ -3,73 +3,38 @@ import type { adminCopy, UiLanguage } from "@/lib/ui-language";
 import type { AgendaItem } from "@/lib/workshop-data";
 import { AdminSheet } from "../../../../admin-ui";
 import type { RichAgendaItem, RichPresenterScene } from "../agenda/types";
-import {
-  AgendaItemCreateSheetBody,
-  AgendaItemEditorSheetBody,
-  PresenterSceneCreateSheetBody,
-  PresenterSceneEditorSheetBody,
-} from "./agenda-sheets";
+import { PresenterSceneEditorSheetBody } from "./agenda-sheets";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
+// Only `scene-edit` remains as an overlay, and only for the structured
+// fields that don't yet have an inline equivalent: source-refs (array
+// of {path, label}) and presenter blocks (via SceneBlockEditor). Every
+// other content field on the scene — label, title, body, sceneType,
+// intent, chromePreset, ctaLabel, ctaHref, facilitatorNotes — edits
+// inline on the scene summary card. agenda-edit / agenda-add /
+// scene-add overlays were retired in favor of inline-field editing and
+// inline-append draft rows (AddAgendaItemRow, AddSceneRow).
 export function AgendaSheetOverlays({
   lang,
   copy,
   instanceId,
   activeOverlay,
-  showAgendaDetail,
   selectedAgendaItem,
   selectedScene,
-  agenda,
-  agendaBaseHref,
   sceneBaseHref,
 }: {
   lang: UiLanguage;
   copy: Copy;
   instanceId: string;
   activeOverlay: ControlRoomOverlay | null;
-  showAgendaDetail: boolean;
+  showAgendaDetail?: boolean;
   selectedAgendaItem: RichAgendaItem | null | undefined;
   selectedScene: RichPresenterScene | null;
-  agenda: AgendaItem[];
-  agendaBaseHref: string;
+  agenda?: AgendaItem[];
+  agendaBaseHref?: string;
   sceneBaseHref: string;
 }) {
-  if (activeOverlay === "agenda-edit" && showAgendaDetail && selectedAgendaItem) {
-    return (
-      <AdminSheet
-        eyebrow={copy.agendaEditEyebrow}
-        title={copy.agendaEditTitle}
-        description={copy.agendaEditDescription}
-        closeHref={agendaBaseHref}
-        closeLabel={copy.closePanelButton}
-      >
-        <AgendaItemEditorSheetBody item={selectedAgendaItem} lang={lang} section="agenda" instanceId={instanceId} copy={copy} />
-      </AdminSheet>
-    );
-  }
-
-  if (activeOverlay === "agenda-add") {
-    return (
-      <AdminSheet
-        eyebrow={copy.agendaEditEyebrow}
-        title={copy.addAgendaItemTitle}
-        description={copy.addAgendaItemDescription}
-        closeHref={agendaBaseHref}
-        closeLabel={copy.closePanelButton}
-      >
-        <AgendaItemCreateSheetBody
-          agenda={agenda}
-          selectedAgendaItemId={selectedAgendaItem?.id ?? null}
-          lang={lang}
-          section="agenda"
-          instanceId={instanceId}
-          copy={copy}
-        />
-      </AdminSheet>
-    );
-  }
-
   if (activeOverlay === "scene-edit" && selectedAgendaItem && selectedScene) {
     return (
       <AdminSheet
@@ -82,26 +47,6 @@ export function AgendaSheetOverlays({
         <PresenterSceneEditorSheetBody
           item={selectedAgendaItem}
           scene={selectedScene}
-          lang={lang}
-          section="agenda"
-          instanceId={instanceId}
-          copy={copy}
-        />
-      </AdminSheet>
-    );
-  }
-
-  if (activeOverlay === "scene-add" && selectedAgendaItem) {
-    return (
-      <AdminSheet
-        eyebrow={copy.agendaPresenterGroupTitle}
-        title={copy.sceneAddTitle}
-        description={copy.sceneAddDescription}
-        closeHref={sceneBaseHref}
-        closeLabel={copy.closePanelButton}
-      >
-        <PresenterSceneCreateSheetBody
-          item={selectedAgendaItem}
           lang={lang}
           section="agenda"
           instanceId={instanceId}

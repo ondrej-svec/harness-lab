@@ -93,7 +93,6 @@ export default async function AdminPage({
                 nextAgendaItem={vm.nextAgendaItem ?? null}
                 roomScenes={vm.roomScenes}
                 participantScenes={vm.participantScenes}
-                selectedScene={vm.selectedScene}
                 selectedRoomScene={vm.selectedRoomScene}
                 selectedParticipantScene={vm.selectedParticipantScene}
                 selectedDefaultScene={vm.selectedDefaultScene}
@@ -105,12 +104,7 @@ export default async function AdminPage({
                 selectedAgendaOwnsHandoffControls={vm.selectedAgendaOwnsHandoffControls}
                 handoffAgendaHref={vm.handoffAgendaHref}
                 agendaIndexHref={vm.agendaIndexHref}
-                agendaEditHref={vm.agendaEditHref}
-                agendaAddHref={vm.agendaAddHref}
                 liveAgendaHref={vm.liveAgendaHref}
-                sceneAddHref={vm.sceneAddHref}
-                roomSceneEditHref={vm.roomSceneEditHref}
-                participantSceneEditHref={vm.participantSceneEditHref}
                 selectedAgendaProjectionHref={vm.selectedAgendaProjectionHref}
                 selectedAgendaParticipantMirrorHref={vm.selectedAgendaParticipantMirrorHref}
               />

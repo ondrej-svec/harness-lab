@@ -195,7 +195,8 @@ type UpdatableSceneField =
   | "intent"
   | "chromePreset"
   | "ctaLabel"
-  | "ctaHref";
+  | "ctaHref"
+  | "facilitatorNotes";
 const UPDATABLE_SCENE_FIELDS: readonly UpdatableSceneField[] = [
   "label",
   "title",
@@ -205,8 +206,13 @@ const UPDATABLE_SCENE_FIELDS: readonly UpdatableSceneField[] = [
   "chromePreset",
   "ctaLabel",
   "ctaHref",
+  "facilitatorNotes",
 ];
-const CLEARABLE_SCENE_FIELDS: ReadonlySet<UpdatableSceneField> = new Set(["ctaLabel", "ctaHref"]);
+const CLEARABLE_SCENE_FIELDS: ReadonlySet<UpdatableSceneField> = new Set([
+  "ctaLabel",
+  "ctaHref",
+  "facilitatorNotes",
+]);
 
 export async function updateSceneFieldAction(formData: FormData) {
   const instanceId = String(formData.get("instanceId") ?? "");
@@ -242,6 +248,7 @@ export async function updateSceneFieldAction(formData: FormData) {
     chromePreset: scene.chromePreset ?? undefined,
     ctaLabel: scene.ctaLabel ?? null,
     ctaHref: scene.ctaHref ?? null,
+    facilitatorNotes: scene.facilitatorNotes ?? [],
   };
   const patch: typeof base = { ...base };
   if (fieldName === "sceneType") {
@@ -254,6 +261,11 @@ export async function updateSceneFieldAction(formData: FormData) {
     patch.ctaLabel = fieldValue || null;
   } else if (fieldName === "ctaHref") {
     patch.ctaHref = fieldValue || null;
+  } else if (fieldName === "facilitatorNotes") {
+    patch.facilitatorNotes = fieldValue
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
   } else {
     patch[fieldName] = fieldValue;
   }
