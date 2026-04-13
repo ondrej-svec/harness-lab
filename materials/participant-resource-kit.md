@@ -1,6 +1,8 @@
 # Participant Resource Kit
 
-Krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu.
+Post-workshop reference — krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu: odkazy, šablony a pět pracovních návyků. Pro in-session coaching moves (co říct, když agent sklouzává) sáhněte po [`coaching-codex.md`](coaching-codex.md).
+
+Cíl kitu: postavit si vlastní **harness** — repo, workflow a kontext, který **unese další krok** bez vás.
 
 ## 1. Začněte `AGENTS.md`
 
@@ -17,7 +19,7 @@ Výchozí šablona:
 
 Vyberte si alespoň jeden:
 - build/test příkazy
-- spustitelné ověření (unit test nebo tracer bullet)
+- spustitelné ověření — tracer bullet, end-to-end check, holistický test. **Celek nad detailem.**
 - review checklist
 
 Když agent dělá větší kus práce, nestačí „rychle jsem to projel očima“.
@@ -66,22 +68,23 @@ Poznámka:
 - `workshop` skill je garantovaný výchozí nástroj workshopu
 - další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
 
-## Kdy se návyky spustí
+## Kdy se návyky spustí — pět návyků, pět spouštěčů
 
-Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním týdnu, kdy se návyk aktivuje:
+Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním dni, kdy se návyk aktivuje. Jsou to ty samé tagy, které uvidíte na challenge kartách v repu.
 
-- Když **otevíráte nový repo, nový úkol nebo novou agent session** → Map before motion (udělám z repa mapu, než začnu generovat)
-- Když **zavíráte chat, končíte hovor nebo pairing kde padlo rozhodnutí** → If it is not in the repo, it does not exist (zapíšu rozhodnutí do repa)
-- Když **cítím dost jistoty na to, abych šel dál** → Verification is the trust boundary (ta jistota je spouštěč k ověření, ne k přeskočení)
-- Když **chystám úkol pro agenta** → Boundaries create speed (napíšu omezení dřív než prompt)
-- Když **se stejná připomínka, třecí plocha nebo ruční krok objeví podruhé** → Cleanup is part of build (proměním to v check, template nebo pravidlo)
-- Když **se stejný problém opakuje** → Fix the system, not just the symptom (neopravím výstup — opravím systém)
+- Když **otevíráte nový repo, nový úkol nebo novou agent session** → **Map before motion** — uděláte z repa mapu, než začnete generovat.
+- Když **agent dostává úkol a vy chystáte prompt** → **Boundaries create speed** — napíšete omezení dřív než prompt. Mantinely jsou důvod, proč práce jede rychleji, ne proč jede pomaleji.
+- Když **cítíte dost jistoty na to, abyste šli dál** → **Verification is the trust boundary** — ta jistota je spouštěč k ověření, ne k přeskočení. Holisticky: dokažte, že drží celek, ne že jedna funkce vrátila 4.
+- Když **zavíráte chat, končíte hovor nebo pairing, kde padlo rozhodnutí** → **If it is not in the repo, it does not exist** — zapíšete rozhodnutí do repa, než se na něj do zítřka zapomene.
+- Když **se stejná třecí plocha, ruční krok nebo drobnost objeví podruhé** → **Cleanup is part of build** — proměníte to v check, template nebo pravidlo na místě, ne „později".
 
-## Výzva na příští týden
+## Výzva na příště
 
-1. Přidejte `AGENTS.md` do jednoho reálného projektu.
-2. Přesuňte jedno trvalé pravidlo z promptu do repa.
-3. Přidejte jeden review nebo handoff checklist.
+Až si **příště otevřete coding agenta**:
+
+1. Přidejte `AGENTS.md` do jednoho reálného projektu — goal, context, constraints, done when. Mapa, ne encyklopedie.
+2. Přesuňte jedno trvalé pravidlo z promptu do repa. Pokud ho říkáte podruhé, patří tam.
+3. Přidejte jeden review nebo handoff checklist. Nejmenší funkční verze stačí.
 
 ## Minimum viable harness pro váš tým
 
@@ -89,8 +92,8 @@ Nemusíte tým přesvědčovat o „harness engineeringu." Stačí ukázat užit
 
 Nejmenší verze, která přežije skeptické code review:
 
-1. **Jeden `AGENTS.md`** — goal, build/test příkazy, jedno explicitní omezení. Nic víc.
-2. **Jeden spustitelný check** — unit test, tracer bullet, nebo jednoduchý smoke test.
+1. **Jeden `AGENTS.md`** — goal, build/test příkazy, jedno explicitní omezení. **Mapa, ne encyklopedie.** Nic víc.
+2. **Jeden spustitelný check** — tracer bullet nebo end-to-end smoke test, který ověří, že celek drží. Ne jednu funkci.
 
 Když se někdo zeptá „proč to děláme?“, odpověď je: „Aby se další člověk nemusel ptát tebe.“
 
