@@ -30,8 +30,11 @@
   },
   "pnpm": {
     "overrides": {
-      "better-auth": ">=1.4.9"
+      "better-auth": ">=1.6.2"
     }
+  },
+  "overrides": {
+    "better-auth": ">=1.6.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
