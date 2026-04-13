@@ -5,6 +5,7 @@ import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
 import {
   addAgendaItem,
+  captureRotationSignal,
   moveAgendaItem,
   removeAgendaItem,
   setCurrentAgendaItem,
@@ -126,5 +127,30 @@ export async function removeAgendaItemAction(formData: FormData) {
   if (agendaId) {
     await removeAgendaItem(agendaId, instanceId);
   }
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+export async function captureRotationSignalAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const freeText = String(formData.get("freeText") ?? "").trim();
+  if (freeText.length === 0) {
+    redirect(buildAdminHref({ lang, section, instanceId }));
+  }
+
+  const tagsRaw = String(formData.get("tags") ?? "").trim();
+  const tags =
+    tagsRaw.length > 0
+      ? tagsRaw
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0)
+      : [];
+
+  const teamIdRaw = String(formData.get("teamId") ?? "").trim();
+  const teamId = teamIdRaw.length > 0 ? teamIdRaw : undefined;
+
+  await captureRotationSignal({ freeText, tags, teamId }, instanceId);
   redirect(buildAdminHref({ lang, section, instanceId }));
 }
