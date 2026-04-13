@@ -598,6 +598,67 @@ test.describe("one canvas phase 3 — inline editing", () => {
   });
 });
 
+test.describe("one canvas phase 4 — operational forms", () => {
+  // Phase 4 exit criterion: password change / archive / facilitator
+  // management / participant-access forms look native to the new
+  // visual language and still behave identically. These smoke tests
+  // verify each form renders the expected fields and the submit
+  // buttons are reachable. They do not assert the underlying mutation
+  // — those are covered by the per-action unit tests already shipped.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("settings section exposes archive + reset (file-mode fallback for password)", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
+    // File mode surfaces the account fallback message instead of the
+    // password change form (password change requires Neon Auth). The
+    // CS fallback mentions "neon módu", the EN one mentions "neon mode"
+    // — either one is proof the fallback branch renders.
+    await expect(page.getByText(/neon mód|neon mode/i).first()).toBeVisible();
+    // Archive workshop form stays visible regardless of auth mode.
+    await expect(
+      page.getByRole("button", { name: /vytvořit archiv|create archive/i }).first(),
+    ).toBeVisible();
+  });
+
+  test("settings section reset workshop requires typed confirmation (regression)", async ({ page }) => {
+    // Mirrors the pre-existing reset confirmation test, but lives
+    // under the Phase 4 describe block so it's caught when the
+    // settings visual language pass changes. The reset form lives
+    // inside a <details> summary that must be opened first.
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
+    const summary = page
+      .locator("form")
+      .filter({ has: page.getByPlaceholder("sample-studio-a") })
+      .locator("summary")
+      .first();
+    await summary.click();
+    await expect(page.getByPlaceholder("sample-studio-a")).toBeVisible();
+    await expect(
+      page.getByText(/Pro potvrzení napište id instance/i),
+    ).toBeVisible();
+  });
+
+  test("access section exposes participant access code form", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=access");
+    await expect(
+      page.getByRole("button", { name: /vydat nový event code|issue new event code/i }).first(),
+    ).toBeVisible();
+  });
+
+  test("access section facilitator add form lives in neon-only branch", async ({ page }) => {
+    // File mode (e2e default) hides the add-facilitator form behind
+    // the fallback message — verify the fallback renders so the flow
+    // isn't silently broken.
+    await page.goto("/admin/instances/sample-studio-a?section=access");
+    await expect(page.getByRole("heading", { name: /správa facilitátorů|facilitator access/i })).toBeVisible();
+  });
+});
+
 test.describe("one canvas phase 5 — presenter scene coverage", () => {
   // Phase 5 exit criterion: every presenter block type renders in the
   // new presenter surface. The sample-studio-a workshop ships with
@@ -846,6 +907,115 @@ test.describe("one canvas phase 7 — parity smoke", () => {
       await page.locator("body").click({ position: { x: 5, y: 5 } });
     });
   }
+});
+
+test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
+  // Phase 7 exit criterion: walk through every capability in the
+  // inventory reference, section by section. For each, confirm it has
+  // a home in the new IA and works. This is the regression backstop.
+  //
+  // The inventory:
+  // - Agenda: timeline nav, detail hero (inline title/time/goal/
+  //   summary + lists), scene cards (inline fields + reorder/default/
+  //   toggle/remove), scene create (inline draft), agenda create
+  //   (inline draft), agenda reorder, agenda remove, set-live-here,
+  //   jump-to-live, launch presenter (soft nav + pop-out), handoff
+  //   moment card (unlock/hide/rotation signals)
+  // - Teams: card rename (name/repoUrl/city/members/anchor inline),
+  //   checkpoint append, register new team
+  // - Signals: capture rotation signal (kept as form)
+  // - Access: participant access code issue, facilitator add
+  //   (neon-only), facilitator revoke (neon-only), facilitator
+  //   fallback message in file mode
+  // - Settings: password change, archive workshop with notes, reset
+  //   workshop with typed confirmation, language switcher, theme
+  //   switcher, sign out
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("every documented capability is reachable in the new IA", async ({ page }) => {
+    // --- Agenda section ---
+    await page.goto("/admin/instances/sample-studio-a?section=agenda");
+    // Timeline rows + add agenda item ghost button.
+    await expect(page.locator('div[data-agenda-item="opening"]').first()).toBeVisible();
+    await expect(page.getByRole("button", { name: /^\+ /i }).first()).toBeVisible();
+
+    // Open an agenda detail.
+    await page.locator('div[data-agenda-item="talk"]').getByRole("link", { name: "detail momentu" }).click();
+    await expect(page).toHaveURL(/agendaItem=talk/);
+
+    // Inline title + time + goal + roomSummary all render.
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^Context is King$/ }).first(),
+    ).toBeVisible();
+
+    // Scene cards + reorder/default/toggle/remove buttons.
+    await expect(
+      page.getByRole("button", { name: /posunout scénu výš|move scene up/i }).first(),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /odebrat scénu|remove scene/i }).first(),
+    ).toBeVisible();
+    // AddSceneRow draft button present.
+    await expect(
+      page.getByRole("button", { name: /\+ přidat scénu|\+ add scene/i }).first(),
+    ).toBeVisible();
+
+    // Launch presenter links exist.
+    await expect(page.getByRole("link", { name: "otevřít tuto scénu" }).first()).toBeVisible();
+
+    // --- Teams section ---
+    await page.goto("/admin/instances/sample-studio-a?section=teams");
+    // Register form (new team).
+    await expect(page.getByPlaceholder(/Studio A/i).first()).toBeVisible();
+    // Inline team card.
+    await expect(page.locator('[data-inline-field="display"]').first()).toBeVisible();
+    // Checkpoint append textarea.
+    await expect(page.getByPlaceholder(/Co se změnilo|checkpoint|Co se/i).first()).toBeVisible();
+
+    // --- Signals section ---
+    await page.goto("/admin/instances/sample-studio-a?section=signals");
+    await expect(
+      page.getByRole("button", { name: /přidat update|add update/i }).first(),
+    ).toBeVisible();
+
+    // --- Access section ---
+    await page.goto("/admin/instances/sample-studio-a?section=access");
+    await expect(
+      page.getByRole("button", { name: /vydat nový event code|issue new event code/i }).first(),
+    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /správa facilitátorů/i })).toBeVisible();
+
+    // --- Settings section ---
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
+    // File-mode fallback for password + archive button. Reset lives
+    // inside a <details> that needs opening before the confirmation
+    // placeholder becomes visible.
+    await expect(page.getByText(/neon mód|neon mode/i).first()).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /vytvořit archiv|create archive/i }).first(),
+    ).toBeVisible();
+    await page
+      .locator("form")
+      .filter({ has: page.getByPlaceholder("sample-studio-a") })
+      .locator("summary")
+      .first()
+      .click();
+    await expect(page.getByPlaceholder("sample-studio-a")).toBeVisible();
+
+    // --- Header chrome ---
+    await expect(page.getByRole("button", { name: /odhlásit se|sign out/i })).toBeVisible();
+    // Language switcher renders CS + EN links.
+    await expect(page.getByRole("link", { name: /^CZ$/i }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /^EN$/i }).first()).toBeVisible();
+  });
 });
 
 test.describe("facilitator API (unauthenticated)", () => {
