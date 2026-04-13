@@ -23,8 +23,8 @@
       ]
     },
     "workshop-content/agenda.json": {
-      "contentHash": "sha256:b09b4dddaa0a6b80c5890df28ab897d3564688a6a8eb4713804614a68bf6bc73",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:7a81247262c908b6f066ec38ac786fec96974c9cb5438f0bd7ba19e6ab7ae6e3",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28530,15 +28530,15 @@
       ]
     },
     "content/challenge-cards/locales/cs/deck.md": {
-      "contentHash": "sha256:f48717601e4ddba668ea9aee9a50047f34c28eab8c07a055d3d3202206eeb0e2",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:f611a98e66c4483473390a1cd04bbf44fc5485884240b369664796382feae28c",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 61,
-          "endColumn": 104,
+          "endColumn": 110,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -28547,8 +28547,8 @@
       ]
     },
     "content/challenge-cards/locales/cs/print-spec.md": {
-      "contentHash": "sha256:eca8d5e20f30be0b7265f957d86e070c0c396691e7334b7d5d382e5705cafc51",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:e0cf8c5d88a79580708559083fd40e05226628c390f9b4e4a9b14ef0718768d7",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28564,8 +28564,8 @@
       ]
     },
     "content/facilitation/locales/cs/codex-setup-verification.md": {
-      "contentHash": "sha256:38db03c2a5062d922143f8e93c2e1fadd9933495a2b0450af57fd0b0482fdf01",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:73de19bf75489ca3c4cf2b79030a904bd8d7e597983afb1b74426f75a10e678b",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28581,8 +28581,8 @@
       ]
     },
     "content/facilitation/locales/cs/master-guide.md": {
-      "contentHash": "sha256:e9933dd96ffb1df4eb8cafdbf8f3f1b230935fa72545029d64be0ca19c7784e1",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:432accafa1d488f10566bb8b25334a628ea42978eaaa2a43e5bc092e2b4a5ff1",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28599,7 +28599,7 @@
     },
     "content/project-briefs/locales/cs/code-review-helper.md": {
       "contentHash": "sha256:398fc7d5dff53b577c902a9130609ab22a997cc1d2405a5a9e846daaffaecf05",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28615,15 +28615,15 @@
       ]
     },
     "content/project-briefs/locales/cs/devtoolbox-cli.md": {
-      "contentHash": "sha256:b8c494bb270a08ab232b9d9dcd8bb459d77e0907871cf453cc3149b0461cef12",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:b272aea9b4b3d2f82a36ae5ad71422a2ad2475aa12147b91bf09a3f4e50a8eef",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
           "startLine": 1,
           "startColumn": 1,
           "endLine": 34,
-          "endColumn": 178,
+          "endColumn": 182,
           "language": "cs",
           "kind": "prose",
           "pathHint": null,
@@ -28632,8 +28632,8 @@
       ]
     },
     "content/project-briefs/locales/cs/doc-generator.md": {
-      "contentHash": "sha256:b4970b9e9881e3e78e6ba0bf1922b25e50c36116455b2d0ab460e2631bc610d3",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:a4993039a979adff3a3911fbf85b482a0c364ea7646ec6113e127bf7424fdb8d",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28650,7 +28650,7 @@
     },
     "content/project-briefs/locales/cs/metrics-dashboard.md": {
       "contentHash": "sha256:874f306db0a456264da52e53328461de028c4ae9d98107ed3c799221822ab953",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28666,8 +28666,8 @@
       ]
     },
     "content/project-briefs/locales/cs/standup-bot.md": {
-      "contentHash": "sha256:38837b3d84010f6ed8302eb53bc31e16475eaae9421d4dcfe242fcde19c655d4",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:53e4e2e3d9d0016d891a77895c876acbd1d48c36de3d2bdcd42a2b6ae8f688a8",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28683,8 +28683,8 @@
       ]
     },
     "content/talks/locales/cs/codex-demo-script.md": {
-      "contentHash": "sha256:c5992ea1c567471b721586f4aed2e7d7ec928d7c3093ec387123f2028c6514da",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:f76e1a3ff961791604387a7a64e7aa835a67f1717662681b579913bbdbf36e86",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28700,8 +28700,8 @@
       ]
     },
     "content/talks/locales/cs/context-is-king.md": {
-      "contentHash": "sha256:c6803f267ad73c2b76513f0b67dcf68c965332af0143ec059662ddef686b9148",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:ff26d4327ac1704997dcdb3d7d61f689333688fd36b51983bcde0fd2ef23b15b",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28717,8 +28717,8 @@
       ]
     },
     "materials/locales/cs/participant-resource-kit.md": {
-      "contentHash": "sha256:0d6b70da2ea6bc2145a293c93a32bf576a6f5e0acfa76e920b8aefe99cca7971",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:efb6d98f70dff8da68416ddeb9727c82c2d082fcd4345582bc5113efc214f9a3",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {
@@ -28734,8 +28734,8 @@
       ]
     },
     "materials/locales/cs/coaching-codex.md": {
-      "contentHash": "sha256:81edf54f81b75e517f871962e8e6bb009426eda4e0fbebe5175299803371b8ee",
-      "segmentedAt": "2026-04-13T11:00:29.681425Z",
+      "contentHash": "sha256:63f844cc18a66ba6b8f22d7e64b996570ea1740f837c7b5555ad8edd1c1e38be",
+      "segmentedAt": "2026-04-13T11:59:10.841167Z",
       "reviewedBy": "ondrej@2026-04-13-refactor-language-flip",
       "spans": [
         {

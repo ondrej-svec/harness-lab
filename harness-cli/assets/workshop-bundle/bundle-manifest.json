@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.7.2",
-  "contentHash": "18ad36da149a366062736c6803d4d3b2416af66d8788f61a8c1c3047784a4ee3",
+  "contentHash": "a93e8c6137e761b2142e2ab46b333c834c94c15efaaacac765582d0bf501fdca",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -14,11 +14,11 @@
     },
     {
       "path": "content/challenge-cards/locales/cs/deck.md",
-      "sha256": "f48717601e4ddba668ea9aee9a50047f34c28eab8c07a055d3d3202206eeb0e2"
+      "sha256": "f611a98e66c4483473390a1cd04bbf44fc5485884240b369664796382feae28c"
     },
     {
       "path": "content/challenge-cards/locales/cs/print-spec.md",
-      "sha256": "eca8d5e20f30be0b7265f957d86e070c0c396691e7334b7d5d382e5705cafc51"
+      "sha256": "e0cf8c5d88a79580708559083fd40e05226628c390f9b4e4a9b14ef0718768d7"
     },
     {
       "path": "content/challenge-cards/print-spec.md",
@@ -38,11 +38,11 @@
     },
     {
       "path": "content/facilitation/locales/cs/codex-setup-verification.md",
-      "sha256": "38db03c2a5062d922143f8e93c2e1fadd9933495a2b0450af57fd0b0482fdf01"
+      "sha256": "73de19bf75489ca3c4cf2b79030a904bd8d7e597983afb1b74426f75a10e678b"
     },
     {
       "path": "content/facilitation/locales/cs/master-guide.md",
-      "sha256": "e9933dd96ffb1df4eb8cafdbf8f3f1b230935fa72545029d64be0ca19c7784e1"
+      "sha256": "432accafa1d488f10566bb8b25334a628ea42978eaaa2a43e5bc092e2b4a5ff1"
     },
     {
       "path": "content/facilitation/master-guide.md",
@@ -70,11 +70,11 @@
     },
     {
       "path": "content/project-briefs/locales/cs/devtoolbox-cli.md",
-      "sha256": "b8c494bb270a08ab232b9d9dcd8bb459d77e0907871cf453cc3149b0461cef12"
+      "sha256": "b272aea9b4b3d2f82a36ae5ad71422a2ad2475aa12147b91bf09a3f4e50a8eef"
     },
     {
       "path": "content/project-briefs/locales/cs/doc-generator.md",
-      "sha256": "b4970b9e9881e3e78e6ba0bf1922b25e50c36116455b2d0ab460e2631bc610d3"
+      "sha256": "a4993039a979adff3a3911fbf85b482a0c364ea7646ec6113e127bf7424fdb8d"
     },
     {
       "path": "content/project-briefs/locales/cs/metrics-dashboard.md",
@@ -82,7 +82,7 @@
     },
     {
       "path": "content/project-briefs/locales/cs/standup-bot.md",
-      "sha256": "38837b3d84010f6ed8302eb53bc31e16475eaae9421d4dcfe242fcde19c655d4"
+      "sha256": "53e4e2e3d9d0016d891a77895c876acbd1d48c36de3d2bdcd42a2b6ae8f688a8"
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
@@ -106,11 +106,11 @@
     },
     {
       "path": "content/talks/locales/cs/codex-demo-script.md",
-      "sha256": "c5992ea1c567471b721586f4aed2e7d7ec928d7c3093ec387123f2028c6514da"
+      "sha256": "f76e1a3ff961791604387a7a64e7aa835a67f1717662681b579913bbdbf36e86"
     },
     {
       "path": "content/talks/locales/cs/context-is-king.md",
-      "sha256": "c6803f267ad73c2b76513f0b67dcf68c965332af0143ec059662ddef686b9148"
+      "sha256": "ff26d4327ac1704997dcdb3d7d61f689333688fd36b51983bcde0fd2ef23b15b"
     },
     {
       "path": "docs/harness-cli-foundation.md",
@@ -142,11 +142,11 @@
     },
     {
       "path": "materials/locales/cs/coaching-codex.md",
-      "sha256": "81edf54f81b75e517f871962e8e6bb009426eda4e0fbebe5175299803371b8ee"
+      "sha256": "63f844cc18a66ba6b8f22d7e64b996570ea1740f837c7b5555ad8edd1c1e38be"
     },
     {
       "path": "materials/locales/cs/participant-resource-kit.md",
-      "sha256": "0d6b70da2ea6bc2145a293c93a32bf576a6f5e0acfa76e920b8aefe99cca7971"
+      "sha256": "efb6d98f70dff8da68416ddeb9727c82c2d082fcd4345582bc5113efc214f9a3"
     },
     {
       "path": "materials/participant-resource-kit.md",

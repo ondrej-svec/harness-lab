@@ -1,4 +1,4 @@
-# Challenge Cards
+# Karty výzev
 
 Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob práce s agentem i kvalitu handoffu.
 
@@ -28,11 +28,11 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 
 - `Delegujte a kontrolujte výsledek` — Skáčete agentovi do každého kroku. Dejte mu úkol s jasnými mantinely a vraťte se za 10 minut zkontrolovat výsledek, ne proces. [Habit: Verification is the trust boundary]
 
-- `Nejmenší užitečné ověření` — Agent říká, že je hotovo, ale nemáte jak to ověřit. Zapište done criteria jako spustitelný check (tracer bullet, end-to-end check nebo browser test) dřív, než agent dostane víc autonomie. Holisticky: dokažte, že drží celek. [Habit: Verification is the trust boundary]
+- `Nejmenší užitečné ověření` — Agent říká, že je hotovo, ale nemáte jak to ověřit. Zapište definici hotovo jako spustitelný check (tracer bullet, end-to-end check nebo browser test) dřív, než agent dostane víc autonomie. Holisticky: dokažte, že drží celek. [Habit: Verification is the trust boundary]
 
 - `Opravte jeden slabý signál` — Přebírající tým musel hádat, co je hotové a co ne. Opravte jedno místo v README, AGENTS.md, plánu, runbooku nebo checku, které by to příště vyjasnilo. [Habit: Cleanup is part of build]
 
-## Advanced
+## Pokročilé
 
 - `2 paralelní sessions` — Máte velký problém a jednu session. Rozdělte ho na dvě nezávislé části, paralelně je zpracujte a porovnejte výstupy. [Habit: Boundaries create speed]
 
@@ -57,4 +57,4 @@ Karty nejsou body navíc. Jsou to malé zásahy, které zlepšují způsob prác
 - Před obědem má každý tým splnit aspoň jednu kartu z části „Před obědem: postavte pracovní systém".
 - Před rotací má být v repu dohledatelné, co bylo opravdu ověřeno a jaký je další bezpečný krok.
 - Po rotaci má každý tým splnit aspoň jednu kartu z „Po rotaci: opravte signál, ne jen feature".
-- Ostatní karty jsou dobrovolné. Berte je jako stretch cíle nebo inspiraci, když nevíte, co zlepšit dál.
+- Ostatní karty jsou dobrovolné. Berte je jako ambicióznější cíle nebo inspiraci, když nevíte, co zlepšit dál.

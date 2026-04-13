@@ -9,7 +9,7 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 ## User stories
 
 - Jako team lead chci sesbírat standup odpovědi do jednoho přehledného souhrnu.
-- Jako vývojář chci rychle vidět blokery, dependency a témata, která potřebují domluvu.
+- Jako vývojář chci rychle vidět blokery, návaznosti a témata, která potřebují domluvu.
 - Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního předání.
 
 ## Architektonické poznámky
@@ -18,7 +18,7 @@ Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přeh
 - Mock data jsou v pořádku, pokud workflow působí realisticky a je dobře popsané.
 - Oddělte ingest, zpracování a prezentaci výstupu.
 - Prompty, runbooky a rozhodnutí musí být uložené v repu, ne jen v hlavách původního týmu.
-- Neřešte „hezký summary text“ dřív než to, jestli jsou vidět blokery, dependency a další safe move.
+- Neřešte uhlazený souhrn dřív, než budou vidět blokery, návaznosti a další bezpečný krok.
 
 ## Hotovo když
 

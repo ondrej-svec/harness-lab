@@ -18,7 +18,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 - Výstup může být Markdown, HTML nebo jednoduchý textový report.
 - Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.
 - Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.
-- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po předání.
+- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a to, aby další tým věděl, jak bezpečně pokračovat.
 
 ## Hotovo když
 

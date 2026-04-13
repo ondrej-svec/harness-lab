@@ -210,7 +210,12 @@ describe("Admin control room page", () => {
     expect(html).toContain('value="talk"');
     expect(html).toContain('name="returnTo"');
     expect(html).toContain('value="detail"');
-    expect(html).toContain('value="The Craft Underneath"');
+    // The sample workshop state ships with Czech content (contentLang="cs"),
+    // so the agenda editor's title input reflects the reviewed Czech label
+    // from the 2026-04-13 native-quality pass. Before that review the CS
+    // label was an English placeholder ("The Craft Underneath"), which is
+    // what this assertion used to match on.
+    expect(html).toContain('value="Řemeslo\u00a0pod povrchem"');
   });
 
   it("renders the selected agenda moment as a dedicated detail workbench", async () => {

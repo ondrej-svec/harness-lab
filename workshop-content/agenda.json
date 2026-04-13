@@ -15,7 +15,7 @@
       "templateLocationDetails": "Add the concrete venue, room, and logistics notes for this event."
     },
     "cs": {
-      "title": "Harness Lab",
+      "title": "Harness Lab",
       "subtitle": "Workshop operating system pro práci s AI agenty",
       "principles": [
         "Kontext před generováním",
@@ -618,7 +618,7 @@
               {
                 "id": "opening-hero",
                 "type": "hero",
-                "eyebrow": "Harness Lab",
+                "eyebrow": "Harness Lab",
                 "title": "Dnes se naučíte tvarovat práci tak, aby ji zvládl převzít kdokoli – i agent",
                 "body": "To je to řemeslo pod veškerým hypem kolem agentů. Nejde o lepší prompty. Nejde o rychlejší psaní. Jde o repo, workflow a kontext, který unese další krok i bez vás. Do večera takový systém postavíte vlastníma rukama, předáte ho jinému týmu a uvidíte, co přežije. Druhý den, až si otevřete coding agenta, budete vědět, co dělat jinak."
               },
@@ -734,7 +734,7 @@
                   {
                     "id": "arc-handoff",
                     "title": "Předat.",
-                    "body": "Po obědě vaše repo už není vaše. Jiný tým ho převezme naslepo. Vy převezmete jejich."
+                    "body": "Po obědě vaše repo už není vaše. Jiný tým ho převezme naslepo. Vy převezmete jejich."
                   },
                   {
                     "id": "arc-continue",
@@ -3216,7 +3216,7 @@
               {
                 "id": "lunch-hero",
                 "type": "hero",
-                "eyebrow": "Harness Lab · Oběd",
+                "eyebrow": "Harness Lab · Oběd",
                 "title": "Zpět v [return-time]",
                 "body": "Najezte se. Projděte se. Nadechněte se. Vidíme se přesně v [return-time]."
               },
@@ -3358,8 +3358,8 @@
             ]
           },
           "cs": {
-            "label": "Vaše repo už není vaše",
-            "title": "Vaše repo už není vaše",
+            "label": "Vaše repo už není vaše",
+            "title": "Vaše repo už není vaše",
             "body": "Po zbytek dne pracujete v repu, které postavil jiný tým ráno. Jiný tým pracuje ve vašem. Jména týmů – a kotvy, které je značí – zůstávají na svých místech. Lidé se pohybují. Všechno, co jste přes oběd nechali v repu, je všechno, co nový tým má.",
             "facilitatorNotes": [
               "Odhalovací moment. Držte ho klidný a přímý."
@@ -3369,7 +3369,7 @@
                 "id": "rotation-reveal-hero",
                 "type": "hero",
                 "eyebrow": "Odpolední test",
-                "title": "Vaše repo už není vaše",
+                "title": "Vaše repo už není vaše",
                 "body": "Po zbytek dne pracujete v repu, které postavil jiný tým ráno. Jiný tým pracuje ve vašem. Všechno, co jste přes oběd nechali v repu, je všechno, co nový tým má."
               },
               {
@@ -3495,7 +3495,7 @@
                 "id": "rotation-silence-callout",
                 "type": "callout",
                 "tone": "info",
-                "title": "Vaše staré repo už není vaše. Nepomáhejte.",
+                "title": "Vaše staré repo už není vaše. Nepomáhejte.",
                 "body": "Opouštíte repo starého týmu. Lidé, kteří tam přicházejí, ho musí přečíst naslepo. Když vás chytí pohledem, usmějte se a ukažte na repo. Ticho je test – i pro vás."
               }
             ],
