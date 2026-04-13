@@ -62,6 +62,15 @@ jobs:
             npm run test:e2e -- --update-snapshots=all
           fi
 
+      - name: Upload regenerated snapshots as artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: regenerated-snapshots
+          path: dashboard/e2e/dashboard.spec.ts-snapshots/*.png
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Commit and push updated snapshots
         shell: bash
         working-directory: ${{ github.workspace }}
