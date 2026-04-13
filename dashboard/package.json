@@ -28,9 +28,9 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.5"
   },
-  "overrides": {
-    "@neondatabase/auth": {
-      "better-auth": "1.4.9"
+  "pnpm": {
+    "overrides": {
+      "better-auth": ">=1.4.9"
     }
   },
   "devDependencies": {
