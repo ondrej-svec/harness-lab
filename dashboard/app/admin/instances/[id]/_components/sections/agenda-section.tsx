@@ -191,6 +191,23 @@ export function AgendaSection({
                   }}
                 />
               </div>
+              <div className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-muted)]">
+                <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">
+                  {copy.agendaDetailGoalTitle}
+                </p>
+                <InlineField
+                  value={selectedAgendaItem.goal ?? ""}
+                  fieldName="goal"
+                  label={copy.agendaDetailGoalTitle}
+                  mode="textarea"
+                  action={updateAgendaFieldAction}
+                  hiddenFields={{
+                    instanceId,
+                    agendaId: selectedAgendaItem.id,
+                    fieldName: "goal",
+                  }}
+                />
+              </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
                 {selectedAgendaItem.id !== currentAgendaItem?.id ? (
