@@ -1,9 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-// NOTE: Several tests below are .skip due to stale Czech content strings that predate the
-// 2026-04-12 agenda rewrite and the 2026-04-13 language-flip + Czech review. They need
-// re-anchoring against the current agenda.json before re-enabling. Tracked in docs/plans/.
-
 test.describe("participant dashboard", () => {
   test("shows the dominant workshop flow on mobile without browser errors", async ({ page }) => {
     const pageErrors: string[] = [];
@@ -53,7 +49,7 @@ test.describe("participant dashboard", () => {
     });
   });
 
-  test.skip("unlocks private participant context only after redeeming the event code", async ({ page }) => {
+  test("unlocks private participant context only after redeeming the event code", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
 
@@ -65,7 +61,10 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByText("participant plocha", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
-    await expect(page.getByText("Do oběda potřebujete mapu repa, plán kroků, spustitelné ověření a první posun")).toBeVisible();
+    // Current phase (build-1) goal on the agenda-for-team panel.
+    // Verifies the participant view renders the current blueprint
+    // content, not just the public chrome.
+    await expect(page.getByText("Dostat tým do režimu, kde do oběda existuje repo")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
 
     // Workshop context line visible with event metadata
@@ -263,26 +262,31 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
   });
 
-  test.skip("keeps room screen and participant mirror as separate launch targets in the control room", async ({ page }) => {
+  test("keeps room screen and participant mirror as separate launch targets in the control room", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a");
 
     await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
-    await expect(page.getByRole("heading", { name: "Rámec rotace" })).toBeVisible();
+    // Detail workbench heading — the moment's time + title.
+    await expect(page.getByRole("heading", { name: "13:30 • Rotace týmů" })).toBeVisible();
     const detailWorkbench = page.locator("section").filter({ has: page.getByRole("heading", { name: "13:30 • Rotace týmů" }) }).first();
     const projectionLink = detailWorkbench.getByRole("link", { name: "otevřít projekci" });
     const participantLinks = detailWorkbench.getByRole("link", { name: "participant plocha 1:1" });
 
     await expect(projectionLink).toBeVisible();
     await expect(participantLinks).toHaveCount(2);
-    await expect(projectionLink).toHaveAttribute("href", /\/presenter\?agendaItem=rotation&scene=rotation-framing/);
+    // Default scene for rotation is `rotation-not-yours-anymore` after the
+    // 2026-04-12 content review renamed the old `rotation-framing`.
+    await expect(projectionLink).toHaveAttribute("href", /\/presenter\?agendaItem=rotation&scene=rotation-not-yours-anymore/);
     await expect(participantLinks.first()).toHaveAttribute("href", /\/participant/);
   });
 
-  test.skip("renders the room screen on mobile", async ({ page }) => {
+  test("renders the room screen on mobile", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation");
 
-    await expect(page.getByText("Tichý start po rotaci")).toBeVisible();
+    // Presenter renders the default room scene for the rotation phase —
+    // `rotation-not-yours-anymore` after the 2026-04-12 content review.
+    await expect(page.getByRole("heading", { name: "Vaše repo už není vaše" })).toBeVisible();
   });
 
   test("keeps the default room screen visually stable on ipad", async ({ page }) => {
@@ -303,11 +307,12 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
-  test.skip("renders the opening promise scene without backstage labels and keeps a stable ipad layout", async ({ page }) => {
+  test("renders the opening promise scene without backstage labels and keeps a stable ipad layout", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing&lang=en");
 
-    await expect(page.getByText("Dnes stavíme pracovní systém, ne prompt show")).toBeVisible();
+    // opening-framing body + block labels after the 2026-04-12 agenda rewrite.
+    await expect(page.getByText("Učíme se stavět pracovní systém")).toBeVisible();
     await expect(page.getByText("Hlavní věta pro dnešek")).toBeVisible();
     await expect(page.getByText("Co se dnes má změnit")).toBeVisible();
     await expect(page.getByText("source material")).toHaveCount(0);
@@ -318,13 +323,16 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
-  test.skip("renders the talk room proof slice with the authority cue and keeps a stable ipad layout", async ({ page }) => {
+  test("renders the talk room proof slice with the authority cue and keeps a stable ipad layout", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-framing");
+    // `talk-framing` was retired in the 2026-04-12 content rewrite.
+    // The protected-phrase scene is now `talk-humans-steer`.
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
 
-    await expect(page.getByText("Co jste právě viděli: kontext je páka, ne kosmetika")).toBeVisible();
-    await expect(page.getByText("Humans steer. Agents execute.")).toBeVisible();
-    await expect(page.getByText("Co si má tým odnést hned teď")).toBeVisible();
+    // Protected phrase from canonical vocabulary §2.
+    await expect(page.getByRole("heading", { name: "Lidé řídí. Agenti vykonávají." })).toBeVisible();
+    // §5 day-neutral closing promise.
+    await expect(page.getByText("Druhý den, až si otevřete coding agenta")).toBeVisible();
     await expect(page.getByText("source material")).toHaveCount(0);
 
     await expect(page).toHaveScreenshot("presenter-talk-proof-ipad.png", {
@@ -332,17 +340,21 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
-  test.skip("renders the talk participant proof slice on mobile without drifting into backstage copy", async ({ page }) => {
+  test("renders the opening participant proof slice on mobile without drifting into backstage copy", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-participant-view");
+    // The 2026-04-12 content review retired `talk-participant-view` along
+    // with every other dedicated participant-view scene. The only scene
+    // that still carries one is `opening-team-formation`, so the mobile
+    // participant smoke retargets there. See the vitest comment on
+    // dashboard/app/admin/instances/[id]/page.test.tsx around line 221.
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-team-formation");
 
-    await expect(page.getByText("Vraťte se k repu se třemi věcmi")).toBeVisible();
-    await expect(page.getByText("Co udělat v prvních minutách")).toBeVisible();
-    await expect(page.getByText("Otevřete README, AGENTS.md a zadání. Srovnejte si, co je cíl, kontext a mantinely.")).toBeVisible();
-    await expect(page.getByText(/harness skill install/)).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Postavte se do.řady/ })).toBeVisible();
+    await expect(page.getByText(/Devět minut\./)).toBeVisible();
+    // Backstage copy must stay off the participant surface.
     await expect(page.getByText("zdrojový materiál")).toHaveCount(0);
 
-    await expect(page).toHaveScreenshot("presenter-talk-participant-proof-mobile.png", {
+    await expect(page).toHaveScreenshot("presenter-opening-participant-proof-mobile.png", {
       maxDiffPixelRatio: 0.08,
     });
   });
