@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { signOutAction } from "./_actions/operations";
+import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
 import { ViewTransitionCard } from "./_components/view-transition-card";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
@@ -852,6 +853,12 @@ export default async function AdminPage({
   );
   const requestedAgendaItem = state.agenda.find((item: AgendaItem) => item.id === query?.agendaItem) as RichAgendaItem | undefined;
   const selectedAgendaItem = (requestedAgendaItem ?? currentAgendaItem ?? state.agenda[0]) as RichAgendaItem | undefined;
+  const outlineAgendaItems: OutlineAgendaItem[] = state.agenda.map((item) => ({
+    id: item.id,
+    label: item.title,
+    time: item.time ?? null,
+    status: (item.status ?? "upcoming") as OutlineAgendaItem["status"],
+  }));
   const roomScenes = getRoomPresenterScenes(selectedAgendaItem);
   const participantScenes = getParticipantPresenterScenes(selectedAgendaItem);
   const selectedScene =
@@ -1126,54 +1133,15 @@ export default async function AdminPage({
         </header>
 
         <div className="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[17rem_minmax(0,1fr)]">
-          <aside className="hidden xl:block">
-            <div className={`sticky top-6 ${adminHeroPanelClassName} p-4`}>
-              <p className="px-2 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.activeInstance}</p>
-              <p className="mt-2 px-2 text-sm leading-6 text-[var(--hero-secondary)]">{state.workshopId}</p>
-              <nav className="flex flex-col gap-2">
-                <AdminSectionLink
-                  lang={lang}
-                  section="agenda"
-                  activeSection={visibleSection}
-                  label={copy.navAgenda}
-                  instanceId={activeInstanceId}
-                  tone="dark"
-                />
-                <AdminSectionLink
-                  lang={lang}
-                  section="teams"
-                  activeSection={visibleSection}
-                  label={copy.navTeams}
-                  instanceId={activeInstanceId}
-                  tone="dark"
-                />
-                <AdminSectionLink
-                  lang={lang}
-                  section="signals"
-                  activeSection={visibleSection}
-                  label={copy.navSignals}
-                  instanceId={activeInstanceId}
-                  tone="dark"
-                />
-                <AdminSectionLink
-                  lang={lang}
-                  section="access"
-                  activeSection={visibleSection}
-                  label={copy.navAccess}
-                  instanceId={activeInstanceId}
-                  tone="dark"
-                />
-                <AdminSectionLink
-                  lang={lang}
-                  section="settings"
-                  activeSection={visibleSection}
-                  label={copy.navSettings}
-                  instanceId={activeInstanceId}
-                  tone="dark"
-                />
-              </nav>
-            </div>
-          </aside>
+          <OutlineRail
+            lang={lang}
+            instanceId={activeInstanceId}
+            activeSection={visibleSection}
+            activeAgendaItemId={selectedAgendaItem?.id ?? null}
+            workshopLabel={state.workshopId}
+            agendaItems={outlineAgendaItems}
+            copy={copy}
+          />
 
           <div className="space-y-6 2xl:space-y-7">
         {visibleSection === "agenda" ? (
