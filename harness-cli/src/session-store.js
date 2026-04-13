@@ -316,6 +316,7 @@ export function sanitizeSession(session, env) {
     email: session.email ?? null,
     role: session.role ?? null,
     selectedInstanceId: session.selectedInstanceId ?? null,
+    instanceId: session.instanceId ?? null,
     loggedInAt: session.loggedInAt,
     expiresAt: session.expiresAt ?? null,
     mode: session.mode ?? "local-dev",

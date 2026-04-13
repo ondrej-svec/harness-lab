@@ -128,6 +128,7 @@ test("sanitized sessions include storage mode but exclude secret fields", async 
     email: "facilitator@example.com",
     role: null,
     expiresAt: null,
+    instanceId: null,
     loggedInAt: "2026-04-07T10:00:00.000Z",
     mode: "local-dev",
     selectedInstanceId: "sample-studio-a",
