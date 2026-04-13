@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { signOutAction } from "./_actions/operations";
 import type { RichAgendaItem } from "./_components/agenda/types";
+import { ControlRoomHeader } from "./_components/control-room-header";
 import { ControlRoomPersistentSummary } from "./_components/control-room-summary";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
 import { AccessSection } from "./_components/sections/access-section";
@@ -19,12 +19,9 @@ import {
   participantAccessFlashCookieName,
   parseParticipantAccessFlash,
 } from "./_lib/participant-access-flash";
-import { AdminRouteLink } from "@/app/admin/admin-route-link";
-import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { auth } from "@/lib/auth/server";
 import {
-  buildAdminHref,
   buildAdminSummaryStats,
   buildAdminWorkspaceHref,
   buildWorkspaceStatusLabel,
@@ -35,14 +32,14 @@ import {
   getWorkshopLocationLines,
   resolveControlRoomOverlay,
   resolveAdminSection,
+  buildAdminHref,
   type AdminSection,
 } from "@/lib/admin-page-view-model";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 import { getFacilitatorParticipantAccessState } from "@/lib/participant-access-management";
-import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
-import { ThemeSwitcher } from "../../../components/theme-switcher";
+import { adminCopy, resolveUiLanguage } from "@/lib/ui-language";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { type AgendaItem, type Team } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
@@ -52,7 +49,7 @@ import {
   listRotationSignals,
 } from "@/lib/workshop-store";
 import type { RotationSignal } from "@/lib/runtime-contracts";
-import { AdminLanguageSwitcher, AdminSheet, StatusPill } from "../../admin-ui";
+import { AdminSheet } from "../../admin-ui";
 
 export const dynamic = "force-dynamic";
 
@@ -353,120 +350,48 @@ export default async function AdminPage({
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
       <div className="mx-auto flex max-w-[112rem] flex-col gap-6">
-        <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
-          <div className="absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
-          <div className="relative space-y-5 p-6 sm:p-7">
-            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-              <div className="max-w-3xl">
-                <AdminRouteLink
-                  href={buildAdminWorkspaceHref({ lang })}
-                  className="inline-flex text-sm lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                >
-                  {copy.controlRoomBack}
-                </AdminRouteLink>
-                <p className="mt-4 text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{copy.deskEyebrow}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-3">
-                  {selectedInstance ? (
-                    <StatusPill
-                      label={buildWorkspaceStatusLabel(copy, selectedInstance.status)}
-                      tone={selectedInstance.status === "running" ? "live" : selectedInstance.status === "archived" ? "archived" : "neutral"}
-                    />
-                  ) : null}
-                  <p className="text-sm text-[var(--text-muted)]">{state.workshopId}</p>
-                </div>
-                <h1 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
-                  {selectedInstance ? getWorkshopDisplayTitle(selectedInstance) : copy.pageTitle}
-                </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.controlRoomBody}</p>
-                <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                  <ControlRoomHeaderMeta label={copy.workspaceWhenLabel} value={instanceWhenLabel} />
-                  <ControlRoomHeaderMeta label={copy.workspaceWhereLabel} value={instanceWhereLabel} />
-                  <ControlRoomHeaderMeta label={copy.workspaceOwnerLabel} value={instanceOwnerLabel} />
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:justify-end">
-                <AdminLanguageSwitcher
-                  lang={lang}
-                  csHref={buildAdminHref({
-                    lang: "cs",
-                    section: visibleSection,
-                    instanceId: activeInstanceId,
-                    teamId: query?.team ?? null,
-                    agendaItemId: showAgendaDetail ? selectedAgendaItem?.id ?? null : null,
-                    sceneId: showAgendaDetail ? selectedScene?.id ?? null : null,
-                    overlay: visibleSection === "agenda" ? activeOverlay : null,
-                  })}
-                  enHref={buildAdminHref({
-                    lang: "en",
-                    section: visibleSection,
-                    instanceId: activeInstanceId,
-                    teamId: query?.team ?? null,
-                    agendaItemId: showAgendaDetail ? selectedAgendaItem?.id ?? null : null,
-                    sceneId: showAgendaDetail ? selectedScene?.id ?? null : null,
-                    overlay: visibleSection === "agenda" ? activeOverlay : null,
-                  })}
-                />
-                <span>/</span>
-                <ThemeSwitcher />
-                <span>/</span>
-                <form action={signOutAction}>
-                  <input name="lang" type="hidden" value={lang} />
-                  <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
-                    {copy.signOutButton}
-                  </AdminSubmitButton>
-                </form>
-              </div>
-            </div>
-
-            <nav className="grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-4 sm:flex sm:flex-wrap sm:gap-x-3 sm:gap-y-3 xl:hidden">
-              <AdminSectionLink
-                lang={lang}
-                section="agenda"
-                activeSection={visibleSection}
-                label={copy.navAgenda}
-                instanceId={activeInstanceId}
-              />
-              <AdminSectionLink
-                lang={lang}
-                section="teams"
-                activeSection={visibleSection}
-                label={copy.navTeams}
-                instanceId={activeInstanceId}
-              />
-              <AdminSectionLink
-                lang={lang}
-                section="signals"
-                activeSection={visibleSection}
-                label={copy.navSignals}
-                instanceId={activeInstanceId}
-              />
-              <AdminSectionLink
-                lang={lang}
-                section="access"
-                activeSection={visibleSection}
-                label={copy.navAccess}
-                instanceId={activeInstanceId}
-              />
-              <AdminSectionLink
-                lang={lang}
-                section="settings"
-                activeSection={visibleSection}
-                label={copy.navSettings}
-                instanceId={activeInstanceId}
-              />
-            </nav>
-            <div className="grid gap-3 border-t border-[var(--border)] pt-4 sm:grid-cols-2 xl:grid-cols-4">
-              {persistentSummaryRows.map((row) => (
-                <ControlRoomPersistentSummary key={row.label} label={row.label} value={row.value} hint={row.hint} />
-              ))}
-            </div>
-            <div className="flex flex-col gap-2 text-xs leading-5 text-[var(--text-muted)]">
+        <ControlRoomHeader
+          lang={lang}
+          copy={copy}
+          instanceId={activeInstanceId}
+          visibleSection={visibleSection}
+          activeOverlay={activeOverlay}
+          instanceBadge={
+            selectedInstance
+              ? {
+                  statusLabel: buildWorkspaceStatusLabel(copy, selectedInstance.status),
+                  statusTone:
+                    selectedInstance.status === "running"
+                      ? "live"
+                      : selectedInstance.status === "archived"
+                        ? "archived"
+                        : "neutral",
+                  displayTitle: getWorkshopDisplayTitle(selectedInstance),
+                }
+              : null
+          }
+          workshopId={state.workshopId}
+          selectedAgendaItemId={selectedAgendaItem?.id ?? null}
+          selectedSceneId={selectedScene?.id ?? null}
+          selectedTeamId={query?.team ?? null}
+          showAgendaDetail={showAgendaDetail}
+          instanceWhenLabel={instanceWhenLabel}
+          instanceWhereLabel={instanceWhereLabel}
+          instanceOwnerLabel={instanceOwnerLabel}
+        />
+        <div className="rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] px-6 py-5 shadow-[var(--shadow-soft)] backdrop-blur sm:px-7">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            {persistentSummaryRows.map((row) => (
+              <ControlRoomPersistentSummary key={row.label} label={row.label} value={row.value} hint={row.hint} />
+            ))}
+          </div>
+          {(sessionState.signedInLine || sessionState.archiveLine) && (
+            <div className="mt-4 flex flex-col gap-2 text-xs leading-5 text-[var(--text-muted)]">
               {sessionState.signedInLine ? <p>{sessionState.signedInLine}</p> : null}
               {sessionState.archiveLine ? <p>{sessionState.archiveLine}</p> : null}
             </div>
-          </div>
-        </header>
+          )}
+        </div>
 
         <div className="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[17rem_minmax(0,1fr)]">
           <OutlineRail
@@ -629,52 +554,5 @@ export default async function AdminPage({
         </AdminSheet>
       ) : null}
     </main>
-  );
-}
-
-function ControlRoomHeaderMeta({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
-
-function AdminSectionLink({
-  lang,
-  section,
-  activeSection,
-  label,
-  instanceId,
-  tone = "light",
-}: {
-  lang: UiLanguage;
-  section: AdminSection;
-  activeSection: AdminSection;
-  label: string;
-  instanceId: string;
-  tone?: "light" | "dark";
-}) {
-  const href = buildAdminHref({ lang, section, instanceId });
-  const active = section === activeSection;
-  const dark = tone === "dark";
-
-  return (
-    <AdminRouteLink
-      href={href}
-      className={`inline-flex items-center justify-center rounded-full border px-4 py-2 text-center text-sm font-medium lowercase transition duration-200 hover:-translate-y-0.5 ${
-        dark
-          ? active
-            ? "border-[var(--hero-border)] bg-[var(--hero-tile-hover)] text-[var(--hero-text)] shadow-[var(--hero-shadow-soft)]"
-            : "border-transparent text-[var(--hero-secondary)] hover:border-[var(--hero-border)] hover:bg-[var(--hero-tile-bg)] hover:text-[var(--hero-text)]"
-          : active
-            ? "border-[var(--border-strong)] bg-[var(--surface-soft)] text-[var(--text-primary)] shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
-            : "border-transparent text-[var(--text-secondary)] hover:border-[var(--border)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-      }`}
-    >
-      {label}
-    </AdminRouteLink>
   );
 }
