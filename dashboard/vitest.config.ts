@@ -12,6 +12,11 @@ export default defineConfig({
   },
   test: {
     exclude: ["e2e/**", "node_modules/**"],
+    // Default environment is `node`. Files that need a DOM (for
+    // @testing-library/react interaction tests) opt in per file via
+    //     // @vitest-environment happy-dom
+    // at the top of the test file. Global happy-dom breaks tests that
+    // depend on node-only APIs (fetch behavior, response objects, etc.).
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json-summary"],
