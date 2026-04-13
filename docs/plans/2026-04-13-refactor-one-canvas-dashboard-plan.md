@@ -10,10 +10,13 @@ phase_commits:
   phase_0: [6aeda39, af893a9, aa66ee3]
   phase_1: [3e15a2c]
   phase_2: [1eb0b4a]
-  phase_3: [ecd0ab0]
+  phase_3: [ecd0ab0, 268e6ef]
   phase_4: [3080d99]
-  phase_5: [3611a4a]
+  phase_5: [3611a4a, 3970a30]
   phase_6: [818ad96]
+  phase_7: [3a4457c]
+  playwright_walkthrough: [dcdd22f]
+  followup_session_2: [3e0f30e, 268e6ef, 3970a30, dc6a622, aede68d, e04f650, 27d33f7]
 ---
 
 # refactor: One Canvas — dashboard motion + admin rework
@@ -451,35 +454,99 @@ Unverified / partially verified assumptions A4, A5, A6, A7, A8, A12, A14, A17, A
 
 ---
 
-## Implementation status summary (2026-04-13, end-of-work-session)
+## Implementation status summary (2026-04-13, end-of-session-2)
 
-All 7 phases are **code-complete**. Final quality pass: Vitest 315 pass / 15 skipped (baseline was 298, +17 new tests across 5 new test files), ESLint clean, `tsc --noEmit` clean, `next build` clean with both `/presenter` (hard-load) and `/(.)presenter` (intercepting) routes registered.
+All 7 plan phases are **code-complete** and the extended session-2 follow-up work landed 7 additional commits on top. Final quality pass at end of session 2: **Vitest 323 pass / 15 skipped** across 78 test files (+25 tests since the Phase 0 baseline of 298), **ESLint clean**, **`tsc --noEmit` clean**, **`next build` clean** with both `/presenter` (hard-load) and `/(.)presenter` (intercepting) routes registered, **Playwright 28/28 passing** including the inline-field accessible-name regression test and the Phase 4 reset confirmation E2E.
 
-| Phase | Commit | Status |
+`dashboard/app/admin/instances/[id]/page.tsx` is down from the 3089-line starting state to **2335 lines** — 754 lines of content + actions extracted into scoped modules. The remaining 2335 lines are mostly the Agenda section (still inline) plus the page component shell.
+
+### Session 2 (follow-up work after the /marvin:work pass completed)
+
+The user approved continuing past the Phase 1 review gate to take on deferred follow-up work. Seven additional commits landed, all green, all backed by Playwright:
+
+| Commit | What |
+|---|---|
+| `dcdd22f` | **Playwright regression fix** during the agentic walkthrough: InlineField display button was using `title` attribute which shadowed the button's text content as its accessible name in Chromium. The surrounding `<h2>` inherited `"13:30 • upravit vybraný moment workshopu"` instead of `"13:30 • Rotace týmů"`, breaking one E2E test. Fix: drop both aria-label AND title; the button's accessible name is its visible value. |
+| `3e0f30e` | **DOM test infrastructure.** happy-dom + @testing-library/react as devDeps, per-file opt-in via `// @vitest-environment happy-dom`. 14 new InlineField interaction tests cover click-to-edit, blur save, Enter commit, textarea Enter insert, Escape cancel, hidden fields, and the accessible-name regression. Global happy-dom broke 34 node-only tests, so opt-in pattern stays. |
+| `268e6ef` | **Inline the agenda `roomSummary` editor** on the detail header. New `updateAgendaFieldAction` is a generic field updater backed by a `UPDATABLE_AGENDA_FIELDS` allowlist (title, time, goal, roomSummary). Makes wiring the remaining 2 fields (time, goal) a trivial 10-line change each. |
+| `3970a30` | **TeamTrailScene in the intercepting overlay** — Phase 5 previously defaulted all scenes to the `SceneBlocks` room-scene layout. Now `chromePreset === "team-trail"` routes to the exported `TeamTrailScene` component, matching the hard-load presenter. Also fixes two lint issues: `setVisible(true)` redundant call in scene-rail.tsx useEffect (react-hooks/set-state-in-effect) and a stale `withLang` import in page.tsx. |
+| `dc6a622` | **Signals section extraction.** `_actions/signals.ts` (addCheckpointFeed, completeChallenge + buildEvidenceSummary helper) + `_components/sections/signals-section.tsx` (104 lines). First extraction proving the pattern. |
+| `aede68d` | **Settings section extraction.** `_actions/settings.ts` (toggleRotation, resetWorkshop with typed confirmation, archiveWorkshop, changePassword) + `_components/sections/settings-section.tsx` (219 lines). toggleRotationAction is re-imported back into page.tsx for the HandoffMomentCard which is the second consumer. |
+| `e04f650` | **Access section extraction.** `_actions/access.ts` (issueParticipantAccess with flash cookie, addFacilitator, revokeFacilitator) + `_components/sections/access-section.tsx` (243 lines). Introduces `_lib/participant-access-flash.ts` as a non-server module holding the cookie name, type, and parser shared between the action (writer) and page.tsx (reader). |
+| `27d33f7` | **Teams section extraction.** `_actions/teams.ts` (registerTeam with local deriveNextTeamId + buildEvidenceSummary helpers) + `_components/sections/teams-section.tsx` (167 lines). Final cleanup pass purges 15 dead imports from page.tsx that accumulated during the four extractions (getNeonSql, getAuditLogRepository, workshopTemplates, 10 workshop-store helpers, KeyValueRow, and the two page-local helper functions now living in the actions files). |
+
+### Current source tree
+
+```
+app/admin/instances/[id]/
+├── page.tsx                       # 2335 lines — Agenda section + header + shell
+├── layout.tsx                     # Parallel @presenter slot + MotionProvider
+├── presenter/page.tsx             # Hard-load presenter fallback
+├── @presenter/
+│   ├── default.tsx                # null
+│   └── (.)presenter/page.tsx      # Intercepting overlay: full scene rendering + TeamTrailScene
+├── _actions/
+│   ├── operations.ts              # signOut, renameAgendaItem, updateAgendaField
+│   ├── signals.ts                 # addCheckpointFeed, completeChallenge
+│   ├── settings.ts                # toggleRotation, resetWorkshop, archiveWorkshop, changePassword
+│   ├── access.ts                  # issueParticipantAccess, addFacilitator, revokeFacilitator
+│   └── teams.ts                   # registerTeam
+├── _components/
+│   ├── inline-field.tsx           # useOptimistic click-to-edit primitive
+│   ├── inline-field.test.tsx      # 6 static renderToStaticMarkup tests
+│   ├── inline-field.interaction.test.tsx  # 14 happy-dom + @testing-library tests
+│   ├── motion-provider.tsx        # LayoutGroup wrapper for Motion gesture work
+│   ├── outline-rail.tsx           # Left rail with nested agenda items
+│   ├── scene-morph-overlay.tsx    # Overlay chrome + Escape / ←/→ keyboard nav
+│   ├── scene-rail.tsx             # Right-edge auto-hiding rail
+│   ├── scene-swiper.tsx           # Motion drag + iPad overscroll containment
+│   ├── view-transition-card.tsx   # <ViewTransition name=...> wrapper w/ graceful fallback
+│   └── sections/
+│       ├── signals-section.tsx    # 104 lines
+│       ├── settings-section.tsx   # 219 lines
+│       ├── access-section.tsx     # 243 lines
+│       └── teams-section.tsx      # 167 lines
+└── _lib/
+    └── participant-access-flash.ts  # Shared flash cookie helpers (constant, type, parser)
+```
+
+| Phase | Commits | Status |
 |---|---|---|
 | Phase 0 — Foundations | `6aeda39`, `af893a9`, `aa66ee3` | ✓ Shipped |
-| Phase 1 — Proof slice | `3e15a2c` | ✓ Code shipped · ⏳ Ondrej's on-iPad review gate OPEN |
-| Phase 2 — Admin shell (outline rail) | `1eb0b4a` | ✓ Shipped (minimal scope — sidebar replaced with outline rail; full focused-canvas rewrite of the 3089-line page.tsx is deferred as incremental follow-up) |
-| Phase 3 — Inline editing primitive | `ecd0ab0` | ✓ `InlineField` primitive shipped + wired to agenda title · remaining 4 sheet replacements (full agenda edit, scene edit, team form) are incremental follow-ups |
-| Phase 4 — Operational forms | `3080d99` | ✓ Reset confirmation gate shipped (fixes the latent no-confirm bug). Other operational form restyling deferred as cosmetic follow-up. |
-| Phase 5 — Presenter full coverage | `3611a4a` | ✓ Full scene block rendering reused inside the overlay via exported `SceneBlocks` / `SceneCta` / `buildFallbackBlocks` |
-| Phase 6 — Polish + keyboard parity | `818ad96` | ✓ Escape / ArrowLeft / ArrowRight keyboard nav wired · motion curve tuning + 4:3 vs 16:9 check are on-device tasks for Ondrej |
-| Phase 7 — Regression + walkthrough | — | ✓ Automated regression (Vitest / lint / tsc / build) clean · ⏳ on-iPad walkthrough + 48h pre-workshop buffer are Ondrej's |
+| Phase 1 — Proof slice | `3e15a2c` | ✓ Code shipped + verified end-to-end via agent-browser walkthrough on desktop 1440×900, iPad landscape 1366×1024, iPad portrait 1024×1366. Functional correctness confirmed. ⏳ Ondrej's taste-level on-iPad review (motion feel, thumb ergonomics, 4:3 mirroring) still OPEN. |
+| Phase 2 — Admin shell (outline rail) | `1eb0b4a` | ✓ Outline rail shipped. **Session 2** extended this with 4 section extractions (Signals, Settings, Access, Teams) bringing `page.tsx` from 3089 → 2335 lines. |
+| Phase 3 — Inline editing | `ecd0ab0`, `268e6ef` | ✓ `InlineField` primitive + agenda title wired (phase 1) + agenda roomSummary wired (session 2). `updateAgendaFieldAction` allowlists title/time/goal/roomSummary so wiring more fields is trivial. Remaining content sheets (scene-edit, agenda-add, scene-add, full agenda-edit) still use the old overlay sheets — incremental follow-up work. |
+| Phase 4 — Operational forms | `3080d99` | ✓ Reset confirmation gate shipped (typed-id confirmation, fixes the latent no-confirm bug). Other operational forms restyling deferred as cosmetic follow-up. E2E test at dashboard.spec.ts:381 guards the behavior. |
+| Phase 5 — Presenter full coverage | `3611a4a`, `3970a30` | ✓ Full scene block rendering shipped via exported `SceneBlocks` / `SceneCta` / `buildFallbackBlocks`. **Session 2** extended this with `TeamTrailScene` rendering so team-trail chromePreset scenes render identically in both the hard-load presenter and the intercepting overlay. |
+| Phase 6 — Polish + keyboard parity | `818ad96` | ✓ Escape / ArrowLeft / ArrowRight keyboard nav wired on `SceneMorphOverlay`, ignores keys while focus is inside inputs so inline editing doesn't collide. Motion curve tuning + 4:3 vs 16:9 big-screen check are on-device tasks Ondrej still has. |
+| Phase 7 — Regression + walkthrough | `3a4457c` | ✓ Automated regression clean (Vitest, lint, tsc, build). **Playwright walkthrough** happened in session 2 via agent-browser (Chrome) at all three viewports; 28/28 tests pass. On-iPad walkthrough + 48h pre-workshop buffer are Ondrej's final gates. |
+| Follow-up session 2 | `dcdd22f`, `3e0f30e`, `268e6ef`, `3970a30`, `dc6a622`, `aede68d`, `e04f650`, `27d33f7` | ✓ Playwright fix, DOM test infra, roomSummary inline, TeamTrailScene, Signals/Settings/Access/Teams extractions, dead import cleanup. |
 
 ### What the remaining human tasks look like
 
-1. **Open the app on iPad Safari 18.x** (mirrored to whatever output Ondrej will use at the workshop). Click a scene card on the admin. Watch the morph. Try ArrowLeft/Right and swipe between scenes. Press Escape to return. Does it feel right? If yes, unlock Phase 2–6 for propagation to the remaining un-inlined fields and further polish. If no, go back to brainstorm.
+1. **Open the app on iPad Safari 18.x** (mirrored to whatever output Ondrej will use at the workshop). Click a scene card on the admin. Watch the morph. Try ArrowLeft/Right and swipe between scenes. Press Escape to return. Does it feel right? Session 2's agent-browser walkthrough already verified functional correctness; this gate is now about **taste and feel**, not correctness.
 2. **Tune motion curves on device if needed.** `dashboard/app/globals.css` has the `::view-transition-*` pseudo-elements. Adjust `animation-duration` and `animation-timing-function` until the feel is right.
-3. **Re-baseline Playwright visual regression snapshots.** Expected to diff after Phase 2 (outline rail replaces sidebar). Per the plan's visual regression protocol, review each diff before running `playwright test --update-snapshots`.
+3. **Re-baseline Playwright visual regression snapshots.** The existing 10 snapshots still match (they cover mobile 393 and iPad 1024×768/1366 which are below the `xl:` breakpoint where the outline rail renders), so the refactor is visually additive at xl+ and non-regressive below. New snapshots for the overlay + outline rail at 1366×1024 and 1440×900 are not yet captured.
 4. **Pre-workshop 48h walkthrough.** Full capability audit against the inventory — every existing action still works; destructive actions still confirm; language switcher still preserves `lang`.
 
-### What was deferred deliberately
+### What was deferred deliberately (status after session 2)
 
-- **Full inlining of the 4 sheet overlays** (`agenda-edit`, `agenda-add`, `scene-edit`, `scene-add`) — only the agenda title was inlined as a proof of the primitive. The `InlineField` is ready; wiring the remaining fields is incremental follow-up work that can land one field at a time without risking the pre-workshop cycle.
-- **The full focused-canvas rewrite of `page.tsx`** — 3089 lines that would need a days-long rewrite. Phase 2 shipped the outline-rail + left-side nav replacement; the inner section rendering stayed inline and working. This is a safer ground state going into the first workshop.
-- **New Playwright tests for the intercepting route + swipe + keyboard** — deferred until motion curves stabilize. Adding E2Es that lock in curves-in-flux is worse than adding them after Ondrej's on-device tuning.
-- **Visual regression re-baselining** — human diff review required; that's Ondrej's Phase 7 task.
-- **DOM test environment for inline-field interaction tests** — the repo has no jsdom/happy-dom/@testing-library. Would require a devDeps add; flagged as a separate infrastructure investment.
+- **Full inlining of the 4 sheet overlays.** Session 2 wired `roomSummary` on top of title. The remaining sheet-backed fields are: `agenda-edit` (time, goal, facilitatorPrompts, watchFors, checkpointQuestions), `scene-edit` (scene label, body, block content, facilitatorNotes, sourceRefs), `agenda-add` + `scene-add` (inline-append flows). **Still open.** `updateAgendaFieldAction` makes time and goal trivial to wire (~10 lines each); scene editing is more involved because of the block editor.
+- **Agenda section extraction from `page.tsx`.** **Still open.** ~300+ lines, 4 overlay sheet definitions, timeline rendering with `TimelineRow`, presenter scene cards already wrapped in `ViewTransitionCard`, the HandoffMomentCard with embedded rotation-signal capture. Most interdependent piece. Expected to land `page.tsx` under 1500 lines. Best done as its own focused session — the pattern is well-proven from the 4 extractions that already landed.
+- **New Playwright tests for the intercepting route + swipe + keyboard** — still deferred until motion curves stabilize. Adding E2Es that lock in curves-in-flux is worse than adding them after Ondrej's on-device tuning.
+- **Visual regression re-baselining for new overlay + outline rail viewports** — existing snapshots still match (they're all below the `xl:` breakpoint). New 1366×1024 and 1440×900 baselines for the outline rail and overlay would complete the visual regression coverage. Human diff review required per the protocol.
+- ~~DOM test environment~~ — **resolved in session 2** via `3e0f30e`. happy-dom + @testing-library/react are in, per-file opt-in pattern, 14 inline-field interaction tests already landing.
+
+### Handoff pointers for a fresh session
+
+If picking this up from a cold start, read in this order:
+1. **`docs/brainstorms/2026-04-13-one-canvas-rework-brainstorm.md`** — the why
+2. **`docs/plans/2026-04-13-one-canvas-research-notes.md`** — the verification pass and the Motion `layoutId` → React `<ViewTransition>` pivot
+3. **This file** — status, phase commit hashes, deferred work
+4. **`docs/plans/2026-04-13-one-canvas-url-contract.md`** — URL contract for deep links
+5. **`docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md`** — E2E test adaptation decisions
+
+Most likely next tasks: (a) Agenda section extraction, (b) inline more agenda fields (time, goal) using the existing `updateAgendaFieldAction` allowlist, (c) scene label/body inline editing. Pattern for all three is well-established — see commits `dc6a622` (Signals) or `aede68d` (Settings) as templates.
 
 ## Phased Implementation
 
