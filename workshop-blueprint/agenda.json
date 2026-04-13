@@ -17,7 +17,7 @@
       "label": "Opening and orientation",
       "startTime": "09:10",
       "kind": "shared",
-      "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue."
+      "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue."
     },
     {
       "id": "talk",
@@ -25,7 +25,7 @@
       "label": "The Craft Underneath",
       "startTime": "09:40",
       "kind": "shared",
-      "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt."
+      "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt."
     },
     {
       "id": "demo",
@@ -33,7 +33,7 @@
       "label": "Let me show you",
       "startTime": "10:05",
       "kind": "shared",
-      "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong."
+      "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong."
     },
     {
       "id": "build-1",
@@ -41,7 +41,7 @@
       "label": "Build fáze 1",
       "startTime": "10:30",
       "kind": "team",
-      "goal": "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work."
+      "goal": "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work."
     },
     {
       "id": "intermezzo-1",
@@ -57,7 +57,7 @@
       "label": "Lunch",
       "startTime": "12:15",
       "kind": "shared",
-      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read."
+      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read."
     },
     {
       "id": "rotation",
@@ -65,7 +65,7 @@
       "label": "Team rotation",
       "startTime": "13:30",
       "kind": "team",
-      "goal": "Force a quiet start after rotation and let repo quality reveal what is genuinely legible."
+      "goal": "Force a quiet start after rotation and let repo quality reveal what is genuinely legible."
     },
     {
       "id": "build-2",
@@ -81,7 +81,7 @@
       "label": "Intermezzo 2",
       "startTime": "14:45",
       "kind": "shared",
-      "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
+      "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
     },
     {
       "id": "build-2-second-push",
@@ -97,7 +97,7 @@
       "label": "Reveal and reflection",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending."
+      "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending."
     }
   ],
   "inventory": {
@@ -230,17 +230,17 @@
     "challenges": [
       {
         "id": "agents-md",
-        "title": "Create AGENTS.md as a map",
+        "title": "Create AGENTS.md as a map",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
         "description": "Write down the goal, build and test flow, durable rules, and where the next team should look first."
       },
       {
         "id": "review-skill",
-        "title": "Write a code review skill",
+        "title": "Write a code review skill",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
-        "description": "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt."
+        "description": "At least one repeatable review routine must live in the repo as a skill or runbook, not only in a prompt."
       },
       {
         "id": "plan-first",
@@ -254,7 +254,7 @@
         "title": "Add the smallest useful verification",
         "category": "Workflow",
         "phaseHint": "before-lunch",
-        "description": "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy."
+        "description": "Create a RED test, tracer bullet, or simple browser check before you give the agent more autonomy."
       },
       {
         "id": "parallel-agents",
@@ -268,7 +268,7 @@
         "title": "Add 'Done When' to every task",
         "category": "Meta",
         "phaseHint": "anytime",
-        "description": "Every important task needs an explicit completion criterion and a link to verification."
+        "description": "Every important task needs an explicit completion criterion and a link to verification."
       }
     ]
   },
