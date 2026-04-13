@@ -1,10 +1,11 @@
 /**
- * Tier 2 sync checker: verify Czech/English markdown pairs exist
+ * Tier 2 sync checker: verify English/Czech markdown pairs exist
  * and surface cs_reviewed staleness.
  *
- * For every Czech file in content/, workshop-skill/, materials/
- * (excluding locales/en/), verify a matching English file in locales/en/.
- * For every English file, verify a matching Czech file.
+ * Post-2026-04-13 layout: English is canonical (at root), Czech is the
+ * reviewed delivery locale (in `locales/cs/`). For every English file
+ * at the root of content/ and materials/ (excluding `locales/`), verify
+ * a matching Czech file in `locales/cs/`.
  *
  * Usage: bun scripts/content/check-tier2-sync.ts
  */
@@ -28,18 +29,20 @@ const SKIP_PATTERNS = [
   "SKILL.md", // workshop-skill internal, not bilingual
 ];
 
-// Files that are genuinely single-language (no bilingual counterpart needed).
-// workshop-skill/ entries are removed because the whole directory no longer
-// participates in the bilingual sync contract — see TIER2_DIRS comment.
-const CZECH_ONLY = new Set([
+// Files at the root that are genuinely single-language (no bilingual
+// counterpart needed). After the 2026-04-13 layout flip, the root holds
+// English-canonical content with two exceptions:
+//   1. Czech style references — meta-documents *about* Czech writing that
+//      would be nonsensical in English.
+//   2. `content/codex-craft.md` — facilitator-internal Czech reference.
+//   3. `materials/README.md` — directory index, Czech-only by design.
+const SINGLE_LANGUAGE_ROOT = new Set([
   "content/czech-reject-list.md",
   "content/czech-editorial-review-checklist.md",
   "content/style-guide.md",
   "content/style-examples.md",
   "content/codex-craft.md",
   "materials/README.md",
-  "materials/coaching-codex.md",
-  "content/challenge-cards/print-spec.md",
 ]);
 
 type SyncResult = {
@@ -77,9 +80,9 @@ function collectMarkdownFiles(dir: string, skipLocales = true): string[] {
   return results;
 }
 
-function collectEnglishFiles(dir: string): string[] {
+function collectCzechFiles(dir: string): string[] {
   const results: string[] = [];
-  const localeDir = resolve(ROOT, dir, "locales/en");
+  const localeDir = resolve(ROOT, dir);
 
   if (!existsSync(localeDir)) return results;
 
@@ -94,23 +97,37 @@ function collectEnglishFiles(dir: string): string[] {
     }
   }
 
-  walk(localeDir);
+  // Walk every subdirectory named "cs" under a "locales" parent.
+  function findCsDirs(current: string) {
+    if (!existsSync(current)) return;
+    for (const entry of readdirSync(current)) {
+      const full = join(current, entry);
+      if (!statSync(full).isDirectory()) continue;
+      if (entry === "cs" && basename(current) === "locales") {
+        walk(full);
+      } else {
+        findCsDirs(full);
+      }
+    }
+  }
+
+  findCsDirs(localeDir);
   return results;
 }
 
-function czechPathToEnglishPath(czechPath: string): string {
-  // content/talks/context-is-king.md -> content/talks/locales/en/context-is-king.md
-  const dir = dirname(czechPath);
-  const file = basename(czechPath);
-  return join(dir, "locales/en", file);
+function englishPathToCzechPath(englishPath: string): string {
+  // content/talks/context-is-king.md -> content/talks/locales/cs/context-is-king.md
+  const dir = dirname(englishPath);
+  const file = basename(englishPath);
+  return join(dir, "locales/cs", file);
 }
 
-function englishPathToCzechPath(englishPath: string): string {
-  // content/talks/locales/en/context-is-king.md -> content/talks/context-is-king.md
-  const parts = englishPath.split("/");
+function czechPathToEnglishPath(czechPath: string): string {
+  // content/talks/locales/cs/context-is-king.md -> content/talks/context-is-king.md
+  const parts = czechPath.split("/");
   const localeIdx = parts.indexOf("locales");
-  if (localeIdx === -1) return englishPath;
-  // Remove "locales/en" from the path
+  if (localeIdx === -1) return czechPath;
+  // Remove "locales/cs" from the path
   const before = parts.slice(0, localeIdx);
   const after = parts.slice(localeIdx + 2);
   return [...before, ...after].join("/");
@@ -140,32 +157,33 @@ function checkSync(): SyncResult {
   };
 
   for (const dir of TIER2_DIRS) {
-    // Collect Czech files (non-locale)
-    const czechFiles = collectMarkdownFiles(dir, true);
-    const englishFiles = collectEnglishFiles(dir);
+    // Collect English-canonical files at the root (non-locale)
+    const englishFiles = collectMarkdownFiles(dir, true);
+    // Collect Czech translations under locales/cs/
+    const czechFiles = collectCzechFiles(dir);
 
-    // Check each Czech file has an English counterpart
-    for (const czFile of czechFiles) {
-      if (CZECH_ONLY.has(czFile)) continue;
+    // Check each English file has a Czech counterpart
+    for (const enFile of englishFiles) {
+      if (SINGLE_LANGUAGE_ROOT.has(enFile)) continue;
 
-      const expectedEnPath = czechPathToEnglishPath(czFile);
-      if (!existsSync(resolve(ROOT, expectedEnPath))) {
-        result.missingEnglish.push(czFile);
+      const expectedCzPath = englishPathToCzechPath(enFile);
+      if (!existsSync(resolve(ROOT, expectedCzPath))) {
+        result.missingCzech.push(enFile);
       } else {
-        const reviewed = readCsReviewed(czFile);
+        const reviewed = readCsReviewed(expectedCzPath);
         if (reviewed === false) {
-          result.staleNodes.push(czFile);
+          result.staleNodes.push(expectedCzPath);
         } else {
-          result.ok.push(czFile);
+          result.ok.push(enFile);
         }
       }
     }
 
-    // Check each English file has a Czech counterpart
-    for (const enFile of englishFiles) {
-      const expectedCzPath = englishPathToCzechPath(enFile);
-      if (!existsSync(resolve(ROOT, expectedCzPath))) {
-        result.missingCzech.push(enFile);
+    // Check each Czech file has an English canonical at the root
+    for (const czFile of czechFiles) {
+      const expectedEnPath = czechPathToEnglishPath(czFile);
+      if (!existsSync(resolve(ROOT, expectedEnPath))) {
+        result.missingEnglish.push(czFile);
       }
     }
   }
@@ -206,6 +224,8 @@ if (result.missingCzech.length > 0) {
     console.error(`  - ${f} -> ${englishPathToCzechPath(f)}`);
   }
 }
+
+void basename; // keep import alive for future use
 
 const hasHardErrors = result.missingEnglish.length > 0 || result.missingCzech.length > 0;
 

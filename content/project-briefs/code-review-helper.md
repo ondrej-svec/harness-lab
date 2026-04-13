@@ -1,31 +1,30 @@
 # Code Review Helper
 
-## Problém
+## Problem
 
-Code review bývá nevyrovnané. Některé změny projdou s dobrým checklistem a jasným popisem rizik, jiné bez společného rámce. Reviewer pak improvizuje, autor neví, co má ověřit předem, a tým ztrácí konzistenci právě tam, kde by měl být nejpřesnější.
-
-Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří použitelný review checklist a zároveň jasně oddělí jistotu, heuristiku a místa, kde je pořád potřeba lidský úsudek.
+Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.
 
 ## User stories
 
-- Jako reviewer chci z diffu rychle získat checklist změněných hranic, rizik, otázek a míst, na která se zaměřit.
-- Jako autor změny chci vědět, co mám ověřit ještě před samotným review.
-- Jako tým po rotaci chci navázat na heuristiky, které původní tým objevil, místo abych je znovu vymýšlel.
+- As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.
+- As the author of a change, I want to know what I should verify before the review starts.
+- As the team after rotation, I want to continue from the heuristics the original team already discovered instead of reinventing them.
 
-## Architektonické poznámky
+## Architecture notes
 
-- Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → rozbor → checklist`.
-- Musí být zřejmé, jaké vstupy nástroj očekává, co umí označit jistě a co naopak zůstává heuristické.
-- Přidejte seed diff nebo `examples/`, aby šlo workflow lokálně ověřit a další tým rychle přidal nové pravidlo.
-- Nástroj má pomáhat reviewerovi, ne předstírat neomylnost.
+- This can be a CLI, web app, or simple script. The important part is a clear `diff -> analysis -> checklist` flow.
+- It must be obvious which inputs the tool expects and what it cannot evaluate reliably.
+- Add a seed diff or `examples/` so the workflow can be checked locally.
+- Separate heuristic from certainty clearly. The tool should help the reviewer, not pretend to be infallible.
 
-## Hotovo když
+## Done when
 
-- Nástroj vytvoří review checklist ze seed diffu.
-- Výstup odlišuje jistá zjištění od doporučení, hypotéz a bodů pro lidský úsudek.
-- Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.
-- Další tým může během 10 minut pokračovat v rozvoji bez chaosu.
+- Another team can add a new review rule within 10 minutes without reading through the whole codebase. *(Handoff test.)*
+- The tool produces a review checklist from a seed diff.
+- The output clearly separates certain findings from heuristic suggestions from items still needing human judgment.
+- The review rules themselves are readable and editable by someone who didn't write them.
+- There is at least one concrete example in `examples/` that demonstrates the full flow.
 
-## První krok pro agenta
+## First step for the agent
 
-Nezačínejte kódem. Nejdřív napište pravidla pro review, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice.
+Don't start with code. First write the review rules, define what a good checklist looks like for a specific seed diff, and clarify what the tool *cannot* evaluate reliably. Only then propose the first implementation slice.

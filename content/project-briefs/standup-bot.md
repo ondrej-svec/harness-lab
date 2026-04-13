@@ -1,33 +1,31 @@
 # Standup Bot
 
-## Problém
+## Problem
 
-Denní standupy v chatu často končí jako dlouhé vlákno bez struktury. Blokery zapadnou, návaznosti mezi lidmi nejsou vidět a po pár hodinách už se těžko dohledává, co se vlastně domluvilo.
-
-Vaším úkolem je navrhnout nástroj, který ze standup vstupů vytvoří přehled, se kterým se dá dál pracovat i bez původního autora nebo bez otevřeného původního vlákna.
+Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a different team can continue working from — without the original author, without the original thread, and without a verbal handoff.
 
 ## User stories
 
-- Jako team lead chci sesbírat standup odpovědi do jednoho přehledného souhrnu.
-- Jako vývojář chci rychle vidět blokery, dependency a témata, která potřebují domluvu.
-- Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního předání.
+- As a team lead, I want standup responses collected into one readable summary.
+- As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.
+- As the team after rotation, I want to understand the data flow and integration points without verbal handoff.
 
-## Architektonické poznámky
+## Architecture notes
 
-- Upřednostněte jasný datový model před složitou integrací.
-- Mock data jsou v pořádku, pokud workflow působí realisticky a je dobře popsané.
-- Oddělte ingest, zpracování a prezentaci výstupu.
-- Prompty, runbooky a rozhodnutí musí být uložené v repu, ne jen v hlavách původního týmu.
-- Neřešte „hezký summary text“ dřív než to, jestli jsou vidět blokery, dependency a další safe move.
+- Prefer a clear data model over complicated integration.
+- Mock data is fine if the workflow feels realistic and is documented clearly.
+- Separate ingest, processing, and presentation of the output.
+- Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original team.
+- Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible.
 
-## Hotovo když
+## Done when
 
-- Nástroj umí ingestovat vzorová data a vytvořit čitelný souhrn.
-- Výstup zvýrazní blokery nebo položky, které potřebují pozornost.
-- Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.
-- Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního předání.
-- Výstup jasně odliší, co nástroj ví jistě a co je jen heuristický návrh.
+- Another team can continue this project without a verbal explanation from the original team. *(Handoff test.)*
+- The tool ingests seed data in a documented format and produces an overview that surfaces blockers, dependencies, and items needing coordination.
+- The output distinguishes what the tool is certain about from what is only a heuristic suggestion.
+- The repo explains how to connect the ingest to a real input channel — without requiring it.
+- Ingest, processing, and presentation are cleanly separated in the code.
 
-## První krok pro agenta
+## First step for the agent
 
-Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který nový tým otevře jako první. Až potom navrhněte implementační kroky.
+Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a rotating team will open first. Only then propose the first implementation slice.

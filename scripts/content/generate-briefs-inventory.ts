@@ -1,8 +1,11 @@
 /**
  * Generate the `inventory.briefs` section of workshop-content/agenda.json
  * from the canonical English markdowns at
- * content/project-briefs/locales/en/*.md and Czech counterparts at
- * content/project-briefs/*.md.
+ * content/project-briefs/*.md and Czech counterparts at
+ * content/project-briefs/locales/cs/*.md.
+ *
+ * Post-2026-04-13 layout: English is canonical (at root), Czech is the
+ * reviewed delivery locale (in `locales/cs/`).
  *
  * Usage:
  *   bun scripts/content/generate-briefs-inventory.ts           # rewrite
@@ -17,8 +20,8 @@ import type { BilingualProjectBrief } from "../../dashboard/lib/types/bilingual-
 
 const MODULE_DIR = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(MODULE_DIR, "../..");
-const EN_BRIEFS_DIR = join(ROOT, "content/project-briefs/locales/en");
-const CS_BRIEFS_DIR = join(ROOT, "content/project-briefs");
+const EN_BRIEFS_DIR = join(ROOT, "content/project-briefs");
+const CS_BRIEFS_DIR = join(ROOT, "content/project-briefs/locales/cs");
 const AGENDA_PATH = join(ROOT, "workshop-content/agenda.json");
 const HASH_LOCK_PATH = join(ROOT, "workshop-content/.brief-hashes.json");
 

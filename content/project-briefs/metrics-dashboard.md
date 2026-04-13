@@ -1,33 +1,31 @@
 # Metrics Dashboard
 
-## Problém
+## Problem
 
-Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.
-
-Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i po předání na jiný tým.
+Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible after handoff to a team that didn't build it.
 
 ## User stories
 
-- Jako tým chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.
-- Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.
-- Jako tým po rotaci chci během 10 minut pochopit strukturu dat, komponent i obrazovek.
+- As a team, I want several metrics on one screen so the current state is legible quickly.
+- As a facilitator, I want to change seed data without touching UI logic.
+- As the team after rotation, I want to understand the data structure, components, and screens within minutes.
 
-## Architektonické poznámky
+## Architecture notes
 
-- Vzorová data a UI oddělte hned od prvního commitu.
-- Mobile-first je výhoda, ale dashboard musí být dobře čitelný i na projekci.
-- README a monitoring mají vysvětlit, co už funguje, co je mock a co zatím chybí.
-- Myslete na to, aby přidání další metriky nevedlo k přepisování celé obrazovky.
-- Neoptimalizujte jen vzhled. Hlídejte, aby nový tým rychle pochopil datový model, pravidla layoutu a způsob ověření.
+- Separate seed data from UI from the first commit.
+- Mobile-first is an advantage, but the dashboard must remain readable on a projected screen too.
+- README and monitoring should explain what already works, what is still mock, and what is still missing.
+- Design the structure so adding another metric does not require rewriting the whole screen.
+- Do not optimize only for the look. Make the data model, layout rules, and verification path easy for another team to understand.
 
-## Hotovo když
+## Done when
 
-- Dashboard ukáže alespoň 3 metriky a jeden trend nebo srovnání.
-- `README` popisuje, co už funguje reálně, co je mock a co zatím chybí.
-- Je jasné, kde se přidává nová metrika a jak se ověřuje layout.
-- Nový tým zvládne rozšířit dashboard bez rozbití struktury.
-- Layout je čitelný na mobilu i na velkém projekčním plátně a v `README` je popsáno, jak obojí ověřit.
+- A team that didn't build this can add a new metric within 10 minutes without breaking the layout. *(Handoff test.)*
+- The dashboard shows at least 3 metrics and one trend or comparison.
+- Seed data and UI logic are cleanly separated — a facilitator can swap seed data without touching the UI.
+- The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.
+- The `README` documents which parts are real, which are mocked, and which are still missing.
 
-## První krok pro agenta
+## First step for the agent
 
-Navrhněte dashboard, který zvládne předání. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI.
+Don't start with the UI. Start with the data model, the component boundaries, the layout rules, and a `Done When` in `AGENTS.md`. Only then touch any visual code.

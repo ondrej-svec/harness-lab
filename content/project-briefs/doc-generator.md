@@ -1,33 +1,31 @@
 # Doc Generator
 
-## Problém
+## Problem
 
-Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po předání pak nový tým neví, čemu má věřit a co je jen odhad.
-
-Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.
+Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After handoff, the next team no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.
 
 ## User stories
 
-- Jako vývojář chci z projektu rychle získat základní technickou dokumentaci bez ručního sepisování všeho od nuly.
-- Jako reviewer chci během 5 minut pochopit strukturu modulů a hlavní vstupní body.
-- Jako tým po rotaci chci objevit architekturu projektu bez dlouhého pátrání po souvislostech.
+- As a developer, I want basic technical documentation from a project without writing everything from scratch.
+- As a reviewer, I want to understand the module structure and main entry points within minutes.
+- As the team after rotation, I want to discover the architecture without long detective work.
 
-## Architektonické poznámky
+## Architecture notes
 
-- Vstup může být lokální repo, seed adresář nebo zjednodušený dataset.
-- Výstup může být Markdown, HTML nebo jednoduchý textový report.
-- Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.
-- Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.
-- Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a další safe move pro tým po předání.
+- The input can be a local repo, seed directory, or simplified dataset.
+- The output can be Markdown, HTML, or a simple text report.
+- The important part is to explain what the tool can infer reliably and what remains heuristic.
+- Design the structure from the start so another output type can be added later.
+- Do not optimize for AI theatre. Optimize for trust, traceability, and a clear next safe move for a team after handoff.
 
-## Hotovo když
+## Done when
 
-- Nástroj vytvoří aspoň jednu čitelnou dokumentační stránku nebo report.
-- Je jasné, jak se nástroj spouští lokálně a nad jakým vstupem.
-- Výstup odděluje fakta od odhadů nebo heuristik.
-- Další tým umí přidat nový typ výstupu bez chaosu v repu.
-- Reviewer během 10 minut pozná, odkud které tvrzení pochází.
+- A reviewer can read the generated documentation and tell exactly where each claim came from — within minutes, without opening the original source. *(Handoff test — provenance is the whole point.)*
+- Another team can add a new output format (Markdown → HTML, report → overview) without refactoring the whole tool.
+- The generated output makes it obvious which claims are *certain* (read directly from source) and which are *inference* (heuristic).
+- The tool produces at least one complete, readable output for a real or seed codebase.
+- `README` and `AGENTS.md` explain how to run locally and what input the tool expects.
 
-## První krok pro agenta
+## First step for the agent
 
-Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Tu specifikaci vložte do `AGENTS.md`. Teprve potom navrhněte první implementační slice.
+Start by listing every signal the tool will read from a codebase (file names, imports, commit messages, directory structure, comments — whatever you're choosing) and for each one, decide whether it produces *certain* output or *heuristic* output. Write that spec in `AGENTS.md`. Only then propose the first implementation slice.

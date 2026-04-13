@@ -1,185 +1,185 @@
+---
+cs_reviewed: true
+---
+
 # Context is King — Facilitator Delivery Script
 
-## Jak tento script číst
+## How to read this script
 
-Tenhle soubor není samostatný obsah talku. Je to delivery script pro facilitátora — to, co říkáte mezi scénami, pacing a watch-fors. Plný text titulků, body a callouts je v `workshop-content/agenda.json`, scény `talk-argued-about-prompts`, `talk-got-a-name`, `talk-how-to-build`, `talk-humans-steer`, `talk-sitting-inside`. Agenda je source of truth; tento soubor je stage manager.
+This file is not standalone talk content. It's a delivery script for the facilitator — what you say between scenes, pacing, and watch-fors. The full titles, bodies, and callouts live in `workshop-content/agenda.json`, scenes `talk-argued-about-prompts`, `talk-got-a-name`, `talk-how-to-build`, `talk-humans-steer`, `talk-sitting-inside`. The agenda is source of truth; this file is stage manager.
 
-Kanonická slovní zásoba, kterou tady používáte, je v `docs/workshop-content-canonical-vocabulary.md`. Když nevíte, jestli nějaké slovo „smíte“ použít, podívejte se tam.
+Canonical vocabulary — what you're allowed to say and what you aren't — is in `docs/workshop-content-canonical-vocabulary.md`. When in doubt, check there.
 
-## Rámec talku
+## Talk frame
 
-- Pět scén, cíl 8–10 minut, hlavní čára je scéna 4.
-- Jedna věta, kterou chráníte nade vše ostatní: **Lidé řídí. Agenti vykonávají.**
-- Talk nekončí tezí. Končí mostem do dema (scéna 5). Demo pak běží podle `content/talks/codex-demo-script.md` — tam žije repo-readiness contrast, tady ne.
-- Nejhustší scéna je scéna 1 (pět hlasů). Nejdůležitější je scéna 4. Nejhubenější je scéna 5.
+- Five scenes, target 8–10 minutes total, the core line is in scene 4.
+- One sentence you protect above everything else: **Humans steer. Agents execute.**
+- The talk doesn't end on a thesis. It ends on a bridge to the demo (scene 5). The demo then runs from `content/talks/codex-demo-script.md` — the repo-readiness contrast lives there, not here.
+- The densest scene is scene 1 (five voices). The most important is scene 4. The leanest is scene 5.
 
-## Scéna 1 — Zatímco jsme se přeli o prompty
+## Scene 1 — While we argued about prompts
 
-**Agenda scéna:** `talk-argued-about-prompts`
+**Agenda scene:** `talk-argued-about-prompts`
 
-### Co říct
+### What to say
 
-Otevřete větou, kterou má scéna v hero bloku: „Před šesti měsíci se konverzace pořád točila kolem promptů. Dnes je o tom, co agent vidí, když otevře vaše repo.“
+Open with the line from the hero block: "Six months ago the conversation was still about prompts. Today it's about what the agent reads when it opens your repo."
 
-Pak čtěte pět hlasů jako příběh, ne jako seznam odrážek. Po každém jméně záměrná pauza:
+Then read the five voices as a story, not a bulleted list. Deliberate pause after each name:
 
-1. **Ryan Lopopolo (OpenAI Frontier & Symphony, únor).** Milion řádků za pět měsíců, nula ručně. Jeho první princip — „Lidé řídí. Agenti vykonávají.“ — řekněte ho pomalu a bez důrazu nakonec. Poprvé ho s důrazem řeknete až ve scéně 4.
-2. **Birgitta Böckeler (Thoughtworks, před deseti dny).** Pojmenovala to: harness engineering. Rozdělila to na **guides** a **sensors**. Tohle jsou dva termíny, které dnes zazní ještě mnohokrát. Nechte je zaznít teď poprvé a nevysvětlujte je — jen je zasaďte.
-3. **Charlie Guo (OpenAI, taky únor).** „Přecházím od chatování s AI k managingu.“ To je jeho celá věta. Nepřidávejte k ní komentář.
-4. **Mitchell Hashimoto (HashiCorp, začátkem roku).** Jeho test řemesla: „Pokaždé, když agent udělá chybu, vezměte si čas a postavte řešení, aby tu chybu už nikdy neudělal.“ Řekněte, že tohle je jednovětná definice sensoru. (Druhá poloviční vazba k Böckeler, propojte.)
-5. **Stripe Minions.** Přes tisíc PR týdně, žádný člověk mezi úkolem a PR. „Není to demo. Je to produkce.“ Tohle je jediné místo v scéně, kde můžete mírně zvýšit hlas.
+1. **Ryan Lopopolo (OpenAI Frontier & Symphony, February).** One million lines in five months, zero written by hand. His first principle — "Humans steer. Agents execute." — say it slowly, without emphasis. The first time you say it with emphasis will be in scene 4.
+2. **Birgitta Böckeler (Thoughtworks, ten days ago).** She named it: harness engineering. She split it into **guides** and **sensors**. These are two words you'll use many more times today. Let them land now for the first time and do not define them yet — just place them.
+3. **Charlie Guo (OpenAI, also February).** "I'm moving away from chatting with AIs and moving towards managing them." That's his whole sentence. Don't add commentary.
+4. **Mitchell Hashimoto (HashiCorp, earlier this year).** His test for the craft: "Anytime an agent makes a mistake, engineer a solution so the agent never makes that mistake again." Say that this is a one-sentence definition of a sensor. (Second half-bridge back to Böckeler — make the connection.)
+5. **Stripe Minions.** 1000+ PRs a week, no human between the task being posted and the PR arriving. "Not a demo. Production." This is the one place in the scene where you can raise your voice slightly.
 
-Pak callout o počasí (Simon Willison, analytické firmy, „nikdo neví, jak bude vypadat prosinec“). Tohle je nejslabší beat scény — je první na řadě, pokud je místnost unavená. V tu chvíli přeskočte rovnou do scény 2.
+Then the weather callout (Simon Willison, analyst firms, "nobody knows what December looks like"). This is the weakest beat of the scene — it's first to cut if the room is tired. If you feel that, skip straight to scene 2.
 
-### Jak to načasovat
+### Pacing
 
-- Scéna 1 cílí na 3 minuty. Pět hlasů po ~20–30 vteřinách, počasí ~30 vteřin.
-- Pokud jdete přes 4 minuty, jste moc pomalí. Zrychlete.
-- Pauzy mezi jmény jsou drahé — stojí za to. Bez pauz je to seznam, s pauzami je to příběh.
+- Scene 1 targets 3 minutes. Five voices at ~20–30 seconds each, weather ~30 seconds.
+- If you go past 4 minutes, you're too slow. Speed up.
+- The pauses between names are expensive — they're worth it. Without pauses it's a list. With pauses it's a story.
 
-### Co hlídat
+### Watch for
 
-- Místnost začne chtít odpovědi na „jak“. Ještě ne. Scéna 1 staví jen tezi, že se něco změnilo. Mechaniku dostanou ve scéně 3.
-- Pokud někdo přeruší otázkou „a co vy/my/Codex/Claude“, odpovězte „k tomu se dostaneme za chvíli“ a pokračujte. Nerozbíjejte rytmus scény.
-- Hlídejte si, abyste neskončili v módu „tool tour“. Scéna 1 není o nástrojích.
+- The room will start wanting answers to "how". Not yet. Scene 1 only plants the thesis that something changed. Mechanics come in scene 3.
+- If someone interrupts with "what about us/Codex/Claude", say "we'll get to that in a moment" and move on. Don't break the scene's rhythm.
+- Watch that you don't slip into tool-tour mode. Scene 1 is not about tools.
 
-## Scéna 2 — Minulý týden to dostalo jméno
+## Scene 2 — Last week, it got a name
 
-**Agenda scéna:** `talk-got-a-name`
+**Agenda scene:** `talk-got-a-name`
 
-### Co říct
+### What to say
 
-Tahle scéna má jednu rovnici a jednu analogii. Udělejte je obě jednou a pořádně.
+This scene has one equation and one analogy. Do both once and do them properly.
 
-Nejdřív rovnice: **Agent = Model + Harness.** Napište ji tak, jak ji Böckeler napsala — jako rovnici, ne jako větu. „Model má sílu. Harness je to, co tu sílu mění v užitečnou práci místo v drift.“
+The equation first: **Agent = Model + Harness.** Write it the way Böckeler wrote it — as an equation, not a sentence. "The model has the power. The harness is what turns that power into useful work instead of drift."
 
-Pak Böckeler citát z hero bloku: „Dobrý harness neusiluje o to, aby odstranil lidský vstup. Směruje lidský vstup tam, kde nejvíc záleží.“ Čtěte přímo z hero bloku — citát je cizí slova, ne vaše.
+Then the Böckeler quote from the hero block: "A good harness doesn't aim to eliminate human input. It directs human input to where it matters most." Read it straight from the hero block — the quote is her words, not yours.
 
-### Analogie s motorem a podvozkem
+### The engine/chassis analogy
 
-Tohle je jediná analogie v celém talku, kterou můžete protáhnout. Ostatní mají být rychlé.
+This is the one analogy in the whole talk you're allowed to stretch. The others are meant to be quick.
 
-Plnou prózu má agenda v hero bloku scény — vy doručujete strukturu, ne text. Drží se na třech bodech:
+The key is the contrast: a 400-horsepower engine bolted to a shopping cart versus the same engine bolted to a well-designed chassis. Not "the engine is bad" — the engine is powerful. The chassis **makes the power accessible**. It makes the power predictable, survivable. The model is the engine. The harness is the chassis.
 
-1. **Stejný motor, dva podvozky.** Čtyři stovky koní v nákupním vozíku — drahý způsob, jak rozbít parkoviště. Ty stejné čtyři stovky koní v pořádném podvozku — auto, které se dá řídit a se kterým se dá přežít.
-2. **Motor se nezměnil.** Podvozek ho neoslabil. Tu sílu zpřístupnil — dal jí rám, brzdy, předvídatelnost, přežitelnost.
-3. **Model je motor. Harness je podvozek.** Dvě věty, pauza, dál.
+Once you've used the analogy, hold it. Do not switch to a second analogy ("it's also like a team, it's also like a kitchen, it's also like…"). One analogy, done properly.
 
-Když analogii použijete jednou, držte ji. Nepoužívejte druhou analogii („je to jako tým, je to jako kuchyně, je to jako…“). Jedna analogie, pořádně.
+Then the reframe callout: **The gap between models is narrowing. The gap between harnesses is widening.** This is the second most important line in the talk. Say it slowly. Let it land before you move to scene 3.
 
-Pak reframe callout: **Mezera mezi modely se zužuje. Mezera mezi harnessy roste.** Tohle je druhá nejdůležitější věta talku. Řekněte ji pomalu. Nechte ji dosednout dřív, než přejdete na scénu 3.
+### Watch for
 
-### Co hlídat
+- If you start extending the analogy with "and the brakes are…" or "and the tires are…", cut it. One analogy, one comparison, move on.
+- "The gap between models is narrowing" can make the room want to debate. Don't get pulled in. "We can talk about that at the break. Right now, how you build the harness."
 
-- Pokud začnete analogii rozšiřovat o „a brzdy jsou…“ nebo „a pneumatiky jsou…“, utněte to. Jedna analogie, jedno porovnání, dál.
-- „Mezera mezi modely se zužuje“ může místnost začít chtít rozebírat. Nenechte se vtáhnout. „O tom si můžeme promluvit o přestávce. Teď jde o to, jak ten harness postavit.“
+## Scene 3 — How you actually build one
 
-## Scéna 3 — Jak ho skutečně postavit
+**Agenda scene:** `talk-how-to-build` — the densest scene in the talk.
 
-**Agenda scéna:** `talk-how-to-build` — nejhustší scéna talku.
+### What to say
 
-### Co říct
+Open by naming that there are multiple framings — Fowler splits it into guides and sensors, OpenAI into context/constraints/feedback, Guo frames it as managing instead of chatting — and you're going to give four pillars that work across all of them.
 
-Otevřete tím, že existuje víc rámování — Fowler ho dělí na guides a sensors, OpenAI na context/constraints/feedback, Guo na managing místo chatování — a vy dáte čtyři sloupy, které fungují napříč.
+Then the **four pillars.** Read each pillar from the agenda but add one concrete sentence of your own. Suggestions:
 
-Pak **čtyři sloupy.** Každý sloup čtěte z agendy, ale přidejte jednu konkrétní větu navíc — jakou, to záleží na scéně a místnosti. Návrhy:
+1. **Context as infrastructure.** The repo is the agent's memory. Your headline sentence: **"AGENTS.md is a map, not a warehouse."** This is canonical — say it once, exactly this way.
+2. **Guides — steering before it acts.** Architectural rules, templates, constraints. Your headline sentence: **"Boundaries create speed."** Constraints aren't friction. They're why work goes fast.
+3. **Sensors — catching after it acts.** Tracer bullets, end-to-end tests, holistic feedback. Your headline sentence: **"When the agent does more, your verification has to prove the whole thing works, not that one function returned 4."** This is where the room first realizes that granularity is the problem, not the goal.
+4. **Managing, not chatting.** "You stop being a pair-programmer and become a director with a crew." This is the shortest of the four — don't stretch it.
 
-1. **Kontext jako infrastruktura.** Repo je agentova paměť. Hlavní věta navíc: **„AGENTS.md jako mapa, ne encyklopedie.“** Tohle je kanonická věta — řekněte ji jednou, přesně.
-2. **Guides — směrování dřív, než agent jedná.** Architektonická pravidla, šablony, constraints. Hlavní věta navíc: **„Boundaries create speed.“** Česky: **„Mantinely nezpomalují. Zrychlují.“**
-3. **Sensors — zachycení potom, co agent jedná.** Tracer bullets, end-to-end testy, holistické ověření. Hlavní věta navíc: **„Když agent dělá víc, ověřujete celek. Ne že jedna funkce vrátila 4.“** Tohle je místo, kde si místnost poprvé uvědomí, že granularita je problém, ne cíl.
-4. **Managing, ne chatování.** „Přestáváte být pair-programmer a stáváte se režisérem s týmem.“ Tohle je ta nejkratší z čtyř scén — neprotahujte.
+Then the callout **"A team lead builds the system the team runs in."** This is the bridge to your role: you as facilitator, them as team leads for their agents. The analogy lands if the room is senior engineers; with a junior room you can shorten it.
 
-Pak callout **„Team lead staví prostředí, ve kterém tým funguje.“** Tohle je most k vaší roli — vy jako facilitátor, oni jako team leads pro své agenty. Analogie zabere, pokud v místnosti sedí seniorní inženýři; s juniorní místností ji můžete zkrátit.
+The scene closes on a checklist of four things to adopt. Those are in the agenda — don't read them out loud, just let them display. Say only: "These are the four moves you'll practice today."
 
-Scéna končí checklistem čtyř věcí k adopci. Ty jsou v agendě — neříkejte je nahlas celé, nechte je jen zobrazené. Řekněte jen „Tohle jsou čtyři pohyby, které budete dnes trénovat.“
+### Pacing
 
-### Jak to načasovat
+- Target 6–8 minutes. The pre-cut version collapses pillars 2 and 3 into one — use it if you're past 9 minutes.
+- Careful: densest scene, but dense doesn't mean slow. Move through it with energy.
 
-- Cíl 6–8 minut. Přednastavená zkrácená verze spojuje sloupy 2 a 3 do jednoho — udělejte to, pokud jste přes 9 minut.
-- Pozor: je to nejhustší scéna, ale nejhustší neznamená nejpomalejší. Projděte to s energií.
+### Watch for
 
-### Co hlídat
+- The room will want to stop you with a question inside pillar 1 or 2. "Good question, we'll get there in a moment." Pillar 3 (sensors) is where you collect questions, not earlier.
+- "Guides" and "sensors" are first named in full here. If someone asks what they are, point back to **Böckeler on Fowler, ten days ago** and keep moving. Don't rewrite her definitions.
+- If the room is losing you, pillar 3 (sensors) is the hardest to grasp without an example. You have one: the one they'll see in the demo in a minute. "You'll see it in the demo in a minute" is a legitimate rescue.
 
-- Místnost vás bude chtít zastavit otázkou uvnitř sloupu 1 nebo 2. „Dobrá otázka, dostaneme se k tomu za chvíli.“ Sloup 3 (sensors) je, kde sbíráte otázky, ne dřív.
-- „Guides“ a „sensors“ zazní poprvé plně pojmenované. Pokud se zeptají, co to jsou, odkažte na **Böckeler na Fowlerovi, před deseti dny** a pokračujte. Nepřepisujte její definice.
-- Pokud se místnost ztrácí, pilíř 3 (sensors) je ten, který se nejhůř chápe bez příkladu. Máte jeden: ten, který uvidí v demu za chvíli. Říct „uvidíte to za chvíli v demu“ je legitimní záchrana.
+## Scene 4 — Humans steer. Agents execute.
 
-## Scéna 4 — Lidé řídí. Agenti vykonávají.
+**Agenda scene:** `talk-humans-steer`
 
-**Agenda scéna:** `talk-humans-steer`
+### What to say
 
-### Co říct
+This scene is protected. It's the only scene where how you stand matters.
 
-Tahle scéna je chráněná. Jediná scéna, kde záleží i na tom, jak stojíte.
+Open by calling back to Lopopolo from scene 1. Then say the core line: **Humans steer. Agents execute.** Slowly. Without rising tone at the end. Pause.
 
-Otevřete připomenutím Lopopola ze scény 1. Pak přečtěte hlavní větu: **Lidé řídí. Agenti vykonávají.** Pomalu. Bez důrazu nakonec. Pauza.
+Then the Lopopolo map quote: "Give Codex a map, not a thousand-page manual." Then the Hashimoto quote about fixing mistakes. Both live in the hero blocks — read them.
 
-Pak Lopopolův citát o mapě: „Dejte Codexu mapu, ne tisícistránkový návod.“ Pak Hashimotův citát o fixování chyb. Oba jsou v hero blocích — čtěte je.
+Then the **next-day callout**. This is the closing role-change promise. Not a calendar promise — a role promise:
 
-Pak **Druhý den callout**. Tahle věta zavírá talk — v obou jazycích je day-neutral, žádný den v týdnu:
+> The next day you open a coding agent, you'll work differently. Not with a new tool. With a different role. You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into.
 
-> Druhý den, až si otevřete coding agenta, budete pracovat jinak. Ne s novým nástrojem. S jinou rolí. Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází.
+The last sentence is the one you want them to take away. Say it, pause, add nothing.
 
-Poslední věta je ta, kterou chcete, aby si odnesli. Řekněte ji, pauza, nic nepřidávejte.
+### The protected line
 
-### Chráněná věta
+**Humans steer. Agents execute.** is the most memorable sentence of the whole workshop. The facilitator protects it by:
 
-**Lidé řídí. Agenti vykonávají.** je nejzapamatovatelnější věta celého workshopu. Chrání ji facilitátor tím, že:
+- Never paraphrasing it. Not ever. Not even "people direct and agents execute". It's four words, not five.
+- Never saying it before scene 4. If it slips out in scene 1, scene 4 loses its impact.
+- Never saying it again in scene 5. Scene 5 is the bridge, not the echo.
+- Never letting it become a hashtag slogan. It's a principle, not a motivational quote.
 
-- Ji neparafrázuje. Nikdy. Ani v lehčí variantě („lidé ukazují směr a agenti jednají“). Je to čtyři slova, ne pět.
-- Ji neřekne dřív než ve scéně 4. Když vám ujede ve scéně 1, scéna 4 ztratí dopad.
-- Ve scéně 5 ji neřekne podruhé. Scéna 5 je most, ne echo.
-- Nedovolí, aby se z ní stala hashtag sloganka. Je to princip, ne motivační citát.
+### Watch for
 
-### Co hlídat
+- The room will want to react. Don't make space for discussion inside scene 4. The space is after scene 5, in the build phase.
+- If you're uncomfortable reading both Lopopolo and Hashimoto back to back — don't. Pick one and place it in context. Two quotes in sequence is the upper limit; one is fine.
 
-- Místnost bude chtít reagovat. Nedávejte prostor na diskusi uvnitř scény 4. Prostor je po scéně 5, v build fázi.
-- Pokud se cítíte nesví při čtení Lopopola/Hashimota — nečtěte je. Vyberte jednu a zasaďte ji do kontextu. Dva citáty po sobě jsou maximum, jeden stačí.
+## Scene 5 — You've been sitting inside one all morning
 
-## Scéna 5 — Celé ráno jste v jednom seděli
+**Agenda scene:** `talk-sitting-inside`
 
-**Agenda scéna:** `talk-sitting-inside`
+### The bridge to demo
 
-### Most do dema
+This scene is short and has one job: tell the room that the workshop skill, the dashboard, the participant board, and the repo they're about to open are real examples of everything the talk was about.
 
-Tahle scéna je krátká a má jeden úkol: říct místnosti, že workshop skill, dashboard, participant board a repo, které za chvíli otevřou, jsou reálné ukázky toho, o čem celý talk byl.
+Text from the hero block: "The workshop skill, the dashboard, the participant board in front of you, the repo you're about to open — I built all of it with agents, using the discipline we just named. What you're about to see in the demo isn't a promise. It's a working instance."
 
-Text z hero bloku: „Workshop skill, dashboard, participant board, repo, které za chvíli otevřete — to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance.“
+Facilitator transition line (optional): **"Let me show you what I mean — here's what a working agent session actually looks like when the harness is doing its job."**
 
-Facilitátorova přechodová věta (pokud chcete): **„Ukážu vám, co tím myslím — takhle vypadá funkční session s agentem, když harness dělá svou práci.“**
+Then move into the demo. The demo has its own delivery script in `content/talks/codex-demo-script.md`.
 
-Pak přejděte do dema. Demo má vlastní delivery script v `content/talks/codex-demo-script.md`.
+### Watch for
 
-### Co hlídat
+- Don't stretch scene 5. It's not the closing speech. It's a ramp into the demo.
+- If the room starts applauding after scene 4, don't add scene 5 as a reaction. Scene 5 is setup for the demo, not a closer.
 
-- Neprodlužujte scénu 5. Není to závěrečná řeč. Je to rampa do dema.
-- Pokud místnost začne tleskat po scéně 4, nepřidávejte scénu 5 jako reakci. Scéna 5 je přípravou na demo, ne ukončením.
+## What not to say
 
-## Co explicitně neříkat
+- Do not use the term "prompt blob" or spend any time on it. The repo-readiness contrast lives in the demo, not in the talk.
+- Do not paraphrase **Humans steer. Agents execute.** Not once.
+- Do not say "Monday morning" or any calendar-day reference. This workshop closes on "the next day you open a coding agent" in both languages — it's a role change, not a calendar event.
+- Do not show features of Codex or any other tool. This is not a tool demo.
+- Do not add a sixth pillar. Four, not five, not six.
+- Do not describe the habit taxonomy. The five habit tags belong on the cards, not in the talk.
+- Do not say "one function plus one test" in any variation. Pillar 3 is about **holistic verification** — tracer bullet, end-to-end, not a unit test on one function.
 
-- Nepoužívejte termín „prompt blob“ a nevěnujte se mu. Repo-readiness contrast je v demu, ne v talku.
-- Neparafrázujte **Lidé řídí. Agenti vykonávají.** Ani jednou.
-- Neříkejte „v pondělí ráno“. V obou jazycích se tenhle workshop loučí s posluchači větou o **druhém dni, až si otevřete coding agenta / the next day you open a coding agent** — je to role change, ne kalendářní událost.
-- Nepředvádějte funkce Codexu nebo jiných nástrojů. Tohle není tool demo.
-- Nepřidávejte šestou odrážku do čtyř sloupů. Čtyři, ne pět, ne šest.
-- Nepopisujte habit taxonomii. Pět habit tagů patří na karty, ne do talku.
-- Neříkejte „one function plus one test“ ani v žádné variantě. Sloup 3 je o **holistickém ověření** — tracer bullet, end-to-end, ne unit test na jednu funkci.
+## Fallbacks
 
-## Fallbacky
+- **If you're over 10 minutes:** collapse pillars 2 and 3 (guides + sensors) into one. Scene 3 is the section that tolerates compression without losing the headline.
+- **If the room is tired:** drop the weather callout from scene 1 (Willison/Gartner). Shorten to five voices plus transition.
+- **If you're under time and at the edge:** what's protected is scene 4 and the four pillars. Everything else is optional.
+- **If you've lost the rhythm somewhere:** come back to the `team lead builds the system` callout (scene 3) and to **Humans steer. Agents execute.** (scene 4). Those two sentences are enough for the room to understand what today is about.
 
-- **Pokud jste nad 10 minut:** spojte sloupy 2 a 3 (guides + sensors) do jednoho. Scéna 3 je sekce, která snese kompresi bez ztráty hlavní věty.
-- **Pokud je místnost unavená:** ze scény 1 vynechejte weather callout (Willison/Gartner). Zkraťte ji na pět hlasů + přechod.
-- **Pokud jste pod časem a na hranici:** chráněné je scéna 4 a čtyři sloupy. Všechno ostatní je volitelné.
-- **Pokud jste někde ztratili rytmus:** vraťte se na `team-lead staví systém` callout (scéna 3) a na **Lidé řídí. Agenti vykonávají.** (scéna 4). Ty dvě věty stačí na to, aby místnost pochopila, o co dnes jde.
+## What the room takes into the build phase
 
-## Co si odnesete do build fáze
+After this talk, the team should not go back to the repo looking for a smarter prompt. It should go back with **one clear expectation**: map and verification first, feature motion second.
 
-Po tomhle talku se tým nemá vracet k repu s pocitem, že potřebuje jen chytřejší prompt. Má se vracet s **jedním jasným očekáváním**: mapa a ověření napřed, funkce potom.
+- If they don't have the workshop skill yet: `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`.
+- First, a short map in the repo.
+- Then a short plan of steps.
+- Then the first tracer — holistic verification, not a unit test on one function.
+- Only then, more feature motion.
 
-- Pokud ještě nemají workshop skill: `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`.
-- Nejdřív krátká mapa v repu.
-- Potom krátký plán kroků.
-- Potom první tracer — holistické ověření, ne unit test na jednu funkci.
-- Teprve potom další feature motion.
-
-To je Build Phase 1. Demo vám ukáže, jak to vypadá, než je pošlete dovnitř.
+That is Build Phase 1. The demo shows them what it looks like before you send them inside.
