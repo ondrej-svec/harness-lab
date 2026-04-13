@@ -9,7 +9,8 @@ import {
   adminInputClassName,
   adminPrimaryButtonClassName,
 } from "../../../../admin-ui";
-import { registerTeamAction } from "../../_actions/teams";
+import { registerTeamAction, updateTeamFieldAction } from "../../_actions/teams";
+import { InlineField } from "../inline-field";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
@@ -135,9 +136,25 @@ export function TeamsSection({
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="font-semibold text-[var(--text-primary)]">{team.name}</p>
-                  <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{team.repoUrl}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold text-[var(--text-primary)]">
+                    <InlineField
+                      value={team.name}
+                      fieldName="name"
+                      label={copy.teamNamePlaceholder}
+                      action={updateTeamFieldAction}
+                      hiddenFields={{ instanceId, teamId: team.id, fieldName: "name" }}
+                    />
+                  </div>
+                  <div className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                    <InlineField
+                      value={team.repoUrl}
+                      fieldName="repoUrl"
+                      label="repo url"
+                      action={updateTeamFieldAction}
+                      hiddenFields={{ instanceId, teamId: team.id, fieldName: "repoUrl" }}
+                    />
+                  </div>
                 </div>
                 <div className="text-right">
                   <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>

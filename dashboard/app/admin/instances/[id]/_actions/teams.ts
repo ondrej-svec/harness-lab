@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
@@ -83,4 +84,50 @@ export async function registerTeamAction(formData: FormData) {
     }
   }
   redirect(buildAdminHref({ lang, section, instanceId, teamId: id || null }));
+}
+
+
+/**
+ * Narrow inline-field updater for teams. Allowlists the short text
+ * fields that the team card surfaces as click-to-edit: name, city,
+ * repoUrl, anchor. Reuses upsertTeam after patching the single field
+ * onto the current team shape, so nested data (checkIns, members,
+ * projectBriefId) stays untouched.
+ */
+type UpdatableTeamField = "name" | "city" | "repoUrl" | "anchor";
+const UPDATABLE_TEAM_FIELDS: readonly UpdatableTeamField[] = [
+  "name",
+  "city",
+  "repoUrl",
+  "anchor",
+];
+
+export async function updateTeamFieldAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const teamId = String(formData.get("teamId") ?? "");
+  const fieldName = String(formData.get("fieldName") ?? "");
+  const fieldValue = String(formData.get(fieldName) ?? "").trim();
+
+  if (!instanceId || !teamId || !fieldName || !fieldValue) {
+    return;
+  }
+  if (!UPDATABLE_TEAM_FIELDS.includes(fieldName as UpdatableTeamField)) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  const state = await getWorkshopState(instanceId);
+  const team = state.teams.find((candidate) => candidate.id === teamId);
+  if (!team) {
+    return;
+  }
+
+  await upsertTeam(
+    {
+      ...team,
+      [fieldName]: fieldValue,
+    },
+    instanceId,
+  );
+  revalidatePath(`/admin/instances/${instanceId}`);
 }
