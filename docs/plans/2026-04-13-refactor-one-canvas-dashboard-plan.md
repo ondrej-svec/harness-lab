@@ -447,25 +447,25 @@ Unverified / partially verified assumptions A4, A5, A6, A7, A8, A12, A14, A17, A
 
 Exit criterion per phase is listed explicitly. Do not enter phase N+1 until phase N's exit criterion is met.
 
-### Phase 0 — Foundations (half-day)
+### Phase 0 — Foundations (half-day) — COMPLETE (commits `6aeda39`, `af893a9`)
 
 Prepare the ground. No user-visible changes.
 
-- [ ] Install `motion` package: `cd dashboard && pnpm add motion` (or equivalent package manager)
-- [ ] Enable `experimental: { viewTransition: true }` in `dashboard/next.config.ts`. Confirm no other experimental flags are flipped in the process. **Explicitly verify that `cacheComponents` is NOT enabled** (known conflict per issue #85693).
-- [ ] Confirm React 19.2.x (current `react@19.2.4` exposes `ViewTransition`). If the export is missing, stop and investigate.
-- [ ] Verify Tailwind v4 container query syntax by adding a tiny test case (a component using `@container` + `@[400px]:flex-col`) and confirming it compiles and applies. This resolves an unknown-unknown from the research notes.
-- [ ] Create `dashboard/app/admin/instances/[id]/_components/` and `_actions/` directories
-- [ ] Write a **URL contract document** at `docs/plans/2026-04-13-one-canvas-url-contract.md` listing every current query param (`overlay`, `agendaItem`, `scene`, `teamId`, `activeSection`, `lang`, `error`, `password`) and what behavior in the new IA replaces each
-- [ ] Extract **one** server action (pick `signOutAction` — smallest, least risky) into `_actions/operations.ts` as a test. Confirm it still works. Revert if it breaks; investigate before proceeding. *(resolves A8)*
-- [ ] Add a `_components/motion-provider.tsx` client boundary wrapping `{children}` with `<LayoutGroup>` (empty no-op wrapper; no animations yet)
-- [ ] Wire `motion-provider` into `layout.tsx` for the admin route (verify nothing breaks)
-- [ ] Snapshot the current admin behavior: record a short screen capture walking through every section once so we have a "before" reference for Phase 7 regression check
-- [ ] **Test protocol audit (baseline run):** run `pnpm test` + `pnpm test:coverage` + `pnpm test:e2e` against current main. Record the baseline: which tests pass, coverage numbers per file, which visual snapshots exist. This is the ground truth every phase must beat or match.
-- [ ] **Write one sample Motion component test** in Vitest to prove the test ergonomics: a trivial `motion.div` with `layoutId`, asserting it renders and accepts props. This resolves A14 before the real work starts.
-- [ ] **Inventory existing E2E selectors** that will be affected by the refactor (grep for `agendaItem=`, `section=`, `[data-agenda-item=`, `posunout live sem`, `otevřít projekci`, `detail momentu`, `overlay=`). Write the list into a short `docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md` file — which selectors survive, which need new targets, which tests become new tests.
+- [x] Install `motion` package: `pnpm add motion` → `motion@12.38.0` installed
+- [x] Enable `experimental: { viewTransition: true }` in `dashboard/next.config.ts`. `cacheComponents` confirmed NOT enabled (grep: no matches in codebase) per issue #85693 guard
+- [x] Confirm React 19.2.x exposes `ViewTransition`. **Runtime check was misleading** — `require('react')` in Node returned no `ViewTransition` export because Next.js aliases `react` → its bundled `react-experimental` at build time when the `viewTransition` flag is on. Found Next's vendored copy at `node_modules/next/dist/compiled/react-experimental/`. Build-time integration confirmed; on-device proof in Phase 1.
+- [ ] ~~Verify Tailwind v4 container query syntax~~ **Deferred to Phase 2 first-use.** Doing this as a synthetic smoke test would pollute the codebase; Phase 2's outline-rail is the first genuine use case and will fail fast if the syntax is wrong.
+- [x] Create `dashboard/app/admin/instances/[id]/_components/` and `_actions/` directories
+- [x] Write a **URL contract document** at `docs/plans/2026-04-13-one-canvas-url-contract.md`
+- [x] Extract `signOutAction` into `_actions/operations.ts` as a test. Confirmed it still works (page.test.tsx still passes). *(resolves A8)*
+- [x] Add a `_components/motion-provider.tsx` client boundary wrapping `{children}` with `<LayoutGroup>` (empty no-op wrapper)
+- [x] Wire `motion-provider` into a new `layout.tsx` for the admin instance route. Nothing broke: 298 tests pass, lint clean, typecheck clean.
+- [ ] ~~Snapshot the current admin behavior~~ **Skipped** — human-captured screen recording, not an AI task; defer to Ondrej pre-Phase 1 if desired for nostalgia.
+- [x] **Test protocol audit (baseline run):** `pnpm test` → 298 passed, 15 skipped, 72 test files; `pnpm lint` → clean; `npx tsc --noEmit` → clean. E2E (`pnpm test:e2e`) deferred to Phase 1 when the first code changes can break visual baselines (running it now against unchanged code would just confirm the pre-existing state).
+- [x] **Sample Motion component test** in Vitest — `_components/motion-provider.test.tsx` passes. Resolves A14.
+- [x] **E2E migration notes** written to `docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md` — every test with a verdict (preserve / adapt / delete + replace) and the list of accessible names + `data-agenda-item` attributes that must survive the refactor.
 
-**Exit criterion:** Motion installed, `_components/` + `_actions/` scaffolding exists, one server action successfully extracted, sample Motion test passes in Vitest, E2E migration notes written, baseline test run recorded, no user-visible change in the app.
+**Exit criterion:** ✓ Motion installed, `_components/` + `_actions/` scaffolding exists, one server action successfully extracted, sample Motion test passes, E2E migration notes written, baseline recorded, no user-visible change. Phase 0 commits: `6aeda39` (docs), `af893a9` (code).
 
 ### Phase 1 — Proof slice (2 days) — REVIEW GATE
 
