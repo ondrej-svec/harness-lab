@@ -97,12 +97,12 @@ Tasks are dependency-ordered within phases. Phases have hard pause points — do
 
 ### Phase C — English canonical polish
 
-- [ ] **C1. Audit EN files against canonical vocabulary.** For each English file (existing + B1–B5 newly created), check against `docs/workshop-content-canonical-vocabulary.md`. Flag any drift, missing canonical phrases, or terms that should be canonical but aren't.
-- [ ] **C2. Polish existing EN talk script.** `content/talks/locales/en/context-is-king.md` was rewritten in commit `fabbdb6` — confirm it's at canonical quality, light-touch only.
-- [ ] **C3. Polish existing EN briefs.** `content/project-briefs/locales/en/*.md` (5 files) — verify canonical vocabulary, fix any drift. Already reviewed mechanically by today's verify:content pass.
-- [ ] **C4. Polish existing EN kit.** `materials/locales/en/participant-resource-kit.md` — already mirrored from CS in commit `004a76e`. Verify canonical quality.
-- [ ] **C5. Polish newly-created EN files (B1–B5).** Apply the canonical vocabulary spec strictly. These are first-pass translations, so they need the most polish.
-- [ ] **C6. Polish coaching-codex EN.** `materials/coaching-codex.md` (currently English-only) — already canonical from today's work, light touch only.
+- [x] **C1. Audit EN files against canonical vocabulary.** 50 canonical-phrase hits across 5 EN files, 0 rejection-list violations. Talk script, demo script, deck, kit, master-guide all clean. Grep artifacts in commit message. For each English file (existing + B1–B5 newly created), check against `docs/workshop-content-canonical-vocabulary.md`. Flag any drift, missing canonical phrases, or terms that should be canonical but aren't.
+- [x] **C2. Polish existing EN talk script.** No edits needed. `fabbdb6` rewrite is already canonical — 13 canonical-phrase hits, "Humans steer. Agents execute." protected verbatim, explicit "do not say" section enforces vocab rules. `content/talks/locales/en/context-is-king.md` was rewritten in commit `fabbdb6` — confirm it's at canonical quality, light-touch only.
+- [x] **C3. Polish existing EN briefs.** No edits needed. All 5 briefs use "handoff test", "next safe move", clean "Done when" and "First step for the agent" sections. No rejection-list terms. They don't need canonical phrases — briefs aren't talk surfaces. `content/project-briefs/locales/en/*.md` (5 files) — verify canonical vocabulary, fix any drift. Already reviewed mechanically by today's verify:content pass.
+- [x] **C4. Polish existing EN kit.** No edits needed. 9 canonical hits: all five habit tags verbatim + "carries the next move" + "A map, not a warehouse" + "Holistic beats granular" + "tracer bullet". `materials/locales/en/participant-resource-kit.md` — already mirrored from CS in commit `004a76e`. Verify canonical quality.
+- [x] **C5. Polish newly-created EN files (B1, B2, B4).** No edits needed. B1 master-guide has 8 canonical hits and uses guides/sensors loanwords, "tracer bullet", "AGENTS.md as a map, not a warehouse", "Humans steer. Agents execute." protected, "next-day commitments". B2/B4 don't carry talk vocab. Apply the canonical vocabulary spec strictly. These are first-pass translations, so they need the most polish.
+- [x] **C6. Polish coaching-codex EN.** No edits needed. This file is the reference against which canonical vocabulary was authored today — already canonical. `materials/coaching-codex.md` (currently English-only) — already canonical from today's work, light touch only.
 - [ ] **C7. Pause and confirm English is the source-of-truth version.** Read each EN file. Confirm it's the version Czech should be reviewed against. **Phase D does not start until this check is done.**
 
 ### Phase D — Czech translation review (the big one)
