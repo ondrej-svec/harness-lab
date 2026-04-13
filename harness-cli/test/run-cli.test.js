@@ -1636,7 +1636,11 @@ test("participant login via event code stores a participant-role session", async
           assert.equal(options.headers.origin, "http://localhost:3000");
           return responseWithSetCookie(
             200,
-            { ok: true, expiresAt: "2026-12-31T23:59:59.000Z" },
+            {
+              ok: true,
+              instanceId: "developer-hackathon-brno-2026-04-21-dakar",
+              expiresAt: "2026-12-31T23:59:59.000Z",
+            },
             ["harness_event_session=abc123; Path=/; HttpOnly; SameSite=lax"],
           );
         },
@@ -1651,6 +1655,7 @@ test("participant login via event code stores a participant-role session", async
   assert.equal(session.role, "participant");
   assert.equal(session.authType, "event-code");
   assert.equal(session.cookieHeader, "harness_event_session=abc123");
+  assert.equal(session.instanceId, "developer-hackathon-brno-2026-04-21-dakar");
   assert.match(io.getStdout(), /Logged in as participant/);
   assert.match(io.getStdout(), /Role.*participant/);
 });
@@ -1760,7 +1765,7 @@ test("participant session cannot access facilitator instance commands", async ()
   }
 });
 
-test("participant session can access workshop brief, challenges, and team", async () => {
+test("participant session uses session-scoped endpoints for brief, challenges, and team", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
   await writeSession(env, {
@@ -1768,28 +1773,29 @@ test("participant session can access workshop brief, challenges, and team", asyn
     role: "participant",
     dashboardUrl: "http://localhost:3000",
     cookieHeader: "harness_event_session=abc123",
+    instanceId: "developer-hackathon-brno-2026-04-21-dakar",
   });
+
+  const coreBundle = {
+    event: { title: "Harness Lab", city: "Brno" },
+    agenda: [{ id: "build-1", status: "current" }],
+    briefs: [{ id: "standup-bot", title: "Standup Bot", problem: "Teams need a daily standup automation." }],
+    challenges: [{ id: "agents-md", title: "Create AGENTS.md", phaseHint: "before-lunch" }],
+    keyLinks: [],
+    announcements: [],
+  };
 
   const fetchFn = createFetchStub(
     new Map([
       [
-        "GET http://localhost:3000/api/briefs",
+        "GET http://localhost:3000/api/event-context/core",
         async (_url, options) => {
           assert.equal(options.headers.cookie, "harness_event_session=abc123");
-          return jsonResponse(200, {
-            items: [{ id: "standup-bot", title: "Standup Bot", problemStatement: "Teams need a daily standup automation." }],
-          });
+          return jsonResponse(200, coreBundle);
         },
       ],
       [
-        "GET http://localhost:3000/api/challenges",
-        async () =>
-          jsonResponse(200, {
-            items: [{ id: "agents-md", title: "Create AGENTS.md", section: "before-lunch" }],
-          }),
-      ],
-      [
-        "GET http://localhost:3000/api/teams",
+        "GET http://localhost:3000/api/event-context/teams",
         async (_url, options) => {
           assert.equal(options.headers.cookie, "harness_event_session=abc123");
           return jsonResponse(200, {

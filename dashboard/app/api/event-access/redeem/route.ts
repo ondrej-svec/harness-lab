@@ -56,7 +56,11 @@ export async function POST(request: Request) {
   }
 
   const response = contentType.includes("application/json")
-    ? NextResponse.json({ ok: true, expiresAt: result.session.expiresAt })
+    ? NextResponse.json({
+        ok: true,
+        instanceId: result.session.instanceId,
+        expiresAt: result.session.expiresAt,
+      })
     : NextResponse.redirect(new URL("/", request.url), { status: 303 });
 
   response.cookies.set(participantSessionCookieName, result.session.token, {

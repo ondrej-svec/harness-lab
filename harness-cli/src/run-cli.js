@@ -229,6 +229,13 @@ function resolveCurrentInstanceTarget(session, env) {
     };
   }
 
+  if (session?.role === "participant" && typeof session?.instanceId === "string" && session.instanceId.trim().length > 0) {
+    return {
+      instanceId: session.instanceId.trim(),
+      source: "session",
+    };
+  }
+
   if (typeof env?.HARNESS_WORKSHOP_INSTANCE_ID === "string" && env.HARNESS_WORKSHOP_INSTANCE_ID.trim().length > 0) {
     return {
       instanceId: env.HARNESS_WORKSHOP_INSTANCE_ID.trim(),
@@ -651,6 +658,7 @@ async function handleEventCodeLogin(io, ui, env, flags, deps) {
       role: "participant",
       dashboardUrl,
       cookieHeader,
+      instanceId: typeof result.instanceId === "string" ? result.instanceId : null,
       loggedInAt: new Date().toISOString(),
       expiresAt: result.expiresAt ?? null,
     };
@@ -833,6 +841,26 @@ async function handleWorkshopStatus(io, ui, env, deps) {
     const target = resolveCurrentInstanceTarget(session, env);
 
     renderSelectedInstanceBanner(ui, target);
+
+    if (session.role === "participant") {
+      const bundle = await client.getParticipantContext();
+      ui.json("Workshop Status", {
+        ok: true,
+        selectedInstance: {
+          instanceId: target.instanceId ?? null,
+          source: target.source,
+          selected: Boolean(target.instanceId),
+        },
+        targetInstanceId: target.instanceId,
+        targetSource: target.source,
+        event: bundle.event,
+        currentPhase: Array.isArray(bundle.agenda)
+          ? bundle.agenda.find((item) => item.status === "current") ?? null
+          : null,
+        agendaItems: Array.isArray(bundle.agenda) ? bundle.agenda.length : null,
+      });
+      return 0;
+    }
 
     if (target.source === "session" && target.instanceId) {
       const [instanceResult, agenda] = await Promise.all([
@@ -1465,6 +1493,11 @@ async function handleWorkshopBrief(io, ui, env, mergedDeps) {
   if (!session) return 1;
   const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
   try {
+    if (session.role === "participant") {
+      const bundle = await client.getParticipantContext();
+      ui.json("Workshop Brief", { items: bundle.briefs ?? [] });
+      return 0;
+    }
     const data = await client.getBriefs();
     ui.json("Workshop Brief", data);
     return 0;
@@ -1482,6 +1515,11 @@ async function handleWorkshopChallenges(io, ui, env, mergedDeps) {
   if (!session) return 1;
   const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
   try {
+    if (session.role === "participant") {
+      const bundle = await client.getParticipantContext();
+      ui.json("Workshop Challenges", { items: bundle.challenges ?? [] });
+      return 0;
+    }
     const data = await client.getChallenges();
     ui.json("Workshop Challenges", data);
     return 0;
@@ -1667,6 +1705,11 @@ async function handleWorkshopTeam(io, ui, env, mergedDeps) {
   if (!session) return 1;
   const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
   try {
+    if (session.role === "participant") {
+      const data = await client.getParticipantTeamLookup();
+      ui.json("Workshop Team", data);
+      return 0;
+    }
     const data = await client.getTeams();
     ui.json("Workshop Team", data);
     return 0;
