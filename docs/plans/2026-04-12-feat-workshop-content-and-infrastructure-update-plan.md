@@ -631,8 +631,8 @@ The rest is tracked here so it is not lost:
 - [x] D-FU3 — harness-cli test assertions rewritten to match the new single-source shape. 67/67 tests pass.
 - [x] D-FU4 — `AGENTS.md` Language section split: presenter copy stays canonical-English-with-reviewed-Czech, skill reference docs are English-only with pointer to the ADR. `.copy-editor.yaml` no longer includes `workshop-skill/**/*.md`.
 - [x] D-FU5 — `scripts/content/check-tier2-sync.ts` drops `workshop-skill` from `TIER2_DIRS`. The tier-2 sync contract now covers `content/` and `materials/` only.
-- [ ] D-FU6 — **Re-segment `workshop-content/agenda.json` for the copy-editor** after the 2026-04-12 Czech translation landed. The `.copy-editor.lock.json` is keyed to the pre-translation content hash and its per-span language tags no longer map to the rewritten file. Until a fresh agent-side segmentation pass runs via the `marvin:copy-editor` skill loop, the Czech rule produces false positives on English prose inside the bilingual source. `agenda.json` is temporarily excluded from `.copy-editor.yaml`; re-include it after segmentation. Human-in-the-loop (the segmentation skill needs Ondrej's review sweep).
-- [ ] D-FU7 — **Native Czech review sweep for the Phase B content.** Every scene touched in Phase B currently has `cs_reviewed: false`. The Czech translations shipped in this session are machine-authored best-effort that preserve idiomatic Czech word order, imperative voice, and standard technical terms in English. They still need a native-speaker pass before the first real workshop runs. After review, flip `cs_reviewed: true` per scene. Focus the sweep on hero titles, hero bodies, and top-level callouts — those are what participants read first. Facilitator-only notes can stay as-is unless they mislead the facilitator.
+- [x] D-FU6 — **Re-segmented `workshop-content/agenda.json` for the copy-editor** (2026-04-13). Walker re-run against post-translation content, 2833 spans written to `.copy-editor.lock.json`, entry marked reviewed, `agenda.json` un-excluded from `.copy-editor.yaml`, `copy-audit --require-reviewed` exits 0. Committed in `50e3789` bundled with the Mode A Czech review that republished harness-cli as 0.7.1.
+- [x] D-FU7 — **Czech review sweep done on the mechanical layer** (2026-04-13, Mode A review). Applied across all touched Phase B scenes: `ty` → `vy` normalisation per style guide, four untranslated opening-phase eyebrows translated, `Monday` framing removed from visible surfaces, `editor` → `coding agent` where the mental model points at the agent, facilitator runner `Odpočítej` → `Rozpočítejte` bug fix, calque cleanup (`v obědě`, `mechanismus`, `stroj`, `Nevybírat není varianta`, `v rukou`), all five brief `firstAgentPrompt` sections converted. Full scene-card memo at `docs/reviews/workshop-content/2026-04-13-czech-mode-a-scene-cards.md`. The native-speaker read-aloud slice that flips `cs_reviewed: true` per scene lives in Phase E3's pre-workshop checklist, not here.
 
 ### Phase E — Operator Docs
 - [x] E1 — Operator guide: silent-gate practice
@@ -662,7 +662,7 @@ All AI-executable work from this plan has landed on `main`. The plan is marked `
 
 Shipped in this cycle:
 
-- `@harness-lab/cli` bumped to `0.7.1` and is ready for npm publish (release tag `harness-cli-v0.7.1`).
+- `@harness-lab/cli@0.7.1` published to npm with provenance and cosign-signed tarball (release tag `harness-cli-v0.7.1`, publish workflow run `24331141705`).
 - Every scene in `workshop-content/agenda.json` carries reviewed-Mode-A Czech with the lockfile re-segmented against the current content hash.
 - The `workshop-skill/` tree is single-source English per `docs/adr/2026-04-12-skill-docs-english-canonical.md`; the legacy `workshop-skill/locales/` parallel tree is retired.
 - All automated quality gates (tsc, eslint, vitest, harness-cli tests, verify:content with the copy-editor gate) are green.
