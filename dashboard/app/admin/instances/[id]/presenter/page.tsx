@@ -351,10 +351,15 @@ function SceneBlocks({
         if (block.type === "quote") {
           const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
           return (
-            <div key={block.id} className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] px-6 py-6">
-              <blockquote className="text-2xl font-medium leading-10 text-[var(--text-primary)]">“{block.quote}”</blockquote>
-              <p className="mt-4 text-sm text-[var(--text-muted)]">{attribution}</p>
-            </div>
+            <figure
+              key={block.id}
+              className="max-w-4xl border-l-[4px] border-[var(--text-primary)] pl-6 py-2"
+            >
+              <blockquote className="text-2xl font-medium italic leading-10 text-[var(--text-primary)]">
+                “{block.quote}”
+              </blockquote>
+              <figcaption className="mt-4 text-sm text-[var(--text-muted)]">— {attribution}</figcaption>
+            </figure>
           );
         }
 
