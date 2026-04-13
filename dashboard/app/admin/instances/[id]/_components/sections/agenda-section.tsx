@@ -315,7 +315,12 @@ export function AgendaSection({
               />
             ) : null}
 
-            <AgendaItemDetail item={selectedAgendaItem} lang={lang} copy={copy} />
+            <AgendaItemDetail
+              item={selectedAgendaItem}
+              lang={lang}
+              copy={copy}
+              instanceId={instanceId}
+            />
 
             <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -691,18 +696,20 @@ function AgendaItemDetail({
   item,
   lang,
   copy,
+  instanceId,
   compact = false,
 }: {
   item: RichAgendaItem;
   lang: UiLanguage;
   copy: Copy;
+  instanceId: string;
   compact?: boolean;
 }) {
-  const sections: Array<{ title: string; items: string[] }> = [
-    { title: copy.agendaFieldFacilitatorPrompts, items: item.facilitatorPrompts ?? [] },
-    { title: copy.agendaFieldWatchFors, items: item.watchFors ?? [] },
-    { title: copy.agendaFieldCheckpointQuestions, items: item.checkpointQuestions ?? [] },
-  ].filter((section) => section.items.length > 0);
+  const listSections: Array<{ title: string; fieldName: "facilitatorPrompts" | "watchFors" | "checkpointQuestions"; items: string[] }> = [
+    { title: copy.agendaFieldFacilitatorPrompts, fieldName: "facilitatorPrompts", items: item.facilitatorPrompts ?? [] },
+    { title: copy.agendaFieldWatchFors, fieldName: "watchFors", items: item.watchFors ?? [] },
+    { title: copy.agendaFieldCheckpointQuestions, fieldName: "checkpointQuestions", items: item.checkpointQuestions ?? [] },
+  ];
   const runnerSections: Array<{ title: string; items: string[] }> = [
     { title: copy.agendaRunnerSayTitle, items: item.facilitatorRunner.say ?? [] },
     { title: copy.agendaRunnerShowTitle, items: item.facilitatorRunner.show ?? [] },
@@ -756,20 +763,28 @@ function AgendaItemDetail({
         </div>
       </div>
 
-      {sections.length > 0 ? (
-        <div className="grid gap-3 lg:grid-cols-2">
-          {sections.map((section) => (
-            <div key={section.title} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
-              <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-secondary)]">
-                {section.items.map((value) => (
-                  <li key={value}>• {value}</li>
-                ))}
-              </ul>
+      <div className="grid gap-3 lg:grid-cols-2">
+        {listSections.map((section) => (
+          <div key={section.fieldName} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
+            <div className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
+              <InlineField
+                value={section.items.join("\n")}
+                fieldName={section.fieldName}
+                label={section.title}
+                mode="textarea"
+                placeholder={section.title}
+                action={updateAgendaFieldAction}
+                hiddenFields={{
+                  instanceId,
+                  agendaId: item.id,
+                  fieldName: section.fieldName,
+                }}
+              />
             </div>
-          ))}
-        </div>
-      ) : null}
+          </div>
+        ))}
+      </div>
 
       {(item.sourceRefs ?? []).length > 0 ? (
         <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">

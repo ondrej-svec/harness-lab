@@ -48,6 +48,12 @@ const UPDATABLE_AGENDA_FIELDS: readonly UpdatableAgendaField[] = [
   "goal",
   "roomSummary",
 ];
+type UpdatableAgendaListField = "facilitatorPrompts" | "watchFors" | "checkpointQuestions";
+const UPDATABLE_AGENDA_LIST_FIELDS: readonly UpdatableAgendaListField[] = [
+  "facilitatorPrompts",
+  "watchFors",
+  "checkpointQuestions",
+];
 
 export async function updateAgendaFieldAction(formData: FormData) {
   const instanceId = String(formData.get("instanceId") ?? "");
@@ -55,18 +61,35 @@ export async function updateAgendaFieldAction(formData: FormData) {
   const fieldName = String(formData.get("fieldName") ?? "");
   const fieldValue = String(formData.get(fieldName) ?? "").trim();
 
-  if (!instanceId || !agendaId || !fieldName || !fieldValue) {
-    return;
-  }
-  if (!UPDATABLE_AGENDA_FIELDS.includes(fieldName as UpdatableAgendaField)) {
+  if (!instanceId || !agendaId || !fieldName) {
     return;
   }
 
   await requireFacilitatorActionAccess(instanceId);
-  await updateAgendaItem(
-    agendaId,
-    { [fieldName]: fieldValue } as Partial<Record<UpdatableAgendaField, string>>,
-    instanceId,
-  );
-  revalidatePath(`/admin/instances/${instanceId}`);
+
+  if (UPDATABLE_AGENDA_FIELDS.includes(fieldName as UpdatableAgendaField)) {
+    if (!fieldValue) {
+      return;
+    }
+    await updateAgendaItem(
+      agendaId,
+      { [fieldName]: fieldValue } as Partial<Record<UpdatableAgendaField, string>>,
+      instanceId,
+    );
+    revalidatePath(`/admin/instances/${instanceId}`);
+    return;
+  }
+
+  if (UPDATABLE_AGENDA_LIST_FIELDS.includes(fieldName as UpdatableAgendaListField)) {
+    const items = fieldValue
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    await updateAgendaItem(
+      agendaId,
+      { [fieldName]: items } as Partial<Record<UpdatableAgendaListField, string[]>>,
+      instanceId,
+    );
+    revalidatePath(`/admin/instances/${instanceId}`);
+  }
 }
