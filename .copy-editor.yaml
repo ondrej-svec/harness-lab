@@ -67,17 +67,6 @@ paths:
     # English fallback locales — reviewed separately, not by the Czech profile.
     - "**/locales/en/**"
 
-    # workshop-content/agenda.json — temporarily excluded after the
-    # 2026-04-12 Phase B content rewrite + Czech translation pass.
-    # The lockfile at .copy-editor.lock.json is keyed to the pre-
-    # translation content hash and its per-span language tags no
-    # longer map to the rewritten file. Until a fresh agent-side
-    # segmentation pass is run (marvin:copy-editor skill loop), the
-    # Czech rule produces false positives on English prose inside
-    # the bilingual source. Re-include this file after the next
-    # segmentation pass.
-    - "workshop-content/agenda.json"
-
     # Generated bundle mirror — review the canonical source instead.
     - "harness-cli/assets/workshop-bundle/**"
 
