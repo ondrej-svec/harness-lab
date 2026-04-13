@@ -2388,7 +2388,7 @@
             "title": "Čas běží. Jste na řadě.",
             "body": "Nejdřív tým. Pak mapa. Pak tracer. Facilitátoři chodí po místnosti – ptejte se na otázky, ne na odpovědi. Když se zaseknete, recovery pattern je na jedno kliknutí. V 11:35 se zastavíme společně.",
             "facilitatorNotes": [
-              "30vteřinový beat. Řekněte „jedeme“ nahlas, když je tohle na plátně, a pak přepněte na 4.2."
+              "30vteřinový krok. Řekněte „jedeme“ nahlas, když je tohle na plátně, a pak přepněte na 4.2."
             ],
             "blocks": [
               {
@@ -4331,7 +4331,7 @@
                   {
                     "id": "i2-write",
                     "title": "Jeden z vás to napíše (1 min).",
-                    "body": "Na participant boardu, připojené k check-inu z Intermezza 1 a k diagnóze z prvního beatu Buildu 2."
+                    "body": "Na participant boardu, připojené k check-inu z Intermezza 1 a k diagnóze z prvního kroku Buildu 2."
                   }
                 ]
               },
@@ -4595,7 +4595,7 @@
             "title": "Druhý push. Čtyřicet minut. Zpátky k práci.",
             "body": "Aplikujte, co jste zvedli v intermezzu. Iterujte, rozšiřujte, tlačte dál. V 15:30 commit, udělejte repo čitelné, rozhodněte, co ukážete na Závěru.",
             "facilitatorNotes": [
-              "30vteřinový beat. Držte tempo, které místnost už zná z Buildu 1 a z prvního pushe Buildu 2."
+              "30vteřinový krok. Držte tempo, které místnost už zná z Buildu 1 a z prvního pushe Buildu 2."
             ],
             "blocks": [
               {

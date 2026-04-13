@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
-  "bundleVersion": "0.7.1",
+  "bundleVersion": "0.7.2",
   "contentHash": "226ea518e48dd583bf1f1a2064304bb76bee833a855eaf43672b627ec12c8b94",
   "files": [
     {
