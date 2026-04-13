@@ -7,6 +7,7 @@ import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail"
 import { AccessSection } from "./_components/sections/access-section";
 import { SettingsSection } from "./_components/sections/settings-section";
 import { SignalsSection } from "./_components/sections/signals-section";
+import { TeamsSection } from "./_components/sections/teams-section";
 import { ViewTransitionCard } from "./_components/view-transition-card";
 import {
   participantAccessFlashCookieName,
@@ -34,18 +35,12 @@ import {
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
-import { getNeonSql } from "@/lib/neon-db";
-import { getAuditLogRepository } from "@/lib/audit-log-repository";
-import { buildRepoBlobUrl, getBlueprintRepoUrl } from "@/lib/repo-links";
-import {
-  getFacilitatorParticipantAccessState,
-  issueParticipantEventAccess,
-} from "@/lib/participant-access-management";
+import { buildRepoBlobUrl } from "@/lib/repo-links";
+import { getFacilitatorParticipantAccessState } from "@/lib/participant-access-management";
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 import { ThemeSwitcher } from "../../../components/theme-switcher";
 import { buildParticipantMirrorHref, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import {
-  workshopTemplates,
   type AgendaItem,
   type PresenterBlock as WorkshopPresenterBlock,
   type PresenterScene,
@@ -56,10 +51,6 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import {
   addPresenterScene,
   addAgendaItem,
-  addSprintUpdate,
-  appendCheckIn,
-  createWorkshopArchive,
-  completeChallenge,
   getWorkshopState,
   getLatestWorkshopArchive,
   moveAgendaItem,
@@ -68,14 +59,11 @@ import {
   captureRotationSignal,
   listRotationSignals,
   removePresenterScene,
-  resetWorkshopState,
   setCurrentAgendaItem,
   setDefaultPresenterScene,
   setPresenterSceneEnabled,
-  setRotationReveal,
   updateAgendaItem,
   updatePresenterScene,
-  upsertTeam,
 } from "@/lib/workshop-store";
 import type { RotationSignal } from "@/lib/runtime-contracts";
 import {
@@ -84,7 +72,6 @@ import {
   AdminSheet,
   ControlCard,
   FieldLabel,
-  KeyValueRow,
   StatusPill,
   adminHeroPanelClassName,
   adminDangerButtonClassName,
@@ -130,34 +117,6 @@ function getRoomPresenterScenes(item: RichAgendaItem | null | undefined) {
 
 function getParticipantPresenterScenes(item: RichAgendaItem | null | undefined) {
   return (item?.presenterScenes ?? []).filter((scene) => scene.surface === "participant");
-}
-
-function deriveNextTeamId(existingIds: string[]) {
-  const numericIds = existingIds
-    .map((id) => id.match(/^t(\d+)$/)?.[1])
-    .filter(Boolean)
-    .map((value) => Number(value));
-  const nextNumber = numericIds.length > 0 ? Math.max(...numericIds) + 1 : 1;
-  return `t${nextNumber}`;
-}
-
-function buildEvidenceSummary(parts: {
-  changed?: string;
-  verified?: string;
-  nextStep?: string;
-  fallback?: string;
-}) {
-  const items = [
-    parts.changed ? `Co se změnilo: ${parts.changed}` : null,
-    parts.verified ? `Co to ověřuje: ${parts.verified}` : null,
-    parts.nextStep ? `Další safe move: ${parts.nextStep}` : null,
-  ].filter(Boolean);
-
-  if (items.length > 0) {
-    return items.join("\n");
-  }
-
-  return parts.fallback?.trim() ?? "";
 }
 
 function parseEvidenceSummary(value: string) {
@@ -512,55 +471,6 @@ async function captureRotationSignalAction(formData: FormData) {
 
   await captureRotationSignal({ freeText, tags, teamId }, instanceId);
   redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function registerTeamAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const state = await getWorkshopState(instanceId);
-  const id = String(formData.get("id") ?? "").trim() || deriveNextTeamId(state.teams.map((team) => team.id));
-  const name = String(formData.get("name") ?? "").trim();
-  const city = String(formData.get("city") ?? "Studio A").trim();
-  const repoUrl = String(formData.get("repoUrl") ?? "").trim();
-  const projectBriefId = String(formData.get("projectBriefId") ?? "").trim();
-  const checkpointText = buildEvidenceSummary({
-    changed: String(formData.get("checkpointChanged") ?? "").trim(),
-    verified: String(formData.get("checkpointVerified") ?? "").trim(),
-    nextStep: String(formData.get("checkpointNextStep") ?? "").trim(),
-    fallback: String(formData.get("checkpoint") ?? "").trim(),
-  });
-  const membersRaw = String(formData.get("members") ?? "").trim();
-  const anchorRaw = String(formData.get("anchor") ?? "").trim();
-
-  if (id && name && repoUrl && projectBriefId) {
-    const existing = state.teams.find((team) => team.id === id);
-    await upsertTeam(
-      {
-        id,
-        name,
-        city,
-        repoUrl,
-        projectBriefId,
-        checkIns: existing?.checkIns ?? [],
-        anchor: anchorRaw ? anchorRaw : existing?.anchor ?? null,
-        members: membersRaw
-          .split(",")
-          .map((value) => value.trim())
-          .filter(Boolean),
-      },
-      instanceId,
-    );
-    if (checkpointText) {
-      const currentPhaseId = state.agenda.find((item) => item.status === "current")?.id ?? state.agenda[0]?.id ?? "opening";
-      await appendCheckIn(
-        id,
-        { phaseId: currentPhaseId, content: checkpointText, writtenBy: null },
-        instanceId,
-      );
-    }
-  }
-  redirect(buildAdminHref({ lang, section, instanceId, teamId: id || null }));
 }
 
 export default async function AdminPage({
@@ -1267,142 +1177,14 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "teams" ? (
-          <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
-            <AdminPanel
-              eyebrow={copy.teamOpsEyebrow}
-              title={selectedTeam ? copy.editTeamTitle : copy.registerTeamTitle}
-              description={selectedTeam ? copy.editTeamDescription : copy.teamOpsDescription}
-            >
-              <div className="space-y-4">
-                {selectedTeam ? (
-                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-[var(--text-primary)]">{selectedTeam.name}</p>
-                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{selectedTeam.id}</p>
-                      </div>
-                        <AdminRouteLink
-                          href={buildAdminHref({ lang, section: activeSection, instanceId: activeInstanceId })}
-                          className="text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                        >
-                          {copy.createAnotherTeamLabel}
-                        </AdminRouteLink>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{selectedTeam.repoUrl}</p>
-                  </div>
-                ) : null}
-
-                <form action={registerTeamAction} className="grid gap-3 lg:grid-cols-2">
-                  <AdminActionStateFields
-                    lang={lang}
-                    section={activeSection}
-                    instanceId={activeInstanceId}
-                  />
-                  <input name="id" type="hidden" value={selectedTeam?.id ?? ""} />
-                  <input name="name" placeholder={copy.teamNamePlaceholder} defaultValue={selectedTeam?.name ?? ""} className={adminInputClassName} />
-                  <input name="city" placeholder="Studio A" defaultValue={selectedTeam?.city ?? ""} className={adminInputClassName} />
-                  <input
-                    name="repoUrl"
-                    placeholder="https://github.com/..."
-                    defaultValue={selectedTeam?.repoUrl ?? ""}
-                    className={`${adminInputClassName} lg:col-span-2`}
-                  />
-                  <input name="projectBriefId" placeholder="standup-bot" defaultValue={selectedTeam?.projectBriefId ?? ""} className={adminInputClassName} />
-                  <input
-                    name="members"
-                    placeholder="Anna, David, Eva"
-                    defaultValue={selectedTeam?.members.join(", ") ?? ""}
-                    className={adminInputClassName}
-                  />
-                  <input
-                    name="anchor"
-                    placeholder="red brick / numbered card 3"
-                    defaultValue={selectedTeam?.anchor ?? ""}
-                    className={adminInputClassName}
-                  />
-                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
-                    {copy.checkpointFormHint}
-                  </div>
-                  <div className="lg:col-span-2">
-                    <FieldLabel htmlFor="checkpoint-changed">{copy.checkpointChangedLabel}</FieldLabel>
-                    <textarea
-                      id="checkpoint-changed"
-                      name="checkpointChanged"
-                      rows={3}
-                      placeholder={copy.checkpointChangedLabel}
-                      defaultValue={selectedTeamCheckpoint.changed}
-                      className={`${adminInputClassName} mt-2`}
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <FieldLabel htmlFor="checkpoint-verified">{copy.checkpointVerifiedLabel}</FieldLabel>
-                    <textarea
-                      id="checkpoint-verified"
-                      name="checkpointVerified"
-                      rows={3}
-                      placeholder={copy.checkpointVerifiedLabel}
-                      defaultValue={selectedTeamCheckpoint.verified}
-                      className={`${adminInputClassName} mt-2`}
-                    />
-                  </div>
-                  <div className="lg:col-span-2">
-                    <FieldLabel htmlFor="checkpoint-next-step">{copy.checkpointNextStepLabel}</FieldLabel>
-                    <textarea
-                      id="checkpoint-next-step"
-                      name="checkpointNextStep"
-                      rows={3}
-                      placeholder={copy.checkpointNextStepLabel}
-                      defaultValue={selectedTeamCheckpoint.nextStep}
-                      className={`${adminInputClassName} mt-2`}
-                    />
-                  </div>
-                  <AdminSubmitButton className={`${adminPrimaryButtonClassName} lg:col-span-2`}>
-                    {selectedTeam ? copy.updateTeamButton : copy.createTeamButton}
-                  </AdminSubmitButton>
-                </form>
-              </div>
-            </AdminPanel>
-
-            <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
-              <div className="grid gap-3 2xl:grid-cols-2">
-                {state.teams.map((team) => (
-                  <div
-                    key={team.id}
-                    className={`rounded-[20px] border p-4 ${
-                      selectedTeam?.id === team.id
-                        ? "border-[var(--text-primary)] bg-[var(--surface)]"
-                        : "border-[var(--border)] bg-[var(--surface-soft)]"
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-[var(--text-primary)]">{team.name}</p>
-                        <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{team.repoUrl}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</p>
-                        <AdminRouteLink
-                          href={buildAdminHref({
-                            lang,
-                            section: activeSection,
-                            instanceId: activeInstanceId,
-                            teamId: team.id,
-                          })}
-                          className="mt-2 inline-flex text-xs lowercase text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-                        >
-                          {copy.editActionLabel}
-                        </AdminRouteLink>
-                      </div>
-                    </div>
-                    <p className="mt-3 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
-                      {team.checkIns[team.checkIns.length - 1]?.content ?? ""}
-                    </p>
-                    <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">{team.members.join(", ")}</p>
-                  </div>
-                ))}
-              </div>
-            </AdminPanel>
-          </div>
+          <TeamsSection
+            lang={lang}
+            copy={copy}
+            instanceId={activeInstanceId}
+            state={state}
+            selectedTeam={selectedTeam}
+            selectedTeamCheckpoint={selectedTeamCheckpoint}
+          />
         ) : null}
 
         {activeSection === "signals" ? (
