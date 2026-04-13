@@ -33,3 +33,40 @@ export async function renameAgendaItemAction(formData: FormData) {
   await updateAgendaItem(agendaId, { title }, instanceId);
   revalidatePath(`/admin/instances/${instanceId}`);
 }
+
+/**
+ * Update a single agenda-item field inline. Same narrow contract as
+ * renameAgendaItemAction but for the other short fields the detail
+ * header exposes: `time`, `goal`, `roomSummary`. The field name comes
+ * from the form's `fieldName` and `fieldValue` pair so a single server
+ * action can back every InlineField on the detail page.
+ */
+type UpdatableAgendaField = "title" | "time" | "goal" | "roomSummary";
+const UPDATABLE_AGENDA_FIELDS: readonly UpdatableAgendaField[] = [
+  "title",
+  "time",
+  "goal",
+  "roomSummary",
+];
+
+export async function updateAgendaFieldAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const fieldName = String(formData.get("fieldName") ?? "");
+  const fieldValue = String(formData.get(fieldName) ?? "").trim();
+
+  if (!instanceId || !agendaId || !fieldName || !fieldValue) {
+    return;
+  }
+  if (!UPDATABLE_AGENDA_FIELDS.includes(fieldName as UpdatableAgendaField)) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  await updateAgendaItem(
+    agendaId,
+    { [fieldName]: fieldValue } as Partial<Record<UpdatableAgendaField, string>>,
+    instanceId,
+  );
+  revalidatePath(`/admin/instances/${instanceId}`);
+}

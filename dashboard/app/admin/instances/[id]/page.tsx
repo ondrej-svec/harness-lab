@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { renameAgendaItemAction, signOutAction } from "./_actions/operations";
+import { renameAgendaItemAction, signOutAction, updateAgendaFieldAction } from "./_actions/operations";
 import { InlineField } from "./_components/inline-field";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
 import { ViewTransitionCard } from "./_components/view-transition-card";
@@ -1211,9 +1211,20 @@ export default async function AdminPage({
                         }}
                       />
                     </h2>
-                    <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
-                      {selectedAgendaItem.roomSummary || selectedAgendaItem.description}
-                    </p>
+                    <div className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
+                      <InlineField
+                        value={selectedAgendaItem.roomSummary || selectedAgendaItem.description}
+                        fieldName="roomSummary"
+                        label={copy.agendaDetailRoomSummaryTitle}
+                        mode="textarea"
+                        action={updateAgendaFieldAction}
+                        hiddenFields={{
+                          instanceId: activeInstanceId,
+                          agendaId: selectedAgendaItem.id,
+                          fieldName: "roomSummary",
+                        }}
+                      />
+                    </div>
 
                     <div className="mt-5 flex flex-wrap gap-3">
                       {selectedAgendaItem.id !== currentAgendaItem?.id ? (
