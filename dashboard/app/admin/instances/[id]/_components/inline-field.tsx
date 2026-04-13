@@ -1,0 +1,172 @@
+"use client";
+
+// Click-to-edit primitive. Click the value → becomes an input/textarea →
+// blur saves via the supplied server action → click-out or Enter commits,
+// Escape cancels. useOptimistic + startTransition per React 19 docs;
+// the reducer pattern is used so concurrent edits don't show stale values.
+// Errors automatically roll back the optimistic state (React's built-in
+// behavior when the Action throws).
+//
+// See docs/plans/2026-04-13-one-canvas-research-notes.md §7 for the
+// grounding research on useOptimistic patterns.
+
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+  type KeyboardEvent,
+  type FocusEvent,
+} from "react";
+
+export type InlineFieldAction = (formData: FormData) => Promise<void> | Promise<unknown> | void;
+
+export type InlineFieldProps = {
+  value: string;
+  fieldName: string;
+  action: InlineFieldAction;
+  mode?: "text" | "textarea";
+  /** Extra hidden form fields to submit alongside the edited value. */
+  hiddenFields?: Record<string, string>;
+  /** Accessible label for assistive tech. */
+  label: string;
+  placeholder?: string;
+  className?: string;
+  /** Additional class for edit mode (usually larger padding). */
+  editClassName?: string;
+};
+
+export function InlineField({
+  value,
+  fieldName,
+  action,
+  mode = "text",
+  hiddenFields,
+  label,
+  placeholder,
+  className,
+  editClassName,
+}: InlineFieldProps) {
+  const [editing, setEditing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const [optimisticValue, setOptimisticValue] = useOptimistic(
+    value,
+    (_currentState: string, next: string) => next,
+  );
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!editing) return;
+    const el = mode === "textarea" ? textareaRef.current : inputRef.current;
+    if (el) {
+      el.focus();
+      if ("select" in el && typeof el.select === "function") {
+        el.select();
+      }
+    }
+  }, [editing, mode]);
+
+  function cancel() {
+    setEditing(false);
+    setError(null);
+  }
+
+  function save(next: string) {
+    if (next === value) {
+      setEditing(false);
+      return;
+    }
+    setError(null);
+    startTransition(async () => {
+      setOptimisticValue(next);
+      try {
+        const formData = new FormData();
+        formData.set(fieldName, next);
+        if (hiddenFields) {
+          for (const [k, v] of Object.entries(hiddenFields)) {
+            formData.set(k, v);
+          }
+        }
+        await action(formData);
+        setEditing(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "chyba ukládání");
+        // React rolls back the optimistic value automatically.
+      }
+    });
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      cancel();
+    } else if (event.key === "Enter" && mode === "text") {
+      event.preventDefault();
+      save(event.currentTarget.value);
+    }
+  }
+
+  function handleBlur(event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    save(event.currentTarget.value);
+  }
+
+  if (!editing) {
+    const showPlaceholder = !optimisticValue;
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        aria-label={`upravit ${label}`}
+        data-inline-field="display"
+        className={`inline-flex items-center gap-2 rounded-[10px] px-1 text-left transition hover:bg-[var(--surface-soft)] focus-visible:bg-[var(--surface-soft)] focus-visible:outline-none ${className ?? ""}`}
+      >
+        <span className={showPlaceholder ? "text-[var(--text-muted)]" : undefined}>
+          {showPlaceholder ? placeholder ?? label : optimisticValue}
+        </span>
+        {isPending ? (
+          <span aria-hidden className="text-xs text-[var(--text-muted)]">…</span>
+        ) : null}
+        {error ? (
+          <span role="alert" className="text-xs text-[var(--border-strong)]">
+            {error}
+          </span>
+        ) : null}
+      </button>
+    );
+  }
+
+  const inputClassName = `block w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-[var(--text-primary)] focus-visible:border-[var(--text-primary)] focus-visible:outline-none ${className ?? ""} ${editClassName ?? ""}`;
+
+  if (mode === "textarea") {
+    return (
+      <textarea
+        ref={textareaRef}
+        defaultValue={optimisticValue}
+        aria-label={label}
+        data-inline-field="edit"
+        rows={3}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
+        className={inputClassName}
+      />
+    );
+  }
+
+  return (
+    <input
+      ref={inputRef}
+      type="text"
+      defaultValue={optimisticValue}
+      aria-label={label}
+      data-inline-field="edit"
+      onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
+      className={inputClassName}
+    />
+  );
+}

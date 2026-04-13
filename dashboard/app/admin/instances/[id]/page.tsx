@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { signOutAction } from "./_actions/operations";
+import { renameAgendaItemAction, signOutAction } from "./_actions/operations";
+import { InlineField } from "./_components/inline-field";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
 import { ViewTransitionCard } from "./_components/view-transition-card";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
@@ -1188,8 +1189,18 @@ export default async function AdminPage({
                       </span>
                     </div>
                     <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[var(--hero-muted)]">{copy.agendaCurrentTitle}</p>
-                    <h2 className="mt-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
-                      {selectedAgendaItem.time} • {selectedAgendaItem.title}
+                    <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
+                      <span>{selectedAgendaItem.time} •</span>
+                      <InlineField
+                        value={selectedAgendaItem.title}
+                        fieldName="title"
+                        label={copy.agendaCurrentTitle}
+                        action={renameAgendaItemAction}
+                        hiddenFields={{
+                          instanceId: activeInstanceId,
+                          agendaId: selectedAgendaItem.id,
+                        }}
+                      />
                     </h2>
                     <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
                       {selectedAgendaItem.roomSummary || selectedAgendaItem.description}
