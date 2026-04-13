@@ -242,22 +242,6 @@ export async function loadAdminPageViewModel({
     agendaItemId: selectedAgendaItem?.id ?? null,
   });
   const agendaBaseHref = showAgendaDetail ? agendaDetailHref : agendaIndexHref;
-  const agendaEditHref = selectedAgendaItem
-    ? buildAdminHref({
-        lang,
-        section: "agenda",
-        instanceId,
-        agendaItemId: selectedAgendaItem.id,
-        overlay: "agenda-edit",
-      })
-    : agendaBaseHref;
-  const agendaAddHref = buildAdminHref({
-    lang,
-    section: "agenda",
-    instanceId,
-    agendaItemId: selectedAgendaItem?.id ?? null,
-    overlay: "agenda-add",
-  });
   const sceneBaseHref = buildAdminHref({
     lang,
     section: "agenda",
@@ -265,35 +249,6 @@ export async function loadAdminPageViewModel({
     agendaItemId: selectedAgendaItem?.id ?? null,
     sceneId: selectedScene?.id ?? null,
   });
-  const sceneAddHref = buildAdminHref({
-    lang,
-    section: "agenda",
-    instanceId,
-    agendaItemId: selectedAgendaItem?.id ?? null,
-    overlay: "scene-add",
-  });
-  const roomSceneEditHref =
-    selectedAgendaItem && selectedRoomScene
-      ? buildAdminHref({
-          lang,
-          section: "agenda",
-          instanceId,
-          agendaItemId: selectedAgendaItem.id,
-          sceneId: selectedRoomScene.id,
-          overlay: "scene-edit",
-        })
-      : sceneBaseHref;
-  const participantSceneEditHref =
-    selectedAgendaItem && selectedParticipantScene
-      ? buildAdminHref({
-          lang,
-          section: "agenda",
-          instanceId,
-          agendaItemId: selectedAgendaItem.id,
-          sceneId: selectedParticipantScene.id,
-          overlay: "scene-edit",
-        })
-      : sceneBaseHref;
   const liveAgendaHref = currentAgendaItem
     ? buildAdminHref({
         lang,
@@ -367,12 +322,7 @@ export async function loadAdminPageViewModel({
     selectedAgendaParticipantMirrorHref,
     agendaIndexHref,
     agendaBaseHref,
-    agendaEditHref,
-    agendaAddHref,
     sceneBaseHref,
-    sceneAddHref,
-    roomSceneEditHref,
-    participantSceneEditHref,
     liveAgendaHref,
     contextualHandoffItem,
     handoffIsLive,
