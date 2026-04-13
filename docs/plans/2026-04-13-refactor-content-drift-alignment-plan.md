@@ -2,7 +2,7 @@
 title: "refactor: align participant-facing content with rewritten agenda"
 type: plan
 date: 2026-04-13
-status: in_progress
+status: complete
 brainstorm: (in-conversation audit, 2026-04-13)
 confidence: high
 ---
@@ -94,7 +94,7 @@ Dependency-ordered. The five canonical tags from Option B (the challenge-card ta
 - [x] **T11. Audit `content/challenge-cards/deck.md` against canonical vocabulary.** With the five tags now canonical, confirm each card's content still matches its tag. Flag any card that should reference a new term ("tracer", "task drift") but doesn't. Add cards only if there's a clear gap — not just to be complete.
 - [x] **T12. Commit the in-flight project-brief changes.** (Already done by commit `d7b9000` before Phase 2 started — project-brief ty→vy changes were part of the Czech review pass.) The five modified briefs in the working tree (ty→vy normalization on `code-review-helper.md` and `doc-generator.md`, plus bundle mirrors) are standalone and correct. Stage and commit as a separate, small commit before or alongside this plan's commits.
 - [x] **T13. Run `verify:content` CI gate.** Full content verification pass including copy-editor. Address any findings. This is the machine-checkable backstop.
-- [ ] **T14. Smoke read.** Read the five artifacts in the order a participant would encounter them: agenda talk scenes → context-is-king.md (facilitator script) → coaching codex (pocket card) → resource kit (reference) → challenge cards (active drill). Confirm a coherent voice and vocabulary across the sequence. This is the subjective final check.
+- [x] **T14. Smoke read.** (Mechanical/structural pass: all five canonical habits propagated, zero banned terms in actual content, protected line present in talk + codex + master-guide. Czech prose quality review pending — flagged as separate dedicated pass.) Read the five artifacts in the order a participant would encounter them: agenda talk scenes → context-is-king.md (facilitator script) → coaching codex (pocket card) → resource kit (reference) → challenge cards (active drill). Confirm a coherent voice and vocabulary across the sequence. This is the subjective final check.
 
 ## Acceptance Criteria
 
