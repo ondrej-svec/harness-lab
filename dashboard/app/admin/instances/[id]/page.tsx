@@ -1,8 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { renameAgendaItemAction, signOutAction, updateAgendaFieldAction } from "./_actions/operations";
+import { toggleRotationAction } from "./_actions/settings";
 import { InlineField } from "./_components/inline-field";
 import { OutlineRail, type OutlineAgendaItem } from "./_components/outline-rail";
+import { SettingsSection } from "./_components/sections/settings-section";
 import { SignalsSection } from "./_components/sections/signals-section";
 import { ViewTransitionCard } from "./_components/view-transition-card";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
@@ -510,14 +512,6 @@ async function removePresenterSceneAction(formData: FormData) {
   redirect(buildAdminHref({ lang, section, instanceId, agendaItemId }));
 }
 
-async function toggleRotationAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  await setRotationReveal(formData.get("revealed") === "true", instanceId);
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
 async function captureRotationSignalAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
@@ -591,35 +585,6 @@ async function registerTeamAction(formData: FormData) {
     }
   }
   redirect(buildAdminHref({ lang, section, instanceId, teamId: id || null }));
-}
-
-async function resetWorkshopAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  // Confirmation gate — the reset is destructive, so the facilitator
-  // must type the workshop instance id to proceed. Mirrors the Stripe /
-  // GitHub "type the repo name to delete" pattern. Without this, the
-  // previous behavior was a single unguarded click. See the One Canvas
-  // plan, Q6 / Phase 4 confirmation dialog requirement.
-  const confirmation = String(formData.get("confirmation") ?? "").trim();
-  if (confirmation !== instanceId) {
-    redirect(buildAdminHref({ lang, section, instanceId }) + "&resetError=confirm");
-  }
-  const templateId = workshopTemplates[0]?.id ?? "";
-  if (templateId) {
-    await resetWorkshopState(templateId, instanceId);
-  }
-  redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function archiveWorkshopAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const notes = String(formData.get("notes") ?? "").trim();
-  await createWorkshopArchive({ reason: "manual", notes: notes || null }, instanceId);
-  redirect(buildAdminHref({ lang, section, instanceId }));
 }
 
 async function issueParticipantAccessAction(formData: FormData) {
@@ -714,36 +679,6 @@ async function revokeFacilitatorAction(formData: FormData) {
     }
   }
   redirect(buildAdminHref({ lang, section, instanceId }));
-}
-
-async function changePasswordAction(formData: FormData) {
-  "use server";
-  const { lang, section, instanceId } = readActionState(formData);
-  await requireFacilitatorActionAccess(instanceId);
-  const currentPassword = String(formData.get("currentPassword") ?? "");
-  const newPassword = String(formData.get("newPassword") ?? "");
-  const confirmPassword = String(formData.get("confirmPassword") ?? "");
-  const revokeOtherSessions = formData.get("revokeOtherSessions") === "on";
-
-  if (!auth) {
-    redirect(buildAdminHref({ lang, section, instanceId, error: "unavailable" }));
-  }
-
-  if (newPassword !== confirmPassword) {
-    redirect(buildAdminHref({ lang, section, instanceId, error: "password_mismatch" }));
-  }
-
-  const { error } = await auth.changePassword({
-    currentPassword,
-    newPassword,
-    revokeOtherSessions,
-  });
-
-  if (error) {
-    redirect(buildAdminHref({ lang, section, instanceId, error: error.message || "password_change_failed" }));
-  }
-
-  redirect(buildAdminHref({ lang, section, instanceId, password: "changed" }));
 }
 
 export default async function AdminPage({
@@ -1748,159 +1683,19 @@ export default async function AdminPage({
         ) : null}
 
         {activeSection === "settings" ? (
-          <div className="grid gap-6 xl:grid-cols-[minmax(20rem,0.82fr)_minmax(0,1.18fr)]">
-            <AdminPanel eyebrow={copy.accountEyebrow} title={copy.accountTitle} description={copy.accountDescription}>
-              {!isNeonMode || !auth ? (
-                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                  <p className="text-sm text-[var(--text-muted)]">{copy.accountFileMode}</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <KeyValueRow label={copy.signInEmailLabel} value={signedInEmail ?? "unknown"} />
-                  <KeyValueRow label="role" value={currentFacilitator?.grant.role ?? "unknown"} />
-                  <KeyValueRow label={copy.activeInstance} value={state.workshopId} />
-                </div>
-              )}
-            </AdminPanel>
-
-            <div className="space-y-6">
-              <AdminPanel
-                eyebrow={copy.settingsSafetyEyebrow}
-                title={copy.participantSurfaceCardTitle}
-                description={copy.participantSurfaceCardDescription}
-              >
-                <div className="space-y-4">
-                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                    {copy.participantStatePrefix} {overviewState.participantState}.
-                  </div>
-                  <form action={toggleRotationAction} className="space-y-4">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <div className="grid grid-cols-2 gap-3">
-                      <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
-                        {copy.unlockButton}
-                      </AdminSubmitButton>
-                      <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
-                        {copy.hideAgainButton}
-                      </AdminSubmitButton>
-                    </div>
-                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantSurfaceRecoveryHint}</p>
-                  </form>
-                </div>
-              </AdminPanel>
-
-              <AdminPanel eyebrow={copy.accountEyebrow} title={copy.passwordCardTitle} description={copy.accountDescription}>
-                {!isNeonMode || !auth ? (
-                  <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
-                    <p className="text-sm text-[var(--text-muted)]">{copy.accountFileMode}</p>
-                  </div>
-                ) : (
-                  <form action={changePasswordAction} className="space-y-4">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <div>
-                      <FieldLabel htmlFor="current-password">{copy.currentPasswordLabel}</FieldLabel>
-                      <input id="current-password" name="currentPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                    </div>
-                    <div>
-                      <FieldLabel htmlFor="new-password">{copy.newPasswordLabel}</FieldLabel>
-                      <input id="new-password" name="newPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                    </div>
-                    <div>
-                      <FieldLabel htmlFor="confirm-password">{copy.confirmPasswordLabel}</FieldLabel>
-                      <input id="confirm-password" name="confirmPassword" type="password" required className={`${adminInputClassName} mt-2`} />
-                    </div>
-                    <label className="flex items-center gap-3 text-sm text-[var(--text-secondary)]">
-                      <input name="revokeOtherSessions" type="checkbox" defaultChecked />
-                      <span>{copy.revokeSessionsLabel}</span>
-                    </label>
-
-                    {passwordParam === "changed" ? (
-                      <p className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)]">
-                        {copy.passwordChanged}
-                      </p>
-                    ) : null}
-
-                    {errorParam ? (
-                      <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
-                        {errorParam === "password_mismatch" ? copy.passwordMismatch : decodeURIComponent(errorParam)}
-                      </p>
-                    ) : null}
-
-                    <AdminSubmitButton className={adminPrimaryButtonClassName}>
-                      {copy.changePasswordButton}
-                    </AdminSubmitButton>
-                  </form>
-                )}
-              </AdminPanel>
-
-              <AdminPanel
-                eyebrow={copy.settingsSafetyEyebrow}
-                title={copy.archiveResetTitle}
-                description={copy.archiveResetDescription}
-              >
-                <div className="space-y-4">
-                  <form action={archiveWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <textarea
-                      name="notes"
-                      rows={3}
-                      placeholder={copy.archivePlaceholder}
-                      className={adminInputClassName}
-                    />
-                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.archiveHint}</p>
-                    <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`}>
-                      {copy.archiveButton}
-                    </AdminSubmitButton>
-                  </form>
-
-                  <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
-                    <AdminActionStateFields lang={lang} section={activeSection} instanceId={activeInstanceId} />
-                    <p className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                      {copy.resetBlueprintSummary}
-                    </p>
-                    <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
-                    <details className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
-                      <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
-                        {copy.resetButton}
-                      </summary>
-                      <div className="mt-4 space-y-3">
-                        <p className="text-xs leading-5 text-[var(--text-muted)]">
-                          {lang === "en"
-                            ? `Type the instance id "${activeInstanceId}" to confirm.`
-                            : `Pro potvrzení napište id instance "${activeInstanceId}".`}
-                        </p>
-                        <input
-                          type="text"
-                          name="confirmation"
-                          required
-                          autoComplete="off"
-                          aria-label={lang === "en" ? "confirmation" : "potvrzení"}
-                          placeholder={activeInstanceId}
-                          className="w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-sm"
-                        />
-                        <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
-                          {lang === "en" ? "Reset workshop" : "Resetovat workshop"}
-                        </AdminSubmitButton>
-                      </div>
-                    </details>
-                  </form>
-
-                  <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
-                    <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.blueprintLinkHint}</p>
-                    {getBlueprintRepoUrl() ? (
-                      <a
-                        href={getBlueprintRepoUrl() ?? undefined}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-3 inline-flex text-sm font-medium lowercase text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
-                      >
-                        {copy.blueprintLinkLabel}
-                      </a>
-                    ) : null}
-                  </div>
-                </div>
-              </AdminPanel>
-            </div>
-          </div>
+          <SettingsSection
+            lang={lang}
+            copy={copy}
+            instanceId={activeInstanceId}
+            isNeonMode={isNeonMode}
+            hasAuth={Boolean(auth)}
+            signedInEmail={signedInEmail}
+            currentFacilitator={currentFacilitator}
+            workshopId={state.workshopId}
+            participantStateLabel={overviewState.participantState}
+            passwordParam={passwordParam}
+            errorParam={errorParam}
+          />
         ) : null}
           </div>
         </div>
