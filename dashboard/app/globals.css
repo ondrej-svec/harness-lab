@@ -131,3 +131,36 @@ h6 {
   background: var(--selection-bg);
   color: var(--selection-text);
 }
+
+/* ——— View Transitions · One Canvas rework ———
+   See docs/plans/2026-04-13-refactor-one-canvas-dashboard-plan.md.
+   Rauno-verified snappy curve: cubic-bezier(0.2, 0.8, 0.2, 1).
+*/
+::view-transition-group(*) {
+  animation-duration: 250ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+::view-transition-image-pair(*) {
+  animation-duration: 250ms;
+  animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* The scene rail is anchored — it should not morph position during
+   shared-element transitions. It's chrome, not content. */
+::view-transition-group(scene-rail) {
+  animation: none;
+  z-index: 100;
+}
+
+/* Respect reduced motion: kill all view transition animation durations.
+   Content still swaps (that's the browser default); no movement. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*),
+  ::view-transition-image-pair(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

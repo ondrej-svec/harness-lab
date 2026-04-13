@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { signOutAction } from "./_actions/operations";
+import { ViewTransitionCard } from "./_components/view-transition-card";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
@@ -2865,8 +2866,18 @@ function PresenterSceneSummaryCard({
     overlay: "scene-edit",
   });
 
+  const presenterHref = buildPresenterRouteHref({
+    lang,
+    instanceId: activeInstanceId,
+    agendaItemId,
+    sceneId: scene.id,
+  });
+  const morphName = `scene-${agendaItemId}-${scene.id}`;
+
   return (
+    <ViewTransitionCard name={morphName}>
     <div
+      data-agenda-scene-card={scene.id}
       className={`rounded-[20px] border p-4 ${
         isSelected ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_14px_28px_rgba(28,25,23,0.08)]" : "border-[var(--border)] bg-[var(--surface-soft)]"
       }`}
@@ -2881,35 +2892,23 @@ function PresenterSceneSummaryCard({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {participantOnly ? (
-            <a
-              href={buildPresenterRouteHref({
-                lang,
-                instanceId: activeInstanceId,
-                agendaItemId,
-                sceneId: scene.id,
-              })}
-              target="_blank"
-              rel="noreferrer"
-              className={adminGhostButtonClassName}
-            >
-              {copy.presenterOpenParticipantButton}
-            </a>
-          ) : (
-            <a
-              href={buildPresenterRouteHref({
-                lang,
-                instanceId: activeInstanceId,
-                agendaItemId,
-                sceneId: scene.id,
-              })}
-              target="_blank"
-              rel="noreferrer"
-              className={adminGhostButtonClassName}
-            >
-              {copy.presenterOpenSelectedScene}
-            </a>
-          )}
+          {/* Primary click does soft nav → intercepting route → View Transitions morph.
+              Secondary "pop out" action (ctrl/cmd-click) preserves multi-window workflow. */}
+          <AdminRouteLink
+            href={presenterHref}
+            className={adminGhostButtonClassName}
+          >
+            {participantOnly ? copy.presenterOpenParticipantButton : copy.presenterOpenSelectedScene}
+          </AdminRouteLink>
+          <a
+            href={presenterHref}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="otevřít v novém okně"
+            className={`${adminGhostButtonClassName} px-2`}
+          >
+            ↗
+          </a>
           <AdminRouteLink href={sceneEditorHref} className={adminGhostButtonClassName}>
             {copy.presenterEditSceneButton}
           </AdminRouteLink>
@@ -2970,6 +2969,7 @@ function PresenterSceneSummaryCard({
         </div>
       ) : null}
     </div>
+    </ViewTransitionCard>
   );
 }
 
