@@ -328,7 +328,7 @@ function ParticipantGuidanceBlocks({
           return (
             <div
               key={block.id}
-              className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-4 text-sm leading-7 text-[var(--text-secondary)] whitespace-pre-line"
+              className="px-1 text-base leading-8 text-[var(--text-secondary)] whitespace-pre-line"
             >
               {block.content}
             </div>
@@ -338,10 +338,15 @@ function ParticipantGuidanceBlocks({
         if (block.type === "quote") {
           const attribution = block.attribution?.trim() || copy.quoteSourceUnknown;
           return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] px-5 py-5">
-              <blockquote className="text-lg leading-8 text-[var(--text-primary)]">&ldquo;{block.quote}&rdquo;</blockquote>
-              <p className="mt-3 text-sm text-[var(--text-muted)]">{attribution}</p>
-            </div>
+            <figure
+              key={block.id}
+              className="border-l-[3px] border-[var(--text-primary)] pl-5 py-1"
+            >
+              <blockquote className="text-lg italic leading-8 text-[var(--text-primary)]">
+                &ldquo;{block.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-3 text-sm text-[var(--text-muted)]">— {attribution}</figcaption>
+            </figure>
           );
         }
 
