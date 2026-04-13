@@ -2,7 +2,7 @@
 
 ## Cíl
 
-Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem a proč tenhle repozitář drží pohromadě díky harnessu, ne díky improvizaci.
+Jedna příběhová ukázka, ne seznam funkcí. Publikum má během 15 minut pochopit, jak vypadá dobrý workflow s agentem a proč tenhle repozitář drží pohromadě díky harnessu, ne díky improvizaci.
 
 ## Repo-Readiness Contrast (talk micro-exercise)
 
@@ -10,66 +10,66 @@ Facilitátor před samotným demo ukazuje krátký kontrast: **stejný prompt, d
 
 ### Two-Folder Setup
 
-Prepare two folders before the workshop:
+Připravte si před workshopem dvě složky:
 
-**Folder A: bare repo**
-- Project brief only (a simple task description)
-- No AGENTS.md
-- No context files, no constraints, no plan
-- Agent receives a simple prompt and drifts — makes plausible but wrong architectural decisions
+**Folder A: holé repo**
+- Jen zadání projektu (krátký popis úkolu)
+- Žádný AGENTS.md
+- Žádné kontextové soubory, žádné mantinely, žádný plán
+- Agent dostane jednoduchý prompt a driftuje — udělá věrohodná, ale špatná architektonická rozhodnutí.
 
-**Folder B: repo with harness**
-- Same project brief
-- AGENTS.md with Goal, Context, Constraints, Done When
-- A short plan or step list
-- Workshop skill installed (`harness skill install`)
-- Agent receives the same simple prompt and produces aligned output
+**Folder B: repo s harnessem**
+- Stejné zadání projektu
+- AGENTS.md s Goal, Context, Constraints, Done When
+- Krátký plán nebo seznam kroků
+- Workshop skill nainstalovaný (`harness skill install`)
+- Agent dostane stejný prompt a vytvoří zarovnaný výstup.
 
 ### Narration flow
 
-1. Show Folder A first. Run a simple prompt. Let the agent drift visibly.
-2. Name what you see: "This is task drift. The agent made plausible decisions, but without constraints it went the wrong way."
-3. Show Folder B. Run the exact same prompt. Let the agent produce aligned output.
-4. Pause. Ask the room: "What changed?"
-5. Let two voices answer before you name it.
-6. Land the thesis: "The prompt didn't change. The repo did."
+1. Nejdřív ukažte Folder A. Spusťte jednoduchý prompt. Nechte agenta viditelně driftovat.
+2. Pojmenujte, co vidíte: „Tohle je **task drift**. Agent udělal věrohodná rozhodnutí, ale bez mantinelů se vydal špatným směrem."
+3. Ukažte Folder B. Spusťte přesně ten stejný prompt. Nechte agenta vytvořit zarovnaný výstup.
+4. Pauza. Zeptejte se místnosti: „Co se změnilo?"
+5. Nechte odpovědět dva hlasy, teprve potom to pojmenujte.
+6. Doručte tezi: „Prompt se nezměnil. Repo ano."
 
 ### Honest failure narration
 
-When showing Variant A, name the failure mode explicitly:
-- "The agent started without constraints and made plausible but wrong architectural decisions."
-- "This is what happens in every repo without AGENTS.md — the agent fills in the blanks with its own assumptions."
-- Use the term **task drift** — it names the pattern precisely.
+Když ukazujete Variantu A, explicitně pojmenujte způsob, jakým to selhalo:
+- „Agent začal bez mantinelů a udělal věrohodná, ale špatná architektonická rozhodnutí."
+- „Tohle se stane v každém repu bez AGENTS.md — agent si doplní mezery vlastními předpoklady."
+- Používejte termín **task drift** — přesně pojmenovává ten vzor.
 
 ### Tool-specific realities to mention during the demo
 
-- Codex lacks rewind/undo — once the agent commits, you need git to go back
-- MCP servers vs. skills: different packaging, same idea (structured capabilities)
-- The principles are tool-agnostic: AGENTS.md works with Codex, Claude Code, Cursor, Copilot
+- Codex nemá rewind/undo — jakmile agent commitne, musíte zpátky přes git.
+- MCP servery vs. skills: jiné balení, stejná myšlenka (strukturované schopnosti).
+- Principy jsou tool-agnostic: AGENTS.md funguje s Codexem, Claude Codem, Cursorem i Copilotem.
 
 ### Open question
 
-Whether `harness` CLI should have a `demo-setup` command that scaffolds both folders automatically.
+Jestli má `harness` CLI mít `demo-setup` příkaz, který obě složky vygeneruje automaticky.
 
 ## Flow (after contrast)
 
-1. Otevři Folder B a ukaž `README`, `AGENTS.md`, rozpad práce do kroků a způsob kontroly změny.
-2. Spusť `/plan`, aby agent rozpadl práci na kroky.
-3. Krátce ukaž, jak se v repu propisuje záměr: kde je mapa, kde je další bezpečný krok a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
-4. Nech agenta implementovat malý kus.
-5. Spusť `/review` a ukaž, že kontrola je součást workflow, ne nouzová brzda na konci.
-6. Krátce ukaž workshop skill:
+1. Otevřete Folder B a ukažte `README`, `AGENTS.md`, rozpad práce do kroků a způsob kontroly změny.
+2. Spusťte `/plan`, aby agent rozpadl práci na kroky.
+3. Krátce ukažte, jak se v repu propisuje záměr: kde je mapa, kde je další bezpečný krok a kde je vidět, že tenhle repozitář vznikal jako continuation-ready systém.
+4. Nechte agenta napsat malý kus.
+5. Spusťte `/review` a ukažte, že kontrola je součást workflow, ne nouzová brzda na konci.
+6. Krátce ukažte workshop skill:
    - jak se instaluje přes `harness skill install`
-   - jak z něj plyne první použitelný krok v Codexu nebo v pi
-7. Zavři to větou:
+   - jak z něj plyne první použitelný krok v Codexu nebo v pi
+7. Zavřete to větou:
    - „Nástroj sám nestačí. Rozhoduje pracovní systém kolem něj."
 
 ## Fallbacky
 
-- Když nefunguje CLI: přejdi na Codex App
-- Když nefunguje App: použij web fallback
-- Když je demo pomalé: měj připravený repo snapshot po každém kroku
-- **If live contrast drags: use pre-prepared screenshots. The contrast matters more than live generation.**
+- Když nefunguje CLI: přejděte na Codex App.
+- Když nefunguje App: použijte web fallback.
+- Když je demo pomalé: mějte připravený repo snapshot po každém kroku.
+- **Pokud živý kontrast vázne: použijte připravené screenshoty. Kontrast je důležitější než živé generování.**
 
 ## Co explicitně neukazovat
 
@@ -80,4 +80,4 @@ Whether `harness` CLI should have a `demo-setup` command that scaffolds both fol
 
 ## Pointa pro místnost
 
-Nejde o to ukázat „kouzelný výsledek". Jde o to ukázat, jak rychle roste kvalita, když přidáme kontext, plán, review a repozitář postavený tak, aby se v něm dalo pokračovat.
+Nejde o to ukázat „zázračný výsledek". Jde o to ukázat, jak rychle roste kvalita, když přidáte kontext, plán, review a repo, ve kterém se dá pokračovat.
