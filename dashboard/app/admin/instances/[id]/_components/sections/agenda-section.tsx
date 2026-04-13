@@ -25,6 +25,7 @@ import {
   renameAgendaItemAction,
   updateAgendaFieldAction,
 } from "../../_actions/operations";
+import { updateSceneFieldAction } from "../../_actions/scenes";
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import type {
@@ -820,8 +821,21 @@ function PresenterSceneSummaryCard({
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="font-medium text-[var(--text-primary)]">{scene.label}</p>
+        <div className="min-w-0 flex-1">
+          <div className="font-medium text-[var(--text-primary)]">
+            <InlineField
+              value={scene.label}
+              fieldName="label"
+              label={copy.sceneFieldLabel}
+              action={updateSceneFieldAction}
+              hiddenFields={{
+                instanceId: activeInstanceId,
+                agendaItemId,
+                sceneId: scene.id,
+                fieldName: "label",
+              }}
+            />
+          </div>
           <p className="text-sm leading-6 text-[var(--text-secondary)]">
             {sceneMeta}
             {isDefault ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
@@ -849,7 +863,21 @@ function PresenterSceneSummaryCard({
           </AdminRouteLink>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{scene.body}</p>
+      <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+        <InlineField
+          value={scene.body ?? ""}
+          fieldName="body"
+          label={copy.sceneFieldBody}
+          mode="textarea"
+          action={updateSceneFieldAction}
+          hiddenFields={{
+            instanceId: activeInstanceId,
+            agendaItemId,
+            sceneId: scene.id,
+            fieldName: "body",
+          }}
+        />
+      </div>
       {sceneBlocks.length > 0 ? (
         <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterRoomBlocksTitle}</p>

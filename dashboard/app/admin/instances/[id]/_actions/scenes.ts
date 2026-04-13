@@ -1,11 +1,13 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
 import type { PresenterBlock, PresenterScene } from "@/lib/workshop-data";
 import {
   addPresenterScene,
+  getWorkshopState,
   movePresenterScene,
   removePresenterScene,
   setDefaultPresenterScene,
@@ -174,4 +176,50 @@ export async function removePresenterSceneAction(formData: FormData) {
     await removePresenterScene(agendaItemId, sceneId, instanceId);
   }
   redirect(buildAdminHref({ lang, section, instanceId, agendaItemId }));
+}
+
+/**
+ * Narrow inline-field updater for presenter scenes. Allowlists only
+ * the short text fields that the agenda surface's inline-edit affordances
+ * can target safely: label, title, body. Reuses updatePresenterScene
+ * after patching the single field onto the current scene shape, so
+ * scene normalization and block handling are untouched.
+ */
+type UpdatableSceneField = "label" | "title" | "body";
+const UPDATABLE_SCENE_FIELDS: readonly UpdatableSceneField[] = ["label", "title", "body"];
+
+export async function updateSceneFieldAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const agendaItemId = String(formData.get("agendaItemId") ?? "");
+  const sceneId = String(formData.get("sceneId") ?? "");
+  const fieldName = String(formData.get("fieldName") ?? "");
+  const fieldValue = String(formData.get(fieldName) ?? "").trim();
+
+  if (!instanceId || !agendaItemId || !sceneId || !fieldName || !fieldValue) {
+    return;
+  }
+  if (!UPDATABLE_SCENE_FIELDS.includes(fieldName as UpdatableSceneField)) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  const state = await getWorkshopState(instanceId);
+  const agendaItem = state.agenda.find((item) => item.id === agendaItemId);
+  const scene = agendaItem?.presenterScenes.find((candidate) => candidate.id === sceneId);
+  if (!agendaItem || !scene) {
+    return;
+  }
+
+  await updatePresenterScene(
+    agendaItemId,
+    sceneId,
+    {
+      label: fieldName === "label" ? fieldValue : scene.label,
+      sceneType: scene.sceneType,
+      title: fieldName === "title" ? fieldValue : scene.title ?? undefined,
+      body: fieldName === "body" ? fieldValue : scene.body ?? undefined,
+    },
+    instanceId,
+  );
+  revalidatePath(`/admin/instances/${instanceId}`);
 }
