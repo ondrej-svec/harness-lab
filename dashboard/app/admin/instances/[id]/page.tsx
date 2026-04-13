@@ -634,6 +634,15 @@ async function resetWorkshopAction(formData: FormData) {
   "use server";
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
+  // Confirmation gate — the reset is destructive, so the facilitator
+  // must type the workshop instance id to proceed. Mirrors the Stripe /
+  // GitHub "type the repo name to delete" pattern. Without this, the
+  // previous behavior was a single unguarded click. See the One Canvas
+  // plan, Q6 / Phase 4 confirmation dialog requirement.
+  const confirmation = String(formData.get("confirmation") ?? "").trim();
+  if (confirmation !== instanceId) {
+    redirect(buildAdminHref({ lang, section, instanceId }) + "&resetError=confirm");
+  }
   const templateId = workshopTemplates[0]?.id ?? "";
   if (templateId) {
     await resetWorkshopState(templateId, instanceId);
@@ -1933,9 +1942,30 @@ export default async function AdminPage({
                       {copy.resetBlueprintSummary}
                     </p>
                     <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.resetHint}</p>
-                    <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
-                      {copy.resetButton}
-                    </AdminSubmitButton>
+                    <details className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+                      <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
+                        {copy.resetButton}
+                      </summary>
+                      <div className="mt-4 space-y-3">
+                        <p className="text-xs leading-5 text-[var(--text-muted)]">
+                          {lang === "en"
+                            ? `Type the instance id "${activeInstanceId}" to confirm.`
+                            : `Pro potvrzení napište id instance "${activeInstanceId}".`}
+                        </p>
+                        <input
+                          type="text"
+                          name="confirmation"
+                          required
+                          autoComplete="off"
+                          aria-label={lang === "en" ? "confirmation" : "potvrzení"}
+                          placeholder={activeInstanceId}
+                          className="w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-sm"
+                        />
+                        <AdminSubmitButton className={`${adminDangerButtonClassName} w-full`}>
+                          {lang === "en" ? "Reset workshop" : "Resetovat workshop"}
+                        </AdminSubmitButton>
+                      </div>
+                    </details>
                   </form>
 
                   <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
