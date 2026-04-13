@@ -17,6 +17,7 @@ phase_commits:
   phase_7: [3a4457c]
   playwright_walkthrough: [dcdd22f]
   followup_session_2: [3e0f30e, 268e6ef, 3970a30, dc6a622, aede68d, e04f650, 27d33f7]
+  followup_session_3: [92cf436, 038a3b7]
 ---
 
 # refactor: One Canvas — dashboard motion + admin rework
@@ -546,7 +547,7 @@ If picking this up from a cold start, read in this order:
 4. **`docs/plans/2026-04-13-one-canvas-url-contract.md`** — URL contract for deep links
 5. **`docs/plans/2026-04-13-one-canvas-e2e-migration-notes.md`** — E2E test adaptation decisions
 
-Most likely next tasks: (a) Agenda section extraction, (b) inline more agenda fields (time, goal) using the existing `updateAgendaFieldAction` allowlist, (c) scene label/body inline editing. Pattern for all three is well-established — see commits `dc6a622` (Signals) or `aede68d` (Settings) as templates.
+Most likely next tasks: (a) Agenda section JSX extraction — blocked by tight coupling to ~6 internal helpers (`HandoffMomentCard`, `TimelineRow`, `PresenterSceneSummaryCard`, `AgendaItemDetail`, `ControlRoomPersistentSummary`, `AdminActionStateFields`); several are used outside the agenda block, so a clean move needs a shared helper file first. Session 3 took the smaller wins instead: agenda actions → `_actions/agenda.ts` (`92cf436`, −103 lines from page.tsx) and inline `time` field in the detail header (`038a3b7`). (b) Scene label/body inline editing — unblocked and next. (c) Full JSX extraction — schedule once the shared helpers are lifted.
 
 ## Phased Implementation
 
