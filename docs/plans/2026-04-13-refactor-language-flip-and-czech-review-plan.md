@@ -87,12 +87,12 @@ Tasks are dependency-ordered within phases. Phases have hard pause points — do
 
 ### Phase B — Close translation gaps
 
-- [ ] **B1. Create EN canonical for `content/facilitation/master-guide.md`.** This is the largest CS-only file (~340 lines). Translate to natural English, preserving canonical vocabulary and the structure exactly. Output goes to `content/facilitation/master-guide.md` as a new file *next to* the CS version (do not flip yet — that's Phase E). The CS version stays at the root for now; the new EN goes to `locales/en/master-guide.md` temporarily until the flip.
-- [ ] **B2. Create EN canonical for `content/facilitation/codex-setup-verification.md`.** Same pattern — EN in `locales/en/`.
-- [ ] **B3. Create EN canonical for `content/challenge-cards/deck.md`.** Translate the card deck. Preserve all canonical habit tag names exactly (they're already English in the CS file). Output: `content/challenge-cards/locales/en/deck.md`.
-- [ ] **B4. Create EN canonical for `content/challenge-cards/print-spec.md`.** Output: `content/challenge-cards/locales/en/print-spec.md`.
-- [ ] **B5. Create EN canonical for `content/talks/codex-demo-script.md`.** This file is mixed — most prose is Czech, embedded blocks are English. Translate the Czech wrapping and let the embedded English stay. Output: `content/talks/locales/en/codex-demo-script.md`.
-- [ ] **B6. Create CS translation for `materials/coaching-codex.md`.** This is the EN-only file (rewritten in this session as the pocket coaching card). Translate to Czech. Use canonical vocabulary verbatim. Output: `materials/locales/cs/coaching-codex.md` (note the new `locales/cs/` directory).
+- [x] **B1. Create EN canonical for `content/facilitation/master-guide.md`.** This is the largest CS-only file (~340 lines). Translate to natural English, preserving canonical vocabulary and the structure exactly. Output goes to `content/facilitation/master-guide.md` as a new file *next to* the CS version (do not flip yet — that's Phase E). The CS version stays at the root for now; the new EN goes to `locales/en/master-guide.md` temporarily until the flip.
+- [x] **B2. Create EN canonical for `content/facilitation/codex-setup-verification.md`.** Same pattern — EN in `locales/en/`.
+- [x] **B3. SKIPPED — EN already exists.** Real translation present at `content/challenge-cards/locales/en/deck.md` (60 lines, not a stub). C-polish in C-phase, D-review CS in D-phase.
+- [x] **B4. Create EN canonical for `content/challenge-cards/print-spec.md`.** Output: `content/challenge-cards/locales/en/print-spec.md`.
+- [x] **B5. SKIPPED — EN already exists.** Real translation present at `content/talks/locales/en/codex-demo-script.md` (87 lines, not a stub). C-polish in C-phase, D-review CS in D-phase.
+- [x] **B6. Create CS translation for `materials/coaching-codex.md`.** This is the EN-only file (rewritten in this session as the pocket coaching card). Translate to Czech. Use canonical vocabulary verbatim. Output: `materials/locales/cs/coaching-codex.md` (note the new `locales/cs/` directory).
 - [ ] **B7. Pause and smoke-check the new translations.** Read each B1–B6 output and confirm the basic shape is right before moving to canonical polish. **Phase C does not start until this check is done.**
 
 ### Phase C — English canonical polish
