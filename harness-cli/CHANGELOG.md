@@ -13,6 +13,52 @@ and the project follows semantic versioning.
   `set-members`, and `set-name`. Sent as authenticated PATCH requests against
   `/api/event-context/teams/<teamId>`. Changelog back-filled in 0.7.0.
 
+## 0.7.1 — 2026-04-13
+
+### Changed
+
+- **Workshop bundle content refreshed with the 2026-04-13 Czech review pass.**
+  The bundled `workshop-content/agenda.json`, the five project briefs, and the
+  generated per-language views all reflect the Mode A editorial review:
+
+  - `ty` → `vy` normalisation across ~14 scenes and every project brief
+    `firstAgentPrompt`, per the `content/style-guide.md` mandate that all
+    visible surfaces use lowercase `vy` (peer tone). Scenes touched include
+    all of Phase 1 Opening, the Phase 5 / Phase 9 intermezzos, Phase 7
+    rotation, Phase 8 Build 2 start, and the entire Phase 11 Reveal arc.
+  - Four untranslated English eyebrows in the opening phase translated to
+    Czech: "The day has one arc" → "Den má jeden oblouk", "Today's schedule"
+    → "Dnešní rozvrh", "Your team" → "Váš tým", "Next" → "A teď".
+  - "Monday" framing removed from visible surfaces. The hero bodies, callouts
+    and closing scenes now use "the next day" / "druhý den" / "zítra ráno"
+    instead of assuming participants come back on Monday. "Editor" replaced
+    with "coding agent" in the two scenes where the workshop's mental model
+    specifically points at the agent, not a text editor.
+  - Facilitator runner steps tightened where `Odpočítej` was masking a
+    linguistic bug — the mechanic is distribution-by-counting, which is
+    `Rozpočítejte se` in Czech, not `Odpočítejte se` (countdown).
+  - Several calques fixed: "v obědě" → "přes oběd", "mechanismus" → "postup",
+    "na tvém stroji" → "na vašem počítači", "Nevybírat není varianta" →
+    "Musíte si vybrat", "v rukou" → "u sebe", "Tým máš na X" → "Na X máte
+    svůj tým".
+  - Project briefs: "rubric" → "hodnoticí schéma" as a Czech-native term
+    (bundled along with the `ty`→`vy` pass on all five briefs).
+
+- **`demo-setup` unwriteable-target test is now cross-platform.** Replaced
+  the Unix-only `/dev/null/impossible` trick with a mkdir-under-a-regular-file
+  pattern. The test now fails identically on Unix and Windows when the
+  target path cannot be created.
+
+### Notes
+
+- Every agenda scene still has `cs_reviewed: false` — the Mode A fixes are
+  mechanical editorial corrections (voice doctrine, reject list, style guide
+  compliance). The native-speaker aesthetic review that flips `cs_reviewed`
+  true is a separate pass, tracked in
+  `docs/reviews/workshop-content/2026-04-13-czech-mode-a-scene-cards.md`.
+- No CLI code changes between 0.7.0 and 0.7.1; this is a content-only
+  republish so that newly-installed CLIs ship with the reviewed agenda.
+
 ## 0.7.0 — 2026-04-13
 
 ### Added
