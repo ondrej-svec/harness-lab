@@ -1,108 +1,111 @@
 # Participant Resource Kit
 
-Krátká sada artefaktů, které si můžete odnést z Harness Lab do vlastního projektu.
+Post-workshop reference — a short set of artifacts you can take from Harness Lab into your own project: links, templates, and the five working habits. For in-session coaching moves (what to say when the agent starts slipping), reach for [`coaching-codex.md`](coaching-codex.md).
 
-## 1. Začněte `AGENTS.md`
+The goal of this kit is to help you build your own **harness** — the repo, workflow, and context that **carries the next move** without you standing over it.
 
-Použijte tento základ:
+## 1. Start with `AGENTS.md`
+
+Use this baseline:
 - `goal`
 - `context`
 - `constraints`
 - `done when`
 
-Výchozí šablona:
+Default template:
 - [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
 
-## 2. Přidejte jeden zdroj důvěry
+## 2. Add one trust anchor
 
-Vyberte si alespoň jeden:
-- build/test příkazy
-- spustitelné ověření (unit test nebo tracer bullet)
-- review checklist
+Choose at least one:
+- build/test commands
+- an executable check — a tracer bullet, an end-to-end check, a holistic smoke test. **Holistic beats granular.**
+- a review checklist
 
-Když agent dělá větší kus práce, nestačí „rychle jsem to projel očima“.
+When the agent handles a larger slice of work, “I skimmed it quickly” is not enough.
 
-Checklist pro handoff:
+Checklist for handoff:
 - [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
 
-## 3. Používejte malý workflow, ne chaos
+## 3. Use a small workflow, not chaos
 
-Doporučený základ:
-- `workshop` pro orientaci a další bezpečný krok
-- `/brainstorm`, když ještě není jasný scope nebo první slice
-- `/plan` před větší implementací
-- `/work` nebo jiný úzký implementační loop, když už víte co stavíte
-- test nebo jiné spustitelné ověření před důležitou změnou
-- `/review` po větším kusu práce
-- `/compound` nebo krátká poznámka zapsaná přímo v repu, když objev udělá další práci levnější
-- průběžný úklid: build/test příkazy, omezení a handoff poznámky přesouvejte z chatu do repa
+Recommended baseline:
+- `workshop` for orientation and the next safe move
+- `/brainstorm` when the scope or first slice is still unclear
+- `/plan` before larger implementation
+- `/work` or another narrow implementation loop once you know what you are building
+- a test or another executable check before an important change
+- `/review` after a larger slice of work
+- `/compound` or a short repo-native note when a discovery makes future work cheaper
+- small ongoing cleanup: move build/test commands, constraints, and handoff notes from chat into the repo
 
-## 4. Přesuňte jedno pravidlo z chatu do repa
+## 4. Move one rule from chat into the repo
 
-Typické kandidáty:
-- build/test příkazy
-- bezpečnostní omezení
-- definice hotovo
-- pravidlo pro handoff
+Typical candidates:
+- build/test commands
+- safety constraints
+- the definition of done
+- a handoff rule
 
-## 5. Pro UI práci držte bezpečný postup
+## 5. Keep UI work on a safe track
 
-Výchozí pattern:
+Default pattern:
 - `agent exploration`
 - `Playwright regression`
 - `human review`
 
-Nenechávejte model jako výchozí volbu ovládat váš běžný přihlášený browser bez sandboxu a kontroly.
+Do not let the model drive your normal signed-in browser by default without sandboxing and control.
 
-## 6. Co si projít po workshopu
+## 6. What to revisit after the workshop
 
 - [`workshop-skill/reference.md`](../workshop-skill/reference.md)
 - [`workshop-skill/recap.md`](../workshop-skill/recap.md)
-- [`docs/learner-reference-gallery.md`](../docs/learner-reference-gallery.md)
-- [`content/codex-craft.md`](../content/codex-craft.md) — Codex-specific craft (approval módy, sandboxing, long-horizon drift, před/po příklad, failure recovery)
-- [`materials/coaching-codex.md`](coaching-codex.md) — jednostránkový pocket card konverzačních tahů pro coaching agenta
+- [`docs/locales/en/learner-reference-gallery.md`](../docs/locales/en/learner-reference-gallery.md)
+- [`content/codex-craft.md`](../content/codex-craft.md) — Codex-specific craft: approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough
+- [`materials/coaching-codex.md`](coaching-codex.md) — the one-page pocket card of conversational moves for coaching an agent
 
-Poznámka:
-- `workshop` skill je garantovaný výchozí nástroj workshopu
-- další workflow skills a veřejné toolkity berte jako volitelné akcelerátory, ne povinný setup
+Note:
+- the `workshop` skill is the guaranteed workshop default
+- additional workflow skills and public toolkits are optional accelerators, not required setup
 
-## Kdy se návyky spustí
+## When the habits fire — five habits, five triggers
 
-Každý z pěti pracovních návyků má svůj spouštěč — moment ve vašem běžném pracovním týdnu, kdy se návyk aktivuje:
+Each of the five working habits has its own trigger — a moment in your ordinary working day when the habit activates. These are the same tags you saw on the challenge cards in the repo.
 
-- Když **otevíráte nový repo, nový úkol nebo novou agent session** → Map before motion (udělám z repa mapu, než začnu generovat)
-- Když **zavíráte chat, končíte hovor nebo pairing kde padlo rozhodnutí** → If it is not in the repo, it does not exist (zapíšu rozhodnutí do repa)
-- Když **cítím dost jistoty na to, abych šel dál** → Verification is the trust boundary (ta jistota je spouštěč k ověření, ne k přeskočení)
-- Když **chystám úkol pro agenta** → Boundaries create speed (napíšu omezení dřív než prompt)
-- Když **se stejná připomínka, třecí plocha nebo ruční krok objeví podruhé** → Cleanup is part of build (proměním to v check, template nebo pravidlo)
-- Když **se stejný problém opakuje** → Fix the system, not just the symptom (neopravím výstup — opravím systém)
+- When **you open a new repo, a new task, or a new agent session** → **Map before motion** — you make the repo a place someone can navigate before you start generating.
+- When **the agent is about to get a task and you're drafting a prompt** → **Boundaries create speed** — you write the constraints before the prompt. Boundaries are why work goes fast, not why it goes slow.
+- When **you feel confident enough to move on** → **Verification is the trust boundary** — that confidence is your cue to verify, not to skip. Holistic over granular: prove the whole thing works, not that one function returned 4.
+- When **you close a chat, end a call, or finish a pairing where a decision landed** → **If it is not in the repo, it does not exist** — write the decision into the repo before it evaporates by tomorrow.
+- When **the same friction, manual step, or small annoyance shows up twice** → **Cleanup is part of build** — turn it into a check, template, or rule on the spot, not "later".
 
-## Výzva na příští týden
+## Next-time challenge
 
-1. Přidejte `AGENTS.md` do jednoho reálného projektu.
-2. Přesuňte jedno trvalé pravidlo z promptu do repa.
-3. Přidejte jeden review nebo handoff checklist.
+The next time you open a coding agent:
 
-## Minimum viable harness pro váš tým
+1. Add `AGENTS.md` to one real project — goal, context, constraints, done when. A map, not a warehouse.
+2. Move one durable rule from a prompt into the repo. If you've said it out loud twice, it belongs there.
+3. Add one review or handoff checklist. The smallest functional version is enough.
 
-Nemusíte tým přesvědčovat o „harness engineeringu." Stačí ukázat užitečný `AGENTS.md`, který ušetřil 20 minut onboardingu.
+## Minimum viable harness for your team
 
-Nejmenší verze, která přežije skeptické code review:
+You don't have to convince your team about "harness engineering". Show them a useful `AGENTS.md` that saved twenty minutes of onboarding.
 
-1. **Jeden `AGENTS.md`** — goal, build/test příkazy, jedno explicitní omezení. Nic víc.
-2. **Jeden spustitelný check** — unit test, tracer bullet, nebo jednoduchý smoke test.
+The smallest version that survives a skeptical code review:
 
-Když se někdo zeptá „proč to děláme?“, odpověď je: „Aby se další člověk nemusel ptát tebe.“
+1. **One `AGENTS.md`** — goal, build/test commands, one explicit constraint. **A map, not a warehouse.** Nothing more.
+2. **One executable check** — a tracer bullet or a simple end-to-end smoke test that proves the whole thing holds together. Not one function.
 
-Měsíční rytmus: každý měsíc si přečtěte svůj `AGENTS.md` skeptickým okem. Smažte, co už není nosné. Přidejte, co tým říká nahlas podruhé.
+When someone asks "why are we doing this?", the answer is: "So the next person doesn't have to ask you."
 
-## Co číst po workshopu, abyste zůstali aktuální
+Monthly rhythm: once a month, read your `AGENTS.md` with a skeptical eye. Delete what is no longer load-bearing. Add what the team has said out loud for the second time.
 
-Codex a další kódovací agenti se mění měsíčně. Tenhle kit není zmrazená reference — je to startovní harness pro vaši vlastní čtecí praxi.
+## What to read after the workshop to stay current
 
-- **Codex CLI release notes** — čtěte při každém vydání. Změny v approval módech a sandboxingu jsou ty nejdůležitější.
-- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — praktický zdroj o Codexu, Claude Code a dalších agentech. Píše z vlastní každodenní praxe.
-- **OpenAI Harness Engineering articles** — viz `docs/learner-reference-gallery.md` pro odkazy.
-- **Anthropic engineering blog** — když pracujete s Claude Code, sledujte oficiální posts.
-- **Vlastní `AGENTS.md` jako živý dokument** — každé čtvrtletí si je znovu přečtěte skeptickým okem. Smažte, co už není nosné. Jednoduchost je součást harnessu.
-- **Vlastní `docs/solutions/` nebo runbook** — když narazíte na failure mode ve své práci, zapište si ho. Váš tým se má učit ze svých vlastních chyb, ne jen z tohoto kitu.
+Codex and other coding agents ship new capabilities monthly. This kit is not a frozen reference — it is a starting harness for your own reading practice.
+
+- **Codex CLI release notes** — read them on every release. The approval-mode and sandboxing changes are the ones that matter most.
+- **Simon Willison's blog** ([simonwillison.net](https://simonwillison.net/)) — one of the densest practical sources on Codex, Claude Code, and other coding agents. He works with these tools daily and writes it down.
+- **OpenAI Harness Engineering articles** — see `docs/learner-reference-gallery.md` for links.
+- **Anthropic engineering blog** — if you use Claude Code, follow the official posts.
+- **Your own `AGENTS.md` as a living document** — re-read them every quarter with a skeptical eye. Delete anything that is no longer load-bearing. Simplicity is part of the harness.
+- **Your own `docs/solutions/` or runbook** — when you find a failure mode in your own work, write it down. Your team should learn from your team's mistakes, not just from this kit.

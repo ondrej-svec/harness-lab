@@ -1,28 +1,28 @@
 # Challenge Cards Print Spec
 
-## Formát
+## Format
 
-- velikost: A6 nebo čtvrtina A4
-- oboustranný tisk není potřeba
-- velký nadpis, 1 krátký popis, 1 ikonický štítek kategorie
+- size: A6 or a quarter of A4
+- double-sided printing isn't required
+- large title, 1 short description, 1 category label
 
-## Barevné rozlišení
+## Color coding
 
-- Context Engineering: písková / žlutá
-- Workflow: modrozelená
-- Advanced: cihlová
-- Meta: šedá
+- Context Engineering: sand / yellow
+- Workflow: teal
+- Advanced: brick
+- Meta: gray
 
 ## Layout
 
-1. nahoře název karty
-2. pod ním kategorie
-3. 2–3 věty zadání
-4. dole malý štítek:
-   - `Před obědem`
-   - `Po rotaci`
-   - `Kdykoliv`
+1. card title at the top
+2. category underneath
+3. 2–3 sentences of the task
+4. small label at the bottom:
+   - `Before lunch`
+   - `After rotation`
+   - `Anytime`
 
-## Tisková poznámka
+## Print note
 
-Pokud se tisk nestihne, primární kanál je dashboard a `/workshop challenges`. Tisk je bonus, ne závislost workshopu.
+If printing doesn't happen in time, the primary channel is the dashboard and `/workshop challenges`. Print is a bonus, not a dependency for the workshop.

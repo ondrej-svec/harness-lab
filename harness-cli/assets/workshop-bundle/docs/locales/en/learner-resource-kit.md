@@ -56,7 +56,7 @@ Why it belongs here:
 ### 4. Challenge cards
 
 Recommended subset:
-- [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/locales/en/deck.md)
+- [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/deck.md)
 
 Use:
 - as small interventions during the workshop
@@ -66,7 +66,7 @@ Use:
 
 Post-workshop reinforcement:
 - [`workshop-skill/follow-up-package.md`](../../../workshop-skill/follow-up-package.md)
-- [`materials/locales/en/participant-resource-kit.md`](../../../materials/locales/en/participant-resource-kit.md)
+- [`materials/locales/en/participant-resource-kit.md`](../../../materials/participant-resource-kit.md)
 
 Why it belongs here:
 - it turns the workshop from a one-day event into a repeatable prompt for behavior change
@@ -84,20 +84,20 @@ Use:
 
 Use:
 - [`workshop-skill/template-agents.md`](../../../workshop-skill/template-agents.md)
-- the `Context Engineering` cards in [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/locales/en/deck.md)
+- the `Context Engineering` cards in [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/deck.md)
 
 ### During the continuation shift
 
 Use:
 - [`workshop-skill/analyze-checklist.md`](../../../workshop-skill/analyze-checklist.md)
-- the `Workflow` cards in [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/locales/en/deck.md)
+- the `Workflow` cards in [`content/challenge-cards/locales/en/deck.md`](../../../content/challenge-cards/deck.md)
 
 ### After the workshop
 
 Use:
 - [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
 - [`workshop-skill/follow-up-package.md`](../../../workshop-skill/follow-up-package.md)
-- [`materials/locales/en/participant-resource-kit.md`](../../../materials/locales/en/participant-resource-kit.md)
+- [`materials/locales/en/participant-resource-kit.md`](../../../materials/participant-resource-kit.md)
 - [`learner-reference-gallery.md`](learner-reference-gallery.md)
 
 ## What to carry into a real project

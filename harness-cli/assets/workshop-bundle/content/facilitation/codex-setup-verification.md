@@ -1,54 +1,54 @@
 # Codex Setup Verification
 
-## Cíl
+## Goal
 
-Do 10:30 musí mít každý účastník jednu funkční cestu:
+By 10:30, every participant needs one working path:
 
 - `pi`
 - `Codex CLI`
 - `Codex App`
-- nebo web fallback
+- or the web fallback
 
-Cíl není perfektní instalace. Cíl je dostat každého co nejdřív do práce s agentem.
+The goal isn't a perfect install. The goal is to get everyone into agent work as early as possible.
 
-## Rychlý start
+## Quick start
 
 ### macOS / Linux
 
-1. Otevřete terminál.
-2. Přihlaste se do Codex prostředí podle firemního flow.
-3. Otevřete repozitář.
-4. Pošlete první prompt.
+1. Open a terminal.
+2. Sign into the Codex environment following the company flow.
+3. Open the repository.
+4. Send the first prompt.
 
 ### pi
 
-1. Nainstalujte `pi`:
+1. Install `pi`:
    `npm install -g @mariozechner/pi-coding-agent`
-2. Přihlaste provider nebo účet, který chcete používat.
-3. Otevřete repozitář.
-4. Spusťte `pi`.
-5. Načtěte workshop skill přes `/skill:workshop` a řekněte si o další krok.
+2. Sign in with the provider or account you want to use.
+3. Open the repository.
+4. Run `pi`.
+5. Load the workshop skill with `/skill:workshop` and ask for the next step.
 
 ### Windows / macOS
 
-1. Otevřete `Codex App`.
-2. Přihlaste se.
-3. Otevřete workshop repo nebo týmový projekt.
-4. Pošlete první prompt.
+1. Open the `Codex App`.
+2. Sign in.
+3. Open the workshop repo or the team project.
+4. Send the first prompt.
 
 ### Web fallback
 
-Použijte ho ve chvíli, kdy vás blokuje instalace, firemní politika nebo autentizace. Nečekejte na ideální setup, když už můžete pracovat.
+Use this the moment installation, company policy, or authentication is blocking you. Don't wait for the ideal setup when you can already be working.
 
 ## Troubleshooting checklist
 
-- Nejde login → přejděte na `App` nebo web fallback a pokračujte.
-- Nejde CLI instalace → nenechte se blokovat déle než 7 minut.
-- Nejde otevřít repo → spárujte se s někým od stolu a vraťte se k tomu později.
-- Nevíte, co je další krok → v Codexu použijte `$workshop setup`. V pi načtěte `/skill:workshop` a řekněte si o setup pomoc.
+- Login not working → switch to the `App` or the web fallback and keep going.
+- CLI install failing → don't let it block you for more than 7 minutes.
+- Can't open the repo → pair up with someone at the table and come back to it later.
+- Don't know the next step → in Codex, use `$workshop setup`. In pi, load `/skill:workshop` and ask for setup help.
 
-## Facilitátorské rozhodnutí
+## Facilitator decisions
 
-- 7 minut blokace → fallback nebo pairing.
-- 10 minut chaosu → facilitátor dává jeden konkrétní další krok.
-- Jakmile má člověk jednu funkční cestu, setup je pro tuto chvíli dost dobrý.
+- 7 minutes blocked → fallback or pairing.
+- 10 minutes of chaos → the facilitator gives one concrete next step.
+- Once a person has one working path, the setup is good enough for now.

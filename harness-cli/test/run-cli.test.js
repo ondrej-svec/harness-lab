@@ -1130,11 +1130,17 @@ test("skill install creates a portable .agents skill bundle in the current repo"
     /ENOENT/,
     "workshop-skill/locales/ must not exist after the D-FU1 migration",
   );
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "locales", "en", "deck.md"));
+  // Post-2026-04-13 layout flip: English canonical lives at the root, Czech
+  // translations live under locales/cs/. See
+  // docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md
+  // and docs/workshop-content-language-architecture.md.
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "devtoolbox-cli.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "cs", "devtoolbox-cli.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "deck.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "locales", "cs", "deck.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-reference-gallery.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "locales", "en", "participant-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "locales", "cs", "participant-resource-kit.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "learner-reference-gallery.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "participant-resource-kit.md"));
@@ -1173,7 +1179,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   // canonical workshop-skill/reference.md, checked above.
   assert.match(installedReference, /4 working defaults for today/);
   const installedEnglishBrief = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "en", "devtoolbox-cli.md"),
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "devtoolbox-cli.md"),
     "utf8",
   );
   assert.match(installedEnglishBrief, /Every team accumulates small one-off scripts/);

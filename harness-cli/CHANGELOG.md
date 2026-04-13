@@ -13,6 +13,40 @@ and the project follows semantic versioning.
   `set-members`, and `set-name`. Sent as authenticated PATCH requests against
   `/api/event-context/teams/<teamId>`. Changelog back-filled in 0.7.0.
 
+## 0.7.2 — 2026-04-13
+
+### Changed
+
+- **Workshop content layout flipped: English canonical at the root, Czech in `locales/cs/`.**
+  Under `docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md`.
+  12 bilingual file pairs moved via `git mv` (history preserved): talks,
+  5 project briefs, materials kit, facilitation master-guide, codex-setup-verification,
+  challenge-cards deck and print-spec. `materials/coaching-codex.md` gained a Czech
+  translation at `materials/locales/cs/coaching-codex.md`. The new convention is
+  documented in `docs/workshop-content-language-architecture.md` under
+  "Directory convention — enforced 2026-04-13".
+- **Full Czech review pass.** Three agenda batches (28 scenes) + four standalone
+  file reviews covering the talks, briefs, materials, facilitation, and
+  challenge cards. Seven review memos under `docs/reviews/workshop-content/2026-04-13-czech-*.md`.
+  ~115 fixes applied across the corpus: protected phrase `Co není v repu,
+  neexistuje` restored in `talk-how-to-build`, `§5 v pondělí` day-anchor
+  violations removed from the reveal facilitator runner, `build-2-second-push`
+  facilitatorRunner translated from English to Czech (was a translation gap),
+  gender error `tyhle čtyři slova` → `tahla čtyři slova`, full `ty` → `vy`
+  sweep across every phase-level facilitatorRunner block, semantic drift
+  corrections (`ztracené řešení` → `řešením, které existuje jen v hlavách`,
+  `ladění` → `shodněte se`, master-guide line 117 context/prompt reversal).
+  Every agenda scene and phase now reads `cs_reviewed: true`.
+- **`check-tier2-sync.ts` and `generate-briefs-inventory.ts` inverted** to
+  walk `locales/cs/` for Czech files and treat the root as English canonical.
+- **`.copy-editor.lock.json` re-segmented** for all 14 moved/new files;
+  `reviewedBy` stamped `ondrej@2026-04-13-refactor-language-flip`.
+- **`.copy-editor.yaml` include list swapped** from root markdown globs to
+  `locales/cs/**/*.md` globs; stale `locales/en/**` exclude removed.
+- **Workshop bundle file list updated** in `harness-cli/src/workshop-bundle.js`
+  to pull Czech files from `locales/cs/` instead of the now-missing
+  `locales/en/` paths. Test suite updated to assert the new layout.
+
 ## 0.7.1 — 2026-04-13
 
 ### Changed

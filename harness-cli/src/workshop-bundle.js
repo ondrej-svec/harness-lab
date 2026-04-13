@@ -16,6 +16,10 @@ const DIRECTORY_COPIES = [
   ["workshop-blueprint", "workshop-blueprint"],
 ];
 
+// Post-2026-04-13 layout: English is canonical at the root, Czech is the
+// reviewed delivery locale under `locales/cs/`. This FILE_COPIES list
+// reflects that convention — no `locales/en/` references remain for the
+// files that were flipped in the language-architecture refactor.
 const FILE_COPIES = [
   ["workshop-skill/SKILL.md", "SKILL.md"],
   ["docs/workshop-event-context-contract.md", "docs/workshop-event-context-contract.md"],
@@ -25,8 +29,9 @@ const FILE_COPIES = [
   ["docs/learner-reference-gallery.md", "docs/learner-reference-gallery.md"],
   ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
-  ["materials/locales/en/participant-resource-kit.md", "materials/locales/en/participant-resource-kit.md"],
+  ["materials/locales/cs/participant-resource-kit.md", "materials/locales/cs/participant-resource-kit.md"],
   ["materials/coaching-codex.md", "materials/coaching-codex.md"],
+  ["materials/locales/cs/coaching-codex.md", "materials/locales/cs/coaching-codex.md"],
 ];
 
 // Files that live inside DIRECTORY_COPIES source trees but must not ship to

@@ -1,6 +1,6 @@
 # Participant Resource Kit
 
-Post-workshop reference — a short set of artifacts you can take from Harness Lab into your own project: links, templates, and the five working habits. For in-session coaching moves (what to say when the agent starts slipping), reach for [`coaching-codex.md`](../../coaching-codex.md).
+Post-workshop reference — a short set of artifacts you can take from Harness Lab into your own project: links, templates, and the five working habits. For in-session coaching moves (what to say when the agent starts slipping), reach for [`coaching-codex.md`](coaching-codex.md).
 
 The goal of this kit is to help you build your own **harness** — the repo, workflow, and context that **carries the next move** without you standing over it.
 
@@ -13,7 +13,7 @@ Use this baseline:
 - `done when`
 
 Default template:
-- [`workshop-skill/template-agents.md`](../../../workshop-skill/template-agents.md)
+- [`workshop-skill/template-agents.md`](../workshop-skill/template-agents.md)
 
 ## 2. Add one trust anchor
 
@@ -25,7 +25,7 @@ Choose at least one:
 When the agent handles a larger slice of work, “I skimmed it quickly” is not enough.
 
 Checklist for handoff:
-- [`workshop-skill/analyze-checklist.md`](../../../workshop-skill/analyze-checklist.md)
+- [`workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md)
 
 ## 3. Use a small workflow, not chaos
 
@@ -58,11 +58,11 @@ Do not let the model drive your normal signed-in browser by default without sand
 
 ## 6. What to revisit after the workshop
 
-- [`workshop-skill/reference.md`](../../../workshop-skill/reference.md)
-- [`workshop-skill/recap.md`](../../../workshop-skill/recap.md)
-- [`docs/locales/en/learner-reference-gallery.md`](../../../docs/locales/en/learner-reference-gallery.md)
-- [`content/codex-craft.md`](../../../content/codex-craft.md) — Codex-specific craft: approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough
-- [`materials/coaching-codex.md`](../../coaching-codex.md) — the one-page pocket card of conversational moves for coaching an agent
+- [`workshop-skill/reference.md`](../workshop-skill/reference.md)
+- [`workshop-skill/recap.md`](../workshop-skill/recap.md)
+- [`docs/locales/en/learner-reference-gallery.md`](../docs/locales/en/learner-reference-gallery.md)
+- [`content/codex-craft.md`](../content/codex-craft.md) — Codex-specific craft: approval modes, sandboxing, long-horizon drift, a representative before/after prompt pair, and a failure-recovery walkthrough
+- [`materials/coaching-codex.md`](coaching-codex.md) — the one-page pocket card of conversational moves for coaching an agent
 
 Note:
 - the `workshop` skill is the guaranteed workshop default

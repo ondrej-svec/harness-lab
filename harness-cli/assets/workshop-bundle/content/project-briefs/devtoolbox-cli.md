@@ -1,33 +1,31 @@
 # DevToolbox CLI
 
-## Problém
+## Problem
 
-Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.
-
-Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil předání na jiný tým a nerozsypal se po přidání dalšího commandu.
+Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.
 
 ## User stories
 
-- Jako vývojář chci jedním příkazem převést log nebo JSON do čitelné podoby.
-- Jako vývojář chci rychle dohledat podezřelé commity, větve nebo změny bez ručního skládání git příkazů.
-- Jako tým chci mít příkazy i způsob práce popsané tak, aby po rotaci mohl bez zmatku pokračovat někdo jiný.
+- As a developer, I want to turn a log or JSON blob into a readable format with one command.
+- As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.
+- As a team, I want both the commands and the way of working documented so another team can continue after rotation without confusion.
 
-## Architektonické poznámky
+## Architecture notes
 
-- Jazyk i framework si zvolte sami, ale CLI musí být snadno spustitelné a snadno objevitelné.
-- Od začátku oddělte samotné příkazy od pomocných utilit a konfigurace.
-- `AGENTS.md` má popsat build/test flow, konvence pro výstupy a pravidla pro další rozšiřování.
-- Stejně důležitý jako funkční příkaz je i runbook pro tým, který projekt převezme po obědě.
-- Nejde o pytel skriptů. Jde o malý systém, ve kterém je jasné, kde přibude další command, test a dokumentace.
+- Choose any language or framework, but the CLI must stay easy to run and easy to discover.
+- Separate commands from helper utilities and configuration from the start.
+- `AGENTS.md` should describe the build and test flow, output conventions, and the rules for future extension.
+- A runbook for the team that inherits the project after lunch matters as much as a working command.
+- Do not build a bag of scripts. Build a small system where it is obvious where the next command, test, and doc belong.
 
-## Hotovo když
+## Done when
 
-- Existují alespoň 3 užitečné příkazy nebo subcommands.
-- `README` i `AGENTS.md` popisují lokální spuštění a způsob ověření.
-- Je jasné, kde přidat další příkaz bez rozbití struktury projektu.
-- Nový tým zvládne během 10 minut přidat nebo opravit další command.
-- Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu.
+- Another team can add or fix a command within 10 minutes of opening the repo. *(Handoff test.)*
+- At least 3 working commands, each solving a concrete developer pain point.
+- `README` and `AGENTS.md` explain how to run and verify locally.
+- The extension pattern is visible — a new command fits without breaking the structure.
+- Every command has at least one readable input/output example.
 
-## První krok pro agenta
+## First step for the agent
 
-Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, flow pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.
+Don't start with code. Start with `AGENTS.md`, a short plan for the extension pattern, and one clear verification step. Only then implement the first command.

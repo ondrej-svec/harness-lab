@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.7.1",
-  "contentHash": "b876c77adc1b7de7e64d5d37e0423a77303b5c51edf46c341c91203680ca414f",
+  "contentHash": "226ea518e48dd583bf1f1a2064304bb76bee833a855eaf43672b627ec12c8b94",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -10,19 +10,23 @@
     },
     {
       "path": "content/challenge-cards/deck.md",
-      "sha256": "d0203341da04d231de09be403c0bd6d99b4bee751370c3c8302aea93e25d34d8"
-    },
-    {
-      "path": "content/challenge-cards/locales/en/deck.md",
       "sha256": "b6a4c7806cd64c96b23a213d44facb6c813004dc30047ddd441df854b59fc1c1"
     },
     {
+      "path": "content/challenge-cards/locales/cs/deck.md",
+      "sha256": "f48717601e4ddba668ea9aee9a50047f34c28eab8c07a055d3d3202206eeb0e2"
+    },
+    {
+      "path": "content/challenge-cards/locales/cs/print-spec.md",
+      "sha256": "eca8d5e20f30be0b7265f957d86e070c0c396691e7334b7d5d382e5705cafc51"
+    },
+    {
       "path": "content/challenge-cards/print-spec.md",
-      "sha256": "0c6bc2953d6296b8901705d938a29c1ef859490e53cc265fe401bb9585611e16"
+      "sha256": "6e3b5d15163072f3a1b24531024a1c90c4a24b1e90ca9aed9503b0dff763d0c2"
     },
     {
       "path": "content/codex-craft.md",
-      "sha256": "d75b15cf97c4ab7f4918e09fff0efbe204d141f7127ca09d9a446a128c8efaaf"
+      "sha256": "2f41f766b9a3e181fe4c773f11e3eea7e9aa78fb35d457ee443d30aea5172dff"
     },
     {
       "path": "content/facilitation/.gitkeep",
@@ -30,19 +34,19 @@
     },
     {
       "path": "content/facilitation/codex-setup-verification.md",
-      "sha256": "d137a5e729a1d443713a9e8431bffe169a1058d3e64c298688a6b7924fbdf3a8"
+      "sha256": "26a4f77d77938aa6986586d0f8f028c46fb24d055a661fa6b108e34c90a24eb7"
     },
     {
-      "path": "content/facilitation/locales/en/codex-setup-verification.md",
-      "sha256": "22cccab9c416fd3be90ffc1b4cdacda2e9cb3dbc87996b6757fa8e892cb62b1c"
+      "path": "content/facilitation/locales/cs/codex-setup-verification.md",
+      "sha256": "38db03c2a5062d922143f8e93c2e1fadd9933495a2b0450af57fd0b0482fdf01"
     },
     {
-      "path": "content/facilitation/locales/en/master-guide.md",
-      "sha256": "8457779270bc6dbcfa9ac35e1d4d6f2d0b9d6ca5f1711971cb0c575726e6c228"
+      "path": "content/facilitation/locales/cs/master-guide.md",
+      "sha256": "e9933dd96ffb1df4eb8cafdbf8f3f1b230935fa72545029d64be0ca19c7784e1"
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "6237d4f4f08947626511f43deb1b3ab7ca44cb00e782f900496ee97648c29b97"
+      "sha256": "fa3e6023af7cca15fb7754d6261acccf92c2aa86dc10c09ceeb56bb1162a0ea5"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -50,43 +54,43 @@
     },
     {
       "path": "content/project-briefs/code-review-helper.md",
-      "sha256": "31cfe35b449b892aaec5dd92282d1523aa14624666dae2faeb3b8d258568f7e0"
+      "sha256": "cf0d0d4d88304526f4d41ecc13d8d7fb47ae9f64f8e17479cf3b41162b52a17e"
     },
     {
       "path": "content/project-briefs/devtoolbox-cli.md",
-      "sha256": "843351cbbdadd92db42eeb655e3174ab080c10d3208540940259995fd066d77c"
+      "sha256": "13b588ac2ffd73a7855def92324c05a18e181c705607dc3eb77575c753d737d8"
     },
     {
       "path": "content/project-briefs/doc-generator.md",
-      "sha256": "b11a41cbbdcb1e2b953471599faa66916f21d0ed3c9ec31a521152b37fdaa5eb"
-    },
-    {
-      "path": "content/project-briefs/locales/en/code-review-helper.md",
-      "sha256": "b51929656f1badc51b3c2d55ef919bb86086fbe8e0332a16f07df62649b95db0"
-    },
-    {
-      "path": "content/project-briefs/locales/en/devtoolbox-cli.md",
-      "sha256": "7eb3d74d7c29f8582818ab95619c831b8a26c3de29cc7741278cb6145612b1f3"
-    },
-    {
-      "path": "content/project-briefs/locales/en/doc-generator.md",
       "sha256": "fa705729cf693180bf839f12c3c972cb96323b63f6176600da9a911d67a70123"
     },
     {
-      "path": "content/project-briefs/locales/en/metrics-dashboard.md",
-      "sha256": "57c240abe18e35d0c8dfa6f4a699752a6a03802781d7b6ee7dd9a6101ab23745"
+      "path": "content/project-briefs/locales/cs/code-review-helper.md",
+      "sha256": "398fc7d5dff53b577c902a9130609ab22a997cc1d2405a5a9e846daaffaecf05"
     },
     {
-      "path": "content/project-briefs/locales/en/standup-bot.md",
-      "sha256": "3043a7a5321d5080593418f553b828b778aef3f5d2d80e2d1c29ef1e8391d741"
+      "path": "content/project-briefs/locales/cs/devtoolbox-cli.md",
+      "sha256": "b8c494bb270a08ab232b9d9dcd8bb459d77e0907871cf453cc3149b0461cef12"
+    },
+    {
+      "path": "content/project-briefs/locales/cs/doc-generator.md",
+      "sha256": "b4970b9e9881e3e78e6ba0bf1922b25e50c36116455b2d0ab460e2631bc610d3"
+    },
+    {
+      "path": "content/project-briefs/locales/cs/metrics-dashboard.md",
+      "sha256": "874f306db0a456264da52e53328461de028c4ae9d98107ed3c799221822ab953"
+    },
+    {
+      "path": "content/project-briefs/locales/cs/standup-bot.md",
+      "sha256": "38837b3d84010f6ed8302eb53bc31e16475eaae9421d4dcfe242fcde19c655d4"
     },
     {
       "path": "content/project-briefs/metrics-dashboard.md",
-      "sha256": "30f9348c84e8d1b309c3a6ee3c45989af680b8c0d71ed57b7833f796e3c452b2"
+      "sha256": "be434a716dd95cbb52a16b6ac5048dc2a4b1d749ebd873e4d59d914865b01dfa"
     },
     {
       "path": "content/project-briefs/standup-bot.md",
-      "sha256": "abcf041d8e9066565a001f7eaecde8737f3e5e76ac885f4b9217aee067edac07"
+      "sha256": "3043a7a5321d5080593418f553b828b778aef3f5d2d80e2d1c29ef1e8391d741"
     },
     {
       "path": "content/talks/.gitkeep",
@@ -94,19 +98,19 @@
     },
     {
       "path": "content/talks/codex-demo-script.md",
-      "sha256": "9ffc59c01da62d4618e62b11d8703e0a797c20d62e9c2c51a8a43333da3b0f14"
-    },
-    {
-      "path": "content/talks/context-is-king.md",
-      "sha256": "7521e1864ee4caf61136609313781a5797cbfb315166ea3f4deaffd85323d7a7"
-    },
-    {
-      "path": "content/talks/locales/en/codex-demo-script.md",
       "sha256": "79484c43c93eaa16338d70eabd7138cbf5fb08e404a9a93e5ccb491509a3c642"
     },
     {
-      "path": "content/talks/locales/en/context-is-king.md",
-      "sha256": "8f8b16ad1174d2742bffd383d253c989b54f346017b7821e787aaf23f63a055d"
+      "path": "content/talks/context-is-king.md",
+      "sha256": "202402ea7320ae20b6d7ff4d6771a12e049ee9c93917e0f0c21cd666b1c98f4e"
+    },
+    {
+      "path": "content/talks/locales/cs/codex-demo-script.md",
+      "sha256": "c5992ea1c567471b721586f4aed2e7d7ec928d7c3093ec387123f2028c6514da"
+    },
+    {
+      "path": "content/talks/locales/cs/context-is-king.md",
+      "sha256": "c6803f267ad73c2b76513f0b67dcf68c965332af0143ec059662ddef686b9148"
     },
     {
       "path": "docs/harness-cli-foundation.md",
@@ -126,7 +130,7 @@
     },
     {
       "path": "docs/locales/en/learner-resource-kit.md",
-      "sha256": "609bd6d98ab79f9aa84af72e2678abf2cc7591cc3dcc8e942f06c2565f5f3408"
+      "sha256": "55cc1d2acfc0784e8869c84fae4aba5c40bb3e66a85112f597150da1cf0c95a4"
     },
     {
       "path": "docs/workshop-event-context-contract.md",
@@ -134,15 +138,19 @@
     },
     {
       "path": "materials/coaching-codex.md",
-      "sha256": "d6d03c8632ffae3dc52bc36f0d7fa6471204a52fe8a8b59dd47bd11bfa33fed4"
+      "sha256": "2ae0540099b97c8b91ec69111dd1a71c637b0385b6167eb8896c10a0ce89831e"
     },
     {
-      "path": "materials/locales/en/participant-resource-kit.md",
-      "sha256": "ff8206ff1cc5524f77da67e8fee5a5efef507563cd5ecf40a0453149f3dad6e4"
+      "path": "materials/locales/cs/coaching-codex.md",
+      "sha256": "81edf54f81b75e517f871962e8e6bb009426eda4e0fbebe5175299803371b8ee"
+    },
+    {
+      "path": "materials/locales/cs/participant-resource-kit.md",
+      "sha256": "0d6b70da2ea6bc2145a293c93a32bf576a6f5e0acfa76e920b8aefe99cca7971"
     },
     {
       "path": "materials/participant-resource-kit.md",
-      "sha256": "17cd63980faef81b8a417c1b45d56540c0e4f3438b14970b5a345ac264358521"
+      "sha256": "55353a2f9a709c8a003edf13ea66796fb43f3d0aeccc7d30e7e4065492ea6d0c"
     },
     {
       "path": "SKILL.md",
@@ -150,7 +158,7 @@
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "5fd54443d28a3da8b44993c110ace58777eb4e23d96a2f1391bcbe124eedd41a"
+      "sha256": "130e4678ce3f8fc70c62cfa7995d5265b04fe8e514b9e653bba1ce8829d4ee7c"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",

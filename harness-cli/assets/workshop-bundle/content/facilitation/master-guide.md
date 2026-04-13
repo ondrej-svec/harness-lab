@@ -1,319 +1,326 @@
-# Facilitační průvodce
+# Facilitation Master Guide
 
-## Otevření a welcome
+## Opening and welcome
 
-### Cíl
+### Goal
 
-Spustit den jako společný start pro celý workshop, ne jako provozní brief k dopoledni.
+Start the day as a shared beginning for the whole workshop — not as an operational brief for the morning.
 
-### Klíčová message
+### Key message
 
-> „Dnes nejde o to být nejrychlejší. Jde o to postavit práci tak, aby ji cizí tým dokázal převzít a posunout dál.“
+> "Today isn't about being fastest. It's about building the work so another team can pick it up and push it forward."
 
-### Co potřebuje zaznít
+### What needs to land
 
-- Nezačínáme tool demo ani soutěž v promptování.
-- Budeme se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.
-- Jde o práci s agentem tak, aby po vás zůstával použitelný kontext.
-- Odpolední část prověří, jestli repo opravdu unese převzetí dalším týmem.
-- Pokud nějaké důležité pravidlo žije jen v hovoru u stolu, ještě neexistuje.
+- We aren't opening with a tool demo or a prompt-writing contest.
+- We'll be learning, building, handing off, and picking up. That arc is the point of the day.
+- The goal is working with an agent in a way that leaves usable context behind.
+- The afternoon tests whether the repo actually carries the next move for another team.
+- If an important rule lives only in a conversation at the table, it doesn't exist yet.
 
-### Doporučený sled beatů
+### Recommended beat order
 
 1. day-opening promise
-2. proč na tom záleží právě teď
-3. analogie typu Lego duck: stejné ingredience, různé použitelné výsledky
-4. krátká pohybová aktivace podle zkušenosti s AI agenty
-5. první pracovní kontrakt pro build fázi 1
+2. why this matters right now
+3. a Lego-duck-style analogy: same ingredients, different usable outcomes
+4. a short physical activation based on experience with AI agents
+5. the first working contract for Build Phase 1
 
-### Lego-duck analogie
+### Lego-duck analogy
 
-Použijte ji krátce a věcně.
+Use it briefly and concretely.
 
-Pointa:
+The point:
 
-- stejný agent neznamená stejný výsledek
-- kvalitu neurčuje samotný model
-- kontext, mantinely a ověřování jsou součást výsledku
+- the same agent doesn't mean the same outcome
+- the model alone doesn't determine quality
+- context, guides, and sensors are part of the outcome
 
-Nevést jako zábavnou odbočku. Vést jako vysvětlení, proč je harness engineering tvůrčí a inženýrská disciplína zároveň.
+Don't run it as a fun tangent. Run it as the reason harness engineering is both a creative and an engineering discipline.
 
-### Pohybová aktivace
+### Physical activation
 
-Použijte krátké rozdělení místnosti podle aktuální zkušenosti s AI agenty:
+Use a short room split based on current experience with AI agents:
 
-- používám skoro denně
-- používám, ale opatrně
-- jsem spíš na startu
-- jsem skeptický, ale chci vidět, že to funguje
+- I use them almost daily
+- I use them, but carefully
+- I'm closer to the start
+- I'm skeptical, but I want to see that it works
 
-Pravidla:
+Rules:
 
-- ne dělat z toho networking kolo
-- stačí přesun a 2 krátké hlasy
-- pointa není seniorita, ale kalibrace místnosti a signál, že den je participativní
+- don't turn it into a networking round
+- a move across the room and two short voices is enough
+- the point isn't seniority — it's calibrating the room and signaling that the day is participatory
 
-### Co má facilitátor průběžně vracet
+### What the facilitator keeps returning to
 
-- „Kde by to našel další tým bez vás?“
-- „Co je tady skutečně ověřené?“
-- „Je `AGENTS.md` mapa, nebo už se z něj stává dump?“
-- „Jaký je další bezpečný krok pro cizího člověka nebo agenta?“
+- "Where would the next team find this without you?"
+- "What's actually verified here?"
+- "Is `AGENTS.md` still a map, or is it becoming a dump?"
+- "What's the next safe step for someone — or an agent — walking in cold?"
 
-### První pracovní kontrakt
+### The first working contract
 
-Po otevření dne potřebuje místnost ještě jednu konkrétní věc:
+After the opening, the room needs one more concrete thing:
 
-- co má být po prvním build bloku opravdu vidět v repu
-- co nestačí jen slíbit nebo dovysvětlit u stolu
+- what has to be actually visible in the repo after the first build block
+- what it isn't enough to just promise or explain at the table
 
-Do oběda má být vidět:
+By lunch, these should be visible:
 
-- `README`, které dává smysl cizímu člověku
-- `AGENTS.md` jako krátká mapa, ne sklad všeho
-- plán kroků nebo jasně vedená implementační stopa, ze které je poznat další bezpečný krok
-- první explicitní ověření před dalším generováním
+- a `README` that makes sense to someone walking in cold
+- `AGENTS.md` as a short map, not a warehouse
+- a plan or a clearly traced implementation trail that shows the next safe step
+- the first explicit verification before any more generation happens
 
 ## Context is King talk
 
-### Cíl
+### Goal
 
-Proměnit energii z openingu v přesnou tezi a čistý most do build fáze 1.
+Turn the energy from the opening into a precise thesis and a clean bridge into Build Phase 1.
 
-### Klíčová message
+### Key message
 
-> „Kontext je páka, ne kosmetika.“
+> "Context is leverage, not cosmetics."
 
-### Co potřebuje zaznít
+### What needs to land
 
-- Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.
-- `AGENTS.md`, skills, runbooky a ověřovací kroky jsou týmová infrastruktura, ne polish navíc.
-- Team lead nestojí modelu za zády a nediktuje další větu každých třicet sekund.
-- Po talku se tým vrací k repu s mapou, plánem kroků a prvním ověřením, ne s lovem na chytřejší prompt.
+- We aren't learning to prompt better. We're learning to build a repo and a workflow where both the agent and another team can safely continue.
+- `AGENTS.md`, skills, runbooks, and verification steps are team infrastructure — not polish on top.
+- The named vocabulary from Böckeler: **guides** (the rails that steer the agent before it acts) and **sensors** (the checks that catch the agent after). Both are part of the harness. Both terms land in the talk, and the facilitator uses them in coaching from then on.
+- The team lead isn't standing behind the model dictating the next sentence every thirty seconds.
+- After the talk, the team returns to the repo with a map, a plan of steps, and the first verification — not with a hunt for a smarter prompt.
 
-### Repo-readiness kontrast (mikro-cvičení)
+### Protected line of the talk
 
-Tohle je krátká facilitátorova ukázka, ne zadání pro celý room.
+> **Humans steer. Agents execute.**
 
-Použijte **stejný prompt ve dvou repech**:
+These are the four words the talk ends on and the four words the room carries out. The facilitator never paraphrases them, never says them before Scene 4, and never turns them into a motivational slogan. It's a principle, not a hashtag. Full delivery in `content/talks/context-is-king.md`.
 
-1. **Varianta A: holé repo** — žádné AGENTS.md, žádné mantinely, žádný kontext. Agent tápe — dělá uvěřitelná, ale špatná rozhodnutí (task drift).
-2. **Varianta B: repo s harnessem** — AGENTS.md s Goal, Context, Constraints, Done When, plán, workshop skill. Stejný prompt, srovnaný výstup.
+### Repo-readiness contrast (micro-exercise)
+
+This is a short facilitator demo — not a task for the whole room.
+
+Use **the same prompt in two repos**:
+
+1. **Variant A: bare repo** — no AGENTS.md, no guides, no context. The agent stumbles — it makes plausible but wrong decisions (task drift).
+2. **Variant B: repo with a harness** — AGENTS.md with Goal, Context, Constraints, Done When, a plan, and a workshop skill. Same prompt, aligned output.
 
 Flow:
-1. Ukažte Variantu A. Pojmenujte task drift.
-2. Ukažte Variantu B se stejným promptem.
-3. Pauza. Zeptejte se: „Co se změnilo?"
-4. Nechte dva hlasy odpovědět.
-5. Pojmenujte tezi: „Prompt se nezměnil. Repo ano."
+1. Show Variant A. Name the task drift.
+2. Show Variant B with the same prompt.
+3. Pause. Ask: "What changed?"
+4. Let two voices answer.
+5. Name the thesis: "The prompt didn't change. The repo did."
 
-Nenechte to sklouznout do debaty o tom, který model je chytřejší. Pointa je, že výsledek změnil kontext v repu, ne prompt.
+Don't let it slide into a debate about which model is smarter. The point is that the outcome changed because the context in the repo changed — not the prompt.
 
-Viz `content/talks/codex-demo-script.md` pro detailní two-folder setup.
+See `content/talks/codex-demo-script.md` for the detailed two-folder setup.
 
-### Co si odnesete do build fáze
+### What you carry into the build phase
 
-Na konci talku má být jasné:
+By the end of the talk, this should be clear:
 
-- teorie tím končí
-- tým se vrací k repu
-- pokud tým ještě nemá workshop skill, teď je chvíle na `harness skill install`, pak `Codex: $workshop setup` nebo `pi: /skill:workshop`
-- nejdřív vzniká mapa a první explicitní ověření
-- teprve potom dává smysl další feature motion
+- theory ends here
+- the team goes back to the repo
+- if the team doesn't have the workshop skill yet, this is the moment for `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`
+- first comes a map and the first explicit verification
+- only then does more feature motion make sense
 
-## Build fáze 1
+## Build Phase 1
 
-### Viditelný milestone board
+### Visible milestone board
 
-Do oběda má být v repu vidět pět základních věcí:
+By lunch, five basics should be visible in the repo:
 
-1. `README`, které dává smysl cizímu člověku
-2. `AGENTS.md` jako krátká mapa
-3. plán, ze kterého je poznat další bezpečný krok
-4. build/test command nebo tracer bullet
-5. první opravdu ověřený posun
+1. a `README` that makes sense to someone walking in cold
+2. `AGENTS.md` as a short map
+3. a plan that shows the next safe step
+4. a build/test command or a tracer bullet
+5. the first genuinely verified move forward
 
-### Role facilitátora
+### Facilitator role
 
-- nejdřív coach — ptejte se, co tým potřebuje a kde je zaseknutý
-- pak mentor — pomozte s workflow nebo s nástrojem
-- učitel až jako poslední možnost — krátce vysvětlete princip a vraťte tým do práce
-- vracejte týmům hlavně artefakty, ze kterých se dá opravdu pracovat, ne celý backstage Harness Lab
-- když se tým zasekne, vraťte ho k ověření, ne k delšímu promptu
+- coach first — ask what the team needs and where it's stuck
+- mentor next — help with workflow or tooling
+- teacher only as a last resort — briefly explain the principle and return the team to work
+- hand the team artifacts they can actually work from, not the full Harness Lab backstage
+- when a team gets stuck, return them to a verification, not to a longer prompt
 
-### Na co se při obcházení dívat
+### What to watch for on the floor
 
-- Má tým jednu společnou představu o cíli?
-- Přibývá kontext v repu, nebo zůstává jen v chatu a v hlavách?
-- Ověřují si výstupy, nebo jen generují další text?
-- Mají test, tracer bullet nebo jiné explicitní ověření, které drží agenta v mezích?
-- Je z repa poznat, co je hotové, co je rozpracované a co je jen hypotéza?
-- Uměl by jiný tým během pěti minut najít první bezpečný krok?
+- Does the team share one picture of the goal?
+- Is context accumulating in the repo, or staying in chat and in heads?
+- Are they verifying outputs, or just generating more text?
+- Do they have a test, tracer bullet, or other explicit check that keeps the agent inside the lines?
+- Can you tell from the repo what's done, what's in progress, and what's still a hypothesis?
+- Could another team find the next safe step within five minutes?
 
-### Facilitační pointa k testům
+### Facilitation point on tests
 
-- S coding agentem nestačí říct „tohle si pak projdeme“.
-- Jakmile agent dostává větší autonomii, tým musí zvýšit kvalitu ověřování.
-- Test-first přístup není dogma pro čistotu. Je to praktický způsob, jak převést záměr do formy, kterou agent umí opakovaně trefovat.
-- Když tým žádné ověření nemá, facilitátor má tlačit na nejmenší možný test nebo tracer bullet, ne na další generování funkcí.
-- U UI práce připomínejte pattern: rychlá agent exploration v izolovaném prostředí, potom browser test, potom lidské review.
-- Pokud tým mluví o tom, že „agent to prostě nakliká v mém browseru“, vraťte debatu k sandboxu, nízkému riziku a explicitní kontrole.
+- With a coding agent, "we'll look at it later" isn't enough.
+- The moment the agent gets more autonomy, the team has to raise the quality of verification.
+- Test-first isn't a purity dogma. It's a practical way to turn intent into a form the agent can hit repeatedly.
+- When the team has no verification at all, the facilitator pushes for the smallest possible test or tracer bullet — not for more feature generation.
+- For UI work, remind them of the pattern: fast agent exploration in an isolated environment, then a browser test, then a human review.
+- If a team is talking about "the agent just clicks around in my browser", pull the conversation back to a sandbox, low risk, and explicit checks.
 
-### Co normalizovat
+### What to normalize
 
-- `AGENTS.md` jako krátkou mapu, ne rostoucí skladiště všeho
-- plán jako pracovní artefakt, ne ceremonii navíc
-- malý průběžný úklid, když se začne šířit chaos nebo duplicity
-- převod opakovaných připomínek do repa místo dalšího ústního mentoringu
+- `AGENTS.md` as a short map, not a growing warehouse
+- a plan as a working artifact, not a ceremony
+- small continuous cleanup when chaos or duplication starts spreading
+- moving repeated verbal reminders into the repo instead of more verbal mentoring
 
 ## Codex demo
 
-### Cíl
+### Goal
 
-Ukázat Codex jako součást pracovního systému, ne jako samostatné kouzlo. Demo má vysvětlit i to, proč tenhle repo drží pohromadě: protože v repu žije záměr, mantinely, rozpad práce do kroků i způsob kontroly, ne jen v hlavě facilitátora.
+Show Codex as part of a working system, not as a trick on its own. The demo should also explain why this repo holds together: because the intent, the guides, the decomposition of work, and the way things get checked all live in the repo — not in the facilitator's head.
 
-### Co má být vidět
+### What should be visible
 
-- jedna příběhová linka, ne přehlídka funkcí
-- repozitář, ve kterém je vidět `README`, `AGENTS.md`, rozpad práce do kroků a způsob, jak změnu zkontrolujete
-- kontrast mezi slabým startem bez kontextu a prací, která má mapu a další bezpečný krok
-- krátké ukotvení workshop skillu: `harness skill install`, první command a proč to šetří ústní rescue
+- one story arc, not a feature tour
+- a repository where you can see the `README`, the `AGENTS.md`, the work broken into steps, and how a change gets checked
+- the contrast between a weak start without context and work that has a map and a next safe step
+- a short anchor for the workshop skill: `harness skill install`, the first command, and why it saves a verbal rescue later
 
-### Co explicitně říct
+### What to say explicitly
 
-- „Tohle není demo pro demo. Tohle je způsob, jak vznikal i tenhle workshopový repo systém.“
-- „Když z repa není poznat, proč se změna dělá, jaký je další krok a podle čeho ji zkontrolujete, další člověk ani další agent nenaváže bezpečně.“
-- „Codex je v tomhle důležitý, ale není to pointa sám o sobě. Pointa je harness kolem něj.“
+- "This isn't a demo for the sake of a demo. This is the way this workshop repo system was built."
+- "When the repo doesn't show why a change is being made, what the next step is, and what you'll check it against, neither the next person nor the next agent can safely pick it up."
+- "Codex matters here, but it isn't the point on its own. The point is the harness around it."
 
-### Co neukazovat
+### What not to show
 
-- pět různých módů Codexu za sebou
-- dlouhé čekání na generování bez komentáře
-- repo, které není continuation-ready a slouží jen jako jednorázový sandbox
+- five different Codex modes in a row
+- long silent waits on generation with no commentary
+- a repo that isn't continuation-ready and just serves as a one-off sandbox
 
-## Intermezza
+## Intermezzos
 
-### Tiché retrieval cvičení (povinné)
+### Silent retrieval exercise (required)
 
-Každé intermezzo začíná 3minutovým tichým retrieval cvičením. Toto je povinný první krok, ne volitelný doplněk.
+Every intermezzo starts with a 3-minute silent retrieval exercise. This is a required first step, not an optional add-on.
 
 Flow:
-1. **3 minuty individuální psaní** — každý píše sám, žádné sdílení
-2. **2 minuty týmová diskuze** — sdílení v rámci týmu
-3. **Sdílení v místnosti** — vybrané signály pro celou místnost
+1. **3 minutes of individual writing** — everyone writes alone, no sharing
+2. **2 minutes of team discussion** — sharing inside the team
+3. **Room share** — selected signals go out to the whole room
 
-Otázky pro retrieval:
-- **Intermezzo 1:** „Co by další tým potřeboval najít ve vašem repu právě teď, aby mohl pokračovat bez ptaní?"
-- **Intermezzo 2:** „Pojmenujte jednu věc, která vám po rotaci opravdu pomohla pokračovat, a jednu, která chyběla."
+Retrieval prompts:
+- **Intermezzo 1:** "What surprised you this morning while working with the agent — and what does that make you want to try differently next time? Three minutes. Don't talk yet."
+- **Intermezzo 2:** "What surprised you about the repo you inherited — and what do you want to try differently in the second push? Three minutes. Don't talk yet."
 
-Když někdo začne mluvit během tiché fáze, přesměrujte: „Nejdřív napište, pak budeme sdílet." Přínos retrieval cvičení vyžaduje individuální produkci před sdílením.
+If someone starts talking during the silent phase, redirect: "Write first, then we share." The retrieval exercise only pays off when individual production happens before sharing.
 
-### Po retrieval cvičení
+### After the retrieval exercise
 
-Každé intermezzo pokračuje třemi kroky:
+Every intermezzo continues with three steps:
 
-1. Týmy napíšou jednu větu: „Co jsme změnili a proč.“
-2. Ondřej shrne, co vidí u stolů a co ukazuje monitoring.
-3. Zazní jedna principová pointa navázaná na to, co se opravdu děje v místnosti.
+1. Teams write one sentence: "What we changed and why."
+2. Ondřej recaps what he sees at the tables and what monitoring shows.
+3. One principle-level point lands, anchored to what's actually happening in the room.
 
-Preferované checkpoint otázky:
+Preferred checkpoint questions:
 
-- Co jste přesunuli z chatu nebo z hlavy do repa?
-- Co dnes ověřujete pomocí spustitelného ověření?
-- Co by měl číst další tým jako první?
+- What did you move from chat or from heads into the repo?
+- What are you verifying today with an executable check?
+- What should the next team read first?
 
-### Smysl intermezz
+### The point of intermezzos
 
-- zviditelnit učení napříč týmy
-- udělat z průběhu dne sérii krátkých checkpointů
-- připomenout, že workflow je stejně důležité jako samotný výsledek
-- vracet týmy k tomu, že bez ověření jen akcelerují nejistotu
+- make learning visible across teams
+- turn the day into a sequence of short checkpoints
+- remind everyone that workflow matters as much as the result
+- return teams to the fact that, without verification, they're only accelerating uncertainty
 
-Nevést intermezzo jako status meeting.
-Vést ho jako krátký checkpoint, ze kterého si týmy odnesou jednu věc, kterou ještě ten den dopíšou, zpřesní nebo ověří.
+Don't run the intermezzo as a status meeting.
+Run it as a short checkpoint that sends each team back with one thing they'll still write, sharpen, or verify today.
 
-## Oběd a příprava na handoff
+## Lunch and handoff prep
 
-### Tichá kontrola repozitářů (během oběda)
+### Silent repo check (during lunch)
 
-Během oběda facilitátor tiše zkontroluje repo každého týmu. Pokud je repo opravdu nepoužitelné (vůbec žádné AGENTS.md, žádný kód, rozbitý setup), pomůže týmu napsat minimum. Rámujte to jako běžný coaching, ne jako bránu.
+During lunch, the facilitator quietly walks every team's repo. If a repo is genuinely unusable (no AGENTS.md at all, no code, broken setup), help the team write the minimum. Frame it as normal coaching, not as a gate.
 
-Brána je tichá — účastníci nemají vědět, že probíhá kontrola. Zasahujte jen u opravdu rozbitých repozitářů, ne u slabých.
+The gate is silent — participants shouldn't know a check is happening. Only intervene on genuinely broken repos, not on weak ones.
 
-### Příprava na handoff
+### Handoff prep
 
-- Oběd není pauza od handoffu.
-- Než týmy vstanou od stolu, musí být z repa poznat:
-  - co se změnilo
-  - co je hotové
-  - co je stále hypotéza
-  - jaký je další bezpečný krok
-- Když něco z toho zůstane jen v hovoru, odpoledne se to vrátí jako tření.
+- Lunch isn't a break from the handoff.
+- Before teams leave the table, the repo has to show:
+  - what changed
+  - what's done
+  - what's still a hypothesis
+  - what the next safe step is
+- Anything that stays in conversation comes back as friction in the afternoon.
 
-## Rotace
+## Rotation
 
-- Bez ústního handoffu.
-- Prvních 10 minut nový tým jen čte repo a mapuje situaci.
-- Frustrace není chyba workshopu. Je to signál kvality kontextu v repozitáři.
+- No verbal handoff.
+- The first 10 minutes, the new team only reads the repo and maps the situation.
+- Frustration isn't a workshop bug. It's a signal about the quality of context in the repo.
 
-### Instrukce pro nový tým
+### Instructions for the new team
 
-- Začněte `README`, `AGENTS.md` a planem.
-- Needitujte hned první soubor, který otevřete.
-- Nejdřív napište vlastní diagnózu: co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok.
-- Když tým neví, po čem sáhnout, vraťte ho k learner kitu: `template-agents`, `reference`, `analyze-checklist` a challenge cards.
+- Start with `README`, `AGENTS.md`, and the plan.
+- Don't immediately edit the first file you open.
+- Write your own diagnosis first: what helps, what's missing, what's risky, and what the next safe step is.
+- If the team doesn't know what to reach for, point them at the learner kit: `template-agents`, `reference`, `analyze-checklist`, and the challenge cards.
 
-### Facilitační pointa k rotaci
+### Facilitation point on rotation
 
-- Frustrace je užitečný signál, pokud ukazuje na skrytý kontext nebo chybějící verifikaci.
-- Nepomáhejte týmům ústním handoffem nahrazovat slabý signál v repu.
-- Pomáhejte jim pojmenovat, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.
+- Frustration is a useful signal when it points at hidden context or missing verification.
+- Don't help teams paper over a weak signal in the repo with a verbal handoff.
+- Help them name what has to be written down, sharpened, or verified after the rotation.
 
-## Build fáze 2
+## Build Phase 2
 
-- Po rotaci neopravujeme jen feature. Opravujeme i signál, který převzetí zbrzdil.
-- Každá opakující se bolest je kandidát na lepší mapu, pravidlo, runbook nebo ověření.
-- Další větší změna má přijít až po nové explicitní verifikaci.
+- After the rotation, we don't just fix the feature. We fix the signal that slowed the pickup.
+- Every recurring pain is a candidate for a better map, rule, runbook, or verification.
+- The next bigger change should come only after a fresh explicit verification.
 
-## Reveal a reflexe
+## Reveal and reflection
 
 ### `1-2-4-All`
 
-Otázky:
+Questions:
 
-- Co vám pomohlo pokračovat?
-- Co chybělo?
-- Jaký signál v repu vám nejvíc ušetřil čas?
+- What helped you keep going?
+- What was missing?
+- Which signal in the repo saved you the most time?
 
 ### `W³`
 
-- `Co?` — co se dnes stalo bez hodnocení
-- `A co?` — co to znamená pro práci s AI agenty
-- `A teď?` — co uděláte jinak příští týden
+- `What?` — what happened today, without judgment
+- `So what?` — what that means for working with AI agents
+- `Now what?` — what you'll do differently the next day you open a coding agent
 
-### Rámec pro facilitaci
+### Facilitation frame
 
-- Nehodnotíme, který tým byl lepší.
-- Díváme se na systém: které signály pomáhají práci přežít handoff a které ji brzdí.
-- Sbíráme konkrétní příklady, ne obecné dojmy.
-- Každá opakující se bolest je kandidát na lepší template, challenge card nebo vodítko v blueprintu.
+- We're not judging which team was better.
+- We're looking at the system: which signals help work survive a handoff, and which slow it down.
+- We collect concrete examples, not general impressions.
+- Every recurring pain is a candidate for a better template, challenge card, or guide in the blueprint.
 
-Na konci dne chceme, aby si lidé odnesli tři věci:
+At the end of the day, we want people to leave with three things:
 
-1. jeden signál, který chtějí zavést natrvalo
-2. jednu slabinu, kterou už příště nenechají jen v hovoru
-3. jeden konkrétní tah pro příští týden
+1. one signal they want to adopt for good
+2. one weak spot they won't leave in conversation next time
+3. one concrete move for the next day they open a coding agent
 
-### `Monday commitments` — sdílený artefakt
+### `next-day commitments` — the shared artifact
 
-Reflexe bez zápisu se do pondělí většinou neudrží. Proto na samém konci dne:
+Reflection without writing usually doesn't hold. So at the very end of the day:
 
-- každý účastník napíše jednu větu ve tvaru: **„Příští týden udělám [X], protože [důvod z dnešního dne]."**
-- věty se napíší na papírek, sticky note nebo přímo do sdíleného dokumentu
-- facilitátor je sesbírá a udělá z nich jeden krátký sdílený seznam, který si tým odnese
-- seznam není hodnocení ani soutěž. Je to jediný artefakt z dnešního dne, který prokáže, že reflexe skutečně něco změnila
+- every participant writes one sentence in the form: **"The next time I open an agent, I'll do [X], because [reason from today]."**
+- the sentences go on paper, on a sticky note, or directly into a shared doc
+- the facilitator collects them and turns them into one short shared list the team takes home
+- the list isn't a score or a contest. It's the one artifact from the day that proves the reflection actually changed something
 
-Facilitátorův tah:
-- věty vybízejte k tomu, aby byly konkrétní (ne „budu lépe pracovat s agenty“, ale „do AGENTS.md svého hlavního repa napíšu 4 elementy: goal, context, constraints, done when“)
-- když někdo napíše něco velmi obecného, zeptejte se: „Jaký je první konkrétní tah, který to spustí?"
-- commitmenty nepublikujte jmenovitě mimo room; artefakt patří týmu, ne marketingu
+Facilitator move:
+- push the sentences toward the concrete (not "I'll work better with agents", but "I'll write four elements into the AGENTS.md of my main repo: goal, context, constraints, done when")
+- when someone writes something very general, ask: "What's the first concrete move that starts it?"
+- don't publish commitments by name outside the room; the artifact belongs to the team, not to marketing
