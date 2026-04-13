@@ -2,7 +2,7 @@
 title: "feat: workshop content and infrastructure update (from brainstorm review)"
 type: plan
 date: 2026-04-12
-status: in_progress
+status: complete
 brainstorm: docs/plans/2026-04-12-brainstorm-workshop-agenda-content-review.md
 confidence: medium
 ---
@@ -644,12 +644,32 @@ The rest is tracked here so it is not lost:
 ### Phase F — Quality Gates
 - [ ] F1 — Cold-read facilitator gate for opening *(human-only — requires an experienced facilitator not involved in the rewrite to read Phase 1 content cold and narrate it live)*
 - [x] F2 — Update tests for new content *(landed with Phase B: 297 tests passing, test fixtures updated in lockstep with the new scene ids)*
-- [x] F3 — Run `verify:content` *(passing: briefs inventory, generated views, tier-2 sync, copy-editor gate all clean)*
+- [x] F3 — Run `verify:content` *(passing: briefs inventory, generated views, tier-2 sync, copy-editor gate all clean after the 2026-04-13 Mode A re-segmentation)*
 - [x] F4 — Run `lint` *(passing: eslint clean, tsc 0 errors)*
-- [x] F5 — Manual smoke test *(partially complete: tsc, eslint, vitest 297 passing, harness-cli 67 passing. Full browser click-through of all 11 phases on the presenter view and participant surface still needs a human — the automated gates cannot verify visual rendering of the team-trail preset or that check-ins round-trip end-to-end in a real browser.)*
+- [x] F5 — Manual smoke test *(automated portion complete: tsc, eslint, vitest 297 passing, harness-cli 67 passing. Full browser click-through of all 11 phases on the presenter view and participant surface still needs a human — the automated gates cannot verify visual rendering of the team-trail preset or that check-ins round-trip end-to-end in a real browser.)*
 - [ ] F6 — Internal dry-run workshop *(human-only — needs 4–6 internal participants running a shortened workshop with real repos and real agents)*
 - [ ] F7 — Fix dry-run blockers *(blocked on F6)*
 - [ ] F8 — Schedule first real workshop *(blocked on F1, F6, F7)*
+
+## Plan Status — Complete (2026-04-13)
+
+All AI-executable work from this plan has landed on `main`. The plan is marked `status: complete` in the frontmatter. The remaining unchecked items are deferred to human validation and do not block this plan from being considered done:
+
+- **F1** cold-read facilitator gate on Phase 1 — needs a facilitator not involved in the rewrite.
+- **F6 / F7 / F8** internal dry-run workshop, blocker fix-up, and first real workshop scheduling — all require a real cohort in a real room.
+- **D-FU7** native Czech review sweep that flips `cs_reviewed: true` per scene. Note: the 2026-04-13 Mode A editorial pass (`docs/reviews/workshop-content/2026-04-13-czech-mode-a-scene-cards.md`) already corrected `ty` → `vy` normalisation, Monday-framing removal, calque cleanup, and the `rozpočítat` vs `odpočítat` mechanic bug. What remains is the native-speaker aesthetic review that promotes each scene from `cs_reviewed: false` to `true`.
+- **D6** optional anonymous commitment push — explicitly deferred from the start.
+
+Shipped in this cycle:
+
+- `@harness-lab/cli` bumped to `0.7.1` and is ready for npm publish (release tag `harness-cli-v0.7.1`).
+- Every scene in `workshop-content/agenda.json` carries reviewed-Mode-A Czech with the lockfile re-segmented against the current content hash.
+- The `workshop-skill/` tree is single-source English per `docs/adr/2026-04-12-skill-docs-english-canonical.md`; the legacy `workshop-skill/locales/` parallel tree is retired.
+- All automated quality gates (tsc, eslint, vitest, harness-cli tests, verify:content with the copy-editor gate) are green.
+
+Follow-up items worth tracking but outside this plan:
+
+- `better-auth` critical 2FA-bypass dependabot alert in `dashboard/pnpm-lock.yaml` — not part of this plan's scope but needs separate attention before the dashboard ships to a real workshop.
 
 ## References
 
