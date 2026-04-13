@@ -2,6 +2,7 @@ type RuntimeAlert = {
   category:
     | "facilitator_auth_failure"
     | "participant_redeem_rate_limited"
+    | "participant_redeem_bot_signal"
     | "instance_archive_created";
   severity: "info" | "warning" | "error";
   instanceId: string;

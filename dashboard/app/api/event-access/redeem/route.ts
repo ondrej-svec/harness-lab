@@ -20,7 +20,11 @@ export async function POST(request: Request) {
 
   const botCheck = await checkBotId();
   if (botCheck.isBot) {
-    return NextResponse.json({ ok: false, error: "denied" }, { status: 403 });
+    emitRuntimeAlert({
+      category: "participant_redeem_bot_signal",
+      severity: "warning",
+      instanceId: getCurrentWorkshopInstanceId(),
+    });
   }
 
   if (await isRedeemRateLimited(request)) {
