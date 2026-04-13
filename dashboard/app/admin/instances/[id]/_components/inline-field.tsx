@@ -22,11 +22,15 @@ import {
 
 export type InlineFieldAction = (formData: FormData) => Promise<void> | Promise<unknown> | void;
 
+export type InlineFieldOption = { value: string; label?: string };
+
 export type InlineFieldProps = {
   value: string;
   fieldName: string;
   action: InlineFieldAction;
-  mode?: "text" | "textarea";
+  mode?: "text" | "textarea" | "select";
+  /** Options for select mode. Required when mode === "select". */
+  options?: readonly InlineFieldOption[];
   /** Extra hidden form fields to submit alongside the edited value. */
   hiddenFields?: Record<string, string>;
   /** Accessible label for assistive tech. */
@@ -42,6 +46,7 @@ export function InlineField({
   fieldName,
   action,
   mode = "text",
+  options,
   hiddenFields,
   label,
   placeholder,
@@ -59,14 +64,20 @@ export function InlineField({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
     if (!editing) return;
-    const el = mode === "textarea" ? textareaRef.current : inputRef.current;
+    const el =
+      mode === "textarea"
+        ? textareaRef.current
+        : mode === "select"
+          ? selectRef.current
+          : inputRef.current;
     if (el) {
       el.focus();
       if ("select" in el && typeof el.select === "function") {
-        el.select();
+        (el as HTMLInputElement | HTMLTextAreaElement).select();
       }
     }
   }, [editing, mode]);
@@ -101,17 +112,17 @@ export function InlineField({
     });
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     if (event.key === "Escape") {
       event.preventDefault();
       cancel();
     } else if (event.key === "Enter" && mode === "text") {
       event.preventDefault();
-      save(event.currentTarget.value);
+      save((event.currentTarget as HTMLInputElement).value);
     }
   }
 
-  function handleBlur(event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleBlur(event: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
     save(event.currentTarget.value);
   }
 
@@ -149,6 +160,27 @@ export function InlineField({
   }
 
   const inputClassName = `block w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-[var(--text-primary)] focus-visible:border-[var(--text-primary)] focus-visible:outline-none ${className ?? ""} ${editClassName ?? ""}`;
+
+  if (mode === "select") {
+    return (
+      <select
+        ref={selectRef}
+        defaultValue={optimisticValue}
+        aria-label={label}
+        data-inline-field="edit"
+        onBlur={handleBlur}
+        onChange={(event) => save(event.currentTarget.value)}
+        onKeyDown={handleKeyDown}
+        className={inputClassName}
+      >
+        {(options ?? []).map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label ?? option.value}
+          </option>
+        ))}
+      </select>
+    );
+  }
 
   if (mode === "textarea") {
     return (

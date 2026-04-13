@@ -25,7 +25,13 @@ import {
   renameAgendaItemAction,
   updateAgendaFieldAction,
 } from "../../_actions/operations";
-import { updateSceneFieldAction } from "../../_actions/scenes";
+import {
+  movePresenterSceneAction,
+  removePresenterSceneAction,
+  setDefaultPresenterSceneAction,
+  togglePresenterSceneEnabledAction,
+  updateSceneFieldAction,
+} from "../../_actions/scenes";
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import type {
@@ -38,6 +44,35 @@ import { InlineField } from "../inline-field";
 import { ViewTransitionCard } from "../view-transition-card";
 
 type Copy = (typeof adminCopy)[UiLanguage];
+
+const SCENE_TYPE_OPTIONS = [
+  { value: "briefing" },
+  { value: "demo" },
+  { value: "participant-view" },
+  { value: "checkpoint" },
+  { value: "reflection" },
+  { value: "transition" },
+  { value: "custom" },
+] as const;
+
+const SCENE_INTENT_OPTIONS = [
+  { value: "framing" },
+  { value: "teaching" },
+  { value: "demo" },
+  { value: "walkthrough" },
+  { value: "checkpoint" },
+  { value: "transition" },
+  { value: "reflection" },
+  { value: "custom" },
+] as const;
+
+const SCENE_CHROME_PRESET_OPTIONS = [
+  { value: "minimal" },
+  { value: "agenda" },
+  { value: "checkpoint" },
+  { value: "participant" },
+  { value: "team-trail" },
+] as const;
 
 type OverviewStateLike = {
   liveNowTitle: string;
@@ -794,15 +829,6 @@ function PresenterSceneSummaryCard({
 }) {
   const sceneBlocks = scene.blocks ?? [];
   const surfaceLabel = participantOnly ? copy.participantSurfaceCardTitle : copy.presenterCardTitle;
-  const sceneMeta = [surfaceLabel, scene.sceneType, scene.intent, scene.chromePreset].filter(Boolean).join(" • ");
-  const sceneEditorHref = buildAdminHref({
-    lang,
-    section: "agenda",
-    instanceId: activeInstanceId,
-    agendaItemId,
-    sceneId: scene.id,
-    overlay: "scene-edit",
-  });
 
   const presenterHref = buildPresenterRouteHref({
     lang,
@@ -836,17 +862,67 @@ function PresenterSceneSummaryCard({
               }}
             />
           </div>
-          <p className="text-sm leading-6 text-[var(--text-secondary)]">
-            {sceneMeta}
-            {isDefault ? ` • ${copy.presenterCurrentSceneLabel}` : ""}
-            {!scene.enabled ? ` • ${copy.presenterSceneDisabled}` : ""}
-          </p>
+          <div className="flex flex-wrap items-center gap-x-2 text-sm leading-6 text-[var(--text-secondary)]">
+            <span>{surfaceLabel}</span>
+            <span aria-hidden="true">•</span>
+            <InlineField
+              value={scene.sceneType}
+              fieldName="sceneType"
+              label={copy.sceneFieldType}
+              mode="select"
+              options={SCENE_TYPE_OPTIONS}
+              action={updateSceneFieldAction}
+              hiddenFields={{
+                instanceId: activeInstanceId,
+                agendaItemId,
+                sceneId: scene.id,
+                fieldName: "sceneType",
+              }}
+            />
+            {scene.intent ? (
+              <>
+                <span aria-hidden="true">•</span>
+                <InlineField
+                  value={scene.intent}
+                  fieldName="intent"
+                  label={copy.sceneFieldIntent}
+                  mode="select"
+                  options={SCENE_INTENT_OPTIONS}
+                  action={updateSceneFieldAction}
+                  hiddenFields={{
+                    instanceId: activeInstanceId,
+                    agendaItemId,
+                    sceneId: scene.id,
+                    fieldName: "intent",
+                  }}
+                />
+              </>
+            ) : null}
+            {scene.chromePreset ? (
+              <>
+                <span aria-hidden="true">•</span>
+                <InlineField
+                  value={scene.chromePreset}
+                  fieldName="chromePreset"
+                  label={copy.sceneFieldChromePreset}
+                  mode="select"
+                  options={SCENE_CHROME_PRESET_OPTIONS}
+                  action={updateSceneFieldAction}
+                  hiddenFields={{
+                    instanceId: activeInstanceId,
+                    agendaItemId,
+                    sceneId: scene.id,
+                    fieldName: "chromePreset",
+                  }}
+                />
+              </>
+            ) : null}
+            {isDefault ? <span>• {copy.presenterCurrentSceneLabel}</span> : null}
+            {!scene.enabled ? <span>• {copy.presenterSceneDisabled}</span> : null}
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <AdminRouteLink
-            href={presenterHref}
-            className={adminGhostButtonClassName}
-          >
+          <AdminRouteLink href={presenterHref} className={adminGhostButtonClassName}>
             {participantOnly ? copy.presenterOpenParticipantButton : copy.presenterOpenSelectedScene}
           </AdminRouteLink>
           <a
@@ -858,9 +934,51 @@ function PresenterSceneSummaryCard({
           >
             ↗
           </a>
-          <AdminRouteLink href={sceneEditorHref} className={adminGhostButtonClassName}>
-            {copy.presenterEditSceneButton}
-          </AdminRouteLink>
+          <form action={movePresenterSceneAction}>
+            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+            <input name="agendaItemId" type="hidden" value={agendaItemId} />
+            <input name="sceneId" type="hidden" value={scene.id} />
+            <input name="direction" type="hidden" value="up" />
+            <AdminSubmitButton className={`${adminGhostButtonClassName} px-2`} aria-label={copy.presenterMoveSceneUpButton}>
+              ↑
+            </AdminSubmitButton>
+          </form>
+          <form action={movePresenterSceneAction}>
+            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+            <input name="agendaItemId" type="hidden" value={agendaItemId} />
+            <input name="sceneId" type="hidden" value={scene.id} />
+            <input name="direction" type="hidden" value="down" />
+            <AdminSubmitButton className={`${adminGhostButtonClassName} px-2`} aria-label={copy.presenterMoveSceneDownButton}>
+              ↓
+            </AdminSubmitButton>
+          </form>
+          {!isDefault ? (
+            <form action={setDefaultPresenterSceneAction}>
+              <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+              <input name="agendaItemId" type="hidden" value={agendaItemId} />
+              <input name="sceneId" type="hidden" value={scene.id} />
+              <AdminSubmitButton className={adminGhostButtonClassName}>
+                {copy.presenterSetDefaultSceneButton}
+              </AdminSubmitButton>
+            </form>
+          ) : null}
+          <form action={togglePresenterSceneEnabledAction}>
+            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+            <input name="agendaItemId" type="hidden" value={agendaItemId} />
+            <input name="sceneId" type="hidden" value={scene.id} />
+            <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
+            <AdminSubmitButton className={adminGhostButtonClassName}>
+              {scene.enabled ? copy.presenterHideSceneButton : copy.presenterShowSceneButton}
+            </AdminSubmitButton>
+          </form>
+          <form action={removePresenterSceneAction}>
+            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+            <input name="agendaItemId" type="hidden" value={agendaItemId} />
+            <input name="sceneId" type="hidden" value={scene.id} />
+            <AdminSubmitButton className={`${adminGhostButtonClassName} text-[var(--border-strong)]`}>
+              {copy.presenterRemoveSceneButton}
+            </AdminSubmitButton>
+          </form>
         </div>
       </div>
       <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">

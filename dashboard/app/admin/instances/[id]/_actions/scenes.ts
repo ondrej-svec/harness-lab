@@ -179,26 +179,49 @@ export async function removePresenterSceneAction(formData: FormData) {
 }
 
 /**
- * Narrow inline-field updater for presenter scenes. Allowlists only
- * the short text fields that the agenda surface's inline-edit affordances
- * can target safely: label, title, body. Reuses updatePresenterScene
- * after patching the single field onto the current scene shape, so
- * scene normalization and block handling are untouched.
+ * Narrow inline-field updater for presenter scenes. Allowlists the
+ * short text/select fields the agenda surface exposes as click-to-edit.
+ * Reuses updatePresenterScene after patching the single field onto the
+ * current scene shape so scene normalization + block handling stay
+ * untouched. Empty text fields are allowed through for ctaLabel/ctaHref
+ * so the facilitator can clear them back to null; other fields require
+ * a non-empty value.
  */
-type UpdatableSceneField = "label" | "title" | "body";
-const UPDATABLE_SCENE_FIELDS: readonly UpdatableSceneField[] = ["label", "title", "body"];
+type UpdatableSceneField =
+  | "label"
+  | "title"
+  | "body"
+  | "sceneType"
+  | "intent"
+  | "chromePreset"
+  | "ctaLabel"
+  | "ctaHref";
+const UPDATABLE_SCENE_FIELDS: readonly UpdatableSceneField[] = [
+  "label",
+  "title",
+  "body",
+  "sceneType",
+  "intent",
+  "chromePreset",
+  "ctaLabel",
+  "ctaHref",
+];
+const CLEARABLE_SCENE_FIELDS: ReadonlySet<UpdatableSceneField> = new Set(["ctaLabel", "ctaHref"]);
 
 export async function updateSceneFieldAction(formData: FormData) {
   const instanceId = String(formData.get("instanceId") ?? "");
   const agendaItemId = String(formData.get("agendaItemId") ?? "");
   const sceneId = String(formData.get("sceneId") ?? "");
-  const fieldName = String(formData.get("fieldName") ?? "");
+  const fieldName = String(formData.get("fieldName") ?? "") as UpdatableSceneField;
   const fieldValue = String(formData.get(fieldName) ?? "").trim();
 
-  if (!instanceId || !agendaItemId || !sceneId || !fieldName || !fieldValue) {
+  if (!instanceId || !agendaItemId || !sceneId || !fieldName) {
     return;
   }
-  if (!UPDATABLE_SCENE_FIELDS.includes(fieldName as UpdatableSceneField)) {
+  if (!UPDATABLE_SCENE_FIELDS.includes(fieldName)) {
+    return;
+  }
+  if (!fieldValue && !CLEARABLE_SCENE_FIELDS.has(fieldName)) {
     return;
   }
 
@@ -210,16 +233,31 @@ export async function updateSceneFieldAction(formData: FormData) {
     return;
   }
 
-  await updatePresenterScene(
-    agendaItemId,
-    sceneId,
-    {
-      label: fieldName === "label" ? fieldValue : scene.label,
-      sceneType: scene.sceneType,
-      title: fieldName === "title" ? fieldValue : scene.title ?? undefined,
-      body: fieldName === "body" ? fieldValue : scene.body ?? undefined,
-    },
-    instanceId,
-  );
+  const base = {
+    label: scene.label,
+    sceneType: scene.sceneType,
+    title: scene.title ?? undefined,
+    body: scene.body ?? undefined,
+    intent: scene.intent ?? undefined,
+    chromePreset: scene.chromePreset ?? undefined,
+    ctaLabel: scene.ctaLabel ?? null,
+    ctaHref: scene.ctaHref ?? null,
+  };
+  const patch: typeof base = { ...base };
+  if (fieldName === "sceneType") {
+    patch.sceneType = fieldValue as PresenterScene["sceneType"];
+  } else if (fieldName === "intent") {
+    patch.intent = fieldValue as PresenterScene["intent"];
+  } else if (fieldName === "chromePreset") {
+    patch.chromePreset = fieldValue as PresenterScene["chromePreset"];
+  } else if (fieldName === "ctaLabel") {
+    patch.ctaLabel = fieldValue || null;
+  } else if (fieldName === "ctaHref") {
+    patch.ctaHref = fieldValue || null;
+  } else {
+    patch[fieldName] = fieldValue;
+  }
+
+  await updatePresenterScene(agendaItemId, sceneId, patch, instanceId);
   revalidatePath(`/admin/instances/${instanceId}`);
 }
