@@ -42,8 +42,13 @@ export function AddAgendaItemRow({
     formData.set("instanceId", instanceId);
     formData.set("title", title);
     formData.set("time", time);
-    formData.set("goal", "");
-    formData.set("roomSummary", "");
+    // The action requires a non-empty description. Seed it with the
+    // title so brand-new items persist; the facilitator edits the
+    // richer fields (goal, roomSummary, prompts) inline once the row
+    // is on the page.
+    formData.set("goal", title);
+    formData.set("roomSummary", title);
+    formData.set("description", title);
     if (afterItemId) formData.set("afterItemId", afterItemId);
     startTransition(async () => {
       try {

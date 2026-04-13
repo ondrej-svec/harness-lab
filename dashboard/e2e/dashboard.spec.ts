@@ -266,9 +266,20 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a");
 
     await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
-    // Detail workbench heading — the moment's time + title.
-    await expect(page.getByRole("heading", { name: "13:30 • Rotace týmů" })).toBeVisible();
-    const detailWorkbench = page.locator("section").filter({ has: page.getByRole("heading", { name: "13:30 • Rotace týmů" }) }).first();
+    // Phase 3 turned the detail hero's "time • title" h2 into two
+    // InlineField buttons wrapped in an h2. The h2 still exists but
+    // its accessible name no longer concatenates cleanly into one
+    // string, so assert the two inline buttons instead.
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^13:30$/ }).first(),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^Rotace týmů$/ }).first(),
+    ).toBeVisible();
+    const detailWorkbench = page
+      .locator("main")
+      .filter({ has: page.locator('[data-inline-field="display"]').filter({ hasText: /^Rotace týmů$/ }) })
+      .first();
     const projectionLink = detailWorkbench.getByRole("link", { name: "otevřít projekci" });
     const participantLinks = detailWorkbench.getByRole("link", { name: "participant plocha 1:1" });
 
@@ -398,6 +409,192 @@ test.describe("facilitator admin (file mode)", () => {
     // text explains what to type.
     const heading = page.getByText(/Pro potvrzení napište id instance/);
     await expect(heading).toBeVisible();
+  });
+});
+
+test.describe("one canvas phase 3 — inline editing", () => {
+  // These tests cover the Phase 3 acceptance criteria: every content
+  // field on the agenda / scene / team surfaces edits inline without a
+  // save button, creation sheets are replaced by inline-append draft
+  // rows, and the three retired sheet overlays no longer resolve to a
+  // rendered sheet. Fixtures come from the playwright-workshop-state
+  // runtime snapshot; tests that mutate state use unique values so a
+  // re-run keeps working (no clean-up between tests).
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("inline editing the agenda time field persists across reload", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+
+    // Find the time InlineField — it renders as a <button> whose text
+    // content is the current value. Talk phase ships with time "9:40".
+    const timeButton = page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first();
+    await expect(timeButton).toBeVisible();
+    await timeButton.click();
+
+    const timeInput = page.locator('[data-inline-field="edit"]').first();
+    await expect(timeInput).toBeVisible();
+    await timeInput.fill("9:42");
+    await timeInput.press("Enter");
+
+    // The display button should reflect the new value after the action
+    // settles.
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:42$/ }).first(),
+    ).toBeVisible();
+
+    // Reload to prove persistence, then revert so re-runs stay stable.
+    await page.reload();
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:42$/ }).first(),
+    ).toBeVisible();
+
+    await page
+      .locator('[data-inline-field="display"]')
+      .filter({ hasText: /^9:42$/ })
+      .first()
+      .click();
+    const revertInput = page.locator('[data-inline-field="edit"]').first();
+    await revertInput.fill("9:40");
+    await revertInput.press("Enter");
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
+    ).toBeVisible();
+  });
+
+  test("escape cancels an inline edit without firing the action", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
+
+    const timeButton = page
+      .locator('[data-inline-field="display"]')
+      .filter({ hasText: /^9:40$/ })
+      .first();
+    await timeButton.click();
+
+    const timeInput = page.locator('[data-inline-field="edit"]').first();
+    await timeInput.fill("99:99");
+    await timeInput.press("Escape");
+
+    // The original value must still render — escape aborts without
+    // hitting the server action.
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
+    ).toBeVisible();
+  });
+
+  test("AddAgendaItemRow creates a new agenda item from the inline draft row", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda");
+
+    // Use a unique time so re-runs don't collide with leftover state.
+    const uniqueTime = `23:${String(Math.floor(Math.random() * 59)).padStart(2, "0")}`;
+    const uniqueTitle = `E2E inline agenda ${Date.now()}`;
+
+    const addButton = page.getByRole("button", { name: /^\+ / });
+    await addButton.first().click();
+
+    // The draft row renders the time input first, then the title
+    // input. Both are focusable; we grab them by aria-label.
+    await page.getByLabel("time").first().fill(uniqueTime);
+    await page.getByLabel(/add agenda item|přidat moment agendy/).first().fill(uniqueTitle);
+    await page.getByLabel(/add agenda item|přidat moment agendy/).first().press("Enter");
+
+    // addAgendaItemAction redirects back to the detail view of the
+    // newly-created item, so the URL reflects the fresh agendaItem id.
+    await page.waitForURL(/agendaItem=/);
+    // The unique title propagates into the outline rail + detail header.
+    await expect(page.getByText(uniqueTitle).first()).toBeVisible();
+  });
+
+  test("scene sceneType edits inline via the select dropdown", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
+
+    // The opening phase carries multiple presenter scenes; pick the
+    // first sceneType select and flip its value. Every scene card
+    // renders one sceneType select, so scoping by first() is safe.
+    const sceneTypeButton = page
+      .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+      .filter({ hasText: /^(briefing|demo|participant-view|checkpoint|reflection|transition|custom)$/ })
+      .first();
+    const originalType = await sceneTypeButton.textContent();
+    await sceneTypeButton.click();
+
+    const select = page.locator('[data-inline-field="edit"]').first();
+    await expect(select).toBeVisible();
+    // Pick a different value than the original so the change is real.
+    const nextType = originalType?.trim() === "demo" ? "briefing" : "demo";
+    await select.selectOption(nextType);
+
+    // Select mode saves onChange; the display button should reflect
+    // the new value without needing a reload.
+    await expect(
+      page
+        .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+        .filter({ hasText: new RegExp(`^${nextType}$`) })
+        .first(),
+    ).toBeVisible();
+
+    // Revert so re-runs stay deterministic.
+    await page
+      .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+      .filter({ hasText: new RegExp(`^${nextType}$`) })
+      .first()
+      .click();
+    await page.locator('[data-inline-field="edit"]').first().selectOption(originalType?.trim() ?? "briefing");
+  });
+
+  test("team card name edits inline and persists", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=teams");
+
+    // Pick the first team card and rename it. Re-use the original name
+    // as the revert value so re-runs stay stable.
+    const teamNameButton = page.locator('[data-inline-field="display"]').first();
+    const original = (await teamNameButton.textContent())?.trim() ?? "";
+    const renamed = `${original} · e2e`;
+
+    await teamNameButton.click();
+    await page.locator('[data-inline-field="edit"]').first().fill(renamed);
+    await page.locator('[data-inline-field="edit"]').first().press("Enter");
+
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first(),
+    ).toBeVisible();
+
+    // Reload to prove the server action persisted the change.
+    await page.reload();
+    await expect(
+      page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first(),
+    ).toBeVisible();
+
+    // Revert.
+    await page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first().click();
+    const revert = page.locator('[data-inline-field="edit"]').first();
+    await revert.fill(original);
+    await revert.press("Enter");
+  });
+
+  test("retired sheet overlays no longer render AdminSheet chrome", async ({ page }) => {
+    // Phase 3 retired agenda-edit, agenda-add, and scene-add overlays.
+    // Loading any of those URLs should still render the section
+    // (graceful degradation — the overlay query param is ignored) but
+    // must not render an AdminSheet. The sheet chrome uses
+    // `fixed inset-0 z-50` on the outer container, so asserting that
+    // selector count stays zero covers the contract.
+    const retired = [
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=talk&overlay=agenda-edit",
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=talk&overlay=agenda-add",
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&overlay=scene-add",
+    ];
+    for (const url of retired) {
+      await page.goto(url);
+      // Page landed on the admin instance (no redirect to sign-in).
+      await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
+      // No sheet chrome rendered for the retired overlays.
+      await expect(page.locator(".fixed.inset-0.z-50")).toHaveCount(0);
+    }
   });
 });
 
