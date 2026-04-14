@@ -42,9 +42,11 @@ import { SceneRail, type SceneRailItem } from "./scene-rail";
 
 const SWIPE_THRESHOLD = 80; // px — feel-tuned for iPadOS
 const SWIPE_VELOCITY = 500; // px/sec — quick flick bypasses threshold
-const WHEEL_THRESHOLD = 60; // accumulated deltaY before navigation
-const WHEEL_GESTURE_QUIET_MS = 200; // wheel quiet period that ends a gesture
-const NAVIGATE_COOLDOWN_MS = 250; // ignore further keyboard/swipe triggers right after a nav
+const WHEEL_THRESHOLD = 30; // accumulated deltaY before navigation
+const WHEEL_GESTURE_QUIET_MS = 250; // wheel quiet period that ends a gesture
+const WHEEL_FORCE_UNLOCK_MS = 400; // failsafe unlock if inertia never quiets
+const NAVIGATE_COOLDOWN_MS = 220; // ignore further keyboard/swipe triggers right after a nav
+const SCROLL_BOUNDARY_TOLERANCE = 4; // px — accommodates retina sub-pixel scrollTop
 
 export type PresenterSlide = {
   id: string;
@@ -102,6 +104,7 @@ export function PresenterShell({
   const wheelAccumRef = useRef(0);
   const wheelLastEventTimeRef = useRef(0);
   const wheelGestureFiredRef = useRef(false);
+  const wheelGestureFiredAtRef = useRef(0);
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -169,15 +172,15 @@ export function PresenterShell({
     [instanceId, lang],
   );
 
-  const navigate = useCallback(
+  // Inner navigation primitive — no cooldown, no gesture state.
+  // Wheel handler calls this directly because it manages its own
+  // gesture-debouncing. Keyboard / rail / swipe go through the
+  // `navigate()` wrapper below which adds a short cooldown.
+  const performNavigation = useCallback(
     (delta: number) => {
       const slidesNow = slidesRef.current;
       const currentIndex = activeIndexRef.current;
       const nextIndex = currentIndex + delta;
-
-      if (Date.now() < cooldownUntilRef.current) {
-        return;
-      }
 
       // Edge fall-through: gesturing past the first or last slide
       // jumps to the neighboring agenda item's first scene AND
@@ -185,22 +188,30 @@ export function PresenterShell({
       if (nextIndex < 0) {
         const target = previousAgendaIdRef.current;
         if (!target) return;
-        cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
         crossAgenda(target);
         return;
       }
       if (nextIndex >= slidesNow.length) {
         const target = nextAgendaIdRef.current;
         if (!target) return;
-        cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
         crossAgenda(target);
         return;
       }
 
-      cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
       setActiveIndex(nextIndex);
     },
     [crossAgenda],
+  );
+
+  const navigate = useCallback(
+    (delta: number) => {
+      if (Date.now() < cooldownUntilRef.current) {
+        return;
+      }
+      cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
+      performNavigation(delta);
+    },
+    [performNavigation],
   );
 
   // Keyboard parity: down/right/space/PgDn = next, up/left/PgUp = prev.
@@ -235,35 +246,43 @@ export function PresenterShell({
 
   // Trackpad two-finger scroll → next/previous scene.
   //
-  // Three intertwined concerns this handler resolves:
+  // The hard problem with wheel-based slide navigation: Mac trackpad
+  // gestures emit a continuous stream of wheel events with a long
+  // inertia tail (~300-600ms after the user lifts their fingers), and
+  // each scroll-deck attempt drowns in three intertwined questions:
   //
-  // 1. Mac trackpads emit a continuous stream of wheel events for a
-  //    single physical scroll gesture (including a long inertia tail).
-  //    A naive "navigate when the accumulator crosses a threshold"
-  //    fires twice per gesture because the inertia tail re-crosses
-  //    the threshold. Fix: gesture-based debouncing. A "gesture" is
-  //    a continuous run of wheel events with <200ms gaps. At most ONE
-  //    navigation per gesture.
+  // 1. Inner scrollable children (inline-edit textareas, details
+  //    bodies) must keep their own scroll behavior. → Walk up the DOM
+  //    from the wheel target; if we hit an inner scrollable ancestor
+  //    BEFORE the slide container, bail out and let the browser
+  //    scroll it.
   //
-  // 2. The slide content can be taller than the viewport. We don't
-  //    want to hijack scrolling INSIDE a tall slide — the user should
-  //    be able to read the body before advancing. Fix: only navigate
-  //    when the user is at the slide's scroll boundary AND continues
-  //    in the same direction (the iOS Safari "rubber band" pattern).
+  // 2. Tall slides (content > viewport) should scroll within first,
+  //    only navigate at the boundary. → If the slide container itself
+  //    can scroll, check its scrollTop. Mid-slide → reset gesture
+  //    state so the moment we hit the boundary starts a fresh
+  //    accumulator. Boundary tolerance is 4px to handle retina
+  //    sub-pixel scroll positions.
   //
-  // 3. Inner scrollable elements like inline-edit textareas should
-  //    keep their own scroll behavior without ever triggering scene
-  //    navigation. Fix: walk up from the wheel target; if we hit an
-  //    inner scrollable ancestor BEFORE the slide container, drop
-  //    the event and let the browser handle the inner scroll.
+  // 3. ONE physical gesture should fire AT MOST ONE navigation, but
+  //    the next physical gesture should be detectable even mid-inertia.
+  //    → Two-stage gesture-end detection:
+  //       a) A 250ms self-resetting timeout fires when wheel events
+  //          stop arriving — that's the "true" end of a gesture.
+  //       b) A 400ms force-unlock from the last navigation, in case
+  //          inertia keeps firing forever. This bounds the worst-case
+  //          "frozen" period when the user keeps wheel-scrolling.
+  //    Once unlocked (either way), the accumulator + fired flag
+  //    reset and the next wheel event can fire a new navigation.
+  //
+  // Wheel calls performNavigation directly (no cooldown collision
+  // with keyboard/swipe/rail).
   useEffect(() => {
     function handleWheel(event: WheelEvent) {
       const target = event.target as HTMLElement | null;
       if (!target) return;
 
-      // Walk up the DOM tree from the wheel target. If we find the
-      // slide container (data-presenter-slide), check its boundary.
-      // If we find an inner scrollable ancestor first, leave it alone.
+      // 1. Walk up; bail to inner scrollable, otherwise find the slide.
       let node: HTMLElement | null = target;
       let slideContainer: HTMLElement | null = null;
       while (node && node !== document.body) {
@@ -276,68 +295,82 @@ export function PresenterShell({
           (style.overflowY === "auto" || style.overflowY === "scroll") &&
           node.scrollHeight > node.clientHeight
         ) {
-          // Inner scrollable (textarea, details body, etc.) — let
-          // the browser scroll it without us hijacking.
+          // Inner scrollable — leave it alone.
           return;
         }
         node = node.parentElement;
       }
 
-      // If the slide container itself can scroll, only navigate when
-      // the user is pushing past its boundary in the same direction
-      // as the wheel delta.
-      if (slideContainer && slideContainer.scrollHeight > slideContainer.clientHeight) {
+      // 2. Boundary check on tall slides. Mid-slide: let the browser
+      //    scroll, reset gesture state.
+      if (slideContainer && slideContainer.scrollHeight > slideContainer.clientHeight + SCROLL_BOUNDARY_TOLERANCE) {
         const scrollTop = slideContainer.scrollTop;
         const maxScroll = slideContainer.scrollHeight - slideContainer.clientHeight;
-        const atTop = scrollTop <= 1;
-        const atBottom = scrollTop >= maxScroll - 1;
+        const atTop = scrollTop <= SCROLL_BOUNDARY_TOLERANCE;
+        const atBottom = scrollTop >= maxScroll - SCROLL_BOUNDARY_TOLERANCE;
         if (event.deltaY > 0 && !atBottom) {
-          // Scrolling down but the slide still has room — let the
-          // browser scroll the slide and reset our gesture state so
-          // the moment we DO hit the bottom is treated as a fresh
-          // gesture.
           wheelAccumRef.current = 0;
           wheelGestureFiredRef.current = false;
+          wheelLastEventTimeRef.current = Date.now();
           return;
         }
         if (event.deltaY < 0 && !atTop) {
           wheelAccumRef.current = 0;
           wheelGestureFiredRef.current = false;
+          wheelLastEventTimeRef.current = Date.now();
           return;
         }
       }
 
+      // 3. Gesture-debouncing logic.
       const now = Date.now();
       const elapsedSinceLastWheel = now - wheelLastEventTimeRef.current;
       wheelLastEventTimeRef.current = now;
 
+      // Quiet-period detection: if no wheel events for 250ms, the
+      // previous gesture has ended (either inertia died or user
+      // paused). Reset accumulator + fired flag so this event can
+      // start a new gesture.
       if (elapsedSinceLastWheel > WHEEL_GESTURE_QUIET_MS) {
-        // New physical gesture starts. Reset accumulator + fired flag
-        // so this gesture can navigate exactly once.
         wheelAccumRef.current = 0;
         wheelGestureFiredRef.current = false;
       }
 
+      // Force-unlock: if we navigated more than 400ms ago, allow a
+      // new navigation even if the inertia tail is still arriving.
+      // This bounds the worst-case "stuck" period when the user keeps
+      // wheel-scrolling — they should never feel frozen for more than
+      // ~half a second.
+      if (
+        wheelGestureFiredRef.current &&
+        wheelGestureFiredAtRef.current > 0 &&
+        now - wheelGestureFiredAtRef.current > WHEEL_FORCE_UNLOCK_MS
+      ) {
+        wheelGestureFiredRef.current = false;
+        wheelAccumRef.current = 0;
+      }
+
       if (wheelGestureFiredRef.current) {
-        // Same gesture, already fired — drop tail events (including
-        // any trackpad inertia decay) until the gesture ends.
+        // Same gesture, already fired — drop the tail.
         return;
       }
 
       wheelAccumRef.current += event.deltaY;
       if (wheelAccumRef.current > WHEEL_THRESHOLD) {
         wheelGestureFiredRef.current = true;
+        wheelGestureFiredAtRef.current = now;
         wheelAccumRef.current = 0;
-        navigate(1);
+        performNavigation(1);
       } else if (wheelAccumRef.current < -WHEEL_THRESHOLD) {
         wheelGestureFiredRef.current = true;
+        wheelGestureFiredAtRef.current = now;
         wheelAccumRef.current = 0;
-        navigate(-1);
+        performNavigation(-1);
       }
     }
     window.addEventListener("wheel", handleWheel, { passive: true });
     return () => window.removeEventListener("wheel", handleWheel);
-  }, [navigate]);
+  }, [performNavigation]);
 
   const offsetExpression = `calc(-${activeIndex} * 100%)`;
   const transition = reduceMotion
