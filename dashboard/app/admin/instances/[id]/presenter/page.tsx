@@ -45,6 +45,18 @@ export default async function PresenterPage({
     .sort((left, right) => left.order - right.order);
   const activeAgendaItemId = presenterState.activeAgendaItem?.id ?? null;
 
+  // Cross-agenda navigation: pre-compute the previous and next agenda
+  // item's first-scene URL so the shell can fall through to a phase
+  // change when the user hits the edge of the current scene pack.
+  const agendaIndex = activeAgendaItemId
+    ? state.agenda.findIndex((item) => item.id === activeAgendaItemId)
+    : -1;
+  const previousAgendaItem = agendaIndex > 0 ? state.agenda[agendaIndex - 1] ?? null : null;
+  const nextAgendaItem =
+    agendaIndex >= 0 && agendaIndex < state.agenda.length - 1
+      ? state.agenda[agendaIndex + 1] ?? null
+      : null;
+
   // Pre-render every scene in the active surface as a React element
   // and hand the whole pack to <PresenterShell>. Local state on the
   // client picks which one is visible — no server round trip per
@@ -80,6 +92,12 @@ export default async function PresenterPage({
           slides={sceneSlides.map(({ id, content }) => ({ id, content }))}
           railItems={railItems}
           initialSceneId={presenterState.selectedScene?.id ?? sceneSlides[0]?.id ?? null}
+          instanceId={instanceId}
+          lang={lang}
+          previousAgendaItemId={previousAgendaItem?.id ?? null}
+          nextAgendaItemId={nextAgendaItem?.id ?? null}
+          previousAgendaLabel={previousAgendaItem ? `${previousAgendaItem.time} · ${previousAgendaItem.title}` : null}
+          nextAgendaLabel={nextAgendaItem ? `${nextAgendaItem.time} · ${nextAgendaItem.title}` : null}
         />
       ) : (
         <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">

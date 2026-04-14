@@ -6,8 +6,10 @@ import {
   useEffect,
   useRef,
   useState,
+  useTransition,
   type ReactNode,
 } from "react";
+import { advancePresenterToAgendaItemAction } from "../_actions/agenda";
 import { SceneRail, type SceneRailItem } from "./scene-rail";
 
 // Local-state presenter carousel.
@@ -41,7 +43,8 @@ import { SceneRail, type SceneRailItem } from "./scene-rail";
 const SWIPE_THRESHOLD = 80; // px — feel-tuned for iPadOS
 const SWIPE_VELOCITY = 500; // px/sec — quick flick bypasses threshold
 const WHEEL_THRESHOLD = 60; // accumulated deltaY before navigation
-const NAVIGATE_COOLDOWN_MS = 250; // ignore further triggers right after a nav
+const WHEEL_GESTURE_QUIET_MS = 200; // wheel quiet period that ends a gesture
+const NAVIGATE_COOLDOWN_MS = 250; // ignore further keyboard/swipe triggers right after a nav
 
 export type PresenterSlide = {
   id: string;
@@ -52,12 +55,31 @@ export function PresenterShell({
   slides,
   railItems,
   initialSceneId,
+  instanceId,
+  lang,
+  previousAgendaItemId,
+  nextAgendaItemId,
+  previousAgendaLabel,
+  nextAgendaLabel,
 }: {
   slides: readonly PresenterSlide[];
   railItems: readonly SceneRailItem[];
   initialSceneId: string | null;
+  instanceId: string;
+  lang: "cs" | "en";
+  /** Agenda item id of the previous phase. Cross-agenda nav
+   *  fall-through fires when the user gestures backward off the
+   *  first slide. Null when at the first agenda item. The action
+   *  also flips the live marker so the participant surface follows. */
+  previousAgendaItemId?: string | null;
+  /** Agenda item id of the next phase. */
+  nextAgendaItemId?: string | null;
+  /** Optional human label for the boundary hint chip. */
+  previousAgendaLabel?: string | null;
+  nextAgendaLabel?: string | null;
 }) {
   const reduceMotion = useReducedMotion();
+  const [isCrossingAgenda, startCrossingAgenda] = useTransition();
 
   // Resolve the initial index from the supplied scene id. Falls back
   // to the first slide if the id is missing (defensive — server should
@@ -74,8 +96,12 @@ export function PresenterShell({
   const activeIndexRef = useRef(activeIndex);
   const slidesRef = useRef(slides);
   const railItemsRef = useRef(railItems);
+  const previousAgendaIdRef = useRef(previousAgendaItemId ?? null);
+  const nextAgendaIdRef = useRef(nextAgendaItemId ?? null);
   const cooldownUntilRef = useRef(0);
   const wheelAccumRef = useRef(0);
+  const wheelLastEventTimeRef = useRef(0);
+  const wheelGestureFiredRef = useRef(false);
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -84,7 +110,9 @@ export function PresenterShell({
   useEffect(() => {
     slidesRef.current = slides;
     railItemsRef.current = railItems;
-  }, [slides, railItems]);
+    previousAgendaIdRef.current = previousAgendaItemId ?? null;
+    nextAgendaIdRef.current = nextAgendaItemId ?? null;
+  }, [slides, railItems, previousAgendaItemId, nextAgendaItemId]);
 
   // Defensive: if the parent re-renders with a different slides prop
   // (server re-render after a navigation that landed via Next.js router
@@ -116,20 +144,56 @@ export function PresenterShell({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
-  const navigate = useCallback((delta: number) => {
-    const slidesNow = slidesRef.current;
-    const currentIndex = activeIndexRef.current;
-    const nextIndex = currentIndex + delta;
-    if (nextIndex < 0 || nextIndex >= slidesNow.length) {
-      // Off the edge — no-op.
-      return;
-    }
-    if (Date.now() < cooldownUntilRef.current) {
-      return;
-    }
-    cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
-    setActiveIndex(nextIndex);
-  }, []);
+  const crossAgenda = useCallback(
+    (targetAgendaId: string) => {
+      // Submit the action via a transition so React keeps the current
+      // UI mounted while the server processes the side effect (set
+      // current agenda + redirect). The transition's pending state
+      // shows the loading overlay below.
+      startCrossingAgenda(async () => {
+        const formData = new FormData();
+        formData.set("instanceId", instanceId);
+        formData.set("agendaId", targetAgendaId);
+        formData.set("lang", lang);
+        await advancePresenterToAgendaItemAction(formData);
+      });
+    },
+    [instanceId, lang],
+  );
+
+  const navigate = useCallback(
+    (delta: number) => {
+      const slidesNow = slidesRef.current;
+      const currentIndex = activeIndexRef.current;
+      const nextIndex = currentIndex + delta;
+
+      if (Date.now() < cooldownUntilRef.current) {
+        return;
+      }
+
+      // Edge fall-through: gesturing past the first or last slide
+      // jumps to the neighboring agenda item's first scene AND
+      // flips the live marker so participants follow.
+      if (nextIndex < 0) {
+        const target = previousAgendaIdRef.current;
+        if (!target) return;
+        cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
+        crossAgenda(target);
+        return;
+      }
+      if (nextIndex >= slidesNow.length) {
+        const target = nextAgendaIdRef.current;
+        if (!target) return;
+        cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
+        crossAgenda(target);
+        return;
+      }
+
+      cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
+      setActiveIndex(nextIndex);
+    },
+    [crossAgenda],
+  );
 
   // Keyboard parity: down/right/space/PgDn = next, up/left/PgUp = prev.
   useEffect(() => {
@@ -161,9 +225,20 @@ export function PresenterShell({
     return () => window.removeEventListener("keydown", handleKey);
   }, [navigate]);
 
-  // Trackpad two-finger scroll → next/previous scene. We ignore wheel
-  // events that target a vertically-scrollable child so inline editing
-  // surfaces still scroll naturally.
+  // Trackpad two-finger scroll → next/previous scene.
+  //
+  // Mac trackpads emit a continuous stream of wheel events for a
+  // single physical scroll gesture (including a long inertia tail
+  // after the user lifts their fingers). The naive "navigate when the
+  // accumulator crosses a threshold" approach fires twice per gesture
+  // because the inertia tail re-crosses the threshold. The fix is
+  // gesture-based debouncing: a "gesture" is a continuous run of
+  // wheel events with <200ms gaps. At most ONE navigation per
+  // gesture, regardless of how many events the trackpad emits.
+  //
+  // Wheel events targeting a scrollable child (block editor textareas,
+  // source-ref details) fall through to the browser so inline editing
+  // still scrolls naturally.
   useEffect(() => {
     function handleWheel(event: WheelEvent) {
       const target = event.target as HTMLElement | null;
@@ -181,14 +256,30 @@ export function PresenterShell({
         }
       }
 
-      if (Date.now() < cooldownUntilRef.current) {
+      const now = Date.now();
+      const elapsedSinceLastWheel = now - wheelLastEventTimeRef.current;
+      wheelLastEventTimeRef.current = now;
+
+      if (elapsedSinceLastWheel > WHEEL_GESTURE_QUIET_MS) {
+        // New physical gesture starts. Reset accumulator + fired
+        // flag so this gesture can navigate exactly once.
+        wheelAccumRef.current = 0;
+        wheelGestureFiredRef.current = false;
+      }
+
+      if (wheelGestureFiredRef.current) {
+        // Same gesture, already fired — drop tail events (including
+        // any trackpad inertia decay) until the gesture ends.
         return;
       }
+
       wheelAccumRef.current += event.deltaY;
       if (wheelAccumRef.current > WHEEL_THRESHOLD) {
+        wheelGestureFiredRef.current = true;
         wheelAccumRef.current = 0;
         navigate(1);
       } else if (wheelAccumRef.current < -WHEEL_THRESHOLD) {
+        wheelGestureFiredRef.current = true;
         wheelAccumRef.current = 0;
         navigate(-1);
       }
@@ -264,6 +355,21 @@ export function PresenterShell({
         </div>
       ) : null}
 
+      {/* Cross-agenda boundary hint. Only renders when the user is on
+          the first slide (and a previous agenda item exists) or the
+          last slide (and a next agenda item exists). One more swipe /
+          arrow press past the edge advances to that agenda item. */}
+      {activeIndex === 0 && previousAgendaLabel ? (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-30 select-none rounded-full border border-dashed border-[var(--border)] bg-[var(--surface-panel)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] shadow-[0_8px_18px_rgba(28,25,23,0.08)] backdrop-blur">
+          ↑ {previousAgendaLabel}
+        </div>
+      ) : null}
+      {activeIndex === slides.length - 1 && nextAgendaLabel ? (
+        <div className="pointer-events-none fixed bottom-6 right-6 z-30 select-none rounded-full border border-dashed border-[var(--border)] bg-[var(--surface-panel)] px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] shadow-[0_8px_18px_rgba(28,25,23,0.08)] backdrop-blur">
+          ↓ {nextAgendaLabel}
+        </div>
+      ) : null}
+
       <SceneRail
         items={railItems}
         activeSceneId={slides[activeIndex]?.id ?? null}
@@ -275,6 +381,23 @@ export function PresenterShell({
           }
         }}
       />
+
+      {/* Phase-change loading overlay. Renders during the transition
+          fired by crossAgenda(): we're switching agenda items, so the
+          server has to re-derive the entire scene pack. The overlay
+          gives the facilitator a clear "phase changing" cue instead
+          of a frozen UI. */}
+      {isCrossingAgenda ? (
+        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-[color:color-mix(in_oklab,var(--surface-admin)_72%,transparent)] backdrop-blur-sm">
+          <div className="flex items-center gap-3 rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-5 py-2 text-sm text-[var(--text-primary)] shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
+            <span
+              aria-hidden
+              className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-[var(--border-strong)] border-t-[var(--text-primary)]"
+            />
+            <span>{lang === "en" ? "Changing phase…" : "Měním fázi…"}</span>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -54,6 +54,15 @@ export default async function InterceptedPresenterPage({
 
   const closeHref = withLang(`/admin/instances/${instanceId}`, lang);
 
+  // Cross-agenda navigation hrefs so the carousel can fall through to
+  // a phase change when the user hits the edge of the current pack.
+  const agendaIndex = state.agenda.findIndex((item) => item.id === activeAgendaItem.id);
+  const previousAgendaItem = agendaIndex > 0 ? state.agenda[agendaIndex - 1] ?? null : null;
+  const nextAgendaItem =
+    agendaIndex >= 0 && agendaIndex < state.agenda.length - 1
+      ? state.agenda[agendaIndex + 1] ?? null
+      : null;
+
   // Pre-render every scene as a React element. The shell handles
   // navigation locally via state — no server round trip per swipe /
   // arrow / wheel / rail click.
@@ -117,7 +126,17 @@ export default async function InterceptedPresenterPage({
 
   return (
     <SceneMorphOverlay closeHref={closeHref} previousHref={null} nextHref={null}>
-      <PresenterShell slides={slides} railItems={railItems} initialSceneId={selectedScene.id} />
+      <PresenterShell
+        slides={slides}
+        railItems={railItems}
+        initialSceneId={selectedScene.id}
+        instanceId={instanceId}
+        lang={lang}
+        previousAgendaItemId={previousAgendaItem?.id ?? null}
+        nextAgendaItemId={nextAgendaItem?.id ?? null}
+        previousAgendaLabel={previousAgendaItem ? `${previousAgendaItem.time} · ${previousAgendaItem.title}` : null}
+        nextAgendaLabel={nextAgendaItem ? `${nextAgendaItem.time} · ${nextAgendaItem.title}` : null}
+      />
     </SceneMorphOverlay>
   );
 }

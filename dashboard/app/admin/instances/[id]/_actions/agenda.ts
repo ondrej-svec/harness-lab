@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
+import { buildPresenterRouteHref } from "@/lib/presenter-view-model";
+import { resolveUiLanguage } from "@/lib/ui-language";
 import {
   addAgendaItem,
   captureRotationSignal,
@@ -128,6 +130,30 @@ export async function removeAgendaItemAction(formData: FormData) {
     await removeAgendaItem(agendaId, instanceId);
   }
   redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+/**
+ * Cross-agenda navigation from the presenter carousel.
+ *
+ * When the facilitator gestures past the last (or first) scene of the
+ * current agenda item, the PresenterShell calls this action with the
+ * neighboring agenda item's id. The action sets the live marker so the
+ * participant surface tracks the new phase, then redirects to the
+ * presenter URL for that item's first scene. Both side effects happen
+ * server-side in one round trip — the client just submits the form.
+ */
+export async function advancePresenterToAgendaItemAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
+
+  if (!instanceId || !agendaId) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  await setCurrentAgendaItem(agendaId, instanceId);
+  redirect(buildPresenterRouteHref({ lang, instanceId, agendaItemId: agendaId, sceneId: null }));
 }
 
 export async function captureRotationSignalAction(formData: FormData) {
