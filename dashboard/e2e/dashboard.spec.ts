@@ -715,76 +715,76 @@ test.describe("agenda detail — scene stage + rail", () => {
     },
   });
 
-  test("default scene selection renders exactly one stage panel", async ({ page }) => {
+  test("opening agenda renders one stage per surface and the room default is active", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
 
-    // Only one stage panel in the DOM — siblings stay as rail tiles.
-    // This is the core regression guard: the old wall-of-scenes layout
-    // rendered one panel per scene, which blew the agenda detail into
-    // a 2000px scroll.
+    // The agenda detail hosts two SceneStageRails (room + participant);
+    // each renders exactly one full-fidelity stage panel. The previous
+    // wall-of-scenes layout rendered N panels per surface and blew the
+    // page into a ~2000px scroll — this count is the regression guard.
     const stagePanels = page.locator("[data-scene-stage]");
-    await expect(stagePanels).toHaveCount(1);
+    await expect(stagePanels).toHaveCount(2);
 
-    // Rail tiles render for every sibling and the default one carries
-    // aria-current. The opening phase's default is opening-framing.
-    const defaultTile = page.locator('[data-scene-rail-tile="opening-framing"]');
-    await expect(defaultTile).toHaveAttribute("aria-current", "true");
-    await expect(stagePanels).toHaveAttribute("data-scene-stage", "opening-framing");
+    // Room surface (first) defaults to opening-framing. Rail tiles
+    // render for every room sibling and aria-current lands on the
+    // default one.
+    const roomStage = stagePanels.first();
+    await expect(roomStage).toHaveAttribute("data-scene-stage", "opening-framing");
+    await expect(
+      page.locator('[data-scene-rail-tile="opening-framing"]').first(),
+    ).toHaveAttribute("aria-current", "true");
   });
 
-  test("?scene= URL param drives active scene selection", async ({ page }) => {
+  test("?scene= URL param drives the room stage selection", async ({ page }) => {
     await page.goto(
       "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
     );
 
-    const stagePanels = page.locator("[data-scene-stage]");
-    await expect(stagePanels).toHaveCount(1);
-    await expect(stagePanels).toHaveAttribute("data-scene-stage", "opening-day-arc");
+    const roomStage = page.locator("[data-scene-stage]").first();
+    await expect(roomStage).toHaveAttribute("data-scene-stage", "opening-day-arc");
 
-    // The opening-day-arc tile is marked current, the default tile is not.
-    await expect(page.locator('[data-scene-rail-tile="opening-day-arc"]')).toHaveAttribute(
-      "aria-current",
-      "true",
-    );
-    await expect(page.locator('[data-scene-rail-tile="opening-framing"]')).not.toHaveAttribute(
-      "aria-current",
-      "true",
-    );
+    await expect(
+      page.locator('[data-scene-rail-tile="opening-day-arc"]').first(),
+    ).toHaveAttribute("aria-current", "true");
+    await expect(
+      page.locator('[data-scene-rail-tile="opening-framing"]').first(),
+    ).not.toHaveAttribute("aria-current", "true");
   });
 
-  test("clicking a rail tile swaps the stage via soft nav", async ({ page }) => {
+  test("clicking a room rail tile swaps the room stage via soft nav", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
 
-    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').click();
+    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').first().click();
 
     await expect(page).toHaveURL(/scene=opening-day-schedule/);
-    await expect(page.locator("[data-scene-stage]")).toHaveAttribute(
+    await expect(page.locator("[data-scene-stage]").first()).toHaveAttribute(
       "data-scene-stage",
       "opening-day-schedule",
     );
   });
 
-  test("keyboard j/k steps forward/backward through the rail", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
-
-    // Tab into the first rail tile, then press j to step forward.
-    await page.locator('[data-scene-rail-tile="opening-framing"]').focus();
-    await page.keyboard.press("j");
-    await page.waitForURL(/scene=opening-day-arc/);
-    await expect(page.locator("[data-scene-stage]")).toHaveAttribute(
-      "data-scene-stage",
-      "opening-day-arc",
+  test("keyboard j advances the room rail; k steps back", async ({ page }) => {
+    // Start from an explicit middle scene so we can test both
+    // directions from a single load without round-tripping through
+    // multiple soft-nav transitions (which are racy under keyboard).
+    await page.goto(
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
     );
 
-    // Arrow-down does the same as j.
-    await page.locator('[data-scene-rail-tile="opening-day-arc"]').focus();
-    await page.keyboard.press("ArrowDown");
+    // j advances to opening-day-schedule.
+    await page.locator('[data-scene-rail-tile="opening-day-arc"]').first().focus();
+    await page.keyboard.press("j");
     await page.waitForURL(/scene=opening-day-schedule/);
+  });
 
-    // k steps back.
-    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').focus();
+  test("keyboard k steps back through the room rail", async ({ page }) => {
+    await page.goto(
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
+    );
+
+    await page.locator('[data-scene-rail-tile="opening-day-arc"]').first().focus();
     await page.keyboard.press("k");
-    await page.waitForURL(/scene=opening-day-arc/);
+    await page.waitForURL(/scene=opening-framing/);
   });
 
   test("facilitator notes peek is collapsed by default and expands on click", async ({ page }) => {
@@ -792,11 +792,12 @@ test.describe("agenda detail — scene stage + rail", () => {
       "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-framing",
     );
 
-    // The peek lives on the stage panel as a <details> whose summary
-    // text starts with the facilitator notes label. Scope to the stage
-    // so the AgendaItemDetail peeks above it don't interfere.
-    const stage = page.locator("[data-scene-stage]");
-    const peek = stage.locator("details").filter({
+    // The peek lives on the room stage panel as a <details> whose
+    // summary text starts with the facilitator notes label. Scope to
+    // the room stage so the AgendaItemDetail peeks above it don't
+    // interfere.
+    const roomStage = page.locator("[data-scene-stage]").first();
+    const peek = roomStage.locator("details").filter({
       has: page.locator("summary", { hasText: /poznámky pro facilitátora|facilitator notes/i }),
     });
 

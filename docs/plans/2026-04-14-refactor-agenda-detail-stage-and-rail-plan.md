@@ -2,7 +2,7 @@
 title: "refactor: agenda detail stage + rail"
 type: plan
 date: 2026-04-14
-status: in_progress
+status: complete
 brainstorm: null
 confidence: high
 related:
@@ -204,10 +204,10 @@ Dependency-ordered. Check boxes drive `/work`.
 - [x] **7. Replace the room-scenes section** in `agenda-section.tsx` with `SceneStageRail` for room scenes only. Participant section untouched this pass. Keep the `AddSceneRow` anchored at the rail bottom.
 - [x] **8. Move notes + source refs into the stage's peek zone.** Inline `<details>` expansion on the stage panel. Reuse existing copy keys.
 - [x] **9. Keyboard navigation.** j/k / ↑↓ inside the rail, Enter is a no-op if already active, focus-visible styles. Unit test.
-- [ ] **10. Proof-slice review.** Screenshot the "opening" item on iPad-landscape and laptop. Hand to Ondrej. Block on rejection criteria above.
+- [x] **10. Proof-slice review.** *Skipped at Ondrej's explicit request — proceed without the screenshot gate.*
 - [x] **11. Apply to participant-surface scenes.** Add a segmented `room`/`participant` tab at the top of the rail. Participant tab swaps the rail and stage to participant scenes.
 - [x] **12. Delete `PresenterSceneSummaryCard` and its imports.** Only after both room and participant sections use the new layout.
-- [~] **13. Playwright coverage.** Existing `scene sceneType edits inline` + `admin shell renders on iPad portrait` updated and green. TODO (follow-up): dedicated tests for URL-driven scene selection, keyboard j/k, peek open/close, and an explicit "only one stage panel in DOM" regression guard.
+- [x] **13. Playwright coverage.** New `agenda detail — scene stage + rail` describe block with 6 tests covering: one stage per surface (wall-of-scenes regression guard), URL-driven scene selection, rail tile click → soft-nav, keyboard j forward, keyboard k back, and peek open/close. Existing `scene sceneType edits inline` and `admin shell renders on iPad portrait` also patched for the new selectors and stay green.
 - [x] **14. Re-baseline admin visual snapshots** with explicit before/after in the PR description.
 - [x] **15. Update copy keys** if the room/participant tab labels need new entries in `adminCopy` (cs + en).
 
