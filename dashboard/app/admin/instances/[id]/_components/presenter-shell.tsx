@@ -43,8 +43,8 @@ import { SceneRail, type SceneRailItem } from "./scene-rail";
 const SWIPE_THRESHOLD = 80; // px — feel-tuned for iPadOS
 const SWIPE_VELOCITY = 500; // px/sec — quick flick bypasses threshold
 const WHEEL_THRESHOLD = 30; // accumulated deltaY before navigation
-const WHEEL_GESTURE_QUIET_MS = 250; // wheel quiet period that ends a gesture
-const WHEEL_FORCE_UNLOCK_MS = 400; // failsafe unlock if inertia never quiets
+const WHEEL_GESTURE_QUIET_MS = 450; // wheel quiet period that ends a gesture (must outlast Mac trackpad inertia)
+const WHEEL_REVERSAL_THRESHOLD = 30; // |deltaY| in opposite direction that counts as a new physical gesture
 const NAVIGATE_COOLDOWN_MS = 220; // ignore further keyboard/swipe triggers right after a nav
 const SCROLL_BOUNDARY_TOLERANCE = 4; // px — accommodates retina sub-pixel scrollTop
 
@@ -104,7 +104,7 @@ export function PresenterShell({
   const wheelAccumRef = useRef(0);
   const wheelLastEventTimeRef = useRef(0);
   const wheelGestureFiredRef = useRef(false);
-  const wheelGestureFiredAtRef = useRef(0);
+  const wheelGestureDirectionRef = useRef(0); // sign of the navigation that fired (1, -1, or 0 if not fired)
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -246,37 +246,38 @@ export function PresenterShell({
 
   // Trackpad two-finger scroll → next/previous scene.
   //
-  // The hard problem with wheel-based slide navigation: Mac trackpad
-  // gestures emit a continuous stream of wheel events with a long
-  // inertia tail (~300-600ms after the user lifts their fingers), and
-  // each scroll-deck attempt drowns in three intertwined questions:
+  // The hard rule: ONE physical gesture must fire EXACTLY ONE
+  // navigation. Mac trackpad inertia routinely lasts 300-600ms after
+  // the user lifts their fingers and emits a continuous stream of
+  // decaying wheel events. Any "force unlock" timer shorter than that
+  // tail will let an inertia event re-trigger navigation — that's
+  // the "double change" the user reported. So we don't time-box at
+  // all: the only way out of the "fired" lock is a clean quiet
+  // period (450ms with no wheel events) OR a clean direction
+  // reversal in the opposite direction (the user explicitly meant
+  // to go back).
+  //
+  // Three concerns this handler resolves:
   //
   // 1. Inner scrollable children (inline-edit textareas, details
-  //    bodies) must keep their own scroll behavior. → Walk up the DOM
+  //    bodies) keep their own scroll behavior. → Walk up the DOM
   //    from the wheel target; if we hit an inner scrollable ancestor
   //    BEFORE the slide container, bail out and let the browser
-  //    scroll it.
+  //    handle the inner scroll.
   //
-  // 2. Tall slides (content > viewport) should scroll within first,
-  //    only navigate at the boundary. → If the slide container itself
-  //    can scroll, check its scrollTop. Mid-slide → reset gesture
-  //    state so the moment we hit the boundary starts a fresh
-  //    accumulator. Boundary tolerance is 4px to handle retina
-  //    sub-pixel scroll positions.
+  // 2. Tall slides (content > viewport) scroll within first, only
+  //    navigate at the boundary. → If the slide container itself can
+  //    scroll, check its scrollTop. Mid-slide → reset gesture state
+  //    and let the browser scroll.
   //
-  // 3. ONE physical gesture should fire AT MOST ONE navigation, but
-  //    the next physical gesture should be detectable even mid-inertia.
-  //    → Two-stage gesture-end detection:
-  //       a) A 250ms self-resetting timeout fires when wheel events
-  //          stop arriving — that's the "true" end of a gesture.
-  //       b) A 400ms force-unlock from the last navigation, in case
-  //          inertia keeps firing forever. This bounds the worst-case
-  //          "frozen" period when the user keeps wheel-scrolling.
-  //    Once unlocked (either way), the accumulator + fired flag
-  //    reset and the next wheel event can fire a new navigation.
+  // 3. Inertia rejection: once we've fired a navigation, every
+  //    subsequent event in the same direction is dropped until
+  //    EITHER the wheel goes quiet for 450ms OR the user produces a
+  //    strong opposite-direction event (≥30px), which we treat as
+  //    a deliberate new gesture.
   //
-  // Wheel calls performNavigation directly (no cooldown collision
-  // with keyboard/swipe/rail).
+  // Wheel calls performNavigation directly so it never collides with
+  // the keyboard/swipe/rail cooldown.
   useEffect(() => {
     function handleWheel(event: WheelEvent) {
       const target = event.target as HTMLElement | null;
@@ -295,14 +296,15 @@ export function PresenterShell({
           (style.overflowY === "auto" || style.overflowY === "scroll") &&
           node.scrollHeight > node.clientHeight
         ) {
-          // Inner scrollable — leave it alone.
           return;
         }
         node = node.parentElement;
       }
 
-      // 2. Boundary check on tall slides. Mid-slide: let the browser
-      //    scroll, reset gesture state.
+      // 2. Boundary check on tall slides. Mid-slide → let the
+      //    browser scroll, but ALSO update wheelLastEventTime so the
+      //    quiet-period clock starts ticking from the moment the
+      //    user actually stops scrolling.
       if (slideContainer && slideContainer.scrollHeight > slideContainer.clientHeight + SCROLL_BOUNDARY_TOLERANCE) {
         const scrollTop = slideContainer.scrollTop;
         const maxScroll = slideContainer.scrollHeight - slideContainer.clientHeight;
@@ -311,12 +313,14 @@ export function PresenterShell({
         if (event.deltaY > 0 && !atBottom) {
           wheelAccumRef.current = 0;
           wheelGestureFiredRef.current = false;
+          wheelGestureDirectionRef.current = 0;
           wheelLastEventTimeRef.current = Date.now();
           return;
         }
         if (event.deltaY < 0 && !atTop) {
           wheelAccumRef.current = 0;
           wheelGestureFiredRef.current = false;
+          wheelGestureDirectionRef.current = 0;
           wheelLastEventTimeRef.current = Date.now();
           return;
         }
@@ -327,43 +331,47 @@ export function PresenterShell({
       const elapsedSinceLastWheel = now - wheelLastEventTimeRef.current;
       wheelLastEventTimeRef.current = now;
 
-      // Quiet-period detection: if no wheel events for 250ms, the
-      // previous gesture has ended (either inertia died or user
-      // paused). Reset accumulator + fired flag so this event can
-      // start a new gesture.
+      // Quiet-period detection: if wheel has been silent for 450ms,
+      // the previous gesture (and its inertia tail) has ended. Reset
+      // and treat this event as the start of a new gesture.
       if (elapsedSinceLastWheel > WHEEL_GESTURE_QUIET_MS) {
         wheelAccumRef.current = 0;
         wheelGestureFiredRef.current = false;
-      }
-
-      // Force-unlock: if we navigated more than 400ms ago, allow a
-      // new navigation even if the inertia tail is still arriving.
-      // This bounds the worst-case "stuck" period when the user keeps
-      // wheel-scrolling — they should never feel frozen for more than
-      // ~half a second.
-      if (
-        wheelGestureFiredRef.current &&
-        wheelGestureFiredAtRef.current > 0 &&
-        now - wheelGestureFiredAtRef.current > WHEEL_FORCE_UNLOCK_MS
-      ) {
-        wheelGestureFiredRef.current = false;
-        wheelAccumRef.current = 0;
+        wheelGestureDirectionRef.current = 0;
       }
 
       if (wheelGestureFiredRef.current) {
-        // Same gesture, already fired — drop the tail.
-        return;
+        // Same gesture, already fired. Two ways out:
+        //
+        // A) Wheel goes quiet — handled by the elapsed check above on
+        //    the NEXT event.
+        // B) The user produces a strong opposite-direction wheel
+        //    event (>= 30px in the reversed direction). That's a
+        //    deliberate "go back" gesture, so re-arm and let it
+        //    accumulate normally.
+        const firedDir = wheelGestureDirectionRef.current;
+        const isOppositeReversal =
+          (firedDir > 0 && event.deltaY <= -WHEEL_REVERSAL_THRESHOLD) ||
+          (firedDir < 0 && event.deltaY >= WHEEL_REVERSAL_THRESHOLD);
+        if (!isOppositeReversal) {
+          // Inertia decay or same-direction continuation — drop.
+          return;
+        }
+        // Direction reversal — re-arm and fall through to accumulate.
+        wheelGestureFiredRef.current = false;
+        wheelGestureDirectionRef.current = 0;
+        wheelAccumRef.current = 0;
       }
 
       wheelAccumRef.current += event.deltaY;
       if (wheelAccumRef.current > WHEEL_THRESHOLD) {
         wheelGestureFiredRef.current = true;
-        wheelGestureFiredAtRef.current = now;
+        wheelGestureDirectionRef.current = 1;
         wheelAccumRef.current = 0;
         performNavigation(1);
       } else if (wheelAccumRef.current < -WHEEL_THRESHOLD) {
         wheelGestureFiredRef.current = true;
-        wheelGestureFiredAtRef.current = now;
+        wheelGestureDirectionRef.current = -1;
         wheelAccumRef.current = 0;
         performNavigation(-1);
       }
