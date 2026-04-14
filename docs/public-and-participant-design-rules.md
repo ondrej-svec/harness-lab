@@ -1,6 +1,6 @@
 # Public And Participant Surface Design Rules
 
-This file is a surface-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md).
+This file is a surface-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md). Motion rules for this surface — durations, entrance patterns, the pending-state rule, reduced-motion — live in the [Motion section](./dashboard-design-system.md#motion) of that file.
 
 ## Purpose
 

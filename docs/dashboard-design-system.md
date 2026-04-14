@@ -139,6 +139,84 @@ Rules:
 - key status should remain visible near the top
 - no giant dead areas caused by desktop-only composition
 
+## Motion
+
+Motion in the dashboard is operational, not decorative. It confirms that an action registered, directs the eye to what changed, and connects state transitions so users do not lose their place. If a motion rule here contradicts a surface-specific doc, this file wins.
+
+### When motion earns its place
+
+- Confirming a click or submit (press states, pending spinners, form result).
+- Orienting after a navigation or view change (entrance fades, staggered reveals).
+- Signalling that something is live or updating (pulsing status dots on truly live state only).
+
+Motion must not be the only signal for state. Color, icon, or text label must also carry the meaning, so reduced-motion users still get it.
+
+### Durations
+
+- Micro (hover, press, toggle): **120–200ms**.
+- Standard (button lift, card lift, small layout): **200–300ms**.
+- View entrance (hero stagger, section fade-up, drawer): **400–500ms**.
+- Nothing functional exceeds **600ms**. Ambient drift layers (the homepage hero glow) may be slower because they are decorative and not functional UI.
+
+### Easing
+
+- Default: `cubic-bezier(0.2, 0.8, 0.2, 1)` — a soft ease-out. Use this for entrances, button lifts, and card hovers.
+- Linear is only allowed for indeterminate spinners.
+- Never use ease-in alone on an entrance — it delays the signal and feels laggy.
+
+### Utility classes (already in `app/globals.css`)
+
+- `dashboard-motion-card` — for panels and tiles. 240ms transform, −4px lift on hover, shadow bloom. Use on `panel` and `inset` surface roles.
+- `dashboard-motion-button` — for buttons and button-shaped links. 220ms, −2px lift on hover.
+- `dashboard-motion-link` — for inline text links and soft navigation. 220ms, 2px right translate on hover.
+
+These classes respect `prefers-reduced-motion: reduce` via the block at the bottom of `globals.css`. Do not add new bespoke hover animations that duplicate what these classes already do — extend the classes or consult first.
+
+### Pending-state rule (non-negotiable)
+
+Every control that triggers a navigation, form submission, or server round-trip must show pending state **within 100 ms** of the user action. This is a direct application of Nielsen's response-time research (0.1 s feels instant, 1 s is the limit before users disengage) and WCAG 2.3.3 (Animation from Interactions) on clear feedback.
+
+Use:
+
+- `AdminRouteLink` (`app/admin/admin-route-link.tsx`) for any internal navigation link in the admin surface. It wraps `next/link` with `useTransition` + a spinner and sets `aria-busy`.
+- `useFormStatus` via the existing `SubmitButton` / `AdminSubmitButton` components for any form.
+- `ExternalOpenButton` (`app/admin/external-open-button.tsx`) for any `target="_blank"` control. It flashes a transient 600 ms pending state so the user knows the click registered, even when the new tab takes a moment to open on mobile.
+
+A plain `<a>` or `<Link>` with no pending state is not acceptable for a navigation action anywhere on the dashboard.
+
+### Entrance motion in React
+
+For React entrances use `motion/react` (library: `motion` v12). Shared components live in `app/components/`:
+
+- `FadeUp` — `whileInView` fade-and-lift for on-scroll entrances. Default 400 ms, 16 px offset, ease-out, `viewport={{ once: true }}`.
+- `HeroStagger` + `HeroStaggerChild` — parent/child pair for an above-the-fold stagger. Default 60 ms stagger, 400 ms children.
+
+Both consult `useReducedMotion()` and collapse to instant transitions when reduced-motion is requested — content remains visible from the first paint. Do not invent a parallel entrance pattern; extend these.
+
+### Stagger rules
+
+- 40–80 ms between siblings. Default 60 ms.
+- Do not stagger more than **six** children at once — the last child lands too late and the user starts reading before the motion finishes.
+- Never stagger inside a table, grid of results, or any structure the user is scanning.
+
+### Reduced motion is mandatory
+
+Every motion addition must have a reduced-motion path, verified in code, not left implicit:
+
+- CSS motion utilities must have a `@media (prefers-reduced-motion: reduce)` override that zeroes transform and animation.
+- React motion components must consult `useReducedMotion()` and either return a plain element or pass `duration: 0` to the transition.
+- Motion must never be the only indicator of a state change.
+
+If a Playwright test sets `reducedMotion: 'reduce'`, the final DOM and the first-paint DOM must be identical for all motion-wrapped content.
+
+### Anti-patterns
+
+- Parallax or scroll-linked motion on readable body copy.
+- Infinite looping motion behind text beyond the existing ambient drift on the hero.
+- Motion longer than 600 ms on functional UI.
+- Motion without a pending state on the same control (spinner and fade-up are not substitutes for each other — a button needs both: hover motion and pending feedback).
+- Re-implementing what `dashboard-motion-*` classes or `FadeUp` / `HeroStagger` already do.
+
 ## Shared Surface Hierarchy
 
 Use only a small set of surface roles:
@@ -200,3 +278,5 @@ Before shipping a dashboard UI change, verify:
 5. Are links visually distinguishable from passive text?
 6. Does the page stay coherent on mobile?
 7. Did the change preserve one visual family across dashboard surfaces?
+8. Does every navigation trigger show pending state within 100 ms? (see Motion → Pending-state rule)
+9. Does every motion addition have a verified reduced-motion path?

@@ -1,6 +1,6 @@
 # Facilitator Control Room Design System
 
-This file is a control-room-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md).
+This file is a control-room-specific supplement to [`dashboard-design-system.md`](./dashboard-design-system.md). Motion rules — durations, entrance patterns, the pending-state rule, reduced-motion — live in the [Motion section](./dashboard-design-system.md#motion) of that file.
 
 This document is the source of truth for the facilitator desk visual and interaction system.
 
