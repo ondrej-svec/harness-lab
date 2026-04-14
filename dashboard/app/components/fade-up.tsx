@@ -13,16 +13,18 @@ const EASE = [0.2, 0.8, 0.2, 1] as const;
 
 export function FadeUp({ children, className, delay = 0 }: FadeUpProps) {
   const reduced = useReducedMotion();
-  const duration = reduced ? 0 : 0.4;
-  const offset = reduced ? 0 : 16;
+
+  if (reduced !== false) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, y: offset }}
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration, ease: EASE, delay: reduced ? 0 : delay }}
+      transition={{ duration: 0.4, ease: EASE, delay }}
     >
       {children}
     </motion.div>

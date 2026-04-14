@@ -2,6 +2,7 @@
 
 import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
+import { isModifiedAnchorClick } from "./admin-route-link";
 
 type ExternalOpenButtonProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "target" | "rel"> & {
   href: string;
@@ -31,7 +32,7 @@ export function ExternalOpenButton({
 
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     onClick?.(event);
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey) {
+    if (event.defaultPrevented || isModifiedAnchorClick(event)) {
       return;
     }
     setPending(true);

@@ -11,7 +11,7 @@ type AdminRouteLinkProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href">
   replace?: boolean;
 };
 
-function isModifiedClick(event: MouseEvent<HTMLAnchorElement>) {
+export function isModifiedAnchorClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
 }
 
@@ -31,7 +31,7 @@ export function AdminRouteLink({
   function handleClick(event: MouseEvent<HTMLAnchorElement>) {
     onClick?.(event);
 
-    if (event.defaultPrevented || target === "_blank" || download || isModifiedClick(event)) {
+    if (event.defaultPrevented || target === "_blank" || download || isModifiedAnchorClick(event)) {
       return;
     }
 

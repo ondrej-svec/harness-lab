@@ -273,20 +273,24 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 
 function SimpleRule({ title, body }: { title: string; body: string }) {
   return (
-    <FadeUp className="grid gap-3 border-t border-[var(--border)] pt-5 sm:grid-cols-[220px_1fr] sm:gap-8">
-      <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
-      <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
-    </FadeUp>
+    <div className="border-t border-[var(--border)] pt-5">
+      <FadeUp className="grid gap-3 sm:grid-cols-[220px_1fr] sm:gap-8">
+        <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
+        <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
+      </FadeUp>
+    </div>
   );
 }
 
 function PhaseStep({ number, title, body }: { number: string; title: string; body: string }) {
   return (
-    <FadeUp className="grid gap-3 border-t border-[var(--border)] py-4 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
-      <span className="text-sm font-medium tabular-nums text-[var(--text-muted)]">{number}</span>
-      <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
-      <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
-    </FadeUp>
+    <div className="border-t border-[var(--border)] py-4">
+      <FadeUp className="grid gap-3 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
+        <span className="text-sm font-medium tabular-nums text-[var(--text-muted)]">{number}</span>
+        <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
+        <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
+      </FadeUp>
+    </div>
   );
 }
 
