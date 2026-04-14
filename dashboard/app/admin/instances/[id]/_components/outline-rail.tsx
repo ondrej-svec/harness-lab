@@ -65,6 +65,7 @@ export function OutlineRail({
               <div key={key}>
                 <AdminRouteLink
                   href={href}
+                  raw
                   className={`flex items-center rounded-[14px] border px-3 py-2 text-left text-sm font-medium lowercase transition ${
                     active
                       ? "border-[var(--border-strong)] bg-[var(--surface)] text-[var(--text-primary)] shadow-[0_8px_18px_rgba(28,25,23,0.06)]"
@@ -100,6 +101,8 @@ export function OutlineRail({
                           />
                           <AdminRouteLink
                             href={itemHref}
+                            raw
+                            scroll={false}
                             data-agenda-item={item.id}
                             className={`block rounded-[10px] px-2 py-1.5 text-xs leading-5 transition ${
                               itemActive

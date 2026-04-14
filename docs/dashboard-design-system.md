@@ -178,11 +178,23 @@ Every control that triggers a navigation, form submission, or server round-trip 
 
 Use:
 
-- `AdminRouteLink` (`app/admin/admin-route-link.tsx`) for any internal navigation link in the admin surface. It wraps `next/link` with `useTransition` + a spinner and sets `aria-busy`.
+- `AdminRouteLink` (`app/admin/admin-route-link.tsx`) for any internal navigation link in the admin surface. It wraps `next/link` with `useTransition` + a spinner and sets `aria-busy`. Two props shape its rendering:
+  - **`scroll={false}`** for any in-section / in-page navigation (rail tiles, tab switches, overlay toggles, breadcrumbs that land in the same view). Without this, Next.js's default `scroll={true}` snaps the viewport to top on every click and loses the user's place.
+  - **`raw`** for card- or list-style links where the default flex-center inner span would collapse layout (scene rail tiles, outline rail items, sidebar rows). `raw` skips the inner span and paints the pending spinner as an absolute overlay at the top-right corner.
 - `useFormStatus` via the existing `SubmitButton` / `AdminSubmitButton` components for any form.
 - `ExternalOpenButton` (`app/admin/external-open-button.tsx`) for any `target="_blank"` control. It flashes a transient 600 ms pending state so the user knows the click registered, even when the new tab takes a moment to open on mobile.
 
-A plain `<a>` or `<Link>` with no pending state is not acceptable for a navigation action anywhere on the dashboard.
+A plain `<a>` or `<Link>` with no pending state is not acceptable for a navigation action anywhere on the dashboard. The only exception is a `<Link>` that exists purely as a hard-load fallback for a client-side carousel (e.g. the presenter scene rail dots, where an `onNavigate` callback handles the real state change and the `href` exists only for middle-click / right-click "open in new tab").
+
+### Scroll preservation on in-section navigation
+
+URL-driven selection — picking a scene, switching agenda items, toggling tabs — must preserve scroll position. Next.js's router defaults to scrolling to the top on every `push`, which for in-section navigation reads as a bug: the user clicks a rail item and the page jumps away from the rail.
+
+Rules:
+
+1. If the click lands the user in the same visual region they clicked from (same rail, same section, same overlay layer), pass `scroll={false}` on the `AdminRouteLink`.
+2. If the click moves the user to a different surface (section change, instance open, presenter launch), leave `scroll` at its default so the new surface's header is visible.
+3. Never fight the browser's back/forward scroll restoration — it's correct by default. `scroll={false}` only affects forward navigation.
 
 ### Entrance motion
 
@@ -284,3 +296,4 @@ Before shipping a dashboard UI change, verify:
 7. Did the change preserve one visual family across dashboard surfaces?
 8. Does every navigation trigger show pending state within 100 ms? (see Motion → Pending-state rule)
 9. Does every motion addition have a verified reduced-motion path?
+10. Does every in-section navigation link use `scroll={false}` so it does not snap the viewport to top?

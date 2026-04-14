@@ -107,7 +107,11 @@ export function AgendaSection({
               <nav aria-label="breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-[var(--text-secondary)]">
                 <span>{copy.agendaSectionTitle}</span>
                 <span aria-hidden="true">/</span>
-                <AdminRouteLink className="text-sm font-medium text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]" href={agendaIndexHref}>
+                <AdminRouteLink
+                  className="text-sm font-medium text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]"
+                  href={agendaIndexHref}
+                  scroll={false}
+                >
                   {copy.agendaTimelineTitle}
                 </AdminRouteLink>
                 <span aria-hidden="true">/</span>
@@ -228,7 +232,7 @@ export function AgendaSection({
 
               {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
                 <div className="mt-3 flex flex-wrap gap-3">
-                  <AdminRouteLink className={adminGhostButtonClassName} href={liveAgendaHref}>
+                  <AdminRouteLink className={adminGhostButtonClassName} href={liveAgendaHref} scroll={false}>
                     {copy.agendaJumpToLiveButton}
                   </AdminRouteLink>
                 </div>
@@ -435,7 +439,7 @@ function HandoffMomentCard({
       <div className="space-y-4">
         {jumpHref ? (
           <div className="flex flex-wrap justify-end gap-3">
-            <AdminRouteLink className={adminGhostButtonClassName} href={jumpHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={jumpHref} scroll={false}>
               {copy.handoffMomentJumpButton}
             </AdminRouteLink>
           </div>
@@ -780,7 +784,7 @@ function TimelineRow({
                     <AdminSubmitButton className={adminSecondaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
                   </form>
                 ) : null}
-                <AdminRouteLink className={adminGhostButtonClassName} href={detailHref}>
+                <AdminRouteLink className={adminGhostButtonClassName} href={detailHref} scroll={false}>
                   {copy.openAgendaDetailButton}
                 </AdminRouteLink>
               </div>

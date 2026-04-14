@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { buildAdminHref } from "@/lib/admin-page-view-model";
@@ -185,12 +184,14 @@ function SceneRailTile({
     ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
     : "border-[var(--border)] bg-[var(--surface-soft)] hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
 
-  // Plain next/link — AdminRouteLink wraps children in an inline-flex
-  // span that centers and collapses card-style content. Rail tiles are
-  // full-width OS-sidebar rows, so we bypass that chrome.
+  // raw={true} skips AdminRouteLink's inner centering span so this card
+  // layout stays left-aligned; scroll={false} keeps the viewport where
+  // it is so picking a sibling scene does not snap the page to top.
   return (
-    <Link
+    <AdminRouteLink
       href={href}
+      raw
+      scroll={false}
       aria-current={isActive ? "true" : undefined}
       data-scene-rail-tile={scene.id}
       className={`${baseClassName} ${stateClassName}`}
@@ -227,7 +228,7 @@ function SceneRailTile({
           </div>
         </div>
       </div>
-    </Link>
+    </AdminRouteLink>
   );
 }
 

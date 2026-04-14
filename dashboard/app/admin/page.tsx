@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
@@ -311,9 +310,9 @@ export default async function AdminWorkspacePage({
                   <AdminSubmitButton className={adminPrimaryButtonClassName}>
                     {copy.workspaceSearchButton}
                   </AdminSubmitButton>
-                  <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
+                  <AdminRouteLink className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
                     {copy.workspaceResetFilters}
-                  </Link>
+                  </AdminRouteLink>
                 </div>
               </form>
 
@@ -470,7 +469,7 @@ export default async function AdminWorkspacePage({
                         <div className="mt-auto pt-4">
                           <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
                             <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">archive-safe</span>
-                            <Link
+                            <AdminRouteLink
                               className="dashboard-motion-link inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]"
                               href={buildAdminWorkspaceHref({
                                 lang,
@@ -478,9 +477,10 @@ export default async function AdminWorkspacePage({
                                 status: filters.status,
                                 removeInstanceId: instance.id,
                               })}
+                              scroll={false}
                             >
                               {copy.removeInstanceReviewButton}
-                            </Link>
+                            </AdminRouteLink>
                           </div>
                         </div>
                       </article>
@@ -491,9 +491,9 @@ export default async function AdminWorkspacePage({
                   <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.workspaceEmptyTitle}</h3>
                   <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceEmptyBody}</p>
                   <div className="mt-5 flex flex-wrap gap-3">
-                    <Link className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
+                    <AdminRouteLink className={adminSecondaryButtonClassName} href={buildAdminWorkspaceHref({ lang })}>
                       {copy.workspaceResetFilters}
-                    </Link>
+                    </AdminRouteLink>
                     <a className={adminPrimaryButtonClassName} href="#create-instance">
                       {copy.createInstanceTitle}
                     </a>
@@ -526,12 +526,13 @@ export default async function AdminWorkspacePage({
               <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{copy.removeInstanceConsequenceBody}</p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-              <Link
+              <AdminRouteLink
                 className={`${adminSecondaryButtonClassName} w-full sm:w-auto`}
                 href={buildAdminWorkspaceHref({ lang, query: filters.query, status: filters.status })}
+                scroll={false}
               >
                 {copy.cancelButton}
-              </Link>
+              </AdminRouteLink>
               <form action={removeInstanceAction} className="w-full sm:w-auto">
                 <input name="lang" type="hidden" value={lang} />
                 <input name="q" type="hidden" value={filters.query} />

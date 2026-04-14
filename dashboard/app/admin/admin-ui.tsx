@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import type { UiLanguage } from "@/lib/ui-language";
@@ -125,13 +124,19 @@ export function AdminLanguageSwitcher({
 }) {
   return (
     <>
-      <Link className={lang === "cs" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={csHref}>
+      <AdminRouteLink
+        className={lang === "cs" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"}
+        href={csHref}
+      >
         CZ
-      </Link>
+      </AdminRouteLink>
       <span>/</span>
-      <Link className={lang === "en" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"} href={enHref}>
+      <AdminRouteLink
+        className={lang === "en" ? "text-[var(--text-primary)]" : "transition hover:text-[var(--text-primary)]"}
+        href={enHref}
+      >
         EN
-      </Link>
+      </AdminRouteLink>
     </>
   );
 }
@@ -175,7 +180,13 @@ export function AdminSheet({
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
       <div className="absolute inset-0">
-        <AdminRouteLink aria-label={closeLabel} className="block h-full w-full" href={closeHref}>
+        <AdminRouteLink
+          aria-label={closeLabel}
+          className="block h-full w-full"
+          href={closeHref}
+          raw
+          scroll={false}
+        >
           <span className="sr-only">{closeLabel}</span>
         </AdminRouteLink>
       </div>
@@ -187,7 +198,7 @@ export function AdminSheet({
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
             </div>
-            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref} scroll={false}>
               {closeLabel}
             </AdminRouteLink>
           </div>
@@ -216,7 +227,13 @@ export function AdminDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[color:var(--overlay-scrim)] p-3 sm:p-5">
       <div className="absolute inset-0">
-        <AdminRouteLink aria-label={closeLabel} className="block h-full w-full" href={closeHref}>
+        <AdminRouteLink
+          aria-label={closeLabel}
+          className="block h-full w-full"
+          href={closeHref}
+          raw
+          scroll={false}
+        >
           <span className="sr-only">{closeLabel}</span>
         </AdminRouteLink>
       </div>
@@ -228,7 +245,7 @@ export function AdminDialog({
               <h2 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{title}</h2>
               <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{description}</p>
             </div>
-            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref}>
+            <AdminRouteLink className={adminGhostButtonClassName} href={closeHref} scroll={false}>
               {closeLabel}
             </AdminRouteLink>
           </div>
