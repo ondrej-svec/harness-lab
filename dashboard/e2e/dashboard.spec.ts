@@ -733,6 +733,236 @@ test.describe("one canvas phase 5 — presenter scene coverage", () => {
   });
 });
 
+test.describe("presenter wheel navigation", () => {
+  // Drive the actual presenter shell with synthetic wheel events and
+  // assert that one physical gesture fires exactly one navigation,
+  // that two distinct gestures fire two navigations, that direction
+  // reversal works, and that small sub-threshold wheel noise does
+  // nothing. These tests catch regressions in the wheel debouncer.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  // Helper: dispatch a wheel event sequence directly on the slide
+  // container so it goes through PresenterShell's listener exactly
+  // like a real trackpad gesture would. Using `page.mouse.wheel`
+  // produces a real WheelEvent but the timing between calls is
+  // limited by Playwright's command latency, which is too slow to
+  // simulate Mac trackpad inertia. Synthetic dispatch with explicit
+  // delays gives us deterministic control.
+  async function dispatchWheelGesture(
+    page: import("@playwright/test").Page,
+    deltas: readonly number[],
+    intervalMs = 16,
+  ) {
+    await page.evaluate(
+      ({ deltas, intervalMs }) => {
+        const slide = document.querySelector('[data-presenter-slide="true"]') as HTMLElement | null;
+        if (!slide) throw new Error("slide container not found");
+        const target = slide;
+        return new Promise<void>((resolve) => {
+          let i = 0;
+          function fire() {
+            if (i >= deltas.length) {
+              resolve();
+              return;
+            }
+            target.dispatchEvent(
+              new WheelEvent("wheel", { deltaY: deltas[i], bubbles: true, cancelable: true }),
+            );
+            i += 1;
+            setTimeout(fire, intervalMs);
+          }
+          fire();
+        });
+      },
+      { deltas: [...deltas], intervalMs },
+    );
+  }
+
+  async function readActiveSceneFromUrl(page: import("@playwright/test").Page) {
+    const url = page.url();
+    const match = url.match(/scene=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  // Read the rail's scene ids in order from the DOM. The rail is
+  // rendered with one <Link> per scene; we derive the pack order by
+  // walking each link's href and extracting the scene query param.
+  async function readSceneOrder(page: import("@playwright/test").Page) {
+    return page.evaluate(() => {
+      const rail = document.querySelector('[aria-label="scene navigation"]');
+      if (!rail) return [] as string[];
+      const links = rail.querySelectorAll<HTMLAnchorElement>("a[href*='scene=']");
+      return Array.from(links).map((link) => {
+        const match = link.getAttribute("href")?.match(/scene=([^&]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+      });
+    });
+  }
+
+  async function readActiveIndex(page: import("@playwright/test").Page) {
+    const active = await readActiveSceneFromUrl(page);
+    const order = await readSceneOrder(page);
+    return order.findIndex((id) => id === active);
+  }
+
+  // Goto + wait for the rail to render so tests have a stable anchor.
+  async function gotoPresenter(page: import("@playwright/test").Page, scenePath: string) {
+    await page.goto(scenePath);
+    await page.waitForSelector('[data-presenter-slide="true"]');
+    await page.waitForSelector('[aria-label="scene navigation"] a[href*="scene="]');
+  }
+
+  test("one wheel gesture advances exactly one scene", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const order = await readSceneOrder(page);
+    const initialIndex = await readActiveIndex(page);
+    expect(initialIndex).toBe(0);
+
+    // One gesture = active phase + inertia tail. Active phase emits
+    // ~10 events with deltaY ≈ 50 at 16ms intervals; inertia tail
+    // emits ~25 decaying events.
+    const active = Array.from({ length: 10 }, () => 50);
+    const inertia = Array.from({ length: 25 }, (_, i) => Math.max(2, 50 * Math.exp(-i / 6)));
+    await dispatchWheelGesture(page, [...active, ...inertia], 16);
+
+    // Wait for the carousel to settle (animation + URL replace).
+    await page.waitForTimeout(600);
+    const afterIndex = await readActiveIndex(page);
+    // Critical: exactly ONE step forward, regardless of the inertia
+    // tail's length. afterIndex must be initial + 1, not + 2.
+    expect(afterIndex).toBe(initialIndex + 1);
+    expect(await readActiveSceneFromUrl(page)).toBe(order[initialIndex + 1]);
+  });
+
+  test("two distinct wheel gestures advance two scenes", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    // Two gestures separated by a quiet window > 450ms (the gesture
+    // quiet threshold) so the second starts fresh.
+    await dispatchWheelGesture(
+      page,
+      [...Array(10).fill(50), ...Array(20).fill(0).map((_, i) => 50 * Math.exp(-i / 6))],
+      16,
+    );
+    await page.waitForTimeout(750);
+
+    await dispatchWheelGesture(
+      page,
+      [...Array(10).fill(50), ...Array(20).fill(0).map((_, i) => 50 * Math.exp(-i / 6))],
+      16,
+    );
+    await page.waitForTimeout(600);
+
+    const afterIndex = await readActiveIndex(page);
+    expect(afterIndex).toBe(initialIndex + 2);
+  });
+
+  test("direction reversal goes back to the previous scene", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    await dispatchWheelGesture(page, [...Array(10).fill(50)], 16);
+    await page.waitForTimeout(600);
+    const afterForward = await readActiveIndex(page);
+    expect(afterForward).toBe(initialIndex + 1);
+
+    // Reverse gesture immediately after. Exercises the direction-
+    // reversal fast path (no quiet wait required).
+    await dispatchWheelGesture(page, [...Array(10).fill(-50)], 16);
+    await page.waitForTimeout(600);
+    const afterReverse = await readActiveIndex(page);
+    expect(afterReverse).toBe(initialIndex);
+  });
+
+  test("sub-threshold wheel noise does nothing", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    // 5 tiny wheel events, total deltaY = 25, below the 30 threshold.
+    await dispatchWheelGesture(page, [5, 5, 5, 5, 5], 30);
+    await page.waitForTimeout(700);
+
+    expect(await readActiveIndex(page)).toBe(initialIndex);
+  });
+
+  test("third gesture in a row still navigates (no permanent freeze)", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    for (let i = 0; i < 3; i++) {
+      await dispatchWheelGesture(
+        page,
+        [...Array(10).fill(50), ...Array(15).fill(0).map((_, j) => 50 * Math.exp(-j / 5))],
+        16,
+      );
+      await page.waitForTimeout(750);
+    }
+
+    expect(await readActiveIndex(page)).toBe(initialIndex + 3);
+  });
+
+  test("a single huge wheel event does not fire multiple navigations", async ({ page }) => {
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    // A single wheel event with a delta 10x the threshold would, on a
+    // naive impl, fire one navigation — good. The test is here to
+    // lock that invariant: one event, one navigation, never more.
+    await dispatchWheelGesture(page, [300], 0);
+    await page.waitForTimeout(600);
+
+    expect(await readActiveIndex(page)).toBe(initialIndex + 1);
+  });
+
+  test("continuous event stream with rising-edge unlock navigates twice", async ({ page }) => {
+    // The hardest case. The user scrolls forward strongly, releases,
+    // inertia decays, but BEFORE the 450ms quiet window elapses they
+    // start scrolling again in the SAME direction. A pure
+    // quiet-window approach would block the second gesture until the
+    // inertia tail finishes. The rising-edge heuristic should detect
+    // the new gesture via |deltaY| going UP after decay.
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    // Gesture 1 active (50 → 50), then inertia decay (50 → 1),
+    // immediately followed by gesture 2 active (50 → 50) with NO
+    // quiet gap. The rising edge from 1 → 50 should unlock.
+    const gesture1Active = Array.from({ length: 8 }, () => 50);
+    const gesture1Inertia = Array.from({ length: 15 }, (_, i) => Math.max(1, 50 * Math.exp(-i / 4)));
+    const gesture2Active = Array.from({ length: 8 }, () => 50);
+    const continuousStream = [...gesture1Active, ...gesture1Inertia, ...gesture2Active];
+    await dispatchWheelGesture(page, continuousStream, 16);
+    await page.waitForTimeout(600);
+
+    expect(await readActiveIndex(page)).toBe(initialIndex + 2);
+  });
+
+  test("pure inertia tail after firing does not re-trigger navigation", async ({ page }) => {
+    // The inverse of the rising-edge test: a long decaying inertia
+    // tail (no rising edge) must not fire a second navigation no
+    // matter how many events arrive. This is the "double change"
+    // regression guard.
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+    const initialIndex = await readActiveIndex(page);
+
+    // One strong gesture followed by a long monotonically decaying
+    // tail — no rising edges anywhere in the tail.
+    const active = Array.from({ length: 8 }, () => 50);
+    const longTail = Array.from({ length: 60 }, (_, i) => Math.max(1, 50 * Math.exp(-i / 15)));
+    await dispatchWheelGesture(page, [...active, ...longTail], 16);
+    await page.waitForTimeout(800);
+
+    // Must be exactly +1, not +2 despite the massive event count.
+    expect(await readActiveIndex(page)).toBe(initialIndex + 1);
+  });
+});
+
 test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
   // Phase 6 covers the rail/keyboard/viewport checks. Tests use the
   // Playwright browser at the five target viewports and verify the
