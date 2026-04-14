@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
-import { useRouter } from "next/navigation";
 import {
   useCallback,
   useEffect,
@@ -20,11 +19,17 @@ import { SceneRail, type SceneRailItem } from "./scene-rail";
 // per navigation, so transitions feel instant and the entry/exit
 // animation runs at 60fps off the GPU.
 //
-// URL sync is a side effect: after the local index changes, an effect
-// calls `router.replace` so the address bar matches the visible scene.
-// We do not call `router.push` because (a) we don't want a history
-// entry per scene, and (b) `replace` doesn't trigger Next 16's
-// transition pending state, so there's no flicker.
+// URL sync is intentionally OUT of React's lifecycle: we call
+// `window.history.replaceState` directly after the local index
+// changes. Using `router.replace` would force Next.js to re-run the
+// server component for the new URL (the route is `force-dynamic`),
+// which rebuilds the `slides` prop from scratch. With local
+// `activeIndex` state preserved across that re-render, the index
+// could end up pointing at a different slide if the rebuilt pack's
+// contents differ — that was the cause of the "scene 1/5 but rail
+// dot at the bottom" desync. `replaceState` updates the address bar
+// without telling React or Next anything, so slides stays referentially
+// stable and indices stay aligned.
 //
 // Animation strategy: every slide lives in the DOM at all times,
 // stacked at `position: absolute`. The `slides` track translates by
@@ -36,7 +41,7 @@ import { SceneRail, type SceneRailItem } from "./scene-rail";
 const SWIPE_THRESHOLD = 80; // px — feel-tuned for iPadOS
 const SWIPE_VELOCITY = 500; // px/sec — quick flick bypasses threshold
 const WHEEL_THRESHOLD = 60; // accumulated deltaY before navigation
-const WHEEL_COOLDOWN_MS = 450; // ignore wheel events after a navigation
+const NAVIGATE_COOLDOWN_MS = 250; // ignore further triggers right after a nav
 
 export type PresenterSlide = {
   id: string;
@@ -52,26 +57,23 @@ export function PresenterShell({
   railItems: readonly SceneRailItem[];
   initialSceneId: string | null;
 }) {
-  const router = useRouter();
   const reduceMotion = useReducedMotion();
 
   // Resolve the initial index from the supplied scene id. Falls back
   // to the first slide if the id is missing (defensive — server should
   // always pass a valid id when slides.length > 0).
-  const initialIndex = Math.max(
+  const resolvedInitialIndex = Math.max(
     0,
     slides.findIndex((slide) => slide.id === initialSceneId),
   );
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [activeIndex, setActiveIndex] = useState(resolvedInitialIndex);
 
-  // Refs so handlers see the freshest values without re-creating the
-  // listeners on every render. Stale closures over `activeIndex` were
-  // the root cause of the "first arrow press does nothing" bug — the
-  // listener captured an old `activeIndex` and the React render that
-  // followed re-mounted the listener but the press had already fired
-  // against the old closure.
+  // Refs let handlers see the freshest values without re-creating
+  // listeners on every render — the stale-closure trap that caused
+  // the "first arrow press does nothing" bug.
   const activeIndexRef = useRef(activeIndex);
   const slidesRef = useRef(slides);
+  const railItemsRef = useRef(railItems);
   const cooldownUntilRef = useRef(0);
   const wheelAccumRef = useRef(0);
 
@@ -81,23 +83,36 @@ export function PresenterShell({
 
   useEffect(() => {
     slidesRef.current = slides;
-  }, [slides]);
+    railItemsRef.current = railItems;
+  }, [slides, railItems]);
 
-  // After the local index changes, sync the URL via a transition-free
-  // replace. window.history.replaceState would also work and avoid the
-  // Next router entirely, but using router.replace keeps Next aware
-  // of the current scene id for any future server-driven feature
-  // (deep links, copied URLs, refresh).
+  // Defensive: if the parent re-renders with a different slides prop
+  // (server re-render after a navigation that landed via Next.js router
+  // somewhere else), realign activeIndex so the visible slide matches
+  // what the parent considers current. This is belt-and-braces — the
+  // window.history.replaceState path below should never trigger a
+  // server re-render, so this almost never fires in practice.
   useEffect(() => {
-    const slide = slides[activeIndex];
-    if (!slide) return;
+    const currentId = slides[activeIndexRef.current]?.id;
+    if (!currentId) {
+      const fallback = Math.max(0, slides.findIndex((slide) => slide.id === initialSceneId));
+      setActiveIndex(fallback);
+    }
+  }, [slides, initialSceneId]);
+
+  // Sync the URL bar without telling React or Next anything. Using
+  // window.history.replaceState skips the entire Next.js routing
+  // pipeline — no server re-render, no slides prop churn, no Suspense
+  // boundary flicker. Hard-load / share-link / refresh still work
+  // because the URL is canonical at all times.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     const railItem = railItems[activeIndex];
     if (!railItem) return;
-    // Skip the sync on the very first render — the URL already matches.
-    if (slide.id === initialSceneId) return;
-    router.replace(railItem.href, { scroll: false });
-    // We deliberately exclude `router` and the rest from deps; this
-    // effect should fire only when the active index changes.
+    const here = window.location.pathname + window.location.search;
+    if (here !== railItem.href) {
+      window.history.replaceState(null, "", railItem.href);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
@@ -106,16 +121,13 @@ export function PresenterShell({
     const currentIndex = activeIndexRef.current;
     const nextIndex = currentIndex + delta;
     if (nextIndex < 0 || nextIndex >= slidesNow.length) {
-      // Off the edge — flash a subtle bounce by re-asserting state.
-      // setActiveIndex with the same value is a no-op so this just
-      // documents the boundary. A future polish could add a haptic /
-      // visual nudge here.
+      // Off the edge — no-op.
       return;
     }
     if (Date.now() < cooldownUntilRef.current) {
       return;
     }
-    cooldownUntilRef.current = Date.now() + WHEEL_COOLDOWN_MS;
+    cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
     setActiveIndex(nextIndex);
   }, []);
 
@@ -258,7 +270,7 @@ export function PresenterShell({
         onNavigate={(targetId) => {
           const targetIndex = slidesRef.current.findIndex((slide) => slide.id === targetId);
           if (targetIndex >= 0 && targetIndex !== activeIndexRef.current) {
-            cooldownUntilRef.current = Date.now() + WHEEL_COOLDOWN_MS;
+            cooldownUntilRef.current = Date.now() + NAVIGATE_COOLDOWN_MS;
             setActiveIndex(targetIndex);
           }
         }}
