@@ -141,6 +141,14 @@ export function PresenterShell({
     if (here !== railItem.href) {
       window.history.replaceState(null, "", railItem.href);
     }
+    // Reset the entering slide's scroll position so re-entering a tall
+    // slide always starts from the top. Each slide section carries the
+    // data-presenter-slide marker.
+    const slideSections = document.querySelectorAll<HTMLElement>('[data-presenter-slide="true"]');
+    const target = slideSections[activeIndex];
+    if (target) {
+      target.scrollTop = 0;
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
 
@@ -227,32 +235,75 @@ export function PresenterShell({
 
   // Trackpad two-finger scroll → next/previous scene.
   //
-  // Mac trackpads emit a continuous stream of wheel events for a
-  // single physical scroll gesture (including a long inertia tail
-  // after the user lifts their fingers). The naive "navigate when the
-  // accumulator crosses a threshold" approach fires twice per gesture
-  // because the inertia tail re-crosses the threshold. The fix is
-  // gesture-based debouncing: a "gesture" is a continuous run of
-  // wheel events with <200ms gaps. At most ONE navigation per
-  // gesture, regardless of how many events the trackpad emits.
+  // Three intertwined concerns this handler resolves:
   //
-  // Wheel events targeting a scrollable child (block editor textareas,
-  // source-ref details) fall through to the browser so inline editing
-  // still scrolls naturally.
+  // 1. Mac trackpads emit a continuous stream of wheel events for a
+  //    single physical scroll gesture (including a long inertia tail).
+  //    A naive "navigate when the accumulator crosses a threshold"
+  //    fires twice per gesture because the inertia tail re-crosses
+  //    the threshold. Fix: gesture-based debouncing. A "gesture" is
+  //    a continuous run of wheel events with <200ms gaps. At most ONE
+  //    navigation per gesture.
+  //
+  // 2. The slide content can be taller than the viewport. We don't
+  //    want to hijack scrolling INSIDE a tall slide — the user should
+  //    be able to read the body before advancing. Fix: only navigate
+  //    when the user is at the slide's scroll boundary AND continues
+  //    in the same direction (the iOS Safari "rubber band" pattern).
+  //
+  // 3. Inner scrollable elements like inline-edit textareas should
+  //    keep their own scroll behavior without ever triggering scene
+  //    navigation. Fix: walk up from the wheel target; if we hit an
+  //    inner scrollable ancestor BEFORE the slide container, drop
+  //    the event and let the browser handle the inner scroll.
   useEffect(() => {
     function handleWheel(event: WheelEvent) {
       const target = event.target as HTMLElement | null;
-      if (target) {
-        let node: HTMLElement | null = target;
-        while (node && node !== document.body) {
-          const style = window.getComputedStyle(node);
-          if (
-            (style.overflowY === "auto" || style.overflowY === "scroll") &&
-            node.scrollHeight > node.clientHeight
-          ) {
-            return;
-          }
-          node = node.parentElement;
+      if (!target) return;
+
+      // Walk up the DOM tree from the wheel target. If we find the
+      // slide container (data-presenter-slide), check its boundary.
+      // If we find an inner scrollable ancestor first, leave it alone.
+      let node: HTMLElement | null = target;
+      let slideContainer: HTMLElement | null = null;
+      while (node && node !== document.body) {
+        if (node.dataset?.presenterSlide === "true") {
+          slideContainer = node;
+          break;
+        }
+        const style = window.getComputedStyle(node);
+        if (
+          (style.overflowY === "auto" || style.overflowY === "scroll") &&
+          node.scrollHeight > node.clientHeight
+        ) {
+          // Inner scrollable (textarea, details body, etc.) — let
+          // the browser scroll it without us hijacking.
+          return;
+        }
+        node = node.parentElement;
+      }
+
+      // If the slide container itself can scroll, only navigate when
+      // the user is pushing past its boundary in the same direction
+      // as the wheel delta.
+      if (slideContainer && slideContainer.scrollHeight > slideContainer.clientHeight) {
+        const scrollTop = slideContainer.scrollTop;
+        const maxScroll = slideContainer.scrollHeight - slideContainer.clientHeight;
+        const atTop = scrollTop <= 1;
+        const atBottom = scrollTop >= maxScroll - 1;
+        if (event.deltaY > 0 && !atBottom) {
+          // Scrolling down but the slide still has room — let the
+          // browser scroll the slide and reset our gesture state so
+          // the moment we DO hit the bottom is treated as a fresh
+          // gesture.
+          wheelAccumRef.current = 0;
+          wheelGestureFiredRef.current = false;
+          return;
+        }
+        if (event.deltaY < 0 && !atTop) {
+          wheelAccumRef.current = 0;
+          wheelGestureFiredRef.current = false;
+          return;
         }
       }
 
@@ -261,8 +312,8 @@ export function PresenterShell({
       wheelLastEventTimeRef.current = now;
 
       if (elapsedSinceLastWheel > WHEEL_GESTURE_QUIET_MS) {
-        // New physical gesture starts. Reset accumulator + fired
-        // flag so this gesture can navigate exactly once.
+        // New physical gesture starts. Reset accumulator + fired flag
+        // so this gesture can navigate exactly once.
         wheelAccumRef.current = 0;
         wheelGestureFiredRef.current = false;
       }
@@ -329,6 +380,7 @@ export function PresenterShell({
           {slides.map((slide, index) => (
             <section
               key={slide.id}
+              data-presenter-slide="true"
               aria-hidden={index !== activeIndex}
               aria-roledescription="slide"
               aria-label={`${index + 1} / ${slides.length}`}
