@@ -2,7 +2,6 @@ import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { ExternalOpenButton } from "@/app/admin/external-open-button";
 import { buildAdminHref } from "@/lib/admin-page-view-model";
-import { buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { buildRepoBlobUrl } from "@/lib/repo-links";
 import type { RotationSignal } from "@/lib/runtime-contracts";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
@@ -26,56 +25,15 @@ import {
   renameAgendaItemAction,
   updateAgendaFieldAction,
 } from "../../_actions/operations";
-import {
-  movePresenterSceneAction,
-  removePresenterSceneAction,
-  setDefaultPresenterSceneAction,
-  togglePresenterSceneEnabledAction,
-  updateSceneFieldAction,
-} from "../../_actions/scenes";
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import { AddAgendaItemRow } from "../agenda/add-agenda-item-row";
-import { AddSceneRow } from "../agenda/add-scene-row";
-import type {
-  RichAgendaItem,
-  RichPresenterScene,
-  SourceRef,
-} from "../agenda/types";
+import type { RichAgendaItem, RichPresenterScene } from "../agenda/types";
 import { ControlRoomPersistentSummary } from "../control-room-summary";
 import { InlineField } from "../inline-field";
-import { ViewTransitionCard } from "../view-transition-card";
+import { SceneStageRail } from "../scene-stage-rail";
 
 type Copy = (typeof adminCopy)[UiLanguage];
-
-const SCENE_TYPE_OPTIONS = [
-  { value: "briefing" },
-  { value: "demo" },
-  { value: "participant-view" },
-  { value: "checkpoint" },
-  { value: "reflection" },
-  { value: "transition" },
-  { value: "custom" },
-] as const;
-
-const SCENE_INTENT_OPTIONS = [
-  { value: "framing" },
-  { value: "teaching" },
-  { value: "demo" },
-  { value: "walkthrough" },
-  { value: "checkpoint" },
-  { value: "transition" },
-  { value: "reflection" },
-  { value: "custom" },
-] as const;
-
-const SCENE_CHROME_PRESET_OPTIONS = [
-  { value: "minimal" },
-  { value: "agenda" },
-  { value: "checkpoint" },
-  { value: "participant" },
-  { value: "team-trail" },
-] as const;
 
 type OverviewStateLike = {
   liveNowTitle: string;
@@ -304,86 +262,42 @@ export function AgendaSection({
               instanceId={instanceId}
             />
 
-            <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaPresenterGroupTitle}</p>
-                  <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">
-                    {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterCardDescription}</p>
-                </div>
-              </div>
-              <div className="mt-4 space-y-3">
-                {roomScenes.length > 0 ? (
-                  roomScenes.map((scene) => (
-                    <PresenterSceneSummaryCard
-                      key={scene.id}
-                      scene={scene}
-                      agendaItemId={selectedAgendaItem.id}
-                      activeInstanceId={instanceId}
-                      lang={lang}
-                      copy={copy}
-                      isDefault={selectedAgendaItem.defaultPresenterSceneId === scene.id}
-                      isSelected={selectedRoomScene?.id === scene.id}
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.presenterNoSceneBody}</p>
-                )}
-                <AddSceneRow
-                  lang={lang}
-                  instanceId={instanceId}
-                  agendaItemId={selectedAgendaItem.id}
-                  addLabel={copy.presenterAddSceneButton}
-                />
-              </div>
-            </section>
+            <SceneStageRail
+              eyebrow={copy.agendaPresenterGroupTitle}
+              title={selectedRoomScene?.label ?? copy.presenterNoSceneTitle}
+              description={copy.presenterCardDescription}
+              scenes={roomScenes}
+              selectedScene={selectedRoomScene}
+              item={selectedAgendaItem}
+              lang={lang}
+              copy={copy}
+              instanceId={instanceId}
+              defaultSceneId={selectedAgendaItem.defaultPresenterSceneId ?? null}
+              emptyCopy={copy.presenterNoSceneBody}
+            />
 
-            <section className="rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.participantSurfaceCardTitle}</p>
-                  <h3 className="mt-2 text-lg font-medium text-[var(--text-primary)]">
-                    {selectedParticipantScene?.label ?? copy.participantSurfaceCardDescription}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceCardDescription}</p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <ExternalOpenButton
-                    href={selectedAgendaParticipantMirrorHref}
-                    className={adminSecondaryButtonClassName}
-                  >
-                    {copy.presenterOpenParticipantSurfaceButton}
-                  </ExternalOpenButton>
-                </div>
-              </div>
-              <div className="mt-4 space-y-3">
-                {participantScenes.length > 0 ? (
-                  participantScenes.map((scene) => (
-                    <PresenterSceneSummaryCard
-                      key={scene.id}
-                      scene={scene}
-                      agendaItemId={selectedAgendaItem.id}
-                      activeInstanceId={instanceId}
-                      lang={lang}
-                      copy={copy}
-                      isDefault={false}
-                      isSelected={selectedParticipantScene?.id === scene.id}
-                      participantOnly
-                    />
-                  ))
-                ) : (
-                  <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceRecoveryHint}</p>
-                )}
-                <AddSceneRow
-                  lang={lang}
-                  instanceId={instanceId}
-                  agendaItemId={selectedAgendaItem.id}
-                  addLabel={copy.presenterAddSceneButton}
-                />
-              </div>
-            </section>
+            <SceneStageRail
+              eyebrow={copy.participantSurfaceCardTitle}
+              title={selectedParticipantScene?.label ?? copy.participantSurfaceCardDescription}
+              description={copy.participantSurfaceCardDescription}
+              scenes={participantScenes}
+              selectedScene={selectedParticipantScene}
+              item={selectedAgendaItem}
+              lang={lang}
+              copy={copy}
+              instanceId={instanceId}
+              defaultSceneId={null}
+              emptyCopy={copy.participantSurfaceRecoveryHint}
+              participantOnly
+              headerActions={
+                <ExternalOpenButton
+                  href={selectedAgendaParticipantMirrorHref}
+                  className={adminSecondaryButtonClassName}
+                >
+                  {copy.presenterOpenParticipantSurfaceButton}
+                </ExternalOpenButton>
+              }
+            />
 
             <details className="rounded-[22px] border border-[var(--border)] bg-[var(--card-top)] p-4">
               <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
@@ -799,281 +713,6 @@ function AgendaItemDetail({
   );
 }
 
-function PresenterSceneSummaryCard({
-  scene,
-  agendaItemId,
-  activeInstanceId,
-  lang,
-  copy,
-  isDefault,
-  isSelected,
-  participantOnly = false,
-}: {
-  scene: RichPresenterScene;
-  agendaItemId: string;
-  activeInstanceId: string;
-  lang: UiLanguage;
-  copy: Copy;
-  isDefault: boolean;
-  isSelected: boolean;
-  participantOnly?: boolean;
-}) {
-  const sceneBlocks = scene.blocks ?? [];
-  const surfaceLabel = participantOnly ? copy.participantSurfaceCardTitle : copy.presenterCardTitle;
-  const sceneEditorHref = buildAdminHref({
-    lang,
-    section: "agenda",
-    instanceId: activeInstanceId,
-    agendaItemId,
-    sceneId: scene.id,
-    overlay: "scene-edit",
-  });
-
-  const presenterHref = buildPresenterRouteHref({
-    lang,
-    instanceId: activeInstanceId,
-    agendaItemId,
-    sceneId: scene.id,
-  });
-  const morphName = `scene-${agendaItemId}-${scene.id}`;
-
-  return (
-    <ViewTransitionCard name={morphName}>
-    <div
-      data-agenda-scene-card={scene.id}
-      className={`rounded-[20px] border p-4 ${
-        isSelected ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_14px_28px_rgba(28,25,23,0.08)]" : "border-[var(--border)] bg-[var(--surface-soft)]"
-      }`}
-    >
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <div className="font-medium text-[var(--text-primary)]">
-            <InlineField
-              value={scene.label}
-              fieldName="label"
-              label={copy.sceneFieldLabel}
-              action={updateSceneFieldAction}
-              hiddenFields={{
-                instanceId: activeInstanceId,
-                agendaItemId,
-                sceneId: scene.id,
-                fieldName: "label",
-              }}
-            />
-          </div>
-          <div className="flex flex-wrap items-center gap-x-2 text-sm leading-6 text-[var(--text-secondary)]">
-            <span>{surfaceLabel}</span>
-            <span aria-hidden="true">•</span>
-            <InlineField
-              value={scene.sceneType}
-              fieldName="sceneType"
-              label={copy.sceneFieldType}
-              mode="select"
-              options={SCENE_TYPE_OPTIONS}
-              action={updateSceneFieldAction}
-              hiddenFields={{
-                instanceId: activeInstanceId,
-                agendaItemId,
-                sceneId: scene.id,
-                fieldName: "sceneType",
-              }}
-            />
-            {scene.intent ? (
-              <>
-                <span aria-hidden="true">•</span>
-                <InlineField
-                  value={scene.intent}
-                  fieldName="intent"
-                  label={copy.sceneFieldIntent}
-                  mode="select"
-                  options={SCENE_INTENT_OPTIONS}
-                  action={updateSceneFieldAction}
-                  hiddenFields={{
-                    instanceId: activeInstanceId,
-                    agendaItemId,
-                    sceneId: scene.id,
-                    fieldName: "intent",
-                  }}
-                />
-              </>
-            ) : null}
-            {scene.chromePreset ? (
-              <>
-                <span aria-hidden="true">•</span>
-                <InlineField
-                  value={scene.chromePreset}
-                  fieldName="chromePreset"
-                  label={copy.sceneFieldChromePreset}
-                  mode="select"
-                  options={SCENE_CHROME_PRESET_OPTIONS}
-                  action={updateSceneFieldAction}
-                  hiddenFields={{
-                    instanceId: activeInstanceId,
-                    agendaItemId,
-                    sceneId: scene.id,
-                    fieldName: "chromePreset",
-                  }}
-                />
-              </>
-            ) : null}
-            {isDefault ? <span>• {copy.presenterCurrentSceneLabel}</span> : null}
-            {!scene.enabled ? <span>• {copy.presenterSceneDisabled}</span> : null}
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <AdminRouteLink href={presenterHref} className={adminGhostButtonClassName}>
-            {participantOnly ? copy.presenterOpenParticipantButton : copy.presenterOpenSelectedScene}
-          </AdminRouteLink>
-          <a
-            href={presenterHref}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="otevřít v novém okně"
-            className={`${adminGhostButtonClassName} px-2`}
-          >
-            ↗
-          </a>
-          <details className="group relative">
-            <summary className="inline-flex cursor-pointer list-none items-center rounded-[10px] px-2 py-1 text-xs lowercase text-[var(--text-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]">
-              více
-            </summary>
-            <div className="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-[18px] border border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
-              <form action={movePresenterSceneAction}>
-                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                <input name="agendaItemId" type="hidden" value={agendaItemId} />
-                <input name="sceneId" type="hidden" value={scene.id} />
-                <input name="direction" type="hidden" value="up" />
-                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
-                  ↑ {copy.presenterMoveSceneUpButton}
-                </AdminSubmitButton>
-              </form>
-              <form action={movePresenterSceneAction}>
-                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                <input name="agendaItemId" type="hidden" value={agendaItemId} />
-                <input name="sceneId" type="hidden" value={scene.id} />
-                <input name="direction" type="hidden" value="down" />
-                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
-                  ↓ {copy.presenterMoveSceneDownButton}
-                </AdminSubmitButton>
-              </form>
-              {!isDefault ? (
-                <form action={setDefaultPresenterSceneAction}>
-                  <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                  <input name="agendaItemId" type="hidden" value={agendaItemId} />
-                  <input name="sceneId" type="hidden" value={scene.id} />
-                  <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
-                    {copy.presenterSetDefaultSceneButton}
-                  </AdminSubmitButton>
-                </form>
-              ) : null}
-              <form action={togglePresenterSceneEnabledAction}>
-                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                <input name="agendaItemId" type="hidden" value={agendaItemId} />
-                <input name="sceneId" type="hidden" value={scene.id} />
-                <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
-                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
-                  {scene.enabled ? copy.presenterHideSceneButton : copy.presenterShowSceneButton}
-                </AdminSubmitButton>
-              </form>
-              <AdminRouteLink
-                href={sceneEditorHref}
-                className={`${adminGhostButtonClassName} w-full justify-start`}
-              >
-                blocks / sources →
-              </AdminRouteLink>
-              <form action={removePresenterSceneAction}>
-                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-                <input name="agendaItemId" type="hidden" value={agendaItemId} />
-                <input name="sceneId" type="hidden" value={scene.id} />
-                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start text-[var(--border-strong)]`}>
-                  {copy.presenterRemoveSceneButton}
-                </AdminSubmitButton>
-              </form>
-            </div>
-          </details>
-        </div>
-      </div>
-      <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-        <InlineField
-          value={scene.body ?? ""}
-          fieldName="body"
-          label={copy.sceneFieldBody}
-          mode="textarea"
-          action={updateSceneFieldAction}
-          hiddenFields={{
-            instanceId: activeInstanceId,
-            agendaItemId,
-            sceneId: scene.id,
-            fieldName: "body",
-          }}
-        />
-      </div>
-      {sceneBlocks.length > 0 ? (
-        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterRoomBlocksTitle}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {sceneBlocks.map((block) => (
-              <span
-                key={block.id}
-                className="rounded-full border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)]"
-              >
-                {block.type}
-              </span>
-            ))}
-          </div>
-        </div>
-      ) : null}
-      <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterFacilitatorNotesTitle}</p>
-        <div className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
-          <InlineField
-            value={(scene.facilitatorNotes ?? []).join("\n")}
-            fieldName="facilitatorNotes"
-            label={copy.presenterFacilitatorNotesTitle}
-            mode="textarea"
-            placeholder={copy.presenterFacilitatorNotesTitle}
-            action={updateSceneFieldAction}
-            hiddenFields={{
-              instanceId: activeInstanceId,
-              agendaItemId,
-              sceneId: scene.id,
-              fieldName: "facilitatorNotes",
-            }}
-          />
-        </div>
-      </div>
-      {(scene.sourceRefs ?? []).length > 0 ? (
-        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-3">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {(scene.sourceRefs ?? []).map((ref: SourceRef) => {
-            const href = buildRepoSourceHref(ref.path);
-            const className =
-              "flex items-center justify-between rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--card-top)]";
-
-            if (!href) {
-              return (
-                <div key={`${ref.path}-${ref.label}`} className={className}>
-                  <span className="font-medium">{ref.label}</span>
-                  <span className="text-xs text-[var(--text-muted)]">{ref.path}</span>
-                </div>
-              );
-            }
-
-            return (
-              <a key={`${ref.path}-${ref.label}`} href={href} target="_blank" rel="noreferrer" className={className}>
-                <span className="font-medium">{ref.label}</span>
-                <span className="text-xs text-[var(--text-muted)]">{copy.openLinkLabel}</span>
-              </a>
-            );
-          })}
-          </div>
-        </div>
-      ) : null}
-    </div>
-    </ViewTransitionCard>
-  );
-}
 
 function TimelineRow({
   item,

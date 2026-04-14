@@ -621,7 +621,7 @@ test.describe("one canvas phase 3 — inline editing", () => {
     // first sceneType select and flip its value. Every scene card
     // renders one sceneType select, so scoping by first() is safe.
     const sceneTypeButton = page
-      .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+      .locator('[data-scene-stage] [data-inline-field="display"]')
       .filter({ hasText: /^(briefing|demo|participant-view|checkpoint|reflection|transition|custom)$/ })
       .first();
     const originalType = await sceneTypeButton.textContent();
@@ -637,14 +637,14 @@ test.describe("one canvas phase 3 — inline editing", () => {
     // the new value without needing a reload.
     await expect(
       page
-        .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+        .locator('[data-scene-stage] [data-inline-field="display"]')
         .filter({ hasText: new RegExp(`^${nextType}$`) })
         .first(),
     ).toBeVisible();
 
     // Revert so re-runs stay deterministic.
     await page
-      .locator('[data-agenda-scene-card] [data-inline-field="display"]')
+      .locator('[data-scene-stage] [data-inline-field="display"]')
       .filter({ hasText: new RegExp(`^${nextType}$`) })
       .first()
       .click();
