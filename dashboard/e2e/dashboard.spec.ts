@@ -1529,6 +1529,88 @@ test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
   });
 });
 
+test.describe("landing page motion — motion path", () => {
+  test("hero heading fades in and resolves to full opacity", async ({ page }) => {
+    await page.goto("/");
+    const heading = page.getByRole("heading", { name: /harness/i, level: 1 }).first();
+    await expect(heading).toBeVisible();
+
+    // motion/react drives opacity from 0 → 1 via the HeroStaggerChild variant.
+    // After the stagger + 400ms animation finishes it should settle at 1.
+    await expect
+      .poll(
+        async () => Number(await heading.evaluate((el) => Number(getComputedStyle(el).opacity))),
+        { timeout: 2000, intervals: [50, 100, 200] },
+      )
+      .toBeGreaterThanOrEqual(0.99);
+  });
+
+  test("on-scroll FadeUp sections reach full opacity", async ({ page }) => {
+    await page.goto("/#details");
+    // Anchor jump puts the details cards in the viewport; whileInView fires
+    // immediately, the animation settles within ~500ms.
+    const card = page.getByText(/\w+/).locator("..").filter({ hasText: /./ }).first();
+    await expect(card).toBeVisible();
+    await expect
+      .poll(
+        async () =>
+          Number(
+            await page
+              .getByRole("heading", { name: /harness/i, level: 1 })
+              .first()
+              .evaluate((el) => Number(getComputedStyle(el).opacity)),
+          ),
+        { timeout: 2000 },
+      )
+      .toBeGreaterThanOrEqual(0.99);
+  });
+});
+
+test.describe("landing page motion — reduced-motion path", () => {
+  test("hero heading is fully visible on first paint", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    const heading = page.getByRole("heading", { name: /harness/i, level: 1 }).first();
+    await expect(heading).toBeVisible();
+    // Under prefers-reduced-motion, HeroStaggerChild short-circuits to a
+    // plain div so content must be visible with opacity 1 from the first
+    // paint — no animation, no hidden initial state.
+    const opacity = await heading.evaluate((el) => Number(getComputedStyle(el).opacity));
+    expect(opacity).toBe(1);
+  });
+
+  test("details section cards are fully visible without scroll animation", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/#details");
+    const sectionLabel = page.getByText(/what.*harness|co.*harness/i).first();
+    await expect(sectionLabel).toBeVisible();
+    const opacity = await sectionLabel.evaluate(
+      (el) => Number(getComputedStyle(el).opacity),
+    );
+    expect(opacity).toBe(1);
+  });
+});
+
+test.describe("pending-state loaders", () => {
+  test("landing facilitator login link flips aria-busy on click", async ({ page }) => {
+    await page.goto("/");
+    // Intercept the /admin navigation so we can observe the pending state
+    // before the route change resolves. Delay the response enough to let
+    // Playwright read aria-busy on the client-side link wrapper.
+    await page.route("**/admin**", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      await route.continue();
+    });
+
+    const link = page.getByRole("link", { name: /facilitator|facilitátor/i }).first();
+    await expect(link).toBeVisible();
+    // Fire the click without awaiting navigation, then read aria-busy.
+    const navigation = link.click().catch(() => undefined);
+    await expect(link).toHaveAttribute("aria-busy", "true", { timeout: 1000 });
+    await navigation;
+  });
+});
+
 test.describe("facilitator API (unauthenticated)", () => {
   test("facilitators API returns 401 without auth", async ({ playwright }) => {
     const context = await playwright.request.newContext({

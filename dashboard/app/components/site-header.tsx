@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { buildAgentPrompt, buildSiteHeaderNavLinks } from "@/lib/public-page-view-model";
 import { publicCopy, type UiLanguage, withLang } from "@/lib/ui-language";
 import { AgentPopover } from "./agent-popover";
@@ -34,17 +35,30 @@ export function SiteHeader({
 
         <div className="relative flex flex-col gap-3 lg:items-end">
           <nav className="flex items-center gap-2 overflow-x-auto whitespace-nowrap pb-1 text-sm lowercase text-[var(--text-secondary)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {navLinks.map((link) => (
-              <a
-                key={`${link.href}-${link.label}`}
-                className="dashboard-motion-link rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-                href={link.href}
-                rel={link.external ? "noreferrer" : undefined}
-                target={link.external ? "_blank" : undefined}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const className = "dashboard-motion-link rounded-full px-3 py-1.5 transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]";
+              // Anchor and external links do not trigger a route change — a
+              // plain <a> is correct. Internal navigation links (e.g. /admin)
+              // go through AdminRouteLink so clicks show pending state.
+              if (link.external || link.href.startsWith("#")) {
+                return (
+                  <a
+                    key={`${link.href}-${link.label}`}
+                    className={className}
+                    href={link.href}
+                    rel={link.external ? "noreferrer" : undefined}
+                    target={link.external ? "_blank" : undefined}
+                  >
+                    {link.label}
+                  </a>
+                );
+              }
+              return (
+                <AdminRouteLink key={`${link.href}-${link.label}`} className={className} href={link.href}>
+                  {link.label}
+                </AdminRouteLink>
+              );
+            })}
           </nav>
           <div className="flex items-center gap-3">
             {!isParticipant ? (
