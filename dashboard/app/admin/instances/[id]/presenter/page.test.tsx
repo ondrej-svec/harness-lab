@@ -241,6 +241,6 @@ describe("PresenterPage", () => {
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain("Every fresh agent session is a rotation");
-    expect(html).toContain("If this is confusing, that&#x27;s the point.");
+    expect(html).toContain("That is the move you are about to practice.");
   });
 });

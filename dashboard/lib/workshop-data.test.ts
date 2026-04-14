@@ -157,7 +157,7 @@ describe("workshop-data", () => {
     expect(talkHowScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "talk-how-hero", type: "hero" }),
-        expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
+        expect.objectContaining({ id: "talk-four-pillars", type: "steps" }),
       ]),
     );
     expect(revealScene?.blocks).toEqual(
@@ -178,7 +178,7 @@ describe("workshop-data", () => {
     expect(talkHowScene?.blocks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ id: "talk-how-hero", type: "hero" }),
-        expect.objectContaining({ id: "talk-adopt", type: "checklist" }),
+        expect.objectContaining({ id: "talk-four-pillars", type: "steps" }),
       ]),
     );
     expect(revealScene?.blocks).toEqual(
