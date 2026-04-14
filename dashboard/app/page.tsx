@@ -11,6 +11,7 @@ import {
   getBlueprintRepoUrl,
 } from "@/lib/public-page-view-model";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
+import { AdminRouteLink } from "./admin/admin-route-link";
 import { SiteHeader } from "./components/site-header";
 import { SubmitButton } from "./components/submit-button";
 
@@ -146,9 +147,9 @@ function PublicView({
           </form>
 
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm lowercase">
-            <a className="dashboard-motion-link text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href={withLang("/admin", lang)}>
+            <AdminRouteLink className="dashboard-motion-link text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href={withLang("/admin", lang)}>
               {copy.facilitatorLogin}
-            </a>
+            </AdminRouteLink>
             <span className="text-[var(--accent-muted)]">/</span>
             <a className="dashboard-motion-link text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href="#details">
               {copy.publicDetails}

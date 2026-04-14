@@ -1,5 +1,6 @@
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
+import { ExternalOpenButton } from "@/app/admin/external-open-button";
 import { buildAdminHref } from "@/lib/admin-page-view-model";
 import { buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { buildRepoBlobUrl } from "@/lib/repo-links";
@@ -244,33 +245,27 @@ export function AgendaSection({
                     <AdminSubmitButton className={adminPrimaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
                   </form>
                 ) : selectedAgendaProjectionHref ? (
-                  <a
+                  <ExternalOpenButton
                     className={`${adminPrimaryButtonClassName} inline-flex`}
                     href={selectedAgendaProjectionHref}
-                    target="_blank"
-                    rel="noreferrer"
                   >
                     {copy.presenterOpenCurrentButton}
-                  </a>
+                  </ExternalOpenButton>
                 ) : null}
                 {selectedAgendaProjectionHref && selectedAgendaItem.id !== currentAgendaItem?.id ? (
-                  <a
+                  <ExternalOpenButton
                     className={`${adminGhostButtonClassName} inline-flex`}
                     href={selectedAgendaProjectionHref}
-                    target="_blank"
-                    rel="noreferrer"
                   >
                     {copy.presenterOpenCurrentButton}
-                  </a>
+                  </ExternalOpenButton>
                 ) : null}
-                <a
+                <ExternalOpenButton
                   className={`${adminSecondaryButtonClassName} inline-flex`}
                   href={selectedAgendaParticipantMirrorHref}
-                  target="_blank"
-                  rel="noreferrer"
                 >
                   {copy.presenterOpenParticipantSurfaceButton}
-                </a>
+                </ExternalOpenButton>
               </div>
 
               {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
@@ -355,14 +350,12 @@ export function AgendaSection({
                   <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.participantSurfaceCardDescription}</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
-                  <a
+                  <ExternalOpenButton
                     href={selectedAgendaParticipantMirrorHref}
-                    target="_blank"
                     className={adminSecondaryButtonClassName}
-                    rel="noreferrer"
                   >
                     {copy.presenterOpenParticipantSurfaceButton}
-                  </a>
+                  </ExternalOpenButton>
                 </div>
               </div>
               <div className="mt-4 space-y-3">

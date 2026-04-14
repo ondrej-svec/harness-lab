@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
@@ -442,9 +443,9 @@ export default async function AdminWorkspacePage({
                             </div>
                             <p className="mt-2.5 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{instance.id}</p>
                           </div>
-                          <Link className={`dashboard-motion-button ${adminSecondaryButtonClassName} shrink-0 px-3 py-2 text-xs`} href={controlRoomHref}>
+                          <AdminRouteLink className={`dashboard-motion-button ${adminSecondaryButtonClassName} shrink-0 px-3 py-2 text-xs`} href={controlRoomHref}>
                             {copy.workspaceOpenInstance}
-                          </Link>
+                          </AdminRouteLink>
                         </div>
 
                         <div className="mt-3 rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2.5">
