@@ -122,6 +122,8 @@ describe("AdminWorkspacePage", () => {
     expect(html).toContain("/admin/instances/sample-studio-a?lang=en");
     expect(html).toContain(adminCopy.en.removeInstanceReviewButton);
     expect(html).not.toContain(adminCopy.en.confirmRemoveInstanceButton);
+    expect(html).toContain("dashboard-motion-card");
+    expect(html).toContain("dashboard-drift");
   });
 
   it("filters the workspace gallery by query", async () => {

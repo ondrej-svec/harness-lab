@@ -220,8 +220,10 @@ export default async function AdminWorkspacePage({
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
       <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
-        <header className="relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
+        <header className="dashboard-motion-card relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
           <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
+          <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_72%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
+          <div className="pointer-events-none absolute left-[28%] top-8 h-32 w-56 rounded-full bg-[radial-gradient(circle,var(--surface-soft),transparent_72%)] blur-3xl dashboard-sheen" />
           <div className="relative space-y-6 p-6 sm:p-7">
             <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
               <div className="max-w-3xl">
@@ -231,7 +233,7 @@ export default async function AdminWorkspacePage({
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceBody}</p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <a className={`${adminPrimaryButtonClassName} w-full sm:w-auto`} href="#create-instance">
+                  <a className={`dashboard-motion-button ${adminPrimaryButtonClassName} w-full sm:w-auto`} href="#create-instance">
                     {copy.createInstanceTitle}
                   </a>
                   <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-secondary)]">
@@ -258,7 +260,8 @@ export default async function AdminWorkspacePage({
               </div>
             </div>
 
-            <section className={`${adminHeroPanelClassName} p-5`}>
+            <section className={`${adminHeroPanelClassName} dashboard-motion-card relative overflow-hidden p-5`}>
+              <div className="pointer-events-none absolute right-0 top-0 h-28 w-40 bg-[radial-gradient(circle,rgba(255,250,243,0.18),transparent_72%)] blur-3xl dashboard-drift" />
               <div className="flex items-center justify-between gap-4">
                 <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.workspaceSummaryTitle}</p>
                 {signedInEmail ? (
@@ -280,7 +283,7 @@ export default async function AdminWorkspacePage({
           <div className="space-y-4">
             <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
               <form
-                className="grid min-w-0 gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end"
+                className="dashboard-motion-card grid min-w-0 gap-3 rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 lg:grid-cols-[minmax(0,1fr)_14rem_auto] lg:items-end"
                 method="get"
               >
                 <div>
@@ -313,7 +316,7 @@ export default async function AdminWorkspacePage({
                 </div>
               </form>
 
-              <details className="group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 transition-all duration-200 open:shadow-[var(--shadow-soft)] xl:col-start-2 xl:w-[23rem] xl:open:col-span-2 xl:open:col-start-1 xl:open:row-start-2 xl:open:w-auto">
+              <details className="dashboard-motion-card group rounded-[24px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 transition-all duration-200 open:shadow-[var(--shadow-soft)] xl:col-start-2 xl:w-[23rem] xl:open:col-span-2 xl:open:col-start-1 xl:open:row-start-2 xl:open:w-auto">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
                   <div className="min-w-0">
                     <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">{copy.createInstanceTitle}</p>
@@ -420,9 +423,10 @@ export default async function AdminWorkspacePage({
                     return (
                       <article
                         key={instance.id}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] p-3.5 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_24px_40px_rgba(28,25,23,0.1)]"
+                        className="dashboard-motion-card group relative flex h-full flex-col overflow-hidden rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] p-3.5 shadow-[var(--shadow-soft)] transition duration-200 hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-[0_24px_40px_rgba(28,25,23,0.1)]"
                       >
                         <div className="absolute inset-x-0 top-0 h-14 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
+                        <div className="pointer-events-none absolute right-0 top-0 h-20 w-24 bg-[radial-gradient(circle,rgba(40,105,131,0.1),transparent_72%)] blur-2xl dashboard-drift" />
                         <div className="relative flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
@@ -438,7 +442,7 @@ export default async function AdminWorkspacePage({
                             </div>
                             <p className="mt-2.5 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{instance.id}</p>
                           </div>
-                          <Link className={`${adminSecondaryButtonClassName} shrink-0 px-3 py-2 text-xs`} href={controlRoomHref}>
+                          <Link className={`dashboard-motion-button ${adminSecondaryButtonClassName} shrink-0 px-3 py-2 text-xs`} href={controlRoomHref}>
                             {copy.workspaceOpenInstance}
                           </Link>
                         </div>
@@ -466,7 +470,7 @@ export default async function AdminWorkspacePage({
                           <div className="flex items-center justify-between gap-3 border-t border-[var(--border)] pt-3">
                             <span className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">archive-safe</span>
                             <Link
-                              className="inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]"
+                              className="dashboard-motion-link inline-flex items-center justify-center rounded-full px-3 py-2 text-xs font-medium lowercase text-[var(--danger)] transition hover:bg-[var(--danger-surface)]"
                               href={buildAdminWorkspaceHref({
                                 lang,
                                 query: filters.query,
@@ -547,7 +551,7 @@ export default async function AdminWorkspacePage({
 
 function WorkspacePulseStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`${adminHeroTileClassName} px-4 py-4`}>
+    <div className={`${adminHeroTileClassName} dashboard-motion-card px-4 py-4`}>
       <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--hero-muted)]">{label}</p>
       <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[var(--hero-text)]">{value}</p>
     </div>
@@ -556,7 +560,7 @@ function WorkspacePulseStat({ label, value }: { label: string; value: string }) 
 
 function WorkspaceMetaRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2.5">
+    <div className="dashboard-motion-card rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2.5">
       <p className="text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-1 text-sm font-medium leading-5 text-[var(--text-primary)]">{value}</p>
     </div>

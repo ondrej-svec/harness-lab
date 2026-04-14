@@ -211,8 +211,12 @@ describe("HomePage", () => {
     const view = await HomePage({
       searchParams: Promise.resolve({ lang: "en", eventAccess: "invalid_code" }),
     });
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const html = renderToStaticMarkup(view);
 
     expect(view).toBeTruthy();
     expect(getConfiguredEventCode).toHaveBeenCalledTimes(1);
+    expect(html).toContain("dashboard-motion-card");
+    expect(html).toMatch(/view-transition-name:\s*room-access/);
   });
 });

@@ -1,4 +1,15 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
+
+async function readTransitionDuration(locator: Locator) {
+  return locator.evaluate((element) => getComputedStyle(element).transitionDuration);
+}
+
+function hasNonZeroTransition(duration: string) {
+  return duration
+    .split(",")
+    .map((part) => part.trim())
+    .some((part) => part !== "0s");
+}
 
 test.describe("participant dashboard", () => {
   test("shows the dominant workshop flow on mobile without browser errors", async ({ page }) => {
@@ -39,6 +50,31 @@ test.describe("participant dashboard", () => {
     await page.getByRole("link", { name: "harness lab" }).click();
     await expect(page).toHaveURL(/\/\?lang=en$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("keeps public motion affordances active on desktop without browser errors", async ({ page }) => {
+    const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message);
+    });
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        consoleErrors.push(message.text());
+      }
+    });
+
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await page.goto("/?lang=en");
+
+    const accessPanel = page.locator("#access");
+    const facilitatorLogin = accessPanel.getByRole("link", { name: "facilitator login" });
+
+    expect(hasNonZeroTransition(await readTransitionDuration(facilitatorLogin))).toBe(true);
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
   });
 
   test("keeps the public mobile hero visually stable", async ({ page }) => {
@@ -88,6 +124,41 @@ test.describe("participant dashboard", () => {
     await expect(page).toHaveScreenshot("participant-mobile-room.png", {
       maxDiffPixelRatio: 0.05,
     });
+  });
+
+  test("keeps participant motion surfaces interactive on desktop", async ({ page }) => {
+    const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message);
+    });
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        consoleErrors.push(message.text());
+      }
+    });
+
+    await page.setViewportSize({ width: 1280, height: 1100 });
+    await page.goto("/?lang=en");
+    await page.getByLabel("event code").fill("lantern8-context4-handoff2");
+    await page.getByRole("button", { name: "open participant surface" }).click();
+    await page.waitForURL("**/participant**");
+
+    const notesJumpCard = page.locator('a[href="#notes"]').first();
+    const firstTeam = page.locator("#teams article").first();
+
+    expect(hasNonZeroTransition(await readTransitionDuration(notesJumpCard))).toBe(true);
+
+    await firstTeam.locator("textarea").fill("We mapped the repo, pinned one failing check, and know the next safe move.");
+    await firstTeam.locator('input[type="text"]').fill("agent observer");
+    await firstTeam.getByRole("button", { name: "Record check-in" }).click();
+
+    await expect(firstTeam.getByText("Check-in saved.")).toBeVisible();
+    await expect(firstTeam.locator("textarea")).toHaveValue("");
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
   });
 });
 
@@ -194,6 +265,35 @@ test.describe("facilitator admin (file mode)", () => {
       // designed viewport shell instead of the scroll length.
       maxDiffPixelRatio: 0.08,
     });
+  });
+
+  test("keeps workspace motion affordances interactive on desktop", async ({ page }) => {
+    const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+
+    page.on("pageerror", (error) => {
+      pageErrors.push(error.message);
+    });
+    page.on("console", (message) => {
+      if (message.type() === "error") {
+        consoleErrors.push(message.text());
+      }
+    });
+
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    await page.goto("/admin?lang=en");
+
+    const firstInstanceCard = page.locator("article").filter({ has: page.getByRole("link", { name: "open control room" }) }).first();
+    const openControlRoom = firstInstanceCard.getByRole("link", { name: "open control room" });
+
+    expect(hasNonZeroTransition(await readTransitionDuration(firstInstanceCard))).toBe(true);
+    expect(hasNonZeroTransition(await readTransitionDuration(openControlRoom))).toBe(true);
+
+    await page.locator("details summary").first().click();
+    await expect(page.locator("details").first()).toHaveAttribute("open", "");
+
+    expect(pageErrors).toEqual([]);
+    expect(consoleErrors).toEqual([]);
   });
 
   test("uses a confirmation dialog before instance removal", async ({ page }) => {
@@ -974,27 +1074,87 @@ test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
     },
   });
 
+  async function readActivePresenterSlideMetrics(page: import("@playwright/test").Page) {
+    return page.evaluate(() => {
+      const slide = document.querySelector('[data-presenter-slide="true"][aria-hidden="false"]') as HTMLElement | null;
+      if (!slide) {
+        throw new Error("active presenter slide not found");
+      }
+
+      return {
+        bodyScrollWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        slideScrollHeight: slide.scrollHeight,
+        slideClientHeight: slide.clientHeight,
+      };
+    });
+  }
+
   test("presenter renders at 4:3 iPad viewport without content overflow", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
     // The page body should fit inside the viewport horizontally — no
     // scrollbar caused by an overflowing element. Measure document
     // scroll width vs viewport width.
-    const metrics = await page.evaluate(() => ({
-      bodyScrollWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
+    const metrics = await readActivePresenterSlideMetrics(page);
     expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
   });
 
   test("presenter renders at 16:9 big-screen mirror viewport without content overflow", async ({ page }) => {
     await page.setViewportSize({ width: 1920, height: 1080 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
-    const metrics = await page.evaluate(() => ({
-      bodyScrollWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
+    const metrics = await readActivePresenterSlideMetrics(page);
     expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
+  });
+
+  test("presenter proof scenes fit the 4:3 baseline without vertical scroll", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+
+    const proofScenes = [
+      { label: "talk-argued-about-prompts", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-argued-about-prompts" },
+      { label: "talk-why-now", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-why-now" },
+      { label: "talk-got-a-name", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-got-a-name" },
+      { label: "talk-how-to-build", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-how-to-build" },
+      { label: "talk-managing-agents", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-managing-agents" },
+      { label: "talk-humans-steer", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer" },
+      { label: "build-1-next-65-minutes", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-next-65-minutes" },
+      { label: "build-1-by-lunch", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-by-lunch" },
+      { label: "reveal-one-thing", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-one-thing" },
+      { label: "reveal-save-the-commitment", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-save-the-commitment" },
+    ] as const;
+
+    for (const scene of proofScenes) {
+      await page.goto(scene.path);
+      await page.waitForSelector('[data-presenter-slide="true"][aria-hidden="false"]');
+      const metrics = await readActivePresenterSlideMetrics(page);
+      expect(metrics.slideScrollHeight, `${scene.label} should fit without vertical scroll`).toBeLessThanOrEqual(
+        metrics.slideClientHeight + 2,
+      );
+    }
+  });
+
+  test("keeps the split proof scenes visually stable on ipad", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-argued-about-prompts");
+    await expect(page).toHaveScreenshot("presenter-talk-evidence-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-how-to-build");
+    await expect(page).toHaveScreenshot("presenter-talk-pillars-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-next-65-minutes");
+    await expect(page).toHaveScreenshot("presenter-build-1-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-one-thing");
+    await expect(page).toHaveScreenshot("presenter-reveal-commitment-proof-ipad.png", {
+      maxDiffPixelRatio: 0.08,
+    });
   });
 
   test("admin shell renders on iPad portrait without horizontal overflow", async ({ page }) => {

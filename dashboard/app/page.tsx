@@ -48,7 +48,7 @@ export default async function HomePage({
   const configuredEventCode = await getConfiguredEventCode();
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
+    <main className="min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
         <SiteHeader isParticipant={false} lang={lang} copy={copy} />
         <PublicView configuredEventCode={configuredEventCode} eventAccessError={params?.eventAccess} copy={copy} lang={lang} />
@@ -74,10 +74,14 @@ function PublicView({
   return (
     <>
       <section
-        className="grid gap-10 border-b border-[var(--border)] py-10 lg:min-h-[58vh] lg:grid-cols-[minmax(0,1.2fr)_minmax(22rem,0.86fr)] lg:items-center lg:gap-14"
+        className="relative grid gap-10 overflow-hidden border-b border-[var(--border)] py-10 lg:min-h-[58vh] lg:grid-cols-[minmax(0,1.2fr)_minmax(22rem,0.86fr)] lg:items-center lg:gap-14"
         id="overview"
       >
-        <div className="max-w-3xl">
+        <div className="pointer-events-none absolute -left-20 top-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,var(--ambient-left),transparent_72%)] blur-3xl dashboard-drift" />
+        <div className="pointer-events-none absolute right-[-4rem] top-[-2rem] h-72 w-72 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_72%)] opacity-[0.1] blur-3xl dashboard-drift-reverse" />
+        <div className="pointer-events-none absolute inset-x-[24%] top-[16%] h-40 rounded-full bg-[radial-gradient(circle,var(--surface-panel),transparent_72%)] blur-3xl dashboard-sheen" />
+
+        <div className="relative max-w-3xl">
           <p className="text-sm lowercase text-[var(--text-muted)]">{copy.heroEyebrow}</p>
           <h1 className="mt-5 max-w-4xl text-5xl font-semibold leading-[0.92] tracking-[-0.08em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
             {copy.brand.split(" ").map((part, index) => (
@@ -99,7 +103,7 @@ function PublicView({
           <div className="mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]">
             {blueprintRepoUrl ? (
               <a
-                className="rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                className="dashboard-motion-link rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
                 href={blueprintRepoUrl}
                 rel="noreferrer"
                 target="_blank"
@@ -111,7 +115,13 @@ function PublicView({
           </div>
         </div>
 
-        <aside id="access" className="rounded-[28px] border border-[var(--accent-surface)] bg-[var(--accent-surface)] p-6 text-[var(--accent-text)] shadow-[var(--shadow-soft)] sm:p-8">
+        <aside
+          id="access"
+          className="dashboard-motion-card relative overflow-hidden rounded-[28px] border border-[var(--accent-surface)] bg-[var(--accent-surface)] p-6 text-[var(--accent-text)] shadow-[var(--shadow-soft)] sm:p-8"
+          style={{ viewTransitionName: "room-access" }}
+        >
+          <div className="pointer-events-none absolute -right-12 top-0 h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(255,250,243,0.24),transparent_72%)] blur-3xl dashboard-drift" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(255,250,243,0.16),transparent_62%)] dashboard-sheen" />
           <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--accent-muted)]">{copy.accessEyebrow}</p>
           <h2 className="mt-4 text-3xl font-semibold tracking-[-0.04em]">{copy.accessTitle}</h2>
           <p className="mt-4 text-sm leading-7 text-[var(--accent-secondary)]">{copy.accessBody}</p>
@@ -129,18 +139,18 @@ function PublicView({
               placeholder={copy.eventCodePlaceholder}
             />
             <SubmitButton
-              className="w-full rounded-full border border-[var(--accent-text)] bg-[var(--accent-text)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-surface)] transition hover:bg-transparent hover:text-[var(--accent-text)]"
+              className="dashboard-motion-button w-full rounded-full border border-[var(--accent-text)] bg-[var(--accent-text)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-surface)] transition hover:bg-transparent hover:text-[var(--accent-text)]"
             >
               {copy.eventCodeSubmit}
             </SubmitButton>
           </form>
 
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm lowercase">
-            <a className="text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href={withLang("/admin", lang)}>
+            <a className="dashboard-motion-link text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href={withLang("/admin", lang)}>
               {copy.facilitatorLogin}
             </a>
             <span className="text-[var(--accent-muted)]">/</span>
-            <a className="text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href="#details">
+            <a className="dashboard-motion-link text-[var(--accent-secondary)] transition hover:text-[var(--accent-text)]" href="#details">
               {copy.publicDetails}
             </a>
           </div>
@@ -219,16 +229,16 @@ function PublicView({
           <p className="mt-2 max-w-md leading-7">{copy.footerBody}</p>
         </div>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2 lowercase">
-          <a className="transition hover:text-[var(--text-primary)]" href="#overview">
+          <a className="dashboard-motion-link transition hover:text-[var(--text-primary)]" href="#overview">
             {copy.footerTop}
           </a>
-          <a className="transition hover:text-[var(--text-primary)]" href="#access">
+          <a className="dashboard-motion-link transition hover:text-[var(--text-primary)]" href="#access">
             {copy.footerParticipantAccess}
           </a>
           {footerLinks.map((link) => (
             <a
               key={`${link.href}-${link.label}`}
-              className="transition hover:text-[var(--text-primary)]"
+              className="dashboard-motion-link transition hover:text-[var(--text-primary)]"
               href={link.href}
               rel={link.external ? "noreferrer" : undefined}
               target={link.external ? "_blank" : undefined}
@@ -267,7 +277,7 @@ function PhaseStep({ number, title, body }: { number: string; title: string; bod
 
 function SignalTile({ title, body }: { title: string; body: string }) {
   return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)] backdrop-blur">
+    <div className="dashboard-motion-card rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)] backdrop-blur">
       <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
       <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
     </div>

@@ -58,7 +58,13 @@ export function ParticipantRoomSurface({
       ) : null}
 
       <section className="border-b border-[var(--border)] py-10" id="room">
-        <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7">
+        <div
+          className="dashboard-motion-card relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7"
+          style={{ viewTransitionName: "room-access" }}
+        >
+          <div className="pointer-events-none absolute -left-10 top-0 h-36 w-36 rounded-full bg-[radial-gradient(circle,var(--ambient-left),transparent_72%)] blur-3xl dashboard-drift" />
+          <div className="pointer-events-none absolute right-[-3rem] top-8 h-44 w-44 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_74%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,var(--surface-soft),transparent_62%)] dashboard-sheen" />
           <SectionLabel>{copy.participantEyebrow}</SectionLabel>
           <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
             {participantPanel.title}
@@ -66,7 +72,7 @@ export function ParticipantRoomSurface({
           <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">{participantPanel.body}</p>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
-            <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <div className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
               <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
               {participantPanel.currentPhaseDescription ? (
@@ -81,7 +87,7 @@ export function ParticipantRoomSurface({
               <MetricCard label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
               <a
                 href="#notes"
-                className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
+                className="dashboard-motion-card dashboard-motion-link rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
               >
                 <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
                 <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{roomNotesSummary}</p>
@@ -108,7 +114,10 @@ export function ParticipantRoomSurface({
           {teamCards.length > 0 ? (
             <div className="mt-4 grid gap-4">
               {teamCards.map((team) => (
-                <article key={team.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur">
+                <article
+                  key={team.id}
+                  className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur"
+                >
                   <div className="flex items-baseline justify-between gap-4">
                     <div>
                       <h3 className="text-lg font-medium text-[var(--text-primary)]">{team.name}</h3>
@@ -157,7 +166,7 @@ export function ParticipantRoomSurface({
                   />
                   {team.repoUrl ? (
                     <a
-                      className="mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                      className="dashboard-motion-card dashboard-motion-link mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
                       href={team.repoUrl}
                       rel="noreferrer"
                       target="_blank"
@@ -182,7 +191,10 @@ export function ParticipantRoomSurface({
           {sharedNotes.length > 0 ? (
             <div className="mt-4 grid gap-4">
               {sharedNotes.map((note) => (
-                <div key={note} className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line">
+                <div
+                  key={note}
+                  className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line"
+                >
                   {note}
                 </div>
               ))}
@@ -201,7 +213,7 @@ export function ParticipantRoomSurface({
           <form action={logoutAction}>
             <input name="lang" type="hidden" value={lang} />
             <SubmitButton
-              className="rounded-full border border-[var(--border-strong)] px-5 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
+              className="dashboard-motion-button rounded-full border border-[var(--border-strong)] px-5 py-2 text-sm font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:text-[var(--text-primary)]"
             >
               {copy.leaveRoomContext}
             </SubmitButton>
@@ -218,7 +230,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
+    <div className="dashboard-motion-card rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
       <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
@@ -239,7 +251,7 @@ function ParticipantGuidanceBlocks({
       {blocks.map((block) => {
         if (block.type === "hero") {
           return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <div key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                 {block.eyebrow ?? participantPanel.guidanceLabel ?? copy.participantEyebrow}
               </p>
@@ -251,7 +263,7 @@ function ParticipantGuidanceBlocks({
 
         if (block.type === "participant-preview") {
           return (
-            <div key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <div key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
               {block.body ? <p className="text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
@@ -370,7 +382,7 @@ function ParticipantGuidanceBlocks({
 
         if (block.type === "image") {
           return (
-            <figure key={block.id} className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-4">
+            <figure key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={block.src} alt={block.alt} className="w-full rounded-[18px] object-cover" />
               {block.caption ? <figcaption className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{block.caption}</figcaption> : null}
@@ -386,7 +398,7 @@ function ParticipantGuidanceBlocks({
 
 function ParticipantBlockCard({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+    <div className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
       {title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{title}</p> : null}
       <div className={title ? "mt-4" : ""}>{children}</div>
     </div>
@@ -412,7 +424,7 @@ function ActionablePrimaryLink({ href, label, openLabel }: { href: string | null
 
   return (
     <a
-      className="inline-flex w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+      className="dashboard-motion-button inline-flex w-full items-center justify-between rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
       href={href}
       rel={isExternalHref(href) ? "noreferrer" : undefined}
       target={isExternalHref(href) ? "_blank" : undefined}
@@ -435,7 +447,7 @@ function ActionablePanelLink({
   openLabel: string;
 }) {
   const className =
-    "rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
+    "dashboard-motion-card dashboard-motion-link rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
   const content = (
     <>
       <div className="flex items-start justify-between gap-3">
@@ -464,7 +476,7 @@ function ActionablePanelLink({
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
+    <div className="dashboard-motion-card rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-3 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>

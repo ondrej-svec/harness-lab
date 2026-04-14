@@ -146,6 +146,85 @@ h6 {
   animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+@keyframes dashboard-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(0, -12px, 0) scale(1.04);
+  }
+}
+
+@keyframes dashboard-sheen {
+  0%,
+  100% {
+    opacity: 0.18;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    opacity: 0.34;
+    transform: translate3d(14px, -10px, 0) scale(1.05);
+  }
+}
+
+.dashboard-drift {
+  animation: dashboard-drift 18s ease-in-out infinite;
+  will-change: transform;
+}
+
+.dashboard-drift-reverse {
+  animation: dashboard-drift 22s ease-in-out infinite reverse;
+  will-change: transform;
+}
+
+.dashboard-sheen {
+  animation: dashboard-sheen 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.dashboard-motion-card {
+  transform: translateZ(0);
+  transition:
+    transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dashboard-motion-card:hover {
+  transform: translate3d(0, -4px, 0);
+}
+
+.dashboard-motion-link {
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dashboard-motion-link:hover {
+  transform: translate3d(2px, 0, 0);
+}
+
+.dashboard-motion-button {
+  transform: translateZ(0);
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dashboard-motion-button:hover {
+  transform: translate3d(0, -2px, 0);
+}
+
 /* The scene rail is anchored — it should not morph position during
    shared-element transitions. It's chrome, not content. */
 ::view-transition-group(scene-rail) {
@@ -162,5 +241,24 @@ h6 {
   ::view-transition-image-pair(*) {
     animation-duration: 0s !important;
     animation-delay: 0s !important;
+  }
+
+  .dashboard-drift,
+  .dashboard-drift-reverse,
+  .dashboard-sheen {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .dashboard-motion-card,
+  .dashboard-motion-link,
+  .dashboard-motion-button {
+    transition-duration: 0ms !important;
+  }
+
+  .dashboard-motion-card:hover,
+  .dashboard-motion-link:hover,
+  .dashboard-motion-button:hover {
+    transform: none !important;
   }
 }

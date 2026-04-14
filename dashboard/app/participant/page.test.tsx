@@ -75,6 +75,8 @@ describe("ParticipantPage", () => {
     expect(getParticipantTeamLookup).toHaveBeenCalledWith("sample-studio-a");
     expect(html).toContain("participant plocha");
     expect(html).toContain("opustit kontext místnosti");
+    expect(html).toContain("dashboard-motion-card");
+    expect(html).toMatch(/view-transition-name:\s*room-access/);
   });
 
   it("renders English participant guidance for an English-content workshop instance", async () => {
