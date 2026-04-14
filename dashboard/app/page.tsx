@@ -12,8 +12,7 @@ import {
 } from "@/lib/public-page-view-model";
 import { publicCopy, resolveUiLanguage, type UiLanguage, withLang } from "@/lib/ui-language";
 import { AdminRouteLink } from "./admin/admin-route-link";
-import { FadeUp } from "./components/fade-up";
-import { HeroStagger, HeroStaggerChild } from "./components/hero-stagger";
+import { ScrollRevealer } from "./components/scroll-revealer";
 import { SiteHeader } from "./components/site-header";
 import { SubmitButton } from "./components/submit-button";
 
@@ -76,6 +75,7 @@ function PublicView({
   const blueprintRepoUrl = getBlueprintRepoUrl();
   return (
     <>
+      <ScrollRevealer />
       <section
         className="relative grid gap-10 overflow-hidden border-b border-[var(--border)] py-10 lg:min-h-[58vh] lg:grid-cols-[minmax(0,1.2fr)_minmax(22rem,0.86fr)] lg:items-center lg:gap-14"
         id="overview"
@@ -84,51 +84,56 @@ function PublicView({
         <div className="pointer-events-none absolute right-[-4rem] top-[-2rem] h-72 w-72 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_72%)] opacity-[0.1] blur-3xl dashboard-drift-reverse" />
         <div className="pointer-events-none absolute inset-x-[24%] top-[16%] h-40 rounded-full bg-[radial-gradient(circle,var(--surface-panel),transparent_72%)] blur-3xl dashboard-sheen" />
 
-        <HeroStagger className="relative max-w-3xl">
-          <HeroStaggerChild>
-            <p className="text-sm lowercase text-[var(--text-muted)]">{copy.heroEyebrow}</p>
-          </HeroStaggerChild>
-          <HeroStaggerChild>
-            <h1 className="mt-5 max-w-4xl text-5xl font-semibold leading-[0.92] tracking-[-0.08em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl">
-              {copy.brand.split(" ").map((part, index) => (
-                <span key={part}>
-                  {index > 0 ? <br /> : null}
-                  {part}
-                </span>
-              ))}
-            </h1>
-          </HeroStaggerChild>
-          <HeroStaggerChild>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl">
-              {copy.heroLead}
-            </p>
-          </HeroStaggerChild>
-          <HeroStaggerChild>
-            <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--text-muted)]">{copy.heroBody}</p>
-          </HeroStaggerChild>
-          <HeroStaggerChild>
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              <SignalTile title={copy.principleOneTitle} body={copy.principleOneBody} />
-              <SignalTile title={copy.principleTwoTitle} body={copy.principleTwoBody} />
-              <SignalTile title={copy.principleThreeTitle} body={copy.principleThreeBody} />
-            </div>
-          </HeroStaggerChild>
-          <HeroStaggerChild>
-            <div className="mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]">
-              {blueprintRepoUrl ? (
-                <a
-                  className="dashboard-motion-link rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
-                  href={blueprintRepoUrl}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  {copy.blueprintLink}
-                </a>
-              ) : null}
-              <p className="max-w-xl leading-6 text-[var(--text-muted)]">{copy.blueprintHint}</p>
-            </div>
-          </HeroStaggerChild>
-        </HeroStagger>
+        <div className="relative max-w-3xl">
+          <p className="landing-rise text-sm lowercase text-[var(--text-muted)]" style={{ "--landing-rise-delay": "0ms" } as React.CSSProperties}>{copy.heroEyebrow}</p>
+          <h1
+            className="landing-rise mt-5 max-w-4xl text-5xl font-semibold leading-[0.92] tracking-[-0.08em] text-[var(--text-primary)] sm:text-6xl lg:text-7xl"
+            style={{ "--landing-rise-delay": "60ms" } as React.CSSProperties}
+          >
+            {copy.brand.split(" ").map((part, index) => (
+              <span key={part}>
+                {index > 0 ? <br /> : null}
+                {part}
+              </span>
+            ))}
+          </h1>
+          <p
+            className="landing-rise mt-6 max-w-2xl text-lg leading-8 text-[var(--text-secondary)] sm:text-xl"
+            style={{ "--landing-rise-delay": "120ms" } as React.CSSProperties}
+          >
+            {copy.heroLead}
+          </p>
+          <p
+            className="landing-rise mt-4 max-w-2xl text-base leading-8 text-[var(--text-muted)]"
+            style={{ "--landing-rise-delay": "180ms" } as React.CSSProperties}
+          >
+            {copy.heroBody}
+          </p>
+          <div
+            className="landing-rise mt-8 grid gap-3 sm:grid-cols-3"
+            style={{ "--landing-rise-delay": "240ms" } as React.CSSProperties}
+          >
+            <SignalTile title={copy.principleOneTitle} body={copy.principleOneBody} />
+            <SignalTile title={copy.principleTwoTitle} body={copy.principleTwoBody} />
+            <SignalTile title={copy.principleThreeTitle} body={copy.principleThreeBody} />
+          </div>
+          <div
+            className="landing-rise mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]"
+            style={{ "--landing-rise-delay": "300ms" } as React.CSSProperties}
+          >
+            {blueprintRepoUrl ? (
+              <a
+                className="dashboard-motion-link rounded-full border border-[var(--border)] px-5 py-3 transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                href={blueprintRepoUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {copy.blueprintLink}
+              </a>
+            ) : null}
+            <p className="max-w-xl leading-6 text-[var(--text-muted)]">{copy.blueprintHint}</p>
+          </div>
+        </div>
 
         <aside
           id="access"
@@ -219,22 +224,22 @@ function PublicView({
 
       <section className="border-b border-[var(--border)] py-12" id="details">
         <div className="grid gap-10 lg:grid-cols-2 xl:grid-cols-4 lg:gap-12">
-          <FadeUp>
+          <div className="landing-fade-up">
             <SectionLabel>{copy.detailsWhat}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsWhatBody}</p>
-          </FadeUp>
-          <FadeUp delay={0.05}>
+          </div>
+          <div className="landing-fade-up" style={{ transitionDelay: "60ms" }}>
             <SectionLabel>{copy.detailsParticipants}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsParticipantsBody}</p>
-          </FadeUp>
-          <FadeUp delay={0.1}>
+          </div>
+          <div className="landing-fade-up" style={{ transitionDelay: "120ms" }}>
             <SectionLabel>{copy.detailsBoundary}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsBoundaryBody}</p>
-          </FadeUp>
-          <FadeUp delay={0.15}>
+          </div>
+          <div className="landing-fade-up" style={{ transitionDelay: "180ms" }}>
             <SectionLabel>{copy.detailsBlueprint}</SectionLabel>
             <p className="mt-4 text-base leading-8 text-[var(--text-secondary)]">{copy.detailsBlueprintBody}</p>
-          </FadeUp>
+          </div>
         </div>
       </section>
 
@@ -274,10 +279,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function SimpleRule({ title, body }: { title: string; body: string }) {
   return (
     <div className="border-t border-[var(--border)] pt-5">
-      <FadeUp className="grid gap-3 sm:grid-cols-[220px_1fr] sm:gap-8">
+      <div className="landing-fade-up grid gap-3 sm:grid-cols-[220px_1fr] sm:gap-8">
         <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
         <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
-      </FadeUp>
+      </div>
     </div>
   );
 }
@@ -285,11 +290,11 @@ function SimpleRule({ title, body }: { title: string; body: string }) {
 function PhaseStep({ number, title, body }: { number: string; title: string; body: string }) {
   return (
     <div className="border-t border-[var(--border)] py-4">
-      <FadeUp className="grid gap-3 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
+      <div className="landing-fade-up grid gap-3 sm:grid-cols-[2.5rem_180px_1fr] sm:gap-6">
         <span className="text-sm font-medium tabular-nums text-[var(--text-muted)]">{number}</span>
         <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
         <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
-      </FadeUp>
+      </div>
     </div>
   );
 }

@@ -184,14 +184,18 @@ Use:
 
 A plain `<a>` or `<Link>` with no pending state is not acceptable for a navigation action anywhere on the dashboard.
 
-### Entrance motion in React
+### Entrance motion
 
-For React entrances use `motion/react` (library: `motion` v12). Shared components live in `app/components/`:
+Entrance motion uses plain CSS, not a JS motion library. This is deliberate: CSS keyframes run from the server-rendered HTML with no hydration gap, so users never see a visible → hidden → visible flash when React takes over. If JavaScript fails entirely, content still appears at its final state.
 
-- `FadeUp` — `whileInView` fade-and-lift for on-scroll entrances. Default 400 ms, 16 px offset, ease-out, `viewport={{ once: true }}`.
-- `HeroStagger` + `HeroStaggerChild` — parent/child pair for an above-the-fold stagger. Default 60 ms stagger, 400 ms children.
+Two shared utility classes live in `app/globals.css`:
 
-Both consult `useReducedMotion()` and collapse to instant transitions when reduced-motion is requested — content remains visible from the first paint. Do not invent a parallel entrance pattern; extend these.
+- **`landing-rise`** — above-the-fold entrance via `@keyframes landing-rise` (520 ms, ease-out, opacity + 18 px rise). Stagger children by setting `style={{ "--landing-rise-delay": "60ms" }}` — default spacing is 60 ms per sibling, at most six children.
+- **`landing-fade-up`** — below-the-fold on-scroll entrance. Elements start at `opacity: 0` and the `ScrollRevealer` client island (`app/components/scroll-revealer.tsx`) toggles `.landing-fade-up-visible` via a single `IntersectionObserver`. 420 ms transition, ease-out, 16 px rise. Per-card stagger via `style={{ transitionDelay: "60ms" }}`.
+
+`ScrollRevealer` must be mounted once per page that uses `.landing-fade-up`. It reads `prefers-reduced-motion` and, if set, immediately reveals every target without running the observer — consistent with the `@media (prefers-reduced-motion: reduce)` override on the class itself.
+
+Do not reach for `motion/react` for landing-page entrances — CSS is simpler, has no SSR seam, and cannot flash. The JS library remains appropriate for dashboards where layout animations or shared-element transitions justify the hydration cost.
 
 ### Stagger rules
 

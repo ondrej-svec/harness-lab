@@ -1530,13 +1530,28 @@ test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
 });
 
 test.describe("landing page motion — motion path", () => {
-  test("hero heading fades in and resolves to full opacity", async ({ page }) => {
+  test("hero heading animates from hidden to full opacity", async ({ page }) => {
     await page.goto("/");
     const heading = page.getByRole("heading", { name: /harness/i, level: 1 }).first();
     await expect(heading).toBeVisible();
 
-    // motion/react drives opacity from 0 → 1 via the HeroStaggerChild variant.
-    // After the stagger + 400ms animation finishes it should settle at 1.
+    // The .landing-rise CSS keyframe animates the h1 opacity from 0 to 1
+    // over ~520ms. Poll quickly to catch a mid-animation frame below 1,
+    // then wait for it to settle at 1. A regression that removes the
+    // animation leaves opacity at 1 throughout, which the first poll
+    // rejects.
+    const observedBelowOne = await page.evaluate(async () => {
+      const el = document.querySelector("h1");
+      if (!el) return false;
+      const start = performance.now();
+      while (performance.now() - start < 500) {
+        if (Number(getComputedStyle(el).opacity) < 0.95) return true;
+        await new Promise((r) => requestAnimationFrame(() => r(null)));
+      }
+      return false;
+    });
+    expect(observedBelowOne).toBe(true);
+
     await expect
       .poll(
         async () => Number(await heading.evaluate((el) => Number(getComputedStyle(el).opacity))),
