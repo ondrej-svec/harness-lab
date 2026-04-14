@@ -16,6 +16,8 @@ vi.mock("next/navigation", () => ({
     push,
     replace,
   }),
+  usePathname: () => "/admin/instances/sample-studio-a/presenter",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({
@@ -62,7 +64,12 @@ describe("PresenterPage", () => {
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
   });
 
-  it("keeps low-chrome previous and next scene navigation on the presenter surface", async () => {
+  it("keeps previous and next scene navigation via the scene rail", async () => {
+    // Phase 6: the old ScenePager low-chrome prev/next buttons have
+    // been replaced by the right-edge SceneRail (one dot per scene)
+    // and the PresenterShell vertical swipe + keyboard handlers. This
+    // test verifies the rail still surfaces every scene's href so the
+    // facilitator can jump directly even without the swipe gesture.
     const { default: PresenterPage } = await presenterPageModulePromise;
 
     const view = await PresenterPage({
@@ -71,10 +78,10 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.presenterScenePagerLabel);
-    expect(html).toContain(adminCopy.en.presenterPreviousSceneButton);
-    expect(html).not.toContain(adminCopy.en.presenterNextSceneButton);
-    expect(html).toContain("scene 3/3");
+    // Rail chrome is visible and carries the active scene marker.
+    expect(html).toContain('aria-label="scene navigation"');
+    expect(html).toContain('aria-current="true"');
+    // The previous-scene href is still reachable from the rail.
     expect(html).toContain("scene=rotation-line-up");
   });
 

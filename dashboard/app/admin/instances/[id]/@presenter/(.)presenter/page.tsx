@@ -6,9 +6,9 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { getWorkshopState } from "@/lib/workshop-store";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { SceneBlocks, SceneCta, TeamTrailScene, buildFallbackBlocks } from "../../presenter/page";
+import { PresenterShell } from "../../_components/presenter-shell";
 import { SceneMorphOverlay } from "../../_components/scene-morph-overlay";
-import { SceneRail, type SceneRailItem } from "../../_components/scene-rail";
-import { SceneSwiper } from "../../_components/scene-swiper";
+import type { SceneRailItem } from "../../_components/scene-rail";
 import { ViewTransitionCard } from "../../_components/view-transition-card";
 
 export const dynamic = "force-dynamic";
@@ -74,9 +74,17 @@ export default async function InterceptedPresenterPage({
   const previousHref = previousScene ? hrefForScene(previousScene.id) : null;
   const nextHref = nextScene ? hrefForScene(nextScene.id) : null;
 
+  void previousScene;
+  void nextScene;
+
   return (
     <SceneMorphOverlay closeHref={closeHref} previousHref={previousHref} nextHref={nextHref}>
-      <SceneSwiper previousHref={previousHref} nextHref={nextHref}>
+      <PresenterShell
+        railItems={railItems}
+        activeSceneId={selectedScene.id}
+        previousHref={previousHref}
+        nextHref={nextHref}
+      >
         <main className="relative flex h-full min-h-screen w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
           <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-col justify-center">
             <ViewTransitionCard name={morphName}>
@@ -88,10 +96,6 @@ export default async function InterceptedPresenterPage({
                   lang={lang}
                   instanceId={instanceId}
                   agendaItem={activeAgendaItem}
-                  previousScene={previousScene}
-                  nextScene={nextScene}
-                  sceneIndex={selectedIndex}
-                  sceneCount={scenePack.length}
                 />
               ) : (
                 <article className="space-y-10">
@@ -116,16 +120,12 @@ export default async function InterceptedPresenterPage({
                       openLabel={copy.openLinkLabel}
                     />
                   ) : null}
-                  <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                    {selectedIndex + 1} / {scenePack.length}
-                  </p>
                 </article>
               )}
             </ViewTransitionCard>
           </div>
         </main>
-      </SceneSwiper>
-      <SceneRail items={railItems} activeSceneId={selectedScene.id} />
+      </PresenterShell>
     </SceneMorphOverlay>
   );
 }

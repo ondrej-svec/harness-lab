@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { getPresenterScenesBySurface } from "@/lib/presenter-scenes";
 import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
@@ -8,6 +7,8 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { getWorkshopState } from "@/lib/workshop-store";
 import type { AgendaItem, PresenterBlock, PresenterScene, Team } from "@/lib/workshop-data";
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
+import { PresenterShell } from "../_components/presenter-shell";
+import type { SceneRailItem } from "../_components/scene-rail";
 
 export const dynamic = "force-dynamic";
 
@@ -45,41 +46,54 @@ export default async function PresenterPage({
   const selectedSceneIndex = presenterScenePack.findIndex((scene) => scene.id === presenterState.selectedScene?.id);
   const previousScene = selectedSceneIndex > 0 ? presenterScenePack[selectedSceneIndex - 1] ?? null : null;
   const nextScene = selectedSceneIndex >= 0 ? presenterScenePack[selectedSceneIndex + 1] ?? null : null;
+  const activeAgendaItemId = presenterState.activeAgendaItem?.id ?? null;
+  const railItems: SceneRailItem[] = activeAgendaItemId
+    ? presenterScenePack.map((scene) => ({
+        id: scene.id,
+        label: scene.label,
+        href: buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: scene.id }),
+      }))
+    : [];
+  const previousHref =
+    previousScene && activeAgendaItemId
+      ? buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: previousScene.id })
+      : null;
+  const nextHref =
+    nextScene && activeAgendaItemId
+      ? buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: nextScene.id })
+      : null;
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] text-[var(--text-primary)]">
-      <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-        {presenterState.selectedScene ? (
-          presenterState.selectedScene.chromePreset === "team-trail" ? (
-            <TeamTrailScene
-              copy={copy}
-              scene={presenterState.selectedScene}
-              teams={teams}
-              lang={lang}
-              instanceId={instanceId}
-              agendaItem={presenterState.activeAgendaItem}
-              previousScene={previousScene}
-              nextScene={nextScene}
-              sceneIndex={selectedSceneIndex}
-              sceneCount={presenterScenePack.length}
-            />
+      <PresenterShell
+        railItems={railItems}
+        activeSceneId={presenterState.selectedScene?.id ?? null}
+        previousHref={previousHref}
+        nextHref={nextHref}
+      >
+        <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+          {presenterState.selectedScene ? (
+            presenterState.selectedScene.chromePreset === "team-trail" ? (
+              <TeamTrailScene
+                copy={copy}
+                scene={presenterState.selectedScene}
+                teams={teams}
+                lang={lang}
+                instanceId={instanceId}
+                agendaItem={presenterState.activeAgendaItem}
+              />
+            ) : (
+              <RoomScene
+                copy={copy}
+                agendaItem={presenterState.activeAgendaItem}
+                scene={presenterState.selectedScene}
+              />
+            )
           ) : (
-            <RoomScene
-              copy={copy}
-              agendaItem={presenterState.activeAgendaItem}
-              scene={presenterState.selectedScene}
-              lang={lang}
-              instanceId={instanceId}
-              previousScene={previousScene}
-              nextScene={nextScene}
-              sceneIndex={selectedSceneIndex}
-              sceneCount={presenterScenePack.length}
-            />
-          )
-        ) : (
-          <EmptyScene copy={copy} />
-        )}
-      </div>
+            <EmptyScene copy={copy} />
+          )}
+        </div>
+      </PresenterShell>
     </main>
   );
 }
@@ -88,22 +102,10 @@ function RoomScene({
   copy,
   agendaItem,
   scene,
-  lang,
-  instanceId,
-  previousScene,
-  nextScene,
-  sceneIndex,
-  sceneCount,
 }: {
   copy: (typeof adminCopy)["cs" | "en"];
   agendaItem: AgendaItem | null;
   scene: PresenterScene;
-  lang: UiLanguage;
-  instanceId: string;
-  previousScene: PresenterScene | null;
-  nextScene: PresenterScene | null;
-  sceneIndex: number;
-  sceneCount: number;
 }) {
   const blocks = scene.blocks.length > 0 ? scene.blocks : buildFallbackBlocks(scene);
 
@@ -117,44 +119,24 @@ function RoomScene({
       />
 
       {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
-
-      <ScenePager
-        copy={copy}
-        lang={lang}
-        instanceId={instanceId}
-        agendaItemId={agendaItem?.id ?? null}
-        previousScene={previousScene}
-        nextScene={nextScene}
-        currentSceneLabel={scene.label}
-        sceneIndex={sceneIndex}
-        sceneCount={sceneCount}
-      />
     </div>
   );
 }
 
 export function TeamTrailScene({
-  copy,
   scene,
   teams,
-  lang,
-  instanceId,
-  agendaItem,
-  previousScene,
-  nextScene,
-  sceneIndex,
-  sceneCount,
 }: {
-  copy: (typeof adminCopy)["cs" | "en"];
+  /** @deprecated retained for call-site parity; no longer consumed */
+  copy?: (typeof adminCopy)["cs" | "en"];
   scene: PresenterScene;
   teams: Team[];
-  lang: UiLanguage;
-  instanceId: string;
-  agendaItem: AgendaItem | null;
-  previousScene: PresenterScene | null;
-  nextScene: PresenterScene | null;
-  sceneIndex: number;
-  sceneCount: number;
+  /** @deprecated retained for call-site parity; no longer consumed */
+  lang?: UiLanguage;
+  /** @deprecated retained for call-site parity; no longer consumed */
+  instanceId?: string;
+  /** @deprecated retained for call-site parity; no longer consumed */
+  agendaItem?: AgendaItem | null;
 }) {
   const heroBlock = scene.blocks.find((block): block is Extract<PresenterBlock, { type: "hero" }> => block.type === "hero");
   return (
@@ -207,17 +189,6 @@ export function TeamTrailScene({
       ) : (
         <p className="text-sm leading-6 text-[var(--text-muted)]">—</p>
       )}
-      <ScenePager
-        copy={copy}
-        lang={lang}
-        instanceId={instanceId}
-        agendaItemId={agendaItem?.id ?? null}
-        previousScene={previousScene}
-        nextScene={nextScene}
-        currentSceneLabel={scene.label}
-        sceneIndex={sceneIndex}
-        sceneCount={sceneCount}
-      />
     </div>
   );
 }
@@ -569,71 +540,6 @@ function ImageSourceAttribution({
       <span>{label}</span>
       <span>{openLabel}</span>
     </a>
-  );
-}
-
-function ScenePager({
-  copy,
-  lang,
-  instanceId,
-  agendaItemId,
-  previousScene,
-  nextScene,
-  currentSceneLabel,
-  sceneIndex,
-  sceneCount,
-}: {
-  copy: (typeof adminCopy)["cs" | "en"];
-  lang: UiLanguage;
-  instanceId: string;
-  agendaItemId: string | null;
-  previousScene: PresenterScene | null;
-  nextScene: PresenterScene | null;
-  currentSceneLabel: string;
-  sceneIndex: number;
-  sceneCount: number;
-}) {
-  if (!agendaItemId || sceneCount <= 1 || sceneIndex < 0) {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-[var(--border)] bg-[color:color-mix(in_oklab,var(--surface-panel)_84%,transparent)] px-4 py-3 backdrop-blur sm:px-5">
-      <div>
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-          {copy.presenterScenePagerLabel} {sceneIndex + 1}/{sceneCount}
-        </p>
-        <p className="mt-1 text-sm text-[var(--text-primary)]">{currentSceneLabel}</p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {previousScene ? (
-          <AdminRouteLink
-            className="inline-flex items-center justify-center rounded-full border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
-            href={buildPresenterRouteHref({
-              lang,
-              instanceId,
-              agendaItemId,
-              sceneId: previousScene.id,
-            })}
-          >
-            {copy.presenterPreviousSceneButton}
-          </AdminRouteLink>
-        ) : null}
-        {nextScene ? (
-          <AdminRouteLink
-            className="inline-flex items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface)]"
-            href={buildPresenterRouteHref({
-              lang,
-              instanceId,
-              agendaItemId,
-              sceneId: nextScene.id,
-            })}
-          >
-            {copy.presenterNextSceneButton}
-          </AdminRouteLink>
-        ) : null}
-      </div>
-    </div>
   );
 }
 
