@@ -42,8 +42,8 @@ export function SceneRailKeyboardNav({
       if (targetElement.closest("input, textarea, select, [contenteditable='true']")) return;
 
       const key = event.key;
-      const isNext = key === "j" || key === "ArrowDown" || key === "ArrowRight";
-      const isPrev = key === "k" || key === "ArrowUp" || key === "ArrowLeft";
+      const isNext = key === "j" || key === "ArrowDown";
+      const isPrev = key === "k" || key === "ArrowUp";
       if (!isNext && !isPrev) return;
       if (items.length === 0) return;
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { buildAdminHref } from "@/lib/admin-page-view-model";
@@ -179,13 +180,16 @@ function SceneRailTile({
   copy: Copy;
 }) {
   const baseClassName =
-    "group relative block w-full rounded-[16px] border px-3 py-3 text-left transition";
+    "group relative block w-full rounded-[16px] border px-3 py-3 text-left transition focus-visible:border-[var(--text-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--text-primary)]/20";
   const stateClassName = isActive
     ? "border-[var(--text-primary)] bg-[var(--surface)] shadow-[0_10px_24px_rgba(28,25,23,0.08)]"
     : "border-[var(--border)] bg-[var(--surface-soft)] hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
 
+  // Plain next/link — AdminRouteLink wraps children in an inline-flex
+  // span that centers and collapses card-style content. Rail tiles are
+  // full-width OS-sidebar rows, so we bypass that chrome.
   return (
-    <AdminRouteLink
+    <Link
       href={href}
       aria-current={isActive ? "true" : undefined}
       data-scene-rail-tile={scene.id}
@@ -223,7 +227,7 @@ function SceneRailTile({
           </div>
         </div>
       </div>
-    </AdminRouteLink>
+    </Link>
   );
 }
 
