@@ -4,21 +4,18 @@ import { useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 
 // Fullscreen overlay shell that wraps the intercepted presenter content.
-// Listens for Escape (dismiss), ← and → (scene navigation), provides a
-// backdrop click to dismiss, and navigates back to the admin root. The
-// View Transitions morph is orchestrated by the <ViewTransitionCard>
-// wrapper around the hero element — this shell is chrome + keyboard.
-//
-// Keyboard parity is a plan Phase 6 acceptance criterion: desktop users
-// must be able to drive a workshop without touching the mouse.
+// Listens for Escape (dismiss), provides a backdrop click to dismiss,
+// and navigates back to the admin root. Scene-to-scene navigation is
+// owned by <PresenterShell>, which is rendered as a child here — this
+// shell is just the dismiss chrome + view-transition morph backdrop.
 export function SceneMorphOverlay({
   closeHref,
-  previousHref,
-  nextHref,
   children,
 }: {
   closeHref: string;
+  /** @deprecated kept for call-site parity; PresenterShell handles scene nav now */
   previousHref?: string | null;
+  /** @deprecated kept for call-site parity; PresenterShell handles scene nav now */
   nextHref?: string | null;
   children: ReactNode;
 }) {
@@ -40,21 +37,11 @@ export function SceneMorphOverlay({
       if (event.key === "Escape") {
         event.preventDefault();
         router.push(closeHref);
-        return;
-      }
-      if (event.key === "ArrowRight" && nextHref) {
-        event.preventDefault();
-        router.push(nextHref);
-        return;
-      }
-      if (event.key === "ArrowLeft" && previousHref) {
-        event.preventDefault();
-        router.push(previousHref);
       }
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [router, closeHref, previousHref, nextHref]);
+  }, [router, closeHref]);
 
   return (
     <div className="fixed inset-0 z-50 flex" role="dialog" aria-modal="true">

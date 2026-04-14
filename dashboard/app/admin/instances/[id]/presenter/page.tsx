@@ -43,57 +43,49 @@ export default async function PresenterPage({
   const presenterScenePack = [...getPresenterScenesBySurface(presenterState.activeAgendaItem, presenterSceneSurface)]
     .filter((scene) => scene.enabled !== false || scene.id === presenterState.selectedScene?.id)
     .sort((left, right) => left.order - right.order);
-  const selectedSceneIndex = presenterScenePack.findIndex((scene) => scene.id === presenterState.selectedScene?.id);
-  const previousScene = selectedSceneIndex > 0 ? presenterScenePack[selectedSceneIndex - 1] ?? null : null;
-  const nextScene = selectedSceneIndex >= 0 ? presenterScenePack[selectedSceneIndex + 1] ?? null : null;
   const activeAgendaItemId = presenterState.activeAgendaItem?.id ?? null;
-  const railItems: SceneRailItem[] = activeAgendaItemId
-    ? presenterScenePack.map((scene) => ({
-        id: scene.id,
-        label: scene.label,
-        href: buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: scene.id }),
-      }))
-    : [];
-  const previousHref =
-    previousScene && activeAgendaItemId
-      ? buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: previousScene.id })
-      : null;
-  const nextHref =
-    nextScene && activeAgendaItemId
-      ? buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: nextScene.id })
-      : null;
+
+  // Pre-render every scene in the active surface as a React element
+  // and hand the whole pack to <PresenterShell>. Local state on the
+  // client picks which one is visible — no server round trip per
+  // navigation, no waiting for new HTML, no perceived "loading"
+  // between scenes. The rail and the URL are synced by the shell.
+  const sceneSlides = presenterScenePack.map((scene) => ({
+    id: scene.id,
+    label: scene.label,
+    href: activeAgendaItemId
+      ? buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItemId, sceneId: scene.id })
+      : "#",
+    content:
+      scene.chromePreset === "team-trail" ? (
+        <TeamTrailScene
+          scene={scene}
+          teams={teams}
+          copy={copy}
+          lang={lang}
+          instanceId={instanceId}
+          agendaItem={presenterState.activeAgendaItem}
+        />
+      ) : (
+        <RoomScene copy={copy} agendaItem={presenterState.activeAgendaItem} scene={scene} />
+      ),
+  }));
+
+  const railItems: SceneRailItem[] = sceneSlides.map(({ id, label, href }) => ({ id, label, href }));
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] text-[var(--text-primary)]">
-      <PresenterShell
-        railItems={railItems}
-        activeSceneId={presenterState.selectedScene?.id ?? null}
-        previousHref={previousHref}
-        nextHref={nextHref}
-      >
+      {sceneSlides.length > 0 ? (
+        <PresenterShell
+          slides={sceneSlides.map(({ id, content }) => ({ id, content }))}
+          railItems={railItems}
+          initialSceneId={presenterState.selectedScene?.id ?? sceneSlides[0]?.id ?? null}
+        />
+      ) : (
         <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
-          {presenterState.selectedScene ? (
-            presenterState.selectedScene.chromePreset === "team-trail" ? (
-              <TeamTrailScene
-                copy={copy}
-                scene={presenterState.selectedScene}
-                teams={teams}
-                lang={lang}
-                instanceId={instanceId}
-                agendaItem={presenterState.activeAgendaItem}
-              />
-            ) : (
-              <RoomScene
-                copy={copy}
-                agendaItem={presenterState.activeAgendaItem}
-                scene={presenterState.selectedScene}
-              />
-            )
-          ) : (
-            <EmptyScene copy={copy} />
-          )}
+          <EmptyScene copy={copy} />
         </div>
-      </PresenterShell>
+      )}
     </main>
   );
 }

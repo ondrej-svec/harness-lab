@@ -8,6 +8,11 @@ import { useEffect, useRef, useState } from "react";
 // item's presenter surface. Auto-hides after 2s of idleness on touch
 // devices (`(pointer: coarse)`); stays visible on mouse/pointer:fine.
 // Keyboard-focusable for desktop parity.
+//
+// When wired into PresenterShell the rail receives an `onNavigate`
+// callback so dot clicks update local carousel state directly instead
+// of triggering a full router round trip. The href stays correct for
+// right-click "open in new tab" and for hard-load fallback.
 
 export type SceneRailItem = {
   id: string;
@@ -25,9 +30,11 @@ function isCoarsePointer() {
 export function SceneRail({
   items,
   activeSceneId,
+  onNavigate,
 }: {
   items: readonly SceneRailItem[];
   activeSceneId: string | null;
+  onNavigate?: (sceneId: string) => void;
 }) {
   const [visible, setVisible] = useState(true);
   const coarseRef = useRef(false);
@@ -86,6 +93,22 @@ export function SceneRail({
                     href={item.href}
                     aria-label={item.label}
                     aria-current={isActive ? "true" : undefined}
+                    onClick={(event) => {
+                      // Let modifier-clicks open in a new tab; otherwise
+                      // delegate to the local carousel state so the swap
+                      // is instant.
+                      if (
+                        onNavigate &&
+                        !event.metaKey &&
+                        !event.ctrlKey &&
+                        !event.shiftKey &&
+                        !event.altKey &&
+                        event.button === 0
+                      ) {
+                        event.preventDefault();
+                        onNavigate(item.id);
+                      }
+                    }}
                     className={`block h-3 w-3 rounded-full border transition ${
                       isActive
                         ? "border-[var(--text-primary)] bg-[var(--text-primary)]"

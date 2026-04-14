@@ -6,7 +6,7 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { getWorkshopState } from "@/lib/workshop-store";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { SceneBlocks, SceneCta, TeamTrailScene, buildFallbackBlocks } from "../../presenter/page";
-import { PresenterShell } from "../../_components/presenter-shell";
+import { PresenterShell, type PresenterSlide } from "../../_components/presenter-shell";
 import { SceneMorphOverlay } from "../../_components/scene-morph-overlay";
 import type { SceneRailItem } from "../../_components/scene-rail";
 import { ViewTransitionCard } from "../../_components/view-transition-card";
@@ -52,46 +52,25 @@ export default async function InterceptedPresenterPage({
     .filter((scene) => scene.enabled !== false || scene.id === selectedScene.id)
     .sort((left, right) => left.order - right.order);
 
-  const selectedIndex = scenePack.findIndex((scene) => scene.id === selectedScene.id);
-  const previousScene = selectedIndex > 0 ? scenePack[selectedIndex - 1] ?? null : null;
-  const nextScene = selectedIndex >= 0 ? scenePack[selectedIndex + 1] ?? null : null;
-
-  const hrefForScene = (sceneId: string) =>
-    buildPresenterRouteHref({ lang, instanceId, agendaItemId: activeAgendaItem.id, sceneId });
-
-  const railItems: SceneRailItem[] = scenePack.map((scene) => ({
-    id: scene.id,
-    label: scene.label,
-    href: hrefForScene(scene.id),
-  }));
-
   const closeHref = withLang(`/admin/instances/${instanceId}`, lang);
-  const morphName = `scene-${activeAgendaItem.id}-${selectedScene.id}`;
 
-  const blocks = selectedScene.blocks.length > 0 ? selectedScene.blocks : buildFallbackBlocks(selectedScene);
-  const isTeamTrail = selectedScene.chromePreset === "team-trail";
-
-  const previousHref = previousScene ? hrefForScene(previousScene.id) : null;
-  const nextHref = nextScene ? hrefForScene(nextScene.id) : null;
-
-  void previousScene;
-  void nextScene;
-
-  return (
-    <SceneMorphOverlay closeHref={closeHref} previousHref={previousHref} nextHref={nextHref}>
-      <PresenterShell
-        railItems={railItems}
-        activeSceneId={selectedScene.id}
-        previousHref={previousHref}
-        nextHref={nextHref}
-      >
+  // Pre-render every scene as a React element. The shell handles
+  // navigation locally via state — no server round trip per swipe /
+  // arrow / wheel / rail click.
+  const slides: PresenterSlide[] = scenePack.map((scene) => {
+    const isTeamTrail = scene.chromePreset === "team-trail";
+    const blocks = scene.blocks.length > 0 ? scene.blocks : buildFallbackBlocks(scene);
+    const morphName = `scene-${activeAgendaItem.id}-${scene.id}`;
+    return {
+      id: scene.id,
+      content: (
         <main className="relative flex h-full min-h-screen w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
           <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-col justify-center">
             <ViewTransitionCard name={morphName}>
               {isTeamTrail ? (
                 <TeamTrailScene
                   copy={copy}
-                  scene={selectedScene}
+                  scene={scene}
                   teams={teams}
                   lang={lang}
                   instanceId={instanceId}
@@ -104,28 +83,41 @@ export default async function InterceptedPresenterPage({
                       {activeAgendaItem.title} · {copy.presenterCardTitle}
                     </p>
                     <h1 className="mt-4 text-4xl font-medium leading-tight text-[var(--text-primary)] sm:text-5xl lg:text-6xl">
-                      {selectedScene.label}
+                      {scene.label}
                     </h1>
                   </header>
                   <SceneBlocks
                     blocks={blocks}
                     copy={copy}
                     activeAgendaItem={activeAgendaItem}
-                    participantCueFirst={selectedScene.chromePreset === "participant"}
+                    participantCueFirst={scene.chromePreset === "participant"}
                   />
-                  {selectedScene.ctaLabel ? (
-                    <SceneCta
-                      href={selectedScene.ctaHref}
-                      label={selectedScene.ctaLabel}
-                      openLabel={copy.openLinkLabel}
-                    />
+                  {scene.ctaLabel ? (
+                    <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} />
                   ) : null}
                 </article>
               )}
             </ViewTransitionCard>
           </div>
         </main>
-      </PresenterShell>
+      ),
+    };
+  });
+
+  const railItems: SceneRailItem[] = scenePack.map((scene) => ({
+    id: scene.id,
+    label: scene.label,
+    href: buildPresenterRouteHref({
+      lang,
+      instanceId,
+      agendaItemId: activeAgendaItem.id,
+      sceneId: scene.id,
+    }),
+  }));
+
+  return (
+    <SceneMorphOverlay closeHref={closeHref} previousHref={null} nextHref={null}>
+      <PresenterShell slides={slides} railItems={railItems} initialSceneId={selectedScene.id} />
     </SceneMorphOverlay>
   );
 }
