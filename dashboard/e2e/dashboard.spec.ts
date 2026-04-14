@@ -703,6 +703,111 @@ test.describe("one canvas phase 3 — inline editing", () => {
   });
 });
 
+test.describe("agenda detail — scene stage + rail", () => {
+  // Stage + rail rework: scenes render as a compact rail with exactly
+  // one full-fidelity stage panel, active selection is URL-driven, and
+  // j/k / arrow keys step through the rail. See
+  // docs/plans/2026-04-14-refactor-agenda-detail-stage-and-rail-plan.md.
+
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  test("default scene selection renders exactly one stage panel", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
+
+    // Only one stage panel in the DOM — siblings stay as rail tiles.
+    // This is the core regression guard: the old wall-of-scenes layout
+    // rendered one panel per scene, which blew the agenda detail into
+    // a 2000px scroll.
+    const stagePanels = page.locator("[data-scene-stage]");
+    await expect(stagePanels).toHaveCount(1);
+
+    // Rail tiles render for every sibling and the default one carries
+    // aria-current. The opening phase's default is opening-framing.
+    const defaultTile = page.locator('[data-scene-rail-tile="opening-framing"]');
+    await expect(defaultTile).toHaveAttribute("aria-current", "true");
+    await expect(stagePanels).toHaveAttribute("data-scene-stage", "opening-framing");
+  });
+
+  test("?scene= URL param drives active scene selection", async ({ page }) => {
+    await page.goto(
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
+    );
+
+    const stagePanels = page.locator("[data-scene-stage]");
+    await expect(stagePanels).toHaveCount(1);
+    await expect(stagePanels).toHaveAttribute("data-scene-stage", "opening-day-arc");
+
+    // The opening-day-arc tile is marked current, the default tile is not.
+    await expect(page.locator('[data-scene-rail-tile="opening-day-arc"]')).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+    await expect(page.locator('[data-scene-rail-tile="opening-framing"]')).not.toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+  });
+
+  test("clicking a rail tile swaps the stage via soft nav", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
+
+    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').click();
+
+    await expect(page).toHaveURL(/scene=opening-day-schedule/);
+    await expect(page.locator("[data-scene-stage]")).toHaveAttribute(
+      "data-scene-stage",
+      "opening-day-schedule",
+    );
+  });
+
+  test("keyboard j/k steps forward/backward through the rail", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
+
+    // Tab into the first rail tile, then press j to step forward.
+    await page.locator('[data-scene-rail-tile="opening-framing"]').focus();
+    await page.keyboard.press("j");
+    await page.waitForURL(/scene=opening-day-arc/);
+    await expect(page.locator("[data-scene-stage]")).toHaveAttribute(
+      "data-scene-stage",
+      "opening-day-arc",
+    );
+
+    // Arrow-down does the same as j.
+    await page.locator('[data-scene-rail-tile="opening-day-arc"]').focus();
+    await page.keyboard.press("ArrowDown");
+    await page.waitForURL(/scene=opening-day-schedule/);
+
+    // k steps back.
+    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').focus();
+    await page.keyboard.press("k");
+    await page.waitForURL(/scene=opening-day-arc/);
+  });
+
+  test("facilitator notes peek is collapsed by default and expands on click", async ({ page }) => {
+    await page.goto(
+      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-framing",
+    );
+
+    // The peek lives on the stage panel as a <details> whose summary
+    // text starts with the facilitator notes label. Scope to the stage
+    // so the AgendaItemDetail peeks above it don't interfere.
+    const stage = page.locator("[data-scene-stage]");
+    const peek = stage.locator("details").filter({
+      has: page.locator("summary", { hasText: /poznámky pro facilitátora|facilitator notes/i }),
+    });
+
+    // Closed by default — the <details> element has no `open` attribute.
+    await expect(peek).not.toHaveAttribute("open", "");
+    const summary = peek.locator("summary").first();
+    await summary.click();
+    await expect(peek).toHaveAttribute("open", "");
+  });
+});
+
 test.describe("one canvas phase 4 — operational forms", () => {
   // Phase 4 exit criterion: password change / archive / facilitator
   // management / participant-access forms look native to the new
@@ -1379,8 +1484,11 @@ test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
     await expect(page.getByPlaceholder(/Studio A/i).first()).toBeVisible();
     // Inline team card.
     await expect(page.locator('[data-inline-field="display"]').first()).toBeVisible();
-    // Checkpoint append textarea.
-    await expect(page.getByPlaceholder(/Co se změnilo|checkpoint|Co se/i).first()).toBeVisible();
+    // Checkpoint append textarea. Target by stable `name` attribute so the
+    // assertion survives cross-test state mutation (earlier participant-side
+    // tests persist a check-in into the shared runtime state, which flips
+    // the textarea's placeholder from the hint to the saved text).
+    await expect(page.locator('textarea[name="checkpoint"]').first()).toBeVisible();
 
     // --- Signals section ---
     await page.goto("/admin/instances/sample-studio-a?section=signals");
