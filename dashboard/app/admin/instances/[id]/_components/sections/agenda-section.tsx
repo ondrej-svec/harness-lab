@@ -705,28 +705,28 @@ function AgendaItemDetail({
     { title: copy.agendaRunnerFallbackTitle, items: item.facilitatorRunner.fallback ?? [] },
   ].filter((section) => section.items.length > 0);
 
+  // Progressive disclosure: the facilitator runner block, the editable
+  // prompt / watch-for / checkpoint-question lists, and the source
+  // materials block all collapse by default. The goal + room summary
+  // duplicate content that already lives inline on the detail hero, so
+  // they're gone from the detail body entirely — the hero is the
+  // canonical surface. Each details element stays `open` if the user
+  // explicitly clicks to expand it.
   return (
-    <div className={`${compact ? "mt-4 space-y-4" : "space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4"}`}>
-      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="max-w-2xl">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaRunnerTitle}</p>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaRunnerDescription}</p>
-          </div>
-          <span className="rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs text-[var(--text-secondary)]">
-            {copy.runtimeCopyBadge}
-          </span>
-        </div>
-
-        <div className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
+    <div className={`${compact ? "mt-4 space-y-3" : "space-y-3"}`}>
+      <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+        <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+          {copy.agendaRunnerTitle}
+        </summary>
+        <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.agendaRunnerDescription}</p>
+        <div className="mt-4 rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-4 py-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaRunnerGoalTitle}</p>
           <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.facilitatorRunner.goal}</p>
         </div>
-
         {runnerSections.length > 0 ? (
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {runnerSections.map((section) => (
-              <div key={section.title} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+              <div key={section.title} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--text-primary)]">
                   {section.items.map((value) => (
@@ -737,45 +737,41 @@ function AgendaItemDetail({
             ))}
           </div>
         ) : null}
-      </div>
+      </details>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailGoalTitle}</p>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.goal}</p>
-        </div>
-        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailRoomSummaryTitle}</p>
-          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{item.roomSummary}</p>
-        </div>
-      </div>
-
-      <div className="grid gap-3 lg:grid-cols-2">
-        {listSections.map((section) => (
-          <div key={section.fieldName} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
-            <div className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
-              <InlineField
-                value={section.items.join("\n")}
-                fieldName={section.fieldName}
-                label={section.title}
-                mode="textarea"
-                placeholder={section.title}
-                action={updateAgendaFieldAction}
-                hiddenFields={{
-                  instanceId,
-                  agendaId: item.id,
-                  fieldName: section.fieldName,
-                }}
-              />
+      <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+        <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+          {copy.agendaFieldFacilitatorPrompts} · {copy.agendaFieldWatchFors} · {copy.agendaFieldCheckpointQuestions}
+        </summary>
+        <div className="mt-3 grid gap-3 lg:grid-cols-2">
+          {listSections.map((section) => (
+            <div key={section.fieldName} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{section.title}</p>
+              <div className="mt-2 whitespace-pre-line text-sm leading-6 text-[var(--text-secondary)]">
+                <InlineField
+                  value={section.items.join("\n")}
+                  fieldName={section.fieldName}
+                  label={section.title}
+                  mode="textarea"
+                  placeholder={section.title}
+                  action={updateAgendaFieldAction}
+                  hiddenFields={{
+                    instanceId,
+                    agendaId: item.id,
+                    fieldName: section.fieldName,
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </details>
 
       {(item.sourceRefs ?? []).length > 0 ? (
-        <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.agendaDetailSourceMaterialTitle}</p>
+        <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+          <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+            {copy.agendaDetailSourceMaterialTitle}
+          </summary>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {(item.sourceRefs ?? []).map((ref) => {
               const href = buildRepoSourceHref(ref.path);
@@ -804,7 +800,7 @@ function AgendaItemDetail({
               {lang === "cs" ? "Dashboard a zdrojové materiály mají sdílet stejný agenda backbone." : "Dashboard and source materials should share the same agenda backbone."}
             </p>
           ) : null}
-        </div>
+        </details>
       ) : null}
     </div>
   );
@@ -931,7 +927,7 @@ function PresenterSceneSummaryCard({
             {!scene.enabled ? <span>• {copy.presenterSceneDisabled}</span> : null}
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <AdminRouteLink href={presenterHref} className={adminGhostButtonClassName}>
             {participantOnly ? copy.presenterOpenParticipantButton : copy.presenterOpenSelectedScene}
           </AdminRouteLink>
@@ -944,57 +940,64 @@ function PresenterSceneSummaryCard({
           >
             ↗
           </a>
-          <form action={movePresenterSceneAction}>
-            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-            <input name="agendaItemId" type="hidden" value={agendaItemId} />
-            <input name="sceneId" type="hidden" value={scene.id} />
-            <input name="direction" type="hidden" value="up" />
-            <AdminSubmitButton className={`${adminGhostButtonClassName} px-2`} aria-label={copy.presenterMoveSceneUpButton}>
-              ↑
-            </AdminSubmitButton>
-          </form>
-          <form action={movePresenterSceneAction}>
-            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-            <input name="agendaItemId" type="hidden" value={agendaItemId} />
-            <input name="sceneId" type="hidden" value={scene.id} />
-            <input name="direction" type="hidden" value="down" />
-            <AdminSubmitButton className={`${adminGhostButtonClassName} px-2`} aria-label={copy.presenterMoveSceneDownButton}>
-              ↓
-            </AdminSubmitButton>
-          </form>
-          {!isDefault ? (
-            <form action={setDefaultPresenterSceneAction}>
-              <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-              <input name="agendaItemId" type="hidden" value={agendaItemId} />
-              <input name="sceneId" type="hidden" value={scene.id} />
-              <AdminSubmitButton className={adminGhostButtonClassName}>
-                {copy.presenterSetDefaultSceneButton}
-              </AdminSubmitButton>
-            </form>
-          ) : null}
-          <form action={togglePresenterSceneEnabledAction}>
-            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-            <input name="agendaItemId" type="hidden" value={agendaItemId} />
-            <input name="sceneId" type="hidden" value={scene.id} />
-            <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
-            <AdminSubmitButton className={adminGhostButtonClassName}>
-              {scene.enabled ? copy.presenterHideSceneButton : copy.presenterShowSceneButton}
-            </AdminSubmitButton>
-          </form>
-          <form action={removePresenterSceneAction}>
-            <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
-            <input name="agendaItemId" type="hidden" value={agendaItemId} />
-            <input name="sceneId" type="hidden" value={scene.id} />
-            <AdminSubmitButton className={`${adminGhostButtonClassName} text-[var(--border-strong)]`}>
-              {copy.presenterRemoveSceneButton}
-            </AdminSubmitButton>
-          </form>
-          <AdminRouteLink
-            href={sceneEditorHref}
-            className="inline-flex items-center text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
-          >
-            blocks / sources →
-          </AdminRouteLink>
+          <details className="group relative">
+            <summary className="inline-flex cursor-pointer list-none items-center rounded-[10px] px-2 py-1 text-xs lowercase text-[var(--text-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]">
+              více
+            </summary>
+            <div className="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-[18px] border border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
+              <form action={movePresenterSceneAction}>
+                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                <input name="agendaItemId" type="hidden" value={agendaItemId} />
+                <input name="sceneId" type="hidden" value={scene.id} />
+                <input name="direction" type="hidden" value="up" />
+                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
+                  ↑ {copy.presenterMoveSceneUpButton}
+                </AdminSubmitButton>
+              </form>
+              <form action={movePresenterSceneAction}>
+                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                <input name="agendaItemId" type="hidden" value={agendaItemId} />
+                <input name="sceneId" type="hidden" value={scene.id} />
+                <input name="direction" type="hidden" value="down" />
+                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
+                  ↓ {copy.presenterMoveSceneDownButton}
+                </AdminSubmitButton>
+              </form>
+              {!isDefault ? (
+                <form action={setDefaultPresenterSceneAction}>
+                  <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                  <input name="agendaItemId" type="hidden" value={agendaItemId} />
+                  <input name="sceneId" type="hidden" value={scene.id} />
+                  <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
+                    {copy.presenterSetDefaultSceneButton}
+                  </AdminSubmitButton>
+                </form>
+              ) : null}
+              <form action={togglePresenterSceneEnabledAction}>
+                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                <input name="agendaItemId" type="hidden" value={agendaItemId} />
+                <input name="sceneId" type="hidden" value={scene.id} />
+                <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
+                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
+                  {scene.enabled ? copy.presenterHideSceneButton : copy.presenterShowSceneButton}
+                </AdminSubmitButton>
+              </form>
+              <AdminRouteLink
+                href={sceneEditorHref}
+                className={`${adminGhostButtonClassName} w-full justify-start`}
+              >
+                blocks / sources →
+              </AdminRouteLink>
+              <form action={removePresenterSceneAction}>
+                <AdminActionStateFields lang={lang} section="agenda" instanceId={activeInstanceId} />
+                <input name="agendaItemId" type="hidden" value={agendaItemId} />
+                <input name="sceneId" type="hidden" value={scene.id} />
+                <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start text-[var(--border-strong)]`}>
+                  {copy.presenterRemoveSceneButton}
+                </AdminSubmitButton>
+              </form>
+            </div>
+          </details>
         </div>
       </div>
       <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">

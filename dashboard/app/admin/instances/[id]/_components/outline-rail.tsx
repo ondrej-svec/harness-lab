@@ -74,7 +74,7 @@ export function OutlineRail({
                   {label}
                 </AdminRouteLink>
                 {key === "agenda" && active && agendaItems.length > 0 ? (
-                  <ul className="mt-1.5 ml-3 space-y-0.5 border-l border-[var(--border)] pl-3">
+                  <ul className="relative mt-1.5 ml-3 space-y-0.5 border-l border-[var(--border)] pl-4">
                     {agendaItems.map((item) => {
                       const itemHref = buildAdminHref({
                         lang,
@@ -85,28 +85,32 @@ export function OutlineRail({
                       const itemActive = item.id === activeAgendaItemId;
                       const statusDotClass =
                         item.status === "current"
-                          ? "bg-[var(--text-primary)]"
+                          ? "bg-[var(--text-primary)] border-[var(--text-primary)]"
                           : item.status === "done"
-                            ? "bg-[var(--text-muted)]"
-                            : "border border-[var(--border-strong)] bg-transparent";
+                            ? "bg-[var(--text-muted)] border-[var(--text-muted)]"
+                            : "bg-[var(--surface)] border-[var(--border-strong)]";
                       return (
-                        <li key={item.id}>
+                        <li key={item.id} className="relative">
+                          {/* Rail indicator: sits on the parent ul's left
+                              border so the dot lives on the vertical line
+                              rather than inline before the time text. */}
+                          <span
+                            aria-hidden
+                            className={`absolute left-[-21px] top-2 h-1.5 w-1.5 rounded-full border ${statusDotClass}`}
+                          />
                           <AdminRouteLink
                             href={itemHref}
                             data-agenda-item={item.id}
-                            className={`flex items-start gap-2 rounded-[10px] px-2 py-1.5 text-xs leading-5 transition ${
+                            className={`block rounded-[10px] px-2 py-1.5 text-xs leading-5 transition ${
                               itemActive
                                 ? "bg-[var(--surface-soft)] text-[var(--text-primary)]"
                                 : "text-[var(--text-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]"
                             }`}
                           >
-                            <span className={`mt-1.5 inline-block h-1.5 w-1.5 shrink-0 rounded-full ${statusDotClass}`} aria-hidden />
-                            <span className="flex-1">
-                              {item.time ? (
-                                <span className="text-[var(--text-muted)]">{item.time} · </span>
-                              ) : null}
-                              {item.label}
-                            </span>
+                            {item.time ? (
+                              <span className="text-[var(--text-muted)]">{item.time} · </span>
+                            ) : null}
+                            {item.label}
                           </AdminRouteLink>
                         </li>
                       );

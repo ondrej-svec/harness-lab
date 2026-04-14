@@ -374,7 +374,12 @@ test.describe("facilitator admin (file mode)", () => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/admin/instances/sample-studio-a?lang=en&section=agenda&agendaItem=talk");
 
-    await expect(page.getByText("facilitator runner")).toBeVisible();
+    // Phase 6 progressive disclosure: the facilitator runner block now
+    // collapses by default. Verify the summary is reachable, then expand
+    // it and assert the runner content renders.
+    const runnerSummary = page.getByText("facilitator runner", { exact: true });
+    await expect(runnerSummary).toBeVisible();
+    await runnerSummary.click();
     await expect(page.getByText("runner goal")).toBeVisible();
     await expect(page.getByText("Kontext je páka, ne kosmetika.")).toBeVisible();
     await expect(page.getByText("show")).toBeVisible();
@@ -956,7 +961,11 @@ test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
       page.locator('[data-inline-field="display"]').filter({ hasText: /^Context is King$/ }).first(),
     ).toBeVisible();
 
-    // Scene cards + reorder/default/toggle/remove buttons.
+    // Scene card "více" disclosure summary is visible. Open it and
+    // verify the management actions (reorder/remove) live inside.
+    const moreSummary = page.getByText(/^více$/).first();
+    await expect(moreSummary).toBeVisible();
+    await moreSummary.click();
     await expect(
       page.getByRole("button", { name: /posunout scénu výš|move scene up/i }).first(),
     ).toBeVisible();
