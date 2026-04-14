@@ -1107,7 +1107,7 @@ test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
     expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
   });
 
-  test("presenter proof scenes fit the 4:3 baseline without vertical scroll", async ({ page }) => {
+  test("presenter proof and rollout scenes fit the 4:3 baseline without vertical scroll", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
 
     const proofScenes = [
@@ -1119,6 +1119,9 @@ test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
       { label: "talk-humans-steer", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer" },
       { label: "build-1-next-65-minutes", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-next-65-minutes" },
       { label: "build-1-by-lunch", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-by-lunch" },
+      { label: "rotation-read-the-room", path: "/admin/instances/sample-studio-a/presenter?agendaItem=rotation&scene=rotation-read-the-room" },
+      { label: "build-2a-eighty-five", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-2&scene=build-2a-eighty-five" },
+      { label: "build-2b-second-push-timeline", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-2-second-push&scene=build-2b-second-push-timeline" },
       { label: "reveal-one-thing", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-one-thing" },
       { label: "reveal-save-the-commitment", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-save-the-commitment" },
     ] as const;

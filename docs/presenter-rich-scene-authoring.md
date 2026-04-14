@@ -24,6 +24,7 @@ Before a content pattern spreads to the rest of the day, the proof pack must sho
 - one dominant voice per scene
 - one main idea per scene
 - a visible room-facing narrative beat, not a text dump
+- room-facing proof scenes fit the projection baseline without vertical scrolling unless the scene is explicitly marked as scroll-allowed
 - facilitator notes strong enough for a cold-read run
 - at least one reviewed local visual that materially improves comprehension
 
@@ -68,7 +69,26 @@ Rules:
    - `dashboard/lib/workshop-blueprint-localized-content.ts`
 4. Attach reviewed local visuals only when they sharpen the point of the scene.
 5. Keep facilitator notes separate from room content.
-6. Add or update regression tests for the scene structure or rendering behavior you changed.
+6. For room-facing proof scenes, preview at the presenter baseline (`1024x768` today) and treat vertical scroll as a failure unless the scene is explicitly in a scroll-allowed family.
+7. Add or update regression tests for the scene structure or rendering behavior you changed.
+
+## Fit Contract
+
+Room-facing presenter scenes are designed for a one-screen projection beat.
+
+Default rule:
+
+- if the scene is meant to be read in one facilitator beat, it should fit the presenter proof viewport without vertical scrolling
+- if a scene needs two independent beats, split it rather than relying on scroll
+- if the extra material mainly helps delivery rather than the room, move it to facilitator notes or runner guidance
+
+Scroll-allowed exceptions:
+
+- `team-trail` scenes that intentionally display accumulated team check-in history
+- explicitly designated participant-support scenes where accumulated context is the point of the surface
+- runtime experiments that have not yet been promoted into the reusable blueprint
+
+When a scene is allowed to scroll, say so in the implementation/review note instead of letting it happen implicitly.
 
 Visual grammar rule for room-facing principle scenes:
 
@@ -91,6 +111,7 @@ Failure examples:
 - the notes describe intent only in Ondrej shorthand
 - the room copy needs improvisation to land
 - the scene stack contains two ideas that should have been split
+- the scene only works because the presenter page scrolls
 
 ## Vibe Check
 

@@ -38,6 +38,7 @@ Reserved for the flows where rendered behavior matters:
 - admin route protection works in a real request flow
 - critical participant information remains visible after data changes
 - browser console and page-error inspection stay clean on the dominant workshop flows
+- designated room-facing presenter scenes that are meant to read as one beat should fit the presenter baseline viewport without unintended scroll
 
 These do not need to be broad. They should cover the highest-risk room-day paths.
 
