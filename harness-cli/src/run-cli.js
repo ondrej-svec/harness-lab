@@ -264,7 +264,7 @@ function printUsage(io, ui) {
 
   ui.section("Setup");
   ui.commandList([
-    helpLine("skill install [--target PATH] [--force]", "Install the workshop skill into your repo"),
+    helpLine("skill install [--target PATH] [--force] [--facilitator]", "Install the workshop skill into your repo"),
     helpLine("demo-setup [--target PATH]", "Scaffold Phase 3 contrast demo folders (facilitator)"),
   ]);
   ui.paragraph("After install, use the workshop skill in your coding agent.");
@@ -342,6 +342,7 @@ async function handleSkillInstall(io, ui, deps, flags) {
     const result = await installWorkshopSkill(deps.cwd ?? process.cwd(), {
       force: flags.force === true,
       target: readStringFlag(flags, "target"),
+      facilitator: flags.facilitator === true,
     });
     ui.heading("Workshop Skill");
     if (result.mode === "already_current") {
@@ -1775,7 +1776,8 @@ export async function runCli(argv, io, deps = {}) {
     ui.blank();
     ui.section("Commands");
     ui.commandList([
-      helpLine("harness skill install [--target PATH] [--force]", "Install the workshop skill"),
+      helpLine("harness skill install [--target PATH] [--force]", "Install the workshop skill (participant)"),
+      helpLine("harness skill install --facilitator", "Also install the facilitator skill (opt-in)"),
     ]);
     ui.blank();
     ui.section("After install");

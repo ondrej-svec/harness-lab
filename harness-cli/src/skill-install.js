@@ -183,6 +183,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
   const targetRoot = path.resolve(startDir, options.target ?? ".");
   await ensureDirectory(targetRoot);
 
+  const withFacilitator = options.facilitator === true;
   const installPath = getInstalledSkillPath(targetRoot);
   const existingInstall = await hasInstalledSkill(targetRoot);
   const sourceManifest = await getSourceBundleManifest(resolvedBundle);
@@ -192,7 +193,9 @@ export async function installWorkshopSkill(startDir, options = {}) {
     if (installedManifest.contentHash === sourceManifest.contentHash) {
       // Agents bundle is current but Claude Code / facilitator targets may be missing
       const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
-      const facilitatorInstalled = await installFacilitatorSkill(installPath, targetRoot);
+      const facilitatorInstalled = withFacilitator
+        ? await installFacilitatorSkill(installPath, targetRoot)
+        : { agents: null, claude: null };
       return {
         installPath,
         skillName: WORKSHOP_SKILL_NAME,
@@ -210,7 +213,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
     );
 
     return {
-      ...(await installFreshBundle(resolvedBundle, installPath, targetRoot)),
+      ...(await installFreshBundle(resolvedBundle, installPath, targetRoot, withFacilitator)),
       mode: "refreshed",
     };
   }
@@ -222,7 +225,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
     );
   }
 
-  const result = await installFreshBundle(resolvedBundle, installPath, targetRoot);
+  const result = await installFreshBundle(resolvedBundle, installPath, targetRoot, withFacilitator);
   if (existingInstall && options.force === true) {
     return {
       ...result,
@@ -233,7 +236,7 @@ export async function installWorkshopSkill(startDir, options = {}) {
   return result;
 }
 
-async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
+async function installFreshBundle(resolvedBundle, installPath, targetRoot, withFacilitator) {
   await fsWithActionableError(
     () => fs.mkdir(path.dirname(installPath), { recursive: true }),
     `create the parent directory for the installed skill`,
@@ -241,7 +244,9 @@ async function installFreshBundle(resolvedBundle, installPath, targetRoot) {
   await installFromResolvedBundle(resolvedBundle, installPath);
 
   const claudeInstalled = await installClaudeCodeSkill(installPath, targetRoot);
-  const facilitatorInstalled = await installFacilitatorSkill(installPath, targetRoot);
+  const facilitatorInstalled = withFacilitator
+    ? await installFacilitatorSkill(installPath, targetRoot)
+    : { agents: null, claude: null };
 
   return {
     installPath,
