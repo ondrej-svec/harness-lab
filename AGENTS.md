@@ -121,11 +121,11 @@ npm run build
 Content verification:
 
 - **Bilingual source**: Edit `workshop-content/agenda.json` (never the generated files). Run `npm run generate:content` to update views, then `npm run verify:content` to confirm they match.
-- **Pre-commit hook** (`.husky/pre-commit`): blocks commits when staged generated files don't match source. Only runs when `workshop-content/` or `dashboard/lib/generated/` files are staged.
+- **Pre-commit hook** (`.husky/pre-commit`): blocks commits when staged generated files don't match source, and runs the Czech copy-editor Layer 1 typography audit (`marvin:copy-editor`) on staged files that fall under the `.copy-editor.yaml` include globs. The copy-audit step degrades gracefully: if `bun` or the toolkit script is not available locally, it emits a warning and does not block the commit.
 - **Pre-push hook** (`.husky/pre-push`): runs Tier 2 locale sync check + generated file verification before push.
 - **CI** (`.github/workflows/content-integrity.yml`): runs both checks on push to main and PRs.
 - **Do not hand-edit** files under `dashboard/lib/generated/` or `workshop-blueprint/agenda.json` — edit `workshop-content/agenda.json` and run the generator.
-- Emergency bypass: `git commit --no-verify` / `git push --no-verify` — document the reason in the commit message.
+- Emergency bypass: `git commit --no-verify` / `git push --no-verify` — document the reason in the commit message. When bypassing the Czech copy-audit specifically, the reason must name the specific finding being overridden and why the override is correct (for example, "ty/vy mismatch is intentional here because the speaker is addressing one named person"). Generic reasons like "copy-audit noise" or "false positive" are not acceptable — if the audit fires repeatedly on the same pattern and the pattern is correct, the doctrine in `content/style-guide.md` or `.copy-editor.yaml` should be updated instead.
 - After fresh clone: hooks in `.husky/` are tracked in git. If your git version doesn't auto-detect them, run `git config core.hooksPath .husky`.
 
 Additional repo-specific checks:

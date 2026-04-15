@@ -12,3 +12,37 @@ if git diff --cached --name-only | grep -qE '^workshop-content/|^dashboard/lib/g
     exit 1
   fi
 fi
+
+# Czech copy-audit: run marvin:copy-editor Layer 1 on staged files that
+# fall under the .copy-editor.yaml include globs. AGENTS.md:128 mandates
+# this in prose; the hook turns it into enforcement.
+#
+# Graceful degradation: if bun or the copy-audit.ts script is not
+# available on this machine, emit a warning and exit zero rather than
+# blocking the commit. The hook must not punish contributors who do not
+# have the heart-of-gold-toolkit checked out next to this repo.
+#
+# Matches mirror the include list in .copy-editor.yaml:42-53.
+if git diff --cached --name-only | grep -qE '^workshop-content/agenda\.json$|^content/project-briefs/locales/cs/|^content/challenge-cards/locales/cs/|^content/facilitation/locales/cs/|^content/talks/locales/cs/|^materials/locales/cs/|^content/style-guide\.md$|^content/style-examples\.md$|^content/czech-editorial-review-checklist\.md$|^content/czech-reject-list\.md$'; then
+  COPY_AUDIT_SCRIPT="../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts"
+  if ! command -v bun >/dev/null 2>&1; then
+    echo "[copy-audit] bun not on PATH; skipping Czech Layer 1 audit."
+    echo "  Install bun or run the audit manually before pushing."
+    echo "  See AGENTS.md:128."
+  elif [ ! -f "$COPY_AUDIT_SCRIPT" ]; then
+    echo "[copy-audit] copy-audit.ts not found at $COPY_AUDIT_SCRIPT; skipping."
+    echo "  Clone heart-of-gold-toolkit alongside this repo or run the audit manually."
+    echo "  See AGENTS.md:128."
+  else
+    echo "[copy-audit] Running Czech Layer 1 typography audit on staged files..."
+    bun "$COPY_AUDIT_SCRIPT" --config .copy-editor.yaml
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo "Czech copy-audit reported error-severity findings."
+      echo "Fix them, re-stage, and retry. Use 'git commit --no-verify' only"
+      echo "with an explicit reason naming the specific finding in the commit"
+      echo "message (see AGENTS.md Emergency bypass section)."
+      exit 1
+    fi
+  fi
+fi
