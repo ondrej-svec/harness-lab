@@ -2,7 +2,7 @@
 title: "fix: localized participant entrypoints and bundle doc portability"
 type: plan
 date: 2026-04-08
-status: completed
+status: complete
 confidence: high
 ---
 

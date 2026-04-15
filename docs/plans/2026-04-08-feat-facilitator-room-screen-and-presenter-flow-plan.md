@@ -2,7 +2,7 @@
 title: "feat: facilitator room screen and presenter flow"
 type: plan
 date: 2026-04-08
-status: completed
+status: complete
 brainstorm: ../brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
 confidence: medium
 ---

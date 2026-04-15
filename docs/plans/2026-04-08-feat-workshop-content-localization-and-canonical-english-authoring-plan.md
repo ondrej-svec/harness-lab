@@ -2,7 +2,7 @@
 title: "feat: workshop content localization and canonical English authoring model"
 type: plan
 date: 2026-04-08
-status: completed
+status: complete
 confidence: medium
 ---
 

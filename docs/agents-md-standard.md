@@ -116,6 +116,20 @@ When reviewing `AGENTS.md`, check:
 - Does it help a new human or agent find the next safe move?
 - Is any critical rule still living only in prompts or chat history?
 
+## Canonical Plan Status Values
+
+Every plan in `docs/plans/` (and `docs/plans/archive/`) must carry a `status:` frontmatter field with exactly one of these values:
+
+- `approved` — written, reviewed, ready to start
+- `in_progress` — `/work` has begun
+- `complete` — all acceptance criteria green, work shipped
+- `superseded` — a newer plan has replaced this one
+- `captured` — reference-only artifact, not an execution tracker (rare)
+
+`completed` is not a canonical value. If you see it, normalize it to `complete`.
+
+Full lifecycle rules — transitions, directory layout, archive behavior, and the `workshop analyze` checks that enforce this — live in [`plan-lifecycle-standard.md`](plan-lifecycle-standard.md). Do not duplicate those rules here.
+
 ## External References
 
 - OpenAI, “Harness engineering: leveraging Codex in an agent-first world”:

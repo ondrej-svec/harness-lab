@@ -2,7 +2,7 @@
 title: "feat: workshop surface refinement"
 type: plan
 date: 2026-04-08
-status: completed
+status: complete
 brainstorm: ../brainstorms/2026-04-08-facilitator-presenter-rich-content-redesign-brainstorm.md
 confidence: medium
 ---
