@@ -1305,6 +1305,75 @@ test("skill install force refreshes an existing install", async () => {
   assert.match(io.getStdout(), /Refreshed the installed Harness Lab workshop skill bundle/);
 });
 
+test("skill install does not install the facilitator skill by default", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-no-facilitator-"));
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["skill", "install"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+
+  const agentsFacilitatorPath = path.join(
+    repoRoot,
+    ".agents",
+    "skills",
+    "harness-lab-workshop-facilitator",
+    "SKILL.md",
+  );
+  const claudeFacilitatorPath = path.join(
+    repoRoot,
+    ".claude",
+    "skills",
+    "workshop-facilitator",
+    "SKILL.md",
+  );
+
+  await assert.rejects(
+    fs.access(agentsFacilitatorPath),
+    /ENOENT/,
+    "facilitator skill should not be present at .agents/skills by default",
+  );
+  await assert.rejects(
+    fs.access(claudeFacilitatorPath),
+    /ENOENT/,
+    "facilitator skill should not be present at .claude/skills by default",
+  );
+  assert.doesNotMatch(io.getStdout(), /workshop-facilitator/);
+});
+
+test("skill install --facilitator installs both participant and facilitator skills", async () => {
+  const repoRoot = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-facilitator-"));
+  const env = await createEnv();
+  const io = createMemoryIo(env);
+
+  const exitCode = await runCli(["skill", "install", "--facilitator"], io, {
+    fetchFn: async () => {
+      throw new Error("fetch should not be called");
+    },
+    cwd: repoRoot,
+  });
+
+  assert.equal(exitCode, 0);
+
+  // Participant skill is still installed
+  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+
+  // Facilitator skill is installed in both surfaces
+  await fs.access(
+    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop-facilitator", "SKILL.md"),
+  );
+  await fs.access(
+    path.join(repoRoot, ".claude", "skills", "workshop-facilitator", "SKILL.md"),
+  );
+  assert.match(io.getStdout(), /workshop-facilitator/);
+});
+
 test("skill install supports an explicit target repo path", async () => {
   const cwd = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-cwd-"));
   const targetRepo = await fs.mkdtemp(path.join(os.tmpdir(), "harness-lab-skill-install-target-"));
