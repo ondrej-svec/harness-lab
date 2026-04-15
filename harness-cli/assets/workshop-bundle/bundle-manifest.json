@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.7.2",
-  "contentHash": "a93e8c6137e761b2142e2ab46b333c834c94c15efaaacac765582d0bf501fdca",
+  "contentHash": "238026b6413dd616aa1792ed7cb8d22a3c7d12fb0fb5b37ca971cf8c4bb76362",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -102,7 +102,7 @@
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "202402ea7320ae20b6d7ff4d6771a12e049ee9c93917e0f0c21cd666b1c98f4e"
+      "sha256": "5bba9af6ecaebd1fdd44353c018ed443a5cf5d47383767b5787d395bfa2ef464"
     },
     {
       "path": "content/talks/locales/cs/codex-demo-script.md",
@@ -110,7 +110,7 @@
     },
     {
       "path": "content/talks/locales/cs/context-is-king.md",
-      "sha256": "ff26d4327ac1704997dcdb3d7d61f689333688fd36b51983bcde0fd2ef23b15b"
+      "sha256": "d5f4b28bf79ac117ed5ad82cedfc849af6d84629e9b765a865686d04dcae2f46"
     },
     {
       "path": "docs/harness-cli-foundation.md",
