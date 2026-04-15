@@ -71,7 +71,7 @@ When you edit content, start with the English root file. Then apply the same cha
 
 Four Czech-only meta-references stay at the root as exceptions because they are *about* Czech writing and would be nonsensical in English: `content/style-guide.md`, `content/style-examples.md`, `content/czech-reject-list.md`, `content/czech-editorial-review-checklist.md`. `content/codex-craft.md` and `materials/README.md` are likewise single-language at the root by design.
 
-**Verified 2026-04-13.** Completed under `docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md`. The flip moved 12 bilingual pairs via `git mv` (preserving history), updated `scripts/content/check-tier2-sync.ts` and `scripts/content/generate-briefs-inventory.ts`, and re-segmented `.copy-editor.lock.json`. The full Czech review covered 28 agenda scenes across 3 batches plus standalone reviews of the 12 flipped files — seven memos live under `docs/reviews/workshop-content/2026-04-13-czech-*.md`.
+**Verified 2026-04-13.** Completed under `docs/plans/archive/2026-04-13-refactor-language-flip-and-czech-review-plan.md`. The flip moved 12 bilingual pairs via `git mv` (preserving history), updated `scripts/content/check-tier2-sync.ts` and `scripts/content/generate-briefs-inventory.ts`, and re-segmented `.copy-editor.lock.json`. The full Czech review covered 28 agenda scenes across 3 batches plus standalone reviews of the 12 flipped files — seven memos live under `docs/reviews/workshop-content/2026-04-13-czech-*.md`.
 
 ## Bilingual Content Source
 

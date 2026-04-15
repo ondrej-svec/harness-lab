@@ -247,8 +247,8 @@ Phases can overlap where tasks are independent, but no phase is "done" until all
   - `docs/harness-doctrine.md` — friction-to-encoding feedback loop
   - `docs/autonomous-planning-standard.md` — context file expectations
 - Related plans (recent, same area):
-  - `docs/plans/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md` — Czech quality work that G complements
-  - `docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md` — language architecture context
+  - `docs/plans/archive/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md` — Czech quality work that G complements
+  - `docs/plans/archive/2026-04-13-refactor-language-flip-and-czech-review-plan.md` — language architecture context
 - Codex peer review (2026-04-14, `gpt-5.4`, high reasoning, read-only): flagged installer, repo map, and audit drift as the three outstanding issues in the brainstorm proposal list.
 - Key code anchors verified during planning:
   - `harness-cli/src/skill-install.js:172-234` — `installWorkshopSkill` function; 195 and 244 are the unconditional facilitator install call sites

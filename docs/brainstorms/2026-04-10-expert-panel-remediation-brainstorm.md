@@ -5,7 +5,7 @@ date: 2026-04-10
 participants: [Ondrej, Claude]
 related:
   - docs/reviews/2026-04-10-expert-panel-skills-cli-teaching-approach.md
-  - docs/plans/2026-04-10-refactor-unified-bilingual-content-model-plan.md
+  - docs/plans/archive/2026-04-10-refactor-unified-bilingual-content-model-plan.md
   - docs/adr/2026-04-10-unified-bilingual-content-model.md
 ---
 

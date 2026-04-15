@@ -5,7 +5,7 @@ date: 2026-04-07
 participants: [Ondrej, Codex]
 related:
   - ../facilitator-dashboard-design-rules.md
-  - ../plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md
+  - ../plans/archive/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md
   - 2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md
   - ../workshop-instance-runbook.md
   - ../private-workshop-instance-data-classification.md
@@ -41,7 +41,7 @@ Build a facilitator cockpit that makes workshop instances feel like understandab
 ### What exists
 
 - [`docs/facilitator-dashboard-design-rules.md`](../facilitator-dashboard-design-rules.md) already defines the intended tone: calm under pressure, explicit scope, grouped actions by intent, safety actions visible but not dominant.
-- [`docs/plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](../plans/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already identifies the facilitator surface as a control plane that needs stronger structure.
+- [`docs/plans/archive/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md`](../plans/archive/2026-04-06-feat-agentic-ui-inspection-dashboard-ux-plan.md) already identifies the facilitator surface as a control plane that needs stronger structure.
 - [`docs/brainstorms/2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md`](2026-04-07-workshop-blueprint-and-facilitator-control-model-brainstorm.md) already says the dashboard should act as runtime control plane for private workshop instances rather than hiding the workshop design inside dashboard internals.
 - [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md) describes workshop instances as private event records with real date, venue, room, participant access, facilitator auth, and lifecycle state.
 - [`docs/private-workshop-instance-schema.md`](../private-workshop-instance-schema.md) proposes first-class instance fields such as `display_name`, `event_date`, `venue_name`, `room_name`, `status`, and `current_phase`.

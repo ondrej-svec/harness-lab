@@ -36,4 +36,4 @@ Collapse all three into a **two-tier bilingual model**:
 ## References
 
 - [Brainstorm](../brainstorms/2026-04-10-unified-bilingual-content-model-brainstorm.md)
-- [Plan](../plans/2026-04-10-refactor-unified-bilingual-content-model-plan.md)
+- [Plan](../plans/archive/2026-04-10-refactor-unified-bilingual-content-model-plan.md)

@@ -13,7 +13,7 @@ root_cause: "The dashboard dependency stack had drifted: Node major selection wa
 severity: high
 related:
   - "../../dependency-maintenance.md"
-  - "../../plans/2026-04-08-fix-repo-dependency-security-hygiene-plan.md"
+  - "../../plans/archive/2026-04-08-fix-repo-dependency-security-hygiene-plan.md"
 ---
 
 # Dashboard dependency security hygiene and Next 16 lint migration
@@ -81,5 +81,5 @@ After the dependency alignment, fix any newly surfaced lint/type issues rather t
 ## Related
 
 - [dependency-maintenance.md](../../dependency-maintenance.md)
-- [2026-04-08-fix-repo-dependency-security-hygiene-plan.md](../../plans/2026-04-08-fix-repo-dependency-security-hygiene-plan.md)
+- [2026-04-08-fix-repo-dependency-security-hygiene-plan.md](../../plans/archive/2026-04-08-fix-repo-dependency-security-hygiene-plan.md)
 - GitHub advisory: `GHSA-xg6x-h9c9-2m83`

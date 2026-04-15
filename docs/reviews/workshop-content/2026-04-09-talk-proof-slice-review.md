@@ -2,7 +2,7 @@
 
 Status: in progress
 
-This is the working review note for the current proof slice under [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](../../plans/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
+This is the working review note for the current proof slice under [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](../../plans/archive/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
 
 ## Scope
 

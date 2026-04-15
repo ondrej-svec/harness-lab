@@ -4,7 +4,7 @@ Status: in progress
 
 This review note records the systemic Czech-language pass requested after live workshop review surfaced repeated mixed-language and translated-shorthand issues on visible workshop surfaces.
 
-It supplements [`2026-04-09-talk-proof-slice-review.md`](./2026-04-09-talk-proof-slice-review.md) and the active plan [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](../../plans/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
+It supplements [`2026-04-09-talk-proof-slice-review.md`](./2026-04-09-talk-proof-slice-review.md) and the active plan [`2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`](../../plans/archive/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md).
 
 ## Scope
 
@@ -20,7 +20,7 @@ It supplements [`2026-04-09-talk-proof-slice-review.md`](./2026-04-09-talk-proof
 - `content/style-guide.md`
 - `docs/workshop-content-language-architecture.md`
 - `docs/workshop-content-qa.md`
-- `docs/plans/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`
+- `docs/plans/archive/2026-04-09-feat-workshop-blueprint-content-excellence-and-readiness-plan.md`
 
 ## Why This Review Exists
 

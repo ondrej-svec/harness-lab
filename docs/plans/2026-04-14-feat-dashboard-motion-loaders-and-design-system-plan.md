@@ -183,7 +183,7 @@ Measurable and testable:
 - Existing loader pattern: `app/admin/admin-route-link.tsx`
 - Existing motion utilities: `app/globals.css` lines 188–264
 - Existing motion provider: `app/admin/instances/[id]/_components/motion-provider.tsx`
-- Recent related work: `docs/plans/2026-04-10-feat-landing-page-sharpening-and-agent-handoff-plan.md`, `docs/plans/2026-04-08-fix-dashboard-design-system-audit-remediations-plan.md`
+- Recent related work: `docs/plans/archive/2026-04-10-feat-landing-page-sharpening-and-agent-handoff-plan.md`, `docs/plans/2026-04-08-fix-dashboard-design-system-audit-remediations-plan.md`
 - Prior design system audit commit: `fcd5e6c Add dashboard motion coverage`
 - Governing design doc: `docs/dashboard-design-system.md`
 - External best practices confirmed: 100–200ms micro, 300–500ms view transitions, ease-out for entrances, `prefers-reduced-motion` mandatory, WCAG 2.3.3 Animation from Interactions, Nielsen response-time thresholds (0.1s / 1s / 10s).

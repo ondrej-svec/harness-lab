@@ -54,7 +54,7 @@ Copy-heavy work is often also layout-heavy. If the message hierarchy depends on 
 
 Source:
 
-- [`plans/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./plans/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
+- [`plans/archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./plans/archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
 
 What it did well:
 

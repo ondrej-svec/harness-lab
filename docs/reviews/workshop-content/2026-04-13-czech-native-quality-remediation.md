@@ -8,7 +8,7 @@ status: complete
 
 # Czech native-quality remediation
 
-This note closes the native-quality cleanup tracked in [`docs/plans/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md`](../../plans/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md).
+This note closes the native-quality cleanup tracked in [`docs/plans/archive/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md`](../../plans/archive/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md).
 
 ## Scope
 

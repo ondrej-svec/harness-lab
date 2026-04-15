@@ -4,7 +4,7 @@ type: brainstorm
 date: 2026-04-09
 participants: ["Codex", "Ondrej Svec"]
 related:
-  - ../plans/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md
+  - ../plans/archive/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md
   - ../brainstorms/2026-04-08-facilitator-room-screen-and-presenter-flow-brainstorm.md
   - ../facilitator-agenda-source-of-truth.md
 ---

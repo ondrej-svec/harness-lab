@@ -97,4 +97,4 @@ The follow-up was verified with focused Vitest coverage for:
 
 See also:
 
-- [`docs/plans/2026-04-08-fix-architecture-review-follow-up-plan.md`](plans/2026-04-08-fix-architecture-review-follow-up-plan.md)
+- [`docs/plans/archive/2026-04-08-fix-architecture-review-follow-up-plan.md`](plans/archive/2026-04-08-fix-architecture-review-follow-up-plan.md)

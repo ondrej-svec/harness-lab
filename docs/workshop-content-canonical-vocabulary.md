@@ -148,5 +148,5 @@ Content is wrong if:
 
 - **Agenda source of truth:** `workshop-content/agenda.json` — commit `2046fbc` (2026-04-12), refined through `ea5ca52` / `d7b9000` / `50e3789` (2026-04-13)
 - **Style rules:** `content/style-guide.md`, `content/czech-reject-list.md`
-- **Alignment plan:** `docs/plans/2026-04-13-refactor-content-drift-alignment-plan.md`
+- **Alignment plan:** `docs/plans/archive/2026-04-13-refactor-content-drift-alignment-plan.md`
 - **Mode A scene-card review:** `docs/reviews/workshop-content/2026-04-13-czech-mode-a-scene-cards.md`

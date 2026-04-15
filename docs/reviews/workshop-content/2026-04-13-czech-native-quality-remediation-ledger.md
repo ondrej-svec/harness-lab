@@ -8,7 +8,7 @@ status: complete
 
 # Czech native-quality remediation ledger
 
-This note consolidates the current rewrite targets for the follow-up Czech remediation pass. It is not another diagnosis memo. It is the execution ledger for the plan in [`docs/plans/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md`](../../plans/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md).
+This note consolidates the current rewrite targets for the follow-up Czech remediation pass. It is not another diagnosis memo. It is the execution ledger for the plan in [`docs/plans/archive/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md`](../../plans/archive/2026-04-13-fix-czech-native-quality-audit-and-remediation-plan.md).
 
 ## Inputs used
 

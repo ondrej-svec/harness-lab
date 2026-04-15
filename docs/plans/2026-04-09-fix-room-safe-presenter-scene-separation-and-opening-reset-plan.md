@@ -40,7 +40,7 @@ The current repo state matters because this is not a blank-slate redesign.
 
 What is already true:
 
-- the agenda-centered control room work is complete in [`2026-04-09-feat-control-room-agenda-presenter-unification-plan.md`](./2026-04-09-feat-control-room-agenda-presenter-unification-plan.md)
+- the agenda-centered control room work is complete in [`2026-04-09-feat-control-room-agenda-presenter-unification-plan.md`](./archive/2026-04-09-feat-control-room-agenda-presenter-unification-plan.md)
 - the canonical blueprint is agenda-owned and scene-backed in [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json)
 - the presenter route is already scene-first in layout terms, but still renders room-unsafe support material in [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](../../dashboard/app/admin/instances/[id]/presenter/page.tsx)
 - the source-of-truth doc currently treats `presenterScenes` as carrying room blocks, facilitator notes, and source refs together in [`docs/facilitator-agenda-source-of-truth.md`](../facilitator-agenda-source-of-truth.md)
@@ -83,7 +83,7 @@ This is a **detailed** plan because it changes the shared agenda/presenter contr
     - participant-facing mirror content
     - facilitator-only support content
   - Update [`docs/dashboard-surface-model.md`](../dashboard-surface-model.md) so the presenter surface is clearly room-safe and does not imply source-strip or participant-scene leakage.
-  - Update the active editorial plan in [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md) so it no longer assumes the current mixed scene model is the right substrate.
+  - Update the active editorial plan in [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md) so it no longer assumes the current mixed scene model is the right substrate.
 
 - [x] Choose and document the corrected runtime shape.
   - Decide whether to model the separation as:
@@ -311,8 +311,8 @@ Exit criteria:
 
 - Brainstorm: [`2026-04-09-workshop-scene-richness-and-presentation-system-brainstorm.md`](../brainstorms/2026-04-09-workshop-scene-richness-and-presentation-system-brainstorm.md)
 - Brainstorm: [`2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md`](../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md)
-- Completed shell plan: [`2026-04-09-feat-control-room-agenda-presenter-unification-plan.md`](./2026-04-09-feat-control-room-agenda-presenter-unification-plan.md)
-- Current editorial continuation plan: [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
+- Completed shell plan: [`2026-04-09-feat-control-room-agenda-presenter-unification-plan.md`](./archive/2026-04-09-feat-control-room-agenda-presenter-unification-plan.md)
+- Current editorial continuation plan: [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
 - Source-of-truth doc: [`docs/facilitator-agenda-source-of-truth.md`](../facilitator-agenda-source-of-truth.md)
 - Presenter route: [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](../../dashboard/app/admin/instances/[id]/presenter/page.tsx)
 - Canonical blueprint: [`dashboard/lib/workshop-blueprint-agenda.json`](../../dashboard/lib/workshop-blueprint-agenda.json)

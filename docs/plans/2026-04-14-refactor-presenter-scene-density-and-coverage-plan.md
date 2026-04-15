@@ -33,7 +33,7 @@ This plan does not reopen the presenter architecture.
 It builds on:
 
 - [`docs/brainstorms/2026-04-10-expert-panel-scene-updates-brainstorm.md`](../brainstorms/2026-04-10-expert-panel-scene-updates-brainstorm.md)
-- [`docs/plans/2026-04-10-feat-expert-panel-scene-updates-plan.md`](2026-04-10-feat-expert-panel-scene-updates-plan.md)
+- [`docs/plans/archive/2026-04-10-feat-expert-panel-scene-updates-plan.md`](archive/2026-04-10-feat-expert-panel-scene-updates-plan.md)
 - [`docs/brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md`](../brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md)
 - [`docs/presenter-rich-scene-authoring.md`](../presenter-rich-scene-authoring.md)
 

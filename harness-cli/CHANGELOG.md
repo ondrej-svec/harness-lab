@@ -18,7 +18,7 @@ and the project follows semantic versioning.
 ### Changed
 
 - **Workshop content layout flipped: English canonical at the root, Czech in `locales/cs/`.**
-  Under `docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md`.
+  Under `docs/plans/archive/2026-04-13-refactor-language-flip-and-czech-review-plan.md`.
   12 bilingual file pairs moved via `git mv` (history preserved): talks,
   5 project briefs, materials kit, facilitation master-guide, codex-setup-verification,
   challenge-cards deck and print-spec. `materials/coaching-codex.md` gained a Czech

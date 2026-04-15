@@ -151,7 +151,7 @@ This is a **detailed** plan because it combines editorial redesign, content-mode
     - what participants will do today
     - what the room should believe before build work starts
   - Treat `opening` and `talk` as one connected module with a deliberate handoff, not two isolated agenda cards.
-  - Update the active editorial continuation plan in [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md) to reference this launch reset as the new front edge of content work.
+  - Update the active editorial continuation plan in [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md) to reference this launch reset as the new front edge of content work.
 
 - [x] Audit and rewrite the current `opening` scene pack from first principles.
   - Remove lines that sound like “we are testing” when the real frame is learning and building.
@@ -329,5 +329,5 @@ Mitigation:
 - [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md)
 - [`docs/facilitator-agenda-source-of-truth.md`](../facilitator-agenda-source-of-truth.md)
 - [`2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md`](../brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md)
-- [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
+- [`2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`](./archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md)
 - [`2026-04-09-fix-room-safe-presenter-scene-separation-and-opening-reset-plan.md`](./2026-04-09-fix-room-safe-presenter-scene-separation-and-opening-reset-plan.md)

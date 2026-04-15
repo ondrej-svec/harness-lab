@@ -2,7 +2,7 @@
 title: "URL contract — One Canvas dashboard rework"
 type: research
 date: 2026-04-13
-for-plan: docs/plans/2026-04-13-refactor-one-canvas-dashboard-plan.md
+for-plan: docs/plans/archive/2026-04-13-refactor-one-canvas-dashboard-plan.md
 ---
 
 # URL contract — One Canvas dashboard rework

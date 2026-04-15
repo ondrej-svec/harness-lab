@@ -4,8 +4,8 @@ type: brainstorm
 date: 2026-04-09
 participants: ["Codex", "Ondrej Svec"]
 related:
-  - ../plans/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md
-  - ../plans/2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md
+  - ../plans/archive/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md
+  - ../plans/archive/2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md
   - ../facilitator-agenda-source-of-truth.md
 ---
 
@@ -31,7 +31,7 @@ The problem is not only "we need prettier slides." The real problem is that new 
   - [`dashboard/app/admin/instances/[id]/presenter/page.tsx`](../../dashboard/app/admin/instances/[id]/presenter/page.tsx)
 - The repo already decided that agenda items own presenter scenes and that richer workshop content should extend this shared model rather than create a second presenter-only system:
   - [`docs/facilitator-agenda-source-of-truth.md`](../facilitator-agenda-source-of-truth.md)
-  - [`docs/plans/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md`](../plans/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md)
+  - [`docs/plans/archive/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md`](../plans/archive/2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md)
 - The workshop source material is richer than the room screen currently feels:
   - [`content/facilitation/master-guide.md`](../../content/facilitation/master-guide.md)
   - [`content/talks/context-is-king.md`](../../content/talks/context-is-king.md)

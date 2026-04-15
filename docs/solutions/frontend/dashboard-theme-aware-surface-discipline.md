@@ -11,7 +11,7 @@ symptoms:
 root_cause: "The app had theme tokens, but key dashboard surfaces bypassed them with page-specific hardcoded dark gradients and one-off light/dark overrides, so the UI was not actually consuming a single theme system."
 severity: medium
 related:
-  - "../../plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md"
+  - "../../plans/archive/2026-04-06-feat-dashboard-polish-dark-light-plan.md"
   - "../../facilitator-dashboard-design-rules.md"
   - "../testing/facilitator-playwright-visual-regression-stability.md"
 ---
@@ -121,4 +121,4 @@ Use these rules for future dashboard work:
 - [`dashboard/app/admin/admin-ui.tsx`](../../../dashboard/app/admin/admin-ui.tsx)
 - [`dashboard/app/admin/page.tsx`](../../../dashboard/app/admin/page.tsx)
 - [`dashboard/app/admin/instances/[id]/page.tsx`](../../../dashboard/app/admin/instances/[id]/page.tsx)
-- [`docs/plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md`](../../plans/2026-04-06-feat-dashboard-polish-dark-light-plan.md)
+- [`docs/plans/archive/2026-04-06-feat-dashboard-polish-dark-light-plan.md`](../../plans/archive/2026-04-06-feat-dashboard-polish-dark-light-plan.md)

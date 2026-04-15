@@ -219,10 +219,10 @@ Unverified assumptions are either blocked by Phase 0 coordination tasks or expli
 - Public/private taxonomy: `docs/public-private-taxonomy.md`
 - In-flight plans with coordination surface:
   - `docs/plans/2026-04-09-feat-opening-talk-reset-and-facilitator-runner-plan.md`
-  - `docs/plans/2026-04-09-feat-czech-copy-quality-foundation-plan.md`
-  - `docs/plans/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`
-  - `docs/plans/2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md`
-  - `docs/plans/2026-04-09-feat-autonomous-planning-and-hybrid-harness-hardening-plan.md`
+  - `docs/plans/archive/2026-04-09-feat-czech-copy-quality-foundation-plan.md`
+  - `docs/plans/archive/2026-04-09-feat-workshop-scene-editorial-rollout-and-copy-excellence-plan.md`
+  - `docs/plans/archive/2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md`
+  - `docs/plans/archive/2026-04-09-feat-autonomous-planning-and-hybrid-harness-hardening-plan.md`
 - Target files for edits (verify line numbers before editing):
   - `content/talks/context-is-king.md`
   - `content/challenge-cards/deck.md`

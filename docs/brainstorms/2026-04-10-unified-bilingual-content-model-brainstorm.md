@@ -4,10 +4,10 @@ type: brainstorm
 date: 2026-04-10
 participants: [Ondrej, Heart of Gold]
 related:
-  - docs/plans/2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md
+  - docs/plans/archive/2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md
   - docs/workshop-content-language-architecture.md
   - docs/adr/2026-04-08-portable-participant-skill-distribution.md
-  - docs/plans/2026-04-09-feat-czech-copy-quality-foundation-plan.md
+  - docs/plans/archive/2026-04-09-feat-czech-copy-quality-foundation-plan.md
 ---
 
 # Unified Bilingual Content Model
@@ -24,7 +24,7 @@ Plus `content/` (talks, facilitation guides, project briefs, challenge cards), `
 
 When someone edits Czech, English can silently fall behind. When someone rewrites a talk, the corresponding agenda scenes may not reflect the rewrite. When the runtime agenda evolves, the public blueprint drifts. The existing architecture doc (`docs/workshop-content-language-architecture.md`) names this problem and says "do not edit one without checking the other" — a prose rule with no enforcement mechanism.
 
-The copy-editor system shipped in `docs/plans/2026-04-09-feat-czech-copy-quality-foundation-plan.md` makes the existing content better within the current architecture. But the architecture itself makes drift inevitable rather than impossible.
+The copy-editor system shipped in `docs/plans/archive/2026-04-09-feat-czech-copy-quality-foundation-plan.md` makes the existing content better within the current architecture. But the architecture itself makes drift inevitable rather than impossible.
 
 The prior localization plan (`2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md`) decided "English is the canonical authoring language, Czech is a first-class reviewed delivery locale." Several migration tasks in that plan remain unchecked. The stated architecture (English canonical) and the actual content flow (Czech is authored first, English is derived) disagree. That mismatch is the structural source of drift.
 

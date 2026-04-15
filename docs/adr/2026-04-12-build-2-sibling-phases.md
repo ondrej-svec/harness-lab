@@ -67,5 +67,5 @@ The visual redundancy of two "Build Phase 2" labels in the day schedule is real 
 ## References
 
 - [Brainstorm: Workshop Agenda Content Review — 2026-04-12](../brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md)
-- [Plan: Workshop Content and Infrastructure Update — 2026-04-12](../plans/2026-04-12-feat-workshop-content-and-infrastructure-update-plan.md)
+- [Plan: Workshop Content and Infrastructure Update — 2026-04-12](../plans/archive/2026-04-12-feat-workshop-content-and-infrastructure-update-plan.md)
 - [ADR: Unified Bilingual Content Model — 2026-04-10](./2026-04-10-unified-bilingual-content-model.md) (describes the flat phase schema this decision builds on)

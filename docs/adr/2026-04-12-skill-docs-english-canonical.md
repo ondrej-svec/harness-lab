@@ -3,7 +3,7 @@ title: "ADR: Workshop skill reference docs are English-canonical, not bilinguall
 type: adr
 date: 2026-04-12
 status: accepted
-supersedes: partial section of 2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md
+supersedes: partial section of docs/plans/archive/2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md
 ---
 
 # Context

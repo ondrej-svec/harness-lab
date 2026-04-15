@@ -707,7 +707,7 @@ test.describe("agenda detail — scene stage + rail", () => {
   // Stage + rail rework: scenes render as a compact rail with exactly
   // one full-fidelity stage panel, active selection is URL-driven, and
   // j/k / arrow keys step through the rail. See
-  // docs/plans/2026-04-14-refactor-agenda-detail-stage-and-rail-plan.md.
+  // docs/plans/archive/2026-04-14-refactor-agenda-detail-stage-and-rail-plan.md.
 
   test.use({
     extraHTTPHeaders: {

@@ -347,5 +347,5 @@ Exit criteria:
 - [`docs/workshop-instance-runbook.md`](../workshop-instance-runbook.md)
 - [`docs/harness-cli-foundation.md`](../harness-cli-foundation.md)
 - [`docs/adr/2026-04-06-facilitator-identity-simplification.md`](../adr/2026-04-06-facilitator-identity-simplification.md)
-- [`docs/plans/2026-04-08-feat-cli-first-facilitator-operations-plan.md`](./2026-04-08-feat-cli-first-facilitator-operations-plan.md)
+- [`docs/plans/archive/2026-04-08-feat-cli-first-facilitator-operations-plan.md`](./archive/2026-04-08-feat-cli-first-facilitator-operations-plan.md)
 - [`docs/2026-04-08-harness-lab-architecture-review.md`](../2026-04-08-harness-lab-architecture-review.md)

@@ -7,7 +7,7 @@ related:
   - docs/reviews/2026-04-10-expert-panel-agenda-presentation-review.md
   - docs/brainstorms/2026-04-09-workshop-scene-content-richness-and-voice-brainstorm.md
   - docs/brainstorms/2026-04-09-presenter-blueprint-rich-content-direction-brainstorm.md
-  - docs/plans/2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md
+  - docs/plans/archive/2026-04-09-feat-workshop-blueprint-rich-presenter-content-plan.md
   - docs/plans/2026-04-09-feat-opening-talk-reset-and-facilitator-runner-plan.md
 ---
 

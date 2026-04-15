@@ -12,7 +12,7 @@ root_cause: "The page served as both a product page and workshop runtime but had
 severity: low
 related:
   - "../../brainstorms/2026-04-10-landing-page-sharpening-and-agent-handoff-brainstorm.md"
-  - "../../plans/2026-04-10-feat-landing-page-sharpening-and-agent-handoff-plan.md"
+  - "../../plans/archive/2026-04-10-feat-landing-page-sharpening-and-agent-handoff-plan.md"
 ---
 
 ## Problem

@@ -24,7 +24,7 @@ It is small enough to reason about, but subjective enough that prose-only plans 
 The existing work already gave us good repo history:
 
 - [`brainstorms/2026-04-07-public-homepage-copy-brainstorm.md`](./brainstorms/2026-04-07-public-homepage-copy-brainstorm.md)
-- [`plans/2026-04-07-docs-public-homepage-copy-plan.md`](./plans/2026-04-07-docs-public-homepage-copy-plan.md)
+- [`plans/archive/2026-04-07-docs-public-homepage-copy-plan.md`](./plans/archive/2026-04-07-docs-public-homepage-copy-plan.md)
 
 That makes it a good proving ground for the hardened method instead of a synthetic example.
 

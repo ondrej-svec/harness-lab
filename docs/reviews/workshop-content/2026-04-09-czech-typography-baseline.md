@@ -6,7 +6,7 @@
 **Scope:** everything in `paths.include` of `.copy-editor.yaml` excluding English locales, the generated workshop bundle mirror, and the four teaching files (`content/style-guide.md`, `content/style-examples.md`, `content/czech-reject-list.md`, `content/czech-editorial-review-checklist.md`)
 **Tool:** `marvin:copy-editor` Layer 1 via `bun ../heart-of-gold-toolkit/plugins/marvin/skills/copy-editor/scripts/copy-audit.ts --config .copy-editor.yaml`
 
-This is the baseline clean-room pass Phase 6 of [`docs/plans/2026-04-09-feat-czech-copy-quality-foundation-plan.md`](../../plans/2026-04-09-feat-czech-copy-quality-foundation-plan.md) produced.
+This is the baseline clean-room pass Phase 6 of [`docs/plans/archive/2026-04-09-feat-czech-copy-quality-foundation-plan.md`](../../plans/archive/2026-04-09-feat-czech-copy-quality-foundation-plan.md) produced.
 
 ---
 

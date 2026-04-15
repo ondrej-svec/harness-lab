@@ -1132,7 +1132,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   );
   // Post-2026-04-13 layout flip: English canonical lives at the root, Czech
   // translations live under locales/cs/. See
-  // docs/plans/2026-04-13-refactor-language-flip-and-czech-review-plan.md
+  // docs/plans/archive/2026-04-13-refactor-language-flip-and-czech-review-plan.md
   // and docs/workshop-content-language-architecture.md.
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "devtoolbox-cli.md"));
   await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "cs", "devtoolbox-cli.md"));
