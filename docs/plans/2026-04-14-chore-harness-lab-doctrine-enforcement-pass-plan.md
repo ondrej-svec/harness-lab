@@ -2,7 +2,7 @@
 title: "chore: Harness Lab doctrine enforcement pass"
 type: plan
 date: 2026-04-14
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-04-14-harness-lab-doctrine-enforcement-brainstorm.md
 confidence: high
 ---
