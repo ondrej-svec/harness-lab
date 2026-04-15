@@ -30,6 +30,7 @@ Before making meaningful changes:
 If you touch these areas, read these files first:
 
 - `dashboard/` UI, routes, or workshop state:
+  - [`dashboard/AGENTS.md`](dashboard/AGENTS.md) — subtree map
   - [`docs/dashboard-design-system.md`](docs/dashboard-design-system.md)
   - [`docs/dashboard-surface-model.md`](docs/dashboard-surface-model.md)
   - [`docs/dashboard-testing-strategy.md`](docs/dashboard-testing-strategy.md)
@@ -44,7 +45,13 @@ If you touch these areas, read these files first:
   - [`workshop-blueprint/day-structure.md`](workshop-blueprint/day-structure.md)
   - [`workshop-blueprint/control-surfaces.md`](workshop-blueprint/control-surfaces.md)
   - [`workshop-blueprint/edit-boundaries.md`](workshop-blueprint/edit-boundaries.md)
+- bilingual agenda scene source (`workshop-content/`):
+  - [`workshop-content/AGENTS.md`](workshop-content/AGENTS.md) — subtree map
+  - [`docs/workshop-content-language-architecture.md`](docs/workshop-content-language-architecture.md)
+  - [`docs/workshop-content-qa.md`](docs/workshop-content-qa.md)
 - participant skill, install flow, or portable bundle behavior:
+  - [`workshop-skill/AGENTS.md`](workshop-skill/AGENTS.md) — subtree map
+  - [`harness-cli/AGENTS.md`](harness-cli/AGENTS.md) — subtree map
   - [`workshop-skill/SKILL.md`](workshop-skill/SKILL.md)
   - [`docs/resource-packaging-model.md`](docs/resource-packaging-model.md)
   - [`docs/harness-cli-foundation.md`](docs/harness-cli-foundation.md)
