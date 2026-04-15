@@ -3,7 +3,7 @@ title: "feat: workshop content and infrastructure update (from brainstorm review
 type: plan
 date: 2026-04-12
 status: complete
-brainstorm: docs/plans/2026-04-12-brainstorm-workshop-agenda-content-review.md
+brainstorm: docs/brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md
 confidence: medium
 ---
 
@@ -675,7 +675,7 @@ Follow-up items worth tracking but outside this plan:
 
 **Inherited from / informed by:**
 
-- [Brainstorm: Workshop Agenda Content Review — 2026-04-12](./2026-04-12-brainstorm-workshop-agenda-content-review.md) (source of all content decisions)
+- [Brainstorm: Workshop Agenda Content Review — 2026-04-12](../brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md) (source of all content decisions)
 - [feat: workshop content localization and canonical English authoring — 2026-04-08](./2026-04-08-feat-workshop-content-localization-and-canonical-english-authoring-plan.md) (English canonical + Czech reviewed model)
 - [feat: rich facilitator agenda and presenter content — 2026-04-08](./2026-04-08-feat-rich-facilitator-agenda-and-presenter-content-plan.md) (block taxonomy, scene structure)
 - [feat: facilitator room screen and presenter flow — 2026-04-08](./2026-04-08-feat-facilitator-room-screen-and-presenter-flow-plan.md) (blueprint defaults + instance overrides model)

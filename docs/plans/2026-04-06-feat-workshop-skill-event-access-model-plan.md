@@ -3,7 +3,7 @@ title: "feat: workshop skill event access model"
 type: plan
 date: 2026-04-06
 status: complete
-brainstorm: docs/plans/2026-04-06-brainstorm-workshop-skill-event-access-model.md
+brainstorm: docs/brainstorms/2026-04-06-brainstorm-workshop-skill-event-access-model.md
 confidence: high
 ---
 
@@ -356,7 +356,7 @@ Exit criteria:
 
 ### Brainstorm
 
-- [`docs/plans/2026-04-06-brainstorm-workshop-skill-event-access-model.md`](2026-04-06-brainstorm-workshop-skill-event-access-model.md)
+- [`docs/brainstorms/2026-04-06-brainstorm-workshop-skill-event-access-model.md`](../brainstorms/2026-04-06-brainstorm-workshop-skill-event-access-model.md)
 
 ### Related repo docs
 

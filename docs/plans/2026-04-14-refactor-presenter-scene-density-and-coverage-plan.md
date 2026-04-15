@@ -3,7 +3,7 @@ title: "refactor: presenter scene density and coverage refinement"
 type: plan
 date: 2026-04-14
 status: in_progress
-brainstorm: ../plans/2026-04-12-brainstorm-workshop-agenda-content-review.md
+brainstorm: ../brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md
 confidence: medium
 ---
 
@@ -34,7 +34,7 @@ It builds on:
 
 - [`docs/brainstorms/2026-04-10-expert-panel-scene-updates-brainstorm.md`](../brainstorms/2026-04-10-expert-panel-scene-updates-brainstorm.md)
 - [`docs/plans/2026-04-10-feat-expert-panel-scene-updates-plan.md`](2026-04-10-feat-expert-panel-scene-updates-plan.md)
-- [`docs/plans/2026-04-12-brainstorm-workshop-agenda-content-review.md`](2026-04-12-brainstorm-workshop-agenda-content-review.md)
+- [`docs/brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md`](../brainstorms/2026-04-12-brainstorm-workshop-agenda-content-review.md)
 - [`docs/presenter-rich-scene-authoring.md`](../presenter-rich-scene-authoring.md)
 
 The April 10 and April 12 work solved the agenda's narrative structure and missing teaching beats. This plan is a refinement pass from current state: the room story is mostly correct, but a subset of scenes still needs to be redistributed across the scene stack so the projection surface stops relying on scroll.
