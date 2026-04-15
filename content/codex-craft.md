@@ -56,7 +56,7 @@ The model has a large context window. You do not have a large budget for putting
 - **Long sessions decay.** After dozens of turns, constraints from the top of the session are in danger of being silently forgotten. Re-surface rules before they matter, not after the agent violates them.
 - **The expensive prompt isn't the one you wrote. It's the one the agent is holding right now.** Every turn, the agent is re-reading the entire session. If there's noise in turn 5, it's still there in turn 50.
 
-**Craft rule:** treat context budget the way a performance engineer treats latency — as a constraint you measure and optimize, not a free resource you assume. The harness is partly a budget discipline.
+**Craft rule:** treat context budget the way a performance engineer treats latency — as a constraint you measure and optimize, not a free resource you assume. The harness is partly a budget discipline. For concrete per-agent limits (the Codex 32 KiB `project_doc_max_bytes` cap, Anthropic's 5-minute prompt-cache TTL, and how to measure context use from session transcripts), see [`../docs/harness-economics.md`](../docs/harness-economics.md).
 
 ---
 
