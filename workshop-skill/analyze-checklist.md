@@ -2,7 +2,7 @@
 
 When an agent runs `/workshop analyze`, it walks the repo and emits a machine-readable PASS/FAIL report plus narrative notes. The PASS/FAIL block is primary; the narrative is commentary.
 
-The checks themselves are defined in [`../docs/agents-md-standard.md`](../docs/agents-md-standard.md#scoring-appendix). This file tells the agent how to walk the repo and what to surface.
+The checks themselves are defined in `docs/agents-md-standard.md` under the "Scoring Appendix" section of the repo this analyze runs against. This file tells the agent how to walk the repo and what to surface.
 
 ## What to check
 
@@ -21,7 +21,7 @@ The checks themselves are defined in [`../docs/agents-md-standard.md`](../docs/a
 
 ## Pre-rotation handoff gate
 
-Before Phase 9 rotation, each team's repo must meet the three minimums defined in [`../workshop-blueprint/day-structure.md`](../workshop-blueprint/day-structure.md) `pre-rotation handoff gate` section. Analyze surfaces these as a dedicated block in the output, clearly labeled **"Pre-rotation gate"**:
+Before Phase 9 rotation, each team's repo must meet the three minimums defined in `workshop-blueprint/day-structure.md` under the `pre-rotation handoff gate` section. Analyze surfaces these as a dedicated block in the output, clearly labeled **"Pre-rotation gate"**:
 
 - **`agents_md_readable_with_goal_and_commands_and_constraint`** — AGENTS.md contains a stated goal, build and test commands, and at least one explicit constraint.
 - **`one_executable_verification_step_passing`** — there is at least one executable verification step (test, tracer, or equivalent) that currently passes.
@@ -33,7 +33,7 @@ Analyze is advisory. The facilitator reads the block and owns the call — the g
 
 Emit the report in three layers:
 
-1. **Machine-readable PASS/FAIL block.** One line per check in the format `<check_name>: PASS` or `<check_name>: FAIL — <one-line reason>`. Ordered by: pre-rotation gate checks first (since they are the rotation-critical items), then AGENTS.md checks, then plans directory checks. See [`../docs/agents-md-standard.md#scoring-appendix`](../docs/agents-md-standard.md#scoring-appendix) for all check names.
+1. **Machine-readable PASS/FAIL block.** One line per check in the format `<check_name>: PASS` or `<check_name>: FAIL — <one-line reason>`. Ordered by: pre-rotation gate checks first (since they are the rotation-critical items), then AGENTS.md checks, then plans directory checks. See the Scoring Appendix in `docs/agents-md-standard.md` for all check names.
 
 2. **Cluster notes.** If more than half of the FAILs point at the same check across multiple files, call it out as a cluster in one paragraph rather than listing every instance.
 

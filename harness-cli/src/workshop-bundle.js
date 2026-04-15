@@ -28,6 +28,13 @@ const FILE_COPIES = [
   ["docs/locales/en/learner-resource-kit.md", "docs/locales/en/learner-resource-kit.md"],
   ["docs/learner-reference-gallery.md", "docs/learner-reference-gallery.md"],
   ["docs/locales/en/learner-reference-gallery.md", "docs/locales/en/learner-reference-gallery.md"],
+  // Doctrine docs that the bundled workshop-skill references for
+  // analyze scoring, plan lifecycle, and context-budget economics.
+  // Without these in the bundle, workshop-skill/analyze-checklist.md
+  // and content/codex-craft.md would dangle on the participant side.
+  ["docs/agents-md-standard.md", "docs/agents-md-standard.md"],
+  ["docs/plan-lifecycle-standard.md", "docs/plan-lifecycle-standard.md"],
+  ["docs/harness-economics.md", "docs/harness-economics.md"],
   ["materials/participant-resource-kit.md", "materials/participant-resource-kit.md"],
   ["materials/locales/cs/participant-resource-kit.md", "materials/locales/cs/participant-resource-kit.md"],
   ["materials/coaching-codex.md", "materials/coaching-codex.md"],
@@ -45,6 +52,11 @@ const EXCLUDED_BUNDLE_PATHS = new Set([
   "content/czech-reject-list.md",
   "content/czech-editorial-review-checklist.md",
   "workshop-blueprint/edit-boundaries.md",
+  // Maintainer-facing subtree AGENTS.md — routes inside the repo via
+  // ../docs/ links that don't resolve inside the participant bundle.
+  // The bundle ships workshop-skill/ content for participants; this
+  // file is orientation for agents working in the source repo.
+  "workshop-skill/AGENTS.md",
 ]);
 
 function isExcludedBundlePath(bundleRelativePath) {

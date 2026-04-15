@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "harness-lab-workshop",
   "bundleVersion": "0.7.2",
-  "contentHash": "238026b6413dd616aa1792ed7cb8d22a3c7d12fb0fb5b37ca971cf8c4bb76362",
+  "contentHash": "3f3ef47a9fc9987ffcadfe35a26ccca55a6b19d05d872177b6d78b72b7f22f8e",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -26,7 +26,7 @@
     },
     {
       "path": "content/codex-craft.md",
-      "sha256": "2f41f766b9a3e181fe4c773f11e3eea7e9aa78fb35d457ee443d30aea5172dff"
+      "sha256": "528f87389902a0beb20267a5347b04234050ee46dc6a93f14e6d4c9be8e38c79"
     },
     {
       "path": "content/facilitation/.gitkeep",
@@ -113,8 +113,16 @@
       "sha256": "d5f4b28bf79ac117ed5ad82cedfc849af6d84629e9b765a865686d04dcae2f46"
     },
     {
+      "path": "docs/agents-md-standard.md",
+      "sha256": "631b9b2dd428545f1b2b514997210bf50caab83295e5724cd70ece05f525483e"
+    },
+    {
       "path": "docs/harness-cli-foundation.md",
       "sha256": "10311d3caf8cec304d5d1694eac66623f06c100990d6f5c4d1dd1f4ba8a24bd8"
+    },
+    {
+      "path": "docs/harness-economics.md",
+      "sha256": "a8c39c0be639e578c5db7807a3d53b59666ccdf96cd8ce10f224bd4457392623"
     },
     {
       "path": "docs/learner-reference-gallery.md",
@@ -131,6 +139,10 @@
     {
       "path": "docs/locales/en/learner-resource-kit.md",
       "sha256": "55cc1d2acfc0784e8869c84fae4aba5c40bb3e66a85112f597150da1cf0c95a4"
+    },
+    {
+      "path": "docs/plan-lifecycle-standard.md",
+      "sha256": "cd258f73d3fb3d80faa5012acde956f3bcd86cc687297fec663508dd0440c7c5"
     },
     {
       "path": "docs/workshop-event-context-contract.md",
@@ -166,7 +178,7 @@
     },
     {
       "path": "workshop-blueprint/day-structure.md",
-      "sha256": "5327b301f9d48efb2455d7377859bd25f87bcbaf56ce5542e9638320217ab933"
+      "sha256": "ddbdfbf28a42df12c4ed674e3d52f674ddf086357b75029d4fda58b0656068c9"
     },
     {
       "path": "workshop-blueprint/operator-guide.md",
@@ -186,7 +198,7 @@
     },
     {
       "path": "workshop-skill/analyze-checklist.md",
-      "sha256": "fcc64de1a3485d749a09ba6daa8640e2b0f7b418489bb67933eb40e6c7d00dd7"
+      "sha256": "0aa311717e44323babb3607b29f165c0dbe57bac97fa13a410052bc6d443d9be"
     },
     {
       "path": "workshop-skill/closing-skill.md",
