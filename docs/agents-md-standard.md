@@ -116,6 +116,54 @@ When reviewing `AGENTS.md`, check:
 - Does it help a new human or agent find the next safe move?
 - Is any critical rule still living only in prompts or chat history?
 
+## Scoring Appendix
+
+`workshop analyze` produces a machine-readable PASS/FAIL report using the checks below. Binary only — a check either passes or it doesn't, and notes capture the nuance. No score, no grade, no percentage. The Review Checklist above is the human-facing narrative version of the same material; this appendix is what the tool emits.
+
+### AGENTS.md checks
+
+Each check maps one of the questions from [`../workshop-skill/analyze-checklist.md`](../workshop-skill/analyze-checklist.md) to a concrete PASS/FAIL:
+
+- **`agents_md_exists`** — a file named `AGENTS.md` exists at the repo root.
+- **`map_not_dump`** — the root file reads as orientation and routing, not as a manual. Heuristic: under ~180 lines; contains routing to deeper docs rather than restating them; no ADR copy, no volatile workshop state, no stale checklist graveyards.
+- **`read_first_present`** — there is an explicit "Read First" section (or equivalent) that tells an agent what to read before editing.
+- **`task_routing_present`** — task types are routed to the right deeper docs. Must name at least three distinct task areas with at least one linked reference each.
+- **`verification_boundary_stated`** — the file names what counts as the trust boundary (tests, Playwright, content verification, copy-editor Layer 1, etc.).
+- **`done_criteria_explicit`** — the file states what "done" means in operational terms, not vibes.
+- **`next_safe_move_obvious`** — an agent stopping mid-task has an obvious way to leave the next safe move visible (via plans, session-state prose, or the done criteria).
+- **`repo_map_matches_reality`** — if a repo map exists, it lists every directory that's actually load-bearing for the repo. Missing `workshop-content/` or similar is FAIL.
+- **`links_repo_relative`** — markdown links use repo-relative paths so they work on GitHub and in local clones. Absolute URLs or broken `@file` references are FAIL.
+- **`no_chat_only_rules`** — no critical rule lives only in chat or prompt memory. Heuristic: if a session keeps correcting the same thing and it isn't written in the repo, FAIL.
+- **`public_private_boundaries_current`** — public/private trust boundaries are described and current. Stale boundary docs are FAIL.
+- **`maintenance_triggers_named`** — the file names the events that should trigger an update (entry points change, trust boundaries move, repeated mistakes, etc.).
+
+Each check emits one of:
+
+- `PASS`
+- `FAIL — <one-line reason>`
+
+Output format is `<check_name>: <verdict>`. Multiple FAIL notes cluster in the report body, not in the header.
+
+### Plans directory checks
+
+These extend the appendix and are applied to the repo being analyzed, not to `AGENTS.md` itself:
+
+- **`no_complete_plans_in_plans_root`** — no file under `docs/plans/*.md` (excluding `archive/`) has `status: complete` or `status: superseded`.
+- **`no_non_plan_types_in_plans_root`** — no file under `docs/plans/*.md` has a `type:` frontmatter field other than `plan` or `research`.
+- **`plan_status_field_canonical`** — every `status:` value under `docs/plans/**/*.md` is in the canonical list (`approved | in_progress | complete | superseded | captured`). No `completed` typo.
+
+See [`plan-lifecycle-standard.md`](plan-lifecycle-standard.md) for the full lifecycle rules that these checks enforce.
+
+### Known ways to game this (don't)
+
+- **Keeping `AGENTS.md` short by hiding detail in a "linked" doc that doesn't actually exist.** Routing to a broken link is worse than inlining the content. `map_not_dump` PASS + `links_repo_relative` FAIL is a red flag pattern.
+- **Claiming `verification_boundary_stated` PASS because the file mentions the word "test".** The check is looking for a named boundary (Playwright for UI, verify:content for agenda source, etc.), not the string "test".
+- **Splitting one overgrown `AGENTS.md` into four overgrown subtree AGENTS.md files.** The shape rule (five sections: Mission, Read First, Task Routing, Verification, Done) applies to nested files too. A 300-line subtree map is a manual, not a map.
+- **Marking a plan `in_progress` to dodge the archive check.** The plans-directory checks count status values; they don't care about intent. If a plan is actually complete, archive it.
+- **Treating FAILs as noise and reviewing them in bulk at the end.** The analyze output is designed to surface problems as they appear, not as a retrospective. FAILs that cluster on one check are almost always a real pattern the repo needs to fix, not a noisy test.
+
+Cluster detection: if more than half of the FAILs in a single analyze run point at the same check, the report body should call it out as a cluster rather than listing each instance individually.
+
 ## Canonical Plan Status Values
 
 Every plan in `docs/plans/` (and `docs/plans/archive/`) must carry a `status:` frontmatter field with exactly one of these values:
