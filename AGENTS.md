@@ -63,6 +63,7 @@ If you touch these areas, read these files first:
 ├── README.md              # Public repo orientation
 ├── dashboard/             # Next.js App Router workshop application
 ├── workshop-blueprint/    # Canonical public definition of the workshop method
+├── workshop-content/      # Bilingual source of truth for agenda scenes (see docs/workshop-content-language-architecture.md)
 ├── workshop-skill/        # Authored participant-facing skill and AGENTS starter
 ├── harness-cli/           # CLI for participant bundle install and facilitator ops
 ├── content/               # Participant-facing briefs, cards, talks, facilitation

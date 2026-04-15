@@ -4,6 +4,15 @@
 **Scope:** Expert audit of how Harness Lab teaches harness engineering through skills, CLI, and workshop structure
 **Requested focus:** How participants learn to work with coding agents; how the skill system and CLI support that learning
 
+## Status Update (2026-04-14)
+
+This audit is preserved as-authored. Two specific claims below have been partially resolved since the review and are noted here so the next reader is not misled:
+
+- **Recommendation #1 ("participant command surface is too large and must be structurally separated from the facilitator surface", lines 36-46).** The structural split of `workshop-skill/SKILL.md` into `SKILL.md` (participant) and `SKILL-facilitator.md` has landed. `SKILL.md` is now 263 lines. However, the installer fix that line 46 called out as an accompanying file target (`harness-cli/src/run-cli.js` and implicitly `harness-cli/src/skill-install.js`) was not part of that initial split — `harness skill install` continued to auto-install the facilitator skill on every participant path until 2026-04-14.
+- **Resolution.** The installer gap is closed by `docs/plans/2026-04-14-chore-harness-lab-doctrine-enforcement-pass-plan.md` (workstream A). As of that plan's P0 phase, `harness skill install` installs the participant skill only by default; `harness skill install --facilitator` is the opt-in path for facilitator machines. Regression coverage lives in `harness-cli/test/run-cli.test.js`.
+
+Other recommendations (challenge card scaffolding, skill docs canonicalization, etc.) may or may not be current — verify against the repo before acting on any specific claim older than this note.
+
 ## Panel Composition
 
 | Framework | Grounding | Focus |
