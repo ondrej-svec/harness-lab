@@ -37,17 +37,30 @@ export async function POST(request: Request) {
   }
 
   const contentType = request.headers.get("content-type") ?? "";
-  const eventCode =
-    contentType.includes("application/json")
-      ? String(((await request.json()) as { eventCode?: string }).eventCode ?? "")
-      : String((await request.formData()).get("eventCode") ?? "");
+  let eventCode = "";
+  let displayName: string | undefined;
+  if (contentType.includes("application/json")) {
+    const body = (await request.json()) as { eventCode?: string; displayName?: string };
+    eventCode = String(body.eventCode ?? "");
+    if (typeof body.displayName === "string" && body.displayName.trim().length > 0) {
+      displayName = body.displayName;
+    }
+  } else {
+    const form = await request.formData();
+    eventCode = String(form.get("eventCode") ?? "");
+    const formName = form.get("displayName");
+    if (typeof formName === "string" && formName.trim().length > 0) {
+      displayName = formName;
+    }
+  }
 
-  const result = await redeemEventCode(eventCode);
+  const result = await redeemEventCode(eventCode, displayName);
   await recordRedeemAttempt(request, result.ok ? "success" : "failure");
 
   if (!result.ok) {
+    const status = result.reason === "invalid_display_name" ? 400 : 401;
     if (contentType.includes("application/json")) {
-      return NextResponse.json({ ok: false, error: result.reason }, { status: 401 });
+      return NextResponse.json({ ok: false, error: result.reason }, { status });
     }
 
     const url = new URL("/", request.url);
@@ -60,6 +73,7 @@ export async function POST(request: Request) {
         ok: true,
         instanceId: result.session.instanceId,
         expiresAt: result.session.expiresAt,
+        participantId: result.session.participantId,
       })
     : NextResponse.redirect(new URL("/", request.url), { status: 303 });
 

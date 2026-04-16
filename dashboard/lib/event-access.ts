@@ -5,8 +5,9 @@ import type { Challenge, ProjectBrief, SetupPath, SprintUpdate, Team, WorkshopSt
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getEventAccessRepository } from "./event-access-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
+import { getParticipantRepository } from "./participant-repository";
 import { getEventAccessPreview, getParticipantEventAccessRepository, hashSecret } from "./participant-event-access-repository";
-import type { ParticipantSession, ParticipantSessionRecord } from "./runtime-contracts";
+import type { ParticipantRecord, ParticipantSession, ParticipantSessionRecord } from "./runtime-contracts";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { getWorkshopState } from "./workshop-store";
 
@@ -62,7 +63,51 @@ function safeCompare(left: string, right: string) {
   return timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-export async function redeemEventCode(submittedCode: string) {
+const maxDisplayNameLength = 80;
+
+/**
+ * Validate a submitted display name. Returns the trimmed value on success,
+ * or a reason string on failure. Used by the redeem and identify paths.
+ */
+export function validateDisplayName(raw: unknown): { ok: true; value: string } | { ok: false; reason: "missing" | "too_long" } {
+  if (typeof raw !== "string") return { ok: false, reason: "missing" };
+  const trimmed = raw.trim();
+  if (trimmed.length === 0) return { ok: false, reason: "missing" };
+  if (trimmed.length > maxDisplayNameLength) return { ok: false, reason: "too_long" };
+  return { ok: true, value: trimmed };
+}
+
+/**
+ * Find-or-create a participant for the given instance + displayName. If
+ * a matching active row exists (case-insensitive), reuse it — this makes
+ * the self-identify flow idempotent across lost cookies. Returns the
+ * participant record; does NOT touch any session.
+ */
+export async function findOrCreateParticipant(
+  instanceId: string,
+  displayName: string,
+): Promise<ParticipantRecord> {
+  const repository = getParticipantRepository();
+  const existing = await repository.findParticipantByDisplayName(instanceId, displayName);
+  if (existing) return existing;
+
+  const now = new Date().toISOString();
+  const participant: ParticipantRecord = {
+    id: `p-${randomUUID()}`,
+    instanceId,
+    displayName,
+    email: null,
+    emailOptIn: false,
+    tag: null,
+    createdAt: now,
+    updatedAt: now,
+    archivedAt: null,
+  };
+  await repository.upsertParticipant(instanceId, participant);
+  return participant;
+}
+
+export async function redeemEventCode(submittedCode: string, displayName?: string) {
   const normalized = submittedCode.trim();
   const codeHash = hashSecret(normalized);
   const auditLogRepository = getAuditLogRepository();
@@ -91,6 +136,27 @@ export async function redeemEventCode(submittedCode: string) {
   }
 
   const instanceId = matchedAccess.instanceId;
+
+  // Optional display name → find-or-create participant + bind the session.
+  let participantId: string | null = null;
+  if (displayName !== undefined) {
+    const validated = validateDisplayName(displayName);
+    if (!validated.ok) {
+      await auditLogRepository.append({
+        id: `audit-${randomUUID()}`,
+        instanceId,
+        actorKind: "participant",
+        action: "participant_event_access_redeem",
+        result: "failure",
+        createdAt: new Date().toISOString(),
+        metadata: { reason: `invalid_display_name_${validated.reason}` },
+      });
+      return { ok: false as const, reason: "invalid_display_name" as const };
+    }
+    const participant = await findOrCreateParticipant(instanceId, validated.value);
+    participantId = participant.id;
+  }
+
   const repository = getEventAccessRepository();
   await repository.deleteExpiredSessions(instanceId, new Date().toISOString());
   const token = randomUUID();
@@ -102,7 +168,7 @@ export async function redeemEventCode(submittedCode: string) {
     lastValidatedAt: new Date().toISOString(),
     expiresAt: getParticipantSessionExpiryDate().toISOString(),
     absoluteExpiresAt: getParticipantSessionAbsoluteExpiryDate().toISOString(),
-    participantId: null,
+    participantId,
   };
 
   await repository.upsertSession(instanceId, nextSession);
@@ -113,6 +179,7 @@ export async function redeemEventCode(submittedCode: string) {
     action: "participant_event_access_redeem",
     result: "success",
     createdAt: new Date().toISOString(),
+    metadata: participantId ? { participantId, named: true } : undefined,
   });
 
   return {
@@ -123,8 +190,67 @@ export async function redeemEventCode(submittedCode: string) {
       expiresAt: nextSession.expiresAt,
       lastValidatedAt: nextSession.lastValidatedAt,
       absoluteExpiresAt: nextSession.absoluteExpiresAt,
+      participantId,
     },
   };
+}
+
+/**
+ * Bind a participant to an already-authenticated session. Used by the
+ * `/api/event-access/identify` endpoint for participants who redeemed
+ * without a name and are self-identifying after the fact. Idempotent for
+ * the same (session, displayName) pair; rejects rebinding to a different
+ * identity.
+ */
+export async function bindParticipantToSession(
+  session: ParticipantSession,
+  tokenHash: string,
+  displayName: string,
+): Promise<{ ok: true; participantId: string } | { ok: false; reason: "already_bound" | "invalid_display_name" }> {
+  const validated = validateDisplayName(displayName);
+  if (!validated.ok) return { ok: false, reason: "invalid_display_name" };
+
+  if (session.participantId) {
+    // Re-identifying with the same name on an existing binding is idempotent.
+    const existing = await getParticipantRepository().findParticipant(
+      session.instanceId,
+      session.participantId,
+    );
+    if (existing && existing.displayName.toLocaleLowerCase() === validated.value.toLocaleLowerCase()) {
+      return { ok: true, participantId: session.participantId };
+    }
+    return { ok: false, reason: "already_bound" };
+  }
+
+  const participant = await findOrCreateParticipant(session.instanceId, validated.value);
+
+  const repository = getEventAccessRepository();
+  const fullSession = await repository.findSessionByTokenHash(tokenHash);
+  if (!fullSession) {
+    // Race: session vanished between validation and update. Caller should
+    // surface this as no_session, but we can't easily re-read here without
+    // the raw session record — let the caller decide by returning the ID
+    // we minted; they can verify.
+    return { ok: true, participantId: participant.id };
+  }
+
+  await repository.upsertSession(session.instanceId, {
+    ...fullSession,
+    participantId: participant.id,
+    lastValidatedAt: new Date().toISOString(),
+  });
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId: session.instanceId,
+    actorKind: "participant",
+    action: "participant_self_identify",
+    result: "success",
+    createdAt: new Date().toISOString(),
+    metadata: { participantId: participant.id },
+  });
+
+  return { ok: true, participantId: participant.id };
 }
 
 export async function getParticipantSession(token: string | undefined | null): Promise<ParticipantSession | null> {
@@ -158,7 +284,21 @@ export async function getParticipantSession(token: string | undefined | null): P
     expiresAt: refreshedSession.expiresAt,
     lastValidatedAt: refreshedSession.lastValidatedAt,
     absoluteExpiresAt: refreshedSession.absoluteExpiresAt,
+    participantId: refreshedSession.participantId ?? null,
   };
+}
+
+/**
+ * Expose the session's token hash alongside the validated session so the
+ * identify endpoint can update the same row without re-parsing the cookie.
+ */
+export async function getParticipantSessionWithTokenHash(
+  token: string | undefined | null,
+): Promise<{ session: ParticipantSession; tokenHash: string } | null> {
+  if (!token) return null;
+  const session = await getParticipantSession(token);
+  if (!session) return null;
+  return { session, tokenHash: hashSecret(token) };
 }
 
 export async function getParticipantSessionFromCookieStore() {
