@@ -12,6 +12,7 @@ import {
 } from "@/lib/public-page-view-model";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
+import { ParticipantIdentifyPrompt } from "../components/participant-identify-prompt";
 import { ParticipantRoomSurface } from "../components/participant-room-surface";
 import { SiteHeader } from "../components/site-header";
 import { ParticipantLiveRefresh } from "../components/participant-live-refresh";
@@ -47,6 +48,20 @@ export default async function ParticipantPage({
 
   if (!participantSession) {
     redirect(withLang("/", lang));
+  }
+
+  // Session exists but no bound Participant — show the one-field self-
+  // identify prompt and nothing else. See docs/previews/2026-04-16-
+  // participant-identify-flow.md for the UX contract.
+  if (!participantSession.participantId) {
+    return (
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
+        <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
+          <SiteHeader isParticipant lang={lang} copy={copy} />
+          <ParticipantIdentifyPrompt lang={lang} />
+        </div>
+      </main>
+    );
   }
 
   const state = await getWorkshopState(participantSession.instanceId);

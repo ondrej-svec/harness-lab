@@ -63,6 +63,7 @@ describe("ParticipantPage", () => {
       expiresAt: "2026-04-06T16:30:00.000Z",
       lastValidatedAt: "2026-04-06T10:30:00.000Z",
       absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
+      participantId: "p1",
     });
 
     const view = await ParticipantPage({
@@ -79,6 +80,27 @@ describe("ParticipantPage", () => {
     expect(html).toMatch(/view-transition-name:\s*room-access/);
   });
 
+  it("renders the self-identify prompt when the session has no participantId", async () => {
+    const { default: ParticipantPage } = await import("./page");
+    getParticipantSessionFromCookieStore.mockResolvedValue({
+      instanceId: "sample-studio-a",
+      expiresAt: "2026-04-06T16:30:00.000Z",
+      lastValidatedAt: "2026-04-06T10:30:00.000Z",
+      absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
+      participantId: null,
+    });
+
+    const view = await ParticipantPage({
+      searchParams: Promise.resolve({ lang: "en" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("What&#x27;s your name?");
+    expect(html).toContain("Continue");
+    expect(getWorkshopState).not.toHaveBeenCalled();
+    expect(getParticipantTeamLookup).not.toHaveBeenCalled();
+  });
+
   it("renders English participant guidance for an English-content workshop instance", async () => {
     const { default: ParticipantPage } = await import("./page");
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
@@ -89,6 +111,7 @@ describe("ParticipantPage", () => {
       expiresAt: "2026-04-06T16:30:00.000Z",
       lastValidatedAt: "2026-04-06T10:30:00.000Z",
       absoluteExpiresAt: "2026-04-06T20:30:00.000Z",
+      participantId: "p1",
     });
 
     const view = await ParticipantPage({
