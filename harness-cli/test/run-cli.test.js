@@ -1120,13 +1120,13 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   });
 
   assert.equal(exitCode, 0);
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "setup.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "SKILL.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "setup.md"));
   // workshop-skill/ no longer maintains a locales/en/ parallel tree — the
   // root files are English-canonical per
   // docs/adr/2026-04-12-skill-docs-english-canonical.md.
   await assert.rejects(
-    fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "locales")),
+    fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "locales")),
     /ENOENT/,
     "workshop-skill/locales/ must not exist after the D-FU1 migration",
   );
@@ -1134,25 +1134,25 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   // translations live under locales/cs/. See
   // docs/plans/archive/2026-04-13-refactor-language-flip-and-czech-review-plan.md
   // and docs/workshop-content-language-architecture.md.
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "devtoolbox-cli.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "locales", "cs", "devtoolbox-cli.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "deck.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "challenge-cards", "locales", "cs", "deck.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-reference-gallery.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "locales", "cs", "participant-resource-kit.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "harness-cli-foundation.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "learner-reference-gallery.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "materials", "participant-resource-kit.md"));
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "bundle-manifest.json"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "content", "project-briefs", "devtoolbox-cli.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "content", "project-briefs", "locales", "cs", "devtoolbox-cli.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "content", "challenge-cards", "deck.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "content", "challenge-cards", "locales", "cs", "deck.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "docs", "locales", "en", "learner-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "docs", "locales", "en", "learner-reference-gallery.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "materials", "locales", "cs", "participant-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "docs", "harness-cli-foundation.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "docs", "learner-reference-gallery.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "materials", "participant-resource-kit.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "bundle-manifest.json"));
   assert.match(io.getStdout(), /Workshop Skill/);
   assert.match(io.getStdout(), /Codex\/pi: .*\.agents[\\/]+skills/);
   assert.match(io.getStdout(), /Target:/);
-  await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "SKILL.md")));
+  await assert.rejects(fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "SKILL.md")));
   assert.match(io.getStdout(), /\$workshop commands/);
   assert.match(io.getStdout(), /\/skill:workshop/);
   assert.match(io.getStdout(), /\$workshop resources/);
-  const installedSkill = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"), "utf8");
+  const installedSkill = await fs.readFile(path.join(repoRoot, ".agents", "skills", "workshop", "SKILL.md"), "utf8");
   // Whitespace in these assertions is intentionally tolerant: the copy-editor
   // baseline Czech typography pass has historically inserted non-breaking
   // spaces (U+00A0) between single-letter words and the next word. The
@@ -1162,7 +1162,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(installedSkill, /resolve to a[\s\u00a0]+reviewed fallback locale/);
   assert.match(installedSkill, /English is the default bundled fallback locale/);
   assert.doesNotMatch(installedSkill, /Use Czech for explanations\./);
-  const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md"), "utf8");
+  const installedReference = await fs.readFile(path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "reference.md"), "utf8");
   // workshop-skill/reference.md is now English-canonical per
   // docs/adr/2026-04-12-skill-docs-english-canonical.md. The agent responds
   // in the participant's language by translating on the fly, so the reference
@@ -1170,7 +1170,7 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   assert.match(installedReference, /The workshop skill is the guaranteed default/);
   assert.match(installedReference, /Verification ladder/);
   const installedFacilitator = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "facilitator.md"),
+    path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "facilitator.md"),
     "utf8",
   );
   assert.match(installedFacilitator, /Commands for facilitators who manage workshop instances through an AI agent\./);
@@ -1179,12 +1179,12 @@ test("skill install creates a portable .agents skill bundle in the current repo"
   // canonical workshop-skill/reference.md, checked above.
   assert.match(installedReference, /4 working defaults for today/);
   const installedEnglishBrief = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "content", "project-briefs", "devtoolbox-cli.md"),
+    path.join(repoRoot, ".agents", "skills", "workshop", "content", "project-briefs", "devtoolbox-cli.md"),
     "utf8",
   );
   assert.match(installedEnglishBrief, /Every team accumulates small one-off scripts/);
   const installedEnglishLearnerKit = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "docs", "locales", "en", "learner-resource-kit.md"),
+    path.join(repoRoot, ".agents", "skills", "workshop", "docs", "locales", "en", "learner-resource-kit.md"),
     "utf8",
   );
   assert.match(installedEnglishLearnerKit, /This page defines the participant-facing resource kit/);
@@ -1214,7 +1214,7 @@ test("skill install reports an existing current install at the target path", asy
   assert.equal(exitCode, 0);
   assert.match(io.getStdout(), /already current at the target path/);
   assert.match(io.getStdout(), /Codex\/pi: .*\.agents[\\/]+skills/);
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "SKILL.md"));
 });
 
 test("skill install refreshes a stale install without requiring force", async () => {
@@ -1230,7 +1230,7 @@ test("skill install refreshes a stale install without requiring force", async ()
 
   assert.equal(firstExitCode, 0);
 
-  const referencePath = path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-skill", "reference.md");
+  const referencePath = path.join(repoRoot, ".agents", "skills", "workshop", "workshop-skill", "reference.md");
   await fs.writeFile(referencePath, "stale reference\n");
 
   const io = createMemoryIo(env);
@@ -1272,7 +1272,7 @@ test("installed workshop blueprint README stays portable and avoids GitHub main 
   assert.equal(exitCode, 0);
 
   const installedBlueprintReadme = await fs.readFile(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "workshop-blueprint", "README.md"),
+    path.join(repoRoot, ".agents", "skills", "workshop", "workshop-blueprint", "README.md"),
     "utf8",
   );
 
@@ -1323,7 +1323,7 @@ test("skill install does not install the facilitator skill by default", async ()
     repoRoot,
     ".agents",
     "skills",
-    "harness-lab-workshop-facilitator",
+    "workshop-facilitator",
     "SKILL.md",
   );
   const claudeFacilitatorPath = path.join(
@@ -1362,11 +1362,11 @@ test("skill install --facilitator installs both participant and facilitator skil
   assert.equal(exitCode, 0);
 
   // Participant skill is still installed
-  await fs.access(path.join(repoRoot, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  await fs.access(path.join(repoRoot, ".agents", "skills", "workshop", "SKILL.md"));
 
   // Facilitator skill is installed in both surfaces
   await fs.access(
-    path.join(repoRoot, ".agents", "skills", "harness-lab-workshop-facilitator", "SKILL.md"),
+    path.join(repoRoot, ".agents", "skills", "workshop-facilitator", "SKILL.md"),
   );
   await fs.access(
     path.join(repoRoot, ".claude", "skills", "workshop-facilitator", "SKILL.md"),
@@ -1387,7 +1387,7 @@ test("skill install supports an explicit target repo path", async () => {
   });
 
   assert.equal(exitCode, 0);
-  await fs.access(path.join(targetRepo, ".agents", "skills", "harness-lab-workshop", "SKILL.md"));
+  await fs.access(path.join(targetRepo, ".agents", "skills", "workshop", "SKILL.md"));
   assert.match(io.getStdout(), new RegExp(`Target: ${targetRepo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`));
 });
 

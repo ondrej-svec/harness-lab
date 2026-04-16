@@ -291,7 +291,7 @@ async function installFacilitatorSkill(agentsInstallPath, targetRoot) {
 
   // Install as a separate Codex/pi skill
   try {
-    const agentsFacPath = path.join(targetRoot, ".agents", "skills", "harness-lab-workshop-facilitator");
+    const agentsFacPath = path.join(targetRoot, ".agents", "skills", "workshop-facilitator");
     await fs.mkdir(agentsFacPath, { recursive: true });
     await fs.copyFile(facilitatorSource, path.join(agentsFacPath, "SKILL.md"));
     // Copy workshop-skill support files for facilitator references

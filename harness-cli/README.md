@@ -99,12 +99,12 @@ Optional explicit target:
 harness skill install --target /path/to/team-repo
 ```
 
-This creates `.agents/skills/harness-lab-workshop` in the target repo. The install does not require a local clone of the Harness Lab source repo.
+This creates `.agents/skills/workshop` in the target repo. The install does not require a local clone of the Harness Lab source repo.
 Rerunning `harness skill install` refreshes the installed bundle when the packaged workshop content changed and reports clearly when the target is already current. Use `--force` only when you want a full reinstall.
 After install, the CLI prints the first recommended agent commands, starting with `Codex: $workshop commands` and `Claude Code: /skill:workshop`.
 Treat the installed `workshop` skill as the first participant entrypoint. It should route setup, reference, and workshop guidance through live `contentLang` when available or the best reviewed bundled locale otherwise, instead of assuming the base authored Czech docs are always the right first stop.
 
-Treat `.agents/skills/harness-lab-workshop` as generated workshop bundle content. The canonical authored source remains in this repository under `workshop-skill/`, `workshop-blueprint/`, selected `docs/`, and selected `materials/`.
+Treat `.agents/skills/workshop` as generated workshop bundle content. The canonical authored source remains in this repository under `workshop-skill/`, `workshop-blueprint/`, selected `docs/`, and selected `materials/`.
 
 ---
 

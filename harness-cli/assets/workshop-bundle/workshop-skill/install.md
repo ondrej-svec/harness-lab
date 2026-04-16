@@ -52,7 +52,7 @@ Recommended next steps:
 
 ## Note
 
-`harness skill install` creates a project bundle at `.agents/skills/harness-lab-workshop` so the skill is discoverable inside the repo without an extra distribution layer.
+`harness skill install` creates a project bundle at `.agents/skills/workshop` so the skill is discoverable inside the repo without an extra distribution layer.
 Treat that folder as a generated workshop bundle, not as the primary authoring source.
 
 Participant login is not required for the skill to exist. `workshop login` is a later step to unlock the live event context.

@@ -31,7 +31,7 @@ Rules:
 - `harness skill install` installs that portable bundle into the participant's current repo or an explicit target path
 - baseline participant commands must work without participant auth and without requiring the public repo clone
 - `workshop login` remains the boundary for live event-private context only
-- the repo-local `.agents/skills/harness-lab-workshop` copy is an optional generated development bundle, gitignored in this repo, and not an independent authored source of truth
+- the repo-local `.agents/skills/workshop` copy is an optional generated development bundle, gitignored in this repo, and not an independent authored source of truth
 
 ## Consequences
 

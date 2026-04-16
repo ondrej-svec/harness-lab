@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const WORKSHOP_SKILL_NAME = "harness-lab-workshop";
+export const WORKSHOP_SKILL_NAME = "workshop";
 export const WORKSHOP_BUNDLE_MANIFEST = "bundle-manifest.json";
 
 const __filename = fileURLToPath(import.meta.url);

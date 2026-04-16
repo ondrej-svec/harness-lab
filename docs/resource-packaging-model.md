@@ -153,7 +153,7 @@ For participant-facing workshop guidance:
 - generated bundle outputs must not become a second authored content system
 - portable bundle outputs should preserve the same locale contract as the dashboard and `workshop` skill rather than assuming Czech-only delivery
 - generated bundle outputs must stay portable: no author-machine absolute paths and no links to bundle-local files that are not actually shipped
-- the repo-local `.agents/skills/harness-lab-workshop` copy is also generated output and should be kept in sync with the authored source rather than edited independently
+- the repo-local `.agents/skills/workshop` copy is also generated output and should be kept in sync with the authored source rather than edited independently
 - live participant runtime context still belongs behind the dashboard/event-access APIs rather than inside the portable bundle
 
 ## Refresh Discipline
@@ -169,7 +169,7 @@ If a change lands in any of those sources, assume the portable participant bundl
 Required maintainer response:
 
 1. regenerate the bundle with `node harness-cli/scripts/sync-workshop-bundle.mjs`
-2. if you depend on the repo-local discovery copy, refresh `.agents/skills/harness-lab-workshop/` in the same slice
+2. if you depend on the repo-local discovery copy, refresh `.agents/skills/workshop/` in the same slice
 3. run `cd harness-cli && npm run verify:workshop-bundle`
 
 Instance follow-through:
