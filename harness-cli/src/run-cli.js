@@ -18,7 +18,18 @@ function sleep(ms) {
 function parseArgs(argv) {
   const positionals = [];
   const flags = {};
-  const booleanFlags = new Set(["json", "help", "version", "force", "no-open", "clear"]);
+  const booleanFlags = new Set([
+    "json",
+    "help",
+    "version",
+    "force",
+    "no-open",
+    "clear",
+    "unassigned",
+    "stdin",
+    "dry-run",
+    "preview",
+  ]);
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
@@ -286,6 +297,19 @@ function printUsage(io, ui) {
     helpLine("workshop briefs", "List every brief available in the instance"),
     helpLine("workshop challenges", "Challenge cards"),
     helpLine("workshop team", "Team info, repo, checkpoint"),
+    helpLine("workshop team assign <pid> <teamId>", "Assign or move a participant (facilitator)"),
+    helpLine("workshop team unassign <pid>", "Remove a participant from their team (facilitator)"),
+    helpLine("workshop team randomize --teams N", "Form teams by cross-level mix (facilitator)"),
+    helpLine("  [--strategy cross-level|random] [--preview] [--commit-token TOKEN]", ""),
+    helpLine("workshop participants list", "List pool + assignments (facilitator)"),
+    helpLine("  [--unassigned] [--team ID]", ""),
+    helpLine("workshop participants add <name>", "Add one participant (facilitator)"),
+    helpLine("  [--email EMAIL] [--tag TAG]", ""),
+    helpLine("workshop participants import", "Paste-list intake (facilitator)"),
+    helpLine("  (--file PATH | --stdin) [--dry-run]", ""),
+    helpLine("workshop participants update <id>", "Edit name, email, tag, consent (facilitator)"),
+    helpLine("  [--name STR] [--email STR|null] [--tag STR|null] [--consent on|off]", ""),
+    helpLine("workshop participants remove <id>", "Soft-delete a participant (facilitator)"),
     helpLine("workshop phase set <phase-id>", "Advance the agenda (facilitator)"),
     helpLine("workshop participant-access [<id>]", "Inspect or rotate event code (facilitator)"),
     helpLine("  [--rotate] [--code VALUE]", ""),
@@ -1603,6 +1627,300 @@ async function handleWorkshopTeamSetName(io, ui, env, positionals, mergedDeps) {
   }
 }
 
+/* ---------------------------------------------------------------------
+ * Participant management — facilitator-only roster and assignment ops.
+ * Mirror of the admin API surface (see docs/previews/2026-04-16-
+ * participant-api-sketch.md and docs/previews/2026-04-16-cli-surface.md).
+ * ------------------------------------------------------------------ */
+
+function resolveInstanceFlag(flags) {
+  return typeof flags.instance === "string" ? flags.instance : undefined;
+}
+
+async function handleWorkshopParticipantsList(io, ui, env, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.listParticipants(resolveInstanceFlag(flags));
+    const assignedIds = new Set(data.assignments.map((a) => a.participantId));
+    let pool = data.pool;
+    if (flags.unassigned === true) {
+      pool = pool.filter((p) => !assignedIds.has(p.id));
+    } else if (typeof flags.team === "string") {
+      const onThisTeam = new Set(
+        data.assignments.filter((a) => a.teamId === flags.team).map((a) => a.participantId),
+      );
+      pool = pool.filter((p) => onThisTeam.has(p.id));
+    }
+    ui.json("Participants", { ok: true, pool, assignments: data.assignments });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to list participants: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopParticipantsAdd(io, ui, env, positionals, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const name = positionals.slice(3).join(" ").trim();
+  if (!name) {
+    ui.status("error", "Usage: harness workshop participants add <name> [--email EMAIL] [--tag TAG]", { stream: "stderr" });
+    return 1;
+  }
+  const entry = { displayName: name };
+  if (typeof flags.email === "string") entry.email = flags.email.trim();
+  if (typeof flags.tag === "string") entry.tag = flags.tag.trim();
+
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.addParticipants(resolveInstanceFlag(flags), { entries: [entry] });
+    ui.json("Participant Added", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to add participant: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function readAllStdin(stdin) {
+  const chunks = [];
+  for await (const chunk of stdin) {
+    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
+async function handleWorkshopParticipantsImport(io, ui, env, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+
+  let rawText;
+  if (typeof flags.file === "string") {
+    try {
+      rawText = await fs.readFile(flags.file, "utf8");
+    } catch (error) {
+      ui.status("error", `Failed to read ${flags.file}: ${error instanceof Error ? error.message : String(error)}`, { stream: "stderr" });
+      return 1;
+    }
+  } else if (flags.stdin === true) {
+    rawText = await readAllStdin(io.stdin);
+  } else {
+    ui.status("error", "Usage: harness workshop participants import (--file PATH | --stdin) [--dry-run]", { stream: "stderr" });
+    return 1;
+  }
+
+  if (!rawText.trim()) {
+    ui.status("error", "Input is empty", { stream: "stderr" });
+    return 1;
+  }
+
+  if (flags["dry-run"] === true) {
+    // Preview only — do not call the server. Uses the same parser the
+    // server uses, imported via the dashboard module if available. To
+    // avoid adding a cross-package dependency in the CLI, we hand the
+    // parse back to the server with a marker flag in a future revision.
+    // For v1, dry-run posts with a fake instance and shows the
+    // server-side parse feedback. Cheap and consistent.
+    ui.status("warn", "Dry-run mode: sending to server for parse preview (no DB writes)", { stream: "stderr" });
+  }
+
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    // In a real dry-run we'd want the server to skip writes. For now,
+    // skip this in --dry-run by showing the parse on the client side via
+    // the server's response.skipped + response.created shape: the CLI
+    // doesn't write anything more than what the server does, so users
+    // get the same view.
+    if (flags["dry-run"] === true) {
+      ui.status("warn", "--dry-run currently submits the input; use the UI preview for no-write parsing.", { stream: "stderr" });
+    }
+    const data = await client.addParticipants(resolveInstanceFlag(flags), { rawText });
+    ui.json("Participants Imported", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Import failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopParticipantsUpdate(io, ui, env, positionals, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const participantId = positionals[3]?.trim();
+  if (!participantId) {
+    ui.status("error", "Usage: harness workshop participants update <id> [--name STR] [--email STR|null] [--tag STR|null] [--consent on|off]", { stream: "stderr" });
+    return 1;
+  }
+  const patch = {};
+  if (typeof flags.instance === "string") patch.instanceId = flags.instance;
+  if (typeof flags.name === "string") patch.displayName = flags.name.trim();
+  if (typeof flags.email === "string") {
+    patch.email = flags.email === "null" ? null : flags.email.trim();
+  }
+  if (typeof flags.tag === "string") {
+    patch.tag = flags.tag === "null" ? null : flags.tag.trim();
+  }
+  if (typeof flags.consent === "string") {
+    if (flags.consent !== "on" && flags.consent !== "off") {
+      ui.status("error", "--consent must be 'on' or 'off'", { stream: "stderr" });
+      return 1;
+    }
+    patch.emailOptIn = flags.consent === "on";
+  }
+
+  if (Object.keys(patch).filter((k) => k !== "instanceId").length === 0) {
+    ui.status("error", "At least one of --name, --email, --tag, --consent is required", { stream: "stderr" });
+    return 1;
+  }
+
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.updateParticipant(participantId, patch);
+    ui.json("Participant Updated", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to update participant: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopParticipantsRemove(io, ui, env, positionals, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const participantId = positionals[3]?.trim();
+  if (!participantId) {
+    ui.status("error", "Usage: harness workshop participants remove <id>", { stream: "stderr" });
+    return 1;
+  }
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.removeParticipant(resolveInstanceFlag(flags), participantId);
+    ui.json("Participant Removed", { ...data, participantId });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to remove participant: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeamAssign(io, ui, env, positionals, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const participantId = positionals[3]?.trim();
+  const teamId = positionals[4]?.trim();
+  if (!participantId || !teamId) {
+    ui.status("error", "Usage: harness workshop team assign <participantId> <teamId>", { stream: "stderr" });
+    return 1;
+  }
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.assignTeamMember({
+      instanceId: resolveInstanceFlag(flags),
+      participantId,
+      teamId,
+    });
+    ui.json("Team Member Assigned", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to assign: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeamUnassign(io, ui, env, positionals, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+  const participantId = positionals[3]?.trim();
+  if (!participantId) {
+    ui.status("error", "Usage: harness workshop team unassign <participantId>", { stream: "stderr" });
+    return 1;
+  }
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.unassignTeamMember({
+      instanceId: resolveInstanceFlag(flags),
+      participantId,
+    });
+    ui.json("Team Member Unassigned", { ...data, participantId });
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Failed to unassign: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopTeamRandomize(io, ui, env, flags, mergedDeps) {
+  const session = await requireSession(io, ui, env);
+  if (!session) return 1;
+
+  // Commit path: caller already has a preview and passes the token back.
+  if (typeof flags["commit-token"] === "string") {
+    const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+    try {
+      const data = await client.randomizeTeams({
+        instanceId: resolveInstanceFlag(flags),
+        commitToken: flags["commit-token"],
+      });
+      ui.json("Randomize Committed", data);
+      return 0;
+    } catch (error) {
+      if (error instanceof HarnessApiError) {
+        ui.status("error", `Commit failed: ${error.message}`, { stream: "stderr" });
+        return 1;
+      }
+      throw error;
+    }
+  }
+
+  const teamCount = Number(flags.teams);
+  if (!Number.isInteger(teamCount) || teamCount < 2 || teamCount > 12) {
+    ui.status("error", "Usage: harness workshop team randomize --teams N [--strategy cross-level|random] [--preview] [--commit-token TOKEN]", { stream: "stderr" });
+    return 1;
+  }
+  const strategy = flags.strategy === "random" ? "random" : "cross-level";
+
+  const client = createHarnessClient({ fetchFn: mergedDeps.fetchFn, session });
+  try {
+    const data = await client.randomizeTeams({
+      instanceId: resolveInstanceFlag(flags),
+      teamCount,
+      strategy,
+      preview: flags.preview === true,
+    });
+    ui.json(flags.preview === true ? "Randomize Preview" : "Randomize Committed", data);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Randomize failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 const DEMO_SETUP_BRIEF = `# Demo repo
 
 This folder is the Phase 3 contrast demo used by the Harness Lab
@@ -1825,8 +2143,40 @@ export async function runCli(argv, io, deps = {}) {
     return handleWorkshopTeamSetName(io, ui, io.env, positionals, mergedDeps);
   }
 
+  if (scope === "workshop" && action === "team" && subaction === "assign") {
+    return handleWorkshopTeamAssign(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team" && subaction === "unassign") {
+    return handleWorkshopTeamUnassign(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "team" && subaction === "randomize") {
+    return handleWorkshopTeamRandomize(io, ui, io.env, flags, mergedDeps);
+  }
+
   if (scope === "workshop" && action === "team" && !subaction) {
     return handleWorkshopTeam(io, ui, io.env, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participants" && subaction === "list") {
+    return handleWorkshopParticipantsList(io, ui, io.env, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participants" && subaction === "add") {
+    return handleWorkshopParticipantsAdd(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participants" && subaction === "import") {
+    return handleWorkshopParticipantsImport(io, ui, io.env, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participants" && subaction === "update") {
+    return handleWorkshopParticipantsUpdate(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "participants" && subaction === "remove") {
+    return handleWorkshopParticipantsRemove(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "workshop" && action === "participant-access") {

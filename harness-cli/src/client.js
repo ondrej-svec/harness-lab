@@ -198,5 +198,57 @@ export function createHarnessClient({ fetchFn, session }) {
         body: input,
       });
     },
+
+    // Participant management (facilitator only)
+    listParticipants(instanceId) {
+      const query = instanceId ? `?instanceId=${encodeURIComponent(instanceId)}` : "";
+      return request(`/api/admin/participants${query}`);
+    },
+    addParticipants(instanceId, payload) {
+      return request("/api/admin/participants", {
+        method: "POST",
+        body: { instanceId, ...payload },
+      });
+    },
+    updateParticipant(participantId, patch) {
+      return request(`/api/admin/participants/${encodeURIComponent(participantId)}`, {
+        method: "PATCH",
+        body: patch,
+      });
+    },
+    removeParticipant(instanceId, participantId) {
+      const query = instanceId ? `?instanceId=${encodeURIComponent(instanceId)}` : "";
+      return request(`/api/admin/participants/${encodeURIComponent(participantId)}${query}`, {
+        method: "DELETE",
+      });
+    },
+
+    // Team-membership (facilitator only)
+    assignTeamMember(input) {
+      return request("/api/admin/team-members", {
+        method: "PUT",
+        body: input,
+      });
+    },
+    unassignTeamMember(input) {
+      return request("/api/admin/team-members", {
+        method: "DELETE",
+        body: input,
+      });
+    },
+    randomizeTeams(input) {
+      return request("/api/admin/team-formation/randomize", {
+        method: "POST",
+        body: input,
+      });
+    },
+
+    // Participant self-identify
+    async identifyParticipant(displayName) {
+      return request("/api/event-access/identify", {
+        method: "POST",
+        body: { displayName },
+      });
+    },
   };
 }

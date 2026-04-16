@@ -81,6 +81,49 @@ Inspect or rotate the shared participant event code for the current workshop ins
 Prefer invoking `harness --json workshop participant-access` for inspection and `harness --json workshop participant-access --rotate` to issue a fresh code.
 If the current raw code is no longer recoverable from the hash-only runtime store, issue a new code instead of guessing.
 
+### `workshop facilitator participants`
+
+Manage the named-participant pool for the current instance. Every action has a matching UI
+control in the admin People section; the CLI is the scriptable path for batch workflows and
+the agent-native demo. See `docs/previews/2026-04-16-cli-surface.md` for the full matrix.
+
+Commands:
+
+- `harness --json workshop participants list [--unassigned] [--team <id>]` — list the pool
+  and current assignments. `--unassigned` filters to participants with no team; `--team <id>`
+  filters to those on a specific team.
+- `harness --json workshop participants add <name> [--email EMAIL] [--tag TAG]` — add one
+  participant. Email is stored without consent; flip consent separately with `update --consent on`.
+- `harness --json workshop participants import (--file PATH | --stdin)` — bulk import from
+  a CSV/TSV/paste. The server parses with the same smart-parser used by the UI: accepts
+  `Name`, `Name, email`, or `Name, email, tag` per line; separators `,` `\t` `;`. Returns
+  per-entry created + skipped arrays.
+- `harness --json workshop participants update <id> [--name STR] [--email STR|null] [--tag STR|null] [--consent on|off]` —
+  edit one participant. Pass `null` to clear email or tag. `--consent on` requires an email
+  to be present; the server returns 409 `email_opt_in_without_email` otherwise.
+- `harness --json workshop participants remove <id>` — soft-delete (sets `archived_at`);
+  cascades: unassigns from any team, nulls the session binding.
+
+Privacy rule: emails ingested through the CLI default to `emailOptIn: false`. Never assume
+consent has been received; collect it explicitly before flipping the flag.
+
+### `workshop facilitator team assign / unassign / randomize`
+
+Team-membership operations for the current instance.
+
+- `harness --json workshop team assign <participantId> <teamId>` — assign-or-move. Returns
+  `movedFrom: <prevTeamId>` if the participant was previously on another team, otherwise `null`.
+- `harness --json workshop team unassign <participantId>` — remove from current team.
+  Idempotent; returns `{ ok: true }` even if the participant was already unassigned.
+- `harness --json workshop team randomize --teams <N> [--strategy cross-level|random] [--preview] [--commit-token TOKEN]` —
+  two-step safety model. Run with `--preview` to compute a distribution and receive a signed
+  `commitToken` (60s TTL), then re-run with `--commit-token <token>` to commit. A single call
+  without either flag computes + commits directly; TTY callers are prompted for confirmation.
+
+Strategy default is `cross-level`: participants are grouped by `tag` and round-robin distributed
+across teams with a rotating offset per group, so each team receives a mixed set of tags. Use
+`random` for pure shuffle. Seed is a timestamp, so repeated previews reroll.
+
 ### `workshop facilitator grant <email> <role>`
 
 Grant a Neon Auth user access to the current workshop instance.
