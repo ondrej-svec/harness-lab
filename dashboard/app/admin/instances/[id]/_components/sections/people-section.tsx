@@ -10,6 +10,7 @@ import type { ParticipantRecord, TeamMemberRecord } from "@/lib/runtime-contract
 import type { Team } from "@/lib/workshop-data";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
 import { PeopleWorkspace } from "./people-section-client";
+import { PeopleRandomize } from "./people-randomize";
 import {
   addParticipantsFromPasteAction,
 } from "../../_actions/participants";
@@ -53,33 +54,41 @@ export async function PeopleSection({
   const commitLabel = lang === "cs" ? "Přidat do poolu" : "Add to pool";
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
-      <AdminPanel
-        eyebrow={pasteLabel}
-        title={lang === "cs" ? "vlož seznam" : "paste your roster"}
-        description={pasteHint}
-      >
-        <form action={addParticipantsFromPasteAction} className="grid gap-3">
-          <input name="instanceId" type="hidden" value={instanceId} />
-          <textarea
-            name="rawText"
-            placeholder={pastePlaceholder}
-            rows={6}
-            className={`${adminInputClassName} font-mono text-[13px]`}
-          />
-          <AdminSubmitButton className={adminPrimaryButtonClassName}>
-            {commitLabel}
-          </AdminSubmitButton>
-        </form>
-      </AdminPanel>
-
-      <PeopleWorkspace
+    <div className="flex flex-col gap-6">
+      <PeopleRandomize
         lang={lang}
         instanceId={instanceId}
-        teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
-        participants={serializedParticipants}
-        members={serializedMembers}
+        existingTeamCount={teams.length}
+        participantCount={serializedParticipants.filter((p) => p.archivedAt === null).length}
       />
+      <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
+        <AdminPanel
+          eyebrow={pasteLabel}
+          title={lang === "cs" ? "vlož seznam" : "paste your roster"}
+          description={pasteHint}
+        >
+          <form action={addParticipantsFromPasteAction} className="grid gap-3">
+            <input name="instanceId" type="hidden" value={instanceId} />
+            <textarea
+              name="rawText"
+              placeholder={pastePlaceholder}
+              rows={6}
+              className={`${adminInputClassName} font-mono text-[13px]`}
+            />
+            <AdminSubmitButton className={adminPrimaryButtonClassName}>
+              {commitLabel}
+            </AdminSubmitButton>
+          </form>
+        </AdminPanel>
+
+        <PeopleWorkspace
+          lang={lang}
+          instanceId={instanceId}
+          teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
+          participants={serializedParticipants}
+          members={serializedMembers}
+        />
+      </div>
     </div>
   );
 }
