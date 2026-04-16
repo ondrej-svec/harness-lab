@@ -5,6 +5,7 @@ import { ControlRoomPersistentSummary } from "./_components/control-room-summary
 import { OutlineRail } from "./_components/outline-rail";
 import { AccessSection } from "./_components/sections/access-section";
 import { AgendaSection } from "./_components/sections/agenda-section";
+import { PeopleSection } from "./_components/sections/people-section";
 import { SettingsSection } from "./_components/sections/settings-section";
 import { SignalsSection } from "./_components/sections/signals-section";
 import { TeamsSection } from "./_components/sections/teams-section";
@@ -118,6 +119,15 @@ export default async function AdminPage({
                 state={vm.state}
                 selectedTeam={vm.selectedTeam}
                 selectedTeamCheckpoint={vm.selectedTeamCheckpoint}
+              />
+            ) : null}
+
+            {vm.activeSection === "people" ? (
+              <PeopleSection
+                lang={vm.lang}
+                copy={vm.copy}
+                instanceId={instanceId}
+                teams={vm.state.teams}
               />
             ) : null}
 
