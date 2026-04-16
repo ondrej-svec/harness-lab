@@ -1384,7 +1384,10 @@ test.describe("one canvas phase 7 — parity smoke", () => {
       await expect(page).toHaveURL(/agendaItem=talk/);
 
       // 5. Inline-edit the room summary and confirm the change
-      //    surfaces. We pick a unique suffix so re-runs don't collide.
+      //    persists across a reload. We pick a unique suffix so each
+      //    viewport run can prove the save independently without
+      //    depending on cleanup clicks that can race with the post-save
+      //    re-render on slower runners.
       const suffix = `${viewport.name}-${Date.now()}`;
       const summaryButton = page
         .locator('[data-inline-field="display"]')
@@ -1396,19 +1399,13 @@ test.describe("one canvas phase 7 — parity smoke", () => {
       await summaryInput.fill(`${original}\nparity-${suffix}`);
       // Textarea saves on blur, so click away to commit.
       await page.locator("body").click({ position: { x: 5, y: 5 } });
-      await expect(
-        page.locator('[data-inline-field="display"]').filter({ hasText: `parity-${suffix}` }).first(),
-      ).toBeVisible();
-
-      // 6. Revert so re-runs stay deterministic.
-      const revertButton = page
+      const savedSummary = page
         .locator('[data-inline-field="display"]')
         .filter({ hasText: `parity-${suffix}` })
         .first();
-      await revertButton.click();
-      const revertInput = page.locator('[data-inline-field="edit"]').first();
-      await revertInput.fill(original);
-      await page.locator("body").click({ position: { x: 5, y: 5 } });
+      await expect(savedSummary).toBeVisible();
+      await page.reload();
+      await expect(savedSummary).toBeVisible();
     });
   }
 });
@@ -1535,22 +1532,20 @@ test.describe("landing page motion — motion path", () => {
     const heading = page.getByRole("heading", { name: /harness/i, level: 1 }).first();
     await expect(heading).toBeVisible();
 
-    // The .landing-rise CSS keyframe animates the h1 opacity from 0 to 1
-    // over ~520ms. Poll quickly to catch a mid-animation frame below 1,
-    // then wait for it to settle at 1. A regression that removes the
-    // animation leaves opacity at 1 throughout, which the first poll
-    // rejects.
-    const observedBelowOne = await page.evaluate(async () => {
-      const el = document.querySelector("h1");
-      if (!el) return false;
-      const start = performance.now();
-      while (performance.now() - start < 500) {
-        if (Number(getComputedStyle(el).opacity) < 0.95) return true;
-        await new Promise((r) => requestAnimationFrame(() => r(null)));
-      }
-      return false;
+    // On slower runners the keyframe may already be near completion by
+    // the time Playwright starts sampling opacity, so assert the motion
+    // contract via computed animation metadata instead of requiring a
+    // captured mid-flight frame.
+    const animation = await heading.evaluate((el) => {
+      const style = getComputedStyle(el);
+      return {
+        animationName: style.animationName,
+        animationDuration: style.animationDuration,
+        animationDelay: style.animationDelay,
+      };
     });
-    expect(observedBelowOne).toBe(true);
+    expect(animation.animationName).toContain("landing-rise");
+    expect(hasNonZeroTransition(animation.animationDuration)).toBe(true);
 
     await expect
       .poll(
