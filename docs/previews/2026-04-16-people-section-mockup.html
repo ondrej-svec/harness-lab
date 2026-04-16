@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facilitator · People · Studio A — Preview 2026-04-16 (rev 2)</title>
+    <style>
+      /* Rosé Pine Dawn — mirrors dashboard/app/globals.css */
+      :root {
+        --font-body: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Space Grotesk", "Avenir Next", sans-serif;
+
+        --surface: #faf4ed;
+        --surface-elevated: #f2e9e1;
+        --surface-panel: #fffaf3;
+        --surface-soft: rgba(255, 250, 243, 0.74);
+
+        --text-primary: #575279;
+        --text-secondary: #797593;
+        --text-muted: #9893a5;
+
+        --border: rgba(87, 82, 121, 0.12);
+        --border-strong: rgba(87, 82, 121, 0.20);
+
+        --shadow-soft: 0 10px 24px rgba(87, 82, 121, 0.06);
+
+        --accent: #286983;
+        --accent-on: #faf4ed;
+        --accent-soft: rgba(40, 105, 131, 0.08);
+
+        --danger: #b4637a;
+        --danger-surface: #f5e4e8;
+
+        --input-bg: #fffaf3;
+        --highlight-surface: #f4ede8;
+
+        --tag-senior: #907aa9;
+        --tag-mid: #56949f;
+        --tag-junior: #d7827e;
+        --tag-senior-bg: rgba(144, 122, 169, 0.10);
+        --tag-mid-bg: rgba(86, 148, 159, 0.10);
+        --tag-junior-bg: rgba(215, 130, 126, 0.10);
+
+        --consent-ok: #56949f;
+
+        --drop-zone: rgba(40, 105, 131, 0.08);
+        --drop-zone-active: rgba(40, 105, 131, 0.18);
+        --drop-zone-border: rgba(40, 105, 131, 0.32);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #232136;
+          --surface-elevated: #2a273f;
+          --surface-panel: #2a273f;
+          --surface-soft: rgba(57, 53, 82, 0.6);
+
+          --text-primary: #e0def4;
+          --text-secondary: #908caa;
+          --text-muted: #6e6a86;
+
+          --border: rgba(224, 222, 244, 0.10);
+          --border-strong: rgba(224, 222, 244, 0.18);
+
+          --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.30);
+
+          --accent: #ea9a97;
+          --accent-on: #232136;
+          --accent-soft: rgba(234, 154, 151, 0.12);
+
+          --danger: #eb6f92;
+          --danger-surface: rgba(235, 111, 146, 0.14);
+
+          --input-bg: #2a273f;
+          --highlight-surface: #2a283e;
+
+          --tag-senior: #c4a7e7;
+          --tag-mid: #9ccfd8;
+          --tag-junior: #f6c177;
+          --tag-senior-bg: rgba(196, 167, 231, 0.14);
+          --tag-mid-bg: rgba(156, 207, 216, 0.14);
+          --tag-junior-bg: rgba(246, 193, 119, 0.14);
+
+          --consent-ok: #9ccfd8;
+
+          --drop-zone: rgba(234, 154, 151, 0.08);
+          --drop-zone-active: rgba(234, 154, 151, 0.18);
+          --drop-zone-border: rgba(234, 154, 151, 0.32);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html, body { background: var(--surface); color: var(--text-primary); margin: 0; }
+      body {
+        font-family: var(--font-body);
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      h1, h2, h3, h4 { font-family: var(--font-display); margin: 0; }
+
+      main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 96px; }
+
+      .breadcrumb {
+        display: flex; gap: 8px; align-items: center;
+        font-size: 13px; color: var(--text-muted);
+        margin-bottom: 10px;
+      }
+      .breadcrumb strong { color: var(--text-primary); font-weight: 600; }
+      .breadcrumb .sep { opacity: 0.5; }
+
+      .section-head {
+        display: flex; align-items: flex-end; justify-content: space-between;
+        gap: 20px; flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+      .section-head h1 {
+        font-size: clamp(1.8rem, 3vw, 2.3rem);
+        letter-spacing: -0.04em;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+      .section-head p {
+        margin: 6px 0 0;
+        color: var(--text-secondary);
+        max-width: 56ch;
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .stats { display: flex; gap: 10px; flex-wrap: wrap; }
+      .stat {
+        padding: 10px 16px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        min-width: 96px;
+      }
+      .stat .label {
+        font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.2em;
+        color: var(--text-muted); font-weight: 700;
+      }
+      .stat .value {
+        margin-top: 2px;
+        font-size: 20px; font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+        gap: 20px;
+        align-items: start;
+      }
+      @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
+
+      /* Panels — flatter than before, no ambient gradient, softer shadow */
+      .panel {
+        border-radius: 22px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        box-shadow: var(--shadow-soft);
+        padding: 20px 22px;
+      }
+      .panel + .panel { margin-top: 14px; }
+
+      .panel h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+      }
+      .panel p.desc {
+        margin: 4px 0 14px;
+        font-size: 13px; line-height: 1.5;
+        color: var(--text-secondary);
+      }
+      .panel .eyebrow {
+        font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--text-muted); font-weight: 700;
+        margin-bottom: 6px;
+      }
+
+      /* Inputs */
+      .input, textarea.input {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--border-strong);
+        background: var(--input-bg);
+        padding: 10px 14px;
+        color: var(--text-primary);
+        font: 14px/1.5 var(--font-body);
+        outline: none;
+        transition: border-color 160ms;
+      }
+      .input::placeholder, textarea.input::placeholder { color: var(--text-muted); }
+      .input:focus, textarea.input:focus { border-color: var(--text-primary); }
+      textarea.input {
+        min-height: 110px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 13px;
+        resize: vertical;
+      }
+      .number-input { width: 62px; text-align: center; font: 14px ui-monospace, Menlo, monospace; padding: 8px 10px; }
+
+      /* Buttons */
+      .btn-primary, .btn-secondary, .btn-ghost {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 160ms, border-color 160ms, color 160ms;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: var(--accent-on);
+        border: 1px solid var(--accent);
+        text-transform: lowercase;
+        font-weight: 600;
+      }
+      .btn-primary:hover { opacity: 0.92; }
+      .btn-secondary {
+        background: transparent;
+        color: var(--text-primary);
+        border: 1px solid var(--border-strong);
+      }
+      .btn-secondary:hover { border-color: var(--text-primary); }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+      }
+      .btn-ghost:hover { background: var(--highlight-surface); color: var(--text-primary); }
+
+      .btn-x {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 20px; height: 20px;
+        border-radius: 999px;
+        border: 0; background: transparent;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+      }
+      .btn-x:hover { background: var(--danger-surface); color: var(--danger); }
+
+      /* Paste preview */
+      .intake-hint {
+        font-size: 12px; color: var(--text-muted);
+        margin-top: 8px;
+      }
+      .intake-hint code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+        padding: 1px 6px;
+        background: var(--highlight-surface);
+        border-radius: 5px;
+        color: var(--text-secondary);
+      }
+
+      .preview {
+        margin-top: 12px;
+        padding: 10px 12px;
+        border-radius: 14px;
+        background: var(--highlight-surface);
+      }
+      .preview-head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px;
+      }
+      .preview-head .hint {
+        font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+        color: var(--text-muted); font-weight: 700;
+      }
+      .preview-head .status {
+        font-size: 11.5px; color: var(--accent); font-weight: 600;
+      }
+
+      table.preview-tbl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+      table.preview-tbl th {
+        text-align: left;
+        font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+        color: var(--text-muted); font-weight: 700;
+        padding: 5px 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      table.preview-tbl td {
+        padding: 6px 8px;
+        color: var(--text-primary);
+      }
+      table.preview-tbl tr + tr td { border-top: 1px solid var(--border); }
+      table.preview-tbl .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+        color: var(--text-secondary);
+      }
+
+      .intake-actions {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 10px; margin-top: 12px;
+        flex-wrap: wrap;
+      }
+      .intake-actions .note {
+        font-size: 11.5px; color: var(--text-muted);
+      }
+
+      /* Pool list — with drag handles */
+      .pool-list { display: flex; flex-direction: column; gap: 6px; }
+      .pool-item {
+        display: grid;
+        grid-template-columns: auto 1fr auto auto auto auto;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px 8px 6px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        cursor: grab;
+        transition: border-color 140ms, background-color 140ms;
+      }
+      .pool-item:hover { border-color: var(--border-strong); background: var(--highlight-surface); }
+      .pool-item.dragging { opacity: 0.4; border-style: dashed; cursor: grabbing; }
+
+      .drag-handle {
+        display: inline-flex;
+        width: 16px; height: 16px;
+        align-items: center; justify-content: center;
+        color: var(--text-muted);
+        font-size: 13px;
+        user-select: none;
+      }
+      .pool-item:hover .drag-handle { color: var(--text-primary); }
+
+      .pool-item .name { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+      .pool-item .email {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px; color: var(--text-secondary);
+        max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .pool-item .email.unset { font-style: italic; color: var(--text-muted); font-family: var(--font-body); font-size: 12px; }
+
+      .pool-empty {
+        padding: 14px; border: 1px dashed var(--border-strong); border-radius: 12px;
+        text-align: center; font-size: 12.5px; color: var(--text-muted);
+      }
+
+      /* Tag + consent */
+      .tag {
+        display: inline-flex; align-items: center;
+        padding: 2px 9px;
+        border-radius: 999px;
+        font-size: 10.5px; font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .tag.senior { color: var(--tag-senior); background: var(--tag-senior-bg); }
+      .tag.mid    { color: var(--tag-mid);    background: var(--tag-mid-bg); }
+      .tag.junior { color: var(--tag-junior); background: var(--tag-junior-bg); }
+      .tag.none   { color: var(--text-muted); background: transparent; }
+
+      .consent {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+        color: var(--text-muted);
+        border: 1px solid var(--border);
+        background: transparent;
+        cursor: pointer;
+      }
+      .consent .dot { width: 6px; height: 6px; border-radius: 999px; background: var(--text-muted); opacity: 0.4; }
+      .consent.on { color: var(--consent-ok); border-color: var(--consent-ok); }
+      .consent.on .dot { background: var(--consent-ok); opacity: 1; }
+
+      /* Teams — drop zones */
+      .teams { display: flex; flex-direction: column; gap: 14px; }
+
+      .team-card {
+        border-radius: 22px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        box-shadow: var(--shadow-soft);
+        padding: 18px 20px;
+        transition: border-color 180ms, background-color 180ms;
+      }
+      .team-card.drop-hover {
+        border-color: var(--drop-zone-border);
+        background: var(--drop-zone-active);
+      }
+
+      .team-head {
+        display: flex; justify-content: space-between; align-items: baseline;
+        gap: 10px; margin-bottom: 2px;
+      }
+      .team-head h3 {
+        font-size: 1.1rem; font-weight: 600;
+        color: var(--text-primary); letter-spacing: -0.02em;
+      }
+      .team-head .meta {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px; color: var(--text-muted);
+      }
+      .team-sub {
+        display: flex; gap: 10px; align-items: center;
+        font-size: 12px; color: var(--text-secondary);
+        margin-bottom: 10px;
+      }
+      .team-sub .count {
+        padding: 1px 8px; border-radius: 999px;
+        font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+        background: var(--accent-soft); color: var(--accent);
+      }
+
+      .team-members {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        padding: 8px;
+        border-radius: 14px;
+        background: var(--drop-zone);
+        border: 1px dashed transparent;
+        min-height: 52px;
+        transition: border-color 160ms, background-color 160ms;
+      }
+      .team-members.drop-hover {
+        border-color: var(--drop-zone-border);
+        background: var(--drop-zone-active);
+      }
+      .team-members.empty::before {
+        content: "drop or click to assign";
+        font-size: 11.5px; letter-spacing: 0.06em;
+        color: var(--text-muted);
+        padding: 12px;
+      }
+
+      .member-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 4px 5px 6px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        font-size: 13px;
+        color: var(--text-primary);
+        cursor: grab;
+        transition: border-color 140ms, transform 140ms;
+      }
+      .member-chip:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+      .member-chip.dragging { opacity: 0.4; cursor: grabbing; }
+      .member-chip .dot { width: 5px; height: 5px; border-radius: 999px; display: inline-block; }
+      .member-chip .dot.senior { background: var(--tag-senior); }
+      .member-chip .dot.mid { background: var(--tag-mid); }
+      .member-chip .dot.junior { background: var(--tag-junior); }
+      .member-chip .grip {
+        font-size: 11px; color: var(--text-muted);
+        padding: 0 2px;
+      }
+
+      .team-foot {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .team-foot .repo {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11px; color: var(--text-muted);
+      }
+
+      /* Picker (click-to-assign fallback) */
+      details.picker { margin-top: 10px; }
+      details.picker > summary {
+        list-style: none; cursor: pointer;
+        font-size: 12px; color: var(--text-secondary);
+        padding: 4px 10px; border-radius: 999px; width: fit-content;
+        border: 1px solid transparent;
+        transition: background-color 140ms;
+      }
+      details.picker > summary::-webkit-details-marker { display: none; }
+      details.picker > summary::before {
+        content: "+ "; color: var(--text-muted);
+      }
+      details.picker > summary:hover { background: var(--highlight-surface); color: var(--text-primary); }
+      details.picker[open] > summary { color: var(--text-primary); background: var(--highlight-surface); }
+      .picker-options {
+        display: flex; flex-wrap: wrap; gap: 6px;
+        margin-top: 8px;
+        padding: 8px; border-radius: 12px;
+        background: var(--highlight-surface);
+      }
+      .picker-option {
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border-strong);
+        background: var(--surface-panel);
+        color: var(--text-primary);
+        font-size: 12.5px;
+        cursor: pointer;
+      }
+      .picker-option:hover { border-color: var(--accent); }
+      .picker-option .dot { width: 5px; height: 5px; border-radius: 999px; }
+
+      /* Footer with CLI parity + reviewer notes */
+      .footer-note {
+        margin-top: 32px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: var(--surface-soft);
+        border: 1px solid var(--border);
+      }
+      .footer-note .eyebrow {
+        font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase;
+        color: var(--text-muted); font-weight: 700;
+        margin-bottom: 10px;
+      }
+      .footer-note p, .footer-note ul {
+        font-size: 13px; line-height: 1.6; color: var(--text-secondary);
+        margin: 0;
+      }
+      .footer-note ul { padding-left: 20px; }
+      .footer-note li + li { margin-top: 4px; }
+      .footer-note b { color: var(--text-primary); font-weight: 600; }
+      .footer-note code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 11.5px;
+        padding: 1px 6px;
+        background: var(--highlight-surface);
+        border-radius: 5px;
+        color: var(--text-primary);
+      }
+
+      .cli-box {
+        margin-top: 10px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        line-height: 1.65;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        overflow-x: auto;
+      }
+      .cli-box .prompt { color: var(--text-muted); }
+      .cli-box .flag { color: var(--accent); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="breadcrumb">
+        <span>Admin</span><span class="sep">›</span>
+        <span>Studio A</span><span class="sep">›</span>
+        <strong>People</strong>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h1>People</h1>
+          <p>Paste your roster or let walk-ins join. Drag names onto teams, click to assign, or run the CLI.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><div class="label">Pool</div><div class="value">15</div></div>
+          <div class="stat"><div class="label">Unassigned</div><div class="value">3</div></div>
+          <div class="stat"><div class="label">Assigned</div><div class="value">12</div></div>
+          <div class="stat"><div class="label">Teams</div><div class="value">3</div></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <!-- LEFT -->
+        <div>
+          <!-- Paste -->
+          <section class="panel">
+            <p class="eyebrow">Add people</p>
+            <h2>Paste your roster</h2>
+            <p class="desc">One per line. Name / Name, email / Name, email, tag. Nothing saves until you commit.</p>
+
+            <textarea class="input" placeholder="Ada Lovelace&#10;Linus Torvalds, linus@example.com&#10;Grace Hopper, grace@example.com, senior">Ada Lovelace
+Linus Torvalds, linus@example.com
+Grace Hopper, grace@example.com, senior
+Alan Kay
+Hedy Lamarr,hedy@example.com,mid
+Radia Perlman</textarea>
+
+            <div class="intake-hint">
+              Separators: <code>,</code> <code>\t</code> <code>;</code> · emails stored without consent
+            </div>
+
+            <div class="preview">
+              <div class="preview-head">
+                <span class="hint">Preview · 6 entries</span>
+                <span class="status">all valid</span>
+              </div>
+              <table class="preview-tbl">
+                <thead><tr><th>Name</th><th>Email</th><th>Tag</th></tr></thead>
+                <tbody>
+                  <tr><td>Ada Lovelace</td><td class="mono">—</td><td><span class="tag none">—</span></td></tr>
+                  <tr><td>Linus Torvalds</td><td class="mono">linus@example.com</td><td><span class="tag none">—</span></td></tr>
+                  <tr><td>Grace Hopper</td><td class="mono">grace@example.com</td><td><span class="tag senior">senior</span></td></tr>
+                  <tr><td>Alan Kay</td><td class="mono">—</td><td><span class="tag none">—</span></td></tr>
+                  <tr><td>Hedy Lamarr</td><td class="mono">hedy@example.com</td><td><span class="tag mid">mid</span></td></tr>
+                  <tr><td>Radia Perlman</td><td class="mono">—</td><td><span class="tag none">—</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="intake-actions">
+              <span class="note">Flip consent per person once you have it.</span>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn-ghost">clear</button>
+                <button class="btn-primary">commit 6</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pool -->
+          <section class="panel">
+            <p class="eyebrow">Unassigned pool</p>
+            <h2>3 waiting for a team</h2>
+            <p class="desc">Drag onto a team, or use the picker under each team.</p>
+            <div class="pool-list">
+              <div class="pool-item" draggable="true">
+                <span class="drag-handle">⋮⋮</span>
+                <span class="name">Alan Kay</span>
+                <span class="tag senior">senior</span>
+                <span class="email unset">no email</span>
+                <span class="consent"><span class="dot"></span>no follow-up</span>
+                <button class="btn-x" title="Remove">×</button>
+              </div>
+              <div class="pool-item dragging" draggable="true">
+                <span class="drag-handle">⋮⋮</span>
+                <span class="name">Hedy Lamarr</span>
+                <span class="tag mid">mid</span>
+                <span class="email">hedy@example.com</span>
+                <span class="consent on"><span class="dot"></span>follow-up ok</span>
+                <button class="btn-x" title="Remove">×</button>
+              </div>
+              <div class="pool-item" draggable="true">
+                <span class="drag-handle">⋮⋮</span>
+                <span class="name">Radia Perlman</span>
+                <span class="tag none">—</span>
+                <span class="email unset">no email</span>
+                <span class="consent"><span class="dot"></span>no follow-up</span>
+                <button class="btn-x" title="Remove">×</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Randomize -->
+          <section class="panel">
+            <p class="eyebrow">Team formation</p>
+            <h2>Randomize</h2>
+            <p class="desc">Cross-level mix using the tag field. Previews before committing.</p>
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+              <input type="number" class="input number-input" value="3" min="2" max="12" />
+              <span style="font-size: 13px; color: var(--text-secondary);">teams</span>
+              <button class="btn-secondary">preview</button>
+              <button class="btn-primary">randomize 15</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="teams">
+
+          <!-- Team 1: drop-hover state -->
+          <section class="team-card drop-hover">
+            <div class="team-head">
+              <h3>Tým Alfa</h3>
+              <span class="meta">t1 · standup-bot</span>
+            </div>
+            <div class="team-sub">
+              <span class="count">4 · mixed</span>
+              <span style="color: var(--accent); font-weight: 600;">drop to assign</span>
+            </div>
+            <div class="team-members drop-hover">
+              <span class="member-chip" draggable="true">
+                <span class="grip">⋮⋮</span>
+                <span class="dot senior"></span>Ada Lovelace
+                <button class="btn-x">×</button>
+              </span>
+              <span class="member-chip" draggable="true">
+                <span class="grip">⋮⋮</span>
+                <span class="dot junior"></span>Grace Hopper
+                <button class="btn-x">×</button>
+              </span>
+              <span class="member-chip" draggable="true">
+                <span class="grip">⋮⋮</span>
+                <span class="dot mid"></span>Tim Berners-Lee
+                <button class="btn-x">×</button>
+              </span>
+              <span class="member-chip" draggable="true">
+                <span class="grip">⋮⋮</span>
+                <span class="dot senior"></span>Donald Knuth
+                <button class="btn-x">×</button>
+              </span>
+            </div>
+            <details class="picker">
+              <summary>add from pool</summary>
+              <div class="picker-options">
+                <span class="picker-option"><span class="dot" style="background: var(--tag-senior);"></span>Alan Kay · senior</span>
+                <span class="picker-option"><span class="dot" style="background: var(--tag-mid);"></span>Hedy Lamarr · mid</span>
+                <span class="picker-option"><span class="dot" style="background: var(--text-muted);"></span>Radia Perlman · —</span>
+              </div>
+            </details>
+          </section>
+
+          <!-- Team 2 -->
+          <section class="team-card">
+            <div class="team-head">
+              <h3>Tým Bravo</h3>
+              <span class="meta">t2 · doc-generator</span>
+            </div>
+            <div class="team-sub">
+              <span class="count">4 · mixed</span>
+            </div>
+            <div class="team-members">
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot senior"></span>Linus Torvalds<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot mid"></span>Margaret Hamilton<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot junior"></span>Ondrej Svec<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot mid"></span>Edsger Dijkstra<button class="btn-x">×</button></span>
+            </div>
+            <div class="team-foot">
+              <span class="repo">anchor: red brick · card 3</span>
+              <details class="picker" style="margin: 0;">
+                <summary>add</summary>
+              </details>
+            </div>
+          </section>
+
+          <!-- Team 3 -->
+          <section class="team-card">
+            <div class="team-head">
+              <h3>Tým Charlie</h3>
+              <span class="meta">t3 · devtoolbox-cli</span>
+            </div>
+            <div class="team-sub">
+              <span class="count">4 · mixed</span>
+            </div>
+            <div class="team-members">
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot junior"></span>Anna Novakova<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot senior"></span>Barbara Liskov<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot mid"></span>Jan Svoboda<button class="btn-x">×</button></span>
+              <span class="member-chip" draggable="true"><span class="grip">⋮⋮</span><span class="dot junior"></span>David Novak<button class="btn-x">×</button></span>
+            </div>
+            <div class="team-foot">
+              <span class="repo">anchor: blue chair · card 7</span>
+              <details class="picker" style="margin: 0;">
+                <summary>add</summary>
+              </details>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Footer: CLI parity + reviewer notes -->
+      <section class="footer-note">
+        <p class="eyebrow">Every action · also on the CLI</p>
+        <p>Agent-native parity: everything above is doable from <code>harness workshop participants …</code> and <code>harness workshop team …</code>. At the hackathon, the whole room can be provisioned from the terminal.</p>
+        <div class="cli-box"><span class="prompt">$</span> harness workshop participants import <span class="flag">--file</span> roster.csv
+<span class="prompt">$</span> harness workshop participants list <span class="flag">--unassigned</span> <span class="flag">--json</span>
+<span class="prompt">$</span> harness workshop team assign p_01HZ... t1
+<span class="prompt">$</span> harness workshop team randomize <span class="flag">--teams</span> 3 <span class="flag">--strategy</span> cross-level <span class="flag">--preview</span></div>
+      </section>
+
+      <section class="footer-note" style="margin-top: 16px;">
+        <p class="eyebrow">Reviewer checklist</p>
+        <ul>
+          <li><b>Simpler:</b> flat surface, single-tier shadows, no decorative gradients, fewer radii.</li>
+          <li><b>Drag-and-drop enabled:</b> grip handles on pool items and member chips, drop-zone hint on team 1 (shown in hover state), click-to-assign stays as keyboard fallback (`add from pool` details).</li>
+          <li><b>CLI parity:</b> see footer box. Full surface in <code>docs/previews/2026-04-16-cli-surface.md</code>.</li>
+          <li><b>Consent separable:</b> emails pasted with no consent; per-row toggle flips it on.</li>
+          <li><b>Dashboard alignment:</b> rosé pine dawn/moon tokens, Manrope/Space Grotesk, 22px radius, lowercase rounded-full accent buttons.</li>
+          <li>Hedy Lamarr's pool row is shown in <em>dragging</em> state (dashed border, 0.4 opacity) for reference.</li>
+          <li>Team Alfa is shown in <em>drop-hover</em> state (accent border, tinted background) for reference.</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

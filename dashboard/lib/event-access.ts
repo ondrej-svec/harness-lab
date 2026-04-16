@@ -102,6 +102,7 @@ export async function redeemEventCode(submittedCode: string) {
     lastValidatedAt: new Date().toISOString(),
     expiresAt: getParticipantSessionExpiryDate().toISOString(),
     absoluteExpiresAt: getParticipantSessionAbsoluteExpiryDate().toISOString(),
+    participantId: null,
   };
 
   await repository.upsertSession(instanceId, nextSession);

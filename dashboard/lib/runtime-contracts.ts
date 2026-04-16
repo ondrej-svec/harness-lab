@@ -9,6 +9,13 @@ export type ParticipantSessionRecord = {
   expiresAt: string;
   lastValidatedAt: string;
   absoluteExpiresAt: string;
+  /**
+   * Soft binding to a named Participant entity. Null / absent for anonymous
+   * sessions (the pre-2026-04-16 default). Set when a participant self-
+   * identifies via `/api/event-access/identify` or redeems with a name.
+   * Persisted via migration 2026-04-16-participants-and-team-members.sql.
+   */
+  participantId?: string | null;
 };
 
 export type ParticipantSession = {
@@ -16,6 +23,39 @@ export type ParticipantSession = {
   expiresAt: string;
   lastValidatedAt: string;
   absoluteExpiresAt: string;
+  participantId?: string | null;
+};
+
+/**
+ * ParticipantRecord — named-participant entity, per-instance. Soft-deletable
+ * via `archivedAt`. `email` is opt-in only; `emailOptIn` gates every
+ * email-using operation (follow-up send, export). `tag` is free-text,
+ * typically used as seniority hint for cross-level randomize.
+ * See docs/plans/2026-04-16-feat-participant-management-and-team-formation-plan.md.
+ */
+export type ParticipantRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  displayName: string;
+  email: string | null;
+  emailOptIn: boolean;
+  tag: string | null;
+  createdAt: string;
+  updatedAt: string;
+  archivedAt: string | null;
+};
+
+/**
+ * TeamMemberRecord — normalized participant-to-team assignment. The
+ * `UNIQUE(participant_id)` constraint enforces one-team-per-participant
+ * per instance; move semantics require delete-then-insert.
+ */
+export type TeamMemberRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  teamId: string;
+  participantId: string;
+  assignedAt: string;
 };
 
 export type ParticipantEventAccessRecord = {
@@ -195,6 +235,67 @@ export interface TeamRepository {
   listTeams(instanceId: WorkshopInstanceId): Promise<TeamRecord[]>;
   upsertTeam(instanceId: WorkshopInstanceId, team: TeamRecord): Promise<void>;
   replaceTeams(instanceId: WorkshopInstanceId, teams: TeamRecord[]): Promise<void>;
+}
+
+export interface ParticipantRepository {
+  listParticipants(
+    instanceId: WorkshopInstanceId,
+    options?: { includeArchived?: boolean },
+  ): Promise<ParticipantRecord[]>;
+  findParticipant(
+    instanceId: WorkshopInstanceId,
+    participantId: string,
+  ): Promise<ParticipantRecord | null>;
+  findParticipantByDisplayName(
+    instanceId: WorkshopInstanceId,
+    displayName: string,
+  ): Promise<ParticipantRecord | null>;
+  upsertParticipant(
+    instanceId: WorkshopInstanceId,
+    participant: ParticipantRecord,
+  ): Promise<void>;
+  archiveParticipant(
+    instanceId: WorkshopInstanceId,
+    participantId: string,
+    archivedAt: string,
+  ): Promise<void>;
+  replaceParticipants(
+    instanceId: WorkshopInstanceId,
+    participants: ParticipantRecord[],
+  ): Promise<void>;
+}
+
+/**
+ * AssignResult — returned by `assignMember`. If the participant was already
+ * on another team, `movedFrom` names the previous team; `null` means this
+ * was a fresh assignment. Lets callers emit "moved from X to Y" feedback
+ * without a second query.
+ */
+export type AssignResult = { teamId: string; movedFrom: string | null };
+
+export interface TeamMemberRepository {
+  listMembers(instanceId: WorkshopInstanceId): Promise<TeamMemberRecord[]>;
+  listMembersByTeam(
+    instanceId: WorkshopInstanceId,
+    teamId: string,
+  ): Promise<TeamMemberRecord[]>;
+  findMemberByParticipant(
+    instanceId: WorkshopInstanceId,
+    participantId: string,
+  ): Promise<TeamMemberRecord | null>;
+  /** Assign-or-move. Idempotent on the same (participant, team) pair. */
+  assignMember(
+    instanceId: WorkshopInstanceId,
+    assignment: TeamMemberRecord,
+  ): Promise<AssignResult>;
+  unassignMember(
+    instanceId: WorkshopInstanceId,
+    participantId: string,
+  ): Promise<void>;
+  replaceMembers(
+    instanceId: WorkshopInstanceId,
+    members: TeamMemberRecord[],
+  ): Promise<void>;
 }
 
 export interface MonitoringSnapshotRepository {

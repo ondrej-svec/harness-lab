@@ -9,6 +9,28 @@ type StoredParticipantSessions = {
   sessions: ParticipantSessionRecord[];
 };
 
+type SessionRow = {
+  token_hash: string;
+  instance_id: string;
+  created_at: string;
+  expires_at: string;
+  last_validated_at: string;
+  absolute_expires_at: string;
+  participant_id: string | null;
+};
+
+function rowToSessionRecord(row: SessionRow): ParticipantSessionRecord {
+  return {
+    tokenHash: row.token_hash,
+    instanceId: row.instance_id,
+    createdAt: row.created_at,
+    expiresAt: row.expires_at,
+    lastValidatedAt: row.last_validated_at,
+    absoluteExpiresAt: row.absolute_expires_at,
+    participantId: row.participant_id,
+  };
+}
+
 export type EventAccessRepository = ParticipantSessionRepository;
 
 export class FileEventAccessRepository implements EventAccessRepository {
@@ -120,110 +142,69 @@ export class NeonEventAccessRepository implements EventAccessRepository {
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at
+        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at, participant_id
         FROM participant_sessions
         WHERE instance_id = $1
         ORDER BY created_at ASC
       `,
       [instanceId],
-    )) as {
-      token_hash: string;
-      instance_id: string;
-      created_at: string;
-      expires_at: string;
-      last_validated_at: string;
-      absolute_expires_at: string;
-    }[];
+    )) as SessionRow[];
 
-    return rows.map((row) => ({
-      tokenHash: row.token_hash,
-      instanceId: row.instance_id,
-      createdAt: row.created_at,
-      expiresAt: row.expires_at,
-      lastValidatedAt: row.last_validated_at,
-      absoluteExpiresAt: row.absolute_expires_at,
-    }));
+    return rows.map(rowToSessionRecord);
   }
 
   async findSession(instanceId: string, tokenHash: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at
+        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at, participant_id
         FROM participant_sessions
         WHERE instance_id = $1
           AND token_hash = $2
         LIMIT 1
       `,
       [instanceId, tokenHash],
-    )) as {
-      token_hash: string;
-      instance_id: string;
-      created_at: string;
-      expires_at: string;
-      last_validated_at: string;
-      absolute_expires_at: string;
-    }[];
+    )) as SessionRow[];
 
     const row = rows[0];
     if (!row) {
       return null;
     }
 
-    return {
-      tokenHash: row.token_hash,
-      instanceId: row.instance_id,
-      createdAt: row.created_at,
-      expiresAt: row.expires_at,
-      lastValidatedAt: row.last_validated_at,
-      absoluteExpiresAt: row.absolute_expires_at,
-    };
+    return rowToSessionRecord(row);
   }
 
   async findSessionByTokenHash(tokenHash: string) {
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at
+        SELECT token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at, participant_id
         FROM participant_sessions
         WHERE token_hash = $1
         LIMIT 1
       `,
       [tokenHash],
-    )) as {
-      token_hash: string;
-      instance_id: string;
-      created_at: string;
-      expires_at: string;
-      last_validated_at: string;
-      absolute_expires_at: string;
-    }[];
+    )) as SessionRow[];
 
     const row = rows[0];
     if (!row) {
       return null;
     }
 
-    return {
-      tokenHash: row.token_hash,
-      instanceId: row.instance_id,
-      createdAt: row.created_at,
-      expiresAt: row.expires_at,
-      lastValidatedAt: row.last_validated_at,
-      absoluteExpiresAt: row.absolute_expires_at,
-    };
+    return rowToSessionRecord(row);
   }
 
   async upsertSession(instanceId: string, session: ParticipantSessionRecord) {
     const sql = getNeonSql();
     await sql.query(
       `
-        INSERT INTO participant_sessions (token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at)
-        VALUES ($1, $2, $3::timestamptz, $4::timestamptz, $5::timestamptz, $6::timestamptz)
+        INSERT INTO participant_sessions (token_hash, instance_id, created_at, expires_at, last_validated_at, absolute_expires_at, participant_id)
+        VALUES ($1, $2, $3::timestamptz, $4::timestamptz, $5::timestamptz, $6::timestamptz, $7)
         ON CONFLICT (token_hash) DO UPDATE
         SET expires_at = EXCLUDED.expires_at,
             last_validated_at = EXCLUDED.last_validated_at,
-            absolute_expires_at = EXCLUDED.absolute_expires_at
+            absolute_expires_at = EXCLUDED.absolute_expires_at,
+            participant_id = EXCLUDED.participant_id
       `,
       [
         session.tokenHash,
@@ -232,6 +213,7 @@ export class NeonEventAccessRepository implements EventAccessRepository {
         session.expiresAt,
         session.lastValidatedAt,
         session.absoluteExpiresAt,
+        session.participantId ?? null,
       ],
     );
   }
