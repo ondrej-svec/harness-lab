@@ -5,6 +5,34 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.8.0 — 2026-04-17
+
+### Added
+
+- **Participant pool commands (facilitator).** `harness workshop participants
+  list|add|import|update|remove`. List filters include `--unassigned` and
+  `--team <id>`. `add` and `update` take `--email`, `--tag`, and `--consent
+  on|off`. `import` reads `--file PATH` or `--stdin`; the server performs
+  the smart-parse (Name / Name, email / Name, email, tag) using the same
+  parser the admin UI uses, so the CLI and UI accept identical input.
+- **Team-membership commands (facilitator).** `harness workshop team assign
+  <participantId> <teamId>` (assign-or-move; returns `movedFrom`),
+  `workshop team unassign <participantId>`, and `workshop team randomize
+  --teams N [--strategy cross-level|random] [--preview] [--commit-token
+  TOKEN]`. Randomize uses a two-step safety flow with an HMAC-signed
+  commit-token (60-second TTL) so previews and commits are both tamper-
+  and replay-safe.
+- **Dedicated CLI test suite.** 8 new tests in
+  `test/run-cli-participants.test.js` cover happy path, `--unassigned`
+  filter, add with all flags, stdin import, team assign, randomize
+  preview + commit-token round-trip, and session gating.
+
+### Changed
+
+- Workshop bundle regenerated with the updated `SKILL-facilitator.md`
+  that documents the new command groups. The participant skill
+  (`SKILL.md`) is unchanged — these commands are facilitator-only.
+
 ## 0.6.0 — 2026-04-10
 
 ### Added
