@@ -57,6 +57,11 @@ fs.writeFileSync(
 
 export default defineConfig({
   testDir: "./e2e",
+  // visual-tour.spec.ts is an artefact generator for design-system review,
+  // not a regression test — it seeds and screenshots at multiple viewports
+  // and can push total runtime past the CI 15-minute cap. Opt in locally
+  // with PLAYWRIGHT_INCLUDE_VISUAL_TOUR=1.
+  testIgnore: process.env.PLAYWRIGHT_INCLUDE_VISUAL_TOUR ? [] : ["**/visual-tour.spec.ts"],
   fullyParallel: false,
   workers: 1,
   reporter: "list",
