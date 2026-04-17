@@ -5,6 +5,17 @@ import { useRouter } from "next/navigation";
 import type { ParticipantRecord, TeamMemberRecord } from "@/lib/runtime-contracts";
 import type { UiLanguage } from "@/lib/ui-language";
 
+// Match the admin-ui panel surface so the People section reads as a
+// first-class dashboard surface, not a form grafted on. Kept inline
+// (not imported from admin-ui) because this is a client component and
+// AdminPanel ships its own copy of the classes for reuse here.
+const panelSurface =
+  "relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] shadow-[var(--shadow-soft)] backdrop-blur";
+const panelAmbient =
+  "pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]";
+const cardSurface =
+  "rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-strong-top),var(--card-strong-bottom))] shadow-[0_14px_30px_rgba(28,25,23,0.05)]";
+
 type TeamSummary = { id: string; name: string; projectBriefId: string };
 
 type PeopleWorkspaceProps = {
@@ -175,23 +186,32 @@ export function PeopleWorkspace({
 
       {/* Pool */}
       <section
+        data-testid="pool-drop-zone"
         onDragOver={(e) => handleDragOver(e, "pool")}
         onDragLeave={handleDragLeave}
         onDrop={(e) => handleDrop(e, "pool")}
-        className={`rounded-[22px] border p-4 transition ${
+        className={`${panelSurface} p-5 sm:p-6 transition ${
           dragOverTarget === "pool"
-            ? "border-[var(--accent-surface)] bg-[color-mix(in_srgb,var(--accent-surface)_12%,var(--surface-soft))]"
-            : "border-[var(--border)] bg-[var(--surface-soft)]"
+            ? "border-[var(--accent-surface)]"
+            : ""
         }`}
       >
-        <div className="mb-3 flex items-baseline justify-between gap-3">
-          <h3 className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">{poolTitle}</h3>
-          <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-            {unassigned.length} {unassignedLabel}
-          </span>
-        </div>
+        <div className={panelAmbient} aria-hidden />
+        <div className="relative">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{poolTitle}</p>
+          <div className="mt-2.5 flex items-baseline justify-between gap-3">
+            <h2 className="text-[1.8rem] font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+              {unassigned.length} {unassignedLabel}
+            </h2>
+          </div>
+          <p className="mt-2 max-w-2xl text-[13px] leading-5 text-[var(--text-secondary)] sm:text-sm sm:leading-6">
+            {lang === "cs"
+              ? "Přetáhněte na tým, nebo použijte +přiřadit. Consent toggle řídí follow-up e-maily."
+              : "Drag onto a team or use +assign. The consent toggle gates follow-up emails."}
+          </p>
+          <div className="mt-4">
         {unassigned.length === 0 ? (
-          <p className="rounded-[14px] border border-dashed border-[var(--border-strong)] px-4 py-3 text-center text-sm text-[var(--text-muted)]">
+          <p className="rounded-[16px] border border-dashed border-[var(--border-strong)] px-4 py-4 text-center text-sm text-[var(--text-muted)]">
             {dropHereLabel}
           </p>
         ) : (
@@ -201,6 +221,9 @@ export function PeopleWorkspace({
                 key={participant.id}
                 draggable
                 onDragStart={(e) => handleDragStart(e, participant.id)}
+                data-testid="pool-row"
+                data-participant-id={participant.id}
+                data-participant-name={participant.displayName}
                 className="flex items-center justify-between gap-3 rounded-[14px] border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-2 text-sm text-[var(--text-primary)] transition hover:border-[var(--border-strong)] [cursor:grab]"
               >
                 <span className="flex min-w-0 flex-1 items-center gap-3">
@@ -262,34 +285,54 @@ export function PeopleWorkspace({
             ))}
           </ul>
         )}
+          </div>
+        </div>
       </section>
 
       {/* Teams */}
-      <div className="flex flex-col gap-4">
+      <section className={`${panelSurface} p-5 sm:p-6`}>
+        <div className={panelAmbient} aria-hidden />
+        <div className="relative">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">
+            {lang === "cs" ? "týmy" : "teams"}
+          </p>
+          <h2 className="mt-2.5 text-[1.8rem] font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
+            {teams.length} {lang === "cs" ? "připraveno" : "ready"}
+          </h2>
+          <p className="mt-2 max-w-2xl text-[13px] leading-5 text-[var(--text-secondary)] sm:text-sm sm:leading-6">
+            {lang === "cs"
+              ? "Jedna sekce na tým. Pusťte na dropzone, nebo použijte +přidat z poolu."
+              : "One section per team. Drop on the zone or use +add from pool."}
+          </p>
+          <div className="mt-4 flex flex-col gap-4">
         {teams.map((team) => {
           const teamMembers = assignmentsByTeam.get(team.id) ?? [];
           const isDragTarget = dragOverTarget === team.id;
           return (
             <section
               key={team.id}
+              data-testid="team-card"
+              data-team-id={team.id}
               onDragOver={(e) => handleDragOver(e, team.id)}
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, team.id)}
-              className={`rounded-[22px] border p-4 transition ${
-                isDragTarget
-                  ? "border-[var(--accent-surface)] bg-[color-mix(in_srgb,var(--accent-surface)_10%,var(--surface-panel))]"
-                  : "border-[var(--border)] bg-[var(--surface-panel)]"
+              className={`${cardSurface} p-5 transition ${
+                isDragTarget ? "border-[var(--accent-surface)]" : ""
               }`}
             >
-              <div className="mb-2 flex items-baseline justify-between gap-3">
-                <h3 className="text-lg font-semibold tracking-tight text-[var(--text-primary)]">{team.name}</h3>
+              <div className="mb-3 flex items-baseline justify-between gap-3">
+                <h3 className="text-lg font-medium tracking-tight text-[var(--text-primary)]">{team.name}</h3>
                 <span className="font-mono text-[11px] text-[var(--text-muted)]">{team.id} · {team.projectBriefId}</span>
               </div>
               <div
-                className={`flex flex-wrap gap-2 rounded-[16px] border border-dashed px-3 py-3 ${
+                data-testid="team-drop-zone"
+                data-team-id={team.id}
+                className={`min-h-[64px] flex flex-wrap gap-2 rounded-[18px] border border-dashed px-4 py-4 transition ${
                   isDragTarget
                     ? "border-[var(--accent-surface)] bg-[color-mix(in_srgb,var(--accent-surface)_8%,transparent)]"
-                    : "border-transparent bg-[var(--surface-soft)]"
+                    : teamMembers.length === 0
+                      ? "border-[var(--border-strong)] bg-[var(--surface-soft)] items-center justify-center"
+                      : "border-[var(--border)] bg-[var(--surface-soft)]"
                 }`}
               >
                 {teamMembers.length === 0 ? (
@@ -300,6 +343,8 @@ export function PeopleWorkspace({
                       key={m.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, m.id)}
+                      data-testid="team-member-chip"
+                      data-participant-id={m.id}
                       className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-1 text-sm text-[var(--text-primary)] [cursor:grab]"
                     >
                       <span className="text-[var(--text-muted)]" aria-hidden>⋮⋮</span>
@@ -328,7 +373,9 @@ export function PeopleWorkspace({
             </section>
           );
         })}
-      </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

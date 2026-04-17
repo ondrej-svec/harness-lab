@@ -95,6 +95,12 @@ test.describe("participant dashboard", () => {
 
     await page.waitForURL("**/participant**");
 
+    // New self-identify step (Phase 4): the prompt appears first, then
+    // the room once a name is bound.
+    await page.getByLabel("Jak se jmenujete?").fill("Test Účastník");
+    await page.getByRole("button", { name: "Pokračovat" }).click();
+    await expect(page.getByLabel("Jak se jmenujete?")).toBeHidden();
+
     await expect(page.getByText("participant plocha", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
     // Current phase (build-1) goal on the agenda-for-team panel.
@@ -121,6 +127,10 @@ test.describe("participant dashboard", () => {
     await page.getByLabel("event code").fill("lantern8-context4-handoff2");
     await page.getByRole("button", { name: "otevřít participant plochu" }).click();
     await page.waitForURL("**/participant**");
+    // Self-identify so the room view renders (not the prompt).
+    await page.getByLabel("Jak se jmenujete?").fill("Test Účastník");
+    await page.getByRole("button", { name: "Pokračovat" }).click();
+    await expect(page.getByLabel("Jak se jmenujete?")).toBeHidden();
     await expect(page).toHaveScreenshot("participant-mobile-room.png", {
       maxDiffPixelRatio: 0.05,
     });
@@ -144,6 +154,11 @@ test.describe("participant dashboard", () => {
     await page.getByLabel("event code").fill("lantern8-context4-handoff2");
     await page.getByRole("button", { name: "open participant surface" }).click();
     await page.waitForURL("**/participant**");
+
+    // Bind a name so the room view renders (not the prompt).
+    await page.getByLabel("What's your name?").fill("Test Participant");
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page.getByLabel("What's your name?")).toBeHidden();
 
     const notesJumpCard = page.locator('a[href="#notes"]').first();
     const firstTeam = page.locator("#teams article").first();
