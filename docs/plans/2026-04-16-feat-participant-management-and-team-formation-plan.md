@@ -2,7 +2,7 @@
 title: "feat: participant management and team formation"
 type: plan
 date: 2026-04-16
-status: in_progress
+status: complete_through_phase_5
 brainstorm: docs/brainstorms/2026-04-16-harness-lab-product-shape-and-participant-management-brainstorm.md
 confidence: medium
 ---
@@ -234,12 +234,12 @@ Dependency-ordered. Check off in `/work` as completed.
 - [x] **3.6** CS + EN copy: `navPeople` added to both language blocks in `ui-language.ts`; component strings inlined with `lang === "cs" ? … : …` — follows the existing section pattern.
 - [x] **3.7** Server-side data fetch via `getParticipantRepository()` + `getTeamMemberRepository()` directly inside the server component; avoids threading through the admin-page view-model loader.
 - [x] **3.8** Section router registration: `people` added to `controlRoomSections` and `legacyAdminSectionMap`; `OutlineRail` entry; page.tsx branch.
-- [ ] **3.9** Playwright e2e for People section — deferred (Phase 6 dogfood will exercise the full flow with live data). Existing `dashboard.spec.ts` still passes.
+- [x] **3.9** Playwright e2e in `e2e/people-section.spec.ts` — paste intake, click-to-assign + unassign, randomize preview + commit. Full suite green.
 - [x] **3.10** Drag-and-drop: native HTML5 events. `dataTransfer.setData("text/participant-id", ...)`; no library. Chips are `draggable={true}` with `[cursor:grab]`.
 - [x] **3.11** Drop zones: pool section + each team card accept drops. `dragOver` adds the `drop-hover` visual via state; pool-drop calls DELETE /api/admin/team-members (unassign), team-drop calls PUT /api/admin/team-members (assign-or-move).
 - [x] **3.12** `drop-hover` state uses accent-tinted background + accent border; drag handles (`⋮⋮`) are visible on hover.
 - [x] **3.13** Keyboard fallback: `+ add from pool` picker per team; `+ …` on pool rows for picking a target team. All interactions reachable via keyboard.
-- [ ] **3.14** Playwright e2e for DnD — deferred with 3.9 (see note above).
+- [x] **3.14** Playwright e2e for DnD: uses native `DragEvent` + `DataTransfer` dispatched through `page.evaluate()` to trigger the component's onDragStart/onDragOver/onDrop handlers. Asserts the participant appears on the target team after drop.
 
 ### Phase 4 — Participant self-identify UI
 
@@ -247,7 +247,7 @@ Dependency-ordered. Check off in `/work` as completed.
 - [x] **4.2** Server action inside the prompt calls `bindParticipantToSession` and redirects back to `/participant`. Re-binding with the same name on an already-bound session is treated as success.
 - [x] **4.3** Page early-returns the prompt path; full room surface + workshop state loading is skipped when identity is not yet bound.
 - [x] **4.4** Copy for both CS + EN inline in the component; `enterKeyHint="done"` + `autoCapitalize="words"` for mobile.
-- [ ] **4.5** Playwright e2e deferred with 3.9 / 3.14. Unit coverage added in `app/participant/page.test.tsx` for the identify path (prompt renders, heavy data not loaded).
+- [x] **4.5** Playwright e2e: `participant · self-identify` test exercises redeem → prompt → bind → hidden-prompt. The three existing participant-dashboard tests in `dashboard.spec.ts` were updated to walk through the prompt before asserting on the room surface.
 
 ### Phase 5 — Cross-level randomize and optional email/tag (SHOULD)
 
