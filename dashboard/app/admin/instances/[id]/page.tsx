@@ -1,7 +1,6 @@
 import { auth } from "@/lib/auth/server";
 import { buildWorkspaceStatusLabel, getWorkshopDisplayTitle } from "@/lib/admin-page-view-model";
-import { ControlRoomHeader } from "./_components/control-room-header";
-import { ControlRoomPersistentSummary } from "./_components/control-room-summary";
+import { ControlRoomCockpit } from "./_components/control-room-cockpit";
 import { OutlineRail } from "./_components/outline-rail";
 import { AccessSection } from "./_components/sections/access-section";
 import { PeopleSection } from "./_components/sections/people-section";
@@ -23,9 +22,9 @@ export default async function AdminPage({
   const vm = await loadAdminPageViewModel({ instanceId, query });
 
   return (
-    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
-      <div className="mx-auto flex max-w-[112rem] flex-col gap-6">
-        <ControlRoomHeader
+    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-5 text-[var(--text-primary)] sm:px-6 sm:py-6">
+      <div className="mx-auto flex max-w-[112rem] flex-col gap-4 sm:gap-5">
+        <ControlRoomCockpit
           lang={vm.lang}
           copy={vm.copy}
           instanceId={instanceId}
@@ -53,22 +52,11 @@ export default async function AdminPage({
           instanceWhenLabel={vm.instanceWhenLabel}
           instanceWhereLabel={vm.instanceWhereLabel}
           instanceOwnerLabel={vm.instanceOwnerLabel}
+          summaryRows={vm.persistentSummaryRows}
+          sessionState={vm.sessionState}
         />
-        <div className="rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] px-6 py-5 shadow-[var(--shadow-soft)] backdrop-blur sm:px-7">
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {vm.persistentSummaryRows.map((row) => (
-              <ControlRoomPersistentSummary key={row.label} label={row.label} value={row.value} hint={row.hint} />
-            ))}
-          </div>
-          {(vm.sessionState.signedInLine || vm.sessionState.archiveLine) && (
-            <div className="mt-4 flex flex-col gap-2 text-xs leading-5 text-[var(--text-muted)]">
-              {vm.sessionState.signedInLine ? <p>{vm.sessionState.signedInLine}</p> : null}
-              {vm.sessionState.archiveLine ? <p>{vm.sessionState.archiveLine}</p> : null}
-            </div>
-          )}
-        </div>
 
-        <div className="grid gap-6 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[17rem_minmax(0,1fr)]">
+        <div className="grid gap-5 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[17rem_minmax(0,1fr)]">
           <OutlineRail
             lang={vm.lang}
             instanceId={instanceId}
