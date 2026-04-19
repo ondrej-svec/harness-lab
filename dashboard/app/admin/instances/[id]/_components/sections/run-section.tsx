@@ -27,7 +27,6 @@ import {
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import type { RichAgendaItem } from "../agenda/types";
-import { ControlRoomPersistentSummary } from "../control-room-summary";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
@@ -87,82 +86,69 @@ export function RunSection({
       title={copy.agendaSectionTitle}
       description={copy.agendaSectionDescription}
     >
-      <div className="space-y-6">
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(18rem,0.8fr)]">
-          <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusPill label={focusStatusLabel} tone={focusItem?.status === "current" ? "live" : "neutral"} />
-              <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
-                {state.workshopMeta.currentPhaseLabel}
+      <div className="space-y-5">
+        <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
+          <div className="flex flex-wrap items-center gap-2">
+            <StatusPill label={focusStatusLabel} tone={focusItem?.status === "current" ? "live" : "neutral"} />
+            <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-secondary)]">
+              {state.workshopMeta.currentPhaseLabel}
+            </span>
+            {focusItem?.id === nextAgendaItem?.id && focusItem?.id !== currentAgendaItem?.id ? (
+              <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">
+                {copy.nextUp}
               </span>
-              {focusItem?.id === nextAgendaItem?.id && focusItem?.id !== currentAgendaItem?.id ? (
-                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
-                  {copy.nextUp}
-                </span>
-              ) : null}
-            </div>
-            <h2 className="mt-4 text-[1.85rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-3xl">
-              {focusItem ? `${focusItem.time} • ${focusItem.title}` : overviewState.liveNowTitle}
-            </h2>
-            <p className="mt-3 max-w-3xl text-[15px] leading-6 text-[var(--hero-secondary)]">
+            ) : null}
+            <span className="text-xs text-[var(--hero-muted)]">
+              {copy.liveNow}: {currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
+            </span>
+          </div>
+          <h2 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-text)] sm:text-2xl lg:text-[26px] xl:text-[28px]">
+            {focusItem ? `${focusItem.time} • ${focusItem.title}` : overviewState.liveNowTitle}
+          </h2>
+          {focusItem?.roomSummary || focusItem?.description || overviewState.liveNowDescription ? (
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
               {focusItem?.roomSummary || focusItem?.description || overviewState.liveNowDescription}
             </p>
+          ) : null}
 
-            <div className="mt-5 flex flex-wrap gap-3">
-              {focusItem && focusItem.id !== currentAgendaItem?.id ? (
-                <form action={setAgendaAction}>
-                  <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
-                  <input name="agendaId" type="hidden" value={focusItem.id} />
-                  <input name="returnTo" type="hidden" value="detail" />
-                  <AdminSubmitButton className={adminPrimaryButtonClassName}>
-                    {copy.agendaMoveLiveHereButton}
-                  </AdminSubmitButton>
-                </form>
-              ) : null}
-              {selectedAgendaProjectionHref ? (
-                <ExternalOpenButton
-                  className={
-                    focusItem && focusItem.id !== currentAgendaItem?.id
-                      ? `${adminSecondaryButtonClassName} inline-flex`
-                      : `${adminPrimaryButtonClassName} inline-flex`
-                  }
-                  href={selectedAgendaProjectionHref}
-                >
-                  {copy.presenterOpenCurrentButton}
-                </ExternalOpenButton>
-              ) : null}
+          <div className="mt-4 flex flex-wrap gap-3">
+            {focusItem && focusItem.id !== currentAgendaItem?.id ? (
+              <form action={setAgendaAction}>
+                <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
+                <input name="agendaId" type="hidden" value={focusItem.id} />
+                <input name="returnTo" type="hidden" value="detail" />
+                <AdminSubmitButton className={adminPrimaryButtonClassName}>
+                  {copy.agendaMoveLiveHereButton}
+                </AdminSubmitButton>
+              </form>
+            ) : null}
+            {selectedAgendaProjectionHref ? (
               <ExternalOpenButton
-                className={`${adminGhostButtonClassName} inline-flex`}
-                href={selectedAgendaParticipantMirrorHref}
+                className={
+                  focusItem && focusItem.id !== currentAgendaItem?.id
+                    ? `${adminSecondaryButtonClassName} inline-flex`
+                    : `${adminPrimaryButtonClassName} inline-flex`
+                }
+                href={selectedAgendaProjectionHref}
               >
-                {copy.presenterOpenParticipantSurfaceButton}
+                {copy.presenterOpenCurrentButton}
               </ExternalOpenButton>
-              {currentAgendaItem && focusItem && focusItem.id !== currentAgendaItem.id ? (
-                <AdminRouteLink
-                  className={adminGhostButtonClassName}
-                  href={liveAgendaHref}
-                  scroll={false}
-                >
-                  {copy.agendaJumpToLiveButton}
-                </AdminRouteLink>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <ControlRoomPersistentSummary
-              label={copy.liveNow}
-              value={currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
-            />
-            <ControlRoomPersistentSummary
-              label={copy.nextUp}
-              value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-            />
-            <ControlRoomPersistentSummary
-              label={copy.workspaceSignalLabel}
-              value={overviewState.participantState}
-              hint={state.rotation.scenario}
-            />
+            ) : null}
+            <ExternalOpenButton
+              className={`${adminGhostButtonClassName} inline-flex`}
+              href={selectedAgendaParticipantMirrorHref}
+            >
+              {copy.presenterOpenParticipantSurfaceButton}
+            </ExternalOpenButton>
+            {currentAgendaItem && focusItem && focusItem.id !== currentAgendaItem.id ? (
+              <AdminRouteLink
+                className={adminGhostButtonClassName}
+                href={liveAgendaHref}
+                scroll={false}
+              >
+                {copy.agendaJumpToLiveButton}
+              </AdminRouteLink>
+            ) : null}
           </div>
         </div>
 
