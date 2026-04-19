@@ -30,8 +30,10 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.locator("#overview").getByText(/Nejde o demo promptů ani o hackathon energii/i)).toBeVisible();
-    await expect(page.getByText(/Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další/i)).toBeVisible();
+    await expect(page.locator("#overview")).toContainText(/Nejde o.demo promptů ani o.hackathon energii/i);
+    await expect(page.locator("#overview")).toContainText(
+      /Celodenní workshop o.tom, jak v.týmu pracovat s.AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další/i,
+    );
     await expect(page.getByRole("navigation").getByRole("link", { name: "vstup pro facilitátora" })).toBeVisible();
 
     expect(pageErrors).toEqual([]);
@@ -90,8 +92,8 @@ test.describe("participant dashboard", () => {
     await page.goto("/");
 
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await page.getByLabel("event code").fill("lantern8-context4-handoff2");
-    await page.getByRole("button", { name: "otevřít participant plochu" }).click();
+    await page.getByLabel(/kód místnosti|event code/i).fill("lantern8-context4-handoff2");
+    await page.getByRole("button", { name: /otevřít plochu pro účastníky|otevřít participant plochu/i }).click();
 
     await page.waitForURL("**/participant**");
 
@@ -101,7 +103,7 @@ test.describe("participant dashboard", () => {
     await page.getByRole("button", { name: "Pokračovat" }).click();
     await expect(page.getByLabel("Jak se jmenujete?")).toBeHidden();
 
-    await expect(page.getByText("participant plocha", { exact: true })).toBeVisible();
+    await expect(page.getByText(/plocha pro účastníky|participant plocha/i).first()).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
     // Current phase/build shell content is present, not just public chrome.
     await expect(page.getByText("10:30 • Build Phase 1")).toBeVisible();
@@ -123,8 +125,8 @@ test.describe("participant dashboard", () => {
   test("keeps the participant mobile room view visually stable", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto("/");
-    await page.getByLabel("event code").fill("lantern8-context4-handoff2");
-    await page.getByRole("button", { name: "otevřít participant plochu" }).click();
+    await page.getByLabel(/kód místnosti|event code/i).fill("lantern8-context4-handoff2");
+    await page.getByRole("button", { name: /otevřít plochu pro účastníky|otevřít participant plochu/i }).click();
     await page.waitForURL("**/participant**");
     // Self-identify so the room view renders (not the prompt).
     await page.getByLabel("Jak se jmenujete?").fill("Test Účastník");
@@ -244,7 +246,7 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "signály" })).toHaveCount(0);
-    await expect(page.getByText("facilitator runner", { exact: true })).toBeVisible();
+    await expect(page.getByText("tahák pro facilitátora", { exact: true })).toBeVisible();
     await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
 
     await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
@@ -254,12 +256,12 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByRole("button", { name: "Odemknout" })).toBeVisible();
 
     await page.getByRole("button", { name: "Odemknout" }).click();
-    await expect(page.getByText(/participant plocha je otevřená/i).first()).toBeVisible();
+    await expect(page.getByText(/plocha pro účastníky je otevřená|participant plocha je otevřená/i).first()).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a?section=settings");
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /plocha pro účastníky|participant plocha/i })).toBeVisible();
     await page.getByRole("button", { name: "znovu skrýt" }).click();
-    await expect(page.getByText(/participant plocha je skrytá/i).first()).toBeVisible();
+    await expect(page.getByText(/plocha pro účastníky je skrytá|participant plocha je skrytá/i).first()).toBeVisible();
   });
 
   test("keeps the facilitator overview visually stable", async ({ page }) => {
@@ -354,16 +356,16 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=access");
 
     await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
-    await expect(page.getByText("Správa facilitátorů vyžaduje neon mód.")).toBeVisible();
+    await expect(page.getByText("Správa facilitátorů je dostupná jen v neon módu.")).toBeVisible();
   });
 
   test("keeps dashboard authoring furniture off the run detail", async ({ page }) => {
     await page.goto("/admin/instances/sample-studio-a?section=run&agendaItem=talk");
 
-    await expect(page.getByText("facilitator runner", { exact: true })).toBeVisible();
+    await expect(page.getByText("tahák pro facilitátora", { exact: true })).toBeVisible();
     await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "otevřít projekci" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "participant plocha 1:1" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /plocha pro účastníky 1:1|participant plocha 1:1/i })).toBeVisible();
     await expect(page.getByText("zdroj a ukládání")).toHaveCount(0);
     await expect(page.getByRole("button", { name: /\+ přidat scénu/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /\+ přidat moment/i })).toHaveCount(0);
@@ -373,7 +375,7 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=run&agendaItem=rotation");
 
     const projectionLink = page.getByRole("link", { name: "otevřít projekci" });
-    const participantLink = page.getByRole("link", { name: "participant plocha 1:1" });
+    const participantLink = page.getByRole("link", { name: /plocha pro účastníky 1:1|participant plocha 1:1/i });
 
     await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
     await expect(projectionLink).toBeVisible();
