@@ -21,8 +21,10 @@ Public responsibilities:
 - team-facing status that is safe to expose in-room
 - links to the participant learner kit artifacts the team should use next
 - phase-aware next-step CTA
+- stable participant-home navigation: `Next / Build / Reference`
 - repo or starter-material access
 - setup-failure fallback guidance
+- structured checkpoint capture and room-safe feed visibility
 
 Design rules:
 - mobile-first
@@ -31,6 +33,8 @@ Design rules:
 - no facilitator-only controls
 - should reinforce the same participant resources as `workshop-skill/` and facilitation guidance
 - must be sufficient for core workshop progression without requiring the CLI or skill first
+- the first viewport is led by `Next`; `Build` and `Reference` are persistent but secondary
+- live participant residue must stay structured and attributable enough that it reads as signal, not chat
 
 ## Facilitator Surface
 

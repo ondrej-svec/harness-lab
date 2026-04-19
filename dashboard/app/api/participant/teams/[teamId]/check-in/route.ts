@@ -1,13 +1,31 @@
 import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
+import { getParticipantRepository } from "@/lib/participant-repository";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { appendCheckIn, getWorkshopState } from "@/lib/workshop-store";
 
 type CheckInBody = {
   phaseId?: string;
   content?: string;
+  changed?: string;
+  verified?: string;
+  nextStep?: string;
   writtenBy?: string | null;
 };
+
+function buildStructuredCheckInContent(input: {
+  changed: string;
+  verified: string;
+  nextStep: string;
+}) {
+  const parts = [
+    `What changed: ${input.changed}`,
+    `What verifies it: ${input.verified}`,
+    `Next safe move: ${input.nextStep}`,
+  ];
+
+  return parts.join("\n");
+}
 
 export async function PATCH(
   request: Request,
@@ -20,9 +38,13 @@ export async function PATCH(
 
   const { teamId } = await params;
   const body = (await request.json()) as CheckInBody;
-  const content = body.content?.trim() ?? "";
-  if (!content) {
-    return NextResponse.json({ ok: false, error: "content is required" }, { status: 400 });
+  const changed = body.changed?.trim() ?? "";
+  const verified = body.verified?.trim() ?? "";
+  const nextStep = body.nextStep?.trim() ?? "";
+  const hasStructuredPayload = Boolean(changed && verified && nextStep);
+  const content = hasStructuredPayload ? buildStructuredCheckInContent({ changed, verified, nextStep }) : (body.content?.trim() ?? "");
+  if (!content || !hasStructuredPayload) {
+    return NextResponse.json({ ok: false, error: "changed, verified, and nextStep are required" }, { status: 400 });
   }
 
   const instanceId = access.session.instanceId;
@@ -37,6 +59,9 @@ export async function PATCH(
     state.agenda.find((item) => item.status === "current")?.id ||
     state.agenda[0]?.id ||
     "opening";
+  const participantRecord = access.session.participantId
+    ? await getParticipantRepository().findParticipant(instanceId, access.session.participantId)
+    : null;
 
   try {
     const nextState = await appendCheckIn(
@@ -44,7 +69,11 @@ export async function PATCH(
       {
         phaseId,
         content,
-        writtenBy: body.writtenBy ?? null,
+        participantId: access.session.participantId ?? null,
+        writtenBy: participantRecord?.displayName ?? body.writtenBy ?? null,
+        changed,
+        verified,
+        nextStep,
       },
       instanceId,
     );

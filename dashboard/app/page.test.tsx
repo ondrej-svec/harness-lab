@@ -91,7 +91,9 @@ describe("public page helpers", () => {
 
   it("builds participant and public header navigation from state", async () => {
     const {
+      buildParticipantCheckpointFeed,
       buildParticipantPanelState,
+      buildParticipantReferenceGroups,
       buildParticipantTeamCards,
       buildPublicAccessPanelState,
       buildPublicFooterLinks,
@@ -103,9 +105,9 @@ describe("public page helpers", () => {
     process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
 
     expect(buildSiteHeaderNavLinks({ isParticipant: true, lang: "en", copy: publicCopy.en }).map((item) => item.label)).toEqual([
-      publicCopy.en.navRoom,
-      publicCopy.en.navTeams,
-      publicCopy.en.navNotes,
+      publicCopy.en.navNext,
+      publicCopy.en.navBuild,
+      publicCopy.en.navReference,
     ]);
     expect(buildSiteHeaderNavLinks({ isParticipant: false, lang: "en", copy: publicCopy.en }).map((item) => item.label)).toContain(
       publicCopy.en.navFacilitatorLogin,
@@ -185,6 +187,47 @@ describe("public page helpers", () => {
     expect(fallbackPanel.guidanceLabel).toBe(publicCopy.en.participantGuidanceFallbackLabel);
     expect(fallbackPanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
     expect(fallbackPanel.guidanceBlocks.some((block) => block.type === "bullet-list")).toBe(true);
+    const stateWithStructuredCheckIn = structuredClone(seedWorkshopState);
+    stateWithStructuredCheckIn.teams[0]!.checkIns = [
+      {
+        phaseId: "build-1",
+        content: "What changed: Added the first AGENTS map",
+        writtenAt: "2026-04-19T09:30:00.000Z",
+        writtenBy: "Anna",
+        participantId: "p-anna",
+        changed: "Added the first AGENTS map",
+        verified: "Reviewed the repo entrypoints together",
+        nextStep: "Write the first plan in the repo",
+      },
+    ];
+    expect(
+      buildParticipantCheckpointFeed({
+        agenda: stateWithStructuredCheckIn.agenda,
+        lang: "en",
+        participantTeams: { items: stateWithStructuredCheckIn.teams },
+        activeParticipantTeam: stateWithStructuredCheckIn.teams[0]!,
+        activeParticipantId: "p-anna",
+        activeParticipantName: "Anna",
+        currentPhaseId: "build-1",
+      }),
+    ).toMatchObject([
+      {
+        teamId: "t1",
+        phaseId: "build-1",
+        changed: "Added the first AGENTS map",
+        verified: "Reviewed the repo entrypoints together",
+        nextStep: "Write the first plan in the repo",
+        isCurrentPhase: true,
+        isMyTeam: true,
+        isMine: true,
+      },
+    ]);
+    expect(
+      buildParticipantReferenceGroups({
+        lang: "en",
+        setupPaths: stateWithStructuredCheckIn.setupPaths,
+      }).map((group) => group.id),
+    ).toEqual(["defaults", "accelerators", "explore"]);
     expect(buildParticipantTeamCards(null)).toEqual([]);
     expect(buildSharedRoomNotes(seedWorkshopState.ticker)).toEqual(seedWorkshopState.ticker.map((item) => item.label));
   });

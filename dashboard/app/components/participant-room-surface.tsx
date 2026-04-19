@@ -1,16 +1,19 @@
 import type { ReactNode } from "react";
 import {
+  buildParticipantCheckpointFeed,
+  buildParticipantHomeState,
   buildParticipantPanelState,
-  buildParticipantTeamCards,
   buildSharedRoomNotes,
+  type ParticipantReferenceGroup,
 } from "@/lib/public-page-view-model";
 import type { ParticipantTeamLookup } from "@/lib/event-access";
-import type { ParticipantSession } from "@/lib/runtime-contracts";
+import type { ParticipantRecord, ParticipantSession } from "@/lib/runtime-contracts";
 import { publicCopy, type UiLanguage } from "@/lib/ui-language";
 import type { Challenge, PresenterBlock, ProjectBrief, Team, WorkshopState } from "@/lib/workshop-data";
 import { CopyActionButton } from "./copy-action-button";
-import { SubmitButton } from "./submit-button";
+import { ParticipantCheckpointFeed } from "./participant-checkpoint-feed";
 import { ParticipantCheckInForm } from "./participant-check-in-form";
+import { SubmitButton } from "./submit-button";
 
 type AgendaItem = WorkshopState["agenda"][number];
 type PublicNote = WorkshopState["ticker"][number];
@@ -21,29 +24,38 @@ export function ParticipantRoomSurface({
   workshopContextLine,
   currentAgendaItem,
   nextAgendaItem,
+  agenda,
   participantSession,
   participantTeams,
   activeParticipantTeam,
+  activeParticipant,
   briefs,
   challenges,
   publicNotes,
+  referenceGroups,
   rotationRevealed,
   logoutAction,
+  checkInEnabled = true,
 }: {
   copy: (typeof publicCopy)[UiLanguage];
   lang: UiLanguage;
   workshopContextLine: string;
   currentAgendaItem: AgendaItem | undefined;
   nextAgendaItem: AgendaItem | undefined;
+  agenda: WorkshopState["agenda"];
   participantSession: ParticipantSession;
   participantTeams: ParticipantTeamLookup | null;
   activeParticipantTeam: Team | null;
+  activeParticipant: ParticipantRecord | null;
   briefs: ProjectBrief[];
   challenges: Challenge[];
   publicNotes: PublicNote[];
+  referenceGroups: ParticipantReferenceGroup[];
   rotationRevealed: boolean;
   logoutAction?: ((formData: FormData) => Promise<void>) | undefined;
+  checkInEnabled?: boolean;
 }) {
+  const sectionCopy = getParticipantSurfaceCopy(lang);
   const participantPanel = buildParticipantPanelState({
     copy,
     lang,
@@ -52,10 +64,30 @@ export function ParticipantRoomSurface({
     participantSession,
     rotationRevealed,
   });
-  const teamCards = buildParticipantTeamCards(participantTeams);
+  const homeState = buildParticipantHomeState({
+    lang,
+    currentAgendaItem,
+    participantTeams,
+    activeParticipantTeam,
+    activeParticipantName: activeParticipant?.displayName ?? null,
+    briefs,
+    challenges,
+  });
   const sharedNotes = buildSharedRoomNotes(publicNotes);
-  const roomNotesSummary = sharedNotes.length > 0 ? `${sharedNotes.length}` : "0";
-  const showBuildPhaseOneProofSlice = currentAgendaItem?.id === "build-1";
+  const checkpointFeed = buildParticipantCheckpointFeed({
+    agenda,
+    lang,
+    participantTeams,
+    activeParticipantTeam,
+    activeParticipantId: activeParticipant?.id ?? null,
+    activeParticipantName: activeParticipant?.displayName ?? null,
+    currentPhaseId: currentAgendaItem?.id ?? null,
+  });
+  const defaultFeedScope = activeParticipantTeam ? "team" : "phase";
+  const activeTeamCards = activeParticipantTeam
+    ? homeState.teamCards.filter((team) => team.id === activeParticipantTeam.id)
+    : homeState.teamCards;
+  const visibleRoomNotes = sharedNotes.slice(0, 2);
 
   return (
     <>
@@ -65,7 +97,7 @@ export function ParticipantRoomSurface({
         </p>
       ) : null}
 
-      <section className="border-b border-[var(--border)] py-10" id="room">
+      <section className="border-b border-[var(--border)] py-10" id="next">
         <div
           className="dashboard-motion-card relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7"
           style={{ viewTransitionName: "room-access" }}
@@ -73,183 +105,292 @@ export function ParticipantRoomSurface({
           <div className="pointer-events-none absolute -left-10 top-0 h-36 w-36 rounded-full bg-[radial-gradient(circle,var(--ambient-left),transparent_72%)] blur-3xl dashboard-drift" />
           <div className="pointer-events-none absolute right-[-3rem] top-8 h-44 w-44 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_74%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
           <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,var(--surface-soft),transparent_62%)] dashboard-sheen" />
-          <SectionLabel>{copy.participantEyebrow}</SectionLabel>
-          <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">
-            {participantPanel.title}
-          </h2>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--text-secondary)]">{participantPanel.body}</p>
 
-          <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.08fr)_minmax(18rem,0.92fr)]">
-            <div className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{participantPanel.currentPhaseLabel}</p>
-              <p className="mt-2 text-xl font-semibold text-[var(--text-primary)]">{participantPanel.currentPhaseTitle}</p>
-              {participantPanel.currentPhaseDescription ? (
-                <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{participantPanel.currentPhaseDescription}</p>
-              ) : null}
-              {participantPanel.nextPhaseLabel ? (
-                <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">{participantPanel.nextPhaseLabel}</p>
-              ) : null}
+          <SectionLabel>{copy.participantEyebrow}</SectionLabel>
+          <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.12fr)_minmax(18rem,0.88fr)]">
+            <div className="dashboard-motion-card rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{sectionCopy.nextEyebrow}</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
+                {homeState.showBuildPhaseOneProofSlice ? sectionCopy.buildPhaseOneTitle : participantPanel.currentPhaseTitle}
+              </h2>
+              <p className="mt-4 max-w-3xl text-base leading-7 text-[var(--text-secondary)]">
+                {homeState.showBuildPhaseOneProofSlice
+                  ? sectionCopy.buildPhaseOneBody
+                  : participantPanel.currentPhaseDescription ?? participantPanel.body}
+              </p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                {homeState.primaryActions.map((action, index) => (
+                  <a
+                    key={action.href}
+                    className={`dashboard-motion-button rounded-full px-4 py-2 text-sm font-medium transition ${
+                      index === 0
+                        ? "border border-[var(--border-strong)] bg-[var(--surface-panel)] text-[var(--text-primary)] hover:border-[var(--text-primary)]"
+                        : "border border-[var(--border)] bg-[var(--surface-panel)] text-[var(--text-primary)] hover:border-[var(--border-strong)]"
+                    }`}
+                    href={action.href}
+                  >
+                    {action.label}
+                  </a>
+                ))}
+              </div>
+              <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
+                <MiniMetric label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
+                <MiniMetric label={participantPanel.sessionUntilLabel} value={participantPanel.sessionUntilValue} />
+              </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <MetricCard label={copy.metricNext} value={participantPanel.nextPhaseTitle ?? copy.metricReflection} />
-              <a
-                href="#notes"
-                className="dashboard-motion-card dashboard-motion-link rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-left transition hover:border-[var(--border-strong)]"
-              >
-                <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{copy.sharedRoomNotes}</p>
-                <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{roomNotesSummary}</p>
-                <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{copy.navNotes}</p>
-              </a>
+            <div className="space-y-4">
+              <ParticipantBlockCard title={sectionCopy.contextTitle}>
+                <div className="grid gap-3">
+                  <KeyValuePair label={homeState.workingContext.modeLabel} value={homeState.workingContext.modeValue} />
+                  {homeState.workingContext.teamLabel ? (
+                    <KeyValuePair label={sectionCopy.teamLabel} value={homeState.workingContext.teamLabel} />
+                  ) : null}
+                  {homeState.workingContext.participantLabel ? (
+                    <KeyValuePair label={sectionCopy.participantLabel} value={homeState.workingContext.participantLabel} />
+                  ) : null}
+                </div>
+                <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{homeState.workingContext.note}</p>
+              </ParticipantBlockCard>
+
+              <ParticipantBlockCard title={copy.sharedRoomNotes}>
+                {visibleRoomNotes.length > 0 ? (
+                  <div className="space-y-3">
+                    {visibleRoomNotes.map((note) => (
+                      <div
+                        key={note}
+                        className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-3 text-sm leading-6 text-[var(--text-secondary)] whitespace-pre-line"
+                      >
+                        {note}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.noRoomData}</p>
+                )}
+              </ParticipantBlockCard>
             </div>
           </div>
 
-          {showBuildPhaseOneProofSlice ? (
-            <BuildPhaseOneProofSlice
-              lang={lang}
-              activeTeam={activeParticipantTeam}
-              teamCards={teamCards}
-              briefs={briefs}
-              challenges={challenges}
-            />
-          ) : null}
-
-          {participantPanel.guidanceBlocks.length > 0 ? (
+          {!homeState.showBuildPhaseOneProofSlice && participantPanel.guidanceBlocks.length > 0 ? (
             <div className="mt-6 space-y-4">
-              <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
+              <SectionLabel>{participantPanel.guidanceLabel ?? sectionCopy.nextEyebrow}</SectionLabel>
               <ParticipantGuidanceBlocks blocks={participantPanel.guidanceBlocks} copy={copy} participantPanel={participantPanel} />
             </div>
           ) : null}
-          {participantPanel.guidanceCtaLabel ? (
+          {!homeState.showBuildPhaseOneProofSlice && participantPanel.guidanceCtaLabel ? (
             <GuidanceCta href={participantPanel.guidanceCtaHref} label={participantPanel.guidanceCtaLabel} openLabel={copy.openLinkLabel} />
           ) : null}
         </div>
       </section>
 
-      <section className="grid gap-10 py-10 lg:grid-cols-[1.05fr_0.95fr]">
-        <div id="teams">
-          <SectionLabel>{copy.roomData}</SectionLabel>
-          {teamCards.length > 0 ? (
-            <div className="mt-4 grid gap-4">
-              {teamCards.map((team) => (
-                <article
-                  key={team.id}
-                  className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur"
-                >
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div>
-                      <h3 className="text-lg font-medium text-[var(--text-primary)]">{team.name}</h3>
-                      <p className="text-sm text-[var(--text-muted)]">{team.city}</p>
-                    </div>
-                    <span className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{team.id}</span>
-                  </div>
-                  {"projectBriefId" in team ? (
-                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
-                      {resolveBriefTitle(briefs, team.projectBriefId)}
-                      {"anchor" in team && team.anchor ? ` · ${team.anchor}` : ""}
-                    </p>
-                  ) : null}
-                  {"members" in team && Array.isArray(team.members) && team.members.length > 0 ? (
-                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
-                  ) : null}
-                  <div className="mt-4 space-y-3">
-                    <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
-                      {copy.teamCheckInsLabel}
-                    </p>
-                    {Array.isArray(team.checkIns) && team.checkIns.length > 0 ? (
-                      <ul className="space-y-2">
-                        {team.checkIns.map((entry) => (
-                          <li
-                            key={`${entry.phaseId}-${entry.writtenAt}`}
-                            className="rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm leading-6 text-[var(--text-secondary)]"
-                          >
-                            <p className="whitespace-pre-line">{entry.content}</p>
-                            <p className="mt-1 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                              {entry.phaseId}
-                              {entry.writtenBy ? ` · ${entry.writtenBy}` : ""}
-                            </p>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p className="text-sm leading-6 text-[var(--text-muted)]">{copy.teamCheckInsEmpty}</p>
-                    )}
-                  </div>
-                  <ParticipantCheckInForm
-                    teamId={team.id}
-                    currentPhaseId={currentAgendaItem?.id ?? null}
-                    labels={{
-                      contentPlaceholder: copy.teamCheckInContentPlaceholder,
-                      authorPlaceholder: copy.teamCheckInAuthorPlaceholder,
-                      submitLabel: copy.teamCheckInSubmit,
-                      successMessage: copy.teamCheckInSuccess,
-                      missingContent: copy.teamCheckInMissingContent,
-                      missingPhase: copy.teamCheckInMissingPhase,
-                      genericError: copy.teamCheckInGenericError,
-                    }}
-                  />
-                  {team.repoUrl ? (
-                    <>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <a
-                          className="dashboard-motion-button inline-flex items-center rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
-                          href={team.repoUrl}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          {lang === "en" ? "Open repo" : "Otevřít repo"}
-                        </a>
-                        <CopyActionButton
-                          className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
-                          value={team.repoUrl}
-                          label={lang === "en" ? "Copy repo URL" : "Kopírovat URL repa"}
-                          copiedLabel={lang === "en" ? "Copied" : "Zkopírováno"}
-                        />
-                        <CopyActionButton
-                          className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
-                          value={`git clone ${team.repoUrl}`}
-                          label={lang === "en" ? "Copy clone command" : "Kopírovat clone command"}
-                          copiedLabel={lang === "en" ? "Copied" : "Zkopírováno"}
-                        />
-                      </div>
-                      <a
-                        className="dashboard-motion-card dashboard-motion-link mt-3 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
-                        href={team.repoUrl}
-                        rel="noreferrer"
-                        target="_blank"
-                      >
-                        {team.repoUrl}
-                      </a>
-                    </>
-                  ) : (
-                    <p className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
-                      {copy.noRoomData}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{copy.noRoomData}</p>
-          )}
-        </div>
+      <section className="border-b border-[var(--border)] py-10" id="build">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.06fr)_minmax(19rem,0.94fr)]">
+          <div className="space-y-4">
+            <ParticipantBlockCard title={sectionCopy.buildTitle}>
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.buildBody}</p>
+            </ParticipantBlockCard>
 
-        <div id="notes">
-          <SectionLabel>{copy.sharedRoomNotes}</SectionLabel>
-          {sharedNotes.length > 0 ? (
-            <div className="mt-4 grid gap-4">
-              {sharedNotes.map((note) => (
-                <div
-                  key={note}
-                  className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4 text-sm leading-6 text-[var(--text-secondary)] shadow-[var(--shadow-soft)] backdrop-blur whitespace-pre-line"
-                >
-                  {note}
+            <ParticipantBlockCard title={homeState.highlightedBrief ? sectionCopy.briefTitleActive : sectionCopy.briefTitleRoom}>
+              <div id="build-briefs">
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">
+                  {homeState.highlightedBrief ? sectionCopy.briefBodyActive : sectionCopy.briefBodyRoom}
+                </p>
+                <div className="mt-4 space-y-3">
+                  {homeState.visibleBriefs.map((brief) => (
+                    <div key={brief.id} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">{brief.title}</p>
+                      <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{brief.problem}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{copy.noRoomData}</p>
-          )}
+              </div>
+            </ParticipantBlockCard>
+
+            <ParticipantBlockCard title={sectionCopy.materialsTitle}>
+              <div id="build-materials">
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.materialsBody}</p>
+                {activeTeamCards.length > 0 ? (
+                  <div className="mt-4 grid gap-4">
+                    {activeTeamCards.map((team) => (
+                      <article
+                        key={team.id}
+                        className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] p-4"
+                      >
+                        <div className="flex flex-wrap items-baseline justify-between gap-3">
+                          <div>
+                            <h3 className="text-base font-medium text-[var(--text-primary)]">{team.name}</h3>
+                            <p className="text-sm text-[var(--text-muted)]">
+                              {resolveBriefTitle(briefs, team.projectBriefId)}
+                              {team.anchor ? ` · ${team.anchor}` : ""}
+                            </p>
+                          </div>
+                          <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{team.id}</span>
+                        </div>
+                        {team.members.length > 0 ? (
+                          <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
+                        ) : null}
+                        {team.repoUrl ? (
+                          <>
+                            <div className="mt-4 flex flex-wrap gap-2">
+                              <a
+                                className="dashboard-motion-button inline-flex items-center rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+                                href={team.repoUrl}
+                                rel="noreferrer"
+                                target="_blank"
+                              >
+                                {sectionCopy.openRepo}
+                              </a>
+                              <CopyActionButton
+                                className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
+                                value={team.repoUrl}
+                                label={sectionCopy.copyRepoUrl}
+                                copiedLabel={sectionCopy.copied}
+                              />
+                              <CopyActionButton
+                                className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
+                                value={`git clone ${team.repoUrl}`}
+                                label={sectionCopy.copyCloneCommand}
+                                copiedLabel={sectionCopy.copied}
+                              />
+                            </div>
+                            <a
+                              className="dashboard-motion-card dashboard-motion-link mt-3 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                              href={team.repoUrl}
+                              rel="noreferrer"
+                              target="_blank"
+                            >
+                              {team.repoUrl}
+                            </a>
+                          </>
+                        ) : (
+                          <p className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
+                            {copy.noRoomData}
+                          </p>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4 text-sm leading-6 text-[var(--text-secondary)]">{copy.noRoomData}</p>
+                )}
+              </div>
+            </ParticipantBlockCard>
+
+            <ParticipantBlockCard title={sectionCopy.challengeTitle}>
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.challengeBody}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {homeState.visibleChallenges.map((challenge) => (
+                  <span
+                    key={challenge.id}
+                    className="rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]"
+                  >
+                    {challenge.title}
+                  </span>
+                ))}
+              </div>
+            </ParticipantBlockCard>
+
+            <ParticipantBlockCard title={sectionCopy.fallbackTitle}>
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.fallbackBody}</p>
+              <div className="mt-4 space-y-3">
+                <FallbackStep title={sectionCopy.fallbackNow} body={sectionCopy.fallbackNowBody} />
+                <FallbackStep title={sectionCopy.fallbackHelp} body={sectionCopy.fallbackHelpBody} />
+                <FallbackStep title={sectionCopy.fallbackFast} body={sectionCopy.fallbackFastBody} />
+              </div>
+            </ParticipantBlockCard>
+          </div>
+
+          <div className="space-y-4">
+            <ParticipantBlockCard title={sectionCopy.acceleratorTitle}>
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.acceleratorBody}</p>
+            </ParticipantBlockCard>
+
+            {homeState.teamCards.length > 0 ? (
+              <div id="checkpoint-capture">
+                <ParticipantCheckInForm
+                  initialTeamId={activeParticipantTeam?.id ?? null}
+                  teamOptions={homeState.teamCards.map((team) => ({
+                    id: team.id,
+                    label: team.name,
+                  }))}
+                  currentPhaseId={currentAgendaItem?.id ?? null}
+                  activeParticipantName={activeParticipant?.displayName ?? null}
+                  disabled={!checkInEnabled}
+                  labels={{
+                    title: sectionCopy.captureTitle,
+                    body: sectionCopy.captureBody,
+                    changedLabel: sectionCopy.captureChangedLabel,
+                    changedPlaceholder: sectionCopy.captureChangedPlaceholder,
+                    verifiedLabel: sectionCopy.captureVerifiedLabel,
+                    verifiedPlaceholder: sectionCopy.captureVerifiedPlaceholder,
+                    nextStepLabel: sectionCopy.captureNextStepLabel,
+                    nextStepPlaceholder: sectionCopy.captureNextStepPlaceholder,
+                    participantPrefix: sectionCopy.participantLabel,
+                    teamLabel: sectionCopy.teamLabel,
+                    submitLabel: sectionCopy.captureSubmit,
+                    successMessage: sectionCopy.captureSuccess,
+                    missingTeam: sectionCopy.captureMissingTeam,
+                    missingStructuredFields: sectionCopy.captureMissing,
+                    missingPhase: copy.teamCheckInMissingPhase,
+                    genericError: copy.teamCheckInGenericError,
+                  }}
+                />
+              </div>
+            ) : (
+              <ParticipantBlockCard title={sectionCopy.captureTitle}>
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.captureNeedsTeam}</p>
+              </ParticipantBlockCard>
+            )}
+
+            <ParticipantCheckpointFeed
+              items={checkpointFeed}
+              defaultScope={defaultFeedScope}
+              showMineFilter={Boolean(activeParticipant)}
+              labels={{
+                title: sectionCopy.feedTitle,
+                body: sectionCopy.feedBody,
+                room: sectionCopy.feedRoom,
+                phase: sectionCopy.feedPhase,
+                team: sectionCopy.feedTeam,
+                mine: sectionCopy.feedMine,
+                empty: sectionCopy.feedEmpty,
+                emptyMine: sectionCopy.feedEmptyMine,
+                changed: sectionCopy.captureChangedLabel,
+                verified: sectionCopy.captureVerifiedLabel,
+                nextStep: sectionCopy.captureNextStepLabel,
+                legacy: sectionCopy.feedLegacy,
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10" id="reference">
+        <div className="space-y-4">
+          <ParticipantBlockCard title={sectionCopy.referenceTitle}>
+            <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.referenceBody}</p>
+          </ParticipantBlockCard>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {referenceGroups.map((group) => (
+              <ParticipantBlockCard key={group.id} title={group.title}>
+                <p className="text-sm leading-7 text-[var(--text-secondary)]">{group.description}</p>
+                <div className="mt-4 space-y-3">
+                  {group.items.map((item) => (
+                    <ActionablePanelLink
+                      key={item.id}
+                      href={item.href}
+                      label={item.label}
+                      description={item.description}
+                      openLabel={copy.openLinkLabel}
+                    />
+                  ))}
+                </div>
+              </ParticipantBlockCard>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -272,156 +413,141 @@ export function ParticipantRoomSurface({
   );
 }
 
+function getParticipantSurfaceCopy(lang: UiLanguage) {
+  if (lang === "en") {
+    return {
+      nextEyebrow: "next",
+      buildPhaseOneTitle: "Agree on the brief. Open the repo. Draft the first map.",
+      buildPhaseOneBody:
+        "The browser path is enough to start. If your local agent setup is ready, use the skill as the faster path, not the required one.",
+      contextTitle: "compact working context",
+      teamLabel: "team",
+      participantLabel: "participant",
+      buildTitle: "build",
+      buildBody:
+        "Keep the working set close: brief, repo, challenge prompts, fallback, and a short evidence trail that the room can actually read.",
+      briefTitleActive: "your brief",
+      briefTitleRoom: "prepared briefs in this room",
+      briefBodyActive: "Your assigned brief is visible here so the workshop does not depend on the skill path first.",
+      briefBodyRoom: "Prepared briefs stay visible here so teams can confirm direction before local setup is perfect.",
+      materialsTitle: "team materials",
+      materialsBody: "Open the repo, copy what you need, and keep the repo move secondary to the brief and first verification step.",
+      openRepo: "Open repo",
+      copyRepoUrl: "Copy repo URL",
+      copyCloneCommand: "Copy clone command",
+      copied: "Copied",
+      challengeTitle: "challenge prompts",
+      challengeBody: "Keep prompts reachable, but secondary to the main move.",
+      fallbackTitle: "setup fallback",
+      fallbackBody:
+        "If setup is blocking you, stay on the browser-first path: align on the brief, open the repo, write the first map, then decide whether local setup deserves more time.",
+      fallbackNow: "0–5 minutes blocked",
+      fallbackNowBody: "Stay here. Align on scope, first verification, and the smallest next move.",
+      fallbackHelp: "Still blocked after that?",
+      fallbackHelpBody: "Raise a hand. The facilitator helps you choose between browser path, starter package, or local-tool fallback.",
+      fallbackFast: "If setup is ready",
+      fallbackFastBody: "Use the workshop skill as a stronger accelerator for coaching and repo-native prompts.",
+      acceleratorTitle: "optional accelerator",
+      acceleratorBody:
+        "CLI and skill support belong here as a clear secondary move. Valuable, visible, and never emotionally framed as the prerequisite.",
+      captureTitle: "structured checkpoint",
+      captureBody: "Write one short evidence item the room can reuse: what changed, what verifies it, and the next safe move.",
+      captureChangedLabel: "what changed",
+      captureChangedPlaceholder: "Name the concrete change your team made.",
+      captureVerifiedLabel: "what verifies it",
+      captureVerifiedPlaceholder: "Say what evidence or check makes this credible.",
+      captureNextStepLabel: "next safe move",
+      captureNextStepPlaceholder: "Tell the next person what to do first.",
+      captureSubmit: "Record checkpoint",
+      captureSuccess: "Checkpoint saved.",
+      captureMissingTeam: "Choose a team first.",
+      captureMissing: "Fill all three checkpoint fields.",
+      captureNeedsTeam: "Bind the participant to a team first, then write the checkpoint from that team context.",
+      feedTitle: "live checkpoint feed",
+      feedBody: "Chronological, attributable residue only. This is for short structured evidence, not room chat.",
+      feedRoom: "room",
+      feedPhase: "current phase",
+      feedTeam: "my team",
+      feedMine: "mine",
+      feedEmpty: "No checkpoints match this scope yet.",
+      feedEmptyMine: "You have not written a structured checkpoint yet.",
+      feedLegacy: "legacy note",
+      referenceTitle: "reference",
+      referenceBody: "Keep the evergreen material reachable, but quieter than the live workshop move.",
+    };
+  }
+
+  return {
+    nextEyebrow: "další krok",
+    buildPhaseOneTitle: "Srovnejte si zadání. Otevřete repo. Sepište první mapu.",
+    buildPhaseOneBody:
+      "Browser cesta na start stačí. Když je lokální setup pro agenta připravený, skill je rychlejší cesta, ne povinná podmínka.",
+    contextTitle: "krátký pracovní kontext",
+    teamLabel: "tým",
+    participantLabel: "účastník",
+    buildTitle: "build",
+    buildBody:
+      "Držte po ruce pracovní minimum: zadání, repo, challenge prompty, fallback a krátkou evidenci, kterou si místnost opravdu přečte.",
+    briefTitleActive: "vaše zadání",
+    briefTitleRoom: "připravená zadání pro tuto místnost",
+    briefBodyActive: "Vaše přiřazené zadání je vidět tady, aby workshop nezačínal závislostí na cestě přes skill.",
+    briefBodyRoom: "Připravená zadání zůstávají vidět tady, takže si tým potvrdí směr ještě dřív, než bude lokální setup dokonalý.",
+    materialsTitle: "materiály týmu",
+    materialsBody: "Otevřete repo, zkopírujte si, co potřebujete, a držte repo krok pořád až za zadáním a prvním ověřením.",
+    openRepo: "Otevřít repo",
+    copyRepoUrl: "Kopírovat URL repa",
+    copyCloneCommand: "Kopírovat clone command",
+    copied: "Zkopírováno",
+    challengeTitle: "challenge prompty",
+    challengeBody: "Prompty držte po ruce, ale pořád až za hlavním krokem.",
+    fallbackTitle: "fallback při setupu",
+    fallbackBody:
+      "Když vás blokuje setup, zůstaňte na browser-first cestě: srovnejte si zadání, otevřete repo, napište první mapu a až potom řešte, jestli má lokální setup cenu dál ladit.",
+    fallbackNow: "0–5 minut blok",
+    fallbackNowBody: "Zůstaňte tady. Srovnejte si scope, první ověření a nejmenší další krok.",
+    fallbackHelp: "Pořád jste zaseklí?",
+    fallbackHelpBody: "Zvedněte ruku. Facilitátor pomůže vybrat browser cestu, starter balíček nebo lokální fallback.",
+    fallbackFast: "Když je setup připravený",
+    fallbackFastBody: "Použijte workshop skill jako silnější akcelerátor pro coaching a repo-native prompty.",
+    acceleratorTitle: "volitelný akcelerátor",
+    acceleratorBody:
+      "CLI a skill patří sem jako jasně sekundární krok. Jsou hodnotné, viditelné a nevracejí do hry pocit, že bez nich se nezačne.",
+    captureTitle: "strukturovaný checkpoint",
+    captureBody: "Zapište krátkou evidenci, kterou může místnost znovu použít: co se změnilo, co to ověřuje a jaký je další bezpečný krok.",
+    captureChangedLabel: "co se změnilo",
+    captureChangedPlaceholder: "Pojmenujte konkrétní změnu, kterou váš tým udělal.",
+    captureVerifiedLabel: "co to ověřuje",
+    captureVerifiedPlaceholder: "Napište, jaký důkaz nebo check to dělá věrohodným.",
+    captureNextStepLabel: "další bezpečný krok",
+    captureNextStepPlaceholder: "Řekněte dalšímu člověku, co má udělat jako první.",
+    captureSubmit: "Zapsat checkpoint",
+    captureSuccess: "Checkpoint uložen.",
+    captureMissingTeam: "Nejdřív vyberte tým.",
+    captureMissing: "Vyplňte všechny tři checkpoint pole.",
+    captureNeedsTeam: "Nejdřív participant session navažte na tým a teprve z jeho kontextu zapisujte checkpoint.",
+    feedTitle: "live feed checkpointů",
+    feedBody: "Jen chronologická a přiřaditelná evidence. Není to room chat.",
+    feedRoom: "místnost",
+    feedPhase: "aktuální fáze",
+    feedTeam: "můj tým",
+    feedMine: "moje",
+    feedEmpty: "Pro tenhle scope zatím nic nesedí.",
+    feedEmptyMine: "Vy sami jste ještě strukturovaný checkpoint nenapsali.",
+    feedLegacy: "starší poznámka",
+    referenceTitle: "reference",
+    referenceBody: "Evergreen materiály zůstávají dosažitelné, ale tišší než live workshopový krok.",
+  };
+}
+
 function SectionLabel({ children }: { children: ReactNode }) {
   return <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--text-muted)]">{children}</p>;
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function KeyValuePair({ label, value }: { label: string; value: string }) {
   return (
-    <div className="dashboard-motion-card rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
-      <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
-function BuildPhaseOneProofSlice({
-  lang,
-  activeTeam,
-  teamCards,
-  briefs,
-  challenges,
-}: {
-  lang: UiLanguage;
-  activeTeam: Team | null;
-  teamCards: Array<ParticipantTeamLookup["items"][number]>;
-  briefs: ProjectBrief[];
-  challenges: Challenge[];
-}) {
-  const copy =
-    lang === "en"
-      ? {
-          eyebrow: "build phase 1",
-          title: "Agree on the brief. Open the repo. Draft the first map.",
-          body:
-            "The participant surface is enough to start. If your local agent setup is ready, the workshop skill is the faster path — not the required one.",
-          primaryBrief: "Open your brief",
-          primaryRepo: "Get team materials",
-          primaryFallback: "Blocked? Use fallback",
-          roomBriefsTitle: activeTeam ? "Your brief" : "Prepared briefs in this room",
-          roomBriefsBody: activeTeam
-            ? "Your team's brief is visible here so Build Phase 1 does not depend on the skill path."
-            : "Every prepared brief for this room is visible here so teams can confirm direction without local setup first.",
-          roomChallengesTitle: "Challenge cards, without the skill dependency",
-          roomChallengesBody:
-            "Required and optional prompts stay visible here so the room can keep moving even when local tooling is uneven.",
-          fallbackTitle: "Fallback is normal, not failure.",
-          fallbackBody:
-            "Keep moving from this page. Confirm the brief, open the repo, write the first map in the repo, and only then decide whether local setup is worth more time.",
-          fallbackNow: "0–5 minutes blocked",
-          fallbackNowBody: "Stay with the participant surface. Align on goal, scope, and the first verification step.",
-          fallbackHelp: "Still blocked after that?",
-          fallbackHelpBody: "Raise a hand. A facilitator helps you choose between browser path, starter package, or local-tool fallback.",
-          fallbackFast: "If setup is ready",
-          fallbackFastBody: "Use the workshop skill as the faster path for coaching and repo-native prompts.",
-          anchorTeams: "Jump to team cards",
-        }
-      : {
-          eyebrow: "build fáze 1",
-          title: "Srovnejte si zadání. Otevřete repo. Sepište první mapu.",
-          body:
-            "Participant plocha na start stačí. Když máte připravený lokální setup pro agenta, workshop skill je rychlejší cesta — ne povinná podmínka.",
-          primaryBrief: "Otevřít zadání",
-          primaryRepo: "Dostat se k materiálům týmu",
-          primaryFallback: "Zasekli jste se? Použijte fallback",
-          roomBriefsTitle: activeTeam ? "Vaše zadání" : "Připravená zadání pro tuto místnost",
-          roomBriefsBody: activeTeam
-            ? "Zadání vašeho týmu je vidět přímo tady, aby Build fáze 1 nezávisela na cestě přes skill."
-            : "Všechna připravená zadání pro tuto místnost jsou vidět tady, takže si tým může potvrdit směr i bez lokálního setupu.",
-          roomChallengesTitle: "Challenge cards i bez závislosti na skillu",
-          roomChallengesBody:
-            "Povinné i volitelné prompty zůstávají viditelné tady, aby se místnost hýbala dál i při nerovnoměrném toolingu.",
-          fallbackTitle: "Fallback není selhání.",
-          fallbackBody:
-            "Pokračujte z téhle stránky. Potvrďte si zadání, otevřete repo, napište první mapu do repa a teprve potom řešte, jestli má lokální setup cenu dál ladit.",
-          fallbackNow: "0–5 minut blok",
-          fallbackNowBody: "Zůstaňte na participant ploše. Srovnejte si cíl, scope a první ověřovací krok.",
-          fallbackHelp: "Pořád jste zaseklí?",
-          fallbackHelpBody: "Zvedněte ruku. Facilitátor pomůže vybrat browser cestu, starter balíček nebo lokální fallback.",
-          fallbackFast: "Když je setup připravený",
-          fallbackFastBody: "Použijte workshop skill jako rychlejší cestu ke coachingu a repo-native promptům.",
-          anchorTeams: "Skočit na karty týmů",
-        };
-
-  const highlightedBrief = activeTeam ? briefs.find((brief) => brief.id === activeTeam.projectBriefId) ?? null : null;
-  const visibleBriefs = highlightedBrief ? [highlightedBrief] : briefs.slice(0, 3);
-  const visibleChallenges = challenges.filter((challenge) => challenge.phaseHint === "before-lunch" || challenge.phaseHint === "anytime").slice(0, 3);
-
-  return (
-    <div className="mt-6 space-y-4" id="build-proof-slice">
-      <SectionLabel>{copy.eyebrow}</SectionLabel>
-      <div className="dashboard-motion-card rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.eyebrow}</p>
-        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{copy.title}</h3>
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)]">{copy.body}</p>
-        <div className="mt-5 flex flex-wrap gap-3">
-          <a className="dashboard-motion-button rounded-full border border-[var(--border-strong)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)]" href="#build-briefs">{copy.primaryBrief}</a>
-          <a className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)]" href="#teams">{copy.primaryRepo}</a>
-          <a className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)]" href="#build-fallback">{copy.primaryFallback}</a>
-        </div>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
-        <div className="space-y-4">
-          <ParticipantBlockCard title={copy.roomBriefsTitle}>
-            <div id="build-briefs">
-              <p className="text-sm leading-7 text-[var(--text-secondary)]">{copy.roomBriefsBody}</p>
-              <div className="mt-4 space-y-3">
-                {visibleBriefs.map((brief) => (
-                  <div key={brief.id} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-                    <p className="text-sm font-medium text-[var(--text-primary)]">{brief.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{brief.problem}</p>
-                  </div>
-                ))}
-              </div>
-              {!highlightedBrief && teamCards.length > 0 ? (
-                <div className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
-                  {lang === "en"
-                    ? "If you're looking at the shared board rather than a bound participant session, use your team card below to open the matching repo."
-                    : "Pokud se díváte na sdílenou plochu a ne na přiřazenou participant session, otevřete si odpovídající repo přes kartu svého týmu níže."}
-                </div>
-              ) : null}
-            </div>
-          </ParticipantBlockCard>
-
-          <ParticipantBlockCard title={copy.roomChallengesTitle}>
-            <p className="text-sm leading-7 text-[var(--text-secondary)]">{copy.roomChallengesBody}</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {visibleChallenges.map((challenge) => (
-                <span key={challenge.id} className="rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
-                  {challenge.title}
-                </span>
-              ))}
-            </div>
-            <div className="mt-4">
-              <a className="dashboard-motion-link text-sm font-medium text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]" href="#teams">{copy.anchorTeams}</a>
-            </div>
-          </ParticipantBlockCard>
-        </div>
-
-        <div className="space-y-4" id="build-fallback">
-          <div className="rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{lang === "en" ? "setup fallback" : "fallback při setupu"}</p>
-            <h3 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">{copy.fallbackTitle}</h3>
-            <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{copy.fallbackBody}</p>
-            <div className="mt-4 space-y-3">
-              <FallbackStep title={copy.fallbackNow} body={copy.fallbackNowBody} />
-              <FallbackStep title={copy.fallbackHelp} body={copy.fallbackHelpBody} />
-              <FallbackStep title={copy.fallbackFast} body={copy.fallbackFastBody} />
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-3">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
@@ -554,12 +680,12 @@ function ParticipantGuidanceBlocks({
           return (
             <figure
               key={block.id}
-              className="border-l-[3px] border-[var(--text-primary)] pl-5 py-1"
+              className="border-l-[3px] border-[var(--text-primary)] py-1 pl-5"
             >
               <blockquote className="text-lg italic leading-8 text-[var(--text-primary)]">
                 &ldquo;{block.quote}&rdquo;
               </blockquote>
-              <figcaption className="mt-3 text-sm text-[var(--text-muted)]">— {attribution}</figcaption>
+              <figcaption className="mt-3 text-sm text-[var(--text-muted)]">- {attribution}</figcaption>
             </figure>
           );
         }

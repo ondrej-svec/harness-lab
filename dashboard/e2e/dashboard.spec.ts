@@ -103,10 +103,9 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByText("participant plocha", { exact: true })).toBeVisible();
     await expect(page.getByText("opustit kontext místnosti")).toBeVisible();
-    // Current phase (build-1) goal on the agenda-for-team panel.
-    // Verifies the participant view renders the current blueprint
-    // content, not just the public chrome.
-    await expect(page.getByText("Dostat tým do režimu, kde do oběda existuje repo")).toBeVisible();
+    // Current phase/build shell content is present, not just public chrome.
+    await expect(page.getByText("10:30 • Build Phase 1")).toBeVisible();
+    await expect(page.getByText("připravená zadání pro tuto místnost")).toBeVisible();
     await expect(page.getByText("https://github.com/example/standup-bot")).toBeVisible();
 
     // Workshop context line visible with event metadata
@@ -115,10 +114,10 @@ test.describe("participant dashboard", () => {
     // Session sidebar with facilitator mention is gone
     await expect(page.getByText("Facilitátor zůstává odděleně")).not.toBeVisible();
 
-    // Verify context-aware nav — room links visible, public anchors gone
-    await expect(page.getByRole("navigation").getByRole("link", { name: "místnost" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "poznámky" })).toBeVisible();
+    // Verify context-aware nav — stable participant-home sections visible.
+    await expect(page.getByRole("navigation").getByRole("link", { name: "další krok" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "build" })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "reference" })).toBeVisible();
   });
 
   test("keeps the participant mobile room view visually stable", async ({ page }) => {
@@ -160,17 +159,17 @@ test.describe("participant dashboard", () => {
     await page.getByRole("button", { name: "Continue" }).click();
     await expect(page.getByLabel("What's your name?")).toBeHidden();
 
-    const notesJumpCard = page.locator('a[href="#notes"]').first();
-    const firstTeam = page.locator("#teams article").first();
+    const buildJump = page.locator('a[href="#build-briefs"]').first();
 
-    expect(hasNonZeroTransition(await readTransitionDuration(notesJumpCard))).toBe(true);
+    expect(hasNonZeroTransition(await readTransitionDuration(buildJump))).toBe(true);
 
-    await firstTeam.locator("textarea").fill("We mapped the repo, pinned one failing check, and know the next safe move.");
-    await firstTeam.locator('input[type="text"]').fill("agent observer");
-    await firstTeam.getByRole("button", { name: "Record check-in" }).click();
+    await page.getByLabel("what changed").fill("We mapped the repo and pinned one failing check.");
+    await page.getByLabel("what verifies it").fill("The team reviewed the repo entrypoints together.");
+    await page.getByLabel("next safe move").fill("Write the first plan directly in the repo.");
+    await page.getByRole("button", { name: "Record checkpoint" }).click();
 
-    await expect(firstTeam.getByText("Check-in saved.")).toBeVisible();
-    await expect(firstTeam.locator("textarea")).toHaveValue("");
+    await expect(page.getByText("Checkpoint saved.")).toBeVisible();
+    await expect(page.locator("#checkpoint-feed")).toContainText("Write the first plan directly in the repo.");
 
     expect(pageErrors).toEqual([]);
     expect(consoleErrors).toEqual([]);
@@ -919,15 +918,30 @@ test.describe("presenter touch navigation", () => {
     );
   }
 
-  test("@presenter-tablet swipe-up on a fitted slide advances to the next scene", async ({ page }) => {
+  async function moveActiveSlideToBoundary(
+    page: import("@playwright/test").Page,
+    direction: "top" | "bottom",
+  ) {
+    await page.evaluate((targetDirection) => {
+      const slide = document.querySelector<HTMLElement>('[data-presenter-slide="true"][aria-hidden="false"]');
+      if (!slide) {
+        throw new Error("active presenter slide not found");
+      }
+      const maxScroll = Math.max(0, slide.scrollHeight - slide.clientHeight);
+      slide.scrollTop = targetDirection === "bottom" ? maxScroll : 0;
+    }, direction);
+  }
+
+  test("@presenter-tablet swipe-up at the slide boundary advances to the next scene", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
 
     const initialScene = await readActiveSceneFromUrl(page);
+    await moveActiveSlideToBoundary(page, "bottom");
     await dispatchTouchSwipe(page, { startY: 620, endY: 420 });
-    await page.waitForTimeout(350);
-
-    expect(await readActiveSceneFromUrl(page)).not.toBe(initialScene);
+    await expect
+      .poll(async () => readActiveSceneFromUrl(page), { timeout: 1_500, intervals: [100, 200, 350] })
+      .not.toBe(initialScene);
   });
 
   test("@presenter-tablet swipe-up from the last scene advances to the next agenda item", async ({ page }) => {
@@ -943,6 +957,7 @@ test.describe("presenter touch navigation", () => {
       `/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=${encodeURIComponent(lastOpeningScene!)}`,
     );
 
+    await moveActiveSlideToBoundary(page, "bottom");
     await dispatchTouchSwipe(page, { startY: 620, endY: 420 });
     await page.waitForURL(/agendaItem=talk/);
   });

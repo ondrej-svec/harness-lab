@@ -6,8 +6,10 @@ import {
   participantSessionCookieName,
   revokeParticipantSession,
 } from "@/lib/event-access";
+import { getParticipantRepository } from "@/lib/participant-repository";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import {
+  buildParticipantReferenceGroups,
   buildWorkshopContextLine,
   deriveHomePageState,
 } from "@/lib/public-page-view-model";
@@ -70,11 +72,19 @@ export default async function ParticipantPage({
   const participantTeamAssignment = participantSession.participantId
     ? await getTeamMemberRepository().findMemberByParticipant(participantSession.instanceId, participantSession.participantId)
     : null;
+  const activeParticipant = await getParticipantRepository().findParticipant(
+    participantSession.instanceId,
+    participantSession.participantId,
+  );
   const activeParticipantTeam = participantTeamAssignment
     ? state.teams.find((team) => team.id === participantTeamAssignment.teamId) ?? null
     : null;
   const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, workshopMeta } = deriveHomePageState(state);
   const workshopContextLine = buildWorkshopContextLine(workshopMeta);
+  const referenceGroups = buildParticipantReferenceGroups({
+    lang,
+    setupPaths: state.setupPaths,
+  });
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
@@ -91,9 +101,12 @@ export default async function ParticipantPage({
           participantSession={participantSession}
           participantTeams={participantTeams}
           activeParticipantTeam={activeParticipantTeam}
+          activeParticipant={activeParticipant}
           briefs={state.briefs}
           challenges={state.challenges}
           publicNotes={participantNotes}
+          agenda={state.agenda}
+          referenceGroups={referenceGroups}
           rotationRevealed={rotationRevealed}
           logoutAction={logoutAction}
         />

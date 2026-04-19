@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { ParticipantRoomSurface } from "@/app/components/participant-room-surface";
 import { SiteHeader } from "@/app/components/site-header";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
-import { deriveHomePageState } from "@/lib/public-page-view-model";
+import { buildParticipantReferenceGroups, deriveHomePageState } from "@/lib/public-page-view-model";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
@@ -42,6 +42,10 @@ export default async function AdminParticipantMirrorPage({
 
   const state = await getWorkshopState(instanceId);
   const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
+  const referenceGroups = buildParticipantReferenceGroups({
+    lang,
+    setupPaths: state.setupPaths,
+  });
 
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
@@ -73,10 +77,14 @@ export default async function AdminParticipantMirrorPage({
             })),
           }}
           activeParticipantTeam={state.teams[0] ?? null}
+          activeParticipant={null}
           briefs={state.briefs}
           challenges={state.challenges}
           publicNotes={participantNotes}
+          agenda={state.agenda}
+          referenceGroups={referenceGroups}
           rotationRevealed={rotationRevealed}
+          checkInEnabled={false}
         />
       </div>
     </main>

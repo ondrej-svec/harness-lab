@@ -156,8 +156,9 @@ describe("participant team check-in route", () => {
   it("appends a check-in and returns the updated team", async () => {
     const { request } = await buildAuthedRequest("t-runtime", {
       phaseId: "intermezzo-1",
-      content: "First intermezzo check-in.",
-      writtenBy: "Iva",
+      changed: "We rewrote the room entrypoint.",
+      verified: "The team replayed the setup path from scratch.",
+      nextStep: "Write the first repo map before lunch.",
     });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(response.status).toBe(200);
@@ -165,8 +166,10 @@ describe("participant team check-in route", () => {
     expect(payload.team.checkIns).toHaveLength(1);
     expect(payload.team.checkIns[0]).toMatchObject({
       phaseId: "intermezzo-1",
-      content: "First intermezzo check-in.",
-      writtenBy: "Iva",
+      changed: "We rewrote the room entrypoint.",
+      verified: "The team replayed the setup path from scratch.",
+      nextStep: "Write the first repo map before lunch.",
+      writtenBy: null,
     });
   });
 
@@ -183,27 +186,42 @@ describe("participant team check-in route", () => {
   });
 
   it("rejects empty content with 400", async () => {
-    const { request } = await buildAuthedRequest("t-runtime", { content: "   " });
+    const { request } = await buildAuthedRequest("t-runtime", { changed: "   " });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(response.status).toBe(400);
   });
 
   it("returns 404 when the team does not exist in the instance", async () => {
-    const { request } = await buildAuthedRequest("t-missing", { content: "hello", phaseId: "opening" });
+    const { request } = await buildAuthedRequest("t-missing", {
+      phaseId: "opening",
+      changed: "hello",
+      verified: "world",
+      nextStep: "next",
+    });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-missing" }) });
     expect(response.status).toBe(404);
   });
 
   it("preserves existing check-ins across multiple appends", async () => {
-    const first = await buildAuthedRequest("t-runtime", { phaseId: "opening", content: "first" });
+    const first = await buildAuthedRequest("t-runtime", {
+      phaseId: "opening",
+      changed: "first change",
+      verified: "first proof",
+      nextStep: "first next",
+    });
     const r1 = await PATCH(first.request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(r1.status).toBe(200);
 
-    const second = await buildAuthedRequest("t-runtime", { phaseId: "intermezzo-1", content: "second" });
+    const second = await buildAuthedRequest("t-runtime", {
+      phaseId: "intermezzo-1",
+      changed: "second change",
+      verified: "second proof",
+      nextStep: "second next",
+    });
     const r2 = await PATCH(second.request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(r2.status).toBe(200);
     const payload = (await r2.json()) as { team: WorkshopState["teams"][number] };
     expect(payload.team.checkIns).toHaveLength(2);
-    expect(payload.team.checkIns.map((entry) => entry.content)).toEqual(["first", "second"]);
+    expect(payload.team.checkIns.map((entry) => entry.changed)).toEqual(["first change", "second change"]);
   });
 });

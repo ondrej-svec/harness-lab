@@ -6,6 +6,7 @@ const getParticipantSessionFromCookieStore = vi.fn();
 const getParticipantTeamLookup = vi.fn();
 const getWorkshopState = vi.fn();
 const findMemberByParticipant = vi.fn();
+const findParticipant = vi.fn();
 
 vi.mock("next/headers", () => ({
   cookies: vi.fn(),
@@ -28,6 +29,12 @@ vi.mock("@/lib/workshop-store", () => ({
   getWorkshopState,
 }));
 
+vi.mock("@/lib/participant-repository", () => ({
+  getParticipantRepository: () => ({
+    findParticipant,
+  }),
+}));
+
 vi.mock("@/lib/team-member-repository", () => ({
   getTeamMemberRepository: () => ({
     findMemberByParticipant,
@@ -40,6 +47,7 @@ describe("ParticipantPage", () => {
     delete process.env.NEXT_PUBLIC_HARNESS_REPO_URL;
     delete process.env.NEXT_PUBLIC_HARNESS_REPO_BRANCH;
     findMemberByParticipant.mockResolvedValue(null);
+    findParticipant.mockResolvedValue({ id: "p1", displayName: "Test Participant" });
   });
 
   it("redirects to / when no participant session exists", async () => {
@@ -87,8 +95,10 @@ describe("ParticipantPage", () => {
     expect(html).toContain("dashboard-motion-card");
     expect(html).toMatch(/view-transition-name:\s*room-access/);
     expect(html).toContain("Srovnejte si zadání. Otevřete repo. Sepište první mapu.");
-    expect(html).toContain("Připravená zadání pro tuto místnost");
-    expect(html).toContain("Fallback není selhání.");
+    expect(html).toContain("připravená zadání pro tuto místnost");
+    expect(html).toContain("fallback při setupu");
+    expect(html).toContain("live feed checkpointů");
+    expect(html).toContain("reference");
   });
 
   it("renders the self-identify prompt when the session has no participantId", async () => {

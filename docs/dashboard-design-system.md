@@ -258,6 +258,11 @@ If a new UI requires many custom card species, the structure probably needs simp
 - live phase first
 - one obvious next move
 - room context as working material, not architecture explanation
+- stable home model with `Next / Build / Reference`
+- `Next` stays visually dominant on first load
+- `Build` carries the minimum useful working set, not a dense status board
+- `Reference` stays evergreen and clearly secondary
+- live checkpoint residue belongs in a structured feed, not a chat-like note wall
 - facilitator-only concepts removed
 
 ### Facilitator

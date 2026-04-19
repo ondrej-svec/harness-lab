@@ -505,6 +505,10 @@ export type TeamCheckIn = {
   content: string;
   writtenAt: string;
   writtenBy: string | null;
+  participantId?: string | null;
+  changed?: string | null;
+  verified?: string | null;
+  nextStep?: string | null;
 };
 
 export type Team = {

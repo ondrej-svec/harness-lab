@@ -10,6 +10,7 @@ const redirect = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect,
+  useRouter: () => ({ refresh: vi.fn() }),
 }));
 
 vi.mock("@/lib/facilitator-access", () => ({
@@ -47,9 +48,10 @@ describe("Admin participant mirror page", () => {
 
     expect(requireFacilitatorPageAccess).toHaveBeenCalledWith("sample-studio-a");
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain(publicCopy.en.navRoom);
+    expect(html).toContain(publicCopy.en.navNext);
     expect(html).toContain(publicCopy.en.sharedRoomNotes);
-    expect(html).toContain("https://github.com/example/code-review-helper");
+    expect(html).toContain("https://github.com/example/standup-bot");
+    expect(html).toContain("live checkpoint feed");
     expect(html).not.toContain(publicCopy.en.leaveRoomContext);
   });
 });
