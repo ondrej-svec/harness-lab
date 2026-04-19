@@ -2,7 +2,7 @@
 title: "refactor: dashboard post-cockpit density, submit feedback, and drift sweep"
 type: plan
 date: 2026-04-19
-status: in_progress
+status: complete
 brainstorm: null
 confidence: medium
 ---
