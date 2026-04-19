@@ -6,7 +6,14 @@ import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { resolveFacilitatorGrant } from "./facilitator-session";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
+import { resolveUiLanguage, withLang } from "./ui-language";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
+
+async function resolveRedirectLanguage() {
+  const headerStore = await headers();
+  const headerLang = headerStore.get("x-harness-ui-lang");
+  return resolveUiLanguage(headerLang ?? undefined);
+}
 
 function unauthorizedResponse() {
   return new Response("Authentication required", { status: 401 });
@@ -126,7 +133,8 @@ export async function requireFacilitatorPageAccess(instanceId?: string | null) {
   if (isNeonAuthMode()) {
     const authorized = await service.hasValidSession({ instanceId: resolvedInstanceId });
     if (!authorized) {
-      redirect("/admin/sign-in");
+      const lang = await resolveRedirectLanguage();
+      redirect(withLang("/admin/sign-in", lang));
     }
     return;
   }
@@ -136,7 +144,8 @@ export async function requireFacilitatorPageAccess(instanceId?: string | null) {
   const authorizationHeader = headerStore.get("x-harness-authorization") ?? headerStore.get("authorization");
   const authorized = await service.hasValidRequestCredentials({ authorizationHeader, instanceId: resolvedInstanceId });
   if (!authorized) {
-    redirect("/admin/sign-in");
+    const lang = await resolveRedirectLanguage();
+    redirect(withLang("/admin/sign-in", lang));
   }
 }
 

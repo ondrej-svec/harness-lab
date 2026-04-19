@@ -443,14 +443,14 @@ function HandoffMomentCard({
               {copy.hideAgainButton}
             </AdminSubmitButton>
           </div>
-          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+          <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
             {copy.participantStatePrefix} {participantState}.
           </div>
         </form>
 
         <div className="space-y-2 border-t border-[var(--border)] pt-4">
           {slots.map((slot) => (
-            <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+            <div key={`${slot.fromTeam}-${slot.toTeam}`} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
               <p className="font-medium text-[var(--text-primary)]">
                 {slot.fromTeam} → {slot.toTeam}
               </p>
@@ -542,7 +542,7 @@ function HandoffMomentCard({
                   return (
                     <li
                       key={signal.id}
-                      className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6"
+                      className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <p className="text-[var(--text-primary)]">{preview}</p>
@@ -613,7 +613,7 @@ function AgendaItemDetail({
   // explicitly clicks to expand it.
   return (
     <div className={`${compact ? "mt-4 space-y-3" : "space-y-3"}`}>
-      <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+      <details className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
         <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
           {copy.agendaRunnerTitle}
         </summary>
@@ -638,7 +638,7 @@ function AgendaItemDetail({
         ) : null}
       </details>
 
-      <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+      <details className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
         <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
           {copy.agendaFieldFacilitatorPrompts} · {copy.agendaFieldWatchFors} · {copy.agendaFieldCheckpointQuestions}
         </summary>
@@ -667,7 +667,7 @@ function AgendaItemDetail({
       </details>
 
       {(item.sourceRefs ?? []).length > 0 ? (
-        <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+        <details className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
           <summary className="cursor-pointer list-none text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
             {copy.agendaDetailSourceMaterialTitle}
           </summary>

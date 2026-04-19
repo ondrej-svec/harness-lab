@@ -270,7 +270,7 @@ function SceneBlockPreview({ block }: { block: PresenterBlock }) {
   if (block.type === "image") {
     return (
       <>
-        <div className="rounded-[18px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-panel)] px-4 py-10 text-center text-sm text-[var(--text-muted)]">
+        <div className="rounded-[20px] border border-dashed border-[var(--border-strong)] bg-[var(--surface-panel)] px-4 py-10 text-center text-sm text-[var(--text-muted)]">
           {block.src || "Image path"}
         </div>
         {block.caption ? <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{block.caption}</p> : null}
@@ -304,7 +304,7 @@ function SceneBlockPreview({ block }: { block: PresenterBlock }) {
           : "border-[var(--border)] bg-[color:color-mix(in_oklab,var(--surface-soft)_90%,#2563eb_10%)]";
 
     return (
-      <div className={`rounded-[18px] border px-4 py-4 ${toneClass}`}>
+      <div className={`rounded-[20px] border px-4 py-4 ${toneClass}`}>
         {block.title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{block.title}</p> : null}
         <p className={block.title ? "mt-2 text-sm leading-6 text-[var(--text-primary)]" : "text-sm leading-6 text-[var(--text-primary)]"}>
           {block.body || "Callout body"}
@@ -343,7 +343,7 @@ export function SceneBlockEditor({ initialBlocks, inputName, lang }: SceneBlockE
 
   return (
     <div id="scene-block-editor" className="mt-3 space-y-4">
-      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+      <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{ui.editorTitle}</p>
@@ -376,7 +376,7 @@ export function SceneBlockEditor({ initialBlocks, inputName, lang }: SceneBlockE
       </div>
 
       {blocks.map((block, index) => (
-        <div key={block.id} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+        <div key={block.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="grid gap-3 md:grid-cols-2">
               <label>
@@ -652,7 +652,7 @@ export function SceneBlockEditor({ initialBlocks, inputName, lang }: SceneBlockE
         </div>
       ))}
 
-      <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+      <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
         <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{ui.previewTitle}</p>
         {previewBlocks.length > 0 ? (
           <div className="mt-4 space-y-4">
@@ -667,7 +667,7 @@ export function SceneBlockEditor({ initialBlocks, inputName, lang }: SceneBlockE
         )}
       </div>
 
-      <details className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+      <details className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
         <summary className="cursor-pointer text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{ui.jsonTitle}</summary>
         <pre className="mt-4 overflow-x-auto whitespace-pre-wrap text-xs leading-6 text-[var(--text-secondary)]">{jsonValue}</pre>
       </details>

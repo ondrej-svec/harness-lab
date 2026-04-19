@@ -73,7 +73,7 @@ export function AccessSection({
         title={copy.participantAccessTitle}
         description={copy.participantAccessDescription}
       >
-        <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
           <div className="space-y-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
             <div className="space-y-3">
               <KeyValueRow
@@ -88,7 +88,7 @@ export function AccessSection({
             </div>
 
             {participantAccessFlash ? (
-              <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                   {copy.participantAccessIssuedCodeLabel}
                 </p>
@@ -100,7 +100,7 @@ export function AccessSection({
                 </p>
               </div>
             ) : participantAccess.canRevealCurrent && participantAccess.currentCode ? (
-              <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4">
+              <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4">
                 <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                   {copy.participantAccessCurrentCodeLabel}
                 </p>
@@ -112,7 +112,7 @@ export function AccessSection({
                 </p>
               </div>
             ) : (
-              <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+              <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
                 {copy.participantAccessUnrecoverableHint}
               </div>
             )}
@@ -132,7 +132,7 @@ export function AccessSection({
               </div>
               <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantAccessIssueHint}</p>
               {errorParam ? (
-                <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                <p className="rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
                   {decodeURIComponent(errorParam)}
                 </p>
               ) : null}
@@ -146,7 +146,7 @@ export function AccessSection({
 
       <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>
         {!isNeonMode ? (
-          <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.08fr)_minmax(20rem,0.92fr)]">
             <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-5">
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                 {copy.fileModeFacilitatorsPanelTitle}
@@ -166,20 +166,20 @@ export function AccessSection({
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.fileModeUpgradeTitle}</p>
               <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{copy.fileModeUpgradeBody}</p>
               <div className="mt-4 space-y-3">
-                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
                   {copy.fileModeUpgradeBenefitOne}
                 </div>
-                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
                   {copy.fileModeUpgradeBenefitTwo}
                 </div>
-                <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm leading-6 text-[var(--text-secondary)]">
                   {copy.fileModeUpgradeBenefitThree}
                 </div>
               </div>
             </div>
           </div>
         ) : (
-          <div className="grid gap-5 2xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.84fr)]">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1.16fr)_minmax(22rem,0.84fr)]">
             <div className="space-y-3">
               {facilitatorGrants.length === 0 ? (
                 <p className="text-sm text-[var(--text-muted)]">{copy.facilitatorListEmpty}</p>

@@ -29,7 +29,7 @@ export function ParticipantIdentifyPrompt({
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center gap-6">
-      <div className="w-full max-w-sm rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-8 shadow-[var(--shadow-soft)] backdrop-blur">
+      <div className="w-full max-w-sm rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] p-8 shadow-[var(--shadow-soft)] backdrop-blur">
         <form action={submitIdentifyAction} className="flex flex-col gap-5">
           <input name="lang" type="hidden" value={lang} />
           <label className="text-center text-lg font-medium text-[var(--text-primary)]" htmlFor="participant-name">

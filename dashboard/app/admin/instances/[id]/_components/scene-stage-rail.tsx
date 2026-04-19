@@ -367,7 +367,7 @@ function SceneStagePanel({
               <summary className="inline-flex cursor-pointer list-none items-center rounded-[10px] px-2 py-1 text-xs lowercase text-[var(--text-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--text-primary)]">
                 více
               </summary>
-              <div className="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-[18px] border border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
+              <div className="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-[20px] border border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
                 <form action={movePresenterSceneAction}>
                   <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                   <input name="agendaItemId" type="hidden" value={item.id} />
@@ -438,7 +438,7 @@ function SceneStagePanel({
         </div>
 
         {sceneBlocks.length > 0 ? (
-          <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-3">
+          <div className="mt-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-3">
             <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.presenterRoomBlocksTitle}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {sceneBlocks.map((block) => (
@@ -453,7 +453,7 @@ function SceneStagePanel({
           </div>
         ) : null}
 
-        <details className="group mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+        <details className="group mt-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition group-open:text-[var(--text-primary)] hover:text-[var(--text-primary)]">
             <span>
               {copy.presenterFacilitatorNotesTitle}

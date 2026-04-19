@@ -84,7 +84,7 @@ export function SettingsSection({
           description={copy.participantSurfaceCardDescription}
         >
           <div className="space-y-4">
-            <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
               {copy.participantStatePrefix} {participantStateLabel}.
             </div>
             <form action={toggleRotationAction} className="space-y-4">
@@ -128,13 +128,13 @@ export function SettingsSection({
               </label>
 
               {passwordParam === "changed" ? (
-                <p className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)]">
+                <p className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm text-[var(--text-primary)]">
                   {copy.passwordChanged}
                 </p>
               ) : null}
 
               {errorParam ? (
-                <p className="rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                <p className="rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
                   {errorParam === "password_mismatch" ? copy.passwordMismatch : decodeURIComponent(errorParam)}
                 </p>
               ) : null}
@@ -152,7 +152,7 @@ export function SettingsSection({
           description={copy.archiveResetDescription}
         >
           <div className="space-y-4">
-            <form action={archiveWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+            <form action={archiveWorkshopAction} className="space-y-3 rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
               <HiddenState lang={lang} instanceId={instanceId} />
               <textarea
                 name="notes"
@@ -166,7 +166,7 @@ export function SettingsSection({
               </AdminSubmitButton>
             </form>
 
-            <form action={resetWorkshopAction} className="space-y-3 rounded-[18px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
+            <form action={resetWorkshopAction} className="space-y-3 rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] p-4">
               <HiddenState lang={lang} instanceId={instanceId} />
               <p className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
                 {copy.resetBlueprintSummary}
@@ -198,7 +198,7 @@ export function SettingsSection({
               </details>
             </form>
 
-            <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
               <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.blueprintLinkHint}</p>
               {blueprintRepoUrl ? (
                 <a

@@ -116,7 +116,7 @@ export default async function SignInPage({
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
-          <div className="border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-8">
+          <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-8 shadow-[var(--shadow-soft)]">
             <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--text-muted)]">
               {copy.deskEyebrow}
             </p>
@@ -128,13 +128,13 @@ export default async function SignInPage({
             </p>
 
             {resetParam === "requested" || resetParam === "done" ? (
-              <p className="mt-6 border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
+              <p className="mt-6 rounded-[20px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text-primary)]">
                 {resetParam === "done" ? copy.passwordResetDone : copy.passwordResetSent}
               </p>
             ) : null}
 
             {errorParam === "unavailable" ? (
-              <p className="mt-6 border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+              <p className="mt-6 rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
                 Neon Auth is not configured.
               </p>
             ) : (
@@ -149,7 +149,7 @@ export default async function SignInPage({
                     {copy.signInEmailLabel}
                   </label>
                   <input
-                    className="mt-2 w-full border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
+                    className="mt-2 w-full rounded-[16px] border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
                     id="sign-in-email"
                     name="email"
                     type="email"
@@ -167,7 +167,7 @@ export default async function SignInPage({
                     {copy.signInPasswordLabel}
                   </label>
                   <input
-                    className="mt-2 w-full border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
+                    className="mt-2 w-full rounded-[16px] border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
                     id="sign-in-password"
                     name="password"
                     type="password"
@@ -177,13 +177,13 @@ export default async function SignInPage({
                 </div>
 
                 {errorParam && errorParam !== "unavailable" ? (
-                  <p className="border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
+                  <p className="rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">
                     {errorParam === "invalid" ? copy.signInError : decodeURIComponent(errorParam)}
                   </p>
                 ) : null}
 
                 <AdminSubmitButton
-                  className="w-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-text)] transition hover:bg-transparent hover:text-[var(--accent-surface)]"
+                  className="w-full rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-4 py-3 text-sm font-medium lowercase text-[var(--accent-text)] transition hover:bg-transparent hover:text-[var(--accent-surface)]"
                 >
                   {copy.signInButton}
                 </AdminSubmitButton>
@@ -191,7 +191,7 @@ export default async function SignInPage({
             )}
           </div>
 
-          <div className="border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-8">
+          <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-elevated)] p-6 sm:p-8 shadow-[var(--shadow-soft)]">
             <p className="text-[11px] lowercase tracking-[0.22em] text-[var(--text-muted)]">
               {copy.passwordResetTitle}
             </p>
@@ -215,7 +215,7 @@ export default async function SignInPage({
                   {copy.signInEmailLabel}
                 </label>
                 <input
-                  className="mt-2 w-full border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
+                  className="mt-2 w-full rounded-[16px] border border-[var(--border)] bg-[var(--input-bg)] px-4 py-3 text-base text-[var(--text-primary)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--border-strong)]"
                   id="reset-email"
                   name="email"
                   type="email"
@@ -226,7 +226,7 @@ export default async function SignInPage({
               </div>
 
               <AdminSubmitButton
-                className="w-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium lowercase text-[var(--text-primary)] transition hover:bg-[var(--surface)]"
+                className="w-full rounded-full border border-[var(--border-strong)] px-4 py-3 text-sm font-medium lowercase text-[var(--text-primary)] transition hover:bg-[var(--surface)]"
               >
                 {copy.passwordResetButton}
               </AdminSubmitButton>

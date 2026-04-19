@@ -162,7 +162,7 @@ export function PeopleRandomize({
       ) : null}
 
       {preview ? (
-        <div className="mt-4 rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
+        <div className="mt-4 rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4">
           <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
             {labels.previewTitle}
           </p>

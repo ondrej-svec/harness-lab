@@ -331,7 +331,7 @@ export function PeopleWorkspace({
               <div
                 data-testid="team-drop-zone"
                 data-team-id={team.id}
-                className={`min-h-[64px] flex flex-wrap gap-2 rounded-[18px] border border-dashed px-4 py-4 transition ${
+                className={`min-h-[64px] flex flex-wrap gap-2 rounded-[20px] border border-dashed px-4 py-4 transition ${
                   isDragTarget
                     ? "border-[var(--accent-surface)] bg-[color-mix(in_srgb,var(--accent-surface)_8%,transparent)]"
                     : teamMembers.length === 0

@@ -111,7 +111,7 @@ export function ParticipantRoomSurface({
 
           <SectionLabel>{copy.participantEyebrow}</SectionLabel>
           <div className="mt-6 grid gap-5 lg:grid-cols-[minmax(0,1.12fr)_minmax(18rem,0.88fr)]">
-            <div className="dashboard-motion-card rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
+            <div className="dashboard-motion-card rounded-[22px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{sectionCopy.nextEyebrow}</p>
               <h2 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)]">
                 {homeState.showBuildPhaseOneProofSlice ? sectionCopy.buildPhaseOneTitle : participantPanel.currentPhaseTitle}
@@ -219,7 +219,7 @@ export function ParticipantRoomSurface({
                     {activeTeamCards.map((team) => (
                       <article
                         key={team.id}
-                        className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] p-4"
+                        className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4"
                       >
                         <div className="flex flex-wrap items-baseline justify-between gap-3">
                           <div>
@@ -582,7 +582,7 @@ function ParticipantGuidanceBlocks({
       {blocks.map((block) => {
         if (block.type === "hero") {
           return (
-            <div key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <div key={block.id} className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5">
               <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
                 {block.eyebrow ?? participantPanel.guidanceLabel ?? copy.participantEyebrow}
               </p>
@@ -594,7 +594,7 @@ function ParticipantGuidanceBlocks({
 
         if (block.type === "participant-preview") {
           return (
-            <div key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+            <div key={block.id} className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5">
               {block.body ? <p className="text-sm leading-7 text-[var(--text-secondary)]">{block.body}</p> : null}
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
                 <MiniMetric label={participantPanel.currentPhaseLabel} value={participantPanel.currentPhaseTitle} />
@@ -658,7 +658,7 @@ function ParticipantGuidanceBlocks({
               ? "border-[var(--border-strong)] bg-[var(--surface-panel)]"
               : "border-[var(--border)] bg-[var(--surface)]";
           return (
-            <div key={block.id} className={`rounded-[24px] border p-5 ${toneClass}`}>
+            <div key={block.id} className={`rounded-[22px] border p-5 ${toneClass}`}>
               {block.title ? <p className="text-sm font-medium text-[var(--text-primary)]">{block.title}</p> : null}
               <p className={block.title ? "mt-2 text-sm leading-7 text-[var(--text-secondary)]" : "text-sm leading-7 text-[var(--text-secondary)]"}>
                 {block.body}
@@ -713,9 +713,9 @@ function ParticipantGuidanceBlocks({
 
         if (block.type === "image") {
           return (
-            <figure key={block.id} className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-4">
+            <figure key={block.id} className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={block.src} alt={block.alt} className="w-full rounded-[18px] object-cover" />
+              <img src={block.src} alt={block.alt} className="w-full rounded-[20px] object-cover" />
               {block.caption ? <figcaption className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{block.caption}</figcaption> : null}
             </figure>
           );
@@ -729,7 +729,7 @@ function ParticipantGuidanceBlocks({
 
 function ParticipantBlockCard({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5">
+    <div className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5">
       {title ? <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{title}</p> : null}
       <div className={title ? "mt-4" : ""}>{children}</div>
     </div>

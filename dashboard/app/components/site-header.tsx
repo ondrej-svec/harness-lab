@@ -21,7 +21,7 @@ export function SiteHeader({
   const navLinks = buildSiteHeaderNavLinks({ isParticipant, lang, copy });
 
   return (
-    <header className="relative overflow-hidden rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur sm:px-6">
+    <header className="relative overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] px-5 py-4 shadow-[var(--shadow-soft)] backdrop-blur sm:px-6">
       <div className="pointer-events-none absolute -left-10 top-0 h-24 w-24 rounded-full bg-[radial-gradient(circle,var(--ambient-left),transparent_72%)] blur-2xl dashboard-drift" />
       <div className="pointer-events-none absolute right-0 top-0 h-28 w-28 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_74%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

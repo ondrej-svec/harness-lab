@@ -167,7 +167,7 @@ export function TeamTrailScene({
           {teams.map((team) => (
             <article
               key={team.id}
-              className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur"
+              className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-panel)] p-5 shadow-[var(--shadow-soft)] backdrop-blur"
             >
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="text-xl font-medium text-[var(--text-primary)]">{team.name}</h3>
@@ -369,7 +369,7 @@ export function SceneBlocks({
             <BlockCard key={block.id} title={block.title}>
               <div className="space-y-3">
                 {block.items.map((item) => (
-                  <div key={item} className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                  <div key={item} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
                     <p className="text-base leading-7 text-[var(--text-secondary)]">{item}</p>
                   </div>
                 ))}
@@ -469,7 +469,7 @@ export function SceneCta({
 }) {
   if (!href) {
     return (
-      <div className="rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4 text-base leading-7 text-[var(--text-primary)]">
+      <div className="rounded-[22px] border border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4 text-base leading-7 text-[var(--text-primary)]">
         {label}
       </div>
     );
@@ -477,7 +477,7 @@ export function SceneCta({
 
   return (
     <a
-      className="inline-flex w-full items-center justify-between rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface-soft)] px-5 py-4 text-base text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+      className="inline-flex w-full items-center justify-between rounded-[22px] border border-[var(--border-strong)] bg-[var(--surface-soft)] px-5 py-4 text-base text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
       href={href}
       rel={isExternalHref(href) ? "noreferrer" : undefined}
       target={isExternalHref(href) ? "_blank" : undefined}
@@ -500,7 +500,7 @@ function ActionableSceneLink({
   openLabel: string;
 }) {
   const className =
-    "rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
+    "rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
   const content = (
     <>
       <div className="flex items-start justify-between gap-3">

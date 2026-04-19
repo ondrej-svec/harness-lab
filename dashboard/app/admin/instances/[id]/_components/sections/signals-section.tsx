@@ -29,7 +29,7 @@ export function SignalsSection({
   state: Pick<WorkshopState, "teams" | "challenges">;
 }) {
   return (
-    <div className="grid gap-6 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+    <div className="grid gap-6 xl:grid-cols-2 xl:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
       <AdminPanel
         eyebrow={copy.signalEyebrow}
         title={copy.sprintFeedTitle}
@@ -50,7 +50,7 @@ export function SignalsSection({
             <FieldLabel htmlFor="signal-at">{copy.checkpointAtLabel}</FieldLabel>
             <input id="signal-at" name="at" defaultValue="11:15" className={`${adminInputClassName} mt-2`} />
           </div>
-          <div className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
+          <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)] lg:col-span-2">
             {copy.checkpointFormHint}
           </div>
           <div className="lg:col-span-2">

@@ -63,7 +63,7 @@ export function TeamsSection({
       </AdminPanel>
 
       <AdminPanel eyebrow={copy.navTeams} title={copy.teamOpsTitle} description={copy.teamOpsDescription}>
-        <div className="grid gap-3 2xl:grid-cols-2">
+        <div className="grid gap-3 xl:grid-cols-2">
           {state.teams.map((team) => {
             const latestCheckIn = team.checkIns[team.checkIns.length - 1]?.content ?? "";
             return (

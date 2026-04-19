@@ -35,7 +35,7 @@ export function ParticipantCheckpointFeed({
   const filteredItems = useMemo(() => filterParticipantCheckpointFeed(items, scope), [items, scope]);
 
   return (
-    <div className="dashboard-motion-card rounded-[24px] border border-[var(--border)] bg-[var(--surface)] p-5" id="checkpoint-feed">
+    <div className="dashboard-motion-card rounded-[22px] border border-[var(--border)] bg-[var(--surface)] p-5" id="checkpoint-feed">
       <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{labels.title}</p>
@@ -56,7 +56,7 @@ export function ParticipantCheckpointFeed({
           {filteredItems.map((item) => (
             <article
               key={item.id}
-              className="rounded-[18px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4"
+              className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-4"
             >
               <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.14em] text-[var(--text-muted)]">
                 <span>{item.teamName}</span>
