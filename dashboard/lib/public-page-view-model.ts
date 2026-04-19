@@ -282,25 +282,25 @@ function buildParticipantWorkingContext(options: {
 
   let modeValue: string;
   if (teamSize <= 1) {
-    modeValue = lang === "en" ? "solo run" : "samostatný běh";
+    modeValue = lang === "en" ? "solo run" : "samostatná práce";
   } else if (teamSize === 2) {
     modeValue = lang === "en" ? "pair" : "dvojice";
   } else {
-    modeValue = lang === "en" ? `team of ${teamSize}` : `tým po ${teamSize}`;
+    modeValue = lang === "en" ? `team of ${teamSize}` : `tým o ${teamSize} lidech`;
   }
 
   return {
     modeLabel: lang === "en" ? "working mode" : "pracovní režim",
-    modeValue: activeParticipantTeam ? modeValue : lang === "en" ? "room view" : "pohled místnosti",
+    modeValue: activeParticipantTeam ? modeValue : lang === "en" ? "room view" : "přehled místnosti",
     teamLabel: activeParticipantTeam ? activeParticipantTeam.name : null,
     participantLabel: activeParticipantName ?? null,
     note: activeParticipantTeam
       ? lang === "en"
         ? "Keep the room context compact. The page should help you move, not manage your whole team."
-        : "Držte kontext krátký. Tahle stránka má pomáhat s pohybem vpřed, ne řídit celý tým."
+        : "Držte tady jen to, co právě potřebujete. Tahle stránka má pomoct s dalším krokem, ne nahrazovat týmový board."
       : lang === "en"
         ? "No bound team yet. Use the room materials below and move to the matching repo when your team is clear."
-        : "Ještě nemáte navázaný konkrétní tým. Vezměte si materiály z místnosti níže a přesuňte se k odpovídajícímu repu, jakmile je tým jasný.",
+        : "Ještě nemáte přiřazený tým. Vezměte si materiály z místnosti níže a jakmile bude tým jasný, přesuňte se k odpovídajícímu repu.",
   } satisfies ParticipantWorkingContext;
 }
 
@@ -329,7 +329,7 @@ export function buildParticipantHomeState(options: {
         ]
       : [
           { href: "#build-briefs", label: "Otevřít zadání" },
-          { href: "#build-materials", label: "Dostat se k materiálům týmu" },
+          { href: "#build-materials", label: "Dostat se k materiálům týmu" },
           { href: "#checkpoint-capture", label: "Zapsat checkpoint" },
         ];
 
@@ -371,7 +371,7 @@ export function buildParticipantReferenceGroups(options: {
 
   const defaults: ParticipantReferenceGroup = {
     id: "defaults",
-    title: lang === "en" ? "Curated defaults" : "Kurátorované základy",
+    title: lang === "en" ? "Curated defaults" : "Základní podklady",
     description:
       lang === "en"
         ? "Start here when you need the workshop path, not more options."
@@ -383,17 +383,17 @@ export function buildParticipantReferenceGroups(options: {
         description:
           lang === "en"
             ? "The public method: how the day works and what belongs in the repo."
-            : "Veřejná metoda: jak funguje den a co patří do repa.",
+            : "Veřejná metoda: jak funguje den a co patří do repa.",
         href: getBlueprintRepoUrl() ?? buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
         external: true,
       },
       {
         id: "skill-reference",
-        label: lang === "en" ? "Workshop reference" : "Workshop reference",
+        label: lang === "en" ? "Workshop reference" : "Workshopové podklady",
         description:
           lang === "en"
             ? "Repo-native prompts, commands, and support material for the day."
-            : "Repo-native prompty, příkazy a podpůrné materiály pro tenhle den.",
+            : "Prompty, příkazy a podpůrné materiály pro dnešní práci.",
         href: buildRepoBlobUrl("workshop-skill/reference.md"),
         external: true,
       },
@@ -402,11 +402,11 @@ export function buildParticipantReferenceGroups(options: {
 
   const accelerators: ParticipantReferenceGroup = {
     id: "accelerators",
-    title: lang === "en" ? "Optional accelerators" : "Volitelné akcelerátory",
+    title: lang === "en" ? "Optional accelerators" : "Když chcete zrychlit",
     description:
       lang === "en"
         ? "Useful when local setup is ready, but never required for workshop progress."
-        : "Hodí se, když je lokální setup připravený, ale nejsou nutné pro postup workshopem.",
+        : "Hodí se, když už máte připravený lokální setup, ale nejsou nutné, abyste se ve workshopu posunuli dál.",
     items: setupPaths.map((path) => ({
       id: path.id,
       label: path.label,
@@ -418,11 +418,11 @@ export function buildParticipantReferenceGroups(options: {
 
   const explore: ParticipantReferenceGroup = {
     id: "explore",
-    title: lang === "en" ? "Explore more" : "Jděte dál",
+    title: lang === "en" ? "Explore more" : "Do hloubky",
     description:
       lang === "en"
         ? "Deeper repo-native references when the immediate workshop move is already clear."
-        : "Hlubší repo-native reference ve chvíli, kdy už je bezprostřední workshopový krok jasný.",
+        : "Hlubší materiály ve chvíli, kdy už je jasné, co máte udělat právě teď.",
     items: [
       {
         id: "public-repo",
@@ -430,17 +430,17 @@ export function buildParticipantReferenceGroups(options: {
         description:
           lang === "en"
             ? "Browse the template repo directly."
-            : "Projděte si přímo template repo.",
+            : "Projděte si přímo veřejné ukázkové repo.",
         href: getPublicRepoUrl(),
         external: true,
       },
       {
         id: "control-surfaces",
-        label: lang === "en" ? "Control surfaces" : "Control surfaces",
+        label: lang === "en" ? "Control surfaces" : "Oddělené vrstvy",
         description:
           lang === "en"
             ? "Why the browser surface, skill, CLI, and facilitator layer stay separate."
-            : "Proč browser surface, skill, CLI a facilitátorská vrstva zůstávají oddělené.",
+            : "Proč zůstávají oddělené prohlížeč, skill, CLI a facilitátorská vrstva.",
         href: buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
         external: true,
       },

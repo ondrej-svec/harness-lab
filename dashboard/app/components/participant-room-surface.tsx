@@ -102,8 +102,11 @@ export function ParticipantRoomSurface({
           className="dashboard-motion-card relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] p-6 shadow-[var(--shadow-soft)] backdrop-blur sm:p-7"
           style={{ viewTransitionName: "room-access" }}
         >
+          {/* copy-editor: ignore decorative gradient class values */}
           <div className="pointer-events-none absolute -left-10 top-0 h-36 w-36 rounded-full bg-[radial-gradient(circle,var(--ambient-left),transparent_72%)] blur-3xl dashboard-drift" />
+          {/* copy-editor: ignore decorative gradient class values */}
           <div className="pointer-events-none absolute right-[-3rem] top-8 h-44 w-44 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_74%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
+          {/* copy-editor: ignore decorative gradient class values */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,var(--surface-soft),transparent_62%)] dashboard-sheen" />
 
           <SectionLabel>{copy.participantEyebrow}</SectionLabel>
@@ -479,63 +482,63 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
 
   return {
     nextEyebrow: "další krok",
-    buildPhaseOneTitle: "Srovnejte si zadání. Otevřete repo. Sepište první mapu.",
+    buildPhaseOneTitle: "Ujasněte si zadání. Otevřete repo. Sepište první mapu.",
     buildPhaseOneBody:
-      "Browser cesta na start stačí. Když je lokální setup pro agenta připravený, skill je rychlejší cesta, ne povinná podmínka.",
-    contextTitle: "krátký pracovní kontext",
+      "Na rozjezd stačí prohlížeč. Když máte agenta připraveného lokálně, skill vám práci urychlí, ale nepotřebujete ho, abyste mohli začít.",
+    contextTitle: "pracovní kontext",
     teamLabel: "tým",
     participantLabel: "účastník",
-    buildTitle: "build",
+    buildTitle: "práce",
     buildBody:
-      "Držte po ruce pracovní minimum: zadání, repo, challenge prompty, fallback a krátkou evidenci, kterou si místnost opravdu přečte.",
+      "Mějte po ruce to podstatné: zadání, repo, prompty k výzvám, fallback a krátký záznam, ke kterému se dá vrátit.",
     briefTitleActive: "vaše zadání",
     briefTitleRoom: "připravená zadání pro tuto místnost",
-    briefBodyActive: "Vaše přiřazené zadání je vidět tady, aby workshop nezačínal závislostí na cestě přes skill.",
+    briefBodyActive: "Vaše přiřazené zadání je vidět tady, aby se nezačínalo až po cestě přes skill.",
     briefBodyRoom: "Připravená zadání zůstávají vidět tady, takže si tým potvrdí směr ještě dřív, než bude lokální setup dokonalý.",
     materialsTitle: "materiály týmu",
-    materialsBody: "Otevřete repo, zkopírujte si, co potřebujete, a držte repo krok pořád až za zadáním a prvním ověřením.",
+    materialsBody: "Otevřete repo, zkopírujte si, co potřebujete, a do práce v repu se pusťte až po zadání a prvním ověření.",
     openRepo: "Otevřít repo",
-    copyRepoUrl: "Kopírovat URL repa",
-    copyCloneCommand: "Kopírovat clone command",
+    copyRepoUrl: "Kopírovat adresu repa",
+    copyCloneCommand: "Kopírovat git clone",
     copied: "Zkopírováno",
-    challengeTitle: "challenge prompty",
+    challengeTitle: "prompty k výzvám",
     challengeBody: "Prompty držte po ruce, ale pořád až za hlavním krokem.",
-    fallbackTitle: "fallback při setupu",
+    fallbackTitle: "když vás brzdí setup",
     fallbackBody:
-      "Když vás blokuje setup, zůstaňte na browser-first cestě: srovnejte si zadání, otevřete repo, napište první mapu a až potom řešte, jestli má lokální setup cenu dál ladit.",
-    fallbackNow: "0–5 minut blok",
-    fallbackNowBody: "Zůstaňte tady. Srovnejte si scope, první ověření a nejmenší další krok.",
+      "Když vás zastaví setup, zůstaňte v prohlížeči: ujasněte si zadání, otevřete repo, napište první mapu a teprve potom řešte, jestli má smysl setup dál ladit.",
+    fallbackNow: "0–5 minut bez posunu",
+    fallbackNowBody: "Zůstaňte tady. Ujasněte si rozsah, první ověření a nejmenší další krok.",
     fallbackHelp: "Pořád jste zaseklí?",
-    fallbackHelpBody: "Zvedněte ruku. Facilitátor pomůže vybrat browser cestu, starter balíček nebo lokální fallback.",
-    fallbackFast: "Když je setup připravený",
-    fallbackFastBody: "Použijte workshop skill jako silnější akcelerátor pro coaching a repo-native prompty.",
-    acceleratorTitle: "volitelný akcelerátor",
+    fallbackHelpBody: "Zvedněte ruku. Facilitátor vám pomůže vybrat cestu v prohlížeči, startovní balíček nebo lokální fallback.",
+    fallbackFast: "Když už setup běží",
+    fallbackFastBody: "Když už setup běží, použijte workshop skill jako rychlejší pomoc pro coaching a prompty navázané na repo.",
+    acceleratorTitle: "když chcete zrychlit",
     acceleratorBody:
-      "CLI a skill patří sem jako jasně sekundární krok. Jsou hodnotné, viditelné a nevracejí do hry pocit, že bez nich se nezačne.",
+      "CLI a skill patří sem jako druhý krok. Pomůžou, ale nejsou podmínkou, abyste mohli začít.",
     captureTitle: "strukturovaný checkpoint",
-    captureBody: "Zapište krátkou evidenci, kterou může místnost znovu použít: co se změnilo, co to ověřuje a jaký je další bezpečný krok.",
+    captureBody: "Zapište stručně to, k čemu se má místnost vrátit: co jste změnili, čím jste to ověřili a co má přijít dál.",
     captureChangedLabel: "co se změnilo",
     captureChangedPlaceholder: "Pojmenujte konkrétní změnu, kterou váš tým udělal.",
-    captureVerifiedLabel: "co to ověřuje",
-    captureVerifiedPlaceholder: "Napište, jaký důkaz nebo check to dělá věrohodným.",
+    captureVerifiedLabel: "čím jste to ověřili",
+    captureVerifiedPlaceholder: "Napište, jaký důkaz nebo kontrola potvrzuje, že změna drží.",
     captureNextStepLabel: "další bezpečný krok",
-    captureNextStepPlaceholder: "Řekněte dalšímu člověku, co má udělat jako první.",
+    captureNextStepPlaceholder: "Napište, co má další člověk udělat jako první.",
     captureSubmit: "Zapsat checkpoint",
     captureSuccess: "Checkpoint uložen.",
     captureMissingTeam: "Nejdřív vyberte tým.",
-    captureMissing: "Vyplňte všechny tři checkpoint pole.",
-    captureNeedsTeam: "Nejdřív participant session navažte na tým a teprve z jeho kontextu zapisujte checkpoint.",
-    feedTitle: "live feed checkpointů",
-    feedBody: "Jen chronologická a přiřaditelná evidence. Není to room chat.",
-    feedRoom: "místnost",
+    captureMissing: "Vyplňte všechna tři pole.",
+    captureNeedsTeam: "Nejdřív si vyberte tým. Pak můžete zapsat checkpoint z jeho kontextu.",
+    feedTitle: "živý přehled checkpointů",
+    feedBody: "Jen krátké a dohledatelné záznamy. Není to chat pro celou místnost.",
+    feedRoom: "celá místnost",
     feedPhase: "aktuální fáze",
     feedTeam: "můj tým",
-    feedMine: "moje",
-    feedEmpty: "Pro tenhle scope zatím nic nesedí.",
-    feedEmptyMine: "Vy sami jste ještě strukturovaný checkpoint nenapsali.",
+    feedMine: "jen moje",
+    feedEmpty: "V tomhle zobrazení zatím nic není.",
+    feedEmptyMine: "Ještě jste nezapsali žádný checkpoint.",
     feedLegacy: "starší poznámka",
-    referenceTitle: "reference",
-    referenceBody: "Evergreen materiály zůstávají dosažitelné, ale tišší než live workshopový krok.",
+    referenceTitle: "podklady",
+    referenceBody: "Důležité materiály mějte po ruce, ale až za tím, co máte udělat právě teď.",
   };
 }
 

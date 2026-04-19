@@ -52,6 +52,11 @@ paths:
     - content/talks/locales/cs/**/*.md
     - materials/locales/cs/**/*.md
 
+    # Dashboard participant-facing Czech copy that currently lives in UI source files.
+    - dashboard/lib/ui-language.ts
+    - dashboard/lib/public-page-view-model.ts
+    - dashboard/app/components/participant-room-surface.tsx
+
     # Czech-only root references (not bilingual pairs — these are
     # meta-documents about Czech writing). Still subject to the gate
     # when referenced directly, though most are excluded as rule sources.
@@ -119,6 +124,9 @@ paths:
     "content/project-briefs/**": participant
     "content/challenge-cards/**": participant
     "materials/**": participant
+    "dashboard/lib/ui-language.ts": participant
+    "dashboard/lib/public-page-view-model.ts": participant
+    "dashboard/app/components/participant-room-surface.tsx": participant
 
     # Presenter-facing (outline tone OK)
     "content/talks/**": presenter

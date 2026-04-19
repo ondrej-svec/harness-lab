@@ -90,15 +90,15 @@ describe("ParticipantPage", () => {
     expect(view).toBeTruthy();
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
     expect(getParticipantTeamLookup).toHaveBeenCalledWith("sample-studio-a");
-    expect(html).toContain("participant plocha");
+    expect(html).toContain("plocha pro účastníky");
     expect(html).toContain("opustit kontext místnosti");
     expect(html).toContain("dashboard-motion-card");
     expect(html).toMatch(/view-transition-name:\s*room-access/);
-    expect(html).toContain("Srovnejte si zadání. Otevřete repo. Sepište první mapu.");
+    expect(html).toContain("Ujasněte si zadání. Otevřete repo. Sepište první mapu.");
     expect(html).toContain("připravená zadání pro tuto místnost");
-    expect(html).toContain("fallback při setupu");
-    expect(html).toContain("live feed checkpointů");
-    expect(html).toContain("reference");
+    expect(html).toContain("když vás brzdí setup");
+    expect(html).toContain("živý přehled checkpointů");
+    expect(html).toContain("podklady");
   });
 
   it("renders the self-identify prompt when the session has no participantId", async () => {
