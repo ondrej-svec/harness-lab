@@ -25,8 +25,6 @@ import {
   AdminDialog,
   FieldLabel,
   StatusPill,
-  adminHeroPanelClassName,
-  adminHeroTileClassName,
   adminDangerButtonClassName,
   adminInputClassName,
   adminPanelSurfaceClassName,
@@ -218,64 +216,64 @@ export default async function AdminWorkspacePage({
   const signedInName = authSession?.data?.user?.name ?? null;
 
   return (
-    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-6 text-[var(--text-primary)] sm:px-6 sm:py-8">
-      <div className="mx-auto flex max-w-[94rem] flex-col gap-6">
-        <header className="dashboard-motion-card relative overflow-hidden rounded-[34px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
-          <div className="absolute inset-x-0 top-0 h-40 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_62%)]" />
-          <div className="pointer-events-none absolute -right-16 top-0 h-56 w-56 rounded-full bg-[radial-gradient(circle,var(--accent-surface),transparent_72%)] opacity-[0.08] blur-3xl dashboard-drift-reverse" />
-          <div className="pointer-events-none absolute left-[28%] top-8 h-32 w-56 rounded-full bg-[radial-gradient(circle,var(--surface-soft),transparent_72%)] blur-3xl dashboard-sheen" />
-          <div className="relative space-y-6 p-6 sm:p-7">
-            <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
-              <div className="max-w-3xl">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">{copy.workspaceEyebrow}</p>
-                <h1 className="mt-3 text-3xl font-semibold tracking-[-0.05em] text-[var(--text-primary)] sm:text-5xl">
-                  {copy.workspaceTitle}
-                </h1>
-                <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--text-secondary)]">{copy.workspaceBody}</p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                  <a className={`dashboard-motion-button ${adminPrimaryButtonClassName} w-full sm:w-auto`} href="#create-instance">
-                    {copy.createInstanceTitle}
-                  </a>
-                  <span className="inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-2 text-sm text-[var(--text-secondary)]">
-                    {`${workspaceStats.prepared} ${copy.workspaceStatsPrepared} • ${workspaceStats.running} ${copy.workspaceStatsRunning}`}
-                  </span>
-                </div>
-              </div>
+    <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_26%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-5 text-[var(--text-primary)] sm:px-6 sm:py-6">
+      <div className="mx-auto flex max-w-[94rem] flex-col gap-4 sm:gap-5">
+        <header className="dashboard-motion-card relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[var(--surface-panel)] shadow-[var(--shadow-soft)] backdrop-blur">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_58%)] dashboard-drift"
+          />
 
-              <div className="flex items-center gap-3 self-start text-xs uppercase tracking-[0.18em] text-[var(--text-muted)] xl:justify-self-end">
-                <AdminLanguageSwitcher
-                  lang={lang}
-                  csHref={buildAdminWorkspaceHref({ lang: "cs", query: filters.query, status: filters.status })}
-                  enHref={buildAdminWorkspaceHref({ lang: "en", query: filters.query, status: filters.status })}
-                />
-                <span>/</span>
-                <ThemeSwitcher />
-                <span>/</span>
-                <form action={signOutAction}>
-                  <input name="lang" type="hidden" value={lang} />
-                  <AdminSubmitButton className="text-xs lowercase text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
-                    {copy.signOutButton}
-                  </AdminSubmitButton>
-                </form>
-              </div>
+          {/* Row 1 — toolbar */}
+          <div className="relative flex flex-col gap-3 px-4 py-3.5 sm:px-5 sm:py-4 lg:flex-row lg:items-center lg:gap-5 lg:py-4 lg:pl-6 lg:pr-5">
+            <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-4 gap-y-2">
+              <p className="shrink-0 text-[10px] uppercase tracking-[0.28em] text-[var(--text-muted)]">
+                {copy.workspaceEyebrow}
+              </p>
+              <span aria-hidden className="hidden h-5 w-px shrink-0 bg-[var(--border)] lg:inline-block" />
+              <h1 className="min-w-0 truncate text-xl font-semibold tracking-[-0.04em] text-[var(--text-primary)] sm:text-2xl lg:text-[26px] xl:text-[28px]">
+                {copy.workspaceTitle}
+              </h1>
+              <span className="inline-flex shrink-0 items-center rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-1 text-xs text-[var(--text-secondary)]">
+                {`${workspaceStats.prepared} ${copy.workspaceStatsPrepared} · ${workspaceStats.running} ${copy.workspaceStatsRunning}`}
+              </span>
             </div>
 
-            <section className={`${adminHeroPanelClassName} dashboard-motion-card relative overflow-hidden p-5`}>
-              <div className="pointer-events-none absolute right-0 top-0 h-28 w-40 bg-[radial-gradient(circle,rgba(255,250,243,0.18),transparent_72%)] blur-3xl dashboard-drift" />
-              <div className="flex items-center justify-between gap-4">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.workspaceSummaryTitle}</p>
-                {signedInEmail ? (
-                  <p className="text-xs leading-5 text-[var(--hero-secondary)]">{`${copy.signedInAs}: ${signedInName ?? signedInEmail}`}</p>
-                ) : null}
+            <div className="flex flex-wrap items-center gap-3 self-start text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] lg:self-auto">
+              <a className={`dashboard-motion-button ${adminPrimaryButtonClassName} !py-1.5 !px-4 !text-[12px]`} href="#create-instance">
+                {copy.createInstanceTitle}
+              </a>
+              <span aria-hidden className="h-5 w-px bg-[var(--border)]" />
+              <AdminLanguageSwitcher
+                lang={lang}
+                csHref={buildAdminWorkspaceHref({ lang: "cs", query: filters.query, status: filters.status })}
+                enHref={buildAdminWorkspaceHref({ lang: "en", query: filters.query, status: filters.status })}
+              />
+              <span aria-hidden>/</span>
+              <ThemeSwitcher />
+              <span aria-hidden>/</span>
+              <form action={signOutAction}>
+                <input name="lang" type="hidden" value={lang} />
+                <AdminSubmitButton className="text-[11px] lowercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]">
+                  {copy.signOutButton}
+                </AdminSubmitButton>
+              </form>
+            </div>
+          </div>
+
+          {/* Row 2 — context strip with workspace stats */}
+          <div className="relative border-t border-[var(--border)] bg-[var(--surface-soft)]">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-3 px-4 py-3 sm:px-5 sm:py-3.5 lg:grid-cols-4 lg:px-6">
+              <WorkspaceContextStat label={copy.workspaceStatsAll} value={`${workspaceStats.all}`} />
+              <WorkspaceContextStat label={copy.workspaceStatsPrepared} value={`${workspaceStats.prepared}`} />
+              <WorkspaceContextStat label={copy.workspaceStatsRunning} value={`${workspaceStats.running}`} />
+              <WorkspaceContextStat label={copy.workspaceStatsArchived} value={`${workspaceStats.archived}`} />
+            </div>
+            {signedInEmail ? (
+              <div className="flex flex-wrap gap-x-4 gap-y-0.5 border-t border-[var(--border)] px-4 py-2 text-[11px] leading-4 text-[var(--text-muted)] sm:px-5 lg:px-6">
+                <p>{`${copy.signedInAs}: ${signedInName ?? signedInEmail}`}</p>
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
-                <WorkspacePulseStat label={copy.workspaceStatsAll} value={`${workspaceStats.all}`} />
-                <WorkspacePulseStat label={copy.workspaceStatsPrepared} value={`${workspaceStats.prepared}`} />
-                <WorkspacePulseStat label={copy.workspaceStatsRunning} value={`${workspaceStats.running}`} />
-                <WorkspacePulseStat label={copy.workspaceStatsArchived} value={`${workspaceStats.archived}`} />
-              </div>
-              <p className="mt-4 border-t border-[var(--hero-border)] pt-4 text-xs leading-5 text-[var(--hero-secondary)]">{copy.pageBody}</p>
-            </section>
+            ) : null}
           </div>
         </header>
 
@@ -551,11 +549,11 @@ export default async function AdminWorkspacePage({
   );
 }
 
-function WorkspacePulseStat({ label, value }: { label: string; value: string }) {
+function WorkspaceContextStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className={`${adminHeroTileClassName} dashboard-motion-card px-4 py-4`}>
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--hero-muted)]">{label}</p>
-      <p className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-[var(--hero-text)]">{value}</p>
+    <div className="flex min-w-0 flex-col">
+      <p className="text-[10px] uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</p>
+      <p className="mt-1 truncate text-sm font-semibold leading-5 text-[var(--text-primary)]">{value}</p>
     </div>
   );
 }
