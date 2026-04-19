@@ -217,7 +217,8 @@ Then move into the demo. The demo has its own delivery script in `content/talks/
 
 After this talk, the team should not go back to the repo looking for a smarter prompt. It should go back with **one clear expectation**: map and verification first, feature motion second.
 
-- If they don't have the workshop skill yet: `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`.
+- If local setup is ready: `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`.
+- If local setup is blocked: use the participant surface as the guaranteed path and come back to the skill later.
 - First, a short map in the repo.
 - Then a short plan of steps.
 - Then the first tracer — holistic verification, not a unit test on one function.

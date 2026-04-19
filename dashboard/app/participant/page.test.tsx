@@ -5,6 +5,7 @@ import { createWorkshopStateFromTemplate } from "@/lib/workshop-data";
 const getParticipantSessionFromCookieStore = vi.fn();
 const getParticipantTeamLookup = vi.fn();
 const getWorkshopState = vi.fn();
+const findMemberByParticipant = vi.fn();
 
 vi.mock("next/headers", () => ({
   cookies: vi.fn(),
@@ -27,11 +28,18 @@ vi.mock("@/lib/workshop-store", () => ({
   getWorkshopState,
 }));
 
+vi.mock("@/lib/team-member-repository", () => ({
+  getTeamMemberRepository: () => ({
+    findMemberByParticipant,
+  }),
+}));
+
 describe("ParticipantPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     delete process.env.NEXT_PUBLIC_HARNESS_REPO_URL;
     delete process.env.NEXT_PUBLIC_HARNESS_REPO_BRANCH;
+    findMemberByParticipant.mockResolvedValue(null);
   });
 
   it("redirects to / when no participant session exists", async () => {
@@ -78,6 +86,9 @@ describe("ParticipantPage", () => {
     expect(html).toContain("opustit kontext místnosti");
     expect(html).toContain("dashboard-motion-card");
     expect(html).toMatch(/view-transition-name:\s*room-access/);
+    expect(html).toContain("Srovnejte si zadání. Otevřete repo. Sepište první mapu.");
+    expect(html).toContain("Připravená zadání pro tuto místnost");
+    expect(html).toContain("Fallback není selhání.");
   });
 
   it("renders the self-identify prompt when the session has no participantId", async () => {
@@ -123,5 +134,6 @@ describe("ParticipantPage", () => {
     expect(html).toContain("Opening and orientation");
     expect(html).toContain("Experience line + team formation");
     expect(html).toContain("Form the line. Count off. Claim your anchor.");
+    expect(html).not.toContain("Agree on the brief. Open the repo. Draft the first map.");
   });
 });

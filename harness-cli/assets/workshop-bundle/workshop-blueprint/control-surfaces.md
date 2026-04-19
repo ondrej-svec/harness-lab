@@ -15,12 +15,22 @@ Purpose:
 - orient teams during the workshop day
 - show participant-safe phase and room context
 - keep the next action obvious on mobile and on projection
+- provide enough execution support that a team can continue even if local CLI or skill setup is blocked
 
 Default behavior:
 - show the current phase
 - show the next hard milestone
 - show the next harness move, not only the next feature move
+- make the essential workshop path available without requiring CLI success first
 - remind teams what evidence should exist by the next checkpoint
+
+Core participant-surface responsibilities:
+- current phase and next required move
+- brief access
+- challenge-card access
+- repo or starter-material access
+- setup-failure fallback guidance
+- team check-ins and room-safe team signals
 
 Good prompts from the surface:
 - "Máš už `AGENTS.md` jako mapu repa?"
@@ -47,6 +57,10 @@ Authentication:
 Scope:
 - runtime state only
 - no hidden authority to redefine the blueprint silently
+
+Participant-path rule:
+- the participant surface must be sufficient to complete the workshop
+- the `workshop` skill and CLI are optional accelerators over the same workshop model, not prerequisites for progress
 
 ## Facilitator Skill
 

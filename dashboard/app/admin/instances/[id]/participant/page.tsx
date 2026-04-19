@@ -68,8 +68,13 @@ export default async function AdminParticipantMirrorPage({
               members: team.members,
               repoUrl: team.repoUrl,
               checkIns: team.checkIns,
+              projectBriefId: team.projectBriefId,
+              anchor: team.anchor,
             })),
           }}
+          activeParticipantTeam={state.teams[0] ?? null}
+          briefs={state.briefs}
+          challenges={state.challenges}
           publicNotes={participantNotes}
           rotationRevealed={rotationRevealed}
         />

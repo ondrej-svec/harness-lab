@@ -62,7 +62,9 @@ Whether the `harness` CLI should have a `demo-setup` command that scaffolds both
 3. Briefly show how intent is written into the repo: where the map lives, where the next safe step lives, and where it is visible that this repository was built as a continuation-ready system.
 4. Let the agent implement a small slice.
 5. Run `/review` and show that review is part of the workflow, not an emergency brake at the end.
-6. Briefly show the workshop skill:
+6. Briefly show the workshop support paths:
+   - the participant surface as the guaranteed operating path for the room
+   - the workshop skill as the faster path when local setup is ready
    - how it is installed via `harness skill install`
    - how it produces the first actionable step in Codex or in pi
 7. Close with this line:
@@ -70,8 +72,8 @@ Whether the `harness` CLI should have a `demo-setup` command that scaffolds both
 
 ## Fallbacks
 
-- If the CLI is not working: switch to the Codex App.
-- If the App is not working: use the web fallback.
+- If the CLI is not working: continue from the participant surface, then switch to the Codex App if that is worth the time.
+- If the App is not working: use the web fallback or keep moving from the participant surface.
 - If the demo is slow: have a repo snapshot ready after every step.
 - **If the live contrast drags: use pre-prepared screenshots. The contrast matters more than live generation.**
 

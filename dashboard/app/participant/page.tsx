@@ -6,6 +6,7 @@ import {
   participantSessionCookieName,
   revokeParticipantSession,
 } from "@/lib/event-access";
+import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import {
   buildWorkshopContextLine,
   deriveHomePageState,
@@ -66,6 +67,12 @@ export default async function ParticipantPage({
 
   const state = await getWorkshopState(participantSession.instanceId);
   const participantTeams = await getParticipantTeamLookup(participantSession.instanceId);
+  const participantTeamAssignment = participantSession.participantId
+    ? await getTeamMemberRepository().findMemberByParticipant(participantSession.instanceId, participantSession.participantId)
+    : null;
+  const activeParticipantTeam = participantTeamAssignment
+    ? state.teams.find((team) => team.id === participantTeamAssignment.teamId) ?? null
+    : null;
   const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, workshopMeta } = deriveHomePageState(state);
   const workshopContextLine = buildWorkshopContextLine(workshopMeta);
 
@@ -83,6 +90,9 @@ export default async function ParticipantPage({
           nextAgendaItem={nextAgendaItem}
           participantSession={participantSession}
           participantTeams={participantTeams}
+          activeParticipantTeam={activeParticipantTeam}
+          briefs={state.briefs}
+          challenges={state.challenges}
           publicNotes={participantNotes}
           rotationRevealed={rotationRevealed}
           logoutAction={logoutAction}

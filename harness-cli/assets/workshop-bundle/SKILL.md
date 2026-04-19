@@ -23,14 +23,14 @@ Participant-facing skill for the Harness Lab workshop. Command semantics stay in
 
 ## Purpose
 
-This skill is the primary workshop interface for participants in Codex or pi. It should prefer live dashboard API data when available and fall back to the local bundled content when the API is unavailable.
+This skill is the primary conversational workshop interface for participants in Codex or pi. It should prefer live dashboard API data when available and fall back to the local bundled content when the API is unavailable. The dashboard participant surface remains the guaranteed workshop operating surface; the skill is the faster path when a participant's local setup is ready.
 
 The portable install path should make this skill usable from the participant's real working repo without requiring a clone of the Harness Lab source repo.
 
 Core mental model:
-- dashboard participant surface = orientation during the day
+- dashboard participant surface = guaranteed workshop operating surface during the day
 - dashboard facilitator surface = control of the workshop instance
-- workshop skill = AI interface to the same workshop system
+- workshop skill = optional conversational accelerator over the same workshop system
 - workshop blueprint = public canonical definition of the workshop method
 - `uiLang` = language of product chrome
 - `contentLang` = language of workshop content for participant-facing delivery

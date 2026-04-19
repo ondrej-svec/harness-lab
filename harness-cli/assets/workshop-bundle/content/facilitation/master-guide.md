@@ -124,7 +124,8 @@ By the end of the talk, this should be clear:
 
 - theory ends here
 - the team goes back to the repo
-- if the team doesn't have the workshop skill yet, this is the moment for `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`
+- if the team's local setup is ready, this is the moment for `harness skill install`, then `Codex: $workshop setup` or `pi: /skill:workshop`
+- if local setup is blocked or slow, keep the team moving from the participant surface first and come back to the skill only when it is worth the time
 - first comes a map and the first explicit verification
 - only then does more feature motion make sense
 
@@ -184,7 +185,7 @@ Show Codex as part of a working system, not as a trick on its own. The demo shou
 - one story arc, not a feature tour
 - a repository where you can see the `README`, the `AGENTS.md`, the work broken into steps, and how a change gets checked
 - the contrast between a weak start without context and work that has a map and a next safe step
-- a short anchor for the workshop skill: `harness skill install`, the first command, and why it saves a verbal rescue later
+- a short anchor for the workshop support paths: participant surface first for guaranteed movement, `harness skill install` as the faster path when local setup is ready
 
 ### What to say explicitly
 

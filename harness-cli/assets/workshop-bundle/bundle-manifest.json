@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "workshop",
-  "bundleVersion": "0.7.2",
-  "contentHash": "af3de7e5d40a7042840ce163cf2ee5ab25ca148601b919c8535354a47357ba99",
+  "bundleVersion": "0.8.0",
+  "contentHash": "5f8ff6bc263904e69f9e0ba3f16a17c200c3b5bb191500f0ef71dc93314f5401",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -46,7 +46,7 @@
     },
     {
       "path": "content/facilitation/master-guide.md",
-      "sha256": "fa3e6023af7cca15fb7754d6261acccf92c2aa86dc10c09ceeb56bb1162a0ea5"
+      "sha256": "cf927bb41d719895c239fe4d2b991ff19c4c24cbfbc3f8edf032fdbf069f5e23"
     },
     {
       "path": "content/project-briefs/.gitkeep",
@@ -98,11 +98,11 @@
     },
     {
       "path": "content/talks/codex-demo-script.md",
-      "sha256": "79484c43c93eaa16338d70eabd7138cbf5fb08e404a9a93e5ccb491509a3c642"
+      "sha256": "c43d702feb1a4bf8d9508faa30e62bd36b7b839f6b569de242568413418d2c02"
     },
     {
       "path": "content/talks/context-is-king.md",
-      "sha256": "5bba9af6ecaebd1fdd44353c018ed443a5cf5d47383767b5787d395bfa2ef464"
+      "sha256": "e6ff70088c9c6c9a07189360fd14e702ddb2fa75a27c1f7b131196b2306675bf"
     },
     {
       "path": "content/talks/locales/cs/codex-demo-script.md",
@@ -166,7 +166,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "2a437fc14f6e0a9717679c6ca5b2726f53a2dce998610822b87965f2676e6b5d"
+      "sha256": "93a86c827cf1c23871c02f35edd6ad4a3b56ac15075e6ad1da4da2c0d741f8af"
     },
     {
       "path": "workshop-blueprint/agenda.json",
@@ -174,7 +174,7 @@
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
-      "sha256": "623930d85b50a35270a721c79b6af05e31facfd85636c4388a0d8361f59b7785"
+      "sha256": "69897ba5e45cf150235ac1e3fc738cbf33f281af347b4ee3418b9f246b215836"
     },
     {
       "path": "workshop-blueprint/day-structure.md",

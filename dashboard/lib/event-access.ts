@@ -32,7 +32,7 @@ export type ParticipantCoreBundle = {
 };
 
 export type ParticipantTeamLookup = {
-  items: Pick<Team, "id" | "name" | "city" | "members" | "repoUrl" | "checkIns">[];
+  items: Pick<Team, "id" | "name" | "city" | "members" | "repoUrl" | "checkIns" | "projectBriefId" | "anchor">[];
 };
 
 export async function getConfiguredEventCode() {
@@ -387,6 +387,8 @@ export async function getParticipantTeamLookup(instanceId?: string): Promise<Par
       members: team.members,
       repoUrl: team.repoUrl,
       checkIns: team.checkIns,
+      projectBriefId: team.projectBriefId,
+      anchor: team.anchor,
     })),
   };
 }

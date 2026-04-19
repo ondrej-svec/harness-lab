@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Participant Surface · Build Phase 1 Proof Slice · Preview 2026-04-19</title>
+    <style>
+      :root {
+        --font-body: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Space Grotesk", "Avenir Next", sans-serif;
+        --surface: #faf4ed;
+        --surface-elevated: #f2e9e1;
+        --surface-panel: #fffaf3;
+        --surface-soft: rgba(255, 250, 243, 0.74);
+        --text-primary: #575279;
+        --text-secondary: #797593;
+        --text-muted: #9893a5;
+        --border: rgba(87, 82, 121, 0.12);
+        --border-strong: rgba(87, 82, 121, 0.2);
+        --accent: #286983;
+        --accent-on: #faf4ed;
+        --accent-soft: rgba(40, 105, 131, 0.08);
+        --success: #56949f;
+        --warning: #d7827e;
+        --shadow-soft: 0 10px 24px rgba(87, 82, 121, 0.08);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #232136;
+          --surface-elevated: #2a273f;
+          --surface-panel: #2a273f;
+          --surface-soft: rgba(57, 53, 82, 0.6);
+          --text-primary: #e0def4;
+          --text-secondary: #908caa;
+          --text-muted: #6e6a86;
+          --border: rgba(224, 222, 244, 0.10);
+          --border-strong: rgba(224, 222, 244, 0.18);
+          --accent: #ea9a97;
+          --accent-on: #232136;
+          --accent-soft: rgba(234, 154, 151, 0.12);
+          --success: #9ccfd8;
+          --warning: #f6c177;
+          --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.28);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top left, var(--surface-soft), transparent 30%), linear-gradient(180deg, var(--surface), var(--surface-elevated));
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+      }
+      h1, h2, h3 { margin: 0; font-family: var(--font-display); }
+      p { margin: 0; }
+      .shell { max-width: 1180px; margin: 0 auto; padding: 24px 18px 80px; }
+      .topline {
+        display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+        font-size: 13px; color: var(--text-muted); margin-bottom: 18px;
+      }
+      .brand { text-transform: lowercase; letter-spacing: 0.08em; }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+        gap: 18px;
+      }
+      @media (max-width: 960px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+      .panel {
+        background: var(--surface-panel);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        box-shadow: var(--shadow-soft);
+        padding: 20px;
+      }
+      .panel + .panel { margin-top: 16px; }
+      .eyebrow {
+        font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+      }
+      .hero h1 {
+        font-size: clamp(2rem, 5vw, 3.3rem);
+        line-height: 0.96;
+        letter-spacing: -0.06em;
+        margin-bottom: 14px;
+      }
+      .hero .lead {
+        font-size: 17px; line-height: 1.6; color: var(--text-secondary); max-width: 58ch;
+      }
+      .phase-strip {
+        display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; margin-top: 18px;
+      }
+      @media (max-width: 760px) { .phase-strip { grid-template-columns: 1fr; } }
+      .metric, .cta, .brief, .repo, .challenges, .fallback, .team, .notes { min-height: 100%; }
+      .metric-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-muted); }
+      .metric-value { margin-top: 10px; font-size: 26px; line-height: 1.15; letter-spacing: -0.04em; }
+      .metric-copy { margin-top: 10px; color: var(--text-secondary); line-height: 1.55; font-size: 14px; }
+      .cta {
+        background: linear-gradient(180deg, var(--accent-soft), transparent 100%), var(--surface-panel);
+        border-color: var(--border-strong);
+      }
+      .cta h2 { font-size: 28px; letter-spacing: -0.04em; }
+      .cta .support { margin-top: 12px; color: var(--text-secondary); line-height: 1.6; }
+      .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      .btn {
+        display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+        padding: 10px 15px; border-radius: 999px; font-size: 14px; font-weight: 600;
+        border: 1px solid var(--border-strong); color: var(--text-primary); background: transparent;
+      }
+      .btn.primary { background: var(--accent); color: var(--accent-on); border-color: var(--accent); }
+      .btn.soft { background: var(--surface); }
+      .stack { display: grid; gap: 16px; }
+      .split {
+        display: grid; gap: 16px; grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: 760px) { .split { grid-template-columns: 1fr; } }
+      .section-title { font-size: 22px; letter-spacing: -0.03em; margin-bottom: 10px; }
+      .body { color: var(--text-secondary); line-height: 1.6; font-size: 14px; }
+      .list { display: grid; gap: 10px; margin-top: 14px; }
+      .list-item {
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 12px 14px;
+        background: var(--surface);
+      }
+      .list-item strong { display: block; font-size: 14px; margin-bottom: 4px; }
+      .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .tag {
+        display: inline-flex; align-items: center; padding: 6px 10px; border-radius: 999px;
+        font-size: 12px; border: 1px solid var(--border); color: var(--text-secondary); background: var(--surface);
+      }
+      .fallback {
+        border-color: rgba(215, 130, 126, 0.28);
+        background: linear-gradient(180deg, rgba(215, 130, 126, 0.10), transparent), var(--surface-panel);
+      }
+      .fallback .body strong { color: var(--text-primary); }
+      .team-grid { display: grid; gap: 12px; }
+      .mini-card {
+        border-radius: 16px; border: 1px solid var(--border); background: var(--surface); padding: 12px 14px;
+      }
+      .mini-card h3 { font-size: 17px; letter-spacing: -0.02em; }
+      .muted { color: var(--text-muted); }
+      .footer-note {
+        margin-top: 18px; font-size: 13px; color: var(--text-muted); line-height: 1.55;
+      }
+      .mobile-note {
+        margin-top: 22px; padding: 14px 16px; border: 1px dashed var(--border-strong); border-radius: 18px; color: var(--text-secondary); font-size: 13px;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        background: var(--surface); padding: 1px 5px; border-radius: 8px; border: 1px solid var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <div class="topline">
+        <div class="brand">harness lab · participant surface preview</div>
+        <div>proof slice · build phase 1 · cli-independent workshop delivery</div>
+      </div>
+
+      <section class="panel hero">
+        <div class="eyebrow">current room context</div>
+        <h1>Build Phase 1 — get moving, even if local setup is awkward.</h1>
+        <p class="lead">
+          This proof slice changes the participant surface from a passive room board into an operating surface.
+          The page answers one dominant question: <strong>what do we do next, and how do we keep moving right now?</strong>
+        </p>
+
+        <div class="phase-strip">
+          <div class="panel metric">
+            <div class="metric-title">current phase</div>
+            <div class="metric-value">10:30 · Build Phase 1</div>
+            <p class="metric-copy">By lunch, your repo needs a short <code>AGENTS.md</code>, a brief you agree on, one explicit verification step, and one first verified move.</p>
+          </div>
+          <div class="panel cta">
+            <div class="eyebrow">do this now</div>
+            <h2>Agree on the brief. Open the repo. Draft the first map.</h2>
+            <p class="support">The participant surface is enough to start. If your local agent setup is ready, the workshop skill is the faster path — not the required one.</p>
+            <div class="actions">
+              <a href="#brief" class="btn primary">Open your brief</a>
+              <a href="#repo" class="btn soft">Get team materials</a>
+              <a href="#fallback" class="btn">Blocked? Use fallback</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid" style="margin-top: 18px;">
+        <div class="stack">
+          <section id="brief" class="panel brief">
+            <div class="eyebrow">your brief</div>
+            <h2 class="section-title">Code Review Helper</h2>
+            <p class="body">Turn a diff into a useful review checklist that clearly separates certainty, heuristic suggestion, and human judgment.</p>
+            <div class="list">
+              <div class="list-item">
+                <strong>Start here</strong>
+                Confirm the user story and the first verification step before you ask an agent for implementation.
+              </div>
+              <div class="list-item">
+                <strong>Architecture reminder</strong>
+                Another team should be able to add a new review rule within 10 minutes of opening the repo.
+              </div>
+              <div class="list-item">
+                <strong>First prompt direction</strong>
+                Start with the data model, certainty boundaries, and <code>AGENTS.md</code> — not with feature generation.
+              </div>
+            </div>
+            <div class="actions">
+              <a href="#" class="btn primary">Open full brief</a>
+              <a href="#" class="btn">View challenge cards</a>
+            </div>
+          </section>
+
+          <section id="repo" class="panel repo">
+            <div class="eyebrow">repo / starter access</div>
+            <h2 class="section-title">Get your team materials</h2>
+            <p class="body">The surface offers the richest safe set available for your team. Clone is supported, but not required.</p>
+            <div class="split" style="margin-top: 14px;">
+              <div class="mini-card">
+                <h3>Primary path</h3>
+                <p class="body" style="margin-top: 8px;">Open the repo in the browser or download the starter package if local setup is blocked.</p>
+                <div class="actions">
+                  <a href="#" class="btn primary">Open repo</a>
+                  <a href="#" class="btn soft">Download ZIP</a>
+                </div>
+              </div>
+              <div class="mini-card">
+                <h3>Optional local path</h3>
+                <p class="body" style="margin-top: 8px;">Use the clone command only if it is the fastest route for your team.</p>
+                <div class="actions">
+                  <a href="#" class="btn">Copy clone command</a>
+                  <a href="#" class="btn">Copy repo URL</a>
+                </div>
+              </div>
+            </div>
+            <p class="footer-note">Design rule: this section must never imply that cloning is the workshop gate.</p>
+          </section>
+
+          <section class="panel challenges">
+            <div class="eyebrow">today's prompts</div>
+            <h2 class="section-title">Challenge cards, without the skill dependency</h2>
+            <p class="body">Required and optional challenge prompts are visible here so teams can keep moving even if local tooling is not ready.</p>
+            <div class="tag-row">
+              <span class="tag">Before lunch · write a repo map</span>
+              <span class="tag">Before lunch · define one verification step</span>
+              <span class="tag">Optional · formalize one review routine</span>
+            </div>
+            <div class="actions">
+              <a href="#" class="btn primary">Open challenge cards</a>
+            </div>
+          </section>
+        </div>
+
+        <div class="stack">
+          <section id="fallback" class="panel fallback">
+            <div class="eyebrow">if setup blocks you</div>
+            <h2 class="section-title">Fallback is normal, not failure.</h2>
+            <p class="body"><strong>Keep moving from this page.</strong> Confirm the brief, get the repo or starter package, write the first map in the repo, and only then decide whether local agent setup is worth more time.</p>
+            <div class="list">
+              <div class="list-item">
+                <strong>0–5 minutes blocked</strong>
+                Stay with the participant surface. Keep the team aligned on goal, scope, and the first check.
+              </div>
+              <div class="list-item">
+                <strong>Still blocked after that?</strong>
+                Raise a hand. A facilitator helps you choose between browser path, starter bundle, or local-tool fallback.
+              </div>
+              <div class="list-item">
+                <strong>If setup is ready</strong>
+                Use the workshop skill as the faster path for coaching and repo-native prompts.
+              </div>
+            </div>
+          </section>
+
+          <section class="panel team">
+            <div class="eyebrow">team signals</div>
+            <h2 class="section-title">What your team leaves behind</h2>
+            <div class="team-grid" style="margin-top: 14px;">
+              <div class="mini-card">
+                <h3>Tým Atlas</h3>
+                <p class="body" style="margin-top: 8px;">Members: Anna, David, Petra</p>
+                <p class="body muted" style="margin-top: 6px;">Anchor: Table 3</p>
+              </div>
+              <div class="mini-card">
+                <h3>Latest check-in</h3>
+                <p class="body" style="margin-top: 8px;">We agreed on the brief and now we're writing the first AGENTS.md pass before touching implementation.</p>
+              </div>
+            </div>
+            <div class="actions" style="margin-top: 14px;">
+              <a href="#" class="btn primary">Record team check-in</a>
+            </div>
+          </section>
+
+          <section class="panel notes">
+            <div class="eyebrow">room notes</div>
+            <h2 class="section-title">Shared room signals</h2>
+            <div class="list">
+              <div class="list-item"><strong>Facilitator reminder</strong> Small verified move first. Don't turn AGENTS.md into a warehouse.</div>
+              <div class="list-item"><strong>Checkpoint</strong> By lunch, the next safe step should be obvious to another team.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <div class="mobile-note">
+        <strong>Mobile behavior rule:</strong> on phone, the order stays: current phase → do this now → brief → repo access → fallback → team signals. The participant should never scroll past decorative content before finding the next supported move.
+      </div>
+    </main>
+  </body>
+</html>

@@ -225,7 +225,7 @@
           "body": "Scéna na plátně pro sál. Drží po celé cvičení – devět minut.",
           "facilitatorNotes": [
             "Nechte tuhle scénu na plátně po celých devět minut formování týmů.",
-            "Účastníci postupují podle kroků na telefonu; plátno je společná kotva, na kterou se celá místnost kouká.",
+            "Plátno drží společné kroky pro celý sál; průběh veďte živě zepředu.",
             "Na přechod do talku přepínejte teprve ve chvíli, kdy má každý tým jméno i kotvu na boardu."
           ],
           "sourceRefs": [
@@ -257,8 +257,8 @@
               "id": "opening-team-room-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Mrkněte na telefon.",
-              "body": "Celé zadání máte na participant boardu před sebou."
+              "title": "Řiďte se děním v sále.",
+              "body": "Tahle obrazovka je společná kotva, zatímco facilitátor skládá týmy živě."
             }
           ]
         },
@@ -751,7 +751,7 @@
                 {
                   "id": "folder-b",
                   "title": "Folder B – stejné repo, ale s harnessem.",
-                  "body": "Stejné zadání. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus krátký plán. Plus nainstalovaný workshop skill."
+                  "body": "Stejné zadání. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus krátký plán. Plus připravená workshopová podpůrná cesta, když ji tým chce využít."
                 }
               ]
             },
@@ -838,7 +838,7 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Váš toolkit, stejná disciplína",
-          "body": "Viděli jste mě pracovat ve Folderu B. Za dvacet minut budete pracovat ve vlastním Folderu B. Tohle je ten nástroj, který to svazuje dohromady – workshop skill. Nainstaluju ho teď na svůj stroj, abyste viděli přesně to, co budete dělat vy.",
+          "body": "Viděli jste mě pracovat ve Folderu B. Za dvacet minut budete pracovat ve vlastním Folderu B. Tady jsou podpůrné plochy pro dnešek. Participant plocha drží všechny v pohybu; workshop skill je rychlejší cesta, když máte připravený vlastní setup. Ukážu vám ji teď na svém stroji, abyste viděli, co navíc přidává.",
           "facilitatorNotes": [
             "Živá instalace na jevišti. Předpřipravené 30vteřinové záložní video mít nachystané a přehratelné do 10 vteřin, kdyby něco selhalo.",
             "Instalaci otestuj ráno před workshopem čerstvě na facilitátorově stroji."
@@ -855,7 +855,7 @@
               "type": "hero",
               "eyebrow": "Workshop skill",
               "title": "Váš toolkit, stejná disciplína",
-              "body": "Jeden příkaz k instalaci. Jeden nástroj, který svazuje ráno dohromady. Sledujte, jak ho instaluju – za dvacet minut uděláte totéž."
+              "body": "Jedna volitelná rychlá cesta na vlastním stroji. Jedna společná participant plocha pro celou místnost. Sledujte, jak tu rychlou cestu instaluju, abyste viděli, co přidává, když máte připravený setup."
             },
             {
               "id": "demo-toolkit-steps",
@@ -863,13 +863,13 @@
               "items": [
                 {
                   "id": "toolkit-install",
-                  "title": "Jeden příkaz k instalaci.",
-                  "body": "V týmovém repu. To je všechno."
+                  "title": "Jedna rychlá cesta k instalaci.",
+                  "body": "V týmovém repu, když máte připravený lokální setup. Když ne, workshop nese participant plocha dál."
                 },
                 {
                   "id": "toolkit-brief",
                   "title": "Vaše zadání na požádání.",
-                  "body": "Skill ví, jaký jste tým, jaký máte projekt a v jaké jste fázi. Zeptejte se a dostanete, co potřebujete."
+                  "body": "Když je skill k dispozici, ví, jaký jste tým, jaký máte projekt a v jaké jste fázi. Urychluje to, co participant plocha už stejně zpřístupňuje."
                 },
                 {
                   "id": "toolkit-reference",
@@ -928,13 +928,13 @@
                 },
                 {
                   "id": "first-ten-install",
-                  "title": "Nainstalujte workshop skill.",
-                  "body": "Stejný příkaz, jaký jsem spustil já. Když se to rozbije, zvedněte ruku – někdo za vámi dorazí."
+                  "title": "Použijte rychlejší cestu, když máte připravený setup.",
+                  "body": "Workshop skill instalujte jen tehdy, když je to pro váš tým nejrychlejší krok. Když se to rozbije, pokračujte z participant plochy a zvedněte ruku."
                 },
                 {
                   "id": "first-ten-brief",
                   "title": "Dohodněte se, co stavíte.",
-                  "body": "Zeptejte se skillu na seznam připravených zadání, nebo si navrhněte vlastní. Pět minut na rozhodnutí, ne padesát."
+                  "body": "Otevřete si připravená zadání na participant ploše, nebo si navrhněte vlastní. Když máte připravený setup, skill je rychlejší cesta. Pět minut na rozhodnutí, ne padesát."
                 },
                 {
                   "id": "first-ten-agents-md",

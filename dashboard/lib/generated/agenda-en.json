@@ -225,7 +225,7 @@
           "body": "Wall scene that holds for the full nine minutes of team formation.",
           "facilitatorNotes": [
             "Hold this on the wall for the full nine minutes of team formation.",
-            "Participants work from the steps on their phones; the wall is the shared anchor the whole room can glance at.",
+            "The wall holds the shared steps for the room; facilitate the sequence live from the front.",
             "Advance to the handoff only once every team has both a name and an anchor on the board."
           ],
           "sourceRefs": [
@@ -257,8 +257,8 @@
               "id": "opening-team-room-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Check your phone.",
-              "body": "Full instructions are on the participant board in front of you."
+              "title": "Follow the room.",
+              "body": "This screen is the shared anchor while the facilitator forms the teams live."
             }
           ]
         },
@@ -759,7 +759,7 @@
                 {
                   "id": "folder-b",
                   "title": "Folder B — the same repo, with a harness.",
-                  "body": "Same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus the workshop skill installed."
+                  "body": "Same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus a workshop support path ready if the team wants it."
                 }
               ]
             },
@@ -846,7 +846,7 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Your toolkit, same discipline",
-          "body": "You've been watching me work in Folder B. In twenty minutes, you'll be working in your own Folder B. Here's the one tool that ties it together — the workshop skill. Let me install it on my machine right now so you see exactly what you'll do.",
+          "body": "You've been watching me work in Folder B. In twenty minutes, you'll be working in your own Folder B. Here are the support surfaces for today. The participant board keeps everyone moving; the workshop skill is the fast lane if your setup is ready. Let me show you that path on my machine so you see exactly what it gives you.",
           "facilitatorNotes": [
             "Live install on stage. Pre-recorded 30-second fallback video cued and ready to play in under 10 seconds if anything breaks.",
             "Test the install fresh on the facilitator's machine the morning of."
@@ -863,7 +863,7 @@
               "type": "hero",
               "eyebrow": "The workshop skill",
               "title": "Your toolkit, same discipline",
-              "body": "One command to install. One tool that ties the morning together. Watch me install it here — you'll do the same thing in twenty minutes."
+              "body": "One optional fast lane on your own machine. One shared participant surface for the whole room. Watch me install the fast lane here so you see what it adds when your setup is ready."
             },
             {
               "id": "demo-toolkit-steps",
@@ -871,13 +871,13 @@
               "items": [
                 {
                   "id": "toolkit-install",
-                  "title": "One command to install.",
-                  "body": "In your team's repo. That's it."
+                  "title": "One fast lane to install.",
+                  "body": "In your team's repo, if your local setup is ready. If not, the participant surface still carries the workshop."
                 },
                 {
                   "id": "toolkit-brief",
                   "title": "Your brief, on demand.",
-                  "body": "The skill knows your team, your project, your phase. Ask it, it hands you what you need."
+                  "body": "If the skill is available, it knows your team, your project, and your phase. Ask it, and it speeds up what the participant surface already makes available."
                 },
                 {
                   "id": "toolkit-reference",
@@ -936,13 +936,13 @@
                 },
                 {
                   "id": "first-ten-install",
-                  "title": "Install the workshop skill.",
-                  "body": "Same command I just ran. If it breaks, raise a hand — someone will come to you."
+                  "title": "Use the faster path if your setup is ready.",
+                  "body": "Install the workshop skill only if that is the fastest move for your team. If it breaks, keep moving from the participant surface and raise a hand."
                 },
                 {
                   "id": "first-ten-brief",
                   "title": "Agree on what you're building.",
-                  "body": "Ask the skill for the list of prepared briefs, or propose your own. Five minutes to decide, not fifty."
+                  "body": "Use the participant surface to open the prepared briefs, or propose your own. If your setup is ready, the skill is the faster path. Five minutes to decide, not fifty."
                 },
                 {
                   "id": "first-ten-agents-md",

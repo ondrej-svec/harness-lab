@@ -7,7 +7,8 @@ import {
 import type { ParticipantTeamLookup } from "@/lib/event-access";
 import type { ParticipantSession } from "@/lib/runtime-contracts";
 import { publicCopy, type UiLanguage } from "@/lib/ui-language";
-import type { PresenterBlock, WorkshopState } from "@/lib/workshop-data";
+import type { Challenge, PresenterBlock, ProjectBrief, Team, WorkshopState } from "@/lib/workshop-data";
+import { CopyActionButton } from "./copy-action-button";
 import { SubmitButton } from "./submit-button";
 import { ParticipantCheckInForm } from "./participant-check-in-form";
 
@@ -22,6 +23,9 @@ export function ParticipantRoomSurface({
   nextAgendaItem,
   participantSession,
   participantTeams,
+  activeParticipantTeam,
+  briefs,
+  challenges,
   publicNotes,
   rotationRevealed,
   logoutAction,
@@ -33,6 +37,9 @@ export function ParticipantRoomSurface({
   nextAgendaItem: AgendaItem | undefined;
   participantSession: ParticipantSession;
   participantTeams: ParticipantTeamLookup | null;
+  activeParticipantTeam: Team | null;
+  briefs: ProjectBrief[];
+  challenges: Challenge[];
   publicNotes: PublicNote[];
   rotationRevealed: boolean;
   logoutAction?: ((formData: FormData) => Promise<void>) | undefined;
@@ -48,6 +55,7 @@ export function ParticipantRoomSurface({
   const teamCards = buildParticipantTeamCards(participantTeams);
   const sharedNotes = buildSharedRoomNotes(publicNotes);
   const roomNotesSummary = sharedNotes.length > 0 ? `${sharedNotes.length}` : "0";
+  const showBuildPhaseOneProofSlice = currentAgendaItem?.id === "build-1";
 
   return (
     <>
@@ -96,6 +104,16 @@ export function ParticipantRoomSurface({
             </div>
           </div>
 
+          {showBuildPhaseOneProofSlice ? (
+            <BuildPhaseOneProofSlice
+              lang={lang}
+              activeTeam={activeParticipantTeam}
+              teamCards={teamCards}
+              briefs={briefs}
+              challenges={challenges}
+            />
+          ) : null}
+
           {participantPanel.guidanceBlocks.length > 0 ? (
             <div className="mt-6 space-y-4">
               <SectionLabel>{participantPanel.guidanceLabel ?? copy.participantEyebrow}</SectionLabel>
@@ -125,8 +143,14 @@ export function ParticipantRoomSurface({
                     </div>
                     <span className="text-xs uppercase tracking-[0.22em] text-[var(--text-muted)]">{team.id}</span>
                   </div>
+                  {"projectBriefId" in team ? (
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+                      {resolveBriefTitle(briefs, team.projectBriefId)}
+                      {"anchor" in team && team.anchor ? ` · ${team.anchor}` : ""}
+                    </p>
+                  ) : null}
                   {"members" in team && Array.isArray(team.members) && team.members.length > 0 ? (
-                    <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{team.members.join(", ")}</p>
                   ) : null}
                   <div className="mt-4 space-y-3">
                     <p className="text-[11px] uppercase tracking-[0.22em] text-[var(--text-muted)]">
@@ -165,14 +189,38 @@ export function ParticipantRoomSurface({
                     }}
                   />
                   {team.repoUrl ? (
-                    <a
-                      className="dashboard-motion-card dashboard-motion-link mt-4 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
-                      href={team.repoUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {team.repoUrl}
-                    </a>
+                    <>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <a
+                          className="dashboard-motion-button inline-flex items-center rounded-full border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface-panel)]"
+                          href={team.repoUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                        >
+                          {lang === "en" ? "Open repo" : "Otevřít repo"}
+                        </a>
+                        <CopyActionButton
+                          className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
+                          value={team.repoUrl}
+                          label={lang === "en" ? "Copy repo URL" : "Kopírovat URL repa"}
+                          copiedLabel={lang === "en" ? "Copied" : "Zkopírováno"}
+                        />
+                        <CopyActionButton
+                          className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)] hover:bg-[var(--surface-panel)]"
+                          value={`git clone ${team.repoUrl}`}
+                          label={lang === "en" ? "Copy clone command" : "Kopírovat clone command"}
+                          copiedLabel={lang === "en" ? "Copied" : "Zkopírováno"}
+                        />
+                      </div>
+                      <a
+                        className="dashboard-motion-card dashboard-motion-link mt-3 block break-all rounded-[16px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                        href={team.repoUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {team.repoUrl}
+                      </a>
+                    </>
                   ) : (
                     <p className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm text-[var(--text-muted)]">
                       {copy.noRoomData}
@@ -235,6 +283,160 @@ function MetricCard({ label, value }: { label: string; value: string }) {
       <p className="mt-3 text-base font-medium leading-6 text-[var(--text-primary)]">{value}</p>
     </div>
   );
+}
+
+function BuildPhaseOneProofSlice({
+  lang,
+  activeTeam,
+  teamCards,
+  briefs,
+  challenges,
+}: {
+  lang: UiLanguage;
+  activeTeam: Team | null;
+  teamCards: Array<ParticipantTeamLookup["items"][number]>;
+  briefs: ProjectBrief[];
+  challenges: Challenge[];
+}) {
+  const copy =
+    lang === "en"
+      ? {
+          eyebrow: "build phase 1",
+          title: "Agree on the brief. Open the repo. Draft the first map.",
+          body:
+            "The participant surface is enough to start. If your local agent setup is ready, the workshop skill is the faster path — not the required one.",
+          primaryBrief: "Open your brief",
+          primaryRepo: "Get team materials",
+          primaryFallback: "Blocked? Use fallback",
+          roomBriefsTitle: activeTeam ? "Your brief" : "Prepared briefs in this room",
+          roomBriefsBody: activeTeam
+            ? "Your team's brief is visible here so Build Phase 1 does not depend on the skill path."
+            : "Every prepared brief for this room is visible here so teams can confirm direction without local setup first.",
+          roomChallengesTitle: "Challenge cards, without the skill dependency",
+          roomChallengesBody:
+            "Required and optional prompts stay visible here so the room can keep moving even when local tooling is uneven.",
+          fallbackTitle: "Fallback is normal, not failure.",
+          fallbackBody:
+            "Keep moving from this page. Confirm the brief, open the repo, write the first map in the repo, and only then decide whether local setup is worth more time.",
+          fallbackNow: "0–5 minutes blocked",
+          fallbackNowBody: "Stay with the participant surface. Align on goal, scope, and the first verification step.",
+          fallbackHelp: "Still blocked after that?",
+          fallbackHelpBody: "Raise a hand. A facilitator helps you choose between browser path, starter package, or local-tool fallback.",
+          fallbackFast: "If setup is ready",
+          fallbackFastBody: "Use the workshop skill as the faster path for coaching and repo-native prompts.",
+          anchorTeams: "Jump to team cards",
+        }
+      : {
+          eyebrow: "build fáze 1",
+          title: "Srovnejte si zadání. Otevřete repo. Sepište první mapu.",
+          body:
+            "Participant plocha na start stačí. Když máte připravený lokální setup pro agenta, workshop skill je rychlejší cesta — ne povinná podmínka.",
+          primaryBrief: "Otevřít zadání",
+          primaryRepo: "Dostat se k materiálům týmu",
+          primaryFallback: "Zasekli jste se? Použijte fallback",
+          roomBriefsTitle: activeTeam ? "Vaše zadání" : "Připravená zadání pro tuto místnost",
+          roomBriefsBody: activeTeam
+            ? "Zadání vašeho týmu je vidět přímo tady, aby Build fáze 1 nezávisela na cestě přes skill."
+            : "Všechna připravená zadání pro tuto místnost jsou vidět tady, takže si tým může potvrdit směr i bez lokálního setupu.",
+          roomChallengesTitle: "Challenge cards i bez závislosti na skillu",
+          roomChallengesBody:
+            "Povinné i volitelné prompty zůstávají viditelné tady, aby se místnost hýbala dál i při nerovnoměrném toolingu.",
+          fallbackTitle: "Fallback není selhání.",
+          fallbackBody:
+            "Pokračujte z téhle stránky. Potvrďte si zadání, otevřete repo, napište první mapu do repa a teprve potom řešte, jestli má lokální setup cenu dál ladit.",
+          fallbackNow: "0–5 minut blok",
+          fallbackNowBody: "Zůstaňte na participant ploše. Srovnejte si cíl, scope a první ověřovací krok.",
+          fallbackHelp: "Pořád jste zaseklí?",
+          fallbackHelpBody: "Zvedněte ruku. Facilitátor pomůže vybrat browser cestu, starter balíček nebo lokální fallback.",
+          fallbackFast: "Když je setup připravený",
+          fallbackFastBody: "Použijte workshop skill jako rychlejší cestu ke coachingu a repo-native promptům.",
+          anchorTeams: "Skočit na karty týmů",
+        };
+
+  const highlightedBrief = activeTeam ? briefs.find((brief) => brief.id === activeTeam.projectBriefId) ?? null : null;
+  const visibleBriefs = highlightedBrief ? [highlightedBrief] : briefs.slice(0, 3);
+  const visibleChallenges = challenges.filter((challenge) => challenge.phaseHint === "before-lunch" || challenge.phaseHint === "anytime").slice(0, 3);
+
+  return (
+    <div className="mt-6 space-y-4" id="build-proof-slice">
+      <SectionLabel>{copy.eyebrow}</SectionLabel>
+      <div className="dashboard-motion-card rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{copy.eyebrow}</p>
+        <h3 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-[var(--text-primary)]">{copy.title}</h3>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--text-secondary)]">{copy.body}</p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <a className="dashboard-motion-button rounded-full border border-[var(--border-strong)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)]" href="#build-briefs">{copy.primaryBrief}</a>
+          <a className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)]" href="#teams">{copy.primaryRepo}</a>
+          <a className="dashboard-motion-button rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-strong)]" href="#build-fallback">{copy.primaryFallback}</a>
+        </div>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)]">
+        <div className="space-y-4">
+          <ParticipantBlockCard title={copy.roomBriefsTitle}>
+            <div id="build-briefs">
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{copy.roomBriefsBody}</p>
+              <div className="mt-4 space-y-3">
+                {visibleBriefs.map((brief) => (
+                  <div key={brief.id} className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{brief.title}</p>
+                    <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{brief.problem}</p>
+                  </div>
+                ))}
+              </div>
+              {!highlightedBrief && teamCards.length > 0 ? (
+                <div className="mt-4 rounded-[16px] border border-dashed border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                  {lang === "en"
+                    ? "If you're looking at the shared board rather than a bound participant session, use your team card below to open the matching repo."
+                    : "Pokud se díváte na sdílenou plochu a ne na přiřazenou participant session, otevřete si odpovídající repo přes kartu svého týmu níže."}
+                </div>
+              ) : null}
+            </div>
+          </ParticipantBlockCard>
+
+          <ParticipantBlockCard title={copy.roomChallengesTitle}>
+            <p className="text-sm leading-7 text-[var(--text-secondary)]">{copy.roomChallengesBody}</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {visibleChallenges.map((challenge) => (
+                <span key={challenge.id} className="rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]">
+                  {challenge.title}
+                </span>
+              ))}
+            </div>
+            <div className="mt-4">
+              <a className="dashboard-motion-link text-sm font-medium text-[var(--text-primary)] transition hover:text-[var(--text-secondary)]" href="#teams">{copy.anchorTeams}</a>
+            </div>
+          </ParticipantBlockCard>
+        </div>
+
+        <div className="space-y-4" id="build-fallback">
+          <div className="rounded-[24px] border border-[var(--border-strong)] bg-[var(--surface)] p-5">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{lang === "en" ? "setup fallback" : "fallback při setupu"}</p>
+            <h3 className="mt-3 text-xl font-semibold tracking-[-0.03em] text-[var(--text-primary)]">{copy.fallbackTitle}</h3>
+            <p className="mt-3 text-sm leading-7 text-[var(--text-secondary)]">{copy.fallbackBody}</p>
+            <div className="mt-4 space-y-3">
+              <FallbackStep title={copy.fallbackNow} body={copy.fallbackNowBody} />
+              <FallbackStep title={copy.fallbackHelp} body={copy.fallbackHelpBody} />
+              <FallbackStep title={copy.fallbackFast} body={copy.fallbackFastBody} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FallbackStep({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
+      <p className="text-sm font-medium text-[var(--text-primary)]">{title}</p>
+      <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
+    </div>
+  );
+}
+
+function resolveBriefTitle(briefs: ProjectBrief[], projectBriefId: string) {
+  return briefs.find((brief) => brief.id === projectBriefId)?.title ?? projectBriefId;
 }
 
 function ParticipantGuidanceBlocks({

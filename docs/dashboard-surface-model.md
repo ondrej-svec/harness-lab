@@ -10,6 +10,7 @@ Purpose:
 - orient participants during the workshop day
 - reduce facilitator repetition
 - give one obvious next step at any point in the day
+- provide a complete participant-safe operating path when local CLI or skill setup is blocked
 
 Public responsibilities:
 - current phase
@@ -19,6 +20,9 @@ Public responsibilities:
 - workshop reference links
 - team-facing status that is safe to expose in-room
 - links to the participant learner kit artifacts the team should use next
+- phase-aware next-step CTA
+- repo or starter-material access
+- setup-failure fallback guidance
 
 Design rules:
 - mobile-first
@@ -26,6 +30,7 @@ Design rules:
 - phase-aware before feature-rich
 - no facilitator-only controls
 - should reinforce the same participant resources as `workshop-skill/` and facilitation guidance
+- must be sufficient for core workshop progression without requiring the CLI or skill first
 
 ## Facilitator Surface
 
@@ -67,6 +72,7 @@ Design rules:
 - room-facing rendering may use facilitator auth, but must not expose facilitator controls or privileged operational state by default
 - room-facing rendering must not show facilitator support material such as source strips, source refs, or coaching notes by default
 - low-chrome previous / next scene navigation is acceptable when it stays visually subordinate to the scene itself and does not read like an admin shell
+- on touch devices, presenter boundary swipes should advance scenes or agenda packs rather than falling through to browser rubber-band overscroll
 - participant mirror is a separate output surface and should not be sequenced as part of the room projection deck
 - attributed quotes must show visible attribution on the room-facing page
 - image-backed scenes may carry room-safe caption context, but raw source-material references belong in the facilitator workbench
