@@ -29,7 +29,6 @@ import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import { AddAgendaItemRow } from "../agenda/add-agenda-item-row";
 import type { RichAgendaItem, RichPresenterScene } from "../agenda/types";
-import { ControlRoomPersistentSummary } from "../control-room-summary";
 import { InlineField } from "../inline-field";
 import { SceneStageRail } from "../scene-stage-rail";
 
@@ -134,15 +133,14 @@ export function AgendaSection({
                   }
                   tone={selectedAgendaItem.status === "current" ? "live" : "neutral"}
                 />
-                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
+                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-secondary)]">
                   {copy.runtimeCopyBadge}
                 </span>
-                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs text-[var(--hero-secondary)]">
+                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-secondary)]">
                   {selectedAgendaItem.kind === "custom" ? copy.customItemBadge : copy.blueprintItemBadge}
                 </span>
               </div>
-              <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-[var(--hero-muted)]">{copy.agendaCurrentTitle}</p>
-              <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 text-[2rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-[2.4rem]">
+              <h2 className="mt-3 flex flex-wrap items-baseline gap-x-3 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-text)] sm:text-2xl lg:text-[26px] xl:text-[28px]">
                 <InlineField
                   value={selectedAgendaItem.time}
                   fieldName="time"
@@ -166,7 +164,7 @@ export function AgendaSection({
                   }}
                 />
               </h2>
-              <div className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
+              <div className="mt-2 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">
                 <InlineField
                   value={selectedAgendaItem.roomSummary || selectedAgendaItem.description}
                   fieldName="roomSummary"
@@ -181,7 +179,7 @@ export function AgendaSection({
                 />
               </div>
               <div className="mt-3 max-w-3xl text-sm leading-6 text-[var(--hero-muted)]">
-                <p className="mb-1 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">
+                <p className="mb-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">
                   {copy.agendaDetailGoalTitle}
                 </p>
                 <InlineField
@@ -198,7 +196,7 @@ export function AgendaSection({
                 />
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-wrap items-center gap-3">
                 {selectedAgendaItem.id !== currentAgendaItem?.id ? (
                   <form action={setAgendaAction}>
                     <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
@@ -228,19 +226,16 @@ export function AgendaSection({
                 >
                   {copy.presenterOpenParticipantSurfaceButton}
                 </ExternalOpenButton>
-              </div>
-
-              {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
-                <div className="mt-3 flex flex-wrap gap-3">
+                {currentAgendaItem && selectedAgendaItem.id !== currentAgendaItem.id ? (
                   <AdminRouteLink className={adminGhostButtonClassName} href={liveAgendaHref} scroll={false}>
                     {copy.agendaJumpToLiveButton}
                   </AdminRouteLink>
-                </div>
-              ) : null}
+                ) : null}
+              </div>
 
-              <div className="mt-5 rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-3">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--hero-muted)]">{copy.presenterCurrentSceneLabel}</p>
-                <p className="mt-2 text-sm font-semibold text-[var(--hero-text)]">
+              <div className="mt-4 rounded-[20px] border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-4 py-2.5">
+                <p className="text-[10px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">{copy.presenterCurrentSceneLabel}</p>
+                <p className="mt-1 text-sm font-semibold text-[var(--hero-text)]">
                   {selectedDefaultScene?.label ?? copy.presenterNoSceneTitle}
                 </p>
               </div>
@@ -323,33 +318,26 @@ export function AgendaSection({
           </>
         ) : (
           <>
-            <div className="grid gap-4 xl:grid-cols-[minmax(0,1.25fr)_minmax(18rem,0.75fr)]">
-              <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-muted)]">
-                    {copy.liveNow}
+            <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-muted)]">
+                  {copy.liveNow}
+                </span>
+                <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-[11px] uppercase tracking-[0.28em] text-[var(--hero-secondary)]">
+                  {state.workshopMeta.currentPhaseLabel}
+                </span>
+                {nextAgendaItem ? (
+                  <span className="text-xs text-[var(--hero-muted)]">
+                    {copy.nextUp}: {nextAgendaItem.time} • {nextAgendaItem.title}
                   </span>
-                  <span className="rounded-full border border-[var(--hero-border)] bg-[var(--hero-tile-bg)] px-3 py-1 text-xs uppercase tracking-[0.18em] text-[var(--hero-secondary)]">
-                    {state.workshopMeta.currentPhaseLabel}
-                  </span>
-                </div>
-                <h2 className="mt-4 text-[1.85rem] font-semibold tracking-[-0.05em] text-[var(--hero-text)] sm:text-3xl">
-                  {overviewState.liveNowTitle}
-                </h2>
-                <p className="mt-3 max-w-3xl text-[15px] leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
+                ) : null}
               </div>
-
-              <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-                <ControlRoomPersistentSummary
-                  label={copy.currentPhase}
-                  value={currentAgendaItem ? `${currentAgendaItem.time} • ${currentAgendaItem.title}` : copy.presenterNoSceneTitle}
-                />
-                <ControlRoomPersistentSummary
-                  label={copy.nextUp}
-                  value={nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : copy.presenterNoSceneTitle}
-                />
-                <ControlRoomPersistentSummary label={copy.workspaceSignalLabel} value={overviewState.participantState} hint={state.rotation.scenario} />
-              </div>
+              <h2 className="mt-3 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-text)] sm:text-2xl lg:text-[26px] xl:text-[28px]">
+                {overviewState.liveNowTitle}
+              </h2>
+              {overviewState.liveNowDescription ? (
+                <p className="mt-2 max-w-3xl text-sm leading-6 text-[var(--hero-secondary)]">{overviewState.liveNowDescription}</p>
+              ) : null}
             </div>
 
             {contextualHandoffItem ? (
