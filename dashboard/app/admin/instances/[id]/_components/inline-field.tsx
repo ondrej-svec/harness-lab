@@ -19,6 +19,7 @@ import {
   type KeyboardEvent,
   type FocusEvent,
 } from "react";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 export type InlineFieldAction = (formData: FormData) => Promise<void> | Promise<unknown> | void;
 
@@ -147,9 +148,8 @@ export function InlineField({
         <span className={showPlaceholder ? "text-[var(--text-muted)]" : undefined}>
           {showPlaceholder ? placeholder ?? label : optimisticValue}
         </span>
-        {isPending ? (
-          <span aria-hidden className="text-xs text-[var(--text-muted)]">…</span>
-        ) : null}
+        <InlineSpinner active={isPending} className="h-3 w-3 border-[1.5px] text-[var(--text-muted)]" />
+        <span aria-busy={isPending} className="sr-only">{isPending ? "Saving…" : ""}</span>
         {error ? (
           <span role="alert" className="text-xs text-[var(--border-strong)]">
             {error}

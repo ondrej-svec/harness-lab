@@ -7,6 +7,7 @@ import {
 } from "@/lib/event-access";
 import { hashSecret } from "@/lib/participant-event-access-repository";
 import { resolveUiLanguage, withLang, type UiLanguage } from "@/lib/ui-language";
+import { SubmitButton } from "./submit-button";
 
 /**
  * Single-field "what's your name?" prompt rendered when a participant
@@ -48,12 +49,11 @@ export function ParticipantIdentifyPrompt({
             aria-label={prompt}
             className="w-full rounded-[16px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-lg text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"
           />
-          <button
-            type="submit"
+          <SubmitButton
             className="inline-flex justify-center rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-6 py-3 text-sm font-semibold lowercase tracking-[0.01em] text-[color:var(--accent-text)] shadow-[0_12px_24px_rgba(12,10,9,0.12)] transition hover:opacity-95"
           >
             {continueLabel}
-          </button>
+          </SubmitButton>
         </form>
       </div>
       <p className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">harness lab</p>

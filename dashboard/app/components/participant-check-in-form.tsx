@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { InlineSpinner } from "./inline-spinner";
 
 type Status = { tone: "idle" | "success" | "error"; message: string };
 
@@ -158,10 +159,12 @@ export function ParticipantCheckInForm({
       <div className="flex flex-wrap items-center gap-3">
         <button
           type="submit"
-          className="rounded-full border border-[var(--border-strong)] bg-[var(--surface-soft)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface)] disabled:opacity-60"
+          aria-busy={isPending}
+          className={`inline-flex items-center justify-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--surface-soft)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] hover:bg-[var(--surface)] disabled:opacity-60 ${isPending ? "cursor-wait" : ""}`}
           disabled={isPending || disabled}
         >
-          {labels.submitLabel}
+          <InlineSpinner active={isPending} />
+          <span>{labels.submitLabel}</span>
         </button>
       </div>
       {status.tone !== "idle" ? (

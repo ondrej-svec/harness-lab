@@ -2,6 +2,7 @@
 
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 export function AdminSubmitButton({
   children,
@@ -22,12 +23,7 @@ export function AdminSubmitButton({
       {...props}
     >
       <span className="inline-flex items-center justify-center gap-2">
-        {pending ? (
-          <span
-            aria-hidden="true"
-            className="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
-          />
-        ) : null}
+        <InlineSpinner active={pending} />
         <span>{children}</span>
       </span>
     </button>

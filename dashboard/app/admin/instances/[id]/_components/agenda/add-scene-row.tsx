@@ -7,6 +7,7 @@
 
 import { useRef, useState, useTransition, type KeyboardEvent } from "react";
 import { addPresenterSceneAction } from "../../_actions/scenes";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 const SCENE_TYPE_OPTIONS = [
   "briefing",
@@ -120,9 +121,7 @@ export function AddSceneRow({
             </option>
           ))}
         </select>
-        {isPending ? (
-          <span aria-hidden className="text-xs text-[var(--text-muted)]">…</span>
-        ) : null}
+        <InlineSpinner active={isPending} className="h-3 w-3 border-[1.5px] text-[var(--text-muted)]" />
       </div>
       <p className="mt-2 text-xs text-[var(--text-muted)]">Enter saves · Esc cancels</p>
     </div>

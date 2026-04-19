@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState, useTransition, type DragEvent } from "r
 import { useRouter } from "next/navigation";
 import type { ParticipantRecord, TeamMemberRecord } from "@/lib/runtime-contracts";
 import type { UiLanguage } from "@/lib/ui-language";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 // Match the admin-ui panel surface so the People section reads as a
 // first-class dashboard surface, not a form grafted on. Kept inline
@@ -249,13 +250,15 @@ export function PeopleWorkspace({
                       type="button"
                       onClick={() => toggleConsent(participant)}
                       disabled={pending}
-                      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold transition ${
+                      aria-busy={pending}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[11px] font-semibold transition ${
                         participant.emailOptIn
                           ? "border-[var(--accent-surface)] bg-[color-mix(in_srgb,var(--accent-surface)_14%,transparent)] text-[var(--accent-surface)]"
                           : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--text-primary)] hover:text-[var(--text-primary)]"
                       }`}
                       title={lang === "cs" ? "Souhlas s follow-upem" : "Follow-up consent"}
                     >
+                      <InlineSpinner active={pending} className="h-3 w-3 border-[1.5px]" />
                       {participant.emailOptIn
                         ? lang === "cs"
                           ? "follow-up ok"
@@ -275,10 +278,11 @@ export function PeopleWorkspace({
                     type="button"
                     onClick={() => removeParticipant(participant.id)}
                     disabled={pending}
+                    aria-busy={pending}
                     aria-label={deleteLabel}
-                    className="h-6 w-6 rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-surface)] hover:text-[var(--danger)]"
+                    className="inline-flex h-6 w-6 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-surface)] hover:text-[var(--danger)]"
                   >
-                    ×
+                    {pending ? <InlineSpinner active className="h-3 w-3 border-[1.5px]" /> : "×"}
                   </button>
                 </span>
               </li>
@@ -353,10 +357,11 @@ export function PeopleWorkspace({
                         type="button"
                         onClick={() => unassign(m.id)}
                         disabled={pending}
+                        aria-busy={pending}
                         aria-label={removeLabel}
-                        className="h-5 w-5 rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-surface)] hover:text-[var(--danger)]"
+                        className="inline-flex h-5 w-5 items-center justify-center rounded-full text-[var(--text-muted)] transition hover:bg-[var(--danger-surface)] hover:text-[var(--danger)]"
                       >
-                        ×
+                        {pending ? <InlineSpinner active className="h-3 w-3 border-[1.5px]" /> : "×"}
                       </button>
                     </span>
                   ))

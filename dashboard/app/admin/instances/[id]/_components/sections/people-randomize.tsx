@@ -3,6 +3,7 @@
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { UiLanguage } from "@/lib/ui-language";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 type Strategy = "cross-level" | "random";
 
@@ -142,8 +143,10 @@ export function PeopleRandomize({
             type="button"
             onClick={runPreview}
             disabled={loading || pending || participantCount === 0}
-            className="rounded-full border border-[var(--border-strong)] px-4 py-2 text-[13px] font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] disabled:opacity-50"
+            aria-busy={loading || pending}
+            className={`inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-4 py-2 text-[13px] font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] disabled:opacity-50 ${loading || pending ? "cursor-wait" : ""}`}
           >
+            <InlineSpinner active={loading || pending} className="h-3.5 w-3.5 border-[1.5px]" />
             {labels.previewBtn}
           </button>
         </div>
@@ -201,16 +204,20 @@ export function PeopleRandomize({
               type="button"
               onClick={runPreview}
               disabled={loading}
-              className="rounded-full border border-[var(--border-strong)] px-4 py-2 text-[13px] font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] disabled:opacity-50"
+              aria-busy={loading}
+              className={`inline-flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-4 py-2 text-[13px] font-medium text-[var(--text-primary)] transition hover:border-[var(--text-primary)] disabled:opacity-50 ${loading ? "cursor-wait" : ""}`}
             >
+              <InlineSpinner active={loading} className="h-3.5 w-3.5 border-[1.5px]" />
               {labels.rerollBtn}
             </button>
             <button
               type="button"
               onClick={commit}
               disabled={loading || pending}
-              className="rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-5 py-2 text-[13px] font-semibold lowercase tracking-[0.01em] text-[color:var(--accent-text)] transition hover:opacity-95 disabled:opacity-50"
+              aria-busy={loading || pending}
+              className={`inline-flex items-center gap-2 rounded-full border border-[var(--accent-surface)] bg-[var(--accent-surface)] px-5 py-2 text-[13px] font-semibold lowercase tracking-[0.01em] text-[color:var(--accent-text)] transition hover:opacity-95 disabled:opacity-50 ${loading || pending ? "cursor-wait" : ""}`}
             >
+              <InlineSpinner active={loading || pending} className="h-3.5 w-3.5 border-[1.5px]" />
               {labels.commitBtn}
             </button>
           </div>

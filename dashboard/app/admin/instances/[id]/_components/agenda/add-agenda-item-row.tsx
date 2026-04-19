@@ -8,6 +8,7 @@
 
 import { useRef, useState, useTransition, type KeyboardEvent } from "react";
 import { addAgendaItemAction } from "../../_actions/agenda";
+import { InlineSpinner } from "@/app/components/inline-spinner";
 
 export function AddAgendaItemRow({
   lang,
@@ -118,9 +119,7 @@ export function AddAgendaItemRow({
           }}
           className="flex-1 rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-2 py-1 text-[var(--text-primary)] focus-visible:border-[var(--text-primary)] focus-visible:outline-none"
         />
-        {isPending ? (
-          <span aria-hidden className="text-xs text-[var(--text-muted)]">…</span>
-        ) : null}
+        <InlineSpinner active={isPending} className="h-3 w-3 border-[1.5px] text-[var(--text-muted)]" />
       </div>
       <p className="mt-2 text-xs text-[var(--text-muted)]">Enter saves · Esc cancels</p>
     </div>
