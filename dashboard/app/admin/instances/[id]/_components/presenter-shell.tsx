@@ -84,6 +84,8 @@ export function PresenterShell({
 }) {
   const reduceMotion = useReducedMotion();
   const [isCrossingAgenda, startCrossingAgenda] = useTransition();
+  const shellRef = useRef<HTMLDivElement | null>(null);
+  const slideRefs = useRef<Array<HTMLElement | null>>([]);
 
   // Resolve the initial index from the supplied scene id. Falls back
   // to the first slide if the id is missing (defensive — server should
@@ -103,6 +105,8 @@ export function PresenterShell({
   const previousAgendaIdRef = useRef(previousAgendaItemId ?? null);
   const nextAgendaIdRef = useRef(nextAgendaItemId ?? null);
   const cooldownUntilRef = useRef(0);
+  const touchStartYRef = useRef<number | null>(null);
+  const touchGestureHandledRef = useRef(false);
   const wheelAccumRef = useRef(0);
   const wheelLastEventTimeRef = useRef(0);
   const wheelGestureFiredRef = useRef(false);
@@ -118,7 +122,30 @@ export function PresenterShell({
     railItemsRef.current = railItems;
     previousAgendaIdRef.current = previousAgendaItemId ?? null;
     nextAgendaIdRef.current = nextAgendaItemId ?? null;
+    slideRefs.current = slideRefs.current.slice(0, slides.length);
   }, [slides, railItems, previousAgendaItemId, nextAgendaItemId]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const syncViewportHeight = () => {
+      const nextHeight = Math.round(window.visualViewport?.height ?? window.innerHeight);
+      shellRef.current?.style.setProperty("--presenter-viewport-height", `${nextHeight}px`);
+    };
+
+    syncViewportHeight();
+
+    const viewport = window.visualViewport;
+    window.addEventListener("resize", syncViewportHeight);
+    viewport?.addEventListener("resize", syncViewportHeight);
+    viewport?.addEventListener("scroll", syncViewportHeight);
+
+    return () => {
+      window.removeEventListener("resize", syncViewportHeight);
+      viewport?.removeEventListener("resize", syncViewportHeight);
+      viewport?.removeEventListener("scroll", syncViewportHeight);
+    };
+  }, []);
 
   // Defensive: if the parent re-renders with a different slides prop
   // (server re-render after a navigation that landed via Next.js router
@@ -245,6 +272,81 @@ export function PresenterShell({
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
+  }, [navigate]);
+
+  // Touch-first scene navigation for iPad / mobile Safari.
+  //
+  // Desktop wheel input is handled below, but tablets mostly drive
+  // the presenter with native scroll gestures. Without a touch
+  // boundary handler, an upward swipe at the bottom of a scene rubber-
+  // bands the browser viewport instead of advancing to the next
+  // scene. This keeps natural in-slide scroll for tall scenes, then
+  // converts continued boundary swipes into scene navigation.
+  useEffect(() => {
+    const root = shellRef.current;
+    if (!root) return;
+
+    function resetTouchGesture() {
+      touchStartYRef.current = null;
+      touchGestureHandledRef.current = false;
+    }
+
+    function handleTouchStart(event: TouchEvent) {
+      if (event.touches.length !== 1) {
+        resetTouchGesture();
+        return;
+      }
+
+      touchStartYRef.current = event.touches[0]?.clientY ?? null;
+      touchGestureHandledRef.current = false;
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      if (event.touches.length !== 1 || touchGestureHandledRef.current || touchStartYRef.current === null) {
+        return;
+      }
+
+      const currentTouch = event.touches[0];
+      if (!currentTouch) return;
+
+      const totalDeltaY = currentTouch.clientY - touchStartYRef.current;
+      if (Math.abs(totalDeltaY) < SWIPE_THRESHOLD) {
+        return;
+      }
+
+      const slide = slideRefs.current[activeIndexRef.current];
+      if (!slide) return;
+
+      const slideCanScroll = slide.scrollHeight > slide.clientHeight + SCROLL_BOUNDARY_TOLERANCE;
+      const movingForward = totalDeltaY < 0;
+      const maxScroll = slide.scrollHeight - slide.clientHeight;
+      const atTop = slide.scrollTop <= SCROLL_BOUNDARY_TOLERANCE;
+      const atBottom = slide.scrollTop >= maxScroll - SCROLL_BOUNDARY_TOLERANCE;
+      const crossedBoundary = !slideCanScroll || (movingForward ? atBottom : atTop);
+
+      if (!crossedBoundary) {
+        return;
+      }
+
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+
+      touchGestureHandledRef.current = true;
+      navigate(movingForward ? 1 : -1);
+    }
+
+    root.addEventListener("touchstart", handleTouchStart, { passive: true });
+    root.addEventListener("touchmove", handleTouchMove, { passive: false });
+    root.addEventListener("touchend", resetTouchGesture, { passive: true });
+    root.addEventListener("touchcancel", resetTouchGesture, { passive: true });
+
+    return () => {
+      root.removeEventListener("touchstart", handleTouchStart);
+      root.removeEventListener("touchmove", handleTouchMove);
+      root.removeEventListener("touchend", resetTouchGesture);
+      root.removeEventListener("touchcancel", resetTouchGesture);
+    };
   }, [navigate]);
 
   // Trackpad two-finger scroll → next/previous scene.
@@ -415,10 +517,15 @@ export function PresenterShell({
 
   return (
     <div
-      className="relative h-screen w-full overflow-hidden"
+      ref={shellRef}
+      className="relative w-full overflow-hidden bg-[var(--surface-admin)]"
       role="region"
       aria-label="presenter scene navigator"
       aria-roledescription="carousel"
+      style={{
+        height: "var(--presenter-viewport-height, 100dvh)",
+        overscrollBehaviorY: "none",
+      }}
     >
       <motion.div
         drag="y"
@@ -449,14 +556,25 @@ export function PresenterShell({
           {slides.map((slide, index) => (
             <section
               key={slide.id}
+              ref={(element) => {
+                slideRefs.current[index] = element;
+              }}
               data-presenter-slide="true"
               aria-hidden={index !== activeIndex}
               aria-roledescription="slide"
               aria-label={`${index + 1} / ${slides.length}`}
-              style={{ top: `${index * 100}%` }}
-              className="absolute inset-x-0 h-screen w-full overflow-y-auto"
+              style={{
+                top: `${index * 100}%`,
+                height: "var(--presenter-viewport-height, 100dvh)",
+                overscrollBehaviorY: "contain",
+                WebkitOverflowScrolling: "touch",
+              }}
+              className="absolute inset-x-0 w-full overflow-y-auto"
             >
-              <div className="mx-auto flex min-h-screen max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12">
+              <div
+                className="mx-auto flex max-w-[100rem] flex-col justify-center px-5 py-8 sm:px-8 sm:py-10 lg:px-12"
+                style={{ minHeight: "var(--presenter-viewport-height, 100dvh)" }}
+              >
                 {slide.content}
               </div>
             </section>

@@ -1184,6 +1184,137 @@ test.describe("presenter wheel navigation", () => {
   });
 });
 
+test.describe("presenter touch navigation", () => {
+  test.use({
+    extraHTTPHeaders: {
+      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
+    },
+  });
+
+  async function gotoPresenter(page: import("@playwright/test").Page, scenePath: string) {
+    await page.goto(scenePath);
+    await page.waitForSelector('[data-presenter-slide="true"][aria-hidden="false"]');
+    await page.waitForSelector('[aria-label="scene navigation"] a[href*="scene="]');
+  }
+
+  async function readActiveSceneFromUrl(page: import("@playwright/test").Page) {
+    const url = page.url();
+    const match = url.match(/scene=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : null;
+  }
+
+  async function readSceneOrder(page: import("@playwright/test").Page) {
+    return page.evaluate(() => {
+      const rail = document.querySelector('[aria-label="scene navigation"]');
+      if (!rail) return [] as string[];
+      const links = rail.querySelectorAll<HTMLAnchorElement>("a[href*='scene=']");
+      return Array.from(links).map((link) => {
+        const match = link.getAttribute("href")?.match(/scene=([^&]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+      });
+    });
+  }
+
+  async function dispatchTouchSwipe(
+    page: import("@playwright/test").Page,
+    {
+      startY,
+      endY,
+      x = 512,
+      steps = 6,
+      intervalMs = 16,
+    }: {
+      startY: number;
+      endY: number;
+      x?: number;
+      steps?: number;
+      intervalMs?: number;
+    },
+  ) {
+    await page.evaluate(
+      async ({ startY, endY, x, steps, intervalMs }) => {
+        const target = document.querySelector('[aria-label="presenter scene navigator"]');
+        if (!target) {
+          throw new Error("presenter scene navigator not found");
+        }
+
+        const createTouchLike = (y: number) => ({
+          identifier: 1,
+          target,
+          clientX: x,
+          clientY: y,
+          pageX: x,
+          pageY: y,
+          screenX: x,
+          screenY: y,
+        });
+
+        const dispatchTouchEvent = (
+          type: string,
+          touches: Array<ReturnType<typeof createTouchLike>>,
+          changedTouches = touches,
+        ) => {
+          const event = new Event(type, { bubbles: true, cancelable: true });
+          Object.defineProperty(event, "touches", {
+            configurable: true,
+            value: touches,
+          });
+          Object.defineProperty(event, "targetTouches", {
+            configurable: true,
+            value: touches,
+          });
+          Object.defineProperty(event, "changedTouches", {
+            configurable: true,
+            value: changedTouches,
+          });
+          target.dispatchEvent(event);
+        };
+
+        const startTouch = createTouchLike(startY);
+        dispatchTouchEvent("touchstart", [startTouch]);
+
+        for (let index = 1; index <= steps; index += 1) {
+          const y = startY + ((endY - startY) * index) / steps;
+          const moveTouch = createTouchLike(y);
+          dispatchTouchEvent("touchmove", [moveTouch]);
+          await new Promise((resolve) => window.setTimeout(resolve, intervalMs));
+        }
+
+        dispatchTouchEvent("touchend", [], [createTouchLike(endY)]);
+      },
+      { startY, endY, x, steps, intervalMs },
+    );
+  }
+
+  test("@presenter-tablet swipe-up on a fitted slide advances to the next scene", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+
+    const initialScene = await readActiveSceneFromUrl(page);
+    await dispatchTouchSwipe(page, { startY: 620, endY: 420 });
+    await page.waitForTimeout(350);
+
+    expect(await readActiveSceneFromUrl(page)).not.toBe(initialScene);
+  });
+
+  test("@presenter-tablet swipe-up from the last scene advances to the next agenda item", async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 768 });
+    await gotoPresenter(page, "/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-framing");
+
+    const openingScenes = await readSceneOrder(page);
+    const lastOpeningScene = openingScenes.at(-1);
+    expect(lastOpeningScene).toBeTruthy();
+
+    await gotoPresenter(
+      page,
+      `/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=${encodeURIComponent(lastOpeningScene!)}`,
+    );
+
+    await dispatchTouchSwipe(page, { startY: 620, endY: 420 });
+    await page.waitForURL(/agendaItem=talk/);
+  });
+});
+
 test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
   // Phase 6 covers the rail/keyboard/viewport checks. Tests use the
   // Playwright browser at the five target viewports and verify the

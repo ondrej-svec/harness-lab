@@ -84,6 +84,14 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    {
+      name: "webkit-ipad",
+      grep: /@presenter-tablet/,
+      use: {
+        ...devices["iPad Pro 11 landscape"],
+        browserName: "webkit",
+      },
+    },
   ],
   webServer: {
     command: "npm run start -- --hostname 127.0.0.1 --port 3100",

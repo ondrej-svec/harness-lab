@@ -73,7 +73,7 @@ export default async function InterceptedPresenterPage({
     return {
       id: scene.id,
       content: (
-        <main className="relative flex h-full min-h-screen w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
+        <main className="relative flex h-full min-h-full w-full flex-col bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_24%),radial-gradient(circle_at_bottom_right,var(--ambient-left),transparent_22%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-6 py-12 text-[var(--text-primary)] sm:px-12 lg:px-20">
           <div className="mx-auto flex w-full max-w-[100rem] flex-1 flex-col justify-center">
             <ViewTransitionCard name={morphName}>
               {isTeamTrail ? (
