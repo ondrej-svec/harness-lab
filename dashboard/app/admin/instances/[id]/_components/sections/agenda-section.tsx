@@ -201,7 +201,7 @@ export function AgendaSection({
               <div className="mt-5 flex flex-wrap gap-3">
                 {selectedAgendaItem.id !== currentAgendaItem?.id ? (
                   <form action={setAgendaAction}>
-                    <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                    <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                     <input name="agendaId" type="hidden" value={selectedAgendaItem.id} />
                     <input name="returnTo" type="hidden" value="detail" />
                     <AdminSubmitButton className={adminPrimaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
@@ -377,7 +377,7 @@ export function AgendaSection({
                 {state.agenda.map((item) => {
                   const detailHref = buildAdminHref({
                     lang,
-                    section: "agenda",
+                    section: "run",
                     instanceId,
                     agendaItemId: item.id,
                   });
@@ -446,7 +446,7 @@ function HandoffMomentCard({
         ) : null}
 
         <form action={toggleRotationAction} className="space-y-4">
-          <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+          <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
           <div className="grid grid-cols-2 gap-3">
             <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
               {copy.unlockButton}
@@ -491,7 +491,7 @@ function HandoffMomentCard({
           </summary>
 
           <form action={captureRotationSignalAction} className="space-y-3 pt-1">
-            <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+            <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
             <div>
               <FieldLabel htmlFor="rotation-signal-free-text">{copy.rotationSignalFreeTextLabel}</FieldLabel>
               <textarea
@@ -778,7 +778,7 @@ function TimelineRow({
               <div className="flex flex-wrap gap-2 lg:justify-end">
                 {item.status !== "current" ? (
                   <form action={setAgendaAction}>
-                    <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                    <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                     <input name="agendaId" type="hidden" value={item.id} />
                     <input name="returnTo" type="hidden" value="index" />
                     <AdminSubmitButton className={adminSecondaryButtonClassName}>{copy.agendaMoveLiveHereButton}</AdminSubmitButton>
@@ -795,4 +795,3 @@ function TimelineRow({
     </div>
   );
 }
-

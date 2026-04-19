@@ -60,7 +60,11 @@ test.describe("admin · People section (file mode)", () => {
     await expect(teamAlfaCard.getByText("Barbara Liskov")).toBeVisible();
 
     // Remove via the × on the member chip — participant returns to pool.
-    await teamAlfaCard.getByRole("button", { name: /remove from team/i }).click();
+    await teamAlfaCard
+      .getByTestId("team-member-chip")
+      .filter({ hasText: "Barbara Liskov" })
+      .getByRole("button", { name: /remove from team/i })
+      .click();
     const pool = page.getByTestId("pool-drop-zone");
     await expect(pool.getByText("Barbara Liskov")).toBeVisible();
   });

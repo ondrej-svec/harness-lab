@@ -112,7 +112,7 @@ export async function loadAdminPageViewModel({
   const lang = resolveUiLanguage(query?.lang);
   const copy = adminCopy[lang];
   const activeSection = resolveAdminSection(query?.section);
-  const visibleSection: AdminSection = activeSection === "live" ? "agenda" : activeSection;
+  const visibleSection: AdminSection = activeSection;
   const activeOverlay: ControlRoomOverlay | null = resolveControlRoomOverlay(query?.overlay);
 
   const instanceRepo = getWorkshopInstanceRepository();
@@ -218,7 +218,7 @@ export async function loadAdminPageViewModel({
     currentAgendaItem,
   });
 
-  const showAgendaDetail = visibleSection === "agenda" && Boolean(requestedAgendaItem);
+  const showAgendaDetail = visibleSection === "run" && Boolean(requestedAgendaItem);
   const selectedDefaultScene =
     roomScenes.find((scene) => scene.id === selectedAgendaItem?.defaultPresenterSceneId) ??
     roomScenes[0] ??
@@ -234,17 +234,17 @@ export async function loadAdminPageViewModel({
     : null;
   const selectedAgendaParticipantMirrorHref = buildParticipantMirrorHref({ lang, instanceId });
 
-  const agendaIndexHref = buildAdminHref({ lang, section: "agenda", instanceId });
+  const agendaIndexHref = buildAdminHref({ lang, section: "run", instanceId });
   const agendaDetailHref = buildAdminHref({
     lang,
-    section: "agenda",
+    section: "run",
     instanceId,
     agendaItemId: selectedAgendaItem?.id ?? null,
   });
   const agendaBaseHref = showAgendaDetail ? agendaDetailHref : agendaIndexHref;
   const sceneBaseHref = buildAdminHref({
     lang,
-    section: "agenda",
+    section: "run",
     instanceId,
     agendaItemId: selectedAgendaItem?.id ?? null,
     sceneId: selectedScene?.id ?? null,
@@ -252,7 +252,7 @@ export async function loadAdminPageViewModel({
   const liveAgendaHref = currentAgendaItem
     ? buildAdminHref({
         lang,
-        section: "agenda",
+        section: "run",
         instanceId,
         agendaItemId: currentAgendaItem.id,
       })
@@ -269,7 +269,7 @@ export async function loadAdminPageViewModel({
   const handoffAgendaHref = contextualHandoffItem
     ? buildAdminHref({
         lang,
-        section: "agenda",
+        section: "run",
         instanceId,
         agendaItemId: contextualHandoffItem.id,
       })

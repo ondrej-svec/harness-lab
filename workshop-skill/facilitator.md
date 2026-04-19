@@ -417,6 +417,8 @@ Rules:
 
 ### `/workshop facilitator agenda`
 
+Use this when the facilitator needs to change instance-local agenda content through the coding-agent/CLI path. The dashboard control room no longer exposes agenda editing UI; `Run` is for operating the day, not authoring it.
+
 Local agenda editing for a specific instance uses the per-instance route:
 
 ```http
@@ -475,8 +477,12 @@ Rules:
 - `description` remains a compatibility field for older surfaces; prefer `roomSummary` for room-facing summaries
 - use canonical agenda ids such as `opening`, `talk`, `demo`, `build-1`, `intermezzo-1`, `rotation`, `build-2`, `intermezzo-2`, and `reveal`
 - the skill should not invent custom workshop moment names outside this skeleton
+- when the facilitator only needs to move the live workshop forward, prefer the dashboard `Run` surface instead of patching agenda data
+- if a change should become reusable workshop method, edit the repo source and reset/reimport the instance rather than accumulating runtime-only drift
 
 ### `/workshop facilitator scenes`
+
+Use this when the facilitator needs to manage presenter scenes through the coding-agent/CLI path. The dashboard still launches presenter output, but it no longer provides scene authoring UI.
 
 Presenter scenes are agenda-linked, room-facing outputs for the facilitator and projector. The skill should be able to:
 

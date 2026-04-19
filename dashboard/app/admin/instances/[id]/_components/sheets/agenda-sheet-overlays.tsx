@@ -48,7 +48,7 @@ export function AgendaSheetOverlays({
           item={selectedAgendaItem}
           scene={selectedScene}
           lang={lang}
-          section="agenda"
+          section="run"
           instanceId={instanceId}
           copy={copy}
         />

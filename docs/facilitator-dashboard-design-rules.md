@@ -15,8 +15,12 @@ For the concrete component, layout, and progressive-disclosure system, see [`fac
 1. Workspace scope and instance scope should not compete on the same primary screen.
 2. The active instance is part of the control model, not just metadata.
 3. The current phase is a live runtime marker, not a hidden side effect of "move agenda".
-4. Blueprint edits and runtime edits must stay visibly separate.
+4. Live operation and authoring must stay visibly separate.
 5. Archive and reset are safety actions. They should be visible, but they should not dominate the primary workflow.
+6. The control room exposes four sections only: `Run`, `People`, `Access`, `Settings`.
+7. `Run` is the default facilitator surface and must answer what is live, what is next, and what action matters now.
+8. Agenda and presenter-scene authoring belong to CLI/agent flows, not the dashboard canvas.
+9. `People` owns live team shaping, including durable history of assignment and rotation changes.
 
 ## Interaction Rules
 
@@ -40,7 +44,7 @@ Archive/reset and blueprint references stay visible in the product, but they bel
 
 7. Continuation is contextual.
 Participant reveal belongs with the handoff / rotation moment, not as a permanent always-visible switch.
-If facilitators still need to correct it later, the fallback belongs on a secondary layer such as `settings`, not back on the default `live` canvas.
+If facilitators still need to correct it later, the fallback belongs on a secondary layer such as `settings`, not back on the default `Run` canvas.
 
 8. Workspace removal requires confirmation.
 Removing an instance is a safety action in the workspace cockpit. The card may expose the intent, but the destructive submit belongs in a confirmation dialog that explains the automatic archive behavior.
@@ -86,6 +90,7 @@ Which event am I controlling?
 What phase is live?
 What happens next?
 Which action matters now?
+6. The old `live`, `agenda`, `teams`, and `signals` split is retired in favor of `Run`, `People`, `Access`, and `Settings`.
 
 ## Review Checklist
 

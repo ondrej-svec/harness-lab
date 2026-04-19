@@ -40,7 +40,7 @@ export function TeamsSection({
       >
         <form action={registerTeamAction} className="grid gap-3 lg:grid-cols-2">
           <input name="lang" type="hidden" value={lang} />
-          <input name="section" type="hidden" value="teams" />
+          <input name="section" type="hidden" value="people" />
           <input name="instanceId" type="hidden" value={instanceId} />
           <input name="name" placeholder={copy.teamNamePlaceholder} className={adminInputClassName} />
           <input name="city" placeholder="Studio A" className={adminInputClassName} />

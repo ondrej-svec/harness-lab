@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import { recordTeamReplacementHistory } from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { getTeamRepository } from "@/lib/team-repository";
 import {
@@ -112,6 +113,7 @@ async function applyAssignments(
 ): Promise<void> {
   const now = new Date().toISOString();
   const members = getTeamMemberRepository();
+  const previousMembers = await members.listMembers(instanceId);
   const records: TeamMemberRecord[] = assignments.map((a, i) => ({
     id: `tm-${randomUUID()}`,
     instanceId,
@@ -122,4 +124,8 @@ async function applyAssignments(
     assignedAt: new Date(Date.parse(now) + i).toISOString(),
   }));
   await members.replaceMembers(instanceId, records);
+  await recordTeamReplacementHistory(instanceId, previousMembers, records, {
+    note: "team formation commit",
+    capturedAt: now,
+  });
 }

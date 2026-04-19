@@ -222,7 +222,7 @@ test.describe("facilitator admin (file mode)", () => {
     },
   });
 
-  test("loads the workspace cockpit, filters instances, and can drive a critical workshop control", async ({ page }) => {
+  test("loads the workspace cockpit, filters instances, and opens the run-first control room", async ({ page }) => {
     await page.goto("/admin");
 
     await expect(page.getByRole("heading", { name: "workshopy a jejich instance" })).toBeVisible();
@@ -237,33 +237,25 @@ test.describe("facilitator admin (file mode)", () => {
 
     await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
     await expect(page.getByRole("link", { name: "zpět na workspace" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" }).first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "control room" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toHaveCount(0);
-
-    await page.locator('[data-agenda-item="rotation"]').getByRole("button", { name: "posunout live sem" }).click();
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "run", exact: true })).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "run" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "lidé" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "přístupy" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "nastavení" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" })).toHaveCount(0);
+    await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toHaveCount(0);
+    await expect(page.getByRole("navigation").getByRole("link", { name: "signály" })).toHaveCount(0);
+    await expect(page.getByText("facilitator runner", { exact: true })).toBeVisible();
+    await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
 
     await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
     await expect(page).toHaveURL(/agendaItem=rotation/);
-
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
     await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
+    await page.getByRole("button", { name: "posunout live sem" }).first().click();
+    await expect(page.getByRole("button", { name: "Odemknout" })).toBeVisible();
 
     await page.getByRole("button", { name: "Odemknout" }).click();
     await expect(page.getByText(/participant plocha je otevřená/i).first()).toBeVisible();
-    await page.goto("/admin/instances/sample-studio-a");
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
-
-    await page.goto("/admin/instances/sample-studio-a");
-    await page.locator('[data-agenda-item="build-2"]').getByRole("link", { name: "detail momentu" }).click();
-    await expect(page).toHaveURL(/agendaItem=build-2/);
-    await page.getByRole("button", { name: "posunout live sem" }).click();
-    await expect(page.getByText("13:45 • Build Phase 2").first()).toBeVisible();
-    await expect(page.getByRole("heading", { name: "participant plocha" })).toHaveCount(0);
-    await page.goto("/admin/instances/sample-studio-a");
-    await expect(page.getByText("13:45 • Build Phase 2").first()).toBeVisible();
-    await expect(page.getByText("14:45 • Intermezzo 2").first()).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a?section=settings");
     await expect(page.getByRole("heading", { name: "participant plocha" })).toBeVisible();
@@ -366,44 +358,29 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByText("Správa facilitátorů vyžaduje neon mód.")).toBeVisible();
   });
 
-  test("shows agenda source information on the agenda section", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda");
+  test("keeps dashboard authoring furniture off the run detail", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=run&agendaItem=talk");
 
-    await expect(page.getByRole("heading", { name: "control room" })).toBeVisible();
-    await page.locator('[data-agenda-item="talk"]').getByRole("link", { name: "detail momentu" }).click();
-    await expect(page).toHaveURL(/agendaItem=talk/);
-    await page.getByText("zdroj a ukládání").click();
-    await expect(page.getByText("dashboard/lib/workshop-data.ts")).toBeVisible();
-    await expect(page.getByText("workshop_instances.workshop_state")).toBeVisible();
+    await expect(page.getByText("facilitator runner", { exact: true })).toBeVisible();
+    await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
+    await expect(page.getByRole("link", { name: "otevřít projekci" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "participant plocha 1:1" })).toBeVisible();
+    await expect(page.getByText("zdroj a ukládání")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /\+ přidat scénu/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /\+ přidat moment/i })).toHaveCount(0);
   });
 
-  test("keeps room screen and participant mirror as separate launch targets in the control room", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a");
+  test("keeps room screen and participant mirror as separate launch targets in the run detail", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=run&agendaItem=rotation");
 
-    await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
-    // Phase 3 turned the detail hero's "time • title" h2 into two
-    // InlineField buttons wrapped in an h2. The h2 still exists but
-    // its accessible name no longer concatenates cleanly into one
-    // string, so assert the two inline buttons instead.
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^13:30$/ }).first(),
-    ).toBeVisible();
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^Rotace týmů$/ }).first(),
-    ).toBeVisible();
-    const detailWorkbench = page
-      .locator("main")
-      .filter({ has: page.locator('[data-inline-field="display"]').filter({ hasText: /^Rotace týmů$/ }) })
-      .first();
-    const projectionLink = detailWorkbench.getByRole("link", { name: "otevřít projekci" });
-    const participantLinks = detailWorkbench.getByRole("link", { name: "participant plocha 1:1" });
+    const projectionLink = page.getByRole("link", { name: "otevřít projekci" });
+    const participantLink = page.getByRole("link", { name: "participant plocha 1:1" });
 
+    await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
     await expect(projectionLink).toBeVisible();
-    await expect(participantLinks).toHaveCount(2);
-    // Default scene for rotation is `rotation-not-yours-anymore` after the
-    // 2026-04-12 content review renamed the old `rotation-framing`.
+    await expect(participantLink).toBeVisible();
     await expect(projectionLink).toHaveAttribute("href", /\/presenter\?agendaItem=rotation&scene=rotation-not-yours-anymore/);
-    await expect(participantLinks.first()).toHaveAttribute("href", /\/participant/);
+    await expect(participantLink).toHaveAttribute("href", /\/participant/);
   });
 
   test("renders the room screen on mobile", async ({ page }) => {
@@ -485,20 +462,42 @@ test.describe("facilitator admin (file mode)", () => {
     });
   });
 
-  test("shows the facilitator runner on a phone-sized agenda detail", async ({ page }) => {
-    await page.setViewportSize({ width: 393, height: 852 });
-    await page.goto("/admin/instances/sample-studio-a?lang=en&section=agenda&agendaItem=talk");
+  test("people section records team history markers and assignment changes", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=people");
 
-    // Phase 6 progressive disclosure: the facilitator runner block now
-    // collapses by default. Verify the summary is reachable, then expand
-    // it and assert the runner content renders.
-    const runnerSummary = page.getByText("facilitator runner", { exact: true });
-    await expect(runnerSummary).toBeVisible();
-    await runnerSummary.click();
-    await expect(page.getByText("runner goal")).toBeVisible();
-    await expect(page.getByText("Kontext je páka, ne kosmetika.")).toBeVisible();
-    await expect(page.getByText("show")).toBeVisible();
-    await expect(page.getByText("Promítněte nejdřív kontrast připravenosti repa, pak tezi, pak přechod do buildu.")).toBeVisible();
+    const uniqueParticipant = `E2E Person ${Date.now()}`;
+    await page
+      .getByPlaceholder("Anna\nDavid, david@example.com\nEva, eva@example.com, senior")
+      .fill(uniqueParticipant);
+    await page.getByRole("button", { name: "Přidat do poolu" }).click();
+
+    const firstPoolRow = page.getByTestId("pool-row").first();
+    await expect(firstPoolRow).toBeVisible();
+    const participantName = ((await firstPoolRow.getAttribute("data-participant-name")) ?? "").trim();
+    expect(participantName.length).toBeGreaterThan(0);
+
+    const firstTeamCard = page.getByTestId("team-card").first();
+    await firstTeamCard.getByRole("button", { name: "+ přidat z poolu" }).click();
+    await page.getByRole("button", { name: participantName }).click();
+
+    const historyList = page.getByTestId("team-history-list");
+    await expect(historyList.getByText(new RegExp(participantName))).toBeVisible();
+    await expect(historyList.getByText(new RegExp(`${participantName} .*přiřazen do`, "i")).first()).toBeVisible();
+
+    const uniqueMarker = `E2E reshuffle ${Date.now()}`;
+    await page.getByLabel("poznámka").fill(uniqueMarker);
+    await page.getByRole("button", { name: "označit začátek reshuffle" }).click();
+    await expect(historyList.getByText(uniqueMarker).first()).toBeVisible();
+  });
+
+  test("access and settings stay reachable as quieter secondary sections", async ({ page }) => {
+    await page.goto("/admin/instances/sample-studio-a?section=access");
+    await expect(page.getByRole("heading", { name: "sdílený event code" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "vydat nový event code" })).toBeVisible();
+
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
+    await expect(page.getByRole("heading", { name: "bezpečnostní zásahy" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "vytvořit archiv" })).toBeVisible();
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {
@@ -529,359 +528,6 @@ test.describe("facilitator admin (file mode)", () => {
     // text explains what to type.
     const heading = page.getByText(/Pro potvrzení napište id instance/);
     await expect(heading).toBeVisible();
-  });
-});
-
-test.describe("one canvas phase 3 — inline editing", () => {
-  // These tests cover the Phase 3 acceptance criteria: every content
-  // field on the agenda / scene / team surfaces edits inline without a
-  // save button, creation sheets are replaced by inline-append draft
-  // rows, and the three retired sheet overlays no longer resolve to a
-  // rendered sheet. Fixtures come from the playwright-workshop-state
-  // runtime snapshot; tests that mutate state use unique values so a
-  // re-run keeps working (no clean-up between tests).
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  test("inline editing the agenda time field persists across reload", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-
-    // Find the time InlineField — it renders as a <button> whose text
-    // content is the current value. Talk phase ships with time "9:40".
-    const timeButton = page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first();
-    await expect(timeButton).toBeVisible();
-    await timeButton.click();
-
-    const timeInput = page.locator('[data-inline-field="edit"]').first();
-    await expect(timeInput).toBeVisible();
-    await timeInput.fill("9:42");
-    await timeInput.press("Enter");
-
-    // The display button should reflect the new value after the action
-    // settles.
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:42$/ }).first(),
-    ).toBeVisible();
-
-    // Reload to prove persistence, then revert so re-runs stay stable.
-    await page.reload();
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:42$/ }).first(),
-    ).toBeVisible();
-
-    await page
-      .locator('[data-inline-field="display"]')
-      .filter({ hasText: /^9:42$/ })
-      .first()
-      .click();
-    const revertInput = page.locator('[data-inline-field="edit"]').first();
-    await revertInput.fill("9:40");
-    await revertInput.press("Enter");
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
-    ).toBeVisible();
-  });
-
-  test("escape cancels an inline edit without firing the action", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-
-    const timeButton = page
-      .locator('[data-inline-field="display"]')
-      .filter({ hasText: /^9:40$/ })
-      .first();
-    await timeButton.click();
-
-    const timeInput = page.locator('[data-inline-field="edit"]').first();
-    await timeInput.fill("99:99");
-    await timeInput.press("Escape");
-
-    // The original value must still render — escape aborts without
-    // hitting the server action.
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
-    ).toBeVisible();
-  });
-
-  test("AddAgendaItemRow creates a new agenda item from the inline draft row", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda");
-
-    // Use a unique time so re-runs don't collide with leftover state.
-    const uniqueTime = `23:${String(Math.floor(Math.random() * 59)).padStart(2, "0")}`;
-    const uniqueTitle = `E2E inline agenda ${Date.now()}`;
-
-    const addButton = page.getByRole("button", { name: /^\+ / });
-    await addButton.first().click();
-
-    // The draft row renders the time input first, then the title
-    // input. Both are focusable; we grab them by aria-label.
-    await page.getByLabel("time").first().fill(uniqueTime);
-    await page.getByLabel(/add agenda item|přidat moment agendy/).first().fill(uniqueTitle);
-    await page.getByLabel(/add agenda item|přidat moment agendy/).first().press("Enter");
-
-    // addAgendaItemAction redirects back to the detail view of the
-    // newly-created item, so the URL reflects the fresh agendaItem id.
-    await page.waitForURL(/agendaItem=/);
-    // The unique title propagates into the outline rail + detail header.
-    await expect(page.getByText(uniqueTitle).first()).toBeVisible();
-  });
-
-  test("scene sceneType edits inline via the select dropdown", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
-
-    // The opening phase carries multiple presenter scenes; pick the
-    // first sceneType select and flip its value. Every scene card
-    // renders one sceneType select, so scoping by first() is safe.
-    const sceneTypeButton = page
-      .locator('[data-scene-stage] [data-inline-field="display"]')
-      .filter({ hasText: /^(briefing|demo|participant-view|checkpoint|reflection|transition|custom)$/ })
-      .first();
-    const originalType = await sceneTypeButton.textContent();
-    await sceneTypeButton.click();
-
-    const select = page.locator('[data-inline-field="edit"]').first();
-    await expect(select).toBeVisible();
-    // Pick a different value than the original so the change is real.
-    const nextType = originalType?.trim() === "demo" ? "briefing" : "demo";
-    await select.selectOption(nextType);
-
-    // Select mode saves onChange; the display button should reflect
-    // the new value without needing a reload.
-    await expect(
-      page
-        .locator('[data-scene-stage] [data-inline-field="display"]')
-        .filter({ hasText: new RegExp(`^${nextType}$`) })
-        .first(),
-    ).toBeVisible();
-
-    // Revert so re-runs stay deterministic.
-    await page
-      .locator('[data-scene-stage] [data-inline-field="display"]')
-      .filter({ hasText: new RegExp(`^${nextType}$`) })
-      .first()
-      .click();
-    await page.locator('[data-inline-field="edit"]').first().selectOption(originalType?.trim() ?? "briefing");
-  });
-
-  test("team card name edits inline and persists", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=teams");
-
-    // Pick the first team card and rename it. Re-use the original name
-    // as the revert value so re-runs stay stable.
-    const teamNameButton = page.locator('[data-inline-field="display"]').first();
-    const original = (await teamNameButton.textContent())?.trim() ?? "";
-    const renamed = `${original} · e2e`;
-
-    await teamNameButton.click();
-    await page.locator('[data-inline-field="edit"]').first().fill(renamed);
-    await page.locator('[data-inline-field="edit"]').first().press("Enter");
-
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first(),
-    ).toBeVisible();
-
-    // Reload to prove the server action persisted the change.
-    await page.reload();
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first(),
-    ).toBeVisible();
-
-    // Revert.
-    await page.locator('[data-inline-field="display"]').filter({ hasText: renamed }).first().click();
-    const revert = page.locator('[data-inline-field="edit"]').first();
-    await revert.fill(original);
-    await revert.press("Enter");
-  });
-
-  test("retired sheet overlays no longer render AdminSheet chrome", async ({ page }) => {
-    // Phase 3 retired agenda-edit, agenda-add, and scene-add overlays.
-    // Loading any of those URLs should still render the section
-    // (graceful degradation — the overlay query param is ignored) but
-    // must not render an AdminSheet. The sheet chrome uses
-    // `fixed inset-0 z-50` on the outer container, so asserting that
-    // selector count stays zero covers the contract.
-    const retired = [
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=talk&overlay=agenda-edit",
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=talk&overlay=agenda-add",
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&overlay=scene-add",
-    ];
-    for (const url of retired) {
-      await page.goto(url);
-      // Page landed on the admin instance (no redirect to sign-in).
-      await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
-      // No sheet chrome rendered for the retired overlays.
-      await expect(page.locator(".fixed.inset-0.z-50")).toHaveCount(0);
-    }
-  });
-});
-
-test.describe("agenda detail — scene stage + rail", () => {
-  // Stage + rail rework: scenes render as a compact rail with exactly
-  // one full-fidelity stage panel, active selection is URL-driven, and
-  // j/k / arrow keys step through the rail. See
-  // docs/plans/archive/2026-04-14-refactor-agenda-detail-stage-and-rail-plan.md.
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  test("opening agenda renders one stage per surface and the room default is active", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
-
-    // The agenda detail hosts two SceneStageRails (room + participant);
-    // each renders exactly one full-fidelity stage panel. The previous
-    // wall-of-scenes layout rendered N panels per surface and blew the
-    // page into a ~2000px scroll — this count is the regression guard.
-    const stagePanels = page.locator("[data-scene-stage]");
-    await expect(stagePanels).toHaveCount(2);
-
-    // Room surface (first) defaults to opening-framing. Rail tiles
-    // render for every room sibling and aria-current lands on the
-    // default one.
-    const roomStage = stagePanels.first();
-    await expect(roomStage).toHaveAttribute("data-scene-stage", "opening-framing");
-    await expect(
-      page.locator('[data-scene-rail-tile="opening-framing"]').first(),
-    ).toHaveAttribute("aria-current", "true");
-  });
-
-  test("?scene= URL param drives the room stage selection", async ({ page }) => {
-    await page.goto(
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
-    );
-
-    const roomStage = page.locator("[data-scene-stage]").first();
-    await expect(roomStage).toHaveAttribute("data-scene-stage", "opening-day-arc");
-
-    await expect(
-      page.locator('[data-scene-rail-tile="opening-day-arc"]').first(),
-    ).toHaveAttribute("aria-current", "true");
-    await expect(
-      page.locator('[data-scene-rail-tile="opening-framing"]').first(),
-    ).not.toHaveAttribute("aria-current", "true");
-  });
-
-  test("clicking a room rail tile swaps the room stage via soft nav", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
-
-    await page.locator('[data-scene-rail-tile="opening-day-schedule"]').first().click();
-
-    await expect(page).toHaveURL(/scene=opening-day-schedule/);
-    await expect(page.locator("[data-scene-stage]").first()).toHaveAttribute(
-      "data-scene-stage",
-      "opening-day-schedule",
-    );
-  });
-
-  test("keyboard j advances the room rail; k steps back", async ({ page }) => {
-    // Start from an explicit middle scene so we can test both
-    // directions from a single load without round-tripping through
-    // multiple soft-nav transitions (which are racy under keyboard).
-    await page.goto(
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
-    );
-
-    // j advances to opening-day-schedule.
-    await page.locator('[data-scene-rail-tile="opening-day-arc"]').first().focus();
-    await page.keyboard.press("j");
-    await page.waitForURL(/scene=opening-day-schedule/);
-  });
-
-  test("keyboard k steps back through the room rail", async ({ page }) => {
-    await page.goto(
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-day-arc",
-    );
-
-    await page.locator('[data-scene-rail-tile="opening-day-arc"]').first().focus();
-    await page.keyboard.press("k");
-    await page.waitForURL(/scene=opening-framing/);
-  });
-
-  test("facilitator notes peek is collapsed by default and expands on click", async ({ page }) => {
-    await page.goto(
-      "/admin/instances/sample-studio-a?section=agenda&agendaItem=opening&scene=opening-framing",
-    );
-
-    // The peek lives on the room stage panel as a <details> whose
-    // summary text starts with the facilitator notes label. Scope to
-    // the room stage so the AgendaItemDetail peeks above it don't
-    // interfere.
-    const roomStage = page.locator("[data-scene-stage]").first();
-    const peek = roomStage.locator("details").filter({
-      has: page.locator("summary", { hasText: /poznámky pro facilitátora|facilitator notes/i }),
-    });
-
-    // Closed by default — the <details> element has no `open` attribute.
-    await expect(peek).not.toHaveAttribute("open", "");
-    const summary = peek.locator("summary").first();
-    await summary.click();
-    await expect(peek).toHaveAttribute("open", "");
-  });
-});
-
-test.describe("one canvas phase 4 — operational forms", () => {
-  // Phase 4 exit criterion: password change / archive / facilitator
-  // management / participant-access forms look native to the new
-  // visual language and still behave identically. These smoke tests
-  // verify each form renders the expected fields and the submit
-  // buttons are reachable. They do not assert the underlying mutation
-  // — those are covered by the per-action unit tests already shipped.
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  test("settings section exposes archive + reset (file-mode fallback for password)", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=settings");
-    // File mode surfaces the account fallback message instead of the
-    // password change form (password change requires Neon Auth). The
-    // CS fallback mentions "neon módu", the EN one mentions "neon mode"
-    // — either one is proof the fallback branch renders.
-    await expect(page.getByText(/neon mód|neon mode/i).first()).toBeVisible();
-    // Archive workshop form stays visible regardless of auth mode.
-    await expect(
-      page.getByRole("button", { name: /vytvořit archiv|create archive/i }).first(),
-    ).toBeVisible();
-  });
-
-  test("settings section reset workshop requires typed confirmation (regression)", async ({ page }) => {
-    // Mirrors the pre-existing reset confirmation test, but lives
-    // under the Phase 4 describe block so it's caught when the
-    // settings visual language pass changes. The reset form lives
-    // inside a <details> summary that must be opened first.
-    await page.goto("/admin/instances/sample-studio-a?section=settings");
-    const summary = page
-      .locator("form")
-      .filter({ has: page.getByPlaceholder("sample-studio-a") })
-      .locator("summary")
-      .first();
-    await summary.click();
-    await expect(page.getByPlaceholder("sample-studio-a")).toBeVisible();
-    await expect(
-      page.getByText(/Pro potvrzení napište id instance/i),
-    ).toBeVisible();
-  });
-
-  test("access section exposes participant access code form", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=access");
-    await expect(
-      page.getByRole("button", { name: /vydat nový event code|issue new event code/i }).first(),
-    ).toBeVisible();
-  });
-
-  test("access section facilitator add form lives in neon-only branch", async ({ page }) => {
-    // File mode (e2e default) hides the add-facilitator form behind
-    // the fallback message — verify the fallback renders so the flow
-    // isn't silently broken.
-    await page.goto("/admin/instances/sample-studio-a?section=access");
-    await expect(page.getByRole("heading", { name: /správa facilitátorů|facilitator access/i })).toBeVisible();
   });
 });
 
@@ -939,19 +585,6 @@ test.describe("one canvas phase 5 — presenter scene coverage", () => {
     expect(response?.status()).toBeLessThan(500);
   });
 
-  test("scene swipe navigation advances to the next scene on soft nav", async ({ page }) => {
-    // Phase 5 covers the scene-swiper gesture. Simulating a touch
-    // swipe in Playwright is awkward; instead we soft-navigate to
-    // the next scene via the rail and confirm the URL + scene change.
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=opening");
-    // Click the first scene link in the Opening scene list; the
-    // presenter overlay route should match on soft-nav.
-    const firstSceneLink = page.getByRole("link", { name: "otevřít tuto scénu" }).first();
-    await expect(firstSceneLink).toBeVisible();
-    await firstSceneLink.click();
-    // URL now reflects the presenter route for the first scene.
-    await expect(page).toHaveURL(/presenter\?agendaItem=opening/);
-  });
 });
 
 test.describe("presenter wheel navigation", () => {
@@ -1315,362 +948,6 @@ test.describe("presenter touch navigation", () => {
   });
 });
 
-test.describe("one canvas phase 6 — polish, responsiveness, keyboard", () => {
-  // Phase 6 covers the rail/keyboard/viewport checks. Tests use the
-  // Playwright browser at the five target viewports and verify the
-  // admin/presenter shell doesn't visually break.
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  async function readActivePresenterSlideMetrics(page: import("@playwright/test").Page) {
-    return page.evaluate(() => {
-      const slide = document.querySelector('[data-presenter-slide="true"][aria-hidden="false"]') as HTMLElement | null;
-      if (!slide) {
-        throw new Error("active presenter slide not found");
-      }
-
-      return {
-        bodyScrollWidth: document.documentElement.scrollWidth,
-        viewportWidth: window.innerWidth,
-        slideScrollHeight: slide.scrollHeight,
-        slideClientHeight: slide.clientHeight,
-      };
-    });
-  }
-
-  test("presenter renders at 4:3 iPad viewport without content overflow", async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 768 });
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
-    // The page body should fit inside the viewport horizontally — no
-    // scrollbar caused by an overflowing element. Measure document
-    // scroll width vs viewport width.
-    const metrics = await readActivePresenterSlideMetrics(page);
-    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
-  });
-
-  test("presenter renders at 16:9 big-screen mirror viewport without content overflow", async ({ page }) => {
-    await page.setViewportSize({ width: 1920, height: 1080 });
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer");
-    const metrics = await readActivePresenterSlideMetrics(page);
-    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
-  });
-
-  test("presenter proof and rollout scenes fit the 4:3 baseline without vertical scroll", async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 768 });
-
-    const proofScenes = [
-      { label: "talk-argued-about-prompts", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-argued-about-prompts" },
-      { label: "talk-why-now", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-why-now" },
-      { label: "talk-got-a-name", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-got-a-name" },
-      { label: "talk-how-to-build", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-how-to-build" },
-      { label: "talk-managing-agents", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-managing-agents" },
-      { label: "talk-humans-steer", path: "/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-humans-steer" },
-      { label: "build-1-next-65-minutes", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-next-65-minutes" },
-      { label: "build-1-by-lunch", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-by-lunch" },
-      { label: "rotation-read-the-room", path: "/admin/instances/sample-studio-a/presenter?agendaItem=rotation&scene=rotation-read-the-room" },
-      { label: "build-2a-eighty-five", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-2&scene=build-2a-eighty-five" },
-      { label: "build-2b-second-push-timeline", path: "/admin/instances/sample-studio-a/presenter?agendaItem=build-2-second-push&scene=build-2b-second-push-timeline" },
-      { label: "reveal-one-thing", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-one-thing" },
-      { label: "reveal-save-the-commitment", path: "/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-save-the-commitment" },
-    ] as const;
-
-    for (const scene of proofScenes) {
-      await page.goto(scene.path);
-      await page.waitForSelector('[data-presenter-slide="true"][aria-hidden="false"]');
-      const metrics = await readActivePresenterSlideMetrics(page);
-      expect(metrics.slideScrollHeight, `${scene.label} should fit without vertical scroll`).toBeLessThanOrEqual(
-        metrics.slideClientHeight + 2,
-      );
-    }
-  });
-
-  test("keeps the split proof scenes visually stable on ipad", async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 768 });
-
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-argued-about-prompts");
-    await expect(page).toHaveScreenshot("presenter-talk-evidence-proof-ipad.png", {
-      maxDiffPixelRatio: 0.08,
-    });
-
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=talk&scene=talk-how-to-build");
-    await expect(page).toHaveScreenshot("presenter-talk-pillars-proof-ipad.png", {
-      maxDiffPixelRatio: 0.08,
-    });
-
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=build-1&scene=build-1-next-65-minutes");
-    await expect(page).toHaveScreenshot("presenter-build-1-proof-ipad.png", {
-      maxDiffPixelRatio: 0.08,
-    });
-
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=reveal&scene=reveal-one-thing");
-    await expect(page).toHaveScreenshot("presenter-reveal-commitment-proof-ipad.png", {
-      maxDiffPixelRatio: 0.08,
-    });
-  });
-
-  test("admin shell renders on iPad portrait without horizontal overflow", async ({ page }) => {
-    await page.setViewportSize({ width: 1024, height: 1366 });
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-    const metrics = await page.evaluate(() => ({
-      bodyScrollWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
-    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
-  });
-
-  test("admin shell renders on desktop small without horizontal overflow", async ({ page }) => {
-    await page.setViewportSize({ width: 1280, height: 1200 });
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-    const metrics = await page.evaluate(() => ({
-      bodyScrollWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
-    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
-  });
-
-  test("admin shell renders on desktop large without horizontal overflow", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 1400 });
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-    const metrics = await page.evaluate(() => ({
-      bodyScrollWidth: document.documentElement.scrollWidth,
-      viewportWidth: window.innerWidth,
-    }));
-    expect(metrics.bodyScrollWidth).toBeLessThanOrEqual(metrics.viewportWidth + 1);
-  });
-
-  test("keyboard-only navigation reaches the first inline field on the agenda detail", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=agenda&agendaItem=talk");
-    // Focus the document, then Tab repeatedly until an inline field
-    // display button gets focus. A 50-Tab budget is more than enough
-    // for the header nav + outline rail + hero.
-    await page.keyboard.press("Tab");
-    let reached = false;
-    for (let i = 0; i < 50; i++) {
-      const focused = await page.evaluate(
-        () => document.activeElement?.getAttribute("data-inline-field") ?? null,
-      );
-      if (focused === "display") {
-        reached = true;
-        break;
-      }
-      await page.keyboard.press("Tab");
-    }
-    expect(reached).toBe(true);
-  });
-
-  test("theme switcher toggles the html class token", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a");
-    // next-themes is configured with attribute: "class" (see
-    // app/components/theme-provider.tsx), so picking a theme writes
-    // the chosen value into the html element's class list.
-    await page.getByRole("button", { name: /Theme: light/i }).click();
-    await expect(page.locator("html")).toHaveClass(/light/);
-    await page.getByRole("button", { name: /Theme: dark/i }).click();
-    await expect(page.locator("html")).toHaveClass(/dark/);
-  });
-});
-
-test.describe("one canvas phase 7 — parity smoke", () => {
-  // Phase 7 exit criterion: a single critical-path test navigates
-  // admin → agenda detail → presenter → return to admin → inline edit
-  // → save, parameterized across the five target viewports. The
-  // full-fat version uses swipe + morph; this parity smoke uses soft
-  // navigation because Playwright cannot reliably simulate spring-
-  // driven drag gestures.
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  const viewports = [
-    { name: "mobile-393", width: 393, height: 852 },
-    { name: "ipad-landscape", width: 1024, height: 768 },
-    { name: "ipad-portrait", width: 1024, height: 1366 },
-    { name: "desktop-small", width: 1280, height: 1200 },
-    { name: "desktop-large", width: 1440, height: 1400 },
-  ];
-
-  for (const viewport of viewports) {
-    test(`critical path works at ${viewport.name} (${viewport.width}x${viewport.height})`, async ({ page }) => {
-      await page.setViewportSize({ width: viewport.width, height: viewport.height });
-
-      // 1. Admin cockpit loads. Below the xl breakpoint (1280px) the
-      //    outline rail collapses behind the section nav, so the
-      //    timeline-row marker is what's visible across all five
-      //    viewports — target the TimelineRow div by its rounded
-      //    class anchor.
-      await page.goto("/admin/instances/sample-studio-a");
-      await expect(
-        page.locator('div[data-agenda-item="opening"]').first(),
-      ).toBeVisible();
-
-      // 2. Open an agenda detail.
-      await page.locator('div[data-agenda-item="talk"]').getByRole("link", { name: "detail momentu" }).click();
-      await expect(page).toHaveURL(/agendaItem=talk/);
-      await expect(
-        page.locator('[data-inline-field="display"]').filter({ hasText: /^Context is King$/ }).first(),
-      ).toBeVisible();
-
-      // 3. Launch the presenter for the selected scene via the
-      //    "open this scene" link. On soft-nav the intercepting
-      //    route morphs; on hard-load it renders the full-page
-      //    fallback. Both pass this assertion.
-      const openScene = page.getByRole("link", { name: "otevřít tuto scénu" }).first();
-      await openScene.click();
-      await expect(page).toHaveURL(/presenter\?agendaItem=talk/);
-
-      // 4. Return to admin.
-      await page.goBack();
-      await expect(page).toHaveURL(/agendaItem=talk/);
-
-      // 5. Inline-edit the room summary and confirm the change
-      //    persists across a reload. We pick a unique suffix so each
-      //    viewport run can prove the save independently without
-      //    depending on cleanup clicks that can race with the post-save
-      //    re-render on slower runners.
-      const suffix = `${viewport.name}-${Date.now()}`;
-      const summaryButton = page
-        .locator('[data-inline-field="display"]')
-        .filter({ hasText: /Místnost má odnést/ })
-        .first();
-      await summaryButton.click();
-      const summaryInput = page.locator('[data-inline-field="edit"]').first();
-      const original = (await summaryInput.inputValue()) ?? "";
-      await summaryInput.fill(`${original}\nparity-${suffix}`);
-      // Textarea saves on blur, so click away to commit.
-      await page.locator("body").click({ position: { x: 5, y: 5 } });
-      const savedSummary = page
-        .locator('[data-inline-field="display"]')
-        .filter({ hasText: `parity-${suffix}` })
-        .first();
-      await expect(savedSummary).toBeVisible();
-      await page.reload();
-      await expect(savedSummary).toBeVisible();
-    });
-  }
-});
-
-test.describe("one canvas phase 7 — capability inventory walkthrough", () => {
-  // Phase 7 exit criterion: walk through every capability in the
-  // inventory reference, section by section. For each, confirm it has
-  // a home in the new IA and works. This is the regression backstop.
-  //
-  // The inventory:
-  // - Agenda: timeline nav, detail hero (inline title/time/goal/
-  //   summary + lists), scene cards (inline fields + reorder/default/
-  //   toggle/remove), scene create (inline draft), agenda create
-  //   (inline draft), agenda reorder, agenda remove, set-live-here,
-  //   jump-to-live, launch presenter (soft nav + pop-out), handoff
-  //   moment card (unlock/hide/rotation signals)
-  // - Teams: card rename (name/repoUrl/city/members/anchor inline),
-  //   checkpoint append, register new team
-  // - Signals: capture rotation signal (kept as form)
-  // - Access: participant access code issue, facilitator add
-  //   (neon-only), facilitator revoke (neon-only), facilitator
-  //   fallback message in file mode
-  // - Settings: password change, archive workshop with notes, reset
-  //   workshop with typed confirmation, language switcher, theme
-  //   switcher, sign out
-
-  test.use({
-    extraHTTPHeaders: {
-      Authorization: `Basic ${Buffer.from("facilitator:secret").toString("base64")}`,
-    },
-  });
-
-  test("every documented capability is reachable in the new IA", async ({ page }) => {
-    // --- Agenda section ---
-    await page.goto("/admin/instances/sample-studio-a?section=agenda");
-    // Timeline rows + add agenda item ghost button.
-    await expect(page.locator('div[data-agenda-item="opening"]').first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /^\+ /i }).first()).toBeVisible();
-
-    // Open an agenda detail.
-    await page.locator('div[data-agenda-item="talk"]').getByRole("link", { name: "detail momentu" }).click();
-    await expect(page).toHaveURL(/agendaItem=talk/);
-
-    // Inline title + time + goal + roomSummary all render.
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^9:40$/ }).first(),
-    ).toBeVisible();
-    await expect(
-      page.locator('[data-inline-field="display"]').filter({ hasText: /^Context is King$/ }).first(),
-    ).toBeVisible();
-
-    // Scene card "více" disclosure summary is visible. Open it and
-    // verify the management actions (reorder/remove) live inside.
-    const moreSummary = page.getByText(/^více$/).first();
-    await expect(moreSummary).toBeVisible();
-    await moreSummary.click();
-    await expect(
-      page.getByRole("button", { name: /posunout scénu výš|move scene up/i }).first(),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /odebrat scénu|remove scene/i }).first(),
-    ).toBeVisible();
-    // AddSceneRow draft button present.
-    await expect(
-      page.getByRole("button", { name: /\+ přidat scénu|\+ add scene/i }).first(),
-    ).toBeVisible();
-
-    // Launch presenter links exist.
-    await expect(page.getByRole("link", { name: "otevřít tuto scénu" }).first()).toBeVisible();
-
-    // --- Teams section ---
-    await page.goto("/admin/instances/sample-studio-a?section=teams");
-    // Register form (new team).
-    await expect(page.getByPlaceholder(/Studio A/i).first()).toBeVisible();
-    // Inline team card.
-    await expect(page.locator('[data-inline-field="display"]').first()).toBeVisible();
-    // Checkpoint append textarea. Target by stable `name` attribute so the
-    // assertion survives cross-test state mutation (earlier participant-side
-    // tests persist a check-in into the shared runtime state, which flips
-    // the textarea's placeholder from the hint to the saved text).
-    await expect(page.locator('textarea[name="checkpoint"]').first()).toBeVisible();
-
-    // --- Signals section ---
-    await page.goto("/admin/instances/sample-studio-a?section=signals");
-    await expect(
-      page.getByRole("button", { name: /přidat update|add update/i }).first(),
-    ).toBeVisible();
-
-    // --- Access section ---
-    await page.goto("/admin/instances/sample-studio-a?section=access");
-    await expect(
-      page.getByRole("button", { name: /vydat nový event code|issue new event code/i }).first(),
-    ).toBeVisible();
-    await expect(page.getByRole("heading", { name: /správa facilitátorů/i })).toBeVisible();
-
-    // --- Settings section ---
-    await page.goto("/admin/instances/sample-studio-a?section=settings");
-    // File-mode fallback for password + archive button. Reset lives
-    // inside a <details> that needs opening before the confirmation
-    // placeholder becomes visible.
-    await expect(page.getByText(/neon mód|neon mode/i).first()).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /vytvořit archiv|create archive/i }).first(),
-    ).toBeVisible();
-    await page
-      .locator("form")
-      .filter({ has: page.getByPlaceholder("sample-studio-a") })
-      .locator("summary")
-      .first()
-      .click();
-    await expect(page.getByPlaceholder("sample-studio-a")).toBeVisible();
-
-    // --- Header chrome ---
-    await expect(page.getByRole("button", { name: /odhlásit se|sign out/i })).toBeVisible();
-    // Language switcher renders CS + EN links.
-    await expect(page.getByRole("link", { name: /^CZ$/i }).first()).toBeVisible();
-    await expect(page.getByRole("link", { name: /^EN$/i }).first()).toBeVisible();
-  });
-});
 
 test.describe("landing page motion — motion path", () => {
   test("hero heading animates from hidden to full opacity", async ({ page }) => {

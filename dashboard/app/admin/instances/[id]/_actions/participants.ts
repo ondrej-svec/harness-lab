@@ -4,6 +4,11 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import {
+  appendRotationMarkerHistory,
+  recordTeamAssignmentHistory,
+  recordTeamUnassignmentHistory,
+} from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { parseParticipantPaste } from "@/lib/participant-paste-parser";
 import { rebuildTeamMembersProjection } from "@/lib/team-members-projection";
@@ -96,7 +101,13 @@ export async function removeParticipantAction(formData: FormData) {
 
   const now = new Date().toISOString();
   await getParticipantRepository().archiveParticipant(instanceId, participantId, now);
-  await getTeamMemberRepository().unassignMember(instanceId, participantId);
+  const result = await getTeamMemberRepository().unassignMember(instanceId, participantId);
+  await recordTeamUnassignmentHistory({
+    instanceId,
+    participantId,
+    result,
+    note: "participant archived",
+  });
   await rebuildTeamMembersProjection(instanceId);
   revalidatePath(pathForInstance(instanceId));
 }
@@ -108,12 +119,17 @@ export async function assignParticipantAction(formData: FormData) {
   if (!instanceId || !participantId || !teamId) return;
   await requireFacilitatorActionAccess(instanceId);
 
-  await getTeamMemberRepository().assignMember(instanceId, {
+  const result = await getTeamMemberRepository().assignMember(instanceId, {
     id: `tm-${randomUUID()}`,
     instanceId,
     teamId,
     participantId,
     assignedAt: new Date().toISOString(),
+  });
+  await recordTeamAssignmentHistory({
+    instanceId,
+    participantId,
+    result,
   });
   await rebuildTeamMembersProjection(instanceId);
   revalidatePath(pathForInstance(instanceId));
@@ -125,7 +141,24 @@ export async function unassignParticipantAction(formData: FormData) {
   if (!instanceId || !participantId) return;
   await requireFacilitatorActionAccess(instanceId);
 
-  await getTeamMemberRepository().unassignMember(instanceId, participantId);
+  const result = await getTeamMemberRepository().unassignMember(instanceId, participantId);
+  await recordTeamUnassignmentHistory({
+    instanceId,
+    participantId,
+    result,
+  });
   await rebuildTeamMembersProjection(instanceId);
+  revalidatePath(pathForInstance(instanceId));
+}
+
+export async function addTeamHistoryMarkerAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "").trim();
+  const note = String(formData.get("note") ?? "").trim();
+  if (!instanceId) return;
+  await requireFacilitatorActionAccess(instanceId);
+
+  await appendRotationMarkerHistory(instanceId, {
+    note: note || null,
+  });
   revalidatePath(pathForInstance(instanceId));
 }

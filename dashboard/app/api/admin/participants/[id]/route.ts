@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import { recordTeamUnassignmentHistory } from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { rebuildTeamMembersProjection } from "@/lib/team-members-projection";
 
@@ -105,9 +106,14 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
   // Cascade: unassign from current team if any.
   const teamMembers = getTeamMemberRepository();
-  const current = await teamMembers.findMemberByParticipant(instanceId, id);
-  if (current) {
-    await teamMembers.unassignMember(instanceId, id);
+  const result = await teamMembers.unassignMember(instanceId, id);
+  if (result) {
+    await recordTeamUnassignmentHistory({
+      instanceId,
+      participantId: id,
+      result,
+      note: "participant archived",
+    });
     await rebuildTeamMembersProjection(instanceId);
   }
 

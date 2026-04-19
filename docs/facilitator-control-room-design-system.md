@@ -66,9 +66,9 @@ That means:
 
 If a desktop composition only feels good because it adds more simultaneous panels, the structure is probably wrong.
 
-## Agenda-Centered Canvas Contract
+## Run-Centered Canvas Contract
 
-The default control room is one agenda-centered workshop surface. Treat `live` as a compatibility alias, not as a separate product.
+The default control room is the `Run` surface: one agenda-centered workshop canvas for live operation. Treat `live` and `agenda` only as legacy URL aliases, not as separate products.
 
 It may show:
 
@@ -78,18 +78,29 @@ It may show:
 - the agenda spine as the primary navigation model
 - one selected agenda item as the current operating object
 - contextual handoff controls only when the selected moment genuinely owns them
+- quiet signal capture that belongs to running the current moment
 
 It must not show by default:
 
 - archive and reset controls
 - blueprint-edit references
-- a detached “presenter card” outside the selected agenda item
+- a detached presenter-management workbench outside the selected agenda item
 - permanent global continuation controls detached from the actual handoff moment
 - a second canvas that restates the same workshop state with a different IA
+- agenda editing forms
+- scene authoring controls
+- storage/source-of-truth explainer panels
 
 Continuation belongs with the handoff / rotation moment. If that moment is not current or next, the control should not dominate the main control-room canvas.
 
 If the facilitator still needs to correct participant reveal later, provide that as a secondary recovery control on another layer such as `settings`, not as a co-primary workshop action.
+
+The four-section control-room contract is:
+
+- `Run`: default live runner, agenda spine, presenter launch, handoff controls, quiet signal capture
+- `People`: participant intake, team shaping, team-composition history
+- `Access`: participant event code and facilitator-access operations
+- `Settings`: reset, archive, and other recovery/safety controls
 
 ## Layout Rules
 
@@ -110,7 +121,7 @@ Allowed pattern:
 - persistent summary header for event context
 - left rail for section location on desktop
 - compact section switcher on mobile
-- keep shared runtime orientation in the shell so non-`live` sections still show current phase, participant-surface state, and team count
+- keep shared runtime orientation in the shell so non-`Run` sections still show current phase, participant-surface state, and team count
 
 ### 2. Use the canvas for reading and operating, not authoring
 
@@ -127,6 +138,7 @@ The default canvas should not show:
 - add-item forms
 - source-of-truth implementation notes as a full panel
 - safety actions that are not part of the current workshop moment
+- agenda or scene authoring affordances
 
 ### 3. Use two columns, not three competing narratives
 
@@ -140,7 +152,7 @@ Third columns are allowed only for:
 - large desktop-only monitoring views
 - clearly independent side content with proven operational value
 
-The agenda view should not use a permanent third column for add-item, presenter scenes, and storage notes at the same time.
+The `Run` view should not use a permanent third column for add-item, presenter scenes, and storage notes at the same time.
 
 ## Progressive Disclosure Rules
 
@@ -151,6 +163,7 @@ Use inline controls only for:
 - changing the live marker
 - opening the room screen
 - simple binary state changes only when they belong to the current or next workshop moment
+- quiet signal capture tied to the current moment
 
 Do not keep fallback override controls on the default canvas once the relevant moment has passed.
 
@@ -158,11 +171,8 @@ Do not keep fallback override controls on the default canvas once the relevant m
 
 Use a side sheet for:
 
-- creating a new local agenda item
-- scene creation and scene editing
 - medium-complexity forms where the facilitator should keep context from the underlying page
-
-For agenda items themselves, prefer progressive in-place editing inside the selected-item workbench unless the form grows past the bounds of a calm operating view.
+- secondary People workflows that need extra context without leaving the section
 
 ### 3. Modal dialog
 
@@ -172,7 +182,7 @@ Use a modal only for:
 - destructive intent
 - short required input tightly coupled to the current action
 
-Do not use a modal for long agenda editing.
+Do not use a modal for long editing workflows.
 
 ### 4. Full page
 
@@ -180,7 +190,6 @@ Use a full page only if the task becomes an editor in its own right.
 
 Examples:
 
-- future presenter-scene authoring
 - large monitoring investigation views
 - archive inspection
 
@@ -204,9 +213,9 @@ Rules:
 
 Good:
 
-- `Open item editor`
 - `Move live marker`
-- `Add local item`
+- `Open presenter screen`
+- `Add team history marker`
 - `Reset data`
 
 Weak:
@@ -242,9 +251,9 @@ Avoid:
 - tiny low-contrast pills that resemble tags
 - links that are visually indistinguishable from metadata
 
-## Agenda View Pattern
+## Run View Pattern
 
-The control room should separate the agenda index from the agenda-moment workbench.
+The control room should separate the agenda index from the agenda-moment workbench inside `Run`.
 
 Use this structure:
 
@@ -257,9 +266,9 @@ Use this structure:
    - dedicated page state for one selected moment
    - breadcrumb-style location back to the timeline instead of an ambiguous lone back label
    - top hero with the moment summary and its primary action
-   - scene pack and source/storage detail below
+   - handoff, presenter launch, and quiet signal controls below
 3. Editing
-   - edit the agenda moment in a side sheet
+   - dashboard does not expose agenda or scene editing from this surface
 
 ## Route Feedback
 
@@ -270,8 +279,7 @@ Required pattern:
 - internal links that open a moment detail, sheet, or adjacent page state should show a pending spinner or busy state on click
 - the same applies to breadcrumb navigation back to the timeline and scene-to-scene navigation on the presenter surface
 - do not rely on the eventual route paint alone as the only confirmation that the click worked
-   - edit scenes in side sheets
-   - do not turn the index into a long mixed read/edit canvas
+- do not turn the index into a long mixed read/edit canvas
 
 This keeps the reading order obvious:
 

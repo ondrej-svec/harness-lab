@@ -69,8 +69,8 @@ describe("workspace admin helpers", () => {
       resolveAdminSection,
     } = await adminPageViewModelPromise;
 
-    expect(resolveAdminSection("teams")).toBe("teams");
-    expect(resolveAdminSection("unknown")).toBe("agenda");
+    expect(resolveAdminSection("teams")).toBe("people");
+    expect(resolveAdminSection("unknown")).toBe("run");
     expect(buildAdminWorkspaceHref({ lang: "cs" })).toBe("/admin");
     expect(buildAdminWorkspaceHref({ lang: "en", query: "studio", status: "running" })).toBe(
       "/admin?q=studio&status=running&lang=en",
@@ -85,7 +85,7 @@ describe("workspace admin helpers", () => {
         section: "signals",
         error: "password_mismatch",
       }),
-    ).toBe("/admin/instances/sample-studio-b?section=signals&error=password_mismatch&lang=en");
+    ).toBe("/admin/instances/sample-studio-b?error=password_mismatch&lang=en");
     expect(buildWorkspaceStatusSummary(sampleWorkshopInstances)).toMatchObject({ all: 4, prepared: 4, running: 0 });
     expect(filterWorkshopInstances(sampleWorkshopInstances, { query: "lab c", status: "all" })).toHaveLength(1);
   });
@@ -145,7 +145,7 @@ describe("AdminWorkspacePage", () => {
       searchParams: Promise.resolve({ lang: "en", instance: "sample-studio-b", section: "signals" }),
     });
 
-    expect(redirect).toHaveBeenCalledWith("/admin/instances/sample-studio-b?section=signals&lang=en");
+    expect(redirect).toHaveBeenCalledWith("/admin/instances/sample-studio-b?lang=en");
   });
 
   it("renders a confirmation dialog before removing an instance", async () => {

@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import {
+  recordTeamAssignmentHistory,
+  recordTeamUnassignmentHistory,
+} from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { getTeamRepository } from "@/lib/team-repository";
 import { rebuildTeamMembersProjection } from "@/lib/team-members-projection";
@@ -53,6 +57,11 @@ async function handleAssign(request: Request) {
     participantId: body.participantId,
     assignedAt: new Date().toISOString(),
   });
+  await recordTeamAssignmentHistory({
+    instanceId,
+    participantId: body.participantId,
+    result,
+  });
 
   await rebuildTeamMembersProjection(instanceId);
 
@@ -81,7 +90,15 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ ok: false, error: "participantId is required" }, { status: 400 });
   }
 
-  await getTeamMemberRepository().unassignMember(instanceId, body.participantId);
+  const result = await getTeamMemberRepository().unassignMember(
+    instanceId,
+    body.participantId,
+  );
+  await recordTeamUnassignmentHistory({
+    instanceId,
+    participantId: body.participantId,
+    result,
+  });
   await rebuildTeamMembersProjection(instanceId);
 
   return NextResponse.json({ ok: true });

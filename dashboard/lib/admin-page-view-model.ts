@@ -1,18 +1,19 @@
 import type { WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 
-export const controlRoomSections = ["live", "agenda", "teams", "people", "signals", "access", "settings"] as const;
+export const controlRoomSections = ["run", "people", "access", "settings"] as const;
 export type ControlRoomSection = (typeof controlRoomSections)[number];
 export type AdminSection = ControlRoomSection;
 export const controlRoomOverlays = ["agenda-edit", "agenda-add", "scene-edit", "scene-add"] as const;
 export type ControlRoomOverlay = (typeof controlRoomOverlays)[number];
 
 export const legacyAdminSectionMap = {
-  overview: "agenda",
-  agenda: "agenda",
-  teams: "teams",
+  overview: "run",
+  live: "run",
+  agenda: "run",
+  signals: "run",
+  teams: "people",
   people: "people",
-  signals: "signals",
   access: "access",
   account: "settings",
 } as const;
@@ -24,7 +25,13 @@ type AdminCopy = Record<string, string>;
 type AgendaItem = WorkshopState["agenda"][number];
 
 export function resolveControlRoomSection(value: string | undefined): ControlRoomSection {
-  return controlRoomSections.find((section) => section === value) ?? "agenda";
+  const normalized = String(value ?? "").trim();
+  const directMatch = controlRoomSections.find((section) => section === normalized);
+  if (directMatch) {
+    return directMatch;
+  }
+
+  return legacyAdminSectionMap[resolveLegacyAdminSection(normalized)];
 }
 
 export function resolveLegacyAdminSection(value: string | undefined): LegacyAdminSection {
@@ -59,7 +66,7 @@ export function buildAdminWorkspaceHref(options: {
 export function buildAdminInstanceHref(options: {
   lang: UiLanguage;
   instanceId: string;
-  section?: ControlRoomSection;
+  section?: ControlRoomSection | LegacyAdminSection;
   teamId?: string | null;
   agendaItemId?: string | null;
   sceneId?: string | null;
@@ -67,10 +74,24 @@ export function buildAdminInstanceHref(options: {
   password?: string | null;
   overlay?: ControlRoomOverlay | null;
 }) {
-  const { lang, instanceId, section, teamId, agendaItemId, sceneId, error, password, overlay } = options;
+  const {
+    lang,
+    instanceId,
+    section,
+    teamId,
+    agendaItemId,
+    sceneId,
+    error,
+    password,
+    overlay,
+  } = options;
+  const resolvedSection =
+    section && section in legacyAdminSectionMap
+      ? legacyAdminSectionMap[section as LegacyAdminSection]
+      : resolveControlRoomSection(String(section ?? ""));
   const params = new URLSearchParams();
-  if (section && section !== "agenda") {
-    params.set("section", section);
+  if (resolvedSection !== "run") {
+    params.set("section", resolvedSection);
   }
   if (teamId) {
     params.set("team", teamId);
@@ -328,7 +349,7 @@ export function buildControlRoomLiveState(options: {
     liveNowTitle: `${currentAgendaItem?.time ?? ""}${currentAgendaItem ? " • " : ""}${currentAgendaItem?.title ?? ""}`.trim(),
     liveNowDescription: currentAgendaItem?.roomSummary || currentAgendaItem?.description || "",
     nextUpLabel: nextAgendaItem ? `${copy.nextUp}: ${nextAgendaItem.time} • ${nextAgendaItem.title}` : null,
-    agendaLink: buildAdminInstanceHref({ lang, section: "agenda", instanceId: activeInstanceId }),
+    agendaLink: buildAdminInstanceHref({ lang, section: "run", instanceId: activeInstanceId }),
     phaseOptions: state.agenda.map((item) => ({
       id: item.id,
       label: `${item.time} • ${item.title}`,

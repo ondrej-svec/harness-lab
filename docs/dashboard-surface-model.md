@@ -38,20 +38,26 @@ Purpose:
 - run the workshop instance without editing seed files or using ad hoc scripts
 
 Protected responsibilities:
-- reset workshop instance
-- move agenda state
-- reveal or hide the continuation window
+- run the workshop through four sections: `Run`, `People`, `Access`, `Settings`
+- move the live workshop moment
+- launch presenter and participant-facing outputs
+- reveal or hide the continuation window when the handoff moment needs it
 - register teams and repo URLs
-- capture sprint updates
-- update checkpoints
-- ingest monitoring snapshots
+- capture sprint updates and challenge completion signals as quiet runtime notes
+- inspect team-composition history during live reshaping
+- manage participant event access and facilitator grants
+- reset or archive the instance from a clearly secondary safety layer
 
 Design rules:
 - protected at runtime
 - optimized for speed and safety, not public polish
 - writes go through explicit admin actions
 - instance lifecycle belongs in the dashboard too: create, switch, reset, and safe remove should be visible product operations rather than script-only paths
+- `Run` is the default canvas and stays agenda-centered
+- `People` owns team formation, team repair, and team-history review
+- `Access` and `Settings` remain reachable but must not compete with `Run`
 - agenda timeline index and agenda-moment detail may be separate page states when that reduces duplication and keeps editing off the default canvas
+- dashboard UI does not expose agenda or presenter-scene authoring; those mutations belong to CLI/agent flows
 
 ## Presenter Surface
 
@@ -95,16 +101,18 @@ There are now two explicit layers:
   - supporting human-readable workshop method docs live in [`workshop-blueprint/`](../workshop-blueprint/)
 - runtime instance layer
   - instance create/reset imports blueprint-owned fields into the active workshop instance
-  - imported agenda becomes a runtime copy that facilitators may edit locally for that instance
-  - facilitator actions move only the current phase and other runtime-local state
+  - imported agenda becomes the runtime copy that live operation reads from
+  - facilitator dashboard actions move only the current phase and other runtime-local state
+  - agenda and presenter-scene mutations remain available through instance-scoped APIs for CLI and coding-agent workflows, not the default dashboard UI
   - file mode persists that runtime copy in `dashboard/data/<instance>/workshop-state.json`
   - neon mode persists that runtime copy in `workshop_instances.workshop_state`
 
 Important consequence:
 
 - facilitator UI changes runtime state, not the canonical blueprint
-- reusable blueprint edits still belong in the repo, but instance-local agenda wording/order/time changes may be authored in runtime
-- presenter scenes follow the same rule: blueprint defines reusable defaults, runtime owns per-instance overrides
+- reusable blueprint edits still belong in the repo
+- instance-local agenda wording/order/time or presenter-scene changes are supported through CLI/agent flows that call the runtime APIs directly
+- presenter scenes follow the same rule: blueprint defines reusable defaults, runtime may own per-instance overrides even though the dashboard no longer exposes that editor
 - dashboard copy should describe reset as blueprint import, not as an opaque seed reset
 - participant and public repo links should use repo-relative blueprint references resolved by deployment config, not hardcoded upstream URLs
 

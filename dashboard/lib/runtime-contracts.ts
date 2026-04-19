@@ -58,6 +58,27 @@ export type TeamMemberRecord = {
   assignedAt: string;
 };
 
+export type TeamCompositionHistoryEventType =
+  | "assigned"
+  | "unassigned"
+  | "moved"
+  | "rotation_marker";
+
+export type TeamCompositionHistoryActorKind = "facilitator" | "system";
+
+export type TeamCompositionHistoryEvent = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  eventType: TeamCompositionHistoryEventType;
+  participantId: string | null;
+  fromTeamId: string | null;
+  toTeamId: string | null;
+  capturedAt: string;
+  actorKind: TeamCompositionHistoryActorKind;
+  note?: string | null;
+  rotationId?: string | null;
+};
+
 export type ParticipantEventAccessRecord = {
   id: string;
   instanceId: WorkshopInstanceId;
@@ -268,10 +289,11 @@ export interface ParticipantRepository {
 /**
  * AssignResult — returned by `assignMember`. If the participant was already
  * on another team, `movedFrom` names the previous team; `null` means this
- * was a fresh assignment. Lets callers emit "moved from X to Y" feedback
- * without a second query.
+ * was a fresh assignment. `changed=false` means the assignment was already
+ * current and no write happened, so callers should not record a history event.
  */
-export type AssignResult = { teamId: string; movedFrom: string | null };
+export type AssignResult = { teamId: string; movedFrom: string | null; changed: boolean };
+export type UnassignResult = { teamId: string } | null;
 
 export interface TeamMemberRepository {
   listMembers(instanceId: WorkshopInstanceId): Promise<TeamMemberRecord[]>;
@@ -291,11 +313,16 @@ export interface TeamMemberRepository {
   unassignMember(
     instanceId: WorkshopInstanceId,
     participantId: string,
-  ): Promise<void>;
+  ): Promise<UnassignResult>;
   replaceMembers(
     instanceId: WorkshopInstanceId,
     members: TeamMemberRecord[],
   ): Promise<void>;
+}
+
+export interface TeamCompositionHistoryRepository {
+  list(instanceId: WorkshopInstanceId): Promise<TeamCompositionHistoryEvent[]>;
+  append(instanceId: WorkshopInstanceId, event: TeamCompositionHistoryEvent): Promise<void>;
 }
 
 export interface MonitoringSnapshotRepository {

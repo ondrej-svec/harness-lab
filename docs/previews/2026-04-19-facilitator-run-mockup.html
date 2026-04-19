@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facilitator · Run · Preview 2026-04-19</title>
+    <style>
+      :root {
+        --font-body: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Space Grotesk", "Avenir Next", sans-serif;
+
+        --surface: #faf4ed;
+        --surface-elevated: #f2e9e1;
+        --surface-panel: #fffaf3;
+        --surface-soft: rgba(255, 250, 243, 0.74);
+        --surface-hero: linear-gradient(180deg, #faf6f0 0%, #f5ece4 100%);
+
+        --text-primary: #575279;
+        --text-secondary: #797593;
+        --text-muted: #9893a5;
+
+        --border: rgba(87, 82, 121, 0.12);
+        --border-strong: rgba(87, 82, 121, 0.2);
+
+        --shadow-soft: 0 10px 24px rgba(87, 82, 121, 0.06);
+
+        --accent: #286983;
+        --accent-on: #faf4ed;
+        --accent-soft: rgba(40, 105, 131, 0.1);
+
+        --live: #56949f;
+        --live-soft: rgba(86, 148, 159, 0.12);
+
+        --warning: #b4637a;
+        --warning-soft: rgba(180, 99, 122, 0.1);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #232136;
+          --surface-elevated: #2a273f;
+          --surface-panel: #2a273f;
+          --surface-soft: rgba(57, 53, 82, 0.6);
+          --surface-hero: linear-gradient(180deg, #2f2a45 0%, #26223b 100%);
+
+          --text-primary: #e0def4;
+          --text-secondary: #908caa;
+          --text-muted: #6e6a86;
+
+          --border: rgba(224, 222, 244, 0.1);
+          --border-strong: rgba(224, 222, 244, 0.18);
+
+          --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.3);
+
+          --accent: #ea9a97;
+          --accent-on: #232136;
+          --accent-soft: rgba(234, 154, 151, 0.14);
+
+          --live: #9ccfd8;
+          --live-soft: rgba(156, 207, 216, 0.12);
+
+          --warning: #f6c177;
+          --warning-soft: rgba(246, 193, 119, 0.12);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        background: radial-gradient(circle at top left, rgba(40, 105, 131, 0.06), transparent 28%), var(--surface);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body { min-height: 100vh; }
+      h1, h2, h3 { margin: 0; font-family: var(--font-display); }
+      p { margin: 0; }
+      main {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 16px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+      .meta strong { color: var(--text-primary); }
+
+      .shell {
+        border-radius: 32px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        box-shadow: var(--shadow-soft);
+        overflow: hidden;
+      }
+
+      .hero {
+        display: grid;
+        gap: 18px;
+        padding: 24px;
+        background: var(--surface-hero);
+        border-bottom: 1px solid var(--border);
+      }
+      .hero-top {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: flex-start;
+      }
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      .hero h1 {
+        margin-top: 10px;
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
+      }
+      .hero p {
+        margin-top: 10px;
+        max-width: 58ch;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      .section-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .nav-pill {
+        border-radius: 999px;
+        border: 1px solid transparent;
+        padding: 9px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: transparent;
+      }
+      .nav-pill.active {
+        border-color: var(--border-strong);
+        background: var(--surface-soft);
+        color: var(--text-primary);
+      }
+
+      .summary {
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .summary-card {
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px 16px;
+      }
+      .summary-card .label {
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .summary-card .value {
+        margin-top: 6px;
+        font-size: 18px;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        font-weight: 600;
+      }
+      .summary-card .hint {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--text-secondary);
+      }
+
+      .canvas {
+        display: grid;
+        gap: 20px;
+        padding: 22px;
+        grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.9fr);
+      }
+
+      .stack { display: grid; gap: 18px; }
+      .panel {
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--surface-panel) 0%, var(--surface-elevated) 100%);
+        padding: 20px;
+      }
+      .panel h2 {
+        font-size: 1.3rem;
+        letter-spacing: -0.03em;
+      }
+      .panel .desc {
+        margin-top: 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .status-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        font-size: 12px;
+        font-weight: 700;
+      }
+      .pill.live {
+        border-color: color-mix(in srgb, var(--live) 36%, transparent);
+        background: var(--live-soft);
+        color: var(--live);
+      }
+      .pill.warning {
+        border-color: color-mix(in srgb, var(--warning) 34%, transparent);
+        background: var(--warning-soft);
+        color: var(--warning);
+      }
+
+      .big-title {
+        font-size: clamp(1.9rem, 3vw, 2.6rem);
+        letter-spacing: -0.05em;
+        line-height: 1;
+      }
+      .moment-meta {
+        margin-top: 14px;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .moment-meta .meta-card {
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px 15px;
+      }
+      .meta-card .label {
+        font-size: 10.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .meta-card .value {
+        margin-top: 6px;
+        color: var(--text-primary);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: var(--accent-on);
+        border-color: var(--accent);
+      }
+      .btn.secondary {
+        background: transparent;
+        color: var(--text-primary);
+        border-color: var(--border-strong);
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--text-secondary);
+      }
+
+      .timeline {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+      .timeline-row {
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 78px minmax(0, 1fr) auto;
+        align-items: start;
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px 15px;
+      }
+      .timeline-row.current {
+        border-color: color-mix(in srgb, var(--live) 30%, var(--border));
+        background: color-mix(in srgb, var(--live-soft) 68%, var(--surface-soft));
+      }
+      .timeline-row .time {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
+      .timeline-row .title {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .timeline-row .body {
+        margin-top: 4px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+      }
+      .timeline-row .link {
+        align-self: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .right-note {
+        display: grid;
+        gap: 16px;
+      }
+      .mini-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .mini-item {
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px 15px;
+      }
+      .mini-item .label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+      .mini-item .value {
+        margin-top: 6px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--text-primary);
+      }
+
+      .notes {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+      .note {
+        border-left: 3px solid var(--border-strong);
+        padding-left: 12px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .note strong { color: var(--text-primary); }
+
+      @media (max-width: 1020px) {
+        .summary,
+        .moment-meta,
+        .canvas {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="meta">
+        <span>Phase 0 artifact</span>
+        <span>•</span>
+        <strong>Run proof slice</strong>
+        <span>•</span>
+        <span>Default control-room surface after the revamp</span>
+      </div>
+
+      <section class="shell">
+        <header class="hero">
+          <div class="hero-top">
+            <div>
+              <div class="eyebrow">Facilitator desk / one event</div>
+              <h1>Run answers the room-first question</h1>
+              <p>
+                The first screen stops acting like an editor. It shows what is live, what comes next,
+                which participant-facing state matters, and the one safe action to take now.
+              </p>
+            </div>
+
+            <div class="section-nav" aria-label="new control-room sections">
+              <span class="nav-pill active">run</span>
+              <span class="nav-pill">people</span>
+              <span class="nav-pill">access</span>
+              <span class="nav-pill">settings</span>
+            </div>
+          </div>
+
+          <div class="summary">
+            <div class="summary-card">
+              <div class="label">Live now</div>
+              <div class="value">11:15 checkpoint round</div>
+              <div class="hint">The room is in live critique and repo evidence collection.</div>
+            </div>
+            <div class="summary-card">
+              <div class="label">Next</div>
+              <div class="value">11:45 rotation prep</div>
+              <div class="hint">The next move depends on whether teams are ready to reshuffle.</div>
+            </div>
+            <div class="summary-card">
+              <div class="label">Participant state</div>
+              <div class="value">Continuation hidden</div>
+              <div class="hint">Only appears here because the next handoff moment owns it.</div>
+            </div>
+            <div class="summary-card">
+              <div class="label">People</div>
+              <div class="value">24 participants / 6 teams</div>
+              <div class="hint">Enough context to know whether a people-side intervention is needed.</div>
+            </div>
+          </div>
+        </header>
+
+        <div class="canvas">
+          <div class="stack">
+            <section class="panel">
+              <div class="status-row">
+                <span class="pill live">Live now</span>
+                <span class="pill warning">Current moment owns the next action</span>
+              </div>
+              <h2 class="big-title">Checkpoint round: gather concrete repo evidence, not opinions</h2>
+              <p class="desc">
+                Facilitator detail stays operational. The card explains the job of the current moment,
+                not how the moment is authored or where its runtime copy is stored.
+              </p>
+
+              <div class="moment-meta">
+                <div class="meta-card">
+                  <div class="label">Room should see</div>
+                  <div class="value">Checkpoint framing scene with one prompt and one timer cue.</div>
+                </div>
+                <div class="meta-card">
+                  <div class="label">Safe next action</div>
+                  <div class="value">Move live marker only when enough teams have named evidence.</div>
+                </div>
+                <div class="meta-card">
+                  <div class="label">Handoff context</div>
+                  <div class="value">Rotation is next, so participant reveal status is still relevant.</div>
+                </div>
+              </div>
+
+              <div class="actions">
+                <span class="btn primary">Move live marker</span>
+                <span class="btn secondary">Open presenter</span>
+                <span class="btn ghost">Open participant surface</span>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="eyebrow">Agenda spine</div>
+              <h2>Current and next moments stay in one readable timeline</h2>
+              <p class="desc">
+                The timeline is still the navigation model, but its rows read as operating objects rather
+                than editable documents. The row actions are inspect / move-live, not inline editing.
+              </p>
+
+              <div class="timeline">
+                <article class="timeline-row">
+                  <div class="time">10:45</div>
+                  <div>
+                    <div class="title">Build sprint</div>
+                    <div class="body">Still visible in the spine, but already resolved.</div>
+                  </div>
+                  <div class="link">done</div>
+                </article>
+
+                <article class="timeline-row current">
+                  <div class="time">11:15</div>
+                  <div>
+                    <div class="title">Checkpoint round</div>
+                    <div class="body">Focused view because it is live. Presenter launch is attached here.</div>
+                  </div>
+                  <div class="link">view</div>
+                </article>
+
+                <article class="timeline-row">
+                  <div class="time">11:45</div>
+                  <div>
+                    <div class="title">Rotation prep</div>
+                    <div class="body">Next card carries the continuation signal and the lead-in to People.</div>
+                  </div>
+                  <div class="link">next</div>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <aside class="right-note">
+            <section class="panel">
+              <div class="eyebrow">What is intentionally gone</div>
+              <h2>No editing furniture on the live canvas</h2>
+              <div class="mini-list">
+                <div class="mini-item">
+                  <div class="label">Removed</div>
+                  <div class="value">Inline title / time / room-summary fields</div>
+                </div>
+                <div class="mini-item">
+                  <div class="label">Removed</div>
+                  <div class="value">Scene-stage authoring rails and scene edit sheets in the default flow</div>
+                </div>
+                <div class="mini-item">
+                  <div class="label">Removed</div>
+                  <div class="value">Repo seed / storage-location explanation panel on the main canvas</div>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="eyebrow">Design-system note</div>
+              <h2>Reused rules vs. doc follow-through</h2>
+              <div class="notes">
+                <div class="note">
+                  <strong>Reused unchanged:</strong> calm-before-clever styling, iPad-first composition,
+                  explicit action hierarchy, mobile-safe summary cards, and the agenda spine as navigation.
+                </div>
+                <div class="note">
+                  <strong>Docs to update:</strong> facilitator product contract, control-room default surface,
+                  and surface model text that still treats agenda/scene authoring as dashboard work.
+                </div>
+                <div class="note">
+                  <strong>Proof-slice test implication:</strong> the dominant Playwright path becomes
+                  “land on Run, confirm current/next/safe-action, open presenter, move live.”
+                </div>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

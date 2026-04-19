@@ -37,7 +37,7 @@ export function SignalsSection({
       >
         <form action={addCheckpointFeedAction} className="grid gap-3 lg:grid-cols-2">
           <input name="lang" type="hidden" value={lang} />
-          <input name="section" type="hidden" value="signals" />
+          <input name="section" type="hidden" value="run" />
           <input name="instanceId" type="hidden" value={instanceId} />
           <select name="teamId" className={adminInputClassName}>
             {state.teams.map((team) => (
@@ -78,7 +78,7 @@ export function SignalsSection({
       >
         <form action={completeChallengeAction} className="space-y-3">
           <input name="lang" type="hidden" value={lang} />
-          <input name="section" type="hidden" value="signals" />
+          <input name="section" type="hidden" value="run" />
           <input name="instanceId" type="hidden" value={instanceId} />
           <select name="teamId" className={adminInputClassName}>
             {state.teams.map((team) => (

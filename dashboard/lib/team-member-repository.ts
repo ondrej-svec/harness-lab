@@ -63,7 +63,7 @@ export class FileTeamMemberRepository implements TeamMemberRepository {
 
     // Idempotent on same team: keep the original row unchanged.
     if (existing && existing.teamId === assignment.teamId) {
-      return { teamId: assignment.teamId, movedFrom: null };
+      return { teamId: assignment.teamId, movedFrom: null, changed: false };
     }
 
     const withoutParticipant = items.filter(
@@ -71,16 +71,18 @@ export class FileTeamMemberRepository implements TeamMemberRepository {
     );
     const nextItems = [...withoutParticipant, assignment];
     await this.replaceMembers(instanceId, nextItems);
-    return { teamId: assignment.teamId, movedFrom };
+    return { teamId: assignment.teamId, movedFrom, changed: true };
   }
 
   async unassignMember(instanceId: string, participantId: string) {
     const items = await this.readAll(instanceId);
+    const existing = items.find((m) => m.participantId === participantId) ?? null;
     const nextItems = items.filter((m) => m.participantId !== participantId);
     if (nextItems.length === items.length) {
-      return; // already unassigned — idempotent
+      return null; // already unassigned — idempotent
     }
     await this.replaceMembers(instanceId, nextItems);
+    return existing ? { teamId: existing.teamId } : null;
   }
 
   async replaceMembers(instanceId: string, members: TeamMemberRecord[]) {
@@ -166,7 +168,7 @@ export class NeonTeamMemberRepository implements TeamMemberRepository {
 
     const previousTeamId = existingRows[0]?.team_id ?? null;
     if (previousTeamId === assignment.teamId) {
-      return { teamId: assignment.teamId, movedFrom: null };
+      return { teamId: assignment.teamId, movedFrom: null, changed: false };
     }
 
     if (previousTeamId !== null) {
@@ -190,15 +192,31 @@ export class NeonTeamMemberRepository implements TeamMemberRepository {
       ],
     );
 
-    return { teamId: assignment.teamId, movedFrom: previousTeamId };
+    return { teamId: assignment.teamId, movedFrom: previousTeamId, changed: true };
   }
 
   async unassignMember(instanceId: string, participantId: string) {
     const sql = getNeonSql();
+    const existingRows = (await sql.query(
+      `
+        SELECT team_id
+        FROM team_members
+        WHERE instance_id = $1 AND participant_id = $2
+      `,
+      [instanceId, participantId],
+    )) as { team_id: string }[];
+
+    const previousTeamId = existingRows[0]?.team_id ?? null;
+    if (!previousTeamId) {
+      return null;
+    }
+
     await sql.query(
       `DELETE FROM team_members WHERE instance_id = $1 AND participant_id = $2`,
       [instanceId, participantId],
     );
+
+    return { teamId: previousTeamId };
   }
 
   async replaceMembers(instanceId: string, members: TeamMemberRecord[]) {

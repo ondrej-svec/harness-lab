@@ -136,7 +136,7 @@ export function ControlRoomHeader({
                 teamId: selectedTeamId,
                 agendaItemId: showAgendaDetail ? selectedAgendaItemId : null,
                 sceneId: showAgendaDetail ? selectedSceneId : null,
-                overlay: visibleSection === "agenda" ? activeOverlay : null,
+                overlay: visibleSection === "run" ? activeOverlay : null,
               })}
               enHref={buildAdminHref({
                 lang: "en",
@@ -145,7 +145,7 @@ export function ControlRoomHeader({
                 teamId: selectedTeamId,
                 agendaItemId: showAgendaDetail ? selectedAgendaItemId : null,
                 sceneId: showAgendaDetail ? selectedSceneId : null,
-                overlay: visibleSection === "agenda" ? activeOverlay : null,
+                overlay: visibleSection === "run" ? activeOverlay : null,
               })}
             />
             <span>/</span>
@@ -161,9 +161,8 @@ export function ControlRoomHeader({
         </div>
 
         <nav className="grid grid-cols-2 gap-2 border-t border-[var(--border)] pt-4 sm:flex sm:flex-wrap sm:gap-x-3 sm:gap-y-3 xl:hidden">
-          <AdminSectionLink lang={lang} section="agenda" activeSection={visibleSection} label={copy.navAgenda} instanceId={instanceId} />
-          <AdminSectionLink lang={lang} section="teams" activeSection={visibleSection} label={copy.navTeams} instanceId={instanceId} />
-          <AdminSectionLink lang={lang} section="signals" activeSection={visibleSection} label={copy.navSignals} instanceId={instanceId} />
+          <AdminSectionLink lang={lang} section="run" activeSection={visibleSection} label={copy.navAgenda} instanceId={instanceId} />
+          <AdminSectionLink lang={lang} section="people" activeSection={visibleSection} label={copy.navPeople} instanceId={instanceId} />
           <AdminSectionLink lang={lang} section="access" activeSection={visibleSection} label={copy.navAccess} instanceId={instanceId} />
           <AdminSectionLink lang={lang} section="settings" activeSection={visibleSection} label={copy.navSettings} instanceId={instanceId} />
         </nav>

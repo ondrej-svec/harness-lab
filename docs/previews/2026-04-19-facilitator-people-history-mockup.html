@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facilitator · People With History · Preview 2026-04-19</title>
+    <style>
+      :root {
+        --font-body: "Manrope", "Segoe UI", sans-serif;
+        --font-display: "Space Grotesk", "Avenir Next", sans-serif;
+
+        --surface: #faf4ed;
+        --surface-elevated: #f2e9e1;
+        --surface-panel: #fffaf3;
+        --surface-soft: rgba(255, 250, 243, 0.74);
+
+        --text-primary: #575279;
+        --text-secondary: #797593;
+        --text-muted: #9893a5;
+
+        --border: rgba(87, 82, 121, 0.12);
+        --border-strong: rgba(87, 82, 121, 0.2);
+        --shadow-soft: 0 10px 24px rgba(87, 82, 121, 0.06);
+
+        --accent: #286983;
+        --accent-on: #faf4ed;
+        --accent-soft: rgba(40, 105, 131, 0.1);
+
+        --history: #907aa9;
+        --history-soft: rgba(144, 122, 169, 0.1);
+        --ok: #56949f;
+        --ok-soft: rgba(86, 148, 159, 0.1);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #232136;
+          --surface-elevated: #2a273f;
+          --surface-panel: #2a273f;
+          --surface-soft: rgba(57, 53, 82, 0.6);
+
+          --text-primary: #e0def4;
+          --text-secondary: #908caa;
+          --text-muted: #6e6a86;
+
+          --border: rgba(224, 222, 244, 0.1);
+          --border-strong: rgba(224, 222, 244, 0.18);
+          --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.3);
+
+          --accent: #ea9a97;
+          --accent-on: #232136;
+          --accent-soft: rgba(234, 154, 151, 0.14);
+
+          --history: #c4a7e7;
+          --history-soft: rgba(196, 167, 231, 0.12);
+          --ok: #9ccfd8;
+          --ok-soft: rgba(156, 207, 216, 0.12);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        background: radial-gradient(circle at top right, rgba(144, 122, 169, 0.06), transparent 24%), var(--surface);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      body { min-height: 100vh; }
+      h1, h2, h3 { margin: 0; font-family: var(--font-display); }
+      p { margin: 0; }
+      main {
+        max-width: 1260px;
+        margin: 0 auto;
+        padding: 24px 20px 80px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 16px;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+      .meta strong { color: var(--text-primary); }
+
+      .shell {
+        border-radius: 32px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        box-shadow: var(--shadow-soft);
+        padding: 24px;
+      }
+      .head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+      }
+      h1 {
+        margin-top: 10px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        line-height: 0.98;
+        letter-spacing: -0.05em;
+      }
+      .head p {
+        margin-top: 10px;
+        max-width: 60ch;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .summary-pill {
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 10px 14px;
+        font-size: 13px;
+        color: var(--text-secondary);
+      }
+      .summary-pill strong { color: var(--text-primary); }
+
+      .layout {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+        align-items: start;
+      }
+      .stack { display: grid; gap: 18px; }
+      .panel {
+        border-radius: 24px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--surface-panel) 0%, var(--surface-elevated) 100%);
+        padding: 20px;
+      }
+      .panel h2 {
+        font-size: 1.3rem;
+        letter-spacing: -0.03em;
+      }
+      .panel .desc {
+        margin-top: 8px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .toolbar {
+        margin-top: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: var(--accent-on);
+        border-color: var(--accent);
+      }
+      .btn.secondary {
+        background: transparent;
+        color: var(--text-primary);
+        border-color: var(--border-strong);
+      }
+
+      .board {
+        margin-top: 18px;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .column {
+        border-radius: 22px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px;
+      }
+      .column .label {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .column .label strong {
+        font-size: 15px;
+        letter-spacing: -0.02em;
+      }
+      .column .count {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+      .person {
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        background: var(--surface-panel);
+        padding: 12px;
+      }
+      .person + .person { margin-top: 10px; }
+      .person .name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+      .person .meta-line {
+        margin-top: 5px;
+        font-size: 12px;
+        line-height: 1.45;
+        color: var(--text-secondary);
+      }
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        padding: 5px 8px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 700;
+        border: 1px solid color-mix(in srgb, var(--ok) 26%, transparent);
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+
+      .history-list {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+      }
+      .history-item {
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface-soft);
+        padding: 14px 15px;
+      }
+      .history-item .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .history-item .type {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--history) 28%, transparent);
+        background: var(--history-soft);
+        color: var(--history);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+      .history-item .when {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+      .history-item .body {
+        margin-top: 10px;
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--text-primary);
+      }
+      .history-item .note {
+        margin-top: 6px;
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+      }
+
+      .schema {
+        margin-top: 16px;
+        display: grid;
+        gap: 10px;
+      }
+      .schema-row {
+        border-left: 3px solid var(--border-strong);
+        padding-left: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--text-secondary);
+      }
+      .schema-row code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        color: var(--text-primary);
+      }
+      .schema-row strong { color: var(--text-primary); }
+
+      @media (max-width: 1020px) {
+        .layout,
+        .board {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="meta">
+        <span>Phase 0 artifact</span>
+        <span>•</span>
+        <strong>People + team history</strong>
+        <span>•</span>
+        <span>Live team operations stay first-class</span>
+      </div>
+
+      <section class="shell">
+        <header class="head">
+          <div>
+            <div class="eyebrow">Facilitator desk / one event</div>
+            <h1>People keeps the operating work and adds memory</h1>
+            <p>
+              Team shaping stays in-product because it is part of the workshop method. The new addition is a durable
+              history seam so the facilitator can explain how the room changed across one or more rotations.
+            </p>
+          </div>
+          <div class="summary">
+            <span class="summary-pill"><strong>24</strong> active participants</span>
+            <span class="summary-pill"><strong>6</strong> teams</span>
+            <span class="summary-pill"><strong>2</strong> rotation markers today</span>
+          </div>
+        </header>
+
+        <div class="layout">
+          <div class="stack">
+            <section class="panel">
+              <div class="eyebrow">Current state</div>
+              <h2>Team board still reads like live operations, not admin bookkeeping</h2>
+              <p class="desc">
+                Intake, assignment, drag/drop, and randomization remain here. This surface absorbs the old `teams`
+                operations that matter on the day, instead of splitting people and teams into competing sections.
+              </p>
+
+              <div class="toolbar">
+                <span class="btn primary">Add people to pool</span>
+                <span class="btn secondary">Reshuffle teams</span>
+                <span class="btn secondary">Mark rotation 2 start</span>
+              </div>
+
+              <div class="board">
+                <div class="column">
+                  <div class="label">
+                    <strong>Pool</strong>
+                    <span class="count">3 unassigned</span>
+                  </div>
+                  <div class="person">
+                    <div class="name">Ada Lovelace</div>
+                    <div class="meta-line">Backend / consent ok / waiting for rotation 2</div>
+                    <div class="tag">ready to assign</div>
+                  </div>
+                  <div class="person">
+                    <div class="name">Linus Torvalds</div>
+                    <div class="meta-line">Platform / no follow-up / late arrival</div>
+                    <div class="tag">late arrival</div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="label">
+                    <strong>Team Atlas</strong>
+                    <span class="count">4 members</span>
+                  </div>
+                  <div class="person">
+                    <div class="name">Eva Novak</div>
+                    <div class="meta-line">Moved here during rotation 1 to balance frontend capacity</div>
+                  </div>
+                  <div class="person">
+                    <div class="name">Jan Svoboda</div>
+                    <div class="meta-line">Original member / repo steward</div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="label">
+                    <strong>Team Beacon</strong>
+                    <span class="count">4 members</span>
+                  </div>
+                  <div class="person">
+                    <div class="name">Tereza Malik</div>
+                    <div class="meta-line">Rotation 2 anchor / participant spokesperson</div>
+                  </div>
+                  <div class="person">
+                    <div class="name">Marek Dolezal</div>
+                    <div class="meta-line">Joined from pool after continuation shift</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="stack">
+            <section class="panel">
+              <div class="eyebrow">History timeline</div>
+              <h2>One append-only stream, grouped by rotation markers</h2>
+              <p class="desc">
+                The history is operational. It answers “how did this team end up here?” without turning into analytics.
+                Current membership still comes from `team_members`; the timeline comes from a separate event log.
+              </p>
+
+              <div class="history-list">
+                <article class="history-item">
+                  <div class="row">
+                    <span class="type">rotation marker</span>
+                    <span class="when">11:48 · facilitator</span>
+                  </div>
+                  <div class="body">Rotation 2 started after checkpoint review.</div>
+                  <div class="note">Note: preserve one repo anchor per team, then absorb late arrivals.</div>
+                </article>
+
+                <article class="history-item">
+                  <div class="row">
+                    <span class="type">moved</span>
+                    <span class="when">11:51 · facilitator</span>
+                  </div>
+                  <div class="body">Eva Novak moved from Team Beacon to Team Atlas.</div>
+                  <div class="note">Reason: Team Atlas needed frontend depth for presenter polish.</div>
+                </article>
+
+                <article class="history-item">
+                  <div class="row">
+                    <span class="type">assigned</span>
+                    <span class="when">11:53 · facilitator</span>
+                  </div>
+                  <div class="body">Marek Dolezal assigned from pool to Team Beacon.</div>
+                  <div class="note">Late arrival merged into the team with the clearest starter path.</div>
+                </article>
+
+                <article class="history-item">
+                  <div class="row">
+                    <span class="type">unassigned</span>
+                    <span class="when">12:02 · facilitator</span>
+                  </div>
+                  <div class="body">Linus Torvalds moved back to pool.</div>
+                  <div class="note">Temporary unassignment during brief device setup reset.</div>
+                </article>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="eyebrow">Model note</div>
+              <h2>History contract preview</h2>
+              <div class="schema">
+                <div class="schema-row">
+                  <strong>Current truth stays:</strong> <code>team_members</code> remains the current membership source.
+                </div>
+                <div class="schema-row">
+                  <strong>New seam:</strong> append-only history rows record <code>instance_id</code>, <code>participant_id</code>,
+                  <code>from_team_id</code>, <code>to_team_id</code>, <code>captured_at</code>, <code>actor_kind</code>, and optional
+                  <code>rotation_id</code> / <code>note</code>.
+                </div>
+                <div class="schema-row">
+                  <strong>Reused unchanged:</strong> current People interaction model, drag/drop, randomize action, and the calm dashboard surface language.
+                </div>
+                <div class="schema-row">
+                  <strong>Docs to update:</strong> facilitator product rules, control-room section map, and testing notes for the new browser path that proves history visibility after a move.
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -95,7 +95,7 @@ export function SceneStageRail({
     id: scene.id,
     href: buildAdminHref({
       lang,
-      section: "agenda",
+      section: "run",
       instanceId,
       agendaItemId: item.id,
       sceneId: scene.id,
@@ -127,7 +127,7 @@ export function SceneStageRail({
                   isDefault={scene.id === defaultSceneId}
                   href={buildAdminHref({
                     lang,
-                    section: "agenda",
+                    section: "run",
                     instanceId,
                     agendaItemId: item.id,
                     sceneId: scene.id,
@@ -253,7 +253,7 @@ function SceneStagePanel({
   const surfaceLabel = participantOnly ? copy.participantSurfaceCardTitle : copy.presenterCardTitle;
   const sceneEditorHref = buildAdminHref({
     lang,
-    section: "agenda",
+    section: "run",
     instanceId,
     agendaItemId: item.id,
     sceneId: scene.id,
@@ -369,7 +369,7 @@ function SceneStagePanel({
               </summary>
               <div className="absolute right-0 z-10 mt-2 flex w-56 flex-col gap-1 rounded-[18px] border border-[var(--border-strong)] bg-[var(--surface)] p-2 shadow-[0_18px_36px_rgba(28,25,23,0.12)]">
                 <form action={movePresenterSceneAction}>
-                  <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                  <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                   <input name="agendaItemId" type="hidden" value={item.id} />
                   <input name="sceneId" type="hidden" value={scene.id} />
                   <input name="direction" type="hidden" value="up" />
@@ -378,7 +378,7 @@ function SceneStagePanel({
                   </AdminSubmitButton>
                 </form>
                 <form action={movePresenterSceneAction}>
-                  <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                  <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                   <input name="agendaItemId" type="hidden" value={item.id} />
                   <input name="sceneId" type="hidden" value={scene.id} />
                   <input name="direction" type="hidden" value="down" />
@@ -388,7 +388,7 @@ function SceneStagePanel({
                 </form>
                 {!isDefault ? (
                   <form action={setDefaultPresenterSceneAction}>
-                    <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                    <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                     <input name="agendaItemId" type="hidden" value={item.id} />
                     <input name="sceneId" type="hidden" value={scene.id} />
                     <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start`}>
@@ -397,7 +397,7 @@ function SceneStagePanel({
                   </form>
                 ) : null}
                 <form action={togglePresenterSceneEnabledAction}>
-                  <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                  <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                   <input name="agendaItemId" type="hidden" value={item.id} />
                   <input name="sceneId" type="hidden" value={scene.id} />
                   <input name="enabled" type="hidden" value={scene.enabled ? "false" : "true"} />
@@ -409,7 +409,7 @@ function SceneStagePanel({
                   blocks / sources →
                 </AdminRouteLink>
                 <form action={removePresenterSceneAction}>
-                  <AdminActionStateFields lang={lang} section="agenda" instanceId={instanceId} />
+                  <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
                   <input name="agendaItemId" type="hidden" value={item.id} />
                   <input name="sceneId" type="hidden" value={scene.id} />
                   <AdminSubmitButton className={`${adminGhostButtonClassName} w-full justify-start text-[var(--border-strong)]`}>

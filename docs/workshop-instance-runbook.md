@@ -70,15 +70,17 @@ For four hackathons under one company, configure each event as a separate privat
 ### 3. Run
 
 During the workshop, facilitator uses the control plane to:
-- move agenda phase
-- locally edit agenda wording, timing, or one-off instance-only items
+- run the live workshop from the `Run`, `People`, `Access`, and `Settings` sections
+- move the live workshop moment
 - register teams and repos
-- capture sprint updates
-- update checkpoints
-- reveal the continuation window at the right time
+- review team-composition history when reshaping teams
+- capture sprint updates and challenge completion signals
+- reveal the continuation window at the right time from the live handoff context or the secondary recovery path
 - review monitoring snapshots
 - confirm the participant event code still works when onboarding late arrivals
 - rotate the event code if it leaks or needs emergency reset
+
+Agenda and presenter-scene changes do not happen through the dashboard UI anymore. For those changes, use the facilitator CLI/agent paths that call the instance-scoped runtime APIs directly.
 
 Operator note:
 - after a facilitator rotates participant access, the runtime keeps the hash as the durable record; the newly issued raw code should be copied from the protected response at that time rather than expected to remain perpetually revealable later

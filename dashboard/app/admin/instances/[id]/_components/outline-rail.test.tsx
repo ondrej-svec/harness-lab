@@ -21,32 +21,31 @@ const agendaItems: OutlineAgendaItem[] = [
 ];
 
 describe("OutlineRail", () => {
-  it("renders the 5 section links with the expected Czech copy", () => {
+  it("renders the 4 section links with the expected Czech copy", () => {
     const html = renderToStaticMarkup(
       <OutlineRail
         lang="cs"
         instanceId="sample-studio-a"
-        activeSection="agenda"
+        activeSection="run"
         activeAgendaItemId="talk"
         workshopLabel="sample-lab-a"
         agendaItems={agendaItems}
         copy={adminCopy.cs}
       />
     );
-    // All 5 section labels from adminCopy.cs should be present
+    // All 4 control-room section labels should be present.
     expect(html).toContain(adminCopy.cs.navAgenda);
-    expect(html).toContain(adminCopy.cs.navTeams);
-    expect(html).toContain(adminCopy.cs.navSignals);
+    expect(html).toContain(adminCopy.cs.navPeople);
     expect(html).toContain(adminCopy.cs.navAccess);
     expect(html).toContain(adminCopy.cs.navSettings);
   });
 
-  it("nests agenda items under Agenda when Agenda is active", () => {
+  it("nests agenda items under Run when Run is active", () => {
     const html = renderToStaticMarkup(
       <OutlineRail
         lang="cs"
         instanceId="sample-studio-a"
-        activeSection="agenda"
+        activeSection="run"
         activeAgendaItemId="talk"
         workshopLabel="sample-lab-a"
         agendaItems={agendaItems}
@@ -67,7 +66,7 @@ describe("OutlineRail", () => {
       <OutlineRail
         lang="cs"
         instanceId="sample-studio-a"
-        activeSection="teams"
+        activeSection="people"
         activeAgendaItemId={null}
         workshopLabel="sample-lab-a"
         agendaItems={agendaItems}
@@ -83,7 +82,7 @@ describe("OutlineRail", () => {
       <OutlineRail
         lang="cs"
         instanceId="sample-studio-a"
-        activeSection="agenda"
+        activeSection="run"
         activeAgendaItemId={null}
         workshopLabel="sample-lab-a"
         agendaItems={agendaItems}
@@ -98,7 +97,7 @@ describe("OutlineRail", () => {
       <OutlineRail
         lang="cs"
         instanceId="sample-studio-a"
-        activeSection="agenda"
+        activeSection="run"
         activeAgendaItemId={null}
         workshopLabel="distinctive-workshop-id"
         agendaItems={agendaItems}

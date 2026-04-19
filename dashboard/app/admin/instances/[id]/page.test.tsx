@@ -206,16 +206,15 @@ describe("Admin control room page", () => {
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+      searchParams: Promise.resolve({ lang: "en", section: "run", agendaItem: "talk" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain('name="agendaId"');
-    expect(html).toContain(adminCopy.en.agendaFieldTime);
-    // The CS-native content ships with "Řemeslo pod povrchem" for Talk; the
-    // inline field renders the value inside a <button>, so we just assert
-    // the label appears somewhere on the page (no more hidden input check).
+    expect(html).toContain(adminCopy.en.agendaRunnerTitle);
+    expect(html).toContain(adminCopy.en.agendaRunnerSayTitle);
     expect(html).toContain("Řemeslo");
+    expect(html).not.toContain(adminCopy.en.runtimeCopyBadge);
+    expect(html).not.toContain(adminCopy.en.agendaSourceBody);
   });
 
   it("renders the selected agenda moment as a dedicated detail workbench", async () => {
@@ -227,7 +226,7 @@ describe("Admin control room page", () => {
     // scenes from every phase.
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "opening" }),
+      searchParams: Promise.resolve({ lang: "en", section: "run", agendaItem: "opening" }),
     });
     const html = renderToStaticMarkup(view);
 
@@ -236,21 +235,19 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.agendaRunnerTitle);
     expect(html).toContain(adminCopy.en.agendaRunnerSayTitle);
     expect(html).toContain(adminCopy.en.agendaRunnerShowTitle);
-    expect(html).toContain(adminCopy.en.agendaDetailSourceMaterialTitle);
-    expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
-    expect(html).toContain(adminCopy.en.presenterOpenParticipantButton);
+    expect(html).not.toContain(adminCopy.en.agendaDetailSourceMaterialTitle);
     expect(html).toContain("Úvod a\u00a0naladění");
-    expect(html).not.toContain(adminCopy.en.openAgendaDetailButton);
+    expect(html).toContain(adminCopy.en.agendaJumpToLiveButton);
   });
 
-  it("renders the scene editor sheet for the selected presenter scene", async () => {
+  it("ignores the old scene-editor overlay on run", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
       searchParams: Promise.resolve({
         lang: "en",
-        section: "agenda",
+        section: "run",
         agendaItem: "talk",
         scene: "talk-argued-about-prompts",
         overlay: "scene-edit",
@@ -258,13 +255,9 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.sceneEditTitle);
-    expect(html).toContain(adminCopy.en.sceneFieldBlocks);
-    expect(html).toContain("Block editor");
-    expect(html).toContain("Add block");
-    expect(html).toContain(adminCopy.en.presenterSetDefaultSceneButton);
-    expect(html).toContain('name="sceneId"');
-    expect(html).toContain('value="talk-argued-about-prompts"');
+    expect(html).not.toContain(adminCopy.en.sceneEditTitle);
+    expect(html).not.toContain(adminCopy.en.sceneFieldBlocks);
+    expect(html).toContain(adminCopy.en.agendaRunnerTitle);
   });
 
   it("keeps persistent runtime context visible outside the live section", async () => {
@@ -272,7 +265,7 @@ describe("Admin control room page", () => {
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "agenda", agendaItem: "talk" }),
+      searchParams: Promise.resolve({ lang: "en", section: "run", agendaItem: "talk" }),
     });
     const html = renderToStaticMarkup(view);
 
@@ -285,29 +278,12 @@ describe("Admin control room page", () => {
     expect(html).toContain("20-participants");
   });
 
-  it("renders team cards with inline editing in the teams section", async () => {
+  it("renders the structured evidence fields on run instead of a separate signals section", async () => {
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "teams", team: "t3" }),
-    });
-    const html = renderToStaticMarkup(view);
-
-    expect(html).toContain(adminCopy.en.registerTeamTitle);
-    expect(html).toContain(adminCopy.en.createTeamButton);
-    expect(html).toContain("Tým 3");
-    expect(html).toContain("https://github.com/example/code-review-helper");
-    expect(html).toContain('value="t3"');
-    expect(html).toContain(adminCopy.en.checkpointFormHint);
-  });
-
-  it("renders structured evidence fields in the signals section", async () => {
-    const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
-
-    const view = await AdminControlRoomPage({
-      params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", section: "signals" }),
+      searchParams: Promise.resolve({ lang: "en", section: "run" }),
     });
     const html = renderToStaticMarkup(view);
 

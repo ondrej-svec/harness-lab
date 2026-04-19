@@ -28,10 +28,8 @@ type OutlineRailProps = {
 };
 
 const SECTIONS: readonly { key: AdminSection; copyKey: keyof (typeof adminCopy)["cs"] }[] = [
-  { key: "agenda", copyKey: "navAgenda" },
-  { key: "teams", copyKey: "navTeams" },
+  { key: "run", copyKey: "navAgenda" },
   { key: "people", copyKey: "navPeople" },
-  { key: "signals", copyKey: "navSignals" },
   { key: "access", copyKey: "navAccess" },
   { key: "settings", copyKey: "navSettings" },
 ];
@@ -75,12 +73,12 @@ export function OutlineRail({
                 >
                   {label}
                 </AdminRouteLink>
-                {key === "agenda" && active && agendaItems.length > 0 ? (
+                {key === "run" && active && agendaItems.length > 0 ? (
                   <ul className="relative mt-1.5 ml-3 space-y-0.5 border-l border-[var(--border)] pl-4">
                     {agendaItems.map((item) => {
                       const itemHref = buildAdminHref({
                         lang,
-                        section: "agenda",
+                        section: "run",
                         instanceId,
                         agendaItemId: item.id,
                       });

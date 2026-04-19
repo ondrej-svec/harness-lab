@@ -4,12 +4,9 @@ import { ControlRoomHeader } from "./_components/control-room-header";
 import { ControlRoomPersistentSummary } from "./_components/control-room-summary";
 import { OutlineRail } from "./_components/outline-rail";
 import { AccessSection } from "./_components/sections/access-section";
-import { AgendaSection } from "./_components/sections/agenda-section";
 import { PeopleSection } from "./_components/sections/people-section";
+import { RunSection } from "./_components/sections/run-section";
 import { SettingsSection } from "./_components/sections/settings-section";
-import { SignalsSection } from "./_components/sections/signals-section";
-import { TeamsSection } from "./_components/sections/teams-section";
-import { AgendaSheetOverlays } from "./_components/sheets/agenda-sheet-overlays";
 import { loadAdminPageViewModel, type AdminPageSearchParams } from "./_lib/admin-page-loader";
 
 export const dynamic = "force-dynamic";
@@ -83,8 +80,8 @@ export default async function AdminPage({
           />
 
           <div className="space-y-6 2xl:space-y-7">
-            {vm.visibleSection === "agenda" ? (
-              <AgendaSection
+            {vm.visibleSection === "run" ? (
+              <RunSection
                 lang={vm.lang}
                 copy={vm.copy}
                 instanceId={instanceId}
@@ -92,33 +89,14 @@ export default async function AdminPage({
                 selectedAgendaItem={vm.selectedAgendaItem ?? null}
                 currentAgendaItem={vm.currentAgendaItem ?? null}
                 nextAgendaItem={vm.nextAgendaItem ?? null}
-                roomScenes={vm.roomScenes}
-                participantScenes={vm.participantScenes}
-                selectedRoomScene={vm.selectedRoomScene}
-                selectedParticipantScene={vm.selectedParticipantScene}
-                selectedDefaultScene={vm.selectedDefaultScene}
-                showAgendaDetail={vm.showAgendaDetail}
                 overviewState={vm.overviewState}
                 rotationSignals={vm.rotationSignals}
-                contextualHandoffItem={vm.contextualHandoffItem}
                 handoffIsLive={vm.handoffIsLive}
                 selectedAgendaOwnsHandoffControls={vm.selectedAgendaOwnsHandoffControls}
                 handoffAgendaHref={vm.handoffAgendaHref}
-                agendaIndexHref={vm.agendaIndexHref}
                 liveAgendaHref={vm.liveAgendaHref}
                 selectedAgendaProjectionHref={vm.selectedAgendaProjectionHref}
                 selectedAgendaParticipantMirrorHref={vm.selectedAgendaParticipantMirrorHref}
-              />
-            ) : null}
-
-            {vm.activeSection === "teams" ? (
-              <TeamsSection
-                lang={vm.lang}
-                copy={vm.copy}
-                instanceId={instanceId}
-                state={vm.state}
-                selectedTeam={vm.selectedTeam}
-                selectedTeamCheckpoint={vm.selectedTeamCheckpoint}
               />
             ) : null}
 
@@ -129,10 +107,6 @@ export default async function AdminPage({
                 instanceId={instanceId}
                 teams={vm.state.teams}
               />
-            ) : null}
-
-            {vm.activeSection === "signals" ? (
-              <SignalsSection lang={vm.lang} copy={vm.copy} instanceId={instanceId} state={vm.state} />
             ) : null}
 
             {vm.activeSection === "access" ? (
@@ -170,20 +144,6 @@ export default async function AdminPage({
           </div>
         </div>
       </div>
-      {vm.visibleSection === "agenda" ? (
-        <AgendaSheetOverlays
-          lang={vm.lang}
-          copy={vm.copy}
-          instanceId={instanceId}
-          activeOverlay={vm.activeOverlay}
-          showAgendaDetail={vm.showAgendaDetail}
-          selectedAgendaItem={vm.selectedAgendaItem}
-          selectedScene={vm.selectedScene}
-          agenda={vm.state.agenda}
-          agendaBaseHref={vm.agendaBaseHref}
-          sceneBaseHref={vm.sceneBaseHref}
-        />
-      ) : null}
     </main>
   );
 }
