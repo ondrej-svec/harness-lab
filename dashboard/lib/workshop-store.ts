@@ -32,7 +32,6 @@ import {
 } from "./workshop-data";
 import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 import { getLearningsLogRepository } from "./learnings-log-repository";
@@ -750,7 +749,7 @@ function requireActivePoll(state: WorkshopState) {
   };
 }
 
-export async function getWorkshopState(instanceId = getCurrentWorkshopInstanceId()): Promise<WorkshopState> {
+export async function getWorkshopState(instanceId: string): Promise<WorkshopState> {
   const [state, teams, monitoring, sprintUpdates] = await Promise.all([
     getBaseWorkshopState(instanceId),
     getTeamRepository().listTeams(instanceId),
@@ -786,7 +785,7 @@ export async function updateWorkshopState(
   return getWorkshopState(instanceId);
 }
 
-export async function setCurrentAgendaItem(itemId: string, instanceId = getCurrentWorkshopInstanceId()) {
+export async function setCurrentAgendaItem(itemId: string, instanceId: string) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(state.agenda, itemId);
     return {
@@ -1306,7 +1305,7 @@ export async function updateTeamFromParticipant(
   return getWorkshopState(instanceId);
 }
 
-export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopInstanceId()) {
+export async function upsertTeam(input: Team, instanceId: string) {
   const repository = getTeamRepository();
   await repository.upsertTeam(instanceId, input);
   const teams = await repository.listTeams(instanceId);
@@ -1327,7 +1326,7 @@ export async function upsertTeam(input: Team, instanceId = getCurrentWorkshopIns
 export async function appendCheckIn(
   teamId: string,
   entry: Omit<TeamCheckIn, "writtenAt">,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const repository = getTeamRepository();
   const teams = await repository.listTeams(instanceId);
@@ -1523,7 +1522,7 @@ export async function prepareWorkshopInstance(instanceId: string, actorNeonUserI
 export async function completeChallenge(
   challengeId: string,
   teamId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => ({
     ...state,
@@ -1535,7 +1534,7 @@ export async function completeChallenge(
   }), instanceId);
 }
 
-export async function setRotationReveal(revealed: boolean, instanceId = getCurrentWorkshopInstanceId()) {
+export async function setRotationReveal(revealed: boolean, instanceId: string) {
   return updateWorkshopState((state) => ({
     ...state,
     rotation: { ...state.rotation, revealed },
@@ -1690,7 +1689,7 @@ export async function submitActivePollResponse(
 }
 
 export async function resetActivePollResponses(
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const summary = await getActivePollSummary(instanceId);
   if (!summary) {
@@ -1702,7 +1701,7 @@ export async function resetActivePollResponses(
 }
 
 export async function listParticipantFeedback(
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ): Promise<ParticipantFeedbackRecord[]> {
   return getParticipantFeedbackRepository().list(instanceId);
 }
@@ -1745,7 +1744,7 @@ export async function submitParticipantFeedback(
 
 export async function promoteParticipantFeedbackToTicker(
   feedbackId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const feedbackItems = await getParticipantFeedbackRepository().list(instanceId);
   const feedback = feedbackItems.find((item) => item.id === feedbackId) ?? null;
@@ -1777,7 +1776,7 @@ export async function promoteParticipantFeedbackToTicker(
   }), instanceId);
 }
 
-export async function addSprintUpdate(update: SprintUpdate, instanceId = getCurrentWorkshopInstanceId()) {
+export async function addSprintUpdate(update: SprintUpdate, instanceId: string) {
   const repository = getCheckpointRepository();
   await repository.appendCheckpoint(instanceId, update);
   const checkpoints = await repository.listCheckpoints(instanceId);
@@ -1795,7 +1794,7 @@ export async function addSprintUpdate(update: SprintUpdate, instanceId = getCurr
   return getWorkshopState(instanceId);
 }
 
-export async function replaceMonitoring(items: MonitoringSnapshot[], instanceId = getCurrentWorkshopInstanceId()) {
+export async function replaceMonitoring(items: MonitoringSnapshot[], instanceId: string) {
   const repository = getMonitoringSnapshotRepository();
   await repository.replaceSnapshots(instanceId, items);
 
@@ -1812,14 +1811,14 @@ export async function replaceMonitoring(items: MonitoringSnapshot[], instanceId 
   return getWorkshopState(instanceId);
 }
 
-export async function getLatestWorkshopArchive(instanceId = getCurrentWorkshopInstanceId()) {
+export async function getLatestWorkshopArchive(instanceId: string) {
   return getInstanceArchiveRepository().getLatestArchive(instanceId);
 }
 
-export async function createWorkshopArchive(options?: {
+export async function createWorkshopArchive(options: {
   reason?: "manual" | "reset";
   notes?: string | null;
-}, instanceId = getCurrentWorkshopInstanceId()) {
+} | undefined, instanceId: string) {
   const reason = options?.reason ?? "manual";
   const archivedAt = new Date();
   const [workshopState, checkpoints, monitoringSnapshots, participantEventAccess, participantSessions] = await Promise.all([
@@ -1878,7 +1877,7 @@ export async function createWorkshopArchive(options?: {
   return archiveRecord;
 }
 
-export async function applyRuntimeRetentionPolicy(instanceId = getCurrentWorkshopInstanceId()) {
+export async function applyRuntimeRetentionPolicy(instanceId: string) {
   const now = new Date();
   await Promise.all([
     getEventAccessRepository().deleteExpiredSessions(instanceId, now.toISOString()),
@@ -1889,10 +1888,11 @@ export async function applyRuntimeRetentionPolicy(instanceId = getCurrentWorksho
   ]);
 }
 
-export async function resetWorkshopState(templateId = workshopTemplates[0]?.id || "blueprint-default", instanceId = getCurrentWorkshopInstanceId(), externalBlueprint?: BlueprintAgenda) {
+export async function resetWorkshopState(templateId: string | undefined, instanceId: string, externalBlueprint?: BlueprintAgenda) {
+  const resolvedTemplateId = templateId ?? workshopTemplates[0]?.id ?? "blueprint-default";
   await createWorkshopArchive({
     reason: "reset",
-    notes: `Automatic pre-reset archive for template ${templateId}`,
+    notes: `Automatic pre-reset archive for template ${resolvedTemplateId}`,
   }, instanceId);
 
   const sessionRepository = getEventAccessRepository();
@@ -1902,7 +1902,7 @@ export async function resetWorkshopState(templateId = workshopTemplates[0]?.id |
   const instanceRepository = getWorkshopInstanceRepository();
   const existingInstance = await instanceRepository.getInstance(instanceId);
   const nextState = createWorkshopStateFromTemplate(
-    templateId,
+    resolvedTemplateId,
     instanceId,
     existingInstance ? resolveStoredContentLanguage(existingInstance.workshopMeta.contentLang) : undefined,
     externalBlueprint,
@@ -1923,7 +1923,7 @@ export async function resetWorkshopState(templateId = workshopTemplates[0]?.id |
     nextState.workshopMeta = nextWorkshopMeta;
     await instanceRepository.updateInstance(instanceId, {
       ...existingInstance,
-      templateId,
+      templateId: resolvedTemplateId,
       status: "prepared",
       importedAt: new Date().toISOString(),
       removedAt: null,

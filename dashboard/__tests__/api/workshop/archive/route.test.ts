@@ -247,7 +247,7 @@ describe("workshop archive route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({ notes: "Po workshopu" }),
+        body: JSON.stringify({ instanceId: "sample-studio-a", notes: "Po workshopu" }),
       }),
     );
 
@@ -285,7 +285,7 @@ describe("workshop archive route", () => {
     });
 
     const response = await GET(
-      new Request("http://localhost/api/workshop/archive", {
+      new Request("http://localhost/api/workshop/archive?instanceId=sample-studio-a", {
         headers: {
           authorization: "Basic dummy",
         },
@@ -300,7 +300,7 @@ describe("workshop archive route", () => {
 
   it("returns a null archive summary when nothing has been archived yet", async () => {
     const response = await GET(
-      new Request("http://localhost/api/workshop/archive", {
+      new Request("http://localhost/api/workshop/archive?instanceId=sample-studio-a", {
         headers: {
           authorization: "Basic dummy",
         },
@@ -311,7 +311,7 @@ describe("workshop archive route", () => {
     await expect(response.json()).resolves.toEqual({ archive: null });
   });
 
-  it("accepts invalid json bodies and archives with null notes", async () => {
+  it("rejects invalid json bodies because instanceId can't be derived", async () => {
     const response = await POST(
       new Request("http://localhost/api/workshop/archive", {
         method: "POST",
@@ -324,10 +324,10 @@ describe("workshop archive route", () => {
       }),
     );
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(400);
     await expect(response.json()).resolves.toMatchObject({
-      ok: true,
-      archive: { reason: "manual", notes: null },
+      ok: false,
+      error: "instanceId is required",
     });
   });
 });

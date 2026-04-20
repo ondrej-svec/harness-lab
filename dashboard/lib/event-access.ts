@@ -1,10 +1,9 @@
 import { randomUUID, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import type { Challenge, ProjectBrief, SetupPath, SprintUpdate, Team, WorkshopState } from "./workshop-data";
+import { seedWorkshopState, type Challenge, type ProjectBrief, type SetupPath, type SprintUpdate, type Team, type WorkshopState } from "./workshop-data";
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getEventAccessRepository } from "./event-access-repository";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getParticipantRepository } from "./participant-repository";
 import {
   getEventAccessPreview,
@@ -42,12 +41,13 @@ export type ParticipantTeamLookup = {
 };
 
 export async function getConfiguredEventCode() {
-  // In Neon mode, event codes are managed per-instance in the DB — no env var needed.
-  // Only show the sample hint in file mode where a seed code is configured.
+  // In Neon mode, event codes are managed per-instance in the DB — no
+  // singleton hint makes sense. Only show the sample hint in file mode
+  // where a seed code is configured against the seed workshop instance.
   if (getRuntimeStorageMode() === "neon") {
     return null;
   }
-  return getEventAccessPreview();
+  return getEventAccessPreview(seedWorkshopState.workshopId);
 }
 
 export function getParticipantSessionExpiryDate() {
@@ -404,7 +404,12 @@ export async function revokeParticipantSession(token: string | undefined | null)
   const tokenHash = hashSecret(token);
   const repository = getEventAccessRepository();
   const session = await repository.findSessionByTokenHash(tokenHash);
-  const instanceId = session?.instanceId ?? getCurrentWorkshopInstanceId();
+  if (!session) {
+    // Unknown session — no row to delete, no audit trail to write.
+    // The token is either expired-and-pruned or never existed.
+    return;
+  }
+  const instanceId = session.instanceId;
   await repository.deleteSession(instanceId, tokenHash);
   await getAuditLogRepository().append({
     id: `audit-${randomUUID()}`,
@@ -436,7 +441,7 @@ export async function requireParticipantSession(request: Request) {
   return { ok: true as const, session };
 }
 
-export async function getParticipantCoreBundle(instanceId?: string): Promise<ParticipantCoreBundle> {
+export async function getParticipantCoreBundle(instanceId: string): Promise<ParticipantCoreBundle> {
   const state = await getWorkshopState(instanceId);
 
   return {
@@ -472,7 +477,7 @@ export async function getParticipantCoreBundle(instanceId?: string): Promise<Par
   };
 }
 
-export async function getParticipantTeamLookup(instanceId?: string): Promise<ParticipantTeamLookup> {
+export async function getParticipantTeamLookup(instanceId: string): Promise<ParticipantTeamLookup> {
   const state = await getWorkshopState(instanceId);
 
   return {

@@ -457,7 +457,7 @@ describe("workshop-store", () => {
   });
 
   it("moves the agenda and updates the phase label", async () => {
-    const state = await setCurrentAgendaItem("rotation");
+    const state = await setCurrentAgendaItem("rotation", instanceId);
 
     expect(state.workshopMeta.currentPhaseLabel).toBe("Rotace týmů");
     expect(state.agenda.find((item) => item.id === "rotation")?.status).toBe("current");
@@ -599,7 +599,7 @@ describe("workshop-store", () => {
     } as WorkshopState);
     setWorkshopStateRepositoryForTests(repository);
 
-    const state = await getWorkshopState();
+    const state = await getWorkshopState(instanceId);
     const talkItem = state.agenda.find((item) => item.id === "talk");
 
     expect(talkItem?.presenterScenes).toEqual(
@@ -624,7 +624,7 @@ describe("workshop-store", () => {
     });
     setWorkshopStateRepositoryForTests(repository);
 
-    const state = await getWorkshopState();
+    const state = await getWorkshopState(instanceId);
 
     // Workshop meta and agenda are localized on read
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
@@ -638,8 +638,8 @@ describe("workshop-store", () => {
   });
 
   it("updates facilitator-controlled team and check-in state", async () => {
-    await appendCheckIn("t1", { phaseId: "opening", content: "Checkpoint po facilitaci", writtenBy: null });
-    let state = await getWorkshopState();
+    await appendCheckIn("t1", { phaseId: "opening", content: "Checkpoint po facilitaci", writtenBy: null }, instanceId);
+    let state = await getWorkshopState(instanceId);
     const t1Latest = state.teams.find((team) => team.id === "t1")?.checkIns.at(-1);
     expect(t1Latest?.content).toBe("Checkpoint po facilitaci");
 
@@ -652,9 +652,9 @@ describe("workshop-store", () => {
       projectBriefId: "standup-bot",
       checkIns: [],
       anchor: null,
-    });
+    }, instanceId);
 
-    state = await getWorkshopState();
+    state = await getWorkshopState(instanceId);
     expect(state.teams.find((team) => team.id === "t9")?.name).toBe("Tým 9");
     const teams = await teamRepository.listTeams("sample-studio-a");
     const t1 = teams.find((team) => team.id === "t1");
@@ -663,8 +663,8 @@ describe("workshop-store", () => {
   });
 
   it("appendCheckIn preserves existing entries and adds timestamp", async () => {
-    await appendCheckIn("t1", { phaseId: "opening", content: "První", writtenBy: "Anna" });
-    await appendCheckIn("t1", { phaseId: "intermezzo-1", content: "Druhý", writtenBy: null });
+    await appendCheckIn("t1", { phaseId: "opening", content: "První", writtenBy: "Anna" }, instanceId);
+    await appendCheckIn("t1", { phaseId: "intermezzo-1", content: "Druhý", writtenBy: null }, instanceId);
     const teams = await teamRepository.listTeams("sample-studio-a");
     const team = teams.find((t) => t.id === "t1");
     expect(team?.checkIns).toHaveLength(2);
@@ -676,19 +676,19 @@ describe("workshop-store", () => {
 
   it("appendCheckIn throws when teamId is unknown", async () => {
     await expect(
-      appendCheckIn("t-missing", { phaseId: "opening", content: "x", writtenBy: null }),
+      appendCheckIn("t-missing", { phaseId: "opening", content: "x", writtenBy: null }, instanceId),
     ).rejects.toThrow(/Team not found/);
   });
 
   it("seedWorkshopState teams start with empty checkIns", async () => {
-    const state = await getWorkshopState();
+    const state = await getWorkshopState(instanceId);
     for (const team of state.teams) {
       expect(team.checkIns).toEqual([]);
     }
   });
 
   it("seedWorkshopState teams start with null anchor", async () => {
-    const state = await getWorkshopState();
+    const state = await getWorkshopState(instanceId);
     for (const team of state.teams) {
       expect(team.anchor).toBeNull();
     }
@@ -704,7 +704,7 @@ describe("workshop-store", () => {
       projectBriefId: "standup-bot",
       checkIns: [],
       anchor: "red brick",
-    });
+    }, instanceId);
     const teams = await teamRepository.listTeams("sample-studio-a");
     const anchored = teams.find((team) => team.id === "t-anchor");
     expect(anchored?.anchor).toBe("red brick");
@@ -718,7 +718,7 @@ describe("workshop-store", () => {
       projectBriefId: "standup-bot",
       checkIns: [],
       anchor: null,
-    });
+    }, instanceId);
     const after = (await teamRepository.listTeams("sample-studio-a")).find((team) => team.id === "t-anchor");
     expect(after?.anchor).toBeNull();
   });
@@ -802,14 +802,14 @@ describe("workshop-store", () => {
     expect(feedback.agendaItemId).toBe("demo");
     expect(feedback.participantMomentId).toBe("demo-open-build-brief");
 
-    let storedFeedback = await listParticipantFeedback();
+    let storedFeedback = await listParticipantFeedback(instanceId);
     expect(storedFeedback[0]?.message).toBe("Can we keep using the browser path if the local install fails?");
     expect(storedFeedback[0]?.promotedTickerId).toBeNull();
 
-    const state = await promoteParticipantFeedbackToTicker(feedback.id);
+    const state = await promoteParticipantFeedbackToTicker(feedback.id, instanceId);
     expect(state.ticker[0]?.label).toBe("Can we keep using the browser path if the local install fails?");
 
-    storedFeedback = await listParticipantFeedback();
+    storedFeedback = await listParticipantFeedback(instanceId);
     expect(storedFeedback[0]?.promotedTickerId).toBe(`participant-feedback-${feedback.id}`);
   });
 
@@ -819,14 +819,14 @@ describe("workshop-store", () => {
   });
 
   it("records challenge completion, sprint updates, and rotation reveal", async () => {
-    await completeChallenge("review-skill", "t2");
+    await completeChallenge("review-skill", "t2", instanceId);
     await addSprintUpdate({
       id: "u-new",
       teamId: "t2",
       text: "Přidali jsme test jako tracer bullet.",
       at: "11:23",
-    });
-    const state = await setRotationReveal(true);
+    }, instanceId);
+    const state = await setRotationReveal(true, instanceId);
 
     expect(state.rotation.revealed).toBe(true);
     expect(state.challenges.find((item) => item.id === "review-skill")?.completedBy).toContain("t2");
@@ -835,7 +835,7 @@ describe("workshop-store", () => {
   });
 
   it("resets state from a sample template", async () => {
-    const state = await resetWorkshopState("blueprint-default");
+    const state = await resetWorkshopState("blueprint-default", instanceId);
 
     expect(state.workshopId).toBe("sample-studio-a");
     expect(state.workshopMeta.city).toBe("Studio A");
@@ -851,7 +851,7 @@ describe("workshop-store", () => {
     await expect(checkpointRepository.listCheckpoints("sample-studio-a")).resolves.toEqual([]);
     await expect(monitoringRepository.getSnapshots("sample-studio-a")).resolves.toEqual([]);
     await expect(eventAccessRepository.listSessions("sample-studio-a")).resolves.toEqual([]);
-    await expect(getLatestWorkshopArchive()).resolves.toMatchObject({
+    await expect(getLatestWorkshopArchive(instanceId)).resolves.toMatchObject({
       payload: {
         reason: "reset",
         participantEventAccessVersion: 3,
@@ -950,7 +950,7 @@ describe("workshop-store", () => {
       },
     ]);
 
-    const state = await getWorkshopState();
+    const state = await getWorkshopState(instanceId);
     expect(state.teams).toMatchObject([{ id: "t4", name: "Tým 4 runtime" }]);
     expect(state.sprintUpdates).toMatchObject([{ id: "u-projected" }]);
     expect(state.monitoring).toMatchObject([{ teamId: "t4", skillsCount: 3 }]);
@@ -975,7 +975,7 @@ describe("workshop-store", () => {
       },
     ]);
 
-    const archive = await createWorkshopArchive({ notes: "Po workshopu" });
+    const archive = await createWorkshopArchive({ notes: "Po workshopu" }, instanceId);
 
     expect(archive.payload.reason).toBe("manual");
     expect(archive.payload.checkpoints).toMatchObject([{ id: "u-archive" }]);
@@ -1010,7 +1010,7 @@ describe("workshop-store", () => {
     ]);
     setInstanceArchiveRepositoryForTests(archiveRepository);
 
-    await applyRuntimeRetentionPolicy();
+    await applyRuntimeRetentionPolicy(instanceId);
 
     await expect(archiveRepository.getLatestArchive("sample-studio-a")).resolves.toBeNull();
     expect(redeemAttemptRepository["items"]).toEqual([]);

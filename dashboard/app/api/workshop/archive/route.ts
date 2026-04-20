@@ -3,12 +3,18 @@ import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { applyRuntimeRetentionPolicy, createWorkshopArchive, getLatestWorkshopArchive } from "@/lib/workshop-store";
 
 export async function GET(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const url = new URL(request.url);
+  const instanceId = url.searchParams.get("instanceId")?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId query parameter is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
 
-  const archive = await getLatestWorkshopArchive();
+  const archive = await getLatestWorkshopArchive(instanceId);
   return NextResponse.json({
     archive: archive
       ? {
@@ -23,14 +29,19 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const body = (await request.json().catch(() => ({}))) as { notes?: string; instanceId?: string };
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
 
-  const body = (await request.json().catch(() => ({}))) as { notes?: string };
-  const archive = await createWorkshopArchive({ reason: "manual", notes: body.notes ?? null });
-  await applyRuntimeRetentionPolicy();
+  const archive = await createWorkshopArchive({ reason: "manual", notes: body.notes ?? null }, instanceId);
+  await applyRuntimeRetentionPolicy(instanceId);
 
   return NextResponse.json({
     ok: true,

@@ -2,7 +2,6 @@ import { randomInt, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { resetParticipantPasswordAsAdmin } from "@/lib/participant-auth";
 
@@ -48,7 +47,10 @@ function generateResetPassword(): string {
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const body = (await request.json().catch(() => ({}))) as { instanceId?: string };
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;

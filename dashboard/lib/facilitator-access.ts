@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getCliSessionFromBearerToken, parseBearerToken } from "./facilitator-cli-auth-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { hasFacilitatorPlatformAccess, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
@@ -42,26 +41,22 @@ async function resolveTargetWorkshopInstance(instanceId?: string | null) {
     return { instanceId: null as null, errorResponse: null as Response | null };
   }
 
-  const resolvedInstanceId = instanceId === undefined ? getCurrentWorkshopInstanceId() : instanceId;
-  if (!resolvedInstanceId) {
+  if (instanceId === undefined) {
     return {
       instanceId: null as null,
-      errorResponse: jsonErrorResponse(400, "no target workshop selected"),
+      errorResponse: jsonErrorResponse(400, "instanceId is required"),
     };
   }
 
-  const instance = await getWorkshopInstanceRepository().getInstance(resolvedInstanceId);
+  const instance = await getWorkshopInstanceRepository().getInstance(instanceId);
   if (!instance) {
     return {
       instanceId: null as null,
-      errorResponse:
-        instanceId === undefined
-          ? jsonErrorResponse(400, "default workshop instance is not available")
-          : jsonErrorResponse(404, "instance not found"),
+      errorResponse: jsonErrorResponse(404, "instance not found"),
     };
   }
 
-  return { instanceId: resolvedInstanceId, errorResponse: null as Response | null };
+  return { instanceId: instanceId as string, errorResponse: null as Response | null };
 }
 
 /**
@@ -126,7 +121,7 @@ export async function requireFacilitatorRequest(request: Request, instanceId?: s
 export async function requireFacilitatorPageAccess(instanceId?: string | null) {
   const { instanceId: resolvedInstanceId, errorResponse } = await resolveTargetWorkshopInstance(instanceId);
   if (errorResponse) {
-    redirect(instanceId === undefined ? "/admin?error=default_instance_missing" : "/admin?error=instance_not_found");
+    redirect("/admin?error=instance_not_found");
   }
 
   const service = getFacilitatorAuthService();

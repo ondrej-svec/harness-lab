@@ -37,10 +37,6 @@ vi.mock("./facilitator-session", () => ({
   resolveFacilitatorGrantWithBootstrap,
 }));
 
-vi.mock("./instance-context", () => ({
-  getCurrentWorkshopInstanceId: () => "sample-studio-a",
-}));
-
 vi.mock("./workshop-instance-repository", () => ({
   getWorkshopInstanceRepository: () => ({
     getInstance,
@@ -84,14 +80,15 @@ describe("facilitator-access", () => {
     requireTrustedActionOrigin.mockResolvedValue(true);
   });
 
-  it("allows authorized file-mode requests", async () => {
+  it("allows authorized file-mode requests when given an explicit instanceId", async () => {
     const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
     const response = await requireFacilitatorRequest(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         headers: {
           authorization: "Basic abc",
         },
       }),
+      "sample-studio-a",
     );
 
     expect(response).toBeNull();
@@ -99,6 +96,16 @@ describe("facilitator-access", () => {
       authorizationHeader: "Basic abc",
       instanceId: "sample-studio-a",
     });
+  });
+
+  it("returns 400 when no instanceId is provided and null is not passed", async () => {
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
+    const response = await requireFacilitatorRequest(
+      new Request("http://localhost/api/anything"),
+    );
+
+    expect(response?.status).toBe(400);
+    await expect(response?.json()).resolves.toEqual({ ok: false, error: "instanceId is required" });
   });
 
   it("rejects untrusted non-GET requests before auth checks", async () => {
@@ -126,11 +133,12 @@ describe("facilitator-access", () => {
     getCliSessionFromBearerToken.mockResolvedValue({ tokenHash: "hash", neonUserId: "user-1" });
 
     const response = await requireFacilitatorRequest(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         headers: {
           authorization: "Bearer cli-token",
         },
       }),
+      "sample-studio-a",
     );
 
     expect(response).toBeNull();
@@ -183,7 +191,8 @@ describe("facilitator-access", () => {
     hasValidSession.mockResolvedValue(false);
 
     const response = await requireFacilitatorRequest(
-      new Request("http://localhost/api/admin/facilitators"),
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators"),
+      "sample-studio-a",
     );
 
     expect(response?.status).toBe(401);
@@ -238,7 +247,10 @@ describe("facilitator-access", () => {
     getRuntimeStorageMode.mockReturnValue("neon");
 
     await expect(
-      requireFacilitatorRequest(new Request("http://localhost/api/admin/facilitators")),
+      requireFacilitatorRequest(
+        new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators"),
+        "sample-studio-a",
+      ),
     ).rejects.toThrow(
       "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET are required when HARNESS_STORAGE_MODE=neon",
     );

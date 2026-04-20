@@ -224,8 +224,8 @@ describe("event-access", () => {
   it("builds the participant core bundle and protected team lookup shapes", async () => {
     tempDir = await mkdtemp(path.join(tmpdir(), "harness-event-access-"));
     process.env.HARNESS_DATA_DIR = tempDir;
-    const core = await getParticipantCoreBundle();
-    const teams = await getParticipantTeamLookup();
+    const core = await getParticipantCoreBundle("sample-studio-a");
+    const teams = await getParticipantTeamLookup("sample-studio-a");
 
     expect(core.event.title).toBe("Harness Lab");
     expect(core.announcements.length).toBeGreaterThan(0);

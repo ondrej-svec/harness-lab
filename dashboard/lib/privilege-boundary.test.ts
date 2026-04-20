@@ -33,10 +33,6 @@ vi.mock("./instance-grant-repository", () => ({
   }),
 }));
 
-vi.mock("./instance-context", () => ({
-  getCurrentWorkshopInstanceId: () => "sample-studio-a",
-}));
-
 vi.mock("./runtime-storage", () => ({
   getRuntimeStorageMode,
 }));

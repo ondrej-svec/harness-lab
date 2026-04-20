@@ -1,7 +1,6 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import path from "node:path";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getNeonSql } from "./neon-db";
 import { isNeonRuntimeMode } from "./runtime-auth-configuration";
 import { getRuntimeStorageMode } from "./runtime-storage";
@@ -279,7 +278,7 @@ export function setParticipantEventAccessRepositoryForTests(repository: Particip
   overrideRepository = repository;
 }
 
-export async function getEventAccessPreview(instanceId = getCurrentWorkshopInstanceId()) {
+export async function getEventAccessPreview(instanceId: string) {
   const access = await getParticipantEventAccessRepository().getActiveAccess(instanceId);
   if (!access) {
     return null;

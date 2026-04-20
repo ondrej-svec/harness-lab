@@ -19,10 +19,6 @@ vi.mock("./instance-grant-repository", () => ({
   }),
 }));
 
-vi.mock("./instance-context", () => ({
-  getCurrentWorkshopInstanceId: () => "sample-studio-a",
-}));
-
 vi.mock("./runtime-storage", () => ({
   getRuntimeStorageMode,
 }));
@@ -56,14 +52,14 @@ describe("facilitator-session", () => {
     const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getRuntimeStorageMode.mockReturnValue("file");
 
-    await expect(getFacilitatorSession()).resolves.toBeNull();
+    await expect(getFacilitatorSession("sample-studio-a")).resolves.toBeNull();
   });
 
   it("throws when neon auth is not fully configured", async () => {
     const { getFacilitatorSession } = await importFacilitatorSessionModule();
     delete process.env.NEON_AUTH_BASE_URL;
 
-    await expect(getFacilitatorSession()).rejects.toThrow(
+    await expect(getFacilitatorSession("sample-studio-a")).rejects.toThrow(
       "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET are required when HARNESS_STORAGE_MODE=neon",
     );
   });
@@ -72,7 +68,7 @@ describe("facilitator-session", () => {
     const { getFacilitatorSession } = await importFacilitatorSessionModule();
     getSession.mockResolvedValue({ data: null });
 
-    await expect(getFacilitatorSession()).resolves.toBeNull();
+    await expect(getFacilitatorSession("sample-studio-a")).resolves.toBeNull();
   });
 
   it("returns null when the signed-in user has no active grant", async () => {

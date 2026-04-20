@@ -1,6 +1,5 @@
 import { getSession as proxyGetSession } from "./auth/neon-auth-proxy";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getNeonSql } from "./neon-db";
 import type { InstanceGrantRecord } from "./runtime-contracts";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
@@ -96,7 +95,7 @@ export async function resolveFacilitatorGrant(instanceId: string, neonUserId: st
  * Get the current facilitator's session and grant info.
  * Returns null if not authenticated or no grant exists.
  */
-export async function getFacilitatorSession(instanceId = getCurrentWorkshopInstanceId()): Promise<FacilitatorSession | null> {
+export async function getFacilitatorSession(instanceId: string): Promise<FacilitatorSession | null> {
   const facilitator = await getAuthenticatedFacilitator();
   if (!facilitator) {
     return null;

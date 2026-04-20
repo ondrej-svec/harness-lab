@@ -90,9 +90,6 @@ describe("participant-event-access-repository", () => {
     vi.doMock("./neon-db", () => ({
       getNeonSql: () => ({ query }),
     }));
-    vi.doMock("./instance-context", () => ({
-      getCurrentWorkshopInstanceId: () => "instance-a",
-    }));
 
     const mod = await import("./participant-event-access-repository");
     const repository = new mod.NeonParticipantEventAccessRepository();
@@ -112,7 +109,7 @@ describe("participant-event-access-repository", () => {
       sampleCode: null,
     });
 
-    const preview = await mod.getEventAccessPreview();
+    const preview = await mod.getEventAccessPreview("instance-a");
     expect(preview).toMatchObject({
       expiresAt: "2026-04-20T12:00:00.000Z",
       isSample: false,
