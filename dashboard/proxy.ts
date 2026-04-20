@@ -81,11 +81,15 @@ export async function proxy(request: NextRequest) {
 
       if (!hasAuthCookie && hasValidFileModeCredentials(authorization)) {
         const response = NextResponse.redirect(request.nextUrl);
-        response.cookies.set(
-          fileModeAuthCookieName,
-          await getExpectedFileModeAuthToken(),
-          getFileModeAuthCookieOptions(),
-        );
+        // Secure cookies are rejected over plain HTTP by webkit (loopback
+        // is not treated as a secure context), which causes a redirect
+        // loop on 127.0.0.1 in production-mode e2e runs. Trust the
+        // actual request protocol, not NODE_ENV.
+        const baseCookieOptions = getFileModeAuthCookieOptions();
+        response.cookies.set(fileModeAuthCookieName, await getExpectedFileModeAuthToken(), {
+          ...baseCookieOptions,
+          secure: baseCookieOptions.secure && request.nextUrl.protocol === "https:",
+        });
         if (urlLanguage) {
           setUiLanguageCookie(response, resolvedLanguage);
         }

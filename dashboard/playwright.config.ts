@@ -61,7 +61,12 @@ export default defineConfig({
   // not a regression test — it seeds and screenshots at multiple viewports
   // and can push total runtime past the CI 15-minute cap. Opt in locally
   // with PLAYWRIGHT_INCLUDE_VISUAL_TOUR=1.
-  testIgnore: process.env.PLAYWRIGHT_INCLUDE_VISUAL_TOUR ? [] : ["**/visual-tour.spec.ts"],
+  // neon-mode/** requires a real Neon database + auth runtime — it has its
+  // own config (playwright.neon.config.ts) and runs via `test:e2e:neon`.
+  testIgnore: [
+    ...(process.env.PLAYWRIGHT_INCLUDE_VISUAL_TOUR ? [] : ["**/visual-tour.spec.ts"]),
+    "**/neon-mode/**",
+  ],
   fullyParallel: false,
   workers: 1,
   reporter: "list",
