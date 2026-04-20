@@ -545,11 +545,12 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 
 ##### Layer 1 — unit tests
 
-- [ ] Suggest endpoint: min-chars, cap, rate-limit, instance scoping, disambiguation (tag-first / masked-email / id-suffix).
-- [ ] `participant-auth.ts` wrapper: classification of every failure reason for create / authenticate / reset-as-admin / reset-via-email. **Shipped (21 tests).**
-- [ ] Walk-in policy gate on set-password: rejects with `walk_in_refused` when toggle is off, accepts when on, rejects when `participantId` absent + `displayName` empty.
-- [ ] Identify-flow component: state-machine transitions on each input / response (React Testing Library).
-- [ ] `participant-disambiguator.ts`: tag-first / masked-email / id-suffix. **Shipped (9 tests).**
+- [x] Suggest endpoint (`__tests__/api/event-access/identify/suggest/route.test.ts`, 9 tests): no-session 401, bad-session 401, min-2-chars short-circuits before the repo, response shape (id + displayName + hasPassword + disambiguator), instance scoping, cap at 5, tag-first disambiguator on collisions, masked-email fallback (asserts the local part is masked but the domain stays), 20/min rate limit returning 429.
+- [x] `participant-auth.ts` wrapper: classification of every failure reason for create / authenticate / reset-as-admin / reset-via-email. **Shipped (21 tests).**
+- [x] Walk-in policy gate on set-password (`__tests__/api/event-access/identify/set-password/route.test.ts`, 8 tests): walk-in refused emits `participant_identify_walk_in_refused` audit + 403; allowed-walk-in path creates the participant + emits `walk_in_created` + 200; missing displayName → 400; participantId-not-found → 404; participant already linked → 409 `already_set`; bad email → 400; weak password → 400; missing session → 401.
+- [x] Identify-flow component (`app/components/participant-identify-flow.test.tsx`, 12 tests, happy-dom): default typing view; debounce skips fetch for prefix < 2; debounced fetch fires once and renders matches; pick-no-password → set_password view; pick-with-password → enter_password view; walk-in create sentinel rendered when allowed; walk_in_refused rendered when toggle is off; `initialHint=already_bound` lands on already_bound; set_password OK → router.refresh; email_taken stays on view + inline error; set_password walk_in_refused transitions; enter_password already_bound transitions; enter_password generic failure → wrong_credentials copy.
+- [x] `lib/suggest-rate-limit.test.ts` (4 tests): first call allowed; cap then deny; window reset; per-key isolation.
+- [x] `participant-disambiguator.ts`: tag-first / masked-email / id-suffix. **Shipped (9 tests).**
 
 ##### Layer 2 — integration tests (Neon test branch)
 
