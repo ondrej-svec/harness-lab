@@ -170,12 +170,19 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     if (!seed) {
       return;
     }
+
+    // Use a random UUID for the row id — the seed id `pea-${instanceId}`
+    // may already exist as a revoked row from a prior rotation, which
+    // would primary-key-collide this INSERT and crash the admin page.
+    // ON CONFLICT DO NOTHING is a belt for the (id) race; the random
+    // suffix is the suspenders.
     await sql.query(
       `
         INSERT INTO participant_event_access (id, instance_id, version, code_hash, expires_at, revoked_at)
         VALUES ($1, $2, $3, $4, $5::timestamptz, $6)
+        ON CONFLICT (id) DO NOTHING
       `,
-      [`pea-${instanceId}`, instanceId, 1, hashEventCode(seed.code), seed.expiresAt, null],
+      [`pea-${instanceId}-${randomUUID()}`, instanceId, 1, hashEventCode(seed.code), seed.expiresAt, null],
     );
   }
 

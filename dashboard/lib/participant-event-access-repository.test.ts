@@ -145,4 +145,44 @@ describe("participant-event-access-repository", () => {
       query.mock.calls.some(([sqlText]) => String(sqlText).includes("INSERT INTO participant_event_access")),
     ).toBe(false);
   });
+
+  it("seeds access with a unique row id and uses ON CONFLICT DO NOTHING so a prior revoked seed row cannot crash admin", async () => {
+    process.env.HARNESS_EVENT_CODE = "lantern8-context4-handoff2";
+    process.env.HARNESS_EVENT_CODE_SECRET = "test-event-code-secret-at-least-32-chars-long";
+    const insertCalls: { sqlText: string; params: unknown[] }[] = [];
+    const query = vi.fn(async (sqlText: string, params?: unknown[]) => {
+      if (sqlText.includes("SELECT id FROM participant_event_access")) {
+        return [];
+      }
+      if (sqlText.includes("INSERT INTO participant_event_access")) {
+        insertCalls.push({ sqlText, params: params ?? [] });
+        return undefined;
+      }
+      if (sqlText.includes("SELECT id, instance_id, version, code_hash, expires_at, revoked_at")) {
+        return [];
+      }
+      return undefined;
+    });
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const mod = await import("./participant-event-access-repository");
+    const repository = new mod.NeonParticipantEventAccessRepository();
+
+    await repository.getActiveAccess("instance-a");
+
+    expect(insertCalls).toHaveLength(1);
+    expect(insertCalls[0].sqlText).toContain("ON CONFLICT (id) DO NOTHING");
+    const [id, instanceId] = insertCalls[0].params as [string, string];
+    expect(id).toMatch(/^pea-instance-a-[0-9a-f-]{36}$/);
+    expect(instanceId).toBe("instance-a");
+
+    delete process.env.HARNESS_EVENT_CODE;
+    delete process.env.HARNESS_EVENT_CODE_SECRET;
+  });
 });
