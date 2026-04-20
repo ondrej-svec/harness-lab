@@ -28,7 +28,7 @@ export const publicCopy = {
     heroEyebrow: "workshop pro týmy, které pracují s ai coding agenty",
     heroLead: "Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další.",
     heroBody:
-      "Nejde o předvádění promptů ani o hackathon energii. Lidé řídí, agenti vykonávají, kontext drží repo, důvěru drží ověření. Úspěch je, když na práci dokáže navázat další tým — bez autorů v místnosti.",
+      "Nejde o předvádění promptů ani o hackathon energii. Lidé řídí, agenti vykonávají, kontext drží repo, důvěru drží ověření. Úspěch je, když na práci dokáže navázat další tým, člověk nebo agent — bez autorů v místnosti.",
     blueprintLink: "otevřít workshop blueprint",
     blueprintHint:
       "Veřejný blueprint workshopu: jak je postavený den, co patří do repa a co až do živé instance workshopu.",
@@ -57,7 +57,7 @@ export const publicCopy = {
     structureTitle: "pět fází, které den drží pohromadě.",
     structurePhase1Title: "otevření a zarámování",
     structurePhase1Body:
-      "Přepnout z hackathon energie na disciplínu pokračování. Úspěch není v tom, kolik kódu vznikne, ale jestli na něj další tým dokáže navázat.",
+      "Přepnout z hackathon energie na disciplínu pokračování. Úspěch není v tom, kolik kódu vznikne, ale jestli na něj dokáže navázat další tým, člověk nebo agent.",
     structurePhase2Title: "context is king",
     structurePhase2Body:
       "Praktická ukázka, jak lepší kontext mění kvalitu výstupu. Proč AGENTS.md, plán a explicitní hranice předcházejí implementaci.",
@@ -66,7 +66,7 @@ export const publicCopy = {
       "Týmy vstupují do reálného repa. Před obědem: AGENTS.md, plán, první spustitelný check a první ověřený krok.",
     structurePhase4Title: "continuation shift",
     structurePhase4Body:
-      "Jiný tým přebírá vaše repo. Nejdřív čte, pak diagnostikuje, teprve pak mění. Co přežije bez autorů v místnosti?",
+      "Jiný tým přebírá vaše repo. Nejdřív čte, pak diagnostikuje, teprve pak mění. Obstojí vaše práce bez vás v místnosti, ať už ji převezme další tým, člověk nebo agent?",
     structurePhase5Title: "reveal a reflexe",
     structurePhase5Body:
       "Co pomohlo pokračování a co způsobilo tření. Signály z dne se v příštím týdnu promění v praxi.",
@@ -149,7 +149,7 @@ export const publicCopy = {
     heroEyebrow: "workshop for teams working with ai coding agents",
     heroLead: "A full-day workshop on working with AI coding agents so anyone can continue where your team left off.",
     heroBody:
-      "Not prompt demos or hackathon energy. Humans steer, agents execute, the repo carries context, verification carries trust. Success is when another team can continue the work without the authors in the room.",
+      "Not prompt demos or hackathon energy. Humans steer, agents execute, the repo carries context, verification carries trust. Success is when another team, teammate, or agent can continue the work without the authors in the room.",
     blueprintLink: "open workshop blueprint",
     blueprintHint:
       "The public workshop blueprint: how the day is structured, what belongs in the repo, and what only exists in the live workshop instance.",
@@ -187,7 +187,7 @@ export const publicCopy = {
       "Teams enter a real repo. Before lunch: AGENTS.md, a plan, one executable check, and the first verified step.",
     structurePhase4Title: "continuation shift",
     structurePhase4Body:
-      "Another team takes over your repo. They read first, diagnose second, change only after they can explain the state. What survives without the authors in the room?",
+      "Another team takes over your repo. They read first, diagnose second, change only after they can explain the state. Will your work hold up without you in the room — for another team, teammate, or agent?",
     structurePhase5Title: "reveal and reflection",
     structurePhase5Body:
       "What helped continuation and what caused friction. Signals from the day become next-week practice.",
@@ -273,7 +273,7 @@ export const adminCopy = {
     workspaceOpenInstance: "otevřít řízení",
     workspaceCreateDescription: "Nejdřív založíte akci. Pak se otevře její režie. Zadejte název, datum a místo.",
     workspaceCreateStepsTitle: "co se stane dál",
-    workspaceCreateStepOne: "instance se objeví ve workspace přehledu",
+    workspaceCreateStepOne: "instance se objeví ve přehledu workspace",
     workspaceCreateStepTwo: "otevře se její režie pro živý průběh",
     workspaceCreateStepThree: "plocha pro účastníky zůstává oddělená a navázaná jen na tuto akci",
     workspaceStatsAll: "celkem",
@@ -327,7 +327,7 @@ export const adminCopy = {
     instanceSwitcherTitle: "na čem právě pracujete",
     instanceSwitcherDescription: "Vyberte instanci, se kterou právě pracujete. Všechny zásahy níže míří jen do ní.",
     instanceSelectLabel: "varianta workshopu",
-    instanceSelectHint: "Tahle volba zatím mění hlavně participant scénář a nastavení rotace podle velikosti skupiny.",
+    instanceSelectHint: "Tahle volba zatím mění hlavně scénář pro účastníky a nastavení rotace podle velikosti skupiny.",
     instanceBlueprintSummary: "Použije se jediný výchozí blueprint pro střední skupinu, zhruba 15 až 20 lidí.",
     switchInstanceButton: "přepnout instanci",
     createInstanceTitle: "vytvořit novou instanci",
@@ -357,7 +357,7 @@ export const adminCopy = {
     removeInstanceDialogEyebrow: "potvrzení bezpečnostního zásahu",
     removeInstanceDialogTitle: "opravdu odebrat tuto instanci?",
     removeInstanceDialogDescription:
-      "Tohle je druhá vrstva operace. Instance zmizí z aktivního workspace přehledu, ale před odebráním se automaticky vytvoří archiv aktuálního stavu.",
+      "Tohle je druhá vrstva operace. Instance zmizí z aktivního přehledu workspace, ale před odebráním se automaticky vytvoří archiv aktuálního stavu.",
     removeInstanceArchiveNote: "Před odebráním vznikne automatický archiv a historie zůstane zachovaná.",
     removeInstanceConsequenceLabel: "co se stane",
     removeInstanceConsequenceBody: "Instance se přesune mimo aktivní seznam. Otevřená režie už ji nemá brát jako běžící akci.",
@@ -437,13 +437,13 @@ export const adminCopy = {
     archiveHint: "Uloží snímek aktuálního stavu před uzavřením nebo před ručním resetem.",
     archiveButton: "vytvořit archiv",
     continuationTitle: "pokračování pro účastníky",
-    continuationEyebrow: "odemknutí participant plochy",
+    continuationEyebrow: "odemknutí plochy pro účastníky",
     continuationDescription: "Přepínač pro chvíli, kdy se má účastníkům otevřít odpolední plocha pro účastníky.",
     handoffMomentTitle: "plocha pro účastníky",
-    handoffMomentLiveDescription: "Rotace právě běží. Tady otevřete participant plochu a držte po ruce i rozpis přesunů.",
+    handoffMomentLiveDescription: "Rotace právě běží. Tady otevřete plochu pro účastníky a držte po ruce i rozpis přesunů.",
     handoffMomentNextDescription: "Další velký přechod je rotace. Participant plochu otevírejte až tady, ne jako trvalý globální přepínač.",
     handoffMomentJumpButton: "detail rotace",
-    revealTitle: "stav participant plochy",
+    revealTitle: "stav plochy pro účastníky",
     unlockButton: "odemknout",
     hideAgainButton: "znovu skrýt",
     participantStatePrefix: "Stav na participant ploše:",
@@ -463,14 +463,14 @@ export const adminCopy = {
     rotationSignalCapturedByLabel: "facilitátor",
     rotationSignalValidationError: "Zápis musí mít text pozorování.",
     participantSurfaceCardTitle: "plocha pro účastníky",
-    participantSurfaceCardDescription: "Vedlejší záchranná vrstva pro chvíli, kdy už je rotace pryč, ale potřebujete stav participant plochy ještě upravit.",
+    participantSurfaceCardDescription: "Vedlejší záchranná vrstva pro chvíli, kdy už je rotace pryč, ale potřebujete stav plochy pro účastníky ještě upravit.",
     participantSurfaceRecoveryHint: "Na hlavní plochu patří jen samotný přechod. Tady zůstává záloha pro pozdější opravný zásah.",
     presenterCardTitle: "projekce pro místnost",
     presenterCardDescription: "Spusťte projekci pro místnost. Výchozí scéna se řídí aktivní položkou agendy a můžete ji kdykoli přepnout.",
     presenterCurrentSceneLabel: "výchozí scéna",
     presenterOpenCurrentButton: "otevřít projekci",
     presenterOpenParticipantSurfaceButton: "plocha pro účastníky 1:1",
-    presenterOpenParticipantButton: "otevřít participant plochu",
+    presenterOpenParticipantButton: "otevřít plochu pro účastníky",
     presenterOpenSelectedScene: "otevřít tuto scénu",
     presenterEditSceneButton: "upravit scénu",
     presenterAddSceneButton: "přidat scénu",

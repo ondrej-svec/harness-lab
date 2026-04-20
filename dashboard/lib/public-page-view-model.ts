@@ -327,7 +327,7 @@ function buildParticipantWorkingContext(options: {
     note: activeParticipantTeam
       ? lang === "en"
         ? "Keep the room context compact. The page should help you move, not manage your whole team."
-        : "Držte tady jen to, co právě potřebujete. Tahle stránka má pomoct s dalším krokem, ne nahrazovat týmový board."
+        : "Držte tady jen to, co právě potřebujete. Tahle stránka má pomoct s dalším krokem, ne nahrazovat týmovou plochu."
       : lang === "en"
         ? "No bound team yet. Use the room materials below and move to the matching repo when your team is clear."
         : "Ještě nemáte přiřazený tým. Vezměte si materiály z místnosti níže a jakmile bude tým jasný, přesuňte se k odpovídajícímu repu.",
