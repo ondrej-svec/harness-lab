@@ -62,7 +62,7 @@ describe("PresenterPage", () => {
     // seedWorkshopState is a Czech-content instance, so the default scene
     // renders its Czech hero title from the 2026-04-12 Phase B translation
     // (with the 2026-04-13 ty→vy normalisation applied per style guide).
-    expect(html).toContain("Vaše repo už není vaše");
+    expect(html).toContain("Vaše repo zůstává vaše");
     expect(html).not.toContain(adminCopy.en.presenterBack);
     expect(html).not.toContain(adminCopy.en.presenterScenesLabel);
   });
