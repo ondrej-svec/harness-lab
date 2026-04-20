@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { normalizeTeamRepoUrl } from "@/lib/team-repo-url";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import type { Team } from "@/lib/workshop-data";
 import { appendCheckIn, upsertTeam } from "@/lib/workshop-store";
@@ -14,6 +15,10 @@ export async function POST(request: Request) {
   if (!body.id || !body.name || !body.repoUrl || !body.projectBriefId) {
     return NextResponse.json({ ok: false, error: "id, name, repoUrl and projectBriefId are required" }, { status: 400 });
   }
+  const repoUrl = normalizeTeamRepoUrl(body.repoUrl);
+  if (!repoUrl.ok) {
+    return NextResponse.json({ ok: false, error: repoUrl.error }, { status: 400 });
+  }
   if (!Array.isArray(body.checkIns)) {
     body.checkIns = [];
   }
@@ -22,7 +27,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const state = await upsertTeam(body);
+    const state = await upsertTeam({ ...body, repoUrl: repoUrl.value });
     return NextResponse.json({ ok: true, items: state.teams });
   } catch (error) {
     return workshopMutationErrorResponse(error);

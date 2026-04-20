@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
+import { isParticipantTeamAccessError, requireParticipantTeamAccess } from "@/lib/participant-team-access";
+import { normalizeTeamRepoUrl } from "@/lib/team-repo-url";
 import { updateTeamFromParticipant, isWorkshopStateTargetError } from "@/lib/workshop-store";
 
 export async function PATCH(
@@ -30,15 +32,11 @@ export async function PATCH(
     if (typeof body.repoUrl !== "string") {
       return NextResponse.json({ ok: false, error: "repoUrl must be a string" }, { status: 400 });
     }
-    const trimmedUrl = body.repoUrl.trim();
-    if (trimmedUrl.length > 0) {
-      try {
-        new URL(trimmedUrl);
-      } catch {
-        return NextResponse.json({ ok: false, error: "repoUrl must be a valid URL" }, { status: 400 });
-      }
+    const repoUrl = normalizeTeamRepoUrl(body.repoUrl);
+    if (!repoUrl.ok) {
+      return NextResponse.json({ ok: false, error: repoUrl.error }, { status: 400 });
     }
-    patch.repoUrl = trimmedUrl;
+    patch.repoUrl = repoUrl.value;
   }
 
   if ("members" in body) {
@@ -53,9 +51,17 @@ export async function PATCH(
   }
 
   try {
+    await requireParticipantTeamAccess({
+      instanceId: access.session.instanceId,
+      participantId: access.session.participantId,
+      teamId,
+    });
     await updateTeamFromParticipant(teamId, patch, access.session.instanceId);
     return NextResponse.json({ ok: true });
   } catch (error) {
+    if (isParticipantTeamAccessError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: 403 });
+    }
     if (isWorkshopStateTargetError(error)) {
       return NextResponse.json({ ok: false, error: error.message }, { status: 404 });
     }

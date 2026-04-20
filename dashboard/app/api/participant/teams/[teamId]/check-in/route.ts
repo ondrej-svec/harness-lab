@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
+import { isParticipantTeamAccessError, requireParticipantTeamAccess } from "@/lib/participant-team-access";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { appendCheckIn, getWorkshopState } from "@/lib/workshop-store";
@@ -48,6 +49,19 @@ export async function PATCH(
   }
 
   const instanceId = access.session.instanceId;
+  try {
+    await requireParticipantTeamAccess({
+      instanceId,
+      participantId: access.session.participantId,
+      teamId,
+    });
+  } catch (error) {
+    if (isParticipantTeamAccessError(error)) {
+      return NextResponse.json({ ok: false, error: error.code }, { status: 403 });
+    }
+    throw error;
+  }
+
   const state = await getWorkshopState(instanceId);
   const team = state.teams.find((item) => item.id === teamId);
   if (!team) {

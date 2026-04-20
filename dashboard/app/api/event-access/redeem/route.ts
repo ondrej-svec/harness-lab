@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkBotId } from "botid/server";
-import { participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
+import { getParticipantSessionCookieOptions, participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
 import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
 import { isRedeemRateLimited, recordRedeemAttempt } from "@/lib/redeem-rate-limit";
 import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
@@ -77,12 +77,11 @@ export async function POST(request: Request) {
       })
     : NextResponse.redirect(new URL("/", request.url), { status: 303 });
 
-  response.cookies.set(participantSessionCookieName, result.session.token, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(result.session.expiresAt),
-  });
+  response.cookies.set(
+    participantSessionCookieName,
+    result.session.token,
+    getParticipantSessionCookieOptions(new Date(result.session.expiresAt)),
+  );
 
   return response;
 }

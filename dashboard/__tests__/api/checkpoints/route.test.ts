@@ -29,32 +29,31 @@ import { seedWorkshopState, type WorkshopState } from "@/lib/workshop-data";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "@/lib/workshop-state-repository";
 
 class MemoryWorkshopStateRepository implements WorkshopStateRepository {
-  constructor(private state: WorkshopState) {}
+  constructor(private states: Record<string, WorkshopState>) {}
 
   async getState(instanceId: string) {
-    void instanceId;
-    return structuredClone(this.state);
+    return structuredClone(this.states[instanceId] ?? this.states["sample-studio-a"]);
   }
 
-  async saveState(_instanceId: string, state: WorkshopState) {
-    this.state = structuredClone(state);
+  async saveState(instanceId: string, state: WorkshopState) {
+    this.states[instanceId] = structuredClone(state);
   }
 }
 
 class MemoryCheckpointRepository implements CheckpointRepository {
-  constructor(private items: CheckpointRecord[] = []) {}
+  constructor(private itemsByInstance: Record<string, CheckpointRecord[]> = {}) {}
 
   async listCheckpoints(instanceId: string) {
-    void instanceId;
-    return structuredClone(this.items);
+    return structuredClone(this.itemsByInstance[instanceId] ?? []);
   }
 
-  async appendCheckpoint(_instanceId: string, checkpoint: CheckpointRecord) {
-    this.items = [structuredClone(checkpoint), ...this.items].slice(0, 12);
+  async appendCheckpoint(instanceId: string, checkpoint: CheckpointRecord) {
+    const current = this.itemsByInstance[instanceId] ?? [];
+    this.itemsByInstance[instanceId] = [structuredClone(checkpoint), ...current].slice(0, 12);
   }
 
-  async replaceCheckpoints(_instanceId: string, checkpoints: CheckpointRecord[]) {
-    this.items = structuredClone(checkpoints);
+  async replaceCheckpoints(instanceId: string, checkpoints: CheckpointRecord[]) {
+    this.itemsByInstance[instanceId] = structuredClone(checkpoints);
   }
 }
 
@@ -135,21 +134,49 @@ class AllowFacilitatorAuthService implements FacilitatorAuthService {
 }
 
 describe("checkpoints route", () => {
+  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
   let checkpointRepository: MemoryCheckpointRepository;
   let eventAccessRepository: MemoryEventAccessRepository;
 
   beforeEach(() => {
-    checkpointRepository = new MemoryCheckpointRepository([
-      {
-        id: "u-checkpoint",
-        teamId: "t1",
-        text: "Checkpoint z dedikovaného repository.",
-        at: "11:24",
-      },
-    ]);
+    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
+    checkpointRepository = new MemoryCheckpointRepository({
+      "sample-studio-a": [
+        {
+          id: "u-checkpoint",
+          teamId: "t1",
+          text: "Checkpoint z dedikovaného repository.",
+          at: "11:24",
+        },
+      ],
+      "sample-lab-c": [
+        {
+          id: "u-wrong-instance",
+          teamId: "t9",
+          text: "Checkpoint from the wrong default instance.",
+          at: "09:00",
+        },
+      ],
+    });
     eventAccessRepository = new MemoryEventAccessRepository();
 
-    setWorkshopStateRepositoryForTests(new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState)));
+    setWorkshopStateRepositoryForTests(
+      new MemoryWorkshopStateRepository({
+        "sample-studio-a": structuredClone(seedWorkshopState),
+        "sample-lab-c": {
+          ...structuredClone(seedWorkshopState),
+          workshopId: "sample-lab-c",
+          sprintUpdates: [
+            {
+              id: "u-wrong-instance",
+              teamId: "t9",
+              text: "Checkpoint from the wrong default instance.",
+              at: "09:00",
+            },
+          ],
+        },
+      }),
+    );
     setCheckpointRepositoryForTests(checkpointRepository);
     setEventAccessRepositoryForTests(eventAccessRepository);
     setParticipantEventAccessRepositoryForTests(
@@ -170,6 +197,11 @@ describe("checkpoints route", () => {
   });
 
   afterEach(() => {
+    if (originalInstanceId === undefined) {
+      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
+    } else {
+      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
+    }
     setWorkshopStateRepositoryForTests(null);
     setCheckpointRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);
@@ -200,6 +232,32 @@ describe("checkpoints route", () => {
     });
   });
 
+  it("scopes the checkpoint read to the participant session instance instead of the default instance", async () => {
+    const redeemed = await redeemEventCode("lantern8-context4-handoff2");
+    expect(redeemed.ok).toBe(true);
+    if (!redeemed.ok) {
+      return;
+    }
+
+    const response = await GET(
+      new Request("http://localhost/api/checkpoints", {
+        headers: {
+          cookie: `${participantSessionCookieName}=${encodeURIComponent(redeemed.session.token)}`,
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      items: [
+        expect.objectContaining({
+          id: "u-checkpoint",
+        }),
+      ],
+      storageMode: expect.any(String),
+    });
+  });
+
   it("writes new checkpoint entries through the normalized repository path", async () => {
     const response = await POST(
       new Request("http://localhost/api/checkpoints", {
@@ -218,7 +276,7 @@ describe("checkpoints route", () => {
     );
 
     expect(response.status).toBe(200);
-    await expect(checkpointRepository.listCheckpoints("sample-studio-a")).resolves.toSatisfy((items) => items[0]?.id === "u-new");
+    await expect(checkpointRepository.listCheckpoints("sample-lab-c")).resolves.toSatisfy((items) => items[0]?.id === "u-new");
   });
 
   it("rejects incomplete checkpoint writes", async () => {

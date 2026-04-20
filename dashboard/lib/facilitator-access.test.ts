@@ -6,7 +6,8 @@ const getCliSessionFromBearerToken = vi.fn();
 const parseBearerToken = vi.fn();
 const hasValidRequestCredentials = vi.fn();
 const hasValidSession = vi.fn();
-const resolveFacilitatorGrant = vi.fn();
+const hasFacilitatorPlatformAccess = vi.fn();
+const resolveFacilitatorGrantWithBootstrap = vi.fn();
 const getInstance = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 const requireTrustedActionOrigin = vi.fn();
@@ -32,7 +33,8 @@ vi.mock("./facilitator-auth-service", () => ({
 }));
 
 vi.mock("./facilitator-session", () => ({
-  resolveFacilitatorGrant,
+  hasFacilitatorPlatformAccess,
+  resolveFacilitatorGrantWithBootstrap,
 }));
 
 vi.mock("./instance-context", () => ({
@@ -74,7 +76,8 @@ describe("facilitator-access", () => {
     headers.mockResolvedValue(new Headers());
     hasValidRequestCredentials.mockResolvedValue(true);
     hasValidSession.mockResolvedValue(true);
-    resolveFacilitatorGrant.mockResolvedValue({ id: "grant-1", role: "owner" });
+    hasFacilitatorPlatformAccess.mockResolvedValue(false);
+    resolveFacilitatorGrantWithBootstrap.mockResolvedValue({ grant: { id: "grant-1", role: "owner" } });
     parseBearerToken.mockReturnValue(null);
     getCliSessionFromBearerToken.mockResolvedValue(null);
     getInstance.mockImplementation(async (instanceId) => ({ id: instanceId }));
@@ -132,8 +135,30 @@ describe("facilitator-access", () => {
 
     expect(response).toBeNull();
     expect(getCliSessionFromBearerToken).toHaveBeenCalledWith("cli-token");
-    expect(resolveFacilitatorGrant).toHaveBeenCalledWith("sample-studio-a", "user-1");
+    expect(resolveFacilitatorGrantWithBootstrap).toHaveBeenCalledWith("sample-studio-a", "user-1");
     expect(hasValidSession).not.toHaveBeenCalled();
+  });
+
+  it("denies platform-scoped cli bearer requests without platform access", async () => {
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    process.env.NEON_AUTH_COOKIE_SECRET = "secret-secret-secret-secret";
+    getRuntimeStorageMode.mockReturnValue("neon");
+    parseBearerToken.mockReturnValue("cli-token");
+    getCliSessionFromBearerToken.mockResolvedValue({ tokenHash: "hash", neonUserId: "user-1" });
+    hasFacilitatorPlatformAccess.mockResolvedValue(false);
+
+    const response = await requireFacilitatorRequest(
+      new Request("http://localhost/api/workshop/instances", {
+        headers: {
+          authorization: "Bearer cli-token",
+        },
+      }),
+      null,
+    );
+
+    expect(response?.status).toBe(401);
+    expect(hasFacilitatorPlatformAccess).toHaveBeenCalledWith("user-1");
   });
 
   it("returns an explicit not-found error when the target workshop does not exist", async () => {

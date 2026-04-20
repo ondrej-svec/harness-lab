@@ -36,6 +36,7 @@ Facilitator access rules:
 - facilitators authenticate through a separate identity path
 - facilitator identities are global to the system, not re-created per event
 - each facilitator action requires an `instance_grant` or a global operator role that explicitly authorizes the target action
+- in hosted Neon mode, the Neon Auth `admin` user role is the global operator role for workspace-level instance list/create operations and for first-owner bootstrap on an empty instance
 - facilitator APIs and admin routes must default-deny when the requested `instance_id` is absent, mismatched, archived, or unauthorized
 
 Enforcement rules:

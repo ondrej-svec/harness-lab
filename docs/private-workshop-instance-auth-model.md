@@ -23,6 +23,7 @@ This document defines the first production security model for participant and fa
 - facilitators authenticate through a separate identity path
 - each facilitator identity is global to the system
 - authorization is granted per instance through `instance_grants`
+- workspace-level instance list/create operations require an explicit global operator identity; in Neon mode this is the Neon Auth `admin` user role
 - facilitator sessions must use stronger session duration and rotation rules than participant sessions
 
 ## Participant Session Rules
@@ -47,7 +48,7 @@ This document defines the first production security model for participant and fa
 - authorization decisions are server-side only
 - participant sessions may never call facilitator routes or observe facilitator-private records
 - facilitator access defaults to deny when the instance grant is missing, revoked, or weaker than the requested action
-- global operator roles, if introduced, must be explicit and limited to narrowly defined operational actions
+- the global operator role is explicit and limited to workspace-level instance lifecycle actions plus first-owner bootstrap on empty instances
 
 ## Audit Requirements
 

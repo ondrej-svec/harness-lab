@@ -1,6 +1,7 @@
 import { auth } from "./auth/server";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
+import { getNeonSql } from "./neon-db";
 import type { InstanceGrantRecord } from "./runtime-contracts";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
 
@@ -34,6 +35,25 @@ export async function getAuthenticatedFacilitator(): Promise<AuthenticatedFacili
   return userId ? { neonUserId: userId } : null;
 }
 
+export async function hasFacilitatorPlatformAccess(neonUserId: string): Promise<boolean> {
+  if (!isNeonRuntimeMode()) {
+    return false;
+  }
+
+  const sql = getNeonSql();
+  const rows = (await sql.query(
+    `
+      SELECT role
+      FROM neon_auth."user"
+      WHERE id::text = $1
+      LIMIT 1
+    `,
+    [neonUserId],
+  )) as Array<{ role: string | null }>;
+
+  return rows[0]?.role === "admin";
+}
+
 export async function resolveFacilitatorGrantWithBootstrap(
   instanceId: string,
   neonUserId: string,
@@ -44,7 +64,7 @@ export async function resolveFacilitatorGrantWithBootstrap(
 
   if (!grant) {
     const grantCount = await repo.countActiveGrants(instanceId);
-    if (grantCount === 0) {
+    if (grantCount === 0 && (await hasFacilitatorPlatformAccess(neonUserId))) {
       grant = await repo.createGrant(instanceId, neonUserId, "owner");
       autoBootstrapped = true;
     }
@@ -54,8 +74,7 @@ export async function resolveFacilitatorGrantWithBootstrap(
 }
 
 export async function resolveFacilitatorGrant(instanceId: string, neonUserId: string): Promise<InstanceGrantRecord | null> {
-  const { grant } = await resolveFacilitatorGrantWithBootstrap(instanceId, neonUserId);
-  return grant;
+  return getInstanceGrantRepository().getActiveGrantByNeonUserId(instanceId, neonUserId);
 }
 
 /**

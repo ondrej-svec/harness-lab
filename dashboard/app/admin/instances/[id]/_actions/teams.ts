@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
+import { normalizeTeamRepoUrl } from "@/lib/team-repo-url";
 import {
   appendCheckIn,
   getWorkshopState,
@@ -57,13 +58,17 @@ export async function registerTeamAction(formData: FormData) {
   const anchorRaw = String(formData.get("anchor") ?? "").trim();
 
   if (id && name && repoUrl && projectBriefId) {
+    const normalizedRepoUrl = normalizeTeamRepoUrl(repoUrl);
+    if (!normalizedRepoUrl.ok) {
+      throw new Error(normalizedRepoUrl.error);
+    }
     const existing = state.teams.find((team) => team.id === id);
     await upsertTeam(
       {
         id,
         name,
         city,
-        repoUrl,
+        repoUrl: normalizedRepoUrl.value,
         projectBriefId,
         checkIns: existing?.checkIns ?? [],
         anchor: anchorRaw ? anchorRaw : existing?.anchor ?? null,
@@ -131,6 +136,12 @@ export async function updateTeamFieldAction(formData: FormData) {
       .filter(Boolean);
   } else if (fieldName === "anchor") {
     next.anchor = fieldValue;
+  } else if (fieldName === "repoUrl") {
+    const normalizedRepoUrl = normalizeTeamRepoUrl(fieldValue);
+    if (!normalizedRepoUrl.ok) {
+      throw new Error(normalizedRepoUrl.error);
+    }
+    next.repoUrl = normalizedRepoUrl.value;
   } else {
     (next as Record<string, unknown>)[fieldName] = fieldValue;
   }

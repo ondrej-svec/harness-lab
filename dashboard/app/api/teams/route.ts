@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     return access.response;
   }
 
-  const state = await getWorkshopState();
+  const state = await getWorkshopState(access.session.instanceId);
   return NextResponse.json({
     items: state.teams,
   });

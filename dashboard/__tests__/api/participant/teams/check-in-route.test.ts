@@ -3,15 +3,24 @@ import { PATCH } from "@/app/api/participant/teams/[teamId]/check-in/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import { participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
 import { setEventAccessRepositoryForTests, type EventAccessRepository } from "@/lib/event-access-repository";
+import { setParticipantRepositoryForTests, type ParticipantRepository } from "@/lib/participant-repository";
 import {
   hashSecret,
   setParticipantEventAccessRepositoryForTests,
   type ParticipantEventAccessRepository,
 } from "@/lib/participant-event-access-repository";
+import { setTeamMemberRepositoryForTests, type TeamMemberRepository } from "@/lib/team-member-repository";
 import { setTeamRepositoryForTests, type TeamRepository } from "@/lib/team-repository";
 import { seedWorkshopState, type WorkshopState } from "@/lib/workshop-data";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "@/lib/workshop-state-repository";
-import type { ParticipantEventAccessRecord, ParticipantSessionRecord } from "@/lib/runtime-contracts";
+import type {
+  AssignResult,
+  ParticipantEventAccessRecord,
+  ParticipantRecord,
+  ParticipantSessionRecord,
+  TeamMemberRecord,
+  UnassignResult,
+} from "@/lib/runtime-contracts";
 
 class MemoryWorkshopStateRepository implements WorkshopStateRepository {
   constructor(private state: WorkshopState) {}
@@ -91,8 +100,110 @@ class MemoryAuditLogRepository implements AuditLogRepository {
   async deleteOlderThan() {}
 }
 
+class MemoryParticipantRepository implements ParticipantRepository {
+  constructor(private items: ParticipantRecord[] = []) {}
+
+  async listParticipants(instanceId: string) {
+    return structuredClone(this.items.filter((item) => item.instanceId === instanceId && item.archivedAt === null));
+  }
+
+  async findParticipant(instanceId: string, participantId: string) {
+    return structuredClone(
+      this.items.find((item) => item.instanceId === instanceId && item.id === participantId) ?? null,
+    );
+  }
+
+  async findParticipantByDisplayName(instanceId: string, displayName: string) {
+    return structuredClone(
+      this.items.find(
+        (item) =>
+          item.instanceId === instanceId &&
+          item.archivedAt === null &&
+          item.displayName.toLocaleLowerCase() === displayName.trim().toLocaleLowerCase(),
+      ) ?? null,
+    );
+  }
+
+  async upsertParticipant(instanceId: string, participant: ParticipantRecord) {
+    this.items = this.items.some((item) => item.instanceId === instanceId && item.id === participant.id)
+      ? this.items.map((item) =>
+          item.instanceId === instanceId && item.id === participant.id ? structuredClone(participant) : item,
+        )
+      : [...this.items, structuredClone({ ...participant, instanceId })];
+  }
+
+  async archiveParticipant(instanceId: string, participantId: string, archivedAt: string) {
+    this.items = this.items.map((item) =>
+      item.instanceId === instanceId && item.id === participantId
+        ? { ...item, archivedAt, updatedAt: archivedAt }
+        : item,
+    );
+  }
+
+  async replaceParticipants(instanceId: string, participants: ParticipantRecord[]) {
+    this.items = [
+      ...this.items.filter((item) => item.instanceId !== instanceId),
+      ...structuredClone(participants.map((participant) => ({ ...participant, instanceId }))),
+    ];
+  }
+}
+
+class MemoryTeamMemberRepository implements TeamMemberRepository {
+  constructor(private items: TeamMemberRecord[] = []) {}
+
+  async listMembers(instanceId: string) {
+    return structuredClone(this.items.filter((item) => item.instanceId === instanceId));
+  }
+
+  async listMembersByTeam(instanceId: string, teamId: string) {
+    return structuredClone(
+      this.items.filter((item) => item.instanceId === instanceId && item.teamId === teamId),
+    );
+  }
+
+  async findMemberByParticipant(instanceId: string, participantId: string) {
+    return structuredClone(
+      this.items.find((item) => item.instanceId === instanceId && item.participantId === participantId) ?? null,
+    );
+  }
+
+  async assignMember(instanceId: string, assignment: TeamMemberRecord): Promise<AssignResult> {
+    const existing = this.items.find(
+      (item) => item.instanceId === instanceId && item.participantId === assignment.participantId,
+    );
+    this.items = this.items.filter(
+      (item) => !(item.instanceId === instanceId && item.participantId === assignment.participantId),
+    );
+    this.items.push(structuredClone({ ...assignment, instanceId }));
+    return {
+      teamId: assignment.teamId,
+      movedFrom: existing?.teamId ?? null,
+      changed: !existing || existing.teamId !== assignment.teamId,
+    };
+  }
+
+  async unassignMember(instanceId: string, participantId: string): Promise<UnassignResult> {
+    const existing = this.items.find(
+      (item) => item.instanceId === instanceId && item.participantId === participantId,
+    ) ?? null;
+    this.items = this.items.filter(
+      (item) => !(item.instanceId === instanceId && item.participantId === participantId),
+    );
+    return existing ? { teamId: existing.teamId } : null;
+  }
+
+  async replaceMembers(instanceId: string, members: TeamMemberRecord[]) {
+    this.items = [
+      ...this.items.filter((item) => item.instanceId !== instanceId),
+      ...structuredClone(members.map((member) => ({ ...member, instanceId }))),
+    ];
+  }
+}
+
 describe("participant team check-in route", () => {
   let teamRepository: MemoryTeamRepository;
+  let participantRepository: MemoryParticipantRepository;
+  let teamMemberRepository: MemoryTeamMemberRepository;
 
   beforeEach(() => {
     setWorkshopStateRepositoryForTests(new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState)));
@@ -109,6 +220,10 @@ describe("participant team check-in route", () => {
       },
     ]);
     setTeamRepositoryForTests(teamRepository);
+    participantRepository = new MemoryParticipantRepository();
+    teamMemberRepository = new MemoryTeamMemberRepository();
+    setParticipantRepositoryForTests(participantRepository);
+    setTeamMemberRepositoryForTests(teamMemberRepository);
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository());
     setParticipantEventAccessRepositoryForTests(
       new MemoryParticipantEventAccessRepository({
@@ -129,17 +244,28 @@ describe("participant team check-in route", () => {
   afterEach(() => {
     setWorkshopStateRepositoryForTests(null);
     setTeamRepositoryForTests(null);
+    setParticipantRepositoryForTests(null);
+    setTeamMemberRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);
     setParticipantEventAccessRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
     vi.useRealTimers();
   });
 
-  async function buildAuthedRequest(teamId: string, body: unknown) {
-    const redeemed = await redeemEventCode("lantern8-context4-handoff2");
+  async function buildAuthedRequest(teamId: string, body: unknown, options?: { membershipTeamId?: string | null }) {
+    const redeemed = await redeemEventCode("lantern8-context4-handoff2", "Iva");
     expect(redeemed.ok).toBe(true);
     if (!redeemed.ok) {
       throw new Error("redeem failed");
+    }
+    if (options?.membershipTeamId && redeemed.session.participantId) {
+      await teamMemberRepository.assignMember("sample-studio-a", {
+        id: `tm-${redeemed.session.participantId}`,
+        instanceId: "sample-studio-a",
+        teamId: options.membershipTeamId,
+        participantId: redeemed.session.participantId,
+        assignedAt: "2026-04-06T12:00:00.000Z",
+      });
     }
     return {
       request: new Request(`http://localhost/api/participant/teams/${teamId}/check-in`, {
@@ -159,7 +285,7 @@ describe("participant team check-in route", () => {
       changed: "We rewrote the room entrypoint.",
       verified: "The team replayed the setup path from scratch.",
       nextStep: "Write the first repo map before lunch.",
-    });
+    }, { membershipTeamId: "t-runtime" });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(response.status).toBe(200);
     const payload = (await response.json()) as { team: WorkshopState["teams"][number] };
@@ -169,7 +295,7 @@ describe("participant team check-in route", () => {
       changed: "We rewrote the room entrypoint.",
       verified: "The team replayed the setup path from scratch.",
       nextStep: "Write the first repo map before lunch.",
-      writtenBy: null,
+      writtenBy: "Iva",
     });
   });
 
@@ -186,7 +312,7 @@ describe("participant team check-in route", () => {
   });
 
   it("rejects empty content with 400", async () => {
-    const { request } = await buildAuthedRequest("t-runtime", { changed: "   " });
+    const { request } = await buildAuthedRequest("t-runtime", { changed: "   " }, { membershipTeamId: "t-runtime" });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(response.status).toBe(400);
   });
@@ -197,7 +323,7 @@ describe("participant team check-in route", () => {
       changed: "hello",
       verified: "world",
       nextStep: "next",
-    });
+    }, { membershipTeamId: "t-missing" });
     const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-missing" }) });
     expect(response.status).toBe(404);
   });
@@ -208,7 +334,7 @@ describe("participant team check-in route", () => {
       changed: "first change",
       verified: "first proof",
       nextStep: "first next",
-    });
+    }, { membershipTeamId: "t-runtime" });
     const r1 = await PATCH(first.request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(r1.status).toBe(200);
 
@@ -217,11 +343,39 @@ describe("participant team check-in route", () => {
       changed: "second change",
       verified: "second proof",
       nextStep: "second next",
-    });
+    }, { membershipTeamId: "t-runtime" });
     const r2 = await PATCH(second.request, { params: Promise.resolve({ teamId: "t-runtime" }) });
     expect(r2.status).toBe(200);
     const payload = (await r2.json()) as { team: WorkshopState["teams"][number] };
     expect(payload.team.checkIns).toHaveLength(2);
     expect(payload.team.checkIns.map((entry) => entry.changed)).toEqual(["first change", "second change"]);
+  });
+
+  it("rejects cross-team writes with 403", async () => {
+    const { request } = await buildAuthedRequest("t-runtime", {
+      phaseId: "opening",
+      changed: "cross-team",
+      verified: "proof",
+      nextStep: "next",
+    }, { membershipTeamId: "t-other" });
+
+    const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({ error: "team_forbidden" });
+  });
+
+  it("rejects writes when the participant is not assigned to any team", async () => {
+    const { request } = await buildAuthedRequest("t-runtime", {
+      phaseId: "opening",
+      changed: "no team",
+      verified: "proof",
+      nextStep: "next",
+    });
+
+    const response = await PATCH(request, { params: Promise.resolve({ teamId: "t-runtime" }) });
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toMatchObject({ error: "team_membership_required" });
   });
 });

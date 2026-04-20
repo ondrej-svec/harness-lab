@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { participantSessionCookieName, revokeParticipantSession } from "@/lib/event-access";
+import { getParticipantSessionCookieOptions, participantSessionCookieName, revokeParticipantSession } from "@/lib/event-access";
 import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
 
 function readCookieValue(request: Request) {
@@ -31,12 +31,7 @@ export async function POST(request: Request) {
   await revokeParticipantSession(readCookieValue(request));
 
   const response = NextResponse.redirect(new URL("/", request.url), { status: 303 });
-  response.cookies.set(participantSessionCookieName, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(0),
-  });
+  response.cookies.set(participantSessionCookieName, "", getParticipantSessionCookieOptions(new Date(0)));
 
   return response;
 }

@@ -19,6 +19,7 @@ describe("facilitator-auth-service (neon mode)", () => {
 
   it("rejects a missing facilitator session and writes a failure audit log", async () => {
     const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const query = vi.fn().mockResolvedValue([]);
 
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
@@ -41,6 +42,9 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-alert", () => ({
       emitRuntimeAlert: vi.fn(),
     }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
 
     const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
 
@@ -55,10 +59,12 @@ describe("facilitator-auth-service (neon mode)", () => {
         metadata: { reason: "no_session" },
       }),
     );
+    expect(query).not.toHaveBeenCalled();
   });
 
   it("auto-bootstraps the first facilitator as owner on a fresh instance", async () => {
     const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const query = vi.fn().mockResolvedValue([{ role: "admin" }]);
     const createdGrant: InstanceGrantRecord = {
       id: "grant-1",
       instanceId: "sample-studio-a",
@@ -90,6 +96,9 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-alert", () => ({
       emitRuntimeAlert: vi.fn(),
     }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
 
     const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
 
@@ -97,6 +106,10 @@ describe("facilitator-auth-service (neon mode)", () => {
       getFacilitatorAuthService().hasValidSession({ instanceId: "sample-studio-a" }),
     ).resolves.toBe(true);
     expect(repo.createGrant).toHaveBeenCalledWith("sample-studio-a", "user-1", "owner");
+    expect(query).toHaveBeenCalledWith(
+      expect.stringContaining('FROM neon_auth."user"'),
+      ["user-1"],
+    );
     expect(append).toHaveBeenCalledWith(
       expect.objectContaining({
         action: "facilitator_auto_bootstrap",
@@ -113,9 +126,62 @@ describe("facilitator-auth-service (neon mode)", () => {
     );
   });
 
+  it("does not auto-bootstrap a non-admin facilitator onto an empty instance", async () => {
+    const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const emitRuntimeAlert = vi.fn();
+    const query = vi.fn().mockResolvedValue([{ role: "member" }]);
+    const repo = {
+      getActiveGrantByNeonUserId: vi.fn().mockResolvedValue(null),
+      countActiveGrants: vi.fn().mockResolvedValue(0),
+      createGrant: vi.fn(),
+    };
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./auth/server", () => ({
+      auth: {
+        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-2" } } }),
+      },
+    }));
+    vi.doMock("./audit-log-repository", () => ({
+      getAuditLogRepository: () => ({ append }),
+    }));
+    vi.doMock("./instance-grant-repository", () => ({
+      getInstanceGrantRepository: () => repo,
+    }));
+    vi.doMock("./runtime-alert", () => ({
+      emitRuntimeAlert,
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
+
+    await expect(
+      getFacilitatorAuthService().hasValidSession({ instanceId: "sample-studio-a" }),
+    ).resolves.toBe(false);
+    expect(repo.createGrant).not.toHaveBeenCalled();
+    expect(emitRuntimeAlert).toHaveBeenCalledWith({
+      category: "facilitator_auth_failure",
+      severity: "warning",
+      instanceId: "sample-studio-a",
+      metadata: { reason: "missing_grant", neonUserId: "user-2" },
+    });
+    expect(append).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "facilitator_auth",
+        result: "failure",
+        metadata: { neonUserId: "user-2", role: null },
+      }),
+    );
+  });
+
   it("emits a runtime alert when a signed-in user has no grant on a non-empty instance", async () => {
     const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
     const emitRuntimeAlert = vi.fn();
+    const query = vi.fn().mockResolvedValue([{ role: "member" }]);
     const repo = {
       getActiveGrantByNeonUserId: vi.fn().mockResolvedValue(null),
       countActiveGrants: vi.fn().mockResolvedValue(2),
@@ -138,6 +204,9 @@ describe("facilitator-auth-service (neon mode)", () => {
     }));
     vi.doMock("./runtime-alert", () => ({
       emitRuntimeAlert,
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
     }));
 
     const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
@@ -162,6 +231,7 @@ describe("facilitator-auth-service (neon mode)", () => {
 
   it("accepts a facilitator with an existing active grant", async () => {
     const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const query = vi.fn().mockResolvedValue([{ role: "admin" }]);
     const repo = {
       getActiveGrantByNeonUserId: vi.fn().mockResolvedValue({
         id: "grant-2",
@@ -192,6 +262,9 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-alert", () => ({
       emitRuntimeAlert: vi.fn(),
     }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
 
     const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
 
@@ -204,6 +277,93 @@ describe("facilitator-auth-service (neon mode)", () => {
         action: "facilitator_auth",
         result: "success",
         metadata: { neonUserId: "user-3", role: "operator" },
+      }),
+    );
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it("denies platform-scoped access to authenticated non-admin facilitators", async () => {
+    const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const query = vi.fn().mockResolvedValue([{ role: "member" }]);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./auth/server", () => ({
+      auth: {
+        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-4" } } }),
+      },
+    }));
+    vi.doMock("./audit-log-repository", () => ({
+      getAuditLogRepository: () => ({ append }),
+    }));
+    vi.doMock("./instance-grant-repository", () => ({
+      getInstanceGrantRepository: () => ({
+        getActiveGrantByNeonUserId: vi.fn(),
+        countActiveGrants: vi.fn(),
+        createGrant: vi.fn(),
+      }),
+    }));
+    vi.doMock("./runtime-alert", () => ({
+      emitRuntimeAlert: vi.fn(),
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
+
+    await expect(
+      getFacilitatorAuthService().hasValidSession({ instanceId: null }),
+    ).resolves.toBe(false);
+    expect(append).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "facilitator_auth",
+        result: "failure",
+        metadata: { neonUserId: "user-4", scope: "platform" },
+      }),
+    );
+  });
+
+  it("accepts platform-scoped access for admin facilitators", async () => {
+    const append = vi.fn<(record: AuditLogRecord) => Promise<void>>().mockResolvedValue();
+    const query = vi.fn().mockResolvedValue([{ role: "admin" }]);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./auth/server", () => ({
+      auth: {
+        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-5" } } }),
+      },
+    }));
+    vi.doMock("./audit-log-repository", () => ({
+      getAuditLogRepository: () => ({ append }),
+    }));
+    vi.doMock("./instance-grant-repository", () => ({
+      getInstanceGrantRepository: () => ({
+        getActiveGrantByNeonUserId: vi.fn(),
+        countActiveGrants: vi.fn(),
+        createGrant: vi.fn(),
+      }),
+    }));
+    vi.doMock("./runtime-alert", () => ({
+      emitRuntimeAlert: vi.fn(),
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { getFacilitatorAuthService } = await import("./facilitator-auth-service");
+
+    await expect(
+      getFacilitatorAuthService().hasValidSession({ instanceId: null }),
+    ).resolves.toBe(true);
+    expect(append).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "facilitator_auth",
+        result: "success",
+        metadata: { neonUserId: "user-5", scope: "platform" },
       }),
     );
   });

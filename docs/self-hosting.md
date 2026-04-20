@@ -131,8 +131,9 @@ npx tsx scripts/create-facilitator.ts "Facilitator Name" facilitator@example.com
 After that:
 
 1. sign in at `/admin/sign-in`
-2. the first sign-in on an empty instance becomes the owner for the current instance
-3. add more facilitators from the admin UI as needed
+2. this bootstrap script marks the facilitator as a Neon Auth `admin`, which is required for workspace-level instance list/create access
+3. the first `admin` sign-in on an empty instance becomes the owner for that instance
+4. add more facilitators from the admin UI as needed
 
 ## 7. Create and Prepare a Workshop Instance
 

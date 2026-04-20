@@ -98,6 +98,16 @@ class AllowFacilitatorAuthService implements FacilitatorAuthService {
   }
 }
 
+class DenyFacilitatorAuthService implements FacilitatorAuthService {
+  async hasValidRequestCredentials() {
+    return false;
+  }
+
+  async hasValidSession() {
+    return false;
+  }
+}
+
 describe("workshop instances route", () => {
   let instanceRepository: MemoryWorkshopInstanceRepository;
   let stateRepository: MemoryWorkshopStateRepository;
@@ -131,6 +141,14 @@ describe("workshop instances route", () => {
     await expect(response.json()).resolves.toMatchObject({
       items: expect.arrayContaining([expect.objectContaining({ id: "sample-studio-a" })]),
     });
+  });
+
+  it("denies platform-scoped instance listing when facilitator auth rejects the request", async () => {
+    setFacilitatorAuthServiceForTests(new DenyFacilitatorAuthService());
+
+    const response = await GET(new Request("http://localhost/api/workshop/instances"));
+
+    expect(response.status).toBe(401);
   });
 
   it("creates a new instance and seeds its workshop state", async () => {
@@ -191,6 +209,26 @@ describe("workshop instances route", () => {
         venueName: "Example Campus North",
       },
     });
+  });
+
+  it("denies platform-scoped instance creation when facilitator auth rejects the request", async () => {
+    setFacilitatorAuthServiceForTests(new DenyFacilitatorAuthService());
+
+    const response = await POST(
+      new Request("http://localhost/api/workshop/instances", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({
+          id: "client-hackathon-2026-05",
+          templateId: "blueprint-default",
+        }),
+      }),
+    );
+
+    expect(response.status).toBe(401);
   });
 
   it("rejects invalid create payloads for skill-facing calls", async () => {

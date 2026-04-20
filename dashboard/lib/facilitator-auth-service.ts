@@ -3,7 +3,11 @@ import type { FacilitatorAuthService } from "./runtime-contracts";
 export type { FacilitatorAuthService } from "./runtime-contracts";
 import { decodeBasicAuthHeader } from "./admin-auth";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getAuthenticatedFacilitator, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";
+import {
+  getAuthenticatedFacilitator,
+  hasFacilitatorPlatformAccess,
+  resolveFacilitatorGrantWithBootstrap,
+} from "./facilitator-session";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { assertValidNeonAuthConfiguration } from "./runtime-auth-configuration";
@@ -74,16 +78,17 @@ class NeonAuthFacilitatorAuthService implements FacilitatorAuthService {
     }
 
     if (!instanceId) {
+      const hasPlatformAccess = await hasFacilitatorPlatformAccess(userId);
       await getAuditLogRepository().append({
         id: `audit-${Date.now()}`,
         instanceId: null,
         actorKind: "facilitator",
         action: "facilitator_auth",
-        result: "success",
+        result: hasPlatformAccess ? "success" : "failure",
         createdAt: new Date().toISOString(),
         metadata: { neonUserId: userId, scope: "platform" },
       });
-      return true;
+      return hasPlatformAccess;
     }
 
     const { grant, autoBootstrapped } = await resolveFacilitatorGrantWithBootstrap(instanceId, userId);

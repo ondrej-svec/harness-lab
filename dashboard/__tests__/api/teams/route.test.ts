@@ -17,34 +17,31 @@ import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from
 import type { AuditLogRecord, ParticipantEventAccessRecord, ParticipantSessionRecord } from "@/lib/runtime-contracts";
 
 class MemoryWorkshopStateRepository implements WorkshopStateRepository {
-  constructor(private state: WorkshopState) {}
+  constructor(private states: Record<string, WorkshopState>) {}
 
   async getState(instanceId: string) {
-    void instanceId;
-    return structuredClone(this.state);
+    return structuredClone(this.states[instanceId] ?? this.states["sample-studio-a"]);
   }
 
-  async saveState(_instanceId: string, state: WorkshopState) {
-    this.state = structuredClone(state);
+  async saveState(instanceId: string, state: WorkshopState) {
+    this.states[instanceId] = structuredClone(state);
   }
 }
 
 class MemoryTeamRepository implements TeamRepository {
-  constructor(private items: WorkshopState["teams"] = []) {}
+  constructor(private itemsByInstance: Record<string, WorkshopState["teams"]> = {}) {}
 
   async listTeams(instanceId: string) {
-    void instanceId;
-    return structuredClone(this.items);
+    return structuredClone(this.itemsByInstance[instanceId] ?? []);
   }
 
   async upsertTeam(instanceId: string, team: WorkshopState["teams"][number]) {
-    void instanceId;
-    this.items = [...this.items, structuredClone(team)];
+    const current = this.itemsByInstance[instanceId] ?? [];
+    this.itemsByInstance[instanceId] = [...current, structuredClone(team)];
   }
 
   async replaceTeams(instanceId: string, teams: WorkshopState["teams"]) {
-    void instanceId;
-    this.items = structuredClone(teams);
+    this.itemsByInstance[instanceId] = structuredClone(teams);
   }
 }
 
@@ -115,21 +112,58 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 }
 
 describe("teams route", () => {
+  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
+
   beforeEach(() => {
-    setWorkshopStateRepositoryForTests(new MemoryWorkshopStateRepository(structuredClone(seedWorkshopState)));
-    setTeamRepositoryForTests(
-      new MemoryTeamRepository([
-        {
-          id: "t-runtime",
-          name: "Tým runtime",
-          city: "Studio Runtime",
-          members: ["Iva", "Milan"],
-          repoUrl: "https://github.com/example/runtime-team",
-          projectBriefId: "standup-bot",
-          checkIns: [],
-          anchor: null,
+    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
+    setWorkshopStateRepositoryForTests(
+      new MemoryWorkshopStateRepository({
+        "sample-studio-a": structuredClone(seedWorkshopState),
+        "sample-lab-c": {
+          ...structuredClone(seedWorkshopState),
+          workshopId: "sample-lab-c",
+          teams: [
+            {
+              id: "t-wrong-instance",
+              name: "Wrong instance team",
+              city: "Lab C",
+              members: ["Other"],
+              repoUrl: "https://github.com/example/wrong-instance-team",
+              projectBriefId: "standup-bot",
+              checkIns: [],
+              anchor: null,
+            },
+          ],
         },
-      ]),
+      }),
+    );
+    setTeamRepositoryForTests(
+      new MemoryTeamRepository({
+        "sample-studio-a": [
+          {
+            id: "t-runtime",
+            name: "Tým runtime",
+            city: "Studio Runtime",
+            members: ["Iva", "Milan"],
+            repoUrl: "https://github.com/example/runtime-team",
+            projectBriefId: "standup-bot",
+            checkIns: [],
+            anchor: null,
+          },
+        ],
+        "sample-lab-c": [
+          {
+            id: "t-wrong-instance",
+            name: "Wrong instance team",
+            city: "Lab C",
+            members: ["Other"],
+            repoUrl: "https://github.com/example/wrong-instance-team",
+            projectBriefId: "standup-bot",
+            checkIns: [],
+            anchor: null,
+          },
+        ],
+      }),
     );
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository());
     setParticipantEventAccessRepositoryForTests(
@@ -149,6 +183,11 @@ describe("teams route", () => {
   });
 
   afterEach(() => {
+    if (originalInstanceId === undefined) {
+      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
+    } else {
+      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
+    }
     setWorkshopStateRepositoryForTests(null);
     setTeamRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);
@@ -175,6 +214,32 @@ describe("teams route", () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       items: [{ id: "t-runtime", name: "Tým runtime" }],
+    });
+  });
+
+  it("scopes the team read to the participant session instance instead of the default instance", async () => {
+    const redeemed = await redeemEventCode("lantern8-context4-handoff2");
+    expect(redeemed.ok).toBe(true);
+    if (!redeemed.ok) {
+      return;
+    }
+
+    const response = await GET(
+      new Request("http://localhost/api/teams", {
+        headers: {
+          cookie: `${participantSessionCookieName}=${encodeURIComponent(redeemed.session.token)}`,
+        },
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      items: [
+        expect.objectContaining({
+          id: "t-runtime",
+          name: "Tým runtime",
+        }),
+      ],
     });
   });
 

@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCliSessionFromBearerToken, parseBearerToken } from "./facilitator-cli-auth-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
-import { resolveFacilitatorGrant } from "./facilitator-session";
+import { hasFacilitatorPlatformAccess, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";
 import { requireTrustedActionOrigin, isTrustedOrigin, untrustedOriginResponse } from "./request-integrity";
 import { assertValidNeonAuthConfiguration, isNeonRuntimeMode } from "./runtime-auth-configuration";
 import { resolveUiLanguage, withLang } from "./ui-language";
@@ -98,10 +98,11 @@ export async function requireFacilitatorRequest(request: Request, instanceId?: s
       }
 
       if (!resolvedInstanceId) {
-        return null;
+        const hasPlatformAccess = await hasFacilitatorPlatformAccess(cliSession.neonUserId);
+        return hasPlatformAccess ? null : unauthorizedResponse();
       }
 
-      const grant = await resolveFacilitatorGrant(resolvedInstanceId, cliSession.neonUserId);
+      const { grant } = await resolveFacilitatorGrantWithBootstrap(resolvedInstanceId, cliSession.neonUserId);
       return grant ? null : unauthorizedResponse();
     }
 

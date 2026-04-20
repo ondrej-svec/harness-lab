@@ -5,6 +5,7 @@ import path from "node:path";
 import {
   getConfiguredEventCode,
   getParticipantCoreBundle,
+  getParticipantSessionCookieOptions,
   getParticipantSession,
   getParticipantTeamLookup,
   participantSessionCookieName,
@@ -236,6 +237,31 @@ describe("event-access", () => {
 
   it("exports the participant session cookie name for route handlers", () => {
     expect(participantSessionCookieName).toBe("harness_event_session");
+  });
+
+  it("marks participant session cookies as secure in production", () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "production";
+
+    expect(getParticipantSessionCookieOptions(new Date("2026-04-07T00:00:00.000Z"))).toMatchObject({
+      secure: true,
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+    });
+
+    process.env.NODE_ENV = originalNodeEnv;
+  });
+
+  it("keeps participant session cookies non-secure in local development", () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    process.env.NODE_ENV = "development";
+
+    expect(getParticipantSessionCookieOptions(new Date("2026-04-07T00:00:00.000Z"))).toMatchObject({
+      secure: false,
+    });
+
+    process.env.NODE_ENV = originalNodeEnv;
   });
 
   it("rejects and removes expired sessions during validation", async () => {
