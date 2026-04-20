@@ -91,6 +91,18 @@ export function SceneRail({
                 <li key={item.id}>
                   <Link
                     href={item.href}
+                    // Disable auto-prefetch. Next.js prefetches every
+                    // <Link> in viewport; the scene rail renders one
+                    // per scene (10+) on a force-dynamic page, so on
+                    // mount we fired 10+ full-SSR RSC requests in
+                    // parallel — each one running the presenter
+                    // page's DB reads. That queue is what stalled
+                    // the actual phase-change navigation behind it
+                    // ("Měním fázi…" stuck for 20s+).
+                    // Rail clicks are handled by onNavigate below
+                    // anyway — the Link just keeps the URL canonical
+                    // for share / modifier-click.
+                    prefetch={false}
                     aria-label={item.label}
                     aria-current={isActive ? "true" : undefined}
                     onClick={(event) => {

@@ -37,6 +37,22 @@ function origin(): string {
   return new URL(baseUrl()).origin;
 }
 
+/**
+ * Neon Auth calls must time out. Without a deadline, a slow or
+ * unreachable auth runtime causes facilitator pages to hang
+ * indefinitely — there's no UI spinner past the Next.js transition,
+ * so the facilitator sees "not completing really" and the only
+ * recourse is a hard refresh. 6 seconds is:
+ *   - long enough for a cold-start of the auth runtime
+ *   - short enough to fail fast instead of stalling the workshop UX
+ * Callers handle AbortError the same way as any other fetch error.
+ */
+const NEON_AUTH_FETCH_TIMEOUT_MS = 6_000;
+
+function fetchNeonAuth(url: string, init: RequestInit = {}): Promise<Response> {
+  return fetch(url, { ...init, signal: AbortSignal.timeout(NEON_AUTH_FETCH_TIMEOUT_MS) });
+}
+
 const NEON_AUTH_COOKIE_PREFIX = "__Secure-neon-auth";
 
 function resolveSameSiteOption(value: string | undefined) {
@@ -118,7 +134,7 @@ export async function getSession(): Promise<GetSessionResult> {
   const cookie = await buildCookieHeader();
   let response: Response;
   try {
-    response = await fetch(`${baseUrl()}/get-session`, {
+    response = await fetchNeonAuth(`${baseUrl()}/get-session`, {
       headers: { origin: origin(), cookie },
     });
   } catch (e) {
@@ -140,7 +156,7 @@ export async function signOut(): Promise<{ ok: boolean; error?: string }> {
   const cookie = await buildCookieHeader();
   let response: Response;
   try {
-    response = await fetch(`${baseUrl()}/sign-out`, {
+    response = await fetchNeonAuth(`${baseUrl()}/sign-out`, {
       method: "POST",
       headers: { "content-type": "application/json", origin: origin(), cookie },
     });
@@ -166,7 +182,7 @@ export async function requestPasswordReset(opts: {
 }): Promise<{ ok: boolean; error?: string }> {
   let response: Response;
   try {
-    response = await fetch(`${baseUrl()}/request-password-reset`, {
+    response = await fetchNeonAuth(`${baseUrl()}/request-password-reset`, {
       method: "POST",
       headers: { "content-type": "application/json", origin: origin() },
       body: JSON.stringify(opts),
@@ -195,7 +211,7 @@ export const admin = {
     const cookie = await buildCookieHeader();
     let response: Response;
     try {
-      response = await fetch(`${baseUrl()}/admin/set-user-password`, {
+      response = await fetchNeonAuth(`${baseUrl()}/admin/set-user-password`, {
         method: "POST",
         headers: { "content-type": "application/json", origin: origin(), cookie },
         body: JSON.stringify(opts),
@@ -218,7 +234,7 @@ export const admin = {
   async revokeUserSessions(opts: { userId: string }): Promise<{ ok: boolean }> {
     const cookie = await buildCookieHeader();
     try {
-      const response = await fetch(`${baseUrl()}/admin/revoke-user-sessions`, {
+      const response = await fetchNeonAuth(`${baseUrl()}/admin/revoke-user-sessions`, {
         method: "POST",
         headers: { "content-type": "application/json", origin: origin(), cookie },
         body: JSON.stringify(opts),
