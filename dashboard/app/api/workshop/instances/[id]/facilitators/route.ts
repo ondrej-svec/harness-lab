@@ -3,25 +3,25 @@ import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getNeonSql } from "@/lib/neon-db";
 import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 
-export async function GET(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id: instanceId } = await params;
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
 
-  const instanceId = getCurrentWorkshopInstanceId();
   const grants = await getInstanceGrantRepository().listActiveGrants(instanceId);
 
   return NextResponse.json({ ok: true, grants });
 }
 
-export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id: instanceId } = await params;
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
 
-  const facilitator = await getFacilitatorSession();
+  const facilitator = await getFacilitatorSession(instanceId);
   if (!facilitator || facilitator.grant.role !== "owner") {
     return NextResponse.json({ ok: false, error: "owner role required" }, { status: 403 });
   }
@@ -56,7 +56,6 @@ export async function POST(request: Request) {
   }
 
   const neonUser = users[0];
-  const instanceId = getCurrentWorkshopInstanceId();
   const repo = getInstanceGrantRepository();
 
   // Check if already granted

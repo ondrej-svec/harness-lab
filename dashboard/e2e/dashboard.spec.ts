@@ -503,7 +503,7 @@ test.describe("facilitator admin (file mode)", () => {
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {
-    const response = await request.get("/api/admin/facilitators");
+    const response = await request.get("/api/workshop/instances/sample-studio-a/facilitators");
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.ok).toBe(true);
@@ -1067,7 +1067,7 @@ test.describe("facilitator API (unauthenticated)", () => {
     const context = await playwright.request.newContext({
       baseURL: "http://127.0.0.1:3100",
     });
-    const response = await context.get("/api/admin/facilitators");
+    const response = await context.get("/api/workshop/instances/sample-studio-a/facilitators");
     expect(response.status()).toBe(401);
     await context.dispose();
   });

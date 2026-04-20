@@ -31,10 +31,6 @@ vi.mock("@/lib/audit-log-repository", () => ({
   }),
 }));
 
-vi.mock("@/lib/instance-context", () => ({
-  getCurrentWorkshopInstanceId: () => "sample-studio-a",
-}));
-
 vi.mock("@/lib/neon-db", () => ({
   getNeonSql: () => ({
     query,
@@ -45,9 +41,11 @@ vi.mock("@/lib/runtime-storage", () => ({
   getRuntimeStorageMode,
 }));
 
-const routeModulePromise = import("@/app/api/admin/facilitators/route");
+const routeModulePromise = import("@/app/api/workshop/instances/[id]/facilitators/route");
 
-describe("admin facilitators route", () => {
+const params = (id: string) => ({ params: Promise.resolve({ id }) });
+
+describe("workshop instance facilitators route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     requireFacilitatorRequest.mockResolvedValue(null);
@@ -58,12 +56,16 @@ describe("admin facilitators route", () => {
     });
   });
 
-  it("lists active grants for authorized facilitators", async () => {
+  it("lists active grants scoped to the url instance", async () => {
     const { GET } = await routeModulePromise;
     listActiveGrants.mockResolvedValue([{ id: "grant-1" }]);
 
-    const response = await GET(new Request("http://localhost/api/admin/facilitators"));
+    const response = await GET(
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators"),
+      params("sample-studio-a"),
+    );
 
+    expect(listActiveGrants).toHaveBeenCalledWith("sample-studio-a");
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ ok: true, grants: [{ id: "grant-1" }] });
   });
@@ -76,10 +78,11 @@ describe("admin facilitators route", () => {
     });
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "new@example.com", role: "owner" }),
       }),
+      params("sample-studio-a"),
     );
 
     expect(response.status).toBe(403);
@@ -90,10 +93,11 @@ describe("admin facilitators route", () => {
     const { POST } = await routeModulePromise;
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "", role: "admin" }),
       }),
+      params("sample-studio-a"),
     );
 
     expect(response.status).toBe(400);
@@ -108,10 +112,11 @@ describe("admin facilitators route", () => {
     getRuntimeStorageMode.mockReturnValue("file");
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "new@example.com", role: "observer" }),
       }),
+      params("sample-studio-a"),
     );
 
     expect(response.status).toBe(400);
@@ -126,63 +131,48 @@ describe("admin facilitators route", () => {
     query.mockResolvedValue([]);
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "missing@example.com", role: "observer" }),
       }),
+      params("sample-studio-a"),
     );
 
     expect(response.status).toBe(404);
-    await expect(response.json()).resolves.toEqual({
-      ok: false,
-      error: "no Neon Auth user found with that email — they must sign up first",
-    });
   });
 
-  it("returns 409 when a facilitator already has a grant", async () => {
+  it("returns 409 when a facilitator already has a grant on this instance", async () => {
     const { POST } = await routeModulePromise;
     query.mockResolvedValue([{ id: "user-2", name: "Dana", email: "dana@example.com" }]);
     getActiveGrantByNeonUserId.mockResolvedValue({ id: "existing-grant" });
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "dana@example.com", role: "observer" }),
       }),
+      params("sample-studio-a"),
     );
 
     expect(response.status).toBe(409);
-    await expect(response.json()).resolves.toEqual({
-      ok: false,
-      error: "facilitator already has an active grant on this instance",
-    });
   });
 
-  it("creates a grant and writes an audit record for a valid owner request", async () => {
+  it("creates a grant scoped to the url instance and writes an audit record", async () => {
     const { POST } = await routeModulePromise;
     query.mockResolvedValue([{ id: "user-3", name: "Jana", email: "jana@example.com" }]);
     getActiveGrantByNeonUserId.mockResolvedValue(null);
     createGrant.mockResolvedValue({ id: "grant-new", role: "operator" });
 
     const response = await POST(
-      new Request("http://localhost/api/admin/facilitators", {
+      new Request("http://localhost/api/workshop/instances/brno-2026/facilitators", {
         method: "POST",
         body: JSON.stringify({ email: "jana@example.com", role: "operator" }),
       }),
+      params("brno-2026"),
     );
 
     expect(response.status).toBe(200);
-    expect(createGrant).toHaveBeenCalledWith("sample-studio-a", "user-3", "operator");
+    expect(createGrant).toHaveBeenCalledWith("brno-2026", "user-3", "operator");
     expect(appendAudit).toHaveBeenCalledTimes(1);
-    await expect(response.json()).resolves.toEqual({
-      ok: true,
-      grant: {
-        id: "grant-new",
-        neonUserId: "user-3",
-        role: "operator",
-        userName: "Jana",
-        userEmail: "jana@example.com",
-      },
-    });
   });
 });

@@ -3,19 +3,19 @@ import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 
-export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const denied = await requireFacilitatorRequest(request);
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string; grantId: string }> },
+) {
+  const { id: instanceId, grantId } = await params;
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
 
-  const facilitator = await getFacilitatorSession();
+  const facilitator = await getFacilitatorSession(instanceId);
   if (!facilitator || facilitator.grant.role !== "owner") {
     return NextResponse.json({ ok: false, error: "owner role required" }, { status: 403 });
   }
-
-  const { id: grantId } = await params;
-  const instanceId = getCurrentWorkshopInstanceId();
 
   // Prevent self-revocation
   if (grantId === facilitator.grant.id) {

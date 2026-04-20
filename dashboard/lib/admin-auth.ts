@@ -1,7 +1,6 @@
 export const protectedWritePaths = new Set([
   "/api/agenda",
   "/api/admin/teams",
-  "/api/admin/facilitators",
   "/api/checkpoints",
   "/api/monitoring",
   "/api/rotation",
@@ -15,10 +14,6 @@ export function isProtectedPath(pathname: string, method: string) {
   }
 
   if (pathname.startsWith("/api/challenges/") && pathname.endsWith("/complete")) {
-    return true;
-  }
-
-  if (pathname.startsWith("/api/admin/facilitators/") && method === "DELETE") {
     return true;
   }
 

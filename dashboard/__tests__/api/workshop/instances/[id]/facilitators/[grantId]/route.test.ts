@@ -25,13 +25,13 @@ vi.mock("@/lib/audit-log-repository", () => ({
   }),
 }));
 
-vi.mock("@/lib/instance-context", () => ({
-  getCurrentWorkshopInstanceId: () => "sample-studio-a",
-}));
+const routeModulePromise = import("@/app/api/workshop/instances/[id]/facilitators/[grantId]/route");
 
-const routeModulePromise = import("@/app/api/admin/facilitators/[id]/route");
+const withParams = (id: string, grantId: string) => ({
+  params: Promise.resolve({ id, grantId }),
+});
 
-describe("admin facilitator revoke route", () => {
+describe("workshop instance facilitator revoke route", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     requireFacilitatorRequest.mockResolvedValue(null);
@@ -44,9 +44,7 @@ describe("admin facilitator revoke route", () => {
       grant: { id: "grant-operator", role: "operator" },
     });
 
-    const response = await DELETE(new Request("http://localhost"), {
-      params: Promise.resolve({ id: "grant-target" }),
-    });
+    const response = await DELETE(new Request("http://localhost"), withParams("sample-studio-a", "grant-target"));
 
     expect(response.status).toBe(403);
     await expect(response.json()).resolves.toEqual({ ok: false, error: "owner role required" });
@@ -59,27 +57,25 @@ describe("admin facilitator revoke route", () => {
       grant: { id: "grant-owner", role: "owner" },
     });
 
-    const response = await DELETE(new Request("http://localhost"), {
-      params: Promise.resolve({ id: "grant-owner" }),
-    });
+    const response = await DELETE(new Request("http://localhost"), withParams("sample-studio-a", "grant-owner"));
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toEqual({ ok: false, error: "cannot revoke your own grant" });
   });
 
-  it("revokes the target grant and writes an audit record", async () => {
+  it("revokes the target grant and writes an audit record scoped to the url instance", async () => {
     const { DELETE } = await routeModulePromise;
     getFacilitatorSession.mockResolvedValue({
       neonUserId: "owner-user",
       grant: { id: "grant-owner", role: "owner" },
     });
 
-    const response = await DELETE(new Request("http://localhost"), {
-      params: Promise.resolve({ id: "grant-target" }),
-    });
+    const response = await DELETE(new Request("http://localhost"), withParams("brno-2026", "grant-target"));
 
     expect(revokeGrant).toHaveBeenCalledWith("grant-target");
     expect(appendAudit).toHaveBeenCalledTimes(1);
+    const auditCall = appendAudit.mock.calls[0][0];
+    expect(auditCall.instanceId).toBe("brno-2026");
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ ok: true });
   });
