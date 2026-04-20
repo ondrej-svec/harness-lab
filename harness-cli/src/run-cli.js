@@ -909,22 +909,12 @@ async function handleWorkshopStatus(io, ui, env, deps) {
       return 0;
     }
 
-    const [workshop, agenda] = await Promise.all([client.getWorkshopStatus(), client.getAgenda()]);
-    ui.json("Workshop Status", {
-      ok: true,
-      selectedInstance: {
-        instanceId: target.instanceId ?? null,
-        source: target.source,
-        selected: Boolean(target.instanceId),
-      },
-      targetInstanceId: target.instanceId,
-      targetSource: target.source,
-      workshopId: workshop.workshopId,
-      workshopMeta: workshop.workshopMeta,
-      currentPhase: agenda.phase,
-      templates: workshop.templates,
-    });
-    return 0;
+    ui.status(
+      "error",
+      "No instance selected. Run `harness instance select <id>` to pin one, then rerun.",
+      { stream: "stderr" },
+    );
+    return 2;
   } catch (error) {
     if (error instanceof HarnessApiError) {
       ui.status("error", `Workshop status failed: ${error.message}`, { stream: "stderr" });
@@ -1161,7 +1151,19 @@ async function handleWorkshopArchive(io, ui, env, flags, deps) {
 
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
-    const result = await client.archiveWorkshop(typeof flags.notes === "string" ? flags.notes : undefined);
+    const target = resolveCurrentInstanceTarget(session, env);
+    if (!target.instanceId) {
+      ui.status(
+        "error",
+        "No instance selected. Run `harness instance select <id>` to pin one, then rerun.",
+        { stream: "stderr" },
+      );
+      return 2;
+    }
+    const result = await client.archiveWorkshop(
+      target.instanceId,
+      typeof flags.notes === "string" ? flags.notes : undefined,
+    );
     ui.json("Workshop Archive", result);
     return 0;
   } catch (error) {
@@ -1403,10 +1405,15 @@ async function handleWorkshopPhaseSet(io, ui, env, positionals, deps) {
   try {
     const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
     const target = resolveCurrentInstanceTarget(session, env);
-    const result =
-      target.source === "session" && target.instanceId
-        ? await client.setCurrentPhaseForInstance(target.instanceId, phaseId)
-        : await client.setCurrentPhase(phaseId);
+    if (!(target.source === "session" && target.instanceId)) {
+      ui.status(
+        "error",
+        "No instance selected. Run `harness instance select <id>` to pin one, then rerun.",
+        { stream: "stderr" },
+      );
+      return 2;
+    }
+    const result = await client.setCurrentPhaseForInstance(target.instanceId, phaseId);
     ui.json("Workshop Phase", result);
     return 0;
   } catch (error) {
@@ -1523,9 +1530,12 @@ async function handleWorkshopBrief(io, ui, env, mergedDeps) {
       ui.json("Workshop Brief", { items: bundle.briefs ?? [] });
       return 0;
     }
-    const data = await client.getBriefs();
-    ui.json("Workshop Brief", data);
-    return 0;
+    ui.status(
+      "error",
+      "workshop brief is a participant command. Log in with `harness auth login --code <event-code>` or use the admin UI to view briefs.",
+      { stream: "stderr" },
+    );
+    return 2;
   } catch (error) {
     if (error instanceof HarnessApiError) {
       ui.status("error", `Failed to fetch briefs: ${error.message}`, { stream: "stderr" });
@@ -1545,9 +1555,12 @@ async function handleWorkshopChallenges(io, ui, env, mergedDeps) {
       ui.json("Workshop Challenges", { items: bundle.challenges ?? [] });
       return 0;
     }
-    const data = await client.getChallenges();
-    ui.json("Workshop Challenges", data);
-    return 0;
+    ui.status(
+      "error",
+      "workshop challenges is a participant command. Log in with `harness auth login --code <event-code>` or use the admin UI to view challenges.",
+      { stream: "stderr" },
+    );
+    return 2;
   } catch (error) {
     if (error instanceof HarnessApiError) {
       ui.status("error", `Failed to fetch challenges: ${error.message}`, { stream: "stderr" });

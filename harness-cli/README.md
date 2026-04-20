@@ -167,13 +167,13 @@ harness auth logout
 Targeting model:
 
 - `harness workshop list-instances` is the discovery entrypoint for facilitator-visible workshops
-- `harness workshop select-instance <instance-id>` stores a local current target for later workshop commands
-- `harness workshop current-instance` reports the stored target and resolves its current server state
-- `harness workshop status` and `harness workshop phase set <phase-id>` use the selected instance when present, otherwise they fall back to deployment default behavior
-- `harness workshop show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` accept an explicit `<instance-id>` but may also use the stored selection as a fallback
+- `harness instance select <instance-id>` stores a local current target for later workshop commands
+- `harness instance current` reports the stored target and resolves its current server state
+- `harness workshop status`, `harness workshop phase set <phase-id>`, and `harness workshop archive` require a selected instance and hard-error with "No instance selected" when none is pinned
+- `harness instance show`, `update`, `reset`, `prepare`, and `remove` accept an explicit `<instance-id>` but may also use the stored selection as a fallback
 - `harness workshop participant-access` accepts an explicit `<instance-id>` but may also use the stored selection as a fallback
-- `harness workshop select-instance --clear` removes the stored selection
-- `HARNESS_WORKSHOP_INSTANCE_ID` remains an environment fallback when no local selection is stored
+- `harness instance select --clear` removes the stored selection
+- No environment-variable fallback. Pin an instance explicitly with `instance select`.
 
 Machine-readable output:
 

@@ -87,9 +87,6 @@ export function createHarnessClient({ fetchFn, session }) {
     signOutDeviceSession() {
       return request("/api/auth/device/logout", { method: "POST" });
     },
-    getWorkshopStatus() {
-      return request("/api/workshop");
-    },
     listWorkshopInstances() {
       return request("/api/workshop/instances");
     },
@@ -105,14 +102,8 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { action: "rotate", ...input },
       });
     },
-    getAgenda() {
-      return request("/api/agenda");
-    },
     getWorkshopAgenda(instanceId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`);
-    },
-    setCurrentPhase(currentId) {
-      return request("/api/agenda", { method: "PATCH", body: { currentId } });
     },
     setCurrentPhaseForInstance(instanceId, currentId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
@@ -120,8 +111,11 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { itemId: currentId },
       });
     },
-    archiveWorkshop(notes) {
-      return request("/api/workshop/archive", { method: "POST", body: notes ? { notes } : {} });
+    archiveWorkshop(instanceId, notes) {
+      return request("/api/workshop/archive", {
+        method: "POST",
+        body: { instanceId, ...(notes ? { notes } : {}) },
+      });
     },
     createWorkshopInstance(input) {
       return request("/api/workshop/instances", { method: "POST", body: input });
@@ -174,17 +168,8 @@ export function createHarnessClient({ fetchFn, session }) {
     logoutParticipant() {
       return request("/api/event-access/logout", { method: "POST" });
     },
-    getBriefs() {
-      return request("/api/briefs");
-    },
-    getChallenges() {
-      return request("/api/challenges");
-    },
     getTeams() {
       return request("/api/teams");
-    },
-    getCheckpoints() {
-      return request("/api/checkpoints");
     },
     getParticipantContext() {
       return request("/api/event-context/core");

@@ -5,6 +5,40 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.9.0 — 2026-04-20
+
+### Changed
+
+- **Silent singleton fallback is gone.** The server retired the
+  `HARNESS_WORKSHOP_INSTANCE_ID` environment variable in favor of explicit
+  per-request `instanceId`. CLI commands that previously fell back on it —
+  `workshop status` and `workshop phase set` without a selected instance —
+  now hard-error with "No instance selected. Run `harness instance select
+  <id>`...". Pin an instance before running facilitator workshop commands.
+- **`workshop archive` now requires a selected instance.** Same pattern.
+- **`workshop brief` / `workshop challenges` are participant-only.**
+  Facilitators calling these commands now see a clear "log in as
+  participant, or use the admin UI" message instead of silently returning
+  data from the wrong workshop. The participant path through
+  `getParticipantContext()` is unchanged.
+
+### Removed
+
+- `client.getWorkshopStatus()`, `client.getAgenda()`,
+  `client.setCurrentPhase()`, `client.getBriefs()`, `client.getChallenges()`,
+  `client.getCheckpoints()` — all legacy flat-route methods. The
+  instance-scoped twins (`getWorkshopInstance`, `getWorkshopAgenda`,
+  `setCurrentPhaseForInstance`) and the participant bundle
+  (`getParticipantContext`) cover every live caller.
+
+### Compatibility
+
+- **Participants upgrading from 0.8.0**: no change needed. Participant
+  commands continue to work identically against the migrated server.
+- **Facilitators on 0.8.0**: works *if* the session has a pinned instance.
+  Upgrade to 0.9.0 for the hard-error behaviour that surfaces the
+  "select an instance" reminder.
+
 ## 0.8.0 — 2026-04-17
 
 ### Added

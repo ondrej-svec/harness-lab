@@ -126,14 +126,13 @@ test("auth status prints persisted session metadata", async () => {
   assert.doesNotMatch(statusIo.getStdout(), /authorizationHeader/);
 });
 
-test("workshop status combines workshop and agenda endpoints", async () => {
+test("workshop status hard-errors when no instance is selected", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
   const loginIo = createMemoryIo(env);
   const fetchFn = createFetchStub(
     new Map([
-      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a", workshopMeta: { title: "Harness Lab" }, templates: [] })],
-      ["GET http://localhost:3000/api/agenda", async () => jsonResponse(200, { phase: { id: "build-1", title: "Build Phase 1" }, items: [] })],
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { ok: true, templates: [] })],
     ]),
   );
 
@@ -141,8 +140,8 @@ test("workshop status combines workshop and agenda endpoints", async () => {
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(["workshop", "status"], io, { fetchFn });
-  assert.equal(exitCode, 0);
-  assert.match(io.getStdout(), /Build Phase 1/);
+  assert.equal(exitCode, 2);
+  assert.match(io.getStderr(), /No instance selected/);
 });
 
 test("workshop select-instance stores a validated local target and current-instance reports it", async () => {
@@ -478,18 +477,13 @@ test("workshop participant-access can rotate and print a fresh code", async () =
   assert.match(io.getStdout(), /"source": "issued"/);
 });
 
-test("workshop phase set sends the selected phase id", async () => {
+test("workshop phase set hard-errors when no instance is selected", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
   const loginIo = createMemoryIo(env);
-  let requestBody = null;
   const fetchFn = createFetchStub(
     new Map([
-      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
-      ["PATCH http://localhost:3000/api/agenda", async (_url, options) => {
-        requestBody = JSON.parse(String(options.body));
-        return jsonResponse(200, { ok: true, phase: "Rotace týmů" });
-      }],
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { ok: true, templates: [] })],
     ]),
   );
 
@@ -497,8 +491,8 @@ test("workshop phase set sends the selected phase id", async () => {
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(["workshop", "phase", "set", "rotation"], io, { fetchFn });
-  assert.equal(exitCode, 0);
-  assert.deepEqual(requestBody, { currentId: "rotation" });
+  assert.equal(exitCode, 2);
+  assert.match(io.getStderr(), /No instance selected/);
 });
 
 test("workshop phase set uses the selected local instance when present", async () => {
@@ -529,14 +523,18 @@ test("workshop phase set uses the selected local instance when present", async (
   assert.deepEqual(requestBody, { itemId: "talk" });
 });
 
-test("workshop archive forwards optional notes", async () => {
+test("workshop archive forwards optional notes with the selected instance", async () => {
   const env = await createEnv();
-  env.HARNESS_SESSION_STORAGE = "file";
-  const loginIo = createMemoryIo(env);
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-a",
+  });
+
   let requestBody = null;
   const fetchFn = createFetchStub(
     new Map([
-      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
       ["POST http://localhost:3000/api/workshop/archive", async (_url, options) => {
         requestBody = JSON.parse(String(options.body));
         return jsonResponse(200, { ok: true, archive: { id: "archive-1" } });
@@ -544,12 +542,10 @@ test("workshop archive forwards optional notes", async () => {
     ]),
   );
 
-  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
-
   const io = createMemoryIo(env);
   const exitCode = await runCli(["workshop", "archive", "--notes", "After lunch reset"], io, { fetchFn });
   assert.equal(exitCode, 0);
-  assert.deepEqual(requestBody, { notes: "After lunch reset" });
+  assert.deepEqual(requestBody, { instanceId: "sample-studio-a", notes: "After lunch reset" });
 });
 
 test("workshop create-instance sends rich metadata and reports created state", async () => {
@@ -1422,20 +1418,6 @@ test("device auth can drive workshop status with the brokered facilitator sessio
             },
           }),
       ],
-      [
-        "GET http://localhost:3000/api/workshop",
-        async (_url, options) => {
-          assert.equal(options.headers.authorization, "Bearer device-token-1");
-          return jsonResponse(200, { workshopId: "sample-studio-a", workshopMeta: { title: "Harness Lab" }, templates: [] });
-        },
-      ],
-      [
-        "GET http://localhost:3000/api/agenda",
-        async (_url, options) => {
-          assert.equal(options.headers.authorization, "Bearer device-token-1");
-          return jsonResponse(200, { phase: { id: "build-1", title: "Build Phase 1" }, items: [] });
-        },
-      ],
     ]),
   );
 
@@ -1447,8 +1429,8 @@ test("device auth can drive workshop status with the brokered facilitator sessio
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(["workshop", "status"], io, { fetchFn });
-  assert.equal(exitCode, 0);
-  assert.match(io.getStdout(), /Build Phase 1/);
+  assert.equal(exitCode, 2);
+  assert.match(io.getStderr(), /No instance selected/);
 });
 
 test("device auth can drive workshop create-instance with the brokered facilitator session", async () => {

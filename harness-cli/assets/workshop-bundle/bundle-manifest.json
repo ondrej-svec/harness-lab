@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "bundleName": "workshop",
-  "bundleVersion": "0.8.0",
-  "contentHash": "5f8ff6bc263904e69f9e0ba3f16a17c200c3b5bb191500f0ef71dc93314f5401",
+  "bundleVersion": "0.9.0",
+  "contentHash": "9258d8aafddfce1ff8d26fea7910c463bac3ac451083b06729ac54db48eebd08",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -118,7 +118,7 @@
     },
     {
       "path": "docs/harness-cli-foundation.md",
-      "sha256": "10311d3caf8cec304d5d1694eac66623f06c100990d6f5c4d1dd1f4ba8a24bd8"
+      "sha256": "3ac4e236cf85d95d4c115b53769a66392915edd4a037780517cf56df28fdf2be"
     },
     {
       "path": "docs/harness-economics.md",
@@ -170,7 +170,7 @@
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "0c6b916090d74bcdb4f3099220dde0a26e0548aa9b28229bcf7b4403b7f629ae"
+      "sha256": "3fb9059301b970642b6e1b61bb55e7fc4012e9251923d2a7968e5324d6150668"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
@@ -210,7 +210,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "fe97d9cbe9b67f79e7889977121af8c1f7bcce7fe1288aab15a2f3d34fd01c1f"
+      "sha256": "0ff4bc7426bae558dd18be8cf188156d4477e81f87603cc4468429740f9c5144"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

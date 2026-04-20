@@ -97,7 +97,7 @@ harness instance current
 
 Show:
 - the locally selected instance id when one exists
-- whether the current target came from persisted selection or `HARNESS_WORKSHOP_INSTANCE_ID`
+- where the current target came from (persisted session selection or none)
 - the resolved instance summary and full record for operator verification
 
 Rules:
@@ -216,21 +216,21 @@ Use the CLI-backed privileged request path. The skill should not handle auth boo
 The API capability remains:
 
 ```http
-POST {DASHBOARD_URL}/api/admin/facilitators
+POST {DASHBOARD_URL}/api/workshop/instances/{instanceId}/facilitators
 Content-Type: application/json
 
 { "email": "...", "role": "operator" }
 ```
 
-Requires `owner` role. Returns the new grant info.
+Requires `owner` role on the target instance. Returns the new grant info.
 
 ### `/workshop facilitator revoke <email>`
 
-Call `GET /api/admin/facilitators` first and find the grant by email.
+Call `GET /api/workshop/instances/{instanceId}/facilitators` first and find the grant by email.
 Then call:
 
 ```http
-DELETE {DASHBOARD_URL}/api/admin/facilitators/{grantId}
+DELETE {DASHBOARD_URL}/api/workshop/instances/{instanceId}/facilitators/{grantId}
 ```
 
 Requires `owner` role.

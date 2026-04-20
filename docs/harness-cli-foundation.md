@@ -88,9 +88,11 @@ Current auth layering:
 Current target-selection order:
 
 1. an explicit command or route instance id
-2. the CLI-local persisted selection set by `harness workshop select-instance`
-3. the deployment default `HARNESS_WORKSHOP_INSTANCE_ID`
-4. a repository fallback only on surfaces that intentionally present a workspace-level default
+2. the CLI-local persisted selection set by `harness instance select`
+3. a repository fallback only on surfaces that intentionally present a workspace-level default
+
+There is no environment-variable fallback. Facilitator workshop commands
+hard-error when no instance is selected.
 
 Current command posture:
 
