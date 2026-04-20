@@ -562,21 +562,41 @@ Gated on `HARNESS_TEST_DATABASE_URL` being set. Skipped otherwise. Spin up the t
 - [x] Schema drift probe (`lib/neon-schema.integration.test.ts`): reads `neon_auth."user"` from the test branch and confirms `id`/`name`/`email`/`emailVerified`/`role` exist with expected types. Also asserts `participants.neon_user_id` (text, nullable) and `workshop_instances.allow_walk_ins` (boolean, default true) — both added by `2026-04-20-participant-auth.sql`. Plus the unique index on `participants.neon_user_id`.
 - [x] `NeonParticipantRepository` round-trip (`lib/participant-repository.integration.test.ts`): creates a throwaway instance row, exercises `upsertParticipant`, `findParticipant`, `linkNeonUser`, `findByNeonUserId`, `listByDisplayNamePrefix`. Surfaced two real bugs that unit tests missed: (a) `findParticipant` SELECT was missing `neon_user_id`, (b) `linkNeonUser`'s "soft no-op" WHERE clause didn't actually prevent the unique-index violation. Both fixed in the same slice.
 
-##### Layer 3 — Playwright e2e + scripted browser smoke (Neon test branch)
+##### Layer 3 — Playwright e2e + scripted browser smoke
 
-- [ ] Playwright config extended with a Neon-mode project: `HARNESS_STORAGE_MODE=neon`, `HARNESS_DATABASE_URL` from `.env.test.local`, `NEON_AUTH_BASE_URL` + `NEON_AUTH_COOKIE_SECRET` from prod env, `HARNESS_EVENT_CODE_SECRET` fresh per run. Ignored when `HARNESS_TEST_DATABASE_URL` is absent.
-- [ ] Seeder: per-run script that issues an event code, pastes a small roster with tag / email / no-email variants so every disambiguation path has a fixture.
-- [ ] Playwright specs:
-  - (a) redeem → pick from roster → set-password → room
-  - (b) sign out → re-login → enter password → room
-  - (c) wrong password → generic error → retry → room
-  - (d) ambiguous name → disambiguator shown → pick → set-password → room
-  - (e) walk-in allowed → create new → set-password → room
-  - (f) walk-in disabled → refusal state
-  - (g) facilitator reset → participant signs in with the new 3-word password → room
-  - (h) participant-role Neon session cannot reach `/admin`
-  - (i) `already_bound` surface when a bound session submits a different identity
-- [ ] Scripted agentic-browser smoke test (Chrome DevTools MCP): one happy-path run that's deterministic enough to re-run between commits. Lives in `scripts/smoke/phase-5-identify.mjs` or similar — writes a brief pass/fail summary so it can be invoked from a harness prompt when verifying a change. Uses the same seeder as the Playwright project.
+**Architectural note**: Neon Auth's runtime is bound to the project's
+primary branch, not branchable. So Layer 3 e2e shares the project's
+auth store. Scoped by a fixed instance id (`playwright-neon-mode`) and
+a unique email pattern (`pw-*@harness-lab-test.invalid`) — the
+cleanup script targets only those. The throwaway test branch from
+Phase 5.6 Setup remains useful for Layer 2 vitest integration but
+Layer 3 hits `main` for both app + auth.
+
+**Cookie note**: the Neon Auth session cookie is `__Secure-` prefixed
++ `SameSite=None`. Browsers (and Playwright's request fixture) refuse
+to send Secure cookies on HTTP, so specs that need a facilitator
+session attach the cookie value via an explicit `Cookie` header on
+the request fixture, bypassing browser enforcement.
+
+- [x] `playwright.neon.config.ts` — Neon-mode Playwright project. Asserts `HARNESS_DATABASE_URL` + `NEON_AUTH_BASE_URL` + `NEON_AUTH_COOKIE_SECRET` + `NEON_API_KEY` at config load. Defaults `HARNESS_NEON_PROJECT_ID` and `HARNESS_NEON_BRANCH_ID` to the project's primary so the systemic admin-create flow works. Sets `HARNESS_BYPASS_BOT_CHECK=1` so the redeem + facilitator signin paths don't trip Vercel BotId locally.
+- [x] `scripts/seed-neon-test-instance.mjs` — per-run seeder. Issues a fresh event code (HMAC matches the Playwright server's `HARNESS_EVENT_CODE_SECRET`), creates the test instance, pastes a roster with tag / email / no-email variants. Note: schema enforces `UNIQUE (instance_id, lower(display_name))`, so the disambiguator code in `lib/participant-disambiguator.ts` covers the equal-name case but the schema prevents it from firing in production. Layer 3 covers the prefix-match suggest path; equal-name disambiguation stays unit-tested in `participant-disambiguator.test.ts`.
+- [x] `scripts/cleanup-neon-auth-test-users.mjs` — targeted sweep by `pw-*@harness-lab-test.invalid` email pattern. Refuses to run with a pattern that doesn't include the test-only domain (defense-in-depth).
+- [x] `e2e/neon-mode/fixtures.ts` — per-test reseed + `signInAsTestFacilitator` helper that provisions an admin-role user, grants ownership, and signs in via the actual `/admin/sign-in` form so cookies land naturally.
+- [x] Playwright specs (6 shipped):
+  - [x] (a) + (b) `happy-path.spec.ts` — fused round-trip: redeem → pick → set password → room → sign out → re-redeem → enter password → room.
+  - [x] (c) `wrong-password.spec.ts` — wrong password shows generic "that didn't match", retry succeeds.
+  - [x] ~~(d) ambiguous name~~ — schema prevents (see above). Unit-tested in `participant-disambiguator.test.ts`.
+  - [x] (e) `walk-in-allowed.spec.ts` — typing an unknown name with `allow_walk_ins=true` surfaces the "+ add" sentinel and registers the participant.
+  - [x] (f) `walk-in-disabled.spec.ts` — toggling `allow_walk_ins=false` makes the unknown-name path render the refusal state with no participant row created.
+  - [x] (i) `already-bound.spec.ts` — a bound session POSTing set-password with a different participantId returns 409 with no Neon Auth user minted.
+  - [x] (h) `privilege-boundary.spec.ts` — a participant-role Neon session enumerates `/api/admin/*` routes and `/admin`; every probe returns 401/403, page never lands on the admin workspace.
+  - [ ] (g) facilitator-issued reset → participant signs in with the new password — **deferred**. Requires the same SDK-Origin refactor as the rest of the facilitator path: `auth.getSession()` proxied via the SDK doesn't forward Origin, so admin endpoints return 401 even when the cookie is attached. This is a real production bug too (facilitator login + admin call from any non-Vercel deployment hits the same wall). Tracked as next-slice work — split because it touches `facilitator-auth-service.ts` + every admin guard.
+- [x] `scripts/smoke/phase-5-identify.mjs` — agentic-browser smoke. Drives redeem → suggest → set-password → re-redeem → authenticate via raw `fetch`. One pass/fail line per step. Re-runnable between commits.
+
+##### Side-quest fixes uncovered by Layer 3 work
+
+- [x] `app/admin/sign-in/page.tsx` — facilitator sign-in now calls `/sign-in/email` via raw fetch with explicit Origin (same pattern as `authenticateParticipant`), and forwards Set-Cookie headers from the upstream onto the redirect response. Closes a real bug: the SDK's server-side `auth.signIn.email` doesn't forward Origin, so facilitator login was broken on any non-Vercel deployment. Unit tests in `app/admin/sign-in/page.test.tsx` updated to mock global fetch.
+- [x] `redeem-guard.ts` — `HARNESS_BYPASS_BOT_CHECK` env gate so the e2e webserver can skip the Vercel BotId OIDC requirement. Bypass only fires when explicitly set, never in production.
 
 ##### Teardown + CI hygiene
 

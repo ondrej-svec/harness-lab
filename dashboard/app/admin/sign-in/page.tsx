@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { checkBotId } from "botid/server";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
@@ -28,26 +28,65 @@ export async function signInAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
 
-  const botCheck = await checkBotId();
+  // Test environments (Playwright Neon mode) bypass the Vercel BotId
+  // check because there's no OIDC token issuer locally. Same gate as
+  // the redeem path — gated by an explicit env var.
+  const botCheck = process.env.HARNESS_BYPASS_BOT_CHECK === "1"
+    ? { isBot: false, isHuman: true, isVerifiedBot: false, bypassed: true }
+    : await checkBotId();
   if (botCheck.isBot) {
     return redirect(withLang("/admin/sign-in?error=denied", lang));
   }
 
-  if (!auth) {
+  const baseUrl = process.env.NEON_AUTH_BASE_URL;
+  if (!auth || !baseUrl) {
     return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
-  const { error } = await auth.signIn.email({ email, password });
+  // Use raw fetch with explicit Origin instead of `auth.signIn.email`.
+  // The SDK's server-side proxy doesn't reliably forward an Origin
+  // header, and Neon Auth's CSRF check rejects requests without one
+  // ("Invalid origin"). Same workaround as `authenticateParticipant`
+  // in lib/participant-auth.ts.
+  const origin = new URL(baseUrl).origin;
+  const response = await fetch(`${baseUrl.replace(/\/$/, "")}/sign-in/email`, {
+    method: "POST",
+    headers: { "content-type": "application/json", origin },
+    body: JSON.stringify({ email, password }),
+  });
 
-  if (error) {
-    console.error("[facilitator-sign-in] error:", JSON.stringify(error));
-    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "invalid")}`, lang));
+  if (!response.ok) {
+    const body = (await response.json().catch(() => ({}))) as { message?: string };
+    console.error("[facilitator-sign-in] error:", body.message ?? response.statusText);
+    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(body.message || "invalid")}`, lang));
   }
 
-  // Verify session was created (matches official Neon Auth pattern)
-  const { data: session } = await auth.getSession();
-  if (!session?.user) {
-    return redirect(withLang("/admin/sign-in?error=session_not_created", lang));
+  // Forward Set-Cookie headers from the upstream response onto the
+  // outgoing redirect so the browser receives the Neon Auth session.
+  // We preserve the upstream's Secure / SameSite flags verbatim —
+  // browsers enforce these correctly in production. Tests that need
+  // to reach admin endpoints over HTTP read the cookie from the
+  // context and attach it as an explicit `Cookie` header to bypass
+  // browser-level enforcement (Playwright request fixture).
+  const setCookies = response.headers.getSetCookie?.() ?? [];
+  const cookieStore = await cookies();
+  for (const header of setCookies) {
+    const [pair, ...attrs] = header.split(";").map((s) => s.trim());
+    const eq = pair.indexOf("=");
+    if (eq === -1) continue;
+    const name = pair.slice(0, eq);
+    const value = pair.slice(eq + 1);
+    const opts: Record<string, unknown> = { path: "/", httpOnly: true, sameSite: "lax" };
+    for (const attr of attrs) {
+      const [k, v] = attr.split("=");
+      const lower = k.toLowerCase();
+      if (lower === "httponly") opts.httpOnly = true;
+      else if (lower === "secure") opts.secure = true;
+      else if (lower === "samesite") opts.sameSite = (v ?? "lax").toLowerCase();
+      else if (lower === "max-age") opts.maxAge = Number(v);
+      else if (lower === "path") opts.path = v;
+    }
+    cookieStore.set(name, value, opts);
   }
 
   return redirect(withLang("/admin", lang));

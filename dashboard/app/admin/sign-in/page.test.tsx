@@ -1,10 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const headers = vi.fn();
+const cookies = vi.fn();
 const redirect = vi.fn();
 const getSession = vi.fn();
 const signInEmail = vi.fn();
 const requestPasswordReset = vi.fn();
+let fetchMock: ReturnType<typeof vi.fn>;
 
 let authMock: {
   getSession: typeof getSession;
@@ -14,6 +16,7 @@ let authMock: {
 
 vi.mock("next/headers", () => ({
   headers,
+  cookies,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -27,6 +30,9 @@ vi.mock("@/lib/auth/server", () => ({
 }));
 
 describe("facilitator sign-in page", () => {
+  let originalFetch: typeof globalThis.fetch;
+  let originalNeonAuthBaseUrl: string | undefined;
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
@@ -38,9 +44,27 @@ describe("facilitator sign-in page", () => {
     };
 
     headers.mockResolvedValue(new Headers([["host", "localhost:3000"]]));
+    cookies.mockResolvedValue({ set: vi.fn() });
     getSession.mockResolvedValue({ data: null });
     signInEmail.mockResolvedValue({ error: null });
     requestPasswordReset.mockResolvedValue({ error: null });
+
+    originalFetch = globalThis.fetch;
+    originalNeonAuthBaseUrl = process.env.NEON_AUTH_BASE_URL;
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
+    fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ user: { id: "user-1" } }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    if (originalNeonAuthBaseUrl === undefined) delete process.env.NEON_AUTH_BASE_URL;
+    else process.env.NEON_AUTH_BASE_URL = originalNeonAuthBaseUrl;
   });
 
   it("derives the forwarded request origin when proxy headers are present", async () => {
@@ -119,8 +143,13 @@ describe("facilitator sign-in page", () => {
     expect(redirect).toHaveBeenCalledWith("/admin/sign-in?error=unavailable&lang=en");
   });
 
-  it("redirects with an encoded sign-in error from auth", async () => {
-    signInEmail.mockResolvedValue({ error: { message: "bad password" } });
+  it("redirects with an encoded sign-in error when better-auth returns 4xx", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ message: "bad password" }), {
+        status: 401,
+        headers: { "content-type": "application/json" },
+      }),
+    );
     const { signInAction } = await import("./page");
     const formData = new FormData();
     formData.set("lang", "en");
@@ -129,33 +158,14 @@ describe("facilitator sign-in page", () => {
 
     await signInAction(formData);
 
-    expect(signInEmail).toHaveBeenCalledWith({
-      email: "facilitator@example.com",
-      password: "secret",
-    });
+    const [, init] = fetchMock.mock.calls[0];
+    expect(init.body).toBe(JSON.stringify({ email: "facilitator@example.com", password: "secret" }));
+    // Origin header is required to clear better-auth's CSRF check.
+    expect(init.headers.origin).toBe("https://auth.example.com");
     expect(redirect).toHaveBeenCalledWith("/admin/sign-in?error=bad%20password&lang=en");
   });
 
-  it("redirects when a sign-in does not create a session", async () => {
-    getSession.mockResolvedValue({ data: null });
-    const { signInAction } = await import("./page");
-    const formData = new FormData();
-    formData.set("lang", "en");
-    formData.set("email", "facilitator@example.com");
-    formData.set("password", "secret");
-
-    await signInAction(formData);
-
-    expect(redirect).toHaveBeenCalledWith("/admin/sign-in?error=session_not_created&lang=en");
-  });
-
   it("redirects to the admin dashboard after a successful sign-in", async () => {
-    getSession.mockResolvedValue({
-      data: {
-        session: { id: "session-1" },
-        user: { id: "user-1" },
-      },
-    });
     const { signInAction } = await import("./page");
     const formData = new FormData();
     formData.set("email", "facilitator@example.com");
