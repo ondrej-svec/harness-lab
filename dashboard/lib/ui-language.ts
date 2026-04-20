@@ -28,10 +28,10 @@ export const publicCopy = {
     heroEyebrow: "workshop pro týmy, které pracují s ai coding agenty",
     heroLead: "Celodenní workshop o tom, jak v týmu pracovat s AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další.",
     heroBody:
-      "Nejde o demo promptů ani o hackathon energii. Lidé řídí, agenti vykonávají, repo nese kontext a ověření nese důvěru. Úspěch je, když na práci dokáže navázat další tým bez autorů v místnosti.",
+      "Nejde o předvádění promptů ani o hackathon energii. Lidé řídí, agenti vykonávají, kontext drží repo, důvěru drží ověření. Úspěch je, když na práci dokáže navázat další tým — bez autorů v místnosti.",
     blueprintLink: "otevřít workshop blueprint",
     blueprintHint:
-      "Veřejný blueprint workshopu: jak je postavený den, co patří do repa a co až do živé workshop instance.",
+      "Veřejný blueprint workshopu: jak je postavený den, co patří do repa a co až do živé instance workshopu.",
     accessEyebrow: "vstup pro účastníky",
     accessTitle: "vstup do kontextu místnosti",
     accessBody:
@@ -44,23 +44,23 @@ export const publicCopy = {
     sampleHint: "V lokálním demu je pole předvyplněné ukázkovým kódem. V preview ani v produkci to tak být nemá.",
     principlesEyebrow: "principy",
     principlesTitle: "tři pravidla, díky kterým je práce s agenty čitelná, ověřitelná a udržitelná.",
-    principleOneTitle: "mapa před pohybem",
+    principleOneTitle: "nejdřív mapa, pak pohyb",
     principleOneBody:
-      "Než pustíte další generování, udělejte z repa místo, kde se dá orientovat. Krátké `AGENTS.md`, jasný vstupní bod a viditelný další bezpečný krok jsou lepší než další prompt navíc.",
+      "Než pošlete agenta do dalšího kola, udělejte repo čitelné. Krátké `AGENTS.md`, jasný vstupní bod a viditelný další bezpečný krok znamenají víc než další prompt.",
     principleTwoTitle: "ověřujte dřív, než jdete dál",
     principleTwoBody:
       "Každý důležitý posun co nejdřív opřete o ověření. Menší ověřený krok je cennější než rychlý postup, který se později rozpadne.",
     principleThreeTitle: "pracujte tak, aby se dalo navázat",
     principleThreeBody:
-      "Další člověk ani další agent nemá hádat, co se stalo. V repu má být jasné, co platí, co je skutečně ověřené a jaký je bezpečný další krok.",
+      "Další člověk ani další agent by neměli muset hádat, co se stalo. V repu má být jasné, co platí, co je skutečně ověřené a jaký je další bezpečný krok.",
     structureEyebrow: "struktura dne",
     structureTitle: "pět fází, které den drží pohromadě.",
     structurePhase1Title: "otevření a zarámování",
     structurePhase1Body:
-      "Přepnout z hackathon energie na disciplínu pokračování. Úspěch není kolik kódu vznikne, ale jestli další tým dokáže navázat.",
+      "Přepnout z hackathon energie na disciplínu pokračování. Úspěch není v tom, kolik kódu vznikne, ale jestli na něj další tým dokáže navázat.",
     structurePhase2Title: "context is king",
     structurePhase2Body:
-      "Praktická ukázka, jak lepší kontext mění kvalitu výstupu. Proč AGENTS.md, plán a explicitní hranice předchází implementaci.",
+      "Praktická ukázka, jak lepší kontext mění kvalitu výstupu. Proč AGENTS.md, plán a explicitní hranice předcházejí implementaci.",
     structurePhase3Title: "první build",
     structurePhase3Body:
       "Týmy vstupují do reálného repa. Před obědem: AGENTS.md, plán, první spustitelný check a první ověřený krok.",
@@ -69,7 +69,7 @@ export const publicCopy = {
       "Jiný tým přebírá vaše repo. Nejdřív čte, pak diagnostikuje, teprve pak mění. Co přežije bez autorů v místnosti?",
     structurePhase5Title: "reveal a reflexe",
     structurePhase5Body:
-      "Co pomohlo pokračování a co způsobilo tření. Signály z dne se promění v praxi na příští týden.",
+      "Co pomohlo pokračování a co způsobilo tření. Signály z dne se v příštím týdnu promění v praxi.",
     structureOutcome:
       "Workshop neoptimalizuje na počet features. Optimalizuje na kvalitu pokračování.",
     navAgents: "pro agenty",
@@ -83,10 +83,10 @@ export const publicCopy = {
       "Harness Lab je praktický workshop o tom, jak používat AI coding agenty při skutečné týmové práci na softwaru. Důraz je na způsob práce, který zůstává srozumitelný, ověřitelný a použitelný i po dalším předání.",
     detailsParticipants: "pro účastníky",
     detailsParticipantsBody:
-      "Účastníci dostanou kontext své místnosti až po zadání kódu místnosti. Veřejná stránka zůstává záměrně obecná a neukazuje živý stav konkrétní workshop instance.",
+      "Účastníci dostanou kontext své místnosti až po zadání kódu místnosti. Veřejná stránka zůstává záměrně obecná a neukazuje živý stav konkrétní instance workshopu.",
     detailsBoundary: "co zůstává neveřejné",
     detailsBoundaryBody:
-      "Konkrétní termín, místnost, složení týmů i facilitace patří do privátní workshop instance. Veřejný dashboard a veřejné repo zůstávají bezpečné a přenositelné.",
+      "Konkrétní termín, místnost, složení týmů i facilitace patří do privátní instance workshopu. Veřejný dashboard a veřejné repo zůstávají bezpečné a přenositelné.",
     detailsBlueprint: "blueprint workshopu",
     detailsBlueprintBody:
       "Workshopová metoda má v repu vlastní blueprint. Dashboard řídí běžící workshop, ale kanonický popis dne, pravidel a hranic editace zůstává tady.",
@@ -166,7 +166,7 @@ export const publicCopy = {
     principlesTitle: "three rules that keep work with agents legible, verifiable, and maintainable.",
     principleOneTitle: "map before motion",
     principleOneBody:
-      "Before you ask for more generation, make the repo navigable. A short `AGENTS.md`, a clear entry point, and an obvious next safe step beat one more prompt blob.",
+      "Before you send the agent on another round, make the repo navigable. A short `AGENTS.md`, a clear entry point, and an obvious next safe step beat one more prompt.",
     principleTwoTitle: "verify before you move on",
     principleTwoBody:
       "Anchor each meaningful step in evidence as early as possible. A smaller verified step is worth more than a faster path that falls apart later.",

@@ -30,7 +30,7 @@ test.describe("participant dashboard", () => {
 
     await expect(page.getByRole("heading", { name: "harness lab" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "vstup do kontextu místnosti" })).toBeVisible();
-    await expect(page.locator("#overview")).toContainText(/Nejde o.demo promptů ani o.hackathon energii/i);
+    await expect(page.locator("#overview")).toContainText(/Nejde o.předvádění promptů ani o.hackathon energii/i);
     await expect(page.locator("#overview")).toContainText(
       /Celodenní workshop o.tom, jak v.týmu pracovat s.AI coding agenty tak, aby na výsledek mohl navázat kdokoliv další/i,
     );
@@ -116,10 +116,11 @@ test.describe("participant dashboard", () => {
     // Session sidebar with facilitator mention is gone
     await expect(page.getByText("Facilitátor zůstává odděleně")).not.toBeVisible();
 
-    // Verify context-aware nav — stable participant-home sections visible.
-    await expect(page.getByRole("navigation").getByRole("link", { name: "další krok" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "build" })).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "reference" })).toBeVisible();
+    // Verify context-aware nav — the participant-home section anchors stay reachable.
+    const participantNav = page.getByRole("navigation");
+    await expect(participantNav.locator('a[href="#next"]')).toBeVisible();
+    await expect(participantNav.locator('a[href="#build"]')).toBeVisible();
+    await expect(participantNav.locator('a[href="#reference"]')).toBeVisible();
   });
 
   test("keeps the participant mobile room view visually stable", async ({ page }) => {

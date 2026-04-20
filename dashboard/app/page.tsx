@@ -110,16 +110,8 @@ function PublicView({
             {copy.heroBody}
           </p>
           <div
-            className="landing-rise mt-8 grid gap-3 sm:grid-cols-3"
-            style={{ "--landing-rise-delay": "240ms" } as React.CSSProperties}
-          >
-            <SignalTile title={copy.principleOneTitle} body={copy.principleOneBody} />
-            <SignalTile title={copy.principleTwoTitle} body={copy.principleTwoBody} />
-            <SignalTile title={copy.principleThreeTitle} body={copy.principleThreeBody} />
-          </div>
-          <div
             className="landing-rise mt-8 flex flex-wrap items-center gap-4 text-sm lowercase text-[var(--text-secondary)]"
-            style={{ "--landing-rise-delay": "300ms" } as React.CSSProperties}
+            style={{ "--landing-rise-delay": "240ms" } as React.CSSProperties}
           >
             {blueprintRepoUrl ? (
               <a
@@ -295,15 +287,6 @@ function PhaseStep({ number, title, body }: { number: string; title: string; bod
         <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
         <p className="text-sm leading-7 text-[var(--text-secondary)]">{body}</p>
       </div>
-    </div>
-  );
-}
-
-function SignalTile({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="dashboard-motion-card rounded-[20px] border border-[var(--border)] bg-[var(--surface-panel)] p-4 shadow-[var(--shadow-soft)] backdrop-blur">
-      <p className="text-sm font-medium lowercase text-[var(--text-primary)]">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
     </div>
   );
 }
