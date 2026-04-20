@@ -467,7 +467,7 @@ export default async function AdminWorkspacePage({
                             label={copy.contentLanguageLabel}
                             value={getContentLanguageLabel(instance.workshopMeta.contentLang, copy)}
                           />
-                          <WorkspaceMetaRow label={copy.workspaceTeamsLabel} value={`${state?.teams.length ?? 0}`} />
+                          <WorkspaceMetaRow label={copy.workspaceTeamsLabel} value={`${state?.teams?.length ?? 0}`} />
                         </div>
 
                         <div className="mt-auto pt-4">
