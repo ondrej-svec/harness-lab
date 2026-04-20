@@ -26,6 +26,7 @@ type SuggestMatch = {
   id: string;
   displayName: string;
   hasPassword: boolean;
+  hasEmail?: boolean;
   disambiguator: { kind: "tag" | "masked_email" | "order"; value: string } | null;
 };
 
@@ -116,6 +117,21 @@ describe("ParticipantIdentifyFlow", () => {
     expect(screen.getByPlaceholderText("your email")).toBeDefined();
   });
 
+  it("skips the email input when the picked roster match already has an email", async () => {
+    setSuggestMatches([
+      { id: "p1", displayName: "Jan Novák", hasPassword: false, hasEmail: true, disambiguator: null },
+    ]);
+    render(<ParticipantIdentifyFlow lang="en" allowWalkIns />);
+
+    await type("jan");
+    await waitForSuggest();
+    fireEvent.click(await screen.findByText("Jan Novák"));
+
+    expect(await screen.findByText("welcome, Jan Novák")).toBeDefined();
+    expect(screen.queryByPlaceholderText("your email")).toBeNull();
+    expect(screen.getByPlaceholderText("password")).toBeDefined();
+  });
+
   it("transitions typing → enter_password when picking a returning match (hasPassword=true)", async () => {
     setSuggestMatches([
       { id: "p1", displayName: "Jan Novák", hasPassword: true, disambiguator: null },
@@ -183,6 +199,28 @@ describe("ParticipantIdentifyFlow", () => {
     fireEvent.submit(screen.getByPlaceholderText("password").closest("form")!);
 
     await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+  });
+
+  it("set_password POST omits email when the picked roster match already has one", async () => {
+    setSuggestMatches([
+      { id: "p1", displayName: "Jan Novák", hasPassword: false, hasEmail: true, disambiguator: null },
+    ]);
+    render(<ParticipantIdentifyFlow lang="en" allowWalkIns />);
+
+    await type("jan");
+    await waitForSuggest();
+    fireEvent.click(await screen.findByText("Jan Novák"));
+
+    fetchMock.mockResolvedValueOnce(makeResponse({ ok: true, status: 200, body: { ok: true } }));
+
+    fireEvent.change(screen.getByPlaceholderText("password"), {
+      target: { value: "longenough" },
+    });
+    fireEvent.submit(screen.getByPlaceholderText("password").closest("form")!);
+
+    await waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+    const [, request] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+    expect(JSON.parse(String(request.body))).toEqual({ participantId: "p1", password: "longenough" });
   });
 
   it("set_password POST → email_taken surfaces the inline error (no view change)", async () => {

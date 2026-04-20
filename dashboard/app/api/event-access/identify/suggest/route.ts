@@ -60,6 +60,7 @@ export async function GET(request: Request) {
       id: p.id,
       displayName: p.displayName,
       hasPassword: p.neonUserId !== null,
+      hasEmail: p.email !== null,
       disambiguator: disambiguators.get(p.id) ?? null,
     })),
   });

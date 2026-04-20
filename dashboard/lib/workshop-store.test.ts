@@ -628,6 +628,51 @@ describe("workshop-store", () => {
     });
   });
 
+  it("fills missing runtime arrays from seed defaults when a stored instance state is sparse", async () => {
+    repository = new MemoryWorkshopStateRepository({
+      version: 1,
+      workshopId: "sparse-instance",
+      workshopMeta: {
+        title: "Sparse workshop",
+        subtitle: "runtime test",
+        contentLang: "en",
+      },
+      agenda: [],
+      liveMoment: {
+        agendaItemId: null,
+        roomSceneId: null,
+        participantMomentId: null,
+        participantMode: "auto",
+        activePollId: null,
+      },
+      teams: undefined as unknown as WorkshopState["teams"],
+      briefs: undefined as unknown as WorkshopState["briefs"],
+      challenges: undefined as unknown as WorkshopState["challenges"],
+      rotation: undefined as unknown as WorkshopState["rotation"],
+      ticker: undefined as unknown as WorkshopState["ticker"],
+      monitoring: undefined as unknown as WorkshopState["monitoring"],
+      sprintUpdates: undefined as unknown as WorkshopState["sprintUpdates"],
+      setupPaths: undefined as unknown as WorkshopState["setupPaths"],
+    });
+    setWorkshopStateRepositoryForTests(repository);
+    teamRepository = new MemoryTeamRepository([]);
+    monitoringRepository = new MemoryMonitoringSnapshotRepository([]);
+    checkpointRepository = new MemoryCheckpointRepository([]);
+    setTeamRepositoryForTests(teamRepository);
+    setMonitoringSnapshotRepositoryForTests(monitoringRepository);
+    setCheckpointRepositoryForTests(checkpointRepository);
+
+    const state = await getWorkshopState(instanceId);
+
+    expect(state.agenda.length).toBeGreaterThan(0);
+    expect(state.rotation).toMatchObject(seedWorkshopState.rotation);
+    expect(state.teams.length).toBeGreaterThan(0);
+    expect(state.briefs.length).toBeGreaterThan(0);
+    expect(state.challenges.length).toBeGreaterThan(0);
+    expect(state.ticker.length).toBeGreaterThan(0);
+    expect(state.setupPaths.length).toBeGreaterThan(0);
+  });
+
   it("projects English blueprint content for legacy English workshop state on read", async () => {
     repository = new MemoryWorkshopStateRepository({
       ...structuredClone(seedWorkshopState),

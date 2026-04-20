@@ -9,12 +9,13 @@ type Match = {
   id: string;
   displayName: string;
   hasPassword: boolean;
+  hasEmail?: boolean;
   disambiguator: ParticipantDisambiguator | null;
 };
 
 type View =
   | { kind: "typing" }
-  | { kind: "set_password"; participantId: string; displayName: string; email: string }
+  | { kind: "set_password"; participantId: string; displayName: string; requiresEmail: boolean }
   | { kind: "enter_password"; participantId: string; displayName: string }
   | { kind: "walk_in_refused" }
   | { kind: "already_bound" };
@@ -161,7 +162,12 @@ export function ParticipantIdentifyFlow({
       if (match.hasPassword) {
         setView({ kind: "enter_password", participantId: match.id, displayName: match.displayName });
       } else {
-        setView({ kind: "set_password", participantId: match.id, displayName: match.displayName, email: "" });
+        setView({
+          kind: "set_password",
+          participantId: match.id,
+          displayName: match.displayName,
+          requiresEmail: match.hasEmail !== true,
+        });
       }
     },
     [],
@@ -174,7 +180,7 @@ export function ParticipantIdentifyFlow({
         return;
       }
       setError(null);
-      setView({ kind: "set_password", participantId: "", displayName: typed, email: "" });
+      setView({ kind: "set_password", participantId: "", displayName: typed, requiresEmail: true });
     },
     [allowWalkIns],
   );
@@ -216,7 +222,7 @@ export function ParticipantIdentifyFlow({
       const email = String(formData.get("email") ?? "").trim();
       const password = String(formData.get("password") ?? "");
 
-      if (email.indexOf("@") <= 0) {
+      if (view.requiresEmail && email.indexOf("@") <= 0) {
         setError(copy.invalidEmail);
         return;
       }
@@ -234,7 +240,7 @@ export function ParticipantIdentifyFlow({
           body: JSON.stringify({
             participantId: view.participantId || undefined,
             displayName: view.participantId ? undefined : view.displayName,
-            email,
+            email: view.requiresEmail ? email : undefined,
             password,
           }),
         });
@@ -445,20 +451,23 @@ export function ParticipantIdentifyFlow({
                 {copy.setPasswordSub}
               </p>
             </div>
-            <label className="sr-only" htmlFor="participant-email">
-              {copy.emailLabel}
-            </label>
-            <input
-              id="participant-email"
-              name="email"
-              type="email"
-              required
-              autoFocus
-              autoComplete="email"
-              placeholder={copy.emailLabel}
-              defaultValue={view.email}
-              className="w-full rounded-[14px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"
-            />
+            {view.requiresEmail ? (
+              <>
+                <label className="sr-only" htmlFor="participant-email">
+                  {copy.emailLabel}
+                </label>
+                <input
+                  id="participant-email"
+                  name="email"
+                  type="email"
+                  required
+                  autoFocus
+                  autoComplete="email"
+                  placeholder={copy.emailLabel}
+                  className="w-full rounded-[14px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"
+                />
+              </>
+            ) : null}
             <label className="sr-only" htmlFor="participant-password">
               {copy.passwordLabel}
             </label>
@@ -468,6 +477,7 @@ export function ParticipantIdentifyFlow({
               type="password"
               required
               minLength={8}
+              autoFocus={!view.requiresEmail}
               autoComplete="new-password"
               placeholder={copy.passwordLabel}
               className="w-full rounded-[14px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"

@@ -16,6 +16,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { createParticipantAccount } from "@/lib/participant-auth";
 import {
   setEventAccessRepositoryForTests,
   type EventAccessRepository,
@@ -43,6 +44,8 @@ import type {
 vi.mock("@/lib/participant-auth", () => ({
   createParticipantAccount: vi.fn(async () => ({ ok: true, neonUserId: "neon-stub" })),
 }));
+
+const createParticipantAccountMock = vi.mocked(createParticipantAccount);
 
 const SESSION_TOKEN = "set-password-session-token";
 const SESSION_TOKEN_HASH = hashSecret(SESSION_TOKEN);
@@ -215,6 +218,8 @@ describe("POST /api/event-access/identify/set-password (walk-in policy gate)", (
   beforeEach(() => {
     auditRepo = new MemoryAuditLogRepository();
     participantRepo = new MemoryParticipantRepository();
+    createParticipantAccountMock.mockReset();
+    createParticipantAccountMock.mockResolvedValue({ ok: true, neonUserId: "neon-stub" });
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository(makeSession()));
     setParticipantRepositoryForTests(participantRepo);
     setAuditLogRepositoryForTests(auditRepo);
@@ -309,9 +314,14 @@ describe("POST /api/event-access/identify/set-password (walk-in policy gate)", (
     setWorkshopInstanceRepositoryForTests(
       new MemoryWorkshopInstanceRepository(makeInstance({ allowWalkIns: true })),
     );
+    participantRepo.participants = [
+      makeParticipant({ id: "p-missing-email", email: null }),
+    ];
     const { POST } = await importRoute();
 
-    const response = await POST(buildRequest({ email: "no-at-sign", password: "longenough" }));
+    const response = await POST(
+      buildRequest({ participantId: "p-missing-email", email: "no-at-sign", password: "longenough" }),
+    );
     expect(response.status).toBe(400);
     const payload = (await response.json()) as { error: string };
     expect(payload.error).toBe("invalid_email");
@@ -327,6 +337,27 @@ describe("POST /api/event-access/identify/set-password (walk-in policy gate)", (
     expect(response.status).toBe(400);
     const payload = (await response.json()) as { error: string };
     expect(payload.error).toBe("weak_password");
+  });
+
+  it("uses the stored participant email when the facilitator already entered it", async () => {
+    setWorkshopInstanceRepositoryForTests(
+      new MemoryWorkshopInstanceRepository(makeInstance({ allowWalkIns: true })),
+    );
+    participantRepo.participants = [
+      makeParticipant({ id: "p-with-email", email: "jana@acme.com" }),
+    ];
+    const { POST } = await importRoute();
+
+    const response = await POST(
+      buildRequest({ participantId: "p-with-email", password: "longenough" }),
+    );
+
+    expect(response.status).toBe(200);
+    expect(createParticipantAccountMock).toHaveBeenCalledWith({
+      email: "jana@acme.com",
+      password: "longenough",
+      displayName: "Jana",
+    });
   });
 
   it("Phase 6: rejects early with already_bound when session has a different participantId", async () => {

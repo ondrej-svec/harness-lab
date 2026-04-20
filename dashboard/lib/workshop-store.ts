@@ -671,13 +671,26 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
   };
 
   const normalizedState = {
+    ...seedWorkshopState,
     ...state,
-    version: state.version ?? 1,
+    version: state.version ?? seedWorkshopState.version,
+    workshopId:
+      typeof state.workshopId === "string" && state.workshopId.trim().length > 0
+        ? state.workshopId
+        : seedWorkshopState.workshopId,
     agenda: normalizedAgenda,
     liveMoment: normalizeStoredLiveMoment(state.liveMoment, normalizedAgenda),
+    teams: Array.isArray(state.teams) ? state.teams : seedWorkshopState.teams,
+    briefs: Array.isArray(state.briefs) ? state.briefs : seedWorkshopState.briefs,
+    challenges: Array.isArray(state.challenges) ? state.challenges : seedWorkshopState.challenges,
     rotation: normalizedRotation,
+    ticker: Array.isArray(state.ticker) ? state.ticker : seedWorkshopState.ticker,
+    monitoring: Array.isArray(state.monitoring) ? state.monitoring : seedWorkshopState.monitoring,
+    sprintUpdates: Array.isArray(state.sprintUpdates) ? state.sprintUpdates : seedWorkshopState.sprintUpdates,
+    setupPaths: Array.isArray(state.setupPaths) ? state.setupPaths : seedWorkshopState.setupPaths,
     workshopMeta: {
-      ...(state.workshopMeta ?? seedWorkshopState.workshopMeta),
+      ...seedWorkshopState.workshopMeta,
+      ...(state.workshopMeta ?? {}),
       contentLang: resolveStoredContentLanguage(state.workshopMeta?.contentLang),
       currentPhaseLabel: resolveCurrentPhaseLabel(normalizedAgenda, state.workshopMeta?.currentPhaseLabel),
     },

@@ -7,7 +7,7 @@
  *   - rate-limited per session token hash (20/min)
  *   - instance-scoped (the repo is queried with the session's instanceId)
  *   - no auth → 401
- *   - response shape includes id, displayName, hasPassword, disambiguator
+ *   - response shape includes id, displayName, hasPassword, hasEmail, disambiguator
  *   - never returns raw email or tag (except as disambiguator value)
  */
 
@@ -171,7 +171,7 @@ describe("GET /api/event-access/identify/suggest", () => {
     expect(repoCalls).toBe(0);
   });
 
-  it("returns id + displayName + hasPassword + disambiguator (null when unique)", async () => {
+  it("returns id + displayName + hasPassword + hasEmail + disambiguator (null when unique)", async () => {
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository(makeSession()));
     setParticipantRepositoryForTests(
       new MemoryParticipantRepository([
@@ -183,10 +183,22 @@ describe("GET /api/event-access/identify/suggest", () => {
     const response = await GET(buildRequest("ja"));
     expect(response.status).toBe(200);
     const payload = (await response.json()) as {
-      matches: Array<{ id: string; displayName: string; hasPassword: boolean; disambiguator: unknown }>;
+      matches: Array<{
+        id: string;
+        displayName: string;
+        hasPassword: boolean;
+        hasEmail: boolean;
+        disambiguator: unknown;
+      }>;
     };
     expect(payload.matches).toEqual([
-      { id: "p1", displayName: "Jana Nováková", hasPassword: true, disambiguator: null },
+      {
+        id: "p1",
+        displayName: "Jana Nováková",
+        hasPassword: true,
+        hasEmail: false,
+        disambiguator: null,
+      },
     ]);
   });
 

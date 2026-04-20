@@ -12,8 +12,8 @@
  *   - a roster covering every disambiguator path:
  *       · "Jana Nováková" (unique name)
  *       · "Jan" with tag "bravo" + "Jan" with tag "charlie" (tag collision)
- *       · "Tomáš" with email tomas@acme.com + "Tomáš" with email
- *         tomas@example.org (masked-email collision)
+ *       · prefilled roster emails under the test-only
+ *         `@harness-lab-test.invalid` domain
  *
  * Usage:
  *   node dashboard/scripts/seed-neon-test-instance.mjs [--reset]
@@ -55,6 +55,7 @@ if (!DATABASE_URL) {
 }
 
 const sql = neon(DATABASE_URL);
+const SEED_RUN_ID = randomUUID().slice(0, 8);
 
 function hashEventCode(code) {
   return createHmac("sha256", EVENT_CODE_SECRET).update(code).digest("hex");
@@ -71,9 +72,9 @@ function hashEventCode(code) {
 const ROSTER = [
   { displayName: "Jana Nováková", email: null, tag: "bravo" },
   { displayName: "Jan Karel", email: null, tag: "charlie" },
-  { displayName: "Jan Černý", email: "jan.cerny@acme.com", tag: null },
-  { displayName: "Tomáš Dvořák", email: "tomas@example.org", tag: null },
-  { displayName: "Returner Already", email: "returner@example.com", tag: "returning" },
+  { displayName: "Jan Černý", email: `pw-prefilled-jan-${SEED_RUN_ID}@harness-lab-test.invalid`, tag: null },
+  { displayName: "Tomáš Dvořák", email: `pw-prefilled-tomas-${SEED_RUN_ID}@harness-lab-test.invalid`, tag: null },
+  { displayName: "Returner Already", email: `pw-prefilled-returner-${SEED_RUN_ID}@harness-lab-test.invalid`, tag: "returning" },
 ];
 
 async function reset() {

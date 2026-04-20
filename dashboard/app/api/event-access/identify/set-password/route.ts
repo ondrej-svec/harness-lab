@@ -27,7 +27,7 @@ import type { ParticipantRecord } from "@/lib/runtime-contracts";
  * Neon Auth session cookie is issued by the SDK as a side effect of
  * the subsequent signIn inside `createParticipantAccount`'s caller.
  *
- * Body (JSON): { participantId?, displayName?, email, password }
+ * Body (JSON): { participantId?, displayName?, email?, password }
  */
 export async function POST(request: Request) {
   if (
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
     password?: unknown;
   };
 
-  const email = typeof body.email === "string" ? body.email.trim() : "";
+  const submittedEmail = typeof body.email === "string" ? body.email.trim() : "";
   const password = typeof body.password === "string" ? body.password : "";
   const participantIdInput = typeof body.participantId === "string" ? body.participantId : null;
   const displayNameInput = typeof body.displayName === "string" ? body.displayName : null;
@@ -81,9 +81,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "already_bound" }, { status: 409 });
   }
 
-  if (!email || email.indexOf("@") <= 0) {
-    return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
-  }
   if (password.length < 8) {
     return NextResponse.json({ ok: false, error: "weak_password" }, { status: 400 });
   }
@@ -134,8 +131,15 @@ export async function POST(request: Request) {
     });
   }
 
+  const email = participant.email ?? submittedEmail;
+  if (!email || email.indexOf("@") <= 0) {
+    return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
+  }
+
   if (participant.email === null || participant.email.toLocaleLowerCase() !== email.toLocaleLowerCase()) {
-    // Store the email on the participant row for the suggest path.
+    // Store the email on the participant row for the suggest path. If
+    // the facilitator already set one, that stored address wins and the
+    // participant does not retype it during first-password setup.
     participant = {
       ...participant,
       email,

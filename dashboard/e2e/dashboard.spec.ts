@@ -969,8 +969,11 @@ test.describe("presenter touch navigation", () => {
     const initialScene = await readActiveSceneFromUrl(page);
     await moveActiveSlideToBoundary(page, "bottom");
     await dispatchTouchSwipe(page, { startY: 620, endY: 420 });
+    // Self-hosted ARM runner + webkit occasionally needs >1.5s for the
+    // touch-dispatched scene advance to settle. Give it 4s — still tight
+    // enough to catch a real freeze, loose enough to not flake on load.
     await expect
-      .poll(async () => readActiveSceneFromUrl(page), { timeout: 1_500, intervals: [100, 200, 350] })
+      .poll(async () => readActiveSceneFromUrl(page), { timeout: 4_000, intervals: [100, 200, 350, 500] })
       .not.toBe(initialScene);
   });
 
