@@ -7,7 +7,7 @@
  *   - rate-limited per session token hash (20/min)
  *   - instance-scoped (the repo is queried with the session's instanceId)
  *   - no auth → 401
- *   - response shape includes id, displayName, hasPassword, hasEmail, disambiguator
+ *   - response shape includes id, displayName, hasPassword, hasEmail, emailDisplay, disambiguator
  *   - never returns raw email or tag (except as disambiguator value)
  */
 
@@ -171,11 +171,16 @@ describe("GET /api/event-access/identify/suggest", () => {
     expect(repoCalls).toBe(0);
   });
 
-  it("returns id + displayName + hasPassword + hasEmail + disambiguator (null when unique)", async () => {
+  it("returns id + displayName + hasPassword + hasEmail + emailDisplay + disambiguator (null when unique)", async () => {
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository(makeSession()));
     setParticipantRepositoryForTests(
       new MemoryParticipantRepository([
-        makeParticipant({ id: "p1", displayName: "Jana Nováková", neonUserId: "neon-1" }),
+        makeParticipant({
+          id: "p1",
+          displayName: "Jana Nováková",
+          neonUserId: "neon-1",
+          email: "jana.novakova@acme.com",
+        }),
         makeParticipant({ id: "p2", displayName: "Tomas", neonUserId: null }),
       ]),
     );
@@ -188,6 +193,7 @@ describe("GET /api/event-access/identify/suggest", () => {
         displayName: string;
         hasPassword: boolean;
         hasEmail: boolean;
+        emailDisplay: string | null;
         disambiguator: unknown;
       }>;
     };
@@ -196,7 +202,8 @@ describe("GET /api/event-access/identify/suggest", () => {
         id: "p1",
         displayName: "Jana Nováková",
         hasPassword: true,
-        hasEmail: false,
+        hasEmail: true,
+        emailDisplay: "j***@acme.com",
         disambiguator: null,
       },
     ]);

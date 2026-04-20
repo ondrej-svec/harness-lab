@@ -14,6 +14,7 @@ test("first-time roster identify skips the email prompt when the participant alr
 
   await expect(page.getByText(/welcome, Jan Černý/i)).toBeVisible();
   await expect(page.getByPlaceholder(/your email/i)).toHaveCount(0);
+  await expect(page.getByText(/.\*\*\*@harness-lab-test\.invalid/i)).toBeVisible();
   await page.getByPlaceholder("password").fill(password);
   await page.getByRole("button", { name: /continue/i }).click();
 

@@ -3,7 +3,7 @@ import {
   getParticipantSessionWithTokenHash,
   participantSessionCookieName,
 } from "@/lib/event-access";
-import { computeDisambiguators } from "@/lib/participant-disambiguator";
+import { computeDisambiguators, maskEmail } from "@/lib/participant-disambiguator";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { checkSuggestRateLimit } from "@/lib/suggest-rate-limit";
 
@@ -18,7 +18,7 @@ const MAX_RESULTS = 5;
  * per session token. Returns disambiguators only when the result set
  * has collisions; never ships raw email, tag (except as disambiguator),
  * or any other field beyond id + displayName + hasPassword + optional
- * disambiguator.
+ * masked email confirmation/disambiguator.
  */
 export async function GET(request: Request) {
   // Read-only, session-guarded. No origin check — browsers omit Origin on
@@ -61,6 +61,7 @@ export async function GET(request: Request) {
       displayName: p.displayName,
       hasPassword: p.neonUserId !== null,
       hasEmail: p.email !== null,
+      emailDisplay: p.email ? maskEmail(p.email) : null,
       disambiguator: disambiguators.get(p.id) ?? null,
     })),
   });

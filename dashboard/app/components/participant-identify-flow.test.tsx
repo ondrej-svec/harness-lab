@@ -27,6 +27,7 @@ type SuggestMatch = {
   displayName: string;
   hasPassword: boolean;
   hasEmail?: boolean;
+  emailDisplay?: string | null;
   disambiguator: { kind: "tag" | "masked_email" | "order"; value: string } | null;
 };
 
@@ -119,7 +120,14 @@ describe("ParticipantIdentifyFlow", () => {
 
   it("skips the email input when the picked roster match already has an email", async () => {
     setSuggestMatches([
-      { id: "p1", displayName: "Jan Novák", hasPassword: false, hasEmail: true, disambiguator: null },
+      {
+        id: "p1",
+        displayName: "Jan Novák",
+        hasPassword: false,
+        hasEmail: true,
+        emailDisplay: "j***@acme.com",
+        disambiguator: null,
+      },
     ]);
     render(<ParticipantIdentifyFlow lang="en" allowWalkIns />);
 
@@ -129,6 +137,7 @@ describe("ParticipantIdentifyFlow", () => {
 
     expect(await screen.findByText("welcome, Jan Novák")).toBeDefined();
     expect(screen.queryByPlaceholderText("your email")).toBeNull();
+    expect(screen.getByText("j***@acme.com")).toBeDefined();
     expect(screen.getByPlaceholderText("password")).toBeDefined();
   });
 
@@ -203,7 +212,14 @@ describe("ParticipantIdentifyFlow", () => {
 
   it("set_password POST omits email when the picked roster match already has one", async () => {
     setSuggestMatches([
-      { id: "p1", displayName: "Jan Novák", hasPassword: false, hasEmail: true, disambiguator: null },
+      {
+        id: "p1",
+        displayName: "Jan Novák",
+        hasPassword: false,
+        hasEmail: true,
+        emailDisplay: "j***@acme.com",
+        disambiguator: null,
+      },
     ]);
     render(<ParticipantIdentifyFlow lang="en" allowWalkIns />);
 

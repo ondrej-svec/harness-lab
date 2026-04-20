@@ -10,12 +10,19 @@ type Match = {
   displayName: string;
   hasPassword: boolean;
   hasEmail?: boolean;
+  emailDisplay?: string | null;
   disambiguator: ParticipantDisambiguator | null;
 };
 
 type View =
   | { kind: "typing" }
-  | { kind: "set_password"; participantId: string; displayName: string; requiresEmail: boolean }
+  | {
+      kind: "set_password";
+      participantId: string;
+      displayName: string;
+      requiresEmail: boolean;
+      emailDisplay: string | null;
+    }
   | { kind: "enter_password"; participantId: string; displayName: string }
   | { kind: "walk_in_refused" }
   | { kind: "already_bound" };
@@ -167,6 +174,7 @@ export function ParticipantIdentifyFlow({
           participantId: match.id,
           displayName: match.displayName,
           requiresEmail: match.hasEmail !== true,
+          emailDisplay: match.emailDisplay ?? null,
         });
       }
     },
@@ -180,7 +188,13 @@ export function ParticipantIdentifyFlow({
         return;
       }
       setError(null);
-      setView({ kind: "set_password", participantId: "", displayName: typed, requiresEmail: true });
+      setView({
+        kind: "set_password",
+        participantId: "",
+        displayName: typed,
+        requiresEmail: true,
+        emailDisplay: null,
+      });
     },
     [allowWalkIns],
   );
@@ -467,6 +481,13 @@ export function ParticipantIdentifyFlow({
                   className="w-full rounded-[14px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"
                 />
               </>
+            ) : view.emailDisplay ? (
+              <div className="rounded-[14px] border border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-panel)_78%,transparent)] px-4 py-3 text-center">
+                <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                  {copy.emailLabel}
+                </p>
+                <p className="mt-1 text-[0.95rem] text-[var(--text-primary)]">{view.emailDisplay}</p>
+              </div>
             ) : null}
             <label className="sr-only" htmlFor="participant-password">
               {copy.passwordLabel}
