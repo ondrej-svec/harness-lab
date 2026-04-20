@@ -507,15 +507,15 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 - [x] `participant_password_reset_tokens` table + repo — **dropped**: facilitator resets the password in place via `resetParticipantPasswordAsAdmin`.
 - [ ] Integration tests (gated on `HARNESS_TEST_DATABASE_URL`): apply the migration to a throwaway Neon branch, run `createParticipantAccount → authenticateParticipant` round-trip, confirm email verification behavior (open item from 5.0), confirm `resetParticipantPasswordAsAdmin` path when the caller is facilitator-role.
 
-#### 5.3 Backend surfaces
+#### 5.3 Backend surfaces — ✅ shipped (`897096f`)
 
-- [ ] `GET /api/event-access/identify/suggest?q=` — returns `{ id, displayName, disambiguator?: { kind: "tag" | "masked_email" | "order"; value: string }, hasPassword: boolean }[]`. Cap 5. Min 2 chars. Rate-limit 20/min per session. `allow_walk_ins === true` appends a trailing create-new sentinel only when no exact match exists.
-- [ ] `POST /api/event-access/identify/set-password` — input: `participantId`, `password`, `displayName` (for walk-in create case). Validates session, checks participant is in session's instance, validates walk-in policy on the create case. Calls `createParticipantPassword`, links `neon_user_id`, binds session.
-- [ ] `POST /api/event-access/identify/authenticate` — input: `participantId`, `password`. Calls `authenticateParticipant`. On success binds session. Generic error message on failure.
-- [ ] `POST /api/event-access/identify/reset-token/redeem` — input: `participantId`, `token`, `newPassword`. Validates + consumes token, then delegates to `createParticipantPassword` path.
-- [ ] `POST /api/admin/participants/[id]/reset-password` — facilitator-only (guarded by `hasFacilitatorPlatformAccess` + per-instance grant). Issues a one-time token, returns the plaintext code once (for the facilitator to read aloud).
-- [ ] Walk-in toggle: facilitator server action on the access panel; audit log `facilitator_walk_in_toggle_changed`.
-- [ ] Audit log additions (repository already generic): `participant_identify_by_roster_pick`, `participant_password_created`, `participant_password_auth_success`, `participant_password_auth_failure`, `participant_password_reset_issued`, `participant_password_reset_redeemed`, `participant_identify_walk_in_created`, `participant_identify_walk_in_refused`.
+- [x] `GET /api/event-access/identify/suggest?q=` — returns `{ id, displayName, disambiguator?: { kind: "tag" | "masked_email" | "order"; value: string }, hasPassword: boolean }[]`. Cap 5. Min 2 chars. Rate-limit 20/min per session. `allow_walk_ins === true` appends a trailing create-new sentinel only when no exact match exists.
+- [x] `POST /api/event-access/identify/set-password` — input: `participantId`, `password`, `displayName` (for walk-in create case). Validates session, checks participant is in session's instance, validates walk-in policy on the create case. Calls `createParticipantPassword`, links `neon_user_id`, binds session.
+- [x] `POST /api/event-access/identify/authenticate` — input: `participantId`, `password`. Calls `authenticateParticipant`. On success binds session. Generic error message on failure.
+- [x] ~~`POST /api/event-access/identify/reset-token/redeem`~~ — **dropped**: facilitator resets the password in-place via the admin session (the participant logs in with the facilitator-issued temp password, then sets a new one via the normal set-password flow on next visit). No separate token endpoint needed.
+- [x] `POST /api/admin/participants/[id]/reset-password` — facilitator-only (guarded by `hasFacilitatorPlatformAccess` + per-instance grant). Generates a 3-word one-time password from the event-code wordlist, rotates the participant's Neon Auth password in place via the facilitator's admin session, returns the plaintext once for reading aloud. Revokes existing sessions on the participant's `neon_user_id`.
+- [x] `PUT /api/admin/instances/[id]/walk-in-policy` — facilitator server action toggling `allow_walk_ins`. Audit log entry on every change.
+- [x] Audit log additions (action names use `result: "success" | "failure"` field instead of suffixed names): `participant_identify_by_roster_pick`, `participant_password_create`, `participant_password_auth`, `participant_password_reset`, `participant_identify_walk_in_created`, `participant_identify_walk_in_refused`, `facilitator_walk_in_policy`. (`rebind_attempt` audit category lives in `runtime-alert.ts` for already_bound surfacing — see Phase 6.)
 
 #### 5.4 Frontend
 

@@ -82,6 +82,15 @@ export async function POST(request: Request) {
     // Walk-in path. Instance must allow walk-ins and displayName must validate.
     const instance = await getWorkshopInstanceRepository().getInstance(bundle.session.instanceId);
     if (!instance || instance.allowWalkIns === false) {
+      await getAuditLogRepository().append({
+        id: `audit-${randomUUID()}`,
+        instanceId: bundle.session.instanceId,
+        actorKind: "participant",
+        action: "participant_identify_walk_in_refused",
+        result: "failure",
+        createdAt: new Date().toISOString(),
+        metadata: { displayName: displayNameInput ?? null },
+      });
       return NextResponse.json({ ok: false, error: "walk_in_refused" }, { status: 403 });
     }
     if (!displayNameInput) {
@@ -91,7 +100,17 @@ export async function POST(request: Request) {
     if (!validated.ok) {
       return NextResponse.json({ ok: false, error: "invalid_display_name" }, { status: 400 });
     }
-    participant = await findOrCreateParticipant(bundle.session.instanceId, validated.value);
+    const created = await findOrCreateParticipant(bundle.session.instanceId, validated.value);
+    participant = created;
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId: bundle.session.instanceId,
+      actorKind: "participant",
+      action: "participant_identify_walk_in_created",
+      result: "success",
+      createdAt: new Date().toISOString(),
+      metadata: { participantId: created.id, displayName: created.displayName },
+    });
   }
 
   if (participant.email === null || participant.email.toLocaleLowerCase() !== email.toLocaleLowerCase()) {
