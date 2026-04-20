@@ -84,7 +84,7 @@ If the facilitator needs the full workspace registry first, use `list-instances`
 
 Targeting behavior:
 - if the facilitator previously ran `harness instance select <instance-id>`, `status` reports that selected instance
-- if no local selection exists, `status` falls back to the deployment-default workshop context
+- if no local selection exists, `status` hard-errors with "No instance selected. Run `harness instance select <id>`..."; pin an instance first
 - for exact machine parsing, prefer `harness --json workshop status`
 
 ### `/workshop facilitator current-instance`
@@ -121,7 +121,7 @@ harness instance select --clear
 Rules:
 - use this when a facilitator will perform several operations against the same live workshop instance
 - the CLI should validate the instance through the server before persisting the selection
-- after selection, `status` and `phase set` should target that instance instead of the deployment default
+- after selection, `status` and `phase set` target that instance; without a selection both hard-error
 - `show-instance`, `update-instance`, `reset-instance`, `prepare`, and `remove-instance` may omit `<instance-id>` when a valid selection already exists
 
 ### `/workshop facilitator list-instances`
@@ -171,7 +171,7 @@ GET {DASHBOARD_URL}/api/workshop/instances/{instanceId}
 ```
 
 Rules:
-- use this when the facilitator needs one specific instance, not the deployment-default `workshop status`
+- use this when the facilitator needs one specific instance by id (unlike `workshop status`, which requires an active selection)
 - if the route returns `404`, the instance does not exist or is not visible to the facilitator
 - prefer this over ad hoc authenticated scripts for routine discovery
 - if a local selection already exists, the facilitator may omit `<instance-id>` and let the CLI use the stored target
