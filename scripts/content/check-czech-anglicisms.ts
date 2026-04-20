@@ -54,7 +54,7 @@ type Finding = {
 };
 
 function isIdOrCodeField(key: string): boolean {
-  return ["id", "path", "href", "ctaHref", "chromePreset", "sceneType", "intent", "kind", "surface", "defaultSceneId"].includes(key);
+  return ["id", "path", "href", "ctaHref", "chromePreset", "sceneType", "intent", "kind", "surface", "defaultSceneId", "roomSceneIds"].includes(key);
 }
 
 function scanValue(value: unknown, path: string, findings: Finding[]): void {

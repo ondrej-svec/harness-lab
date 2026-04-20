@@ -271,7 +271,7 @@
               "type": "hero",
               "eyebrow": "Teď jste na tahu",
               "title": "Vstaňte. Postavte se do řady. Vyberte kotvu.",
-              "body": "Řiďte se sledem v místnosti. Tohle je jediný participant beat, na kterém teď záleží."
+              "body": "Řiďte se sledem v místnosti. Tohle je jediný okamžik pro účastníky, na kterém teď záleží."
             },
             {
               "id": "opening-team-formation-moment-steps",
@@ -970,14 +970,14 @@
         {
           "id": "demo-open-build-brief",
           "label": "Otevřete pracovní materiály",
-          "title": "Otevřete zadání, repo a fallback cestu",
-          "body": "Build 1 začíná hned potom. Otevřete zadání, otevřete repo a nechte si po ruce browser fallback, pokud lokální setup ještě neběží.",
+          "title": "Otevřete zadání, repo a záložní cestu",
+          "body": "Build 1 začíná hned potom. Otevřete zadání, otevřete repo a nechte si po ruce záložní variantu v prohlížeči, pokud lokální setup ještě neběží.",
           "blocks": [
             {
               "id": "demo-open-build-hero",
               "type": "hero",
               "eyebrow": "Další krok",
-              "title": "Otevřete zadání, repo a fallback cestu",
+              "title": "Otevřete zadání, repo a záložní cestu",
               "body": "Participant plocha je stabilní cesta. Skill použijte jen tehdy, když je pro váš stůl opravdu rychlejší."
             }
           ],
