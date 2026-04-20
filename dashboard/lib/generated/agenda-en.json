@@ -2198,8 +2198,8 @@
       "startTime": "15:45",
       "kind": "shared",
       "intent": "reflection",
-      "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
-      "roomSummary": "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals helped work survive handoff and which ones repeatedly failed.",
+      "goal": "Close the day by naming the signals that helped the work carry forward through handoff and by turning them into next practice, not just a pleasant ending.",
+      "roomSummary": "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals carried the work through handoff and which ones repeatedly failed.",
       "facilitatorPrompts": [
         "We are not judging which team was better.",
         "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
@@ -2222,7 +2222,7 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
+        "goal": "Close the day by naming the signals that helped the work carry forward through handoff and by turning them into next practice, not just a pleasant ending.",
         "say": [
           "We are not judging which team was better.",
           "We are looking at the system: which signals help work survive handoff and which ones slow it down.",

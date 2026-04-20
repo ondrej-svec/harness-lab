@@ -1038,7 +1038,7 @@
       },
       "cs": {
         "label": "Řemeslo pod povrchem",
-        "goal": "Proměnit energii z openingu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a ověřením, ne dalším promptem.",
+        "goal": "Proměnit energii z úvodu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a ověřením, ne dalším promptem.",
         "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní ověření nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu předání i review.",
         "facilitatorPrompts": [
           "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
@@ -2331,7 +2331,7 @@
       },
       "cs": {
         "label": "Build fáze 1",
-        "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
+        "goal": "Do oběda má mít každý tým repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
         "roomSummary": "Facilitátor má držet viditelnou tabuli milníků, coachovat otázkami a tlačit na nejmenší užitečné ověření místo dalšího generování bez hranic.",
         "facilitatorPrompts": [
           "Nejdřív coach, pak mentor, učitel až jako poslední možnost.",
@@ -2355,7 +2355,7 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Dostat tým do režimu, kde do oběda existuje repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
+          "goal": "Do oběda má mít každý tým repo, AGENTS.md, plán kroků, nejmenší ověření a první ověřený výstup.",
           "say": [
             "Agent, který začne bez mantinelů, udělá uvěřitelná, ale špatná architektonická rozhodnutí. Tohle je task drift. Mantinely v AGENTS.md jsou řešení."
           ],
@@ -2779,7 +2779,7 @@
       },
       "cs": {
         "label": "Intermezzo 1",
-        "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný výsledek.",
+        "goal": "Zviditelnit učení napříč týmy a připomenout místnosti, že workflow je stejně důležité jako samotný výsledek.",
         "roomSummary": "Týmy krátce shrnou, co změnily a proč. Facilitátor spojí signály z místnosti, monitoring a jednu principovou pointu navázanou na to, co se opravdu děje.",
         "facilitatorPrompts": [
           "Co jste změnili a proč?",
@@ -2803,7 +2803,7 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Zviditelnit učení napříč týmy a vrátit místnost k tomu, že workflow je stejně důležité jako samotný výsledek.",
+          "goal": "Zviditelnit učení napříč týmy a připomenout místnosti, že workflow je stejně důležité jako samotný výsledek.",
           "say": [],
           "show": [],
           "do": [
@@ -4434,8 +4434,8 @@
       },
       "cs": {
         "label": "Build fáze 2 · druhý push",
-        "goal": "Aplikujte signál z mezipatra. Iterujte, rozšiřujte, tlačte dál. Commitněte a udělejte repo čitelné pro Závěr.",
-        "roomSummary": "Druhý push Build 2. Tým jedná podle toho, co zvedlo mezipatro, a připravuje repo pro Závěr.",
+        "goal": "Aplikujte signál z intermezza. Iterujte, rozšiřujte, tlačte dál. Commitněte a udělejte repo čitelné pro Závěr.",
+        "roomSummary": "Druhý push Build 2. Tým jedná podle toho, co zvedlo intermezzo, a připravuje repo pro Závěr.",
         "facilitatorPrompts": [
           "Právě jste se zastavili. Teď jednejte podle signálu.",
           "Commitněte, co drží. Udělejte repo čitelné. Rozhodněte, co ukážete na Závěr."
@@ -4646,8 +4646,8 @@
       "defaultSceneId": "reveal-1-2-4-all",
       "en": {
         "label": "Reveal and reflection",
-        "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
-        "roomSummary": "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals helped work survive handoff and which ones repeatedly failed.",
+        "goal": "Close the day by naming the signals that helped the work carry forward through handoff and by turning them into next practice, not just a pleasant ending.",
+        "roomSummary": "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals carried the work through handoff and which ones repeatedly failed.",
         "facilitatorPrompts": [
           "We are not judging which team was better.",
           "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
@@ -4670,7 +4670,7 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Close the day by naming the signals that helped work survive handoff and by turning them into next practice, not just a pleasant ending.",
+          "goal": "Close the day by naming the signals that helped the work carry forward through handoff and by turning them into next practice, not just a pleasant ending.",
           "say": [
             "We are not judging which team was better.",
             "We are looking at the system: which signals help work survive handoff and which ones slow it down.",
@@ -4691,8 +4691,8 @@
       },
       "cs": {
         "label": "Závěr a reflexe",
-        "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít předání, a převést je do další praxe i do lepšího workshopového systému.",
-        "roomSummary": "Závěr a reflexe nejsou soutěž týmů. Sledujeme, které signály pomáhají práci přežít předání a které ji brzdí.",
+        "goal": "Uzavřít den přes konkrétní signály, díky kterým práce unese předání, a převést je do další praxe i do lepšího workshopového systému.",
+        "roomSummary": "Závěr a reflexe nejsou soutěž týmů. Sledujeme, co práci při předání drží a co ji brzdí.",
         "facilitatorPrompts": [
           "Nehodnotíme, který tým byl lepší.",
           "Díváme se na systém: které signály pomáhají práci přežít předání a které ji brzdí.",
@@ -4715,7 +4715,7 @@
           }
         ],
         "facilitatorRunner": {
-          "goal": "Uzavřít den přes konkrétní signály, které pomáhají práci přežít předání, a převést je do další praxe i do lepšího workshopového systému.",
+          "goal": "Uzavřít den přes konkrétní signály, díky kterým práce unese předání, a převést je do další praxe i do lepšího workshopového systému.",
           "say": [
             "Tyhle postupy jsou nezávislé na nástroji. Až si příště sáhnete po jakémkoli toolchainu, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
           ],
