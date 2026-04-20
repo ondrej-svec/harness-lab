@@ -187,7 +187,7 @@ export class NeonParticipantRepository implements ParticipantRepository {
     const rows = (await sql.query(
       `
         SELECT id, instance_id, display_name, email, email_opt_in, tag,
-               created_at, updated_at, archived_at
+               neon_user_id, created_at, updated_at, archived_at
         FROM participants
         WHERE instance_id = $1 AND id = $2
       `,
@@ -258,11 +258,10 @@ export class NeonParticipantRepository implements ParticipantRepository {
     updatedAt: string,
   ) {
     const sql = getNeonSql();
-    // The unique index on neon_user_id already stops two participants
-    // from pointing at the same user. WHERE (neon_user_id IS NULL OR =
-    // new) makes this idempotent when the same participant re-links
-    // the same user, and a no-op (no rows affected) when another
-    // participant already owns the id.
+    // Idempotent on the same (participant, neon_user_id) pair. No-op
+    // when another participant already owns the neon_user_id — the
+    // NOT EXISTS clause filters those out before the UPDATE so the
+    // unique index never throws.
     await sql.query(
       `
         UPDATE participants
@@ -271,6 +270,11 @@ export class NeonParticipantRepository implements ParticipantRepository {
         WHERE instance_id = $1
           AND id = $2
           AND (neon_user_id IS NULL OR neon_user_id = $3)
+          AND NOT EXISTS (
+            SELECT 1 FROM participants other
+            WHERE other.neon_user_id = $3
+              AND other.id <> $2
+          )
       `,
       [instanceId, participantId, neonUserId, updatedAt],
     );

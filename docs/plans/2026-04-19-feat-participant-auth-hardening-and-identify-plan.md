@@ -505,7 +505,7 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 - [x] Extend `lib/participant-repository.ts` with `listByDisplayNamePrefix`, `findByNeonUserId`, `linkNeonUser` (file + Neon modes). 5 new file-mode tests. (commit `906c761`)
 - [x] `lib/participant-identifier.ts` — **dropped**: real email is the canonical identifier; no synthesis needed.
 - [x] `participant_password_reset_tokens` table + repo — **dropped**: facilitator resets the password in place via `resetParticipantPasswordAsAdmin`.
-- [ ] Integration tests (gated on `HARNESS_TEST_DATABASE_URL`): apply the migration to a throwaway Neon branch, run `createParticipantAccount → authenticateParticipant` round-trip, confirm email verification behavior (open item from 5.0), confirm `resetParticipantPasswordAsAdmin` path when the caller is facilitator-role.
+- [x] Integration tests against a throwaway Neon branch — split by what the test runtime can reach. Vitest layer (Phase 5.6 Layer 2 below) ships now: schema drift probe + `NeonParticipantRepository` round-trip (`linkNeonUser` / `findByNeonUserId` / `listByDisplayNamePrefix` / `findParticipant`). The Neon Auth wrapper round-trip (`createParticipantAccount → authenticateParticipant → resetParticipantPasswordAsAdmin`) requires a Next.js runtime (the SDK pulls in `next/headers`) and ships in Phase 5.6 Layer 3 against a built app. Email-verification behavior open item from 5.0 ditto — it's a Layer 3 probe.
 
 #### 5.3 Backend surfaces — ✅ shipped (`897096f`)
 
@@ -552,12 +552,13 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 
 ##### Layer 2 — integration tests (Neon test branch)
 
-Gated on `HARNESS_TEST_DATABASE_URL` + `NEON_AUTH_BASE_URL` being set. Skipped otherwise. Spin up the test branch first (see Setup above).
+Gated on `HARNESS_TEST_DATABASE_URL` being set. Skipped otherwise. Spin up the test branch first (see Setup above). File pattern: `*.integration.test.ts`. Picked up by the default `npm test` run — `describe.skip`'d when the env var is absent so dev cycles stay fast.
 
-- [ ] `participant-auth.integration.test.ts` — end-to-end wrapper round-trip: `createParticipantAccount` → `authenticateParticipant` → `resetParticipantPasswordAsAdmin` → re-auth with new password. Validates that each call actually touches Neon Auth (not mocked).
-- [ ] Email verification behavior probe: `createParticipantAccount` on the test branch's Neon Auth instance, then try `authenticateParticipant` immediately. Document whether the hosted instance blocks signin pre-verification — resolves the one open item from Phase 5.0 empirically.
-- [ ] Privilege boundary: create a `role="participant"` Neon user, sign in as them, hit every `/api/admin/*` route, assert 401/403. (This is also Phase 5.5's test; land it here if 5.5 hasn't shipped yet.)
-- [ ] Schema drift probe: read `neon_auth."user"` schema from the test branch, confirm the columns we rely on (`id`, `email`, `emailVerified`, `role`, `name`) exist and match the shape in `lib/participant-auth.ts`.
+- [ ] `participant-auth.integration.test.ts` — end-to-end wrapper round-trip: `createParticipantAccount` → `authenticateParticipant` → `resetParticipantPasswordAsAdmin` → re-auth with new password. Cannot run as a vitest integration test — `@neondatabase/auth/next/server` imports `next/headers`, which only resolves inside a Next.js runtime. Moved to Layer 3 (Playwright against a built app).
+- [ ] Email verification behavior probe — same constraint. Moved to Layer 3.
+- [ ] Privilege boundary — needs a real Neon Auth session cookie on the request, which only exists when the SDK is initialized in a Next runtime. Moved to Layer 3.
+- [x] Schema drift probe (`lib/neon-schema.integration.test.ts`): reads `neon_auth."user"` from the test branch and confirms `id`/`name`/`email`/`emailVerified`/`role` exist with expected types. Also asserts `participants.neon_user_id` (text, nullable) and `workshop_instances.allow_walk_ins` (boolean, default true) — both added by `2026-04-20-participant-auth.sql`. Plus the unique index on `participants.neon_user_id`.
+- [x] `NeonParticipantRepository` round-trip (`lib/participant-repository.integration.test.ts`): creates a throwaway instance row, exercises `upsertParticipant`, `findParticipant`, `linkNeonUser`, `findByNeonUserId`, `listByDisplayNamePrefix`. Surfaced two real bugs that unit tests missed: (a) `findParticipant` SELECT was missing `neon_user_id`, (b) `linkNeonUser`'s "soft no-op" WHERE clause didn't actually prevent the unique-index violation. Both fixed in the same slice.
 
 ##### Layer 3 — Playwright e2e + scripted browser smoke (Neon test branch)
 
