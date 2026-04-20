@@ -11,7 +11,23 @@ confidence: medium
 
 **One-line summary:** close the submit-review security gaps (rate-limit bypass, cookie secure flag, unsalted code hash), fix the language-switcher link that drops participants onto the public page, and reshape the identify flow so pre-entered participants don't have to retype their own identity — email-first when the roster has emails, name-with-autocomplete otherwise, walk-in path unchanged.
 
-## Session handoff (2026-04-20)
+## Session handoff (2026-04-20 · v2 · scope expanded)
+
+**What changed between v1 and v2:** Phase 5 used to be "name-autocomplete OR email-first, dispatched from roster contents, walk-in fallback always open." After reviewing the v1 preview, Ondrej reshaped it:
+
+- **Name-first is now the default for everyone.** Single name match on the roster → authenticate. Multiple matches → disambiguate by `tag` first, masked email only when tag isn't enough. Email is never the primary identifier.
+- **Participants get real credentials via Neon Auth.** `role = "participant"` on `neon_auth."user"`. Replaces the session-cookie-only binding with a password participants set on first identify. Solves re-login after cookie clear without adding email infrastructure.
+- **Event code stays.** Room key first, personal password second. Re-login needs both.
+- **Walk-in policy becomes a facilitator toggle.** `allow_walk_ins: true` preserves today's "type a new name, get added" behavior. `allow_walk_ins: false` rejects unknown names with "ask your facilitator to add you."
+- **Facilitator can reset participant passwords in-app** via a one-time code (no email flow).
+
+The phases 1–4 security work in v1 is unaffected — event code hashing, guard centralization, and cookie hardening all still hold, they're independent of the auth identity model.
+
+**Status when this session paused:** Phases 1, 2, 3, 4 shipped to main (`17a17dd`, `cf0a414`, `f4f8f67`, `1e1f865`). Phase 5 replanned to the v2 shape above; preview artifact + code still pending. Phases 6, 7 still pending.
+
+---
+
+## Session handoff (2026-04-20 · v1 · superseded)
 
 **Status when this session paused:** Phase 1 shipped. Phase 3 partially covered by a parallel-session commit (`976ab6b fix: harden dashboard auth boundaries`). Phases 2, 4, 5, 6, 7 still pending.
 
@@ -68,34 +84,43 @@ When this lands:
 2. **Both redeem paths carry the same guards.** `isTrustedOrigin`, `checkBotId`, and `isRedeemRateLimited` protect *every* code submission, whether via server action or API route. Rate-limiter is authoritative: 5 failures per client fingerprint per 10 minutes regardless of entry point.
 3. **Cookies are `secure` in production.** Both the participant session cookie and the language cookie set `secure: true` when running under HTTPS; dev over HTTP still works.
 4. **Event codes are HMAC-hashed.** New codes are hashed with `hmac("sha256", HARNESS_EVENT_CODE_SECRET, code)`. Existing SHA-256 hashes are migrated at read-time with a dual-hash window — no forced re-seed.
-5. **Pre-entered participants don't retype themselves.** If the roster for the instance has at least one participant with an email, the redeem flow asks for email, and matches it against the roster server-side. If the roster has no emails (or the participant doesn't have one listed), the prompt becomes name-with-autocomplete that queries the roster as you type (min 2 chars, capped results). Neither path ever ships the full roster to the client. Walk-in flow ("I'm not on the list, add me") stays available.
-6. **Session collision is surfaced.** When `bindParticipantToSession` returns `already_bound`, the UI shows an explicit error ("this session is already identified as [name]") instead of silently redirecting to the hub.
-7. **Audit log captures the new paths.** Every email match, autocomplete-miss, and `already_bound` rejection appends an audit row.
-8. **Existing tests green, new regression tests for each change.** Including e2e coverage of the lang-switch fix.
+5. **Pre-entered participants don't retype themselves.** Name-first everywhere. The participant types their name, the server suggests up to 5 roster matches (min 2 chars, no email/tag shipped unless needed), and the participant picks one. The roster is never shipped to the client as a whole.
+6. **Name collisions resolve privately.** When two or more roster entries share the typed name, the listbox adds a soft disambiguator per option — `tag` first (team or role), masked email only if tag isn't enough (`j***@acme.com`). No full emails, no preview of attendees outside the current query.
+7. **Participants have real credentials via Neon Auth.** Picking a roster identity for the first time prompts "set your password" (Neon Auth `role = "participant"`). Returning participants authenticate with their password — event code still required as the room key. Facilitator-initiated password reset uses a one-time code read aloud in the room (no email infrastructure).
+8. **Walk-ins are a facilitator choice, not a system default.** `workshop_instance.allow_walk_ins` toggle. When on, unknown names can "add yourself" and set a password. When off, unknown names are refused politely ("ask your facilitator to add you"); only facilitator-pasted roster members can self-select.
+9. **The privilege boundary is strict.** Participant Neon users cannot reach any facilitator surface. Every facilitator-side guard checks `role === "admin"` via `hasFacilitatorPlatformAccess`, never "has Neon session."
+10. **Session collision is surfaced.** When `bindParticipantToSession` returns `already_bound`, the UI shows an explicit error ("this session is already identified as [name]") instead of silently redirecting to the hub.
+11. **Audit log captures the new paths.** Roster pick, password set, password auth, password reset, walk-in creation, walk-in refusal, `already_bound` rejection — each appends an audit row.
+12. **Existing tests green, new regression tests for each change.** Including the participant ↔ facilitator privilege boundary as an explicit OWASP regression suite, plus e2e coverage of the lang-switch fix.
 
 ## Scope and Non-Goals
 
 **In scope:**
-- Link-target fix on `SiteHeader` participant usage (and `/admin/instances/[id]/participant/page.tsx` mirror).
-- Moving rate-limit / origin / bot guards inside `redeemEventCode()` so both paths share them.
-- `secure` flag on session + language cookies in production.
-- HMAC upgrade for event code hashing, with a dual-hash read-time migration.
-- New identify prompt with two modes: email-first (when roster has emails) or name-with-autocomplete (otherwise).
-- Roster autocomplete endpoint with rate-limit + min-chars + result-cap.
+- Link-target fix on `SiteHeader` participant usage (and `/admin/instances/[id]/participant/page.tsx` mirror). ✅ shipped
+- Moving rate-limit / origin / bot guards inside `redeemEventCode()` so both paths share them. ✅ shipped
+- `secure` flag on session + language cookies in production. ✅ shipped
+- HMAC upgrade for event code hashing, with a dual-hash read-time migration. ✅ shipped
+- Name-first identify prompt with `tag` / masked-email disambiguation when roster names collide.
+- Roster suggest endpoint with rate-limit + min-chars + result-cap, returning only `{ id, displayName, disambiguator? }`.
+- Participant credentials via Neon Auth (`role = "participant"`): password set on first identify, password prompt on re-login.
+- Facilitator-initiated password reset via a one-time in-app code (no email).
+- `workshop_instance.allow_walk_ins` toggle + facilitator UI control.
+- Walk-in flow (when enabled): "add yourself as new" → set password.
+- Walk-in refusal flow (when disabled): "ask your facilitator to add you" — no create affordance.
 - Surfacing `already_bound` to the user as an explicit error state.
-- Test coverage: unit, Playwright e2e regression for the lang bug.
+- OWASP regression suite for the participant ↔ facilitator privilege boundary.
+- Test coverage: unit, Playwright e2e regression for the lang bug + full identify-and-re-login round-trip.
 
 **Not in scope:**
-- Per-participant invite codes (Option E from the conversation) — doctrine change, separate plan if ever.
-- Roster "pick from full list" (Option A) — rejected for privacy reasons.
-- Silent name match (Option D) — rejected because first-name-only entries create false positives.
-- SSO / OAuth per participant — out of Q5 doctrine.
+- Email delivery infrastructure — password reset is in-room via one-time code, not email.
+- SSO / OAuth per participant — rejected; event code + personal password is the doctrine.
+- MFA for participants — password + event code is already a two-factor story (know the room, know yourself).
 - CSRF tokens beyond Next's built-in server-action protocol.
 - Rewriting `parseParticipantPaste`'s format (already accepts `displayName, email, tag`).
-- Facilitator-side roster import UI changes beyond what's needed for email capture.
 - Email opt-in / follow-up delivery infrastructure.
-- Display-name collision policy ("two Johns" in the walk-in path) — existing behavior preserved, tracked as followup.
+- Cross-instance participant identity (same person joining two workshops reuses a single Neon user) — out of scope for this plan, tracked as followup if needed.
 - Event code rotation / TTL policy — handled elsewhere.
+- Neon user merge/move between instances — followup if we see real demand.
 
 ## Proposed Solution
 
@@ -147,36 +172,100 @@ Preserve `httpOnly: true, sameSite: "lax", path: "/"`.
    - Neon mode: per-instance access rows get upgraded on first successful redeem. Old rows that never see a successful redeem stay SHA-256 until they expire — that's acceptable; they're already time-limited.
 6. Document the new env var in `.env.example` and require it for production deployment. A deploy-time guard in `lib/runtime-auth-configuration.ts` asserts the key exists and has sufficient entropy (≥32 bytes, base64 or hex).
 
-### Phase 5 — Identify flow revamp
+### Phase 5 — Name-first identify + Neon Auth participants + walk-in policy
 
-The facilitator's roster decision drives the participant prompt.
+The v1 "dispatch by roster contents" sketch is superseded. The v2 flow is one prompt for everyone, with ambiguity resolved only when the roster actually forces it, and real credentials once the participant picks an identity.
 
-**Server-side decision at page load** (`app/participant/page.tsx` when `!participantSession.participantId`):
+#### 5.1 The single identify prompt
 
-1. Load the instance's participants. If any has `email != null`, route to **email-first mode**. Otherwise route to **name-with-autocomplete mode**.
-2. If the instance has no pre-entered participants at all, route to **walk-in mode** (current "what's your name?" unchanged, no autocomplete).
+`app/components/participant-identify-prompt.tsx` becomes a name-first `combobox`:
 
-**Email-first mode** (`ParticipantIdentifyByEmailPrompt`):
-- Input: type="email", label "Your email", required.
-- Submit flow: server action finds participant by exact `email` match (case-insensitive).
-- If matched: bind session, done.
-- If no match: return to the prompt with a secondary affordance: "We don't see that email. If you're a walk-in, add yourself by name." → switches to walk-in mode for that participant only.
-- Validate: email format on the client (`type="email"`), re-validate server-side. No user enumeration signal in error text (same message for "not on list" and "typed wrong"; rely on the walk-in fallback to succeed).
+1. Participant types their name. After 2+ characters, the client calls `GET /api/event-access/identify/suggest?q=<prefix>` with the session cookie. The endpoint is rate-limited to 20/min per session, returns up to 5 matches.
+2. Each suggestion is `{ id, displayName, disambiguator?, hasPassword }`:
+   - `disambiguator` is present only when ≥2 roster entries share the typed name. Value is `tag` when any matching entry has one (e.g. "team bravo"); otherwise masked email (`j***@acme.com`). Never both. Never raw email.
+   - `hasPassword` tells the client whether to render "set your password" or "enter your password" once the participant picks.
+3. Picking a suggestion calls a server action that either binds the session directly (if `hasPassword === false`, proceeds to set-password sub-view) or prompts for the password (if `hasPassword === true`).
 
-**Name-with-autocomplete mode** (`ParticipantIdentifyByNamePrompt`):
-- Input: type="text" with a live `combobox` pattern. As the user types (min 2 chars), the client calls `GET /api/event-access/identify/suggest?q=<prefix>` with the session cookie.
-- Suggest endpoint: scoped to the session's `instanceId`, returns up to 5 participants whose `displayName` matches case-insensitively (prefix or substring — prefix only to start, substring if we see misses). Rate-limited by session-token fingerprint (no more than 20 calls per minute per session). Returns only `{ id, displayName }` — not emails, not tags.
-- Submit flow: if the user picked a suggestion, server action binds by `participantId`. If the user typed something and hit enter without picking, treat as walk-in: call `findOrCreateParticipant` with the typed name.
-- Optional tiny UX: show "or add yourself as a new participant" button under the suggestion list so the create-new intent is always visible.
+#### 5.2 Password set / authenticate
 
-**Walk-in mode** (`ParticipantIdentifyPrompt`, existing):
-- Unchanged "what's your name?" flow. This is what runs today when no roster exists.
+First-time identify on a roster row:
 
-**Backend changes:**
-- `lib/event-access.ts` gains `bindParticipantByEmail(session, tokenHash, email)` — parallel to `bindParticipantToSession`, but matches the roster by email instead of creating. Returns `{ ok: true, participantId }` or `{ ok: false, reason: "no_match" | "already_bound" | "invalid_email" }`.
-- `lib/event-access.ts` gains `bindParticipantById(session, tokenHash, participantId)` for the autocomplete-picked case. Validates that the participant is in the same instance.
-- `app/api/event-access/identify/suggest/route.ts` — new endpoint, rate-limited, scoped by session instance.
-- Audit log: `participant_identify_by_email`, `participant_identify_by_roster_pick`, `participant_identify_not_found` (email mode fall-through).
+- Sub-view asks "set your password" with a single password field (min 8 chars, no other constraints — workshop doctrine is pragmatic, not bank-grade).
+- Server action creates a Neon Auth user with `role = "participant"` and links `participant.neon_user_id` to the new user id. Uses Neon Auth's hashing + rate-limit primitives directly; we never touch raw password bytes beyond the submit.
+- Binds the event-code session to the participant id. Emits `participant_password_created`.
+
+Returning identify:
+
+- Sub-view asks "enter your password".
+- Server action authenticates via Neon Auth (`auth.signIn({ identifier, password })`). On success, bind the event-code session to the participant id and emit `participant_password_auth_success`. On failure, emit `participant_password_auth_failure` and return a generic "that didn't match" message. Neon Auth's own rate limiter throttles brute force.
+
+The participant's Neon Auth cookie lives alongside the event-code session cookie. Both are required to reach `/participant`; if either is missing, the flow restarts at its correct step (event code first, identify second).
+
+#### 5.3 Walk-in policy
+
+New field: `workshop_instance.allow_walk_ins` (boolean, default `true` to preserve today's behavior).
+
+Facilitator toggle lives in the access panel on `/admin/instances/[id]`.
+
+When `allow_walk_ins === true`:
+- The suggest listbox includes a trailing "＋ add 'Jan' as a new participant" option when the typed name doesn't match the roster.
+- Choosing it creates a new `participant` row (existing `findOrCreateParticipant` path), then proceeds to the set-password sub-view.
+
+When `allow_walk_ins === false`:
+- The trailing "add as new" option is absent.
+- If the participant types a name that has no roster match and submits, the prompt renders a polite refusal: "we don't have you on the roster — ask your facilitator to add you." No other navigation.
+- Emits `participant_identify_walk_in_refused`.
+
+#### 5.4 Name collision disambiguation
+
+The suggest endpoint computes disambiguation server-side:
+
+```ts
+function computeDisambiguator(matches: ParticipantRecord[]): Record<ParticipantId, Disambiguator | null> {
+  const byNormalizedName = groupBy(matches, (p) => p.displayName.toLocaleLowerCase());
+  const result: Record<string, Disambiguator | null> = {};
+  for (const group of Object.values(byNormalizedName)) {
+    if (group.length < 2) {
+      for (const p of group) result[p.id] = null;
+      continue;
+    }
+    for (const p of group) {
+      if (p.tag) result[p.id] = { kind: "tag", value: p.tag };
+      else if (p.email) result[p.id] = { kind: "masked_email", value: maskEmail(p.email) };
+      else result[p.id] = { kind: "order", value: `#${p.id.slice(-4)}` };
+    }
+  }
+  return result;
+}
+```
+
+Client renders the `disambiguator.value` as a small secondary line beneath the name when present. The raw email never leaves the server.
+
+#### 5.5 Facilitator password reset (in-app)
+
+New facilitator action on the People section:
+
+- "reset password" on a participant row generates a 3-word one-time code (reuses the event-code word list for familiarity), stores only its HMAC hash in `participant_password_reset_tokens`, expires in 15 minutes.
+- Facilitator reads the code aloud to the participant.
+- Participant redeems: on the identify prompt, after picking their name, a tiny "forgot?" link surfaces a "enter one-time code" flow. Submitting a valid code dispatches straight into the set-password sub-view.
+- Redeemed codes are invalidated immediately. Rate-limit: 5 attempts per 10 minutes per session fingerprint, same primitive as event-code redeem.
+
+#### 5.6 Privilege boundary audit
+
+The existing `hasFacilitatorPlatformAccess(neonUserId)` already checks `role === "admin"`. Before Phase 5 ships, every facilitator route / server action is audited to confirm it calls `hasFacilitatorPlatformAccess` (not just `getAuthenticatedFacilitator`). A new `lib/privilege-boundary.test.ts` asserts that a participant-role Neon session cannot read or mutate any facilitator endpoint.
+
+#### 5.7 Backend surface summary
+
+- `lib/event-access.ts` gains `bindParticipantAfterAuth(session, tokenHash, participantId)` — called after Neon Auth succeeds.
+- `lib/participant-auth.ts` (new) — thin wrapper around Neon Auth for participant role: `createParticipantPassword`, `authenticateParticipant`, `issueParticipantResetToken`, `consumeParticipantResetToken`.
+- `lib/participant-repository.ts` gains `listByDisplayNamePrefix(instanceId, prefix, limit)` and updates the schema to include `neon_user_id: string | null`.
+- `app/api/event-access/identify/suggest/route.ts` — new endpoint, rate-limited, returns `{ id, displayName, disambiguator, hasPassword }`.
+- `app/api/event-access/identify/set-password/route.ts` — new endpoint for first-time password.
+- `app/api/event-access/identify/authenticate/route.ts` — new endpoint for returning password.
+- `app/api/event-access/identify/reset-token/redeem/route.ts` — new endpoint for the one-time reset code.
+- `app/api/admin/participants/[id]/reset-password/route.ts` — facilitator-only, issues the one-time code.
+- `app/admin/instances/[id]/access/toggle-walk-ins/` — facilitator server action for the walk-in toggle.
+- Audit log additions: `participant_identify_by_roster_pick`, `participant_password_created`, `participant_password_auth_success`, `participant_password_auth_failure`, `participant_password_reset_issued`, `participant_password_reset_redeemed`, `participant_identify_walk_in_created`, `participant_identify_walk_in_refused`.
 
 ### Phase 6 — Surface `already_bound`
 
@@ -191,14 +280,37 @@ The facilitator's roster decision drives the participant prompt.
 
 ## Decision Rationale
 
-### Why B+C over A, D, E
+### Why name-first over email-first or dispatch-by-roster
 
-- **A (full roster list)**: rejected. Exposes the attendee list to anyone who has the code — potentially including anyone a code was shared with "by accident." Unacceptable for any workshop with external attendees.
-- **D (silent name match)**: rejected by the user this session — first-name-only entries ("Jan") collide across multiple real people, binding the wrong session to the wrong record silently. Data integrity bug.
-- **E (per-participant invite codes)**: rejected as out-of-scope. Heavy change to Q5 doctrine (single shared event code); requires out-of-band distribution infrastructure (email/SMS); adds per-person secret management. Good feature later, not now.
-- **B alone (email only)**: rejected. Some rosters are pasted as names only; forcing email collection up front creates friction at the roster-import step.
-- **C alone (name autocomplete only)**: rejected. For rosters with emails already captured, email is a stronger identifier than a name prefix and avoids the "which Jan" problem.
-- **B+C**: the server decides based on what the roster actually contains. Cheap to implement, degrades gracefully to walk-in mode when neither applies. Keeps the attendee list private in both modes.
+The v1 plan dispatched on roster contents (email-first when emails existed, name-autocomplete otherwise). That's two prompts to build, two trust stories, and it forces participants to remember *which shape* applies to their workshop. Name-first-with-disambiguation is one prompt. Single match is the common case and becomes "type, pick, password" — three user actions, no conditional UI.
+
+Rejected alternatives:
+
+- **Email-first**: some rosters are names only. Email as primary identifier forces the facilitator to chase emails at roster paste time, which is the friction we were trying to remove.
+- **Full roster list**: exposes the attendee list to anyone with the event code. Unacceptable for any workshop with external attendees.
+- **Silent name match**: binding to the only-matching-Jan is a data-integrity bug the moment two Jans exist.
+- **Name-first + disambiguate by email always**: leaks email domains when tag would have been enough. Tag-first keeps workplace privacy intact for the common case.
+
+### Why Neon Auth for participants instead of passwordless revival
+
+The v1 plan accepted that re-login (cleared cookies, new device, closed tab) meant re-walking-in as a fresh identity, and guarded data integrity with the `already_bound` surface only. That didn't match Ondrej's actual mental model — if a participant's identity matters enough to pre-load the roster, it matters enough to survive a browser close.
+
+Alternatives considered:
+
+- **One-time revival code shown on first identify**: one secret the participant has to remember. If lost, re-walk-in. Light, but doesn't let the facilitator recover someone who forgot it.
+- **Facilitator-approved claim per session**: needs facilitator attention every time the participant loses their cookie. Bad UX the second time.
+- **Per-person invite codes emailed in advance**: requires email infra we don't have and doesn't exist yet.
+- **Real user accounts via Neon Auth** (chosen): the infrastructure is already there for facilitators. Adding `role = "participant"` reuses the password hashing, session management, and brute-force protection Neon Auth already provides. The privilege boundary is already schema-level (`hasFacilitatorPlatformAccess` checks `role === "admin"`), so the blast radius of mixing participant and facilitator identities in the same auth store is bounded by an audit of facilitator-side guards — not a new security primitive.
+
+The honest name for this is "real user management." It's 4–6 days of work, not weeks, because we're not building password hashing or session management — we're wiring Neon Auth into a second role.
+
+### Why the facilitator controls the walk-in toggle
+
+Some workshops are invite-only (corporate training, external-attendee retros) and should refuse unknown names. Others are open (meetups, hackathons with on-the-door signups) and shouldn't require roster pre-entry. A per-instance toggle matches both realities without forcing a global policy. Default `true` preserves today's behavior for anyone who upgrades.
+
+### Why a one-time reset code instead of email reset
+
+Email reset requires email infrastructure we don't have and don't want yet. The facilitator is physically in the room, has the participant's attention, and can say "your reset code is lantern-relay-north" in fifteen seconds. Same word list as event codes (the participants already trust this vocabulary). Expires in 15 minutes, HMAC-hashed in storage, rate-limited on redeem. Matches the workshop's actual trust model.
 
 ### Why move guards into `redeemEventCode` instead of adding to the server action
 
@@ -237,27 +349,33 @@ Phase 1 (lang fix) ships in minutes and closes the user-visible bug that trigger
 |---|---|---|
 | `parseParticipantPaste` already accepts email in the paste text | Verified | `participants.ts:42-43` reads `entry.email` from parser output; entries include `displayName, email, tag` triple. |
 | `ParticipantRecord` already has `email: string \| null` | Verified | `runtime-contracts.ts:40` — field exists with opt-in flag. |
-| Next.js server actions go through a specific POST transport that lets us read the underlying Request headers | Assumed | Server actions in Next 16 can call `headers()` / `cookies()` from `next/headers`. The x-forwarded-for / user-agent values needed by `getClientFingerprint` are accessible via that path. Needs verification in Phase 2. |
-| `HARNESS_EVENT_CODE_SECRET` can be provisioned ahead of deploy | Assumed | Vercel env vars support this; need explicit doc in README. |
-| The facilitator paste intake today captures emails when pasted | Unverified | Need to confirm `parseParticipantPaste`'s current grammar handles `Jan Novák <jan@acme.com>` and `Jan Novák, jan@acme.com`. Investigation task in Phase 5. |
-| Rate limit by session-token fingerprint is acceptable for the suggest endpoint (same user, many queries as they type) | Assumed | 20 queries/min is generous for normal typing. Validate empirically in Phase 5. |
-| No existing production deploys have event codes that would be disrupted by the HMAC migration | Assumed | Single active event currently; dual-hash fallback would cover any edge case even if this is wrong. |
+| Server actions can read request headers via `next/headers` | Verified | Phases 1–4 already use this via `buildServerActionRequest` in `lib/redeem-guard.ts`. |
+| `HARNESS_EVENT_CODE_SECRET` can be provisioned ahead of deploy | Verified | `.env.example` documents it; Playwright config injects a stable test key. |
+| Neon Auth supports adding users with `role = "participant"` alongside the existing `role = "admin"` | Verified | `facilitator-session.ts:54` already checks `role === "admin"`; the column exists on `neon_auth."user"` and is the schema-level discriminator. |
+| Neon Auth session cookies for facilitator and participant live in the same namespace (`__Secure-neon-auth.session_token`) | Assumed | Requires a 20-minute spike in Phase 5.0 to confirm and decide whether the app-layer role check is strict enough, or whether we need a per-role cookie split. |
+| Neon Auth accepts a username-style identifier (not mandatory email) for sign-in | Unverified | Need to confirm in Phase 5.0. Fallback: synthesize `<slug>@<instance>.harness.local` as the Neon identifier when the participant has no email. |
+| Neon Auth exposes a server-side API for creating users with a chosen password (not an email-verified signup flow) | Unverified | Need to confirm in Phase 5.0. If only a signup flow exists, we call that flow server-side with a synthetic verify-skip path or wrap it with a service account that auto-confirms. |
+| Neon Auth provides per-identifier rate limiting on failed signin | Assumed | Documented in Neon Auth; confirm the limits match our threat model. Supplement with our own `redeem-attempt-repository`-style limiter if needed. |
+| Facilitator password reset for participants can happen without email delivery | Decided | Workshop doctrine — in-room one-time code is the mechanism. |
+| Rate limit by session-token fingerprint is acceptable for the suggest endpoint | Assumed | 20 queries/min is generous for normal typing. Validate empirically in Phase 5. |
+| No existing production deploys have participants bound to sessions that would need migration on this change | Assumed | Today's `participant.neon_user_id` is a new column; pre-Phase-5 participants get `null` and are transparently prompted to set a password on next identify. |
 | `sameSite: "lax"` is still appropriate after `secure` is added | Verified | Lax + secure is the standard combo for first-party session cookies. |
 
-Unverified assumptions are investigation tasks in the phases below.
+Unverified assumptions above are investigation tasks pinned to Phase 5.0 (pre-flight spike).
 
 ## Risk Analysis
 
 | Risk | Likelihood | Severity | Mitigation |
 |---|---|---|---|
-| HMAC migration misses a code path and a live code becomes unverifiable | Low | High | Dual-hash window checks both. Playwright + unit test covering SHA-256 stored code still redeeming successfully post-migration. |
-| Secret env var leaks in dev | Medium | Low | Console-warn in dev when the fallback dev key is used; ensure `.env*` files remain git-ignored. |
-| Rate limit inside `redeemEventCode` breaks existing Playwright test fixtures | Low | Low | Tests already tolerate the 429 path via the API route. Confirm by running Playwright after Phase 2; adjust test-mode hook if needed. |
-| Autocomplete endpoint becomes a roster scraper for anyone with a live session | Medium | Medium | Rate-limit by session fingerprint (20/min). Minimum 2 chars. Cap 5 results. No email/tag in response. Short cache TTL. |
-| Email-first mode frustrates participants without email in roster | Medium | Low | Fall-through to walk-in on no-match is always one click away. |
-| `secure: true` breaks a non-Vercel HTTPS deploy that uses a non-standard proxy header | Low | Medium | Gate on `NODE_ENV === "production"` as the primary signal; `x-forwarded-proto` as the secondary. Document the choice. |
-| `already_bound` error surface confuses legitimate users who share a device | Medium | Low | Error text explicitly offers the logout path. Acceptable cost for the security signal. |
-| Phase 5 UX change looks worse than current "What's your name?" minimal card | Medium | Medium | Preview artifact required before landing (see Subjective Contract). |
+| HMAC migration misses a code path and a live code becomes unverifiable | Low | High | ✅ Shipped. Dual-hash window checks both. Tests cover SHA-256 redeem + in-place upgrade. |
+| Autocomplete endpoint becomes a roster scraper for anyone with a live session | Medium | Medium | Rate-limit 20/min per session. Min 2 chars. Cap 5 results. No raw email ever — only masked form when disambiguation requires it. |
+| A participant-role Neon user reaches a facilitator surface | Medium | High | Every facilitator guard audited to use `hasFacilitatorPlatformAccess` (role check), not `getAuthenticatedFacilitator` (presence check). New `lib/privilege-boundary.test.ts` asserts participant cannot touch any admin endpoint. Code review gate: any new admin route MUST reference the test. |
+| Facilitator and participant Neon Auth sessions collide in the same browser | Medium | Low | Document the "one Neon session at a time per browser" rule. The app-layer role check is strict, so the worst case is one of them has to sign out — not a security issue. Consider a per-role cookie split only if empirically painful. |
+| Participant forgets password, facilitator isn't available | Medium | Low | One-time reset code can be issued by any facilitator on the instance. 15-minute window, HMAC-hashed, rate-limited. If truly stuck, facilitator archives the participant row and re-issues. |
+| Walk-in creation becomes a password-creation funnel for the curious | Medium | Low | `allow_walk_ins` toggle means hosts who don't want this can turn it off. When on, rate limits on identify + event-code prevent abuse. |
+| Password min-length (8) is too weak or too strong for the room | Low | Low | 8 chars is a pragmatic workshop floor. Matches ergonomics of "pick something you'll remember for the next 8 hours." Not bank-grade; that's not the threat model. |
+| Neon Auth API changes or throttles us unexpectedly | Low | Medium | Wrap all Neon Auth calls behind `lib/participant-auth.ts` so the integration point is one file. If we need to swap, we swap there. |
+| Phase 5 UX looks bureaucratic ("set a password? I just came here to code") | Medium | Medium | Preview artifact (this document's Subjective Contract) reviewed before any code lands. Password screen is one field, one button, lowercase copy, no account-creation framing. |
 
 ## Phased Implementation
 
@@ -279,9 +397,19 @@ Each phase ships as its own PR.
 
 **Exit:** new codes are HMAC'd. Existing SHA-256 codes still redeem and get upgraded to HMAC on first success. `.env.example` documents the new key. `runtime-auth-configuration.ts` asserts its presence in prod. Tests cover both hash families + migration.
 
-### Phase 5 — Identify flow revamp
+### Phase 5 — Name-first identify + Neon Auth participants + walk-in policy
 
-**Exit:** three modes (email-first, name-autocomplete, walk-in) dispatch correctly based on roster contents. Autocomplete endpoint rate-limited. `already_bound` surfaces. Preview artifact reviewed before the code lands.
+**Sub-phases:**
+
+- **5.0 — Pre-flight spike.** Confirm Neon Auth supports (a) non-email identifiers (or we commit to synthetic identifiers), (b) server-side user creation with a chosen password, (c) rate limits on failed signin. Resolve the "cookie namespace shared" question. One page of notes, committed to the plan before code.
+- **5.1 — Preview artifact v2.** Redrawn HTML preview showing the single name-first prompt, the disambiguation sub-view, the set-password and enter-password sub-views, the walk-in creation / refusal states, and the facilitator walk-in toggle. Reviewed by Ondrej. No code before this passes.
+- **5.2 — Schema + Neon Auth integration.** Add `participant.neon_user_id`, `workshop_instance.allow_walk_ins`, `participant_password_reset_tokens` table. Add `lib/participant-auth.ts` wrapping Neon Auth. Migrations + unit coverage.
+- **5.3 — Backend surfaces.** Suggest endpoint with disambiguation, set-password endpoint, authenticate endpoint, reset-token issue + redeem endpoints, walk-in toggle action.
+- **5.4 — Frontend.** New name-first prompt with disambiguation, password sub-views, reset-flow entry, walk-in toggle in facilitator access panel, password reset button in People section row.
+- **5.5 — Privilege boundary audit.** Read every facilitator route / server action; confirm each calls `hasFacilitatorPlatformAccess`. Add `lib/privilege-boundary.test.ts` asserting a participant-role session cannot reach any admin surface.
+- **5.6 — End-to-end tests.** Playwright: redeem → name-pick → set password → complete; re-login → enter password → complete; reset flow end-to-end; walk-in creation path; walk-in refusal path.
+
+**Exit:** a pre-entered participant can identify with name-first + password on first visit, re-login with password only on return, and cannot reach any facilitator surface. Walk-ins work when allowed, fail politely when not. Facilitator can reset a participant's password in the room. Preview artifact reviewed before the code lands.
 
 ### Phase 6 — Tests + docs
 
@@ -340,104 +468,141 @@ Still open for this plan:
 - [ ] Playwright sweep deferred to end-of-phase verification.
 - [ ] ⎘ Commit: `feat: hmac-hash event codes with legacy sha256 migration`.
 
-### Phase 5 — Identify flow revamp
+### Phase 5 — Name-first identify + Neon Auth participants + walk-in policy
 
-#### 5a. Preview artifact (required before code)
+#### 5.0 Pre-flight spike (required before any design or code)
 
-- [ ] Sketch the three prompt modes (email-first, name-autocomplete, walk-in) as an authored HTML artifact (Rosé Pine tokens, cockpit panel style). Show keyboard focus order, error states, the walk-in fallback affordance. Publish via `/babel-fish:visualize` and review before writing code.
+- [ ] Confirm Neon Auth supports creating users with `role = "participant"` via server-side API (not only email-verified signup). Document findings in `docs/brainstorms/2026-04-20-neon-auth-participant-role-spike.md`.
+- [ ] Confirm Neon Auth accepts non-email identifiers OR decide on a synthetic identifier scheme (`<slug>@<instance>.harness.local`) and document the choice.
+- [ ] Confirm Neon Auth cookie namespace behavior with two concurrent roles. Decide: shared cookie with role-strict guards (default) or per-role cookie split (fallback).
+- [ ] Confirm Neon Auth failed-signin rate limiting. If not sufficient, decide whether to stack our own limiter on top.
+- [ ] One-page summary committed before any Phase 5 code lands.
 
-#### 5b. Backend
+#### 5.1 Preview artifact v2 (required before any code)
 
-- [ ] Verify `parseParticipantPaste` accepts `Name <email>` and/or `Name, email` formats. If not, extend it (new ADR note, not a breaking schema change).
-- [ ] Add `bindParticipantByEmail(session, tokenHash, email)` in `lib/event-access.ts`. Match against `ParticipantRepository.findParticipantByEmail(instanceId, email)` (add this method to the repo interface + file/neon impls). Case-insensitive. Returns `{ ok, reason }`.
-- [ ] Add `bindParticipantById(session, tokenHash, participantId)` in `lib/event-access.ts`. Validates participant belongs to the same instance.
-- [ ] Add server action `submitIdentifyByEmailAction` in `app/components/participant-identify-by-email-prompt.tsx` (new). Server action calls `bindParticipantByEmail`; on miss, redirect to `/participant?identify=walk_in_offer` to show the fallback.
-- [ ] Add server action `submitIdentifyByPickAction` for the autocomplete-picked path. Validates `participantId` is roster-owned.
-- [ ] Add `app/api/event-access/identify/suggest/route.ts`: GET endpoint, reads session cookie → instance, reads `q` query, returns up to 5 `{ id, displayName }` matches. Rate-limit 20/min/session-fingerprint. `q.length < 2` returns empty array. Trust boundary: only same-instance roster; never emails/tags.
-- [ ] Audit log entries: `participant_identify_by_email_success`, `participant_identify_by_email_miss`, `participant_identify_by_roster_pick`, `participant_identify_walkin_created`.
+- [ ] Redraw the HTML preview to match the v2 shape: single name-first prompt with disambiguation sub-view, set-password sub-view, enter-password sub-view, reset-flow entry, walk-in creation state, walk-in refusal state, facilitator walk-in toggle. Publish via `/babel-fish:visualize`. Review by Ondrej.
 
-#### 5c. Frontend
+#### 5.2 Schema + Neon Auth integration
 
-- [ ] Dispatcher in `app/participant/page.tsx` (in the `!participantSession.participantId` branch): query `getParticipantRepository().listParticipants(instanceId)`, compute `hasAnyEmail = some(p => p.email)`, `hasAnyRoster = items.length > 0`. Route to the right prompt.
-- [ ] New `ParticipantIdentifyByEmailPrompt` (client boundary as needed). Uses `SubmitButton`. Shows inline "add yourself as new" affordance on miss.
-- [ ] New `ParticipantIdentifyByNamePrompt` with `combobox` pattern, React-managed state for the suggestion list. Uses `InlineSpinner` for the fetch-while-typing indicator. Debounced 250 ms. Keyboard: Arrow up/down traverse suggestions, Enter submits (picks highlighted suggestion, or falls through to create-new if nothing highlighted).
-- [ ] Preserve `ParticipantIdentifyPrompt` for the walk-in path (no autocomplete, original minimal card).
-- [ ] Copy additions in `lib/ui-language.ts`: prompts, error messages, the walk-in fallback label.
+- [ ] Add migration: `ALTER TABLE participants ADD COLUMN neon_user_id text NULL`.
+- [ ] Add migration: `ALTER TABLE workshop_instance ADD COLUMN allow_walk_ins boolean NOT NULL DEFAULT true`.
+- [ ] Add migration: create `participant_password_reset_tokens (id, instance_id, participant_id, token_hash, issued_at, expires_at, consumed_at)`.
+- [ ] Add `lib/participant-auth.ts` — the single integration point for Neon Auth in the participant role. Exports `createParticipantPassword(identifier, password, metadata)`, `authenticateParticipant(identifier, password)`, `issueResetToken(participantId, issuedBy)`, `consumeResetToken(token, newPassword)`.
+- [ ] Add `lib/participant-identifier.ts` — resolves `participant` → Neon Auth identifier (prefers `email` when present, synthesizes otherwise).
+- [ ] Update `lib/participant-repository.ts`: add `listByDisplayNamePrefix(instanceId, prefix, limit)`, `findByNeonUserId(neonUserId)`, `linkNeonUser(participantId, neonUserId)`, `listReserveForSuggest(instanceId, prefix)`.
+- [ ] Update `ParticipantRecord` in `runtime-contracts.ts` to include `neonUserId: string | null`.
 
-#### 5d. Tests
+#### 5.3 Backend surfaces
 
-- [ ] Unit: `bindParticipantByEmail` exact-match, case-insensitive match, no-match, already-bound, invalid-email.
-- [ ] Unit: suggest endpoint honors min-chars, cap, instance scoping, rate limit.
-- [ ] Page test: dispatcher picks email-first mode when roster has ≥1 email, name-autocomplete when roster is all name-only, walk-in when roster is empty.
-- [ ] Playwright: redeem → email-first flow → exact match → room. Redeem → email-first flow → no-match → walk-in fallback. Redeem → name-autocomplete → pick suggestion. Redeem → name-autocomplete → type + submit new → create.
+- [ ] `GET /api/event-access/identify/suggest?q=` — returns `{ id, displayName, disambiguator?: { kind: "tag" | "masked_email" | "order"; value: string }, hasPassword: boolean }[]`. Cap 5. Min 2 chars. Rate-limit 20/min per session. `allow_walk_ins === true` appends a trailing create-new sentinel only when no exact match exists.
+- [ ] `POST /api/event-access/identify/set-password` — input: `participantId`, `password`, `displayName` (for walk-in create case). Validates session, checks participant is in session's instance, validates walk-in policy on the create case. Calls `createParticipantPassword`, links `neon_user_id`, binds session.
+- [ ] `POST /api/event-access/identify/authenticate` — input: `participantId`, `password`. Calls `authenticateParticipant`. On success binds session. Generic error message on failure.
+- [ ] `POST /api/event-access/identify/reset-token/redeem` — input: `participantId`, `token`, `newPassword`. Validates + consumes token, then delegates to `createParticipantPassword` path.
+- [ ] `POST /api/admin/participants/[id]/reset-password` — facilitator-only (guarded by `hasFacilitatorPlatformAccess` + per-instance grant). Issues a one-time token, returns the plaintext code once (for the facilitator to read aloud).
+- [ ] Walk-in toggle: facilitator server action on the access panel; audit log `facilitator_walk_in_toggle_changed`.
+- [ ] Audit log additions (repository already generic): `participant_identify_by_roster_pick`, `participant_password_created`, `participant_password_auth_success`, `participant_password_auth_failure`, `participant_password_reset_issued`, `participant_password_reset_redeemed`, `participant_identify_walk_in_created`, `participant_identify_walk_in_refused`.
+
+#### 5.4 Frontend
+
+- [ ] Rewrite `app/components/participant-identify-prompt.tsx` as a single-page state machine: `typing` → `picking` → `set_password` | `enter_password` | `walk_in_create` | `walk_in_refused` | `reset_flow`. Each sub-view is a thin render of a shared card shell. Uses `InlineSpinner` for async fetches, debounce 250 ms.
+- [ ] Suggest calls include the `hasPassword` hint; the UI branches on it before prompting for password.
+- [ ] "forgot?" link under the password field routes to the reset-code redemption sub-view.
+- [ ] Facilitator-side: walk-in toggle in access panel (`/admin/instances/[id]`), per-row "reset password" action in the People section. The reset action opens a small modal that displays the one-time code once.
+- [ ] Copy additions in `lib/ui-language.ts` (cs + en) for every new label, error, and fallback.
+
+#### 5.5 Privilege boundary audit
+
+- [ ] Grep every facilitator route/action handler; confirm `hasFacilitatorPlatformAccess` is called (not just `getAuthenticatedFacilitator`). Fix any drift.
+- [ ] Add `lib/privilege-boundary.test.ts` — parametrized test that creates a participant-role Neon session, enumerates every facilitator API route, asserts each returns 401/403.
+- [ ] Add an ESLint rule or code review checklist note in `dashboard/AGENTS.md`: "any new `/admin` or facilitator server action must reference the privilege-boundary test."
+
+#### 5.6 Tests
+
+- [ ] Unit: suggest endpoint (min chars, cap, disambiguation logic tag-first then masked-email), `participant-auth.ts` wrapper, walk-in policy gate on set-password path, reset token issue/redeem/expire, walk-in toggle action.
+- [ ] Unit: `lib/participant-identifier.ts` (synthetic identifier generation, collision handling).
+- [ ] Page test: identify prompt state machine transitions on each input / response.
+- [ ] Playwright: (a) redeem → pick-from-roster → set-password → room; (b) re-login → enter password → room; (c) password reset end-to-end (facilitator issues, participant redeems); (d) walk-in enabled → create new → set password → room; (e) walk-in disabled → refusal state; (f) participant-role session cannot reach `/admin` routes.
 - [ ] Full test suite green.
-- [ ] ⎘ Commits (one per sub-phase is fine): `feat: roster-aware identify prompts (backend)` then `feat: identify prompts UI (email-first + autocomplete)`.
+- [ ] ⎘ Commits (one per sub-phase): `feat: schema + participant-auth wrapper`, `feat: identify suggest + password endpoints`, `feat: identify prompt state machine + reset flow`, `feat: facilitator walk-in toggle + password reset`, `test: participant privilege boundary regression`.
 
 ### Phase 6 — Surface already_bound
 
-- [ ] Update `submitIdentifyAction`, `submitIdentifyByEmailAction`, `submitIdentifyByPickAction` to redirect with `?identify=already_bound` when the repo returns that reason.
-- [ ] Update all three prompt components to render the explicit error state when that query param is present.
-- [ ] Playwright: simulate an already-bound session submitting a different name/email, assert the error renders and nothing in the DB changed.
+- [ ] Update every identify server action (set-password, authenticate, reset-redeem, walk-in-create) to redirect with `?identify=already_bound` when the session already has a `participantId` that doesn't match the submitted choice.
+- [ ] Update the identify prompt state machine to render the explicit error state when that query param is present.
+- [ ] Playwright: simulate an already-bound session submitting a different name, assert the error renders and no DB write happened.
 - [ ] ⎘ Commit: `fix: surface participant already_bound state explicitly`.
 
 ### Phase 7 — Docs
 
-- [ ] New ADR `docs/adr/2026-04-19-roster-aware-identify.md` — records B+C decision, rejects A/D/E with reasons, cross-references the Q5 brainstorm.
-- [ ] Update `docs/private-workshop-instance-schema.md` with HMAC note and the new identify paths.
+- [ ] New ADR `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md` — records the name-first + Neon Auth decision, cross-references the v1 Q5 brainstorm as the doctrine extension.
+- [ ] Update `docs/private-workshop-instance-schema.md` with the `neon_user_id`, `allow_walk_ins`, and `participant_password_reset_tokens` additions.
+- [ ] Update `docs/private-workshop-instance-data-classification.md` to classify the participant password hashes (handled by Neon Auth, referenced only).
+- [ ] Update `docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md` (or add a companion ADR) to note that `neon_auth."user".role` is the privilege discriminator and that every admin guard must check it explicitly.
 - [ ] Mark this plan `status: complete` in frontmatter.
-- [ ] ⎘ Commit: `docs: ADR for roster-aware identify + schema notes`.
+- [ ] ⎘ Commit: `docs: ADR for name-first + neon-auth identify model`.
 
 ## Acceptance Criteria
 
-- [ ] Clicking `cs` or `en` on `/participant` stays at `/participant?lang=cs|en`; session cookie survives; no re-login.
-- [ ] Submitting 6 invalid codes in a row via the server action returns HTTP 429 (or redirects with `?eventAccess=rate_limited`) on the 6th, matching the API route behavior.
-- [ ] Running `pnpm build && pnpm start` under `NODE_ENV=production`, the Set-Cookie response for a successful redeem contains the `Secure` flag. Under `next dev`, it does not.
-- [ ] A stored SHA-256 codeHash still redeems on first attempt; after that attempt the stored row contains an HMAC hash. Grep `lib/event-access.ts` shows no call to `hashSecret` on event-code inputs (sessions keep `hashSecret` — tokens are already CSPRNG).
-- [ ] On an instance where ≥1 pre-entered participant has an email, redeeming brings up the email-first prompt. Entering a matching email binds the session in <300 ms. Entering a non-matching email shows the walk-in fallback.
-- [ ] On an instance where the roster has only names, the prompt is name-with-autocomplete. Typing 2+ characters returns up to 5 matches. Picking one binds to the existing record; pressing Enter with a new name creates a new record and binds.
-- [ ] Walk-in events (no roster) see the unchanged "what's your name?" minimal prompt.
+Phases 1–4 (shipped):
+- [x] Clicking `cs` or `en` on `/participant` stays at `/participant?lang=cs|en`; session cookie survives; no re-login.
+- [x] Submitting 6 invalid codes in a row via the server action returns HTTP 429 (or redirects with `?eventAccess=rate_limited`) on the 6th, matching the API route behavior.
+- [x] Server-action redeem + language cookie carry `Secure` when `NODE_ENV=production`; dev over HTTP still works.
+- [x] A stored SHA-256 codeHash still redeems on first attempt; after that attempt the stored row contains an HMAC hash.
+
+Phase 5 (name-first identify + Neon Auth participants + walk-in policy):
+- [ ] Typing 2+ characters in the identify prompt returns up to 5 matches from the roster. The suggest endpoint returns only `{ id, displayName, disambiguator?, hasPassword }` — never raw email, never tag unless promoted to disambiguator, never password state beyond the boolean.
+- [ ] When two roster entries share a typed name, the listbox shows a tag beside each (or masked email if tags aren't present). One-match queries never show a disambiguator.
+- [ ] A pre-entered participant picks their name, sets a password once, and is in the room. On return (fresh browser, new event-code session), picking the same name prompts for the password and authenticates via Neon Auth.
+- [ ] A participant-role Neon session cannot reach any `/admin` route or facilitator server action. The `privilege-boundary.test.ts` suite is green.
+- [ ] With `allow_walk_ins = true`, typing a name not on the roster surfaces a "＋ add yourself as new" option; submitting creates a participant and prompts for a password.
+- [ ] With `allow_walk_ins = false`, the create option is absent and submitting an unknown name surfaces "ask your facilitator to add you" — no participant row is created.
+- [ ] Facilitator "reset password" on a participant row displays a one-time code (3 words, 15-minute expiry); the participant can redeem it inside the identify prompt via a "forgot?" flow, and the new password immediately authenticates.
 - [ ] Rate-limiting the suggest endpoint returns 429 after 21 queries in a minute from the same session.
-- [ ] Attempting to bind a different name to an already-bound session shows the explicit error; the bound participant is unchanged.
-- [ ] Suggest endpoint responses never contain `email`, `tag`, or any field other than `id` and `displayName`.
-- [ ] Every identify path emits an audit log entry.
-- [ ] All unit + Playwright tests green.
+- [ ] Attempting to bind a different name/identity to an already-bound session shows the explicit error; the bound participant is unchanged.
+- [ ] Every identify / password path emits an audit log entry.
+- [ ] All unit + Playwright tests green, including the full identify → set password → re-login → reset flow round-trip.
 
 ## Subjective Contract (Phase 5 only)
 
 Phase 5 is the UX-heavy phase. The target outcome matters as much as the structural change.
 
-**Target outcome:** a pre-entered participant opens the workshop URL, types their email (or first few letters of their name) once, and is in the room. The experience feels like "oh, it knew me" — not "here are all the things I could be."
+**Target outcome:** a pre-entered participant opens the workshop URL, types the first few letters of their name, picks themselves, sets a password once, and is in the room. When they come back the next day (or on a different device) they repeat only the last two steps. Walk-ins work when the facilitator has enabled them and never when disabled. The whole experience feels like "oh, it remembered me" — not "create your account."
 
 **Anti-goals:**
-- Roster exposed to anyone with a code (rejects Option A).
-- Silent identity collision (rejects Option D).
-- A UI that shows "loading suggestions…" so slowly the user gives up and types the full name.
-- Email prompt that looks intimidating (no "register your account", no caps, no verification).
-- Missing walk-in fallback that makes pre-entered workshops unfriendly to last-minute guests.
+- An identify screen that looks like a SaaS signup page.
+- A password prompt that asks for confirmation, recovery email, security questions, or any other credential-management theater.
+- A walk-in refusal that feels like rejection rather than routing ("ask your facilitator to add you" is friendly; "access denied" is not).
+- Any UI that reveals more of the roster than the current query strictly requires.
+- A password field that appears before the participant has picked their identity.
 
 **References:**
 - Today's cockpit compaction (`control-room-cockpit.tsx`): density without coldness.
 - `participant-identify-prompt.tsx`'s current minimal card: keep the calm center.
 - Rosé Pine tokens, Space Grotesk display, Manrope body, lowercase labels.
+- Event code redeem card on the homepage — establishes the "one field, one button" pattern the identify surface should extend.
 
 **Anti-references:**
 - SaaS "sign in or sign up" walls with split buttons.
+- Password managers' "create account" flows with confirmation fields and strength meters.
 - Any prompt that reveals more information than strictly needed (how many people are on the list, who they are, whether you're early or late).
 - A combobox that looks like a Google search bar.
 
 **Tone rules:**
-- One instruction per prompt. "Your email." "Your name." No preambles.
-- Error messages neutral — "we don't see that email, add yourself as new?" not "that email wasn't found."
+- One instruction per sub-view. "Your name." "Your password." "Ask your facilitator to add you." No preambles.
+- "Set your password" — not "create account", not "register", not "sign up."
+- Error messages neutral — "that didn't match" not "wrong password."
 - Lowercase everything (matches product doctrine).
 
-**Representative proof slice:** one HTML preview artifact showing all three modes side-by-side at iPad portrait 834px. Published via the share server before any code in Phase 5 is written.
+**Representative proof slice:** one HTML preview artifact showing the single name-first prompt with every sub-view laid out (typing / picking / set-password / enter-password / walk-in-create / walk-in-refused / reset-flow) at iPad portrait 834px. Published via the share server before any Phase 5 code is written. Supersedes the v1 three-lane preview (`artifact--2026-04-20--22b22049`).
 
-**Rollout rule:** Phase 5 lands behind no flag — the dispatcher code selects the mode from the roster contents, so empty rosters stay on walk-in. This means old workshops are unaffected and new workshops adopt the new flow by having emails.
+**Rollout rule:** Phase 5 lands without a feature flag per-se — the flow is one shape for everyone. The only configuration is the facilitator's `allow_walk_ins` toggle, defaulted to `true` so existing instances behave like today.
 
 **Rejection criteria:** ship back to planning if reviewer feels any of:
-- the three modes aren't distinguishable enough that a returning participant recognizes they're in the right one;
-- the email fallback flow reads as "you're wrong, try again" rather than "no problem, come in as a walk-in";
-- the autocomplete feels like a search box rather than a soft roster match.
+- the identify surface reads as "sign in" rather than "come in";
+- the password sub-view feels heavier than the event-code sub-view (they should feel like siblings);
+- walk-in refusal reads as rejection rather than redirection;
+- disambiguation reveals more than it should (full emails, counts, anything the current query didn't explicitly ask for);
+- the overall experience feels like user management has arrived, rather than identity has become survivable.
 
 **Reviewer:** Ondrej. One preview artifact, one pass, then implementation starts.
 
