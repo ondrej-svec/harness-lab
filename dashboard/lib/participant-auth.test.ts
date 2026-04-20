@@ -1,27 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const createUser = vi.fn();
-const setUserPassword = vi.fn();
-const revokeUserSessions = vi.fn();
-const signInEmail = vi.fn();
-const signUpEmail = vi.fn();
-const signOut = vi.fn();
-const getSession = vi.fn();
-const requestPasswordReset = vi.fn();
+const proxySetUserPassword = vi.fn();
+const proxyRevokeUserSessions = vi.fn();
+const proxyRequestPasswordReset = vi.fn();
 const sqlQuery = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 const adminCreateParticipantUser = vi.fn();
 const setParticipantPasswordViaResetToken = vi.fn();
 
-vi.mock("./auth/server", () => ({
-  auth: {
-    admin: { createUser, setUserPassword, revokeUserSessions },
-    signIn: { email: signInEmail },
-    signUp: { email: signUpEmail },
-    signOut,
-    getSession,
-    requestPasswordReset,
+vi.mock("./auth/neon-auth-proxy", () => ({
+  admin: {
+    setUserPassword: proxySetUserPassword,
+    revokeUserSessions: proxyRevokeUserSessions,
   },
+  requestPasswordReset: proxyRequestPasswordReset,
 }));
 
 vi.mock("./auth/admin-create-user", () => ({
@@ -261,9 +253,9 @@ describe("participant-auth", () => {
   });
 
   describe("resetParticipantPasswordAsAdmin", () => {
-    it("rotates the password and revokes existing sessions", async () => {
-      setUserPassword.mockResolvedValue({ data: {} });
-      revokeUserSessions.mockResolvedValue({ data: {} });
+    it("rotates the password and revokes existing sessions via the proxy", async () => {
+      proxySetUserPassword.mockResolvedValue({ ok: true });
+      proxyRevokeUserSessions.mockResolvedValue({ ok: true });
       const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
 
       const result = await resetParticipantPasswordAsAdmin({
@@ -272,15 +264,15 @@ describe("participant-auth", () => {
       });
 
       expect(result).toEqual({ ok: true });
-      expect(setUserPassword).toHaveBeenCalledWith({
+      expect(proxySetUserPassword).toHaveBeenCalledWith({
         userId: "user-1",
         newPassword: "lantern-relay-north",
       });
-      expect(revokeUserSessions).toHaveBeenCalledWith({ userId: "user-1" });
+      expect(proxyRevokeUserSessions).toHaveBeenCalledWith({ userId: "user-1" });
     });
 
-    it("classifies admin-session-missing errors distinctly so callers can surface them", async () => {
-      setUserPassword.mockResolvedValue({ error: { message: "Unauthorized: admin required" } });
+    it("propagates not_admin from the proxy without revoking sessions", async () => {
+      proxySetUserPassword.mockResolvedValue({ ok: false, reason: "not_admin" });
       const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
 
       const result = await resetParticipantPasswordAsAdmin({
@@ -289,11 +281,11 @@ describe("participant-auth", () => {
       });
 
       expect(result).toMatchObject({ ok: false, reason: "not_admin" });
-      expect(revokeUserSessions).not.toHaveBeenCalled();
+      expect(proxyRevokeUserSessions).not.toHaveBeenCalled();
     });
 
-    it("classifies not-found when the Neon user id has already been removed", async () => {
-      setUserPassword.mockResolvedValue({ error: { message: "User not found" } });
+    it("propagates not_found when the user is gone", async () => {
+      proxySetUserPassword.mockResolvedValue({ ok: false, reason: "not_found" });
       const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
 
       const result = await resetParticipantPasswordAsAdmin({
@@ -305,8 +297,8 @@ describe("participant-auth", () => {
     });
 
     it("tolerates revoke failures — the password was already rotated", async () => {
-      setUserPassword.mockResolvedValue({ data: {} });
-      revokeUserSessions.mockRejectedValue(new Error("revoke upstream flake"));
+      proxySetUserPassword.mockResolvedValue({ ok: true });
+      proxyRevokeUserSessions.mockRejectedValue(new Error("revoke upstream flake"));
       const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
 
       const result = await resetParticipantPasswordAsAdmin({
@@ -319,8 +311,8 @@ describe("participant-auth", () => {
   });
 
   describe("sendParticipantPasswordResetEmail", () => {
-    it("calls requestPasswordReset with the normalized email + redirectTo", async () => {
-      requestPasswordReset.mockResolvedValue({ data: {} });
+    it("calls the proxy with the normalized email + redirectTo", async () => {
+      proxyRequestPasswordReset.mockResolvedValue({ ok: true });
       const { sendParticipantPasswordResetEmail } = await importParticipantAuth();
 
       const result = await sendParticipantPasswordResetEmail({
@@ -329,14 +321,14 @@ describe("participant-auth", () => {
       });
 
       expect(result).toEqual({ ok: true });
-      expect(requestPasswordReset).toHaveBeenCalledWith({
+      expect(proxyRequestPasswordReset).toHaveBeenCalledWith({
         email: "jan@acme.com",
         redirectTo: "https://example.test/participant/reset",
       });
     });
 
-    it("surfaces SDK errors without crashing", async () => {
-      requestPasswordReset.mockResolvedValue({ error: { message: "Email delivery failed" } });
+    it("surfaces proxy errors without crashing", async () => {
+      proxyRequestPasswordReset.mockResolvedValue({ ok: false, error: "Email delivery failed" });
       const { sendParticipantPasswordResetEmail } = await importParticipantAuth();
 
       const result = await sendParticipantPasswordResetEmail({

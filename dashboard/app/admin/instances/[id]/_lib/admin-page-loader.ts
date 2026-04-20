@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/server";
+import { getSession as proxyGetSession } from "@/lib/auth/neon-auth-proxy";
 import {
   buildAdminHref,
   buildAdminOverviewState,
@@ -139,7 +139,9 @@ export async function loadAdminPageViewModel({
     getLatestWorkshopArchive(instanceId),
     isNeonMode ? getInstanceGrantRepository().listActiveGrants(instanceId) : Promise.resolve([]),
     isNeonMode ? getFacilitatorSession(instanceId) : Promise.resolve(null),
-    isNeonMode && auth ? auth.getSession() : Promise.resolve({ data: null }),
+    isNeonMode && process.env.NEON_AUTH_BASE_URL
+      ? proxyGetSession()
+      : Promise.resolve({ data: null }),
     getFacilitatorParticipantAccessState(instanceId),
     listRotationSignals(instanceId).catch(() => [] as RotationSignal[]),
   ]);

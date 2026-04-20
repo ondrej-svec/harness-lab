@@ -1,4 +1,4 @@
-import { auth } from "./auth/server";
+import { getSession as proxyGetSession } from "./auth/neon-auth-proxy";
 import { getInstanceGrantRepository } from "./instance-grant-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getNeonSql } from "./neon-db";
@@ -26,11 +26,11 @@ export async function getAuthenticatedFacilitator(): Promise<AuthenticatedFacili
 
   assertValidNeonAuthConfiguration();
 
-  if (!auth) {
-    return null;
-  }
-
-  const { data: session } = await auth.getSession();
+  // Uses the raw-fetch proxy (lib/auth/neon-auth-proxy.ts) instead of
+  // the Neon Auth SDK because the SDK doesn't reliably forward an
+  // Origin header from server-side calls — see the proxy module
+  // header for the full story.
+  const { data: session } = await proxyGetSession();
   const userId = session?.user?.id;
   return userId ? { neonUserId: userId } : null;
 }

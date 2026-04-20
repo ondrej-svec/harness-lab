@@ -1,7 +1,7 @@
 import { randomUUID, createHash, randomBytes } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { auth } from "./auth/server";
+import { getSession as proxyGetSession } from "./auth/neon-auth-proxy";
 import { getAuditLogRepository } from "./audit-log-repository";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
@@ -352,8 +352,11 @@ export async function startDeviceAuthorization(baseUrlOverride?: string) {
 }
 
 export async function approveDeviceAuthorizationForCurrentSession(userCode: string) {
-  const session = auth ? (await auth.getSession()).data : null;
-  const neonUserId = session?.user?.id ?? null;
+  // Guard for file mode: when NEON_AUTH_BASE_URL is unset, treat as
+  // unauthenticated rather than letting the proxy throw.
+  const neonUserId = process.env.NEON_AUTH_BASE_URL
+    ? (await proxyGetSession()).data?.user?.id ?? null
+    : null;
 
   if (!neonUserId) {
     await appendAudit({

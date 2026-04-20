@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const getSession = vi.fn();
@@ -20,20 +20,33 @@ vi.mock("@/lib/auth/server", () => ({
   },
 }));
 
+vi.mock("@/lib/auth/neon-auth-proxy", () => ({
+  getSession: () => getSession(),
+}));
+
 vi.mock("@/lib/facilitator-cli-auth-repository", () => ({
   approveDeviceAuthorizationForCurrentSession,
   denyDeviceAuthorization,
 }));
 
 describe("admin device page", () => {
+  let originalNeonAuthBaseUrl: string | undefined;
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.resetModules();
     authMock = {
       getSession,
     };
+    originalNeonAuthBaseUrl = process.env.NEON_AUTH_BASE_URL;
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     approveDeviceAuthorizationForCurrentSession.mockResolvedValue({ ok: true });
     denyDeviceAuthorization.mockResolvedValue({ ok: true });
+  });
+
+  afterEach(() => {
+    if (originalNeonAuthBaseUrl === undefined) delete process.env.NEON_AUTH_BASE_URL;
+    else process.env.NEON_AUTH_BASE_URL = originalNeonAuthBaseUrl;
   });
 
   it("shows the facilitator sign-in gate when no session exists", async () => {

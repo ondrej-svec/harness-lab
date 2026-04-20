@@ -25,6 +25,10 @@ vi.mock("@/lib/auth/server", () => ({
   },
 }));
 
+vi.mock("@/lib/auth/neon-auth-proxy", () => ({
+  getSession: getSessionMock,
+}));
+
 const { POST: startDeviceAuth } = await import("@/app/api/auth/device/start/route");
 const { POST: pollDeviceAuth } = await import("@/app/api/auth/device/poll/route");
 const { POST: approveDeviceAuth } = await import("@/app/api/auth/device/approve/route");
@@ -120,6 +124,7 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 describe("device auth routes", () => {
   let repo: MemoryFacilitatorCliAuthRepository;
   let auditLog: MemoryAuditLogRepository;
+  let originalNeonAuthBaseUrl: string | undefined;
 
   beforeEach(() => {
     repo = new MemoryFacilitatorCliAuthRepository();
@@ -132,6 +137,8 @@ describe("device auth routes", () => {
       randomUuid: () => "fixed-uuid",
       randomBytes: (size) => Buffer.alloc(size, 1),
     });
+    originalNeonAuthBaseUrl = process.env.NEON_AUTH_BASE_URL;
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     getSessionMock.mockResolvedValue({ data: { user: { id: "neon-user-1" } } });
   });
 
@@ -140,6 +147,8 @@ describe("device auth routes", () => {
     setFacilitatorCliAuthDepsForTests(null);
     setAuditLogRepositoryForTests(null);
     setInstanceGrantRepositoryForTests(null);
+    if (originalNeonAuthBaseUrl === undefined) delete process.env.NEON_AUTH_BASE_URL;
+    else process.env.NEON_AUTH_BASE_URL = originalNeonAuthBaseUrl;
     getSessionMock.mockReset();
   });
 

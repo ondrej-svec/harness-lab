@@ -29,6 +29,12 @@ vi.mock("@/lib/auth/server", () => ({
   },
 }));
 
+vi.mock("@/lib/auth/neon-auth-proxy", () => ({
+  getSession: () => getSession(),
+  requestPasswordReset: (input: { email: string; redirectTo?: string }) =>
+    requestPasswordReset(input),
+}));
+
 describe("facilitator sign-in page", () => {
   let originalFetch: typeof globalThis.fetch;
   let originalNeonAuthBaseUrl: string | undefined;
@@ -177,7 +183,7 @@ describe("facilitator sign-in page", () => {
   });
 
   it("redirects to unavailable when password reset auth is missing", async () => {
-    authMock = null;
+    delete process.env.NEON_AUTH_BASE_URL;
     const { requestPasswordResetAction } = await import("./page");
     const formData = new FormData();
     formData.set("lang", "en");
@@ -189,6 +195,7 @@ describe("facilitator sign-in page", () => {
 
   it("requests a password reset with an origin-aware reset URL", async () => {
     headers.mockResolvedValue(new Headers([["host", "localhost:3000"]]));
+    requestPasswordReset.mockResolvedValue({ ok: true });
     const { requestPasswordResetAction } = await import("./page");
     const formData = new FormData();
     formData.set("lang", "en");
@@ -204,7 +211,7 @@ describe("facilitator sign-in page", () => {
   });
 
   it("redirects with an encoded password reset error", async () => {
-    requestPasswordReset.mockResolvedValue({ error: { message: "reset blocked" } });
+    requestPasswordReset.mockResolvedValue({ ok: false, error: "reset blocked" });
     const { requestPasswordResetAction } = await import("./page");
     const formData = new FormData();
     formData.set("lang", "en");

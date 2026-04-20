@@ -7,10 +7,8 @@ const createGrant = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 const sqlQuery = vi.fn();
 
-vi.mock("./auth/server", () => ({
-  auth: {
-    getSession,
-  },
+vi.mock("./auth/neon-auth-proxy", () => ({
+  getSession,
 }));
 
 vi.mock("./instance-grant-repository", () => ({

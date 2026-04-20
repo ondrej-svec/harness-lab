@@ -2,15 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth/server";
+import { signOut as proxySignOut } from "@/lib/auth/neon-auth-proxy";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { updateAgendaItem } from "@/lib/workshop-store";
 
 export async function signOutAction(formData: FormData) {
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-  if (auth) {
-    await auth.signOut();
+  if (process.env.NEON_AUTH_BASE_URL) {
+    await proxySignOut();
   }
   redirect(withLang("/admin/sign-in", lang));
 }

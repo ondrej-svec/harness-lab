@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
-import { auth } from "@/lib/auth/server";
+import { getSession as proxyGetSession } from "@/lib/auth/neon-auth-proxy";
 import { approveDeviceAuthorizationForCurrentSession, denyDeviceAuthorization } from "@/lib/facilitator-cli-auth-repository";
 
 export async function approveAction(formData: FormData) {
@@ -34,7 +34,9 @@ export default async function AdminDevicePage({
   searchParams?: Promise<{ user_code?: string; approved?: string; denied?: string; error?: string }>;
 }) {
   const params = await searchParams;
-  const session = auth ? (await auth.getSession()).data : null;
+  const session = process.env.NEON_AUTH_BASE_URL
+    ? (await proxyGetSession()).data
+    : null;
   const userCode = String(params?.user_code ?? "").trim().toUpperCase();
   const isTerminalState = Boolean(params?.approved || params?.denied);
 

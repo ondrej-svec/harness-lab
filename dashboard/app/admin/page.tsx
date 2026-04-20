@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
+import {
+  getSession as proxyGetSession,
+  signOut as proxySignOut,
+} from "@/lib/auth/neon-auth-proxy";
 import { requireFacilitatorActionAccess, requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import {
   buildAdminInstanceHref,
@@ -37,8 +41,8 @@ export const dynamic = "force-dynamic";
 async function signOutAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
-  if (auth) {
-    await auth.signOut();
+  if (process.env.NEON_AUTH_BASE_URL) {
+    await proxySignOut();
   }
   redirect(withLang("/admin/sign-in", lang));
 }
@@ -205,7 +209,9 @@ export default async function AdminWorkspacePage({
     : null;
   const workspaceStats = buildWorkspaceStatusSummary(availableInstances);
   const [loadedAuthSession, loadedWorkshopStates] = await Promise.all([
-    getRuntimeStorageMode() === "neon" && auth ? auth.getSession() : Promise.resolve({ data: null }),
+    getRuntimeStorageMode() === "neon" && process.env.NEON_AUTH_BASE_URL
+      ? proxyGetSession()
+      : Promise.resolve({ data: null }),
     Promise.all(filteredInstances.map(async (instance) => ({ instanceId: instance.id, state: await getWorkshopState(instance.id) }))),
   ]);
   const authSession: Awaited<ReturnType<NonNullable<typeof auth>["getSession"]>> | { data: null } = loadedAuthSession;

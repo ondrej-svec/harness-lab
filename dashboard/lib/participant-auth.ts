@@ -1,5 +1,8 @@
-import { auth } from "./auth/server";
 import { adminCreateParticipantUser } from "./auth/admin-create-user";
+import {
+  admin as proxyAdmin,
+  requestPasswordReset as proxyRequestPasswordReset,
+} from "./auth/neon-auth-proxy";
 import { setParticipantPasswordViaResetToken } from "./auth/server-set-password";
 import { getNeonSql } from "./neon-db";
 import { isNeonRuntimeMode } from "./runtime-auth-configuration";
@@ -56,27 +59,13 @@ export type AuthenticateParticipantResult =
   | { ok: true; neonUserId: string }
   | { ok: false; reason: AuthenticateParticipantFailureReason; message?: string };
 
-type NeonAuthCallShape = {
-  admin: {
-    createUser: (input: { email: string; password: string; name: string; role: string }) => Promise<unknown>;
-    setUserPassword: (input: { userId: string; newPassword: string }) => Promise<unknown>;
-    revokeUserSessions: (input: { userId: string }) => Promise<unknown>;
-  };
-  signIn: { email: (input: { email: string; password: string }) => Promise<unknown> };
-  signUp: { email: (input: { email: string; password: string; name: string }) => Promise<unknown> };
-  signOut: () => Promise<unknown>;
-  getSession: () => Promise<{ data?: { user?: { id?: string } } | null }>;
-  requestPasswordReset: (input: { email: string; redirectTo: string }) => Promise<unknown>;
-};
-
-function requireAuth(): NeonAuthCallShape {
+function requireNeonMode(): void {
   if (!isNeonRuntimeMode()) {
     throw new Error("participant-auth requires HARNESS_STORAGE_MODE=neon");
   }
-  if (!auth) {
-    throw new Error("participant-auth requires NEON_AUTH_BASE_URL + NEON_AUTH_COOKIE_SECRET");
+  if (!process.env.NEON_AUTH_BASE_URL) {
+    throw new Error("participant-auth requires NEON_AUTH_BASE_URL");
   }
-  return auth as unknown as NeonAuthCallShape;
 }
 
 function normalizeEmail(email: string): string {
@@ -246,33 +235,20 @@ export async function resetParticipantPasswordAsAdmin(opts: {
   neonUserId: string;
   newPassword: string;
 }): Promise<{ ok: true } | { ok: false; reason: "not_admin" | "not_found" | "unknown"; message?: string }> {
-  const client = requireAuth();
+  requireNeonMode();
 
-  try {
-    const setResp = await client.admin.setUserPassword({
-      userId: opts.neonUserId,
-      newPassword: opts.newPassword,
-    });
-    const setErr = (setResp as { error?: { message?: string } }).error;
-    if (setErr) {
-      const msg = (setErr.message ?? "").toLowerCase();
-      if (msg.includes("unauthorized") || msg.includes("forbidden") || msg.includes("admin")) {
-        return { ok: false, reason: "not_admin", message: setErr.message };
-      }
-      if (msg.includes("not found") || msg.includes("no user")) {
-        return { ok: false, reason: "not_found", message: setErr.message };
-      }
-      return { ok: false, reason: "unknown", message: setErr.message };
-    }
-
-    // Best-effort session revoke. If it fails, the password was still
-    // rotated, so the stale session dies at its expiry at the latest.
-    await client.admin.revokeUserSessions({ userId: opts.neonUserId }).catch(() => {});
-    return { ok: true };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    return { ok: false, reason: "unknown", message };
+  const setResult = await proxyAdmin.setUserPassword({
+    userId: opts.neonUserId,
+    newPassword: opts.newPassword,
+  });
+  if (!setResult.ok) {
+    return { ok: false, reason: setResult.reason ?? "unknown", message: setResult.error };
   }
+
+  // Best-effort session revoke. If it fails, the password was still
+  // rotated, so the stale session dies at its expiry at the latest.
+  await proxyAdmin.revokeUserSessions({ userId: opts.neonUserId }).catch(() => {});
+  return { ok: true };
 }
 
 /**
@@ -285,20 +261,12 @@ export async function sendParticipantPasswordResetEmail(opts: {
   email: string;
   redirectTo: string;
 }): Promise<{ ok: true } | { ok: false; message?: string }> {
-  const client = requireAuth();
-
-  try {
-    const response = await client.requestPasswordReset({
-      email: normalizeEmail(opts.email),
-      redirectTo: opts.redirectTo,
-    });
-    const error = (response as { error?: { message?: string } }).error;
-    if (error) return { ok: false, message: error.message };
-    return { ok: true };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    return { ok: false, message };
-  }
+  requireNeonMode();
+  const result = await proxyRequestPasswordReset({
+    email: normalizeEmail(opts.email),
+    redirectTo: opts.redirectTo,
+  });
+  return result.ok ? { ok: true } : { ok: false, message: result.error };
 }
 
 /**

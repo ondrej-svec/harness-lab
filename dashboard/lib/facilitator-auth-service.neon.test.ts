@@ -24,10 +24,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: null }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: null }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -82,10 +80,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-1" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-1" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -139,10 +135,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-2" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-2" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -191,10 +185,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-2" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-2" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -248,10 +240,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-3" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-3" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -292,10 +282,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-4" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-4" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),
@@ -335,10 +323,8 @@ describe("facilitator-auth-service (neon mode)", () => {
     vi.doMock("./runtime-storage", () => ({
       getRuntimeStorageMode: () => "neon",
     }));
-    vi.doMock("./auth/server", () => ({
-      auth: {
-        getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-5" } } }),
-      },
+    vi.doMock("./auth/neon-auth-proxy", () => ({
+      getSession: vi.fn().mockResolvedValue({ data: { user: { id: "user-5" } } }),
     }));
     vi.doMock("./audit-log-repository", () => ({
       getAuditLogRepository: () => ({ append }),

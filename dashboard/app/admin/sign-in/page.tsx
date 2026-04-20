@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import { checkBotId } from "botid/server";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
+import {
+  getSession as proxyGetSession,
+  requestPasswordReset as proxyRequestPasswordReset,
+} from "@/lib/auth/neon-auth-proxy";
 import { adminCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
 import { ThemeSwitcher } from "@/app/components/theme-switcher";
 
@@ -98,25 +102,24 @@ export async function requestPasswordResetAction(formData: FormData) {
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const email = String(formData.get("email") ?? "").trim();
 
-  const botCheck = await checkBotId();
+  // Test environments bypass — same gate as signInAction.
+  const botCheck = process.env.HARNESS_BYPASS_BOT_CHECK === "1"
+    ? { isBot: false, isHuman: true, isVerifiedBot: false, bypassed: true }
+    : await checkBotId();
   if (botCheck.isBot) {
     return redirect(withLang("/admin/sign-in?error=denied", lang));
   }
 
-  if (!auth) {
+  if (!process.env.NEON_AUTH_BASE_URL) {
     return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
-  const origin = await getRequestOrigin();
-  const redirectTo = origin ? `${origin}${withLang("/admin/reset-password", lang)}` : undefined;
-  const { error } = await auth.requestPasswordReset({
-    email,
-    redirectTo,
-  });
-
-  if (error) {
-    console.error("[facilitator-password-reset] error:", JSON.stringify(error));
-    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(error.message || "reset_failed")}`, lang));
+  const requestOrigin = await getRequestOrigin();
+  const redirectTo = requestOrigin ? `${requestOrigin}${withLang("/admin/reset-password", lang)}` : undefined;
+  const result = await proxyRequestPasswordReset({ email, redirectTo });
+  if (!result.ok) {
+    console.error("[facilitator-password-reset] error:", result.error);
+    return redirect(withLang(`/admin/sign-in?error=${encodeURIComponent(result.error || "reset_failed")}`, lang));
   }
 
   return redirect(withLang("/admin/sign-in?reset=requested", lang));
@@ -133,9 +136,9 @@ export default async function SignInPage({
   const errorParam = params?.error;
   const resetParam = params?.reset;
 
-  // If already authenticated, redirect to admin
-  if (auth) {
-    const { data: session } = await auth.getSession();
+  // If already authenticated, redirect to admin.
+  if (process.env.NEON_AUTH_BASE_URL) {
+    const { data: session } = await proxyGetSession();
     if (session?.user) {
       return redirect(withLang("/admin", lang));
     }
