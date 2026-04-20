@@ -659,9 +659,9 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
     agenda: normalizedAgenda,
     liveMoment: normalizeStoredLiveMoment(state.liveMoment, normalizedAgenda),
     workshopMeta: {
-      ...state.workshopMeta,
+      ...(state.workshopMeta ?? seedWorkshopState.workshopMeta),
       contentLang: resolveStoredContentLanguage(state.workshopMeta?.contentLang),
-      currentPhaseLabel: resolveCurrentPhaseLabel(normalizedAgenda, state.workshopMeta.currentPhaseLabel),
+      currentPhaseLabel: resolveCurrentPhaseLabel(normalizedAgenda, state.workshopMeta?.currentPhaseLabel),
     },
   };
 
