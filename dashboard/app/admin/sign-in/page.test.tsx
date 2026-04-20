@@ -7,6 +7,7 @@ const getSession = vi.fn();
 const signInEmail = vi.fn();
 const requestPasswordReset = vi.fn();
 let fetchMock: ReturnType<typeof vi.fn>;
+const cookieSet = vi.fn();
 
 let authMock: {
   getSession: typeof getSession;
@@ -50,7 +51,7 @@ describe("facilitator sign-in page", () => {
     };
 
     headers.mockResolvedValue(new Headers([["host", "localhost:3000"]]));
-    cookies.mockResolvedValue({ set: vi.fn() });
+    cookies.mockResolvedValue({ get: vi.fn(), set: cookieSet });
     getSession.mockResolvedValue({ data: null });
     signInEmail.mockResolvedValue({ error: null });
     requestPasswordReset.mockResolvedValue({ error: null });
@@ -140,6 +141,7 @@ describe("facilitator sign-in page", () => {
 
   it("redirects to unavailable when sign-in auth is missing", async () => {
     authMock = null;
+    process.env.NEON_AUTH_BASE_URL = "https://auth.example.com";
     const { signInAction } = await import("./page");
     const formData = new FormData();
     formData.set("lang", "en");
@@ -147,6 +149,66 @@ describe("facilitator sign-in page", () => {
     await signInAction(formData);
 
     expect(redirect).toHaveBeenCalledWith("/admin/sign-in?error=unavailable&lang=en");
+  });
+
+  it("creates a file-mode auth cookie and redirects to admin on successful local sign-in", async () => {
+    authMock = null;
+    delete process.env.NEON_AUTH_BASE_URL;
+    const { signInAction } = await import("./page");
+    const formData = new FormData();
+    formData.set("lang", "en");
+    formData.set("email", "facilitator@example.com");
+    formData.set("password", "secret");
+
+    await signInAction(formData);
+
+    expect(cookieSet).toHaveBeenCalledWith(
+      "harness-admin-file-auth",
+      expect.any(String),
+      expect.objectContaining({ httpOnly: true, path: "/", sameSite: "lax" }),
+    );
+    expect(redirect).toHaveBeenCalledWith("/admin?lang=en");
+  });
+
+  it("rejects invalid local sign-in credentials in file mode", async () => {
+    authMock = null;
+    delete process.env.NEON_AUTH_BASE_URL;
+    const { signInAction } = await import("./page");
+    const formData = new FormData();
+    formData.set("lang", "en");
+    formData.set("email", "facilitator@example.com");
+    formData.set("password", "wrong");
+
+    await signInAction(formData);
+
+    expect(cookieSet).not.toHaveBeenCalled();
+    expect(redirect).toHaveBeenCalledWith("/admin/sign-in?error=invalid&lang=en");
+  });
+
+  it("redirects file-mode facilitators back to admin when the local auth cookie is present", async () => {
+    authMock = null;
+    delete process.env.NEON_AUTH_BASE_URL;
+    const { getExpectedFileModeAuthToken } = await import("@/lib/admin-auth");
+    const authToken = await getExpectedFileModeAuthToken();
+    cookies.mockResolvedValue({
+      get: vi.fn((name: string) => (
+        name === "harness-admin-file-auth"
+          ? {
+              name,
+              value: authToken,
+            }
+          : undefined
+      )),
+      set: cookieSet,
+    });
+    const { default: SignInPage } = await import("./page");
+
+    const view = await SignInPage({
+      searchParams: Promise.resolve({ lang: "en" }),
+    });
+
+    expect(view).toBeUndefined();
+    expect(redirect).toHaveBeenCalledWith("/admin?lang=en");
   });
 
   it("redirects with an encoded sign-in error when better-auth returns 4xx", async () => {

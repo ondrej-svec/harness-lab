@@ -1,4 +1,7 @@
+import { createHash } from "node:crypto";
 import { expect, test, type Locator } from "@playwright/test";
+
+const fileModeAuthToken = createHash("sha256").update("facilitator:secret").digest("hex");
 
 async function readTransitionDuration(locator: Locator) {
   return locator.evaluate((element) => getComputedStyle(element).transitionDuration);
@@ -224,6 +227,18 @@ test.describe("facilitator admin (file mode)", () => {
     },
   });
 
+  test.beforeEach(async ({ context, baseURL }) => {
+    await context.addCookies([
+      {
+        name: "harness-admin-file-auth",
+        value: fileModeAuthToken,
+        url: baseURL!,
+        httpOnly: true,
+        sameSite: "Lax",
+      },
+    ]);
+  });
+
   test("loads the workspace cockpit, filters instances, and opens the run-first control room", async ({ page }) => {
     await page.goto("/admin");
 
@@ -447,21 +462,42 @@ test.describe("facilitator admin (file mode)", () => {
 
   test("renders the opening participant proof slice on mobile without drifting into backstage copy", async ({ page }) => {
     await page.setViewportSize({ width: 393, height: 852 });
-    // The 2026-04-12 content review retired `talk-participant-view` along
-    // with every other dedicated participant-view scene. The only scene
-    // that still carries one is `opening-team-formation`, so the mobile
-    // participant smoke retargets there. See the vitest comment on
-    // dashboard/app/admin/instances/[id]/page.test.tsx around line 221.
-    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-team-formation");
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-team-formation-room");
 
     await expect(page.getByRole("heading", { name: /Postavte se do.řady/ })).toBeVisible();
-    await expect(page.getByText(/Devět minut\./)).toBeVisible();
+    await expect(page.getByText("Formování týmů · 9 minut")).toBeVisible();
     // Backstage copy must stay off the participant surface.
     await expect(page.getByText("zdrojový materiál")).toHaveCount(0);
 
     await expect(page).toHaveScreenshot("presenter-opening-participant-proof-mobile.png", {
       maxDiffPixelRatio: 0.08,
     });
+  });
+
+  test("renders the updated opening agenda, team-formation, and handoff scenes in the browser", async ({ page }) => {
+    await page.setViewportSize({ width: 393, height: 852 });
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-day-arc");
+    await expect(page.getByRole("heading", { name: "Jak půjde dnešek." })).toBeVisible();
+    await expect(page.getByText("09:10 · Úvod, talk a demo")).toBeVisible();
+    await expect(page.getByText("10:30 · Build 1")).toBeVisible();
+    await expect(page.getByText("13:30 · Rotace a Build 2")).toBeVisible();
+    await expect(page.getByText("15:45 · Závěr a reflexe")).toBeVisible();
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-team-formation-room");
+    await expect(
+      page.getByRole("heading", { name: "Postavte se do řady. Rozpočítejte se. Sedněte si spolu." }),
+    ).toBeVisible();
+    await expect(page.getByText("Sedněte si spolu a krátce se seznamte").first()).toBeVisible();
+    await expect(page.getByText("Vyberte si kotvu")).toHaveCount(0);
+    await expect(page.getByText("pojmenujte tým")).toHaveCount(0);
+    await expect(page.getByText("Řiďte se děním v sále")).toHaveCount(0);
+    await expect(page.getByText("tým zapíšeme naživo")).toHaveCount(0);
+
+    await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=opening&scene=opening-handoff");
+    await expect(page.getByRole("heading", { name: "Týmy jsou hotové. Podívejte se nahoru." })).toBeVisible();
+    await expect(page.getByText("Další krok: talk.")).toBeVisible();
+    await expect(page.getByText("Na boardu máte svůj tým")).toHaveCount(0);
   });
 
   test("people section records team history markers and assignment changes", async ({ page }) => {

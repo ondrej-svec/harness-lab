@@ -1,7 +1,7 @@
 import type { FacilitatorAuthService } from "./runtime-contracts";
 
 export type { FacilitatorAuthService } from "./runtime-contracts";
-import { decodeBasicAuthHeader } from "./admin-auth";
+import { hasValidFileModeCredentials } from "./admin-auth";
 import { getAuditLogRepository } from "./audit-log-repository";
 import {
   getAuthenticatedFacilitator,
@@ -22,17 +22,7 @@ class BasicFacilitatorAuthService implements FacilitatorAuthService {
     instanceId?: string | null;
   }) {
     const { authorizationHeader, instanceId } = options;
-    const credentials = decodeBasicAuthHeader(authorizationHeader);
-
-    if (!credentials) {
-      return false;
-    }
-
-    // File mode: accept sample credentials (facilitator/secret)
-    const expectedPassword = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
-    const expectedUsername = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
-
-    if (credentials.username !== expectedUsername || credentials.password !== expectedPassword) {
+    if (!hasValidFileModeCredentials(authorizationHeader)) {
       return false;
     }
 

@@ -250,7 +250,7 @@ describe("PresenterPage", () => {
     expect(html).not.toContain("content/talks/context-is-king.md");
   });
 
-  it("renders checklist scenes without generic backstage cue labels", async () => {
+  it("renders the opening agenda scene as a concrete day timeline without backstage cue labels", async () => {
     const { default: PresenterPage } = await presenterPageModulePromise;
     const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
     getWorkshopState.mockResolvedValue(state);
@@ -265,9 +265,43 @@ describe("PresenterPage", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Learn. Build. Hand off. Continue.");
-    expect(html).toContain("The talk and the demo name the craft");
+    expect(html).toContain("Today at a glance.");
+    expect(html).toContain("09:10 · Opening, talk, and demo");
+    expect(html).toContain("10:30 · Build 1");
+    expect(html).toContain("13:30 · Rotation and Build 2");
+    expect(html).toContain("15:45 · Reveal");
     expect(html).not.toContain("What the room should see now");
+  });
+
+  it("renders the simplified Czech team-formation room scene without anchor or naming steps", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ agendaItem: "opening", scene: "opening-team-formation-room" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("Postavte se do řady. Rozpočítejte se. Sedněte si spolu.");
+    expect(html).toContain("Sedněte si spolu a krátce se seznamte");
+    expect(html).not.toContain("Vyberte si kotvu");
+    expect(html).not.toContain("pojmenujte tým");
+    expect(html).not.toContain("Řiďte se děním v sále");
+    expect(html).not.toContain("tým zapíšeme naživo");
+  });
+
+  it("renders the updated opening handoff without board-based wording", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ agendaItem: "opening", scene: "opening-handoff" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("Týmy jsou hotové. Podívejte se nahoru.");
+    expect(html).toContain("Další krok: talk.");
+    expect(html).not.toContain("Na boardu máte svůj tým");
   });
 
   it("renders localized English presenter content for an English-content workshop instance", async () => {

@@ -180,7 +180,7 @@ Private workshop instance layer:
 - `/admin` acts as the facilitator surface
 - `/admin/instances/[id]/presenter` acts as the room-facing presenter surface
 - Neon Auth protects facilitator sign-in in neon mode
-- file mode retains the Basic Auth fallback for local/demo work
+- file mode retains local/demo facilitator access via the legacy Basic Auth header path and a cookie-backed local sign-in/session
 - file storage remains the local development adapter
 - `dashboard/lib/workshop-state-repository.ts` is the seam for moving to a hosted private store later
 - facilitator skills should use the `harness` CLI for privileged local auth/session handling rather than inventing a parallel secret store

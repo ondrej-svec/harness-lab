@@ -604,29 +604,29 @@
           ],
           "en": {
             "label": "Look up",
-            "title": "Your team is recorded. Look up.",
+            "title": "Teams are set. Look up.",
             "body": "The room is moving into the talk. Pause the table setup and switch your attention back to the front.",
             "blocks": [
               {
                 "id": "opening-look-up-hero",
                 "type": "hero",
                 "eyebrow": "Transition",
-                "title": "Your team is recorded. Look up.",
-                "body": "Team is set. The room is moving into the talk."
+                "title": "Teams are set. Look up.",
+                "body": "Teams are set. The room is moving into the talk."
               }
             ]
           },
           "cs": {
             "label": "Podívejte se nahoru",
-            "title": "Tým je zapsaný. Podívejte se nahoru.",
-            "body": "Místnost se přesouvá do talku. Přerušte nastavování u stolu a vraťte pozornost dopředu.",
+            "title": "Týmy jsou hotové. Podívejte se nahoru.",
+            "body": "Talk začíná. Přerušte nastavování u stolu a vraťte pozornost dopředu.",
             "blocks": [
               {
                 "id": "opening-look-up-hero",
                 "type": "hero",
                 "eyebrow": "Přechod",
-                "title": "Tým je zapsaný. Podívejte se nahoru.",
-                "body": "Tým je hotový. Místnost se přesouvá do talku."
+                "title": "Týmy jsou hotové. Podívejte se nahoru.",
+                "body": "Týmy jsou hotové. Jdeme do talku."
               }
             ]
           },
@@ -725,20 +725,20 @@
           "intent": "framing",
           "chromePreset": "agenda",
           "en": {
-            "label": "Day arc",
-            "title": "Learn. Build. Hand off. Continue.",
-            "body": "One day, four moves. Each one sets up the next. By the time the day closes, you will have practiced each move end to end.",
+            "label": "Agenda",
+            "title": "Today at a glance.",
+            "body": "What happens when: opening, build, rotation, and reveal.",
             "facilitatorNotes": [
-              "Give each step one sentence. Keep the spine tight.",
-              "No rules yet — just the promise of the arc."
+              "Give the room the times and the shape of the day.",
+              "Keep it concrete. No rules yet, just the agenda."
             ],
             "blocks": [
               {
                 "id": "opening-day-arc-hero",
                 "type": "hero",
-                "eyebrow": "Den má jeden oblouk",
-                "title": "Learn. Build. Hand off. Continue.",
-                "body": "This is not a prompting contest. It is a day where you will learn the craft, build something real, hand it to another team, and watch what continues without you."
+                "eyebrow": "Today's agenda",
+                "title": "Today at a glance.",
+                "body": "Here is the day in one view: we start together, get the work moving before lunch, continue in the afternoon, and end by naming what carried the work."
               },
               {
                 "id": "opening-day-arc-steps",
@@ -746,23 +746,28 @@
                 "items": [
                   {
                     "id": "arc-learn",
-                    "title": "Learn.",
-                    "body": "The talk and the demo name the craft and show you what it looks like in a real repo."
+                    "title": "09:10 · Opening, talk, and demo",
+                    "body": "We set the frame, name the craft, and show the workflow you will use."
                   },
                   {
                     "id": "arc-build",
-                    "title": "Build.",
-                    "body": "Your team picks a brief and builds a working slice — with AGENTS.md as a map, a plan, a tracer, and a next-move note."
+                    "title": "10:30 · Build 1",
+                    "body": "Your team picks a brief and ships a first working version before lunch."
                   },
                   {
                     "id": "arc-handoff",
-                    "title": "Hand off.",
-                    "body": "After lunch, your repo is not yours anymore. Another team inherits it cold. You inherit theirs."
+                    "title": "12:15 · Lunch reset",
+                    "body": "Before you go, leave the repo readable enough for another team to enter it."
                   },
                   {
                     "id": "arc-continue",
-                    "title": "Continue.",
-                    "body": "You continue in the inherited repo — reading, capturing friction, shipping another slice. The afternoon tests what the morning encoded."
+                    "title": "13:30 · Rotation and Build 2",
+                    "body": "After lunch you reset, name the current state, and continue with the next block of work."
+                  },
+                  {
+                    "id": "arc-reveal",
+                    "title": "15:45 · Reveal",
+                    "body": "We compare what survived handoff and what still needs a stronger harness."
                   }
                 ]
               }
@@ -775,20 +780,20 @@
             ]
           },
           "cs": {
-            "label": "Oblouk dne",
-            "title": "Učit se. Stavět. Předat. Pokračovat.",
-            "body": "Jeden den, čtyři pohyby. Každý připraví ten další. Než se den zavře, vyzkoušíš si každý z nich end-to-end.",
+            "label": "Agenda",
+            "title": "Jak půjde dnešek.",
+            "body": "Co se dnes bude dít a kdy: od úvodu přes build až po závěr.",
             "facilitatorNotes": [
-              "Jedna věta na krok. Drž páteř napnutou.",
-              "Žádná pravidla – zatím jen slib oblouku."
+              "Dej místnosti časy i tvar dne.",
+              "Drž to konkrétní. Ještě ne pravidla, jen agendu."
             ],
             "blocks": [
               {
                 "id": "opening-day-arc-hero",
                 "type": "hero",
-                "eyebrow": "Den má jeden oblouk",
-                "title": "Učit se. Stavět. Předat. Pokračovat.",
-                "body": "Tohle není soutěž v promptování. Je to den, kdy se naučíte řemeslo, postavíte něco reálného, předáte to jinému týmu a uvidíte, co přežije i bez vás."
+                "eyebrow": "Dnešní agenda",
+                "title": "Jak půjde dnešek.",
+                "body": "Takhle půjde celý den: začneme spolu, před obědem rozjedete práci, po obědě na ni navážete a na konci ukážeme, co práci opravdu udrželo."
               },
               {
                 "id": "opening-day-arc-steps",
@@ -796,23 +801,28 @@
                 "items": [
                   {
                     "id": "arc-learn",
-                    "title": "Učit se.",
-                    "body": "Talk a demo pojmenují řemeslo a ukážou, jak vypadá v reálném repu."
+                    "title": "09:10 · Úvod, talk a demo",
+                    "body": "Nastavíme rámec dne, pojmenujeme řemeslo a ukážeme workflow, které si dnes vyzkoušíte."
                   },
                   {
                     "id": "arc-build",
-                    "title": "Stavět.",
-                    "body": "Tým si vybere zadání a postaví funkční slice – s AGENTS.md jako mapou, s plánem, s tracerem a s poznámkou o dalším kroku."
+                    "title": "10:30 · Build 1",
+                    "body": "Týmy si vyberou zadání a před obědem pošlou první funkční verzi."
                   },
                   {
                     "id": "arc-handoff",
-                    "title": "Předat.",
-                    "body": "Po obědě vaše repo už není vaše. Jiný tým ho převezme naslepo. Vy převezmete jejich."
+                    "title": "12:15 · Oběd",
+                    "body": "Než odejdete, nechte v repu čitelný další krok pro tým po vás."
                   },
                   {
                     "id": "arc-continue",
-                    "title": "Pokračovat.",
-                    "body": "Pokračuješ v převzatém repu – čteš, zachytáváš friction, posíláš další slice. Odpoledne testuje, co ráno opravdu zůstalo v repu."
+                    "title": "13:30 · Rotace a Build 2",
+                    "body": "Po obědě si znovu srovnáte stav a navážete další částí práce."
+                  },
+                  {
+                    "id": "arc-reveal",
+                    "title": "15:45 · Závěr a reflexe",
+                    "body": "Porovnáme, co předání ustálo a co ještě potřebuje silnější oporu v repu."
                   }
                 ]
               }
@@ -833,20 +843,20 @@
           "chromePreset": "minimal",
           "en": {
             "label": "Team formation (room)",
-            "title": "Form the line. Count off. Claim your anchor.",
+            "title": "Form the line. Count off. Sit with your team.",
             "body": "Wall scene that holds for the full nine minutes of team formation.",
             "facilitatorNotes": [
               "Hold this on the wall for the full nine minutes of team formation.",
               "The wall holds the shared steps for the room; facilitate the sequence live from the front.",
-              "Advance to the handoff only once every team has both a name and an anchor on the board."
+              "Advance only once every team is seated together."
             ],
             "blocks": [
               {
                 "id": "opening-team-room-hero",
                 "type": "hero",
-                "eyebrow": "Your team · 9 min",
-                "title": "Form the line. Count off. Claim your anchor.",
-                "body": "Everyone stands. Experience line along the wall. Count off into mixed teams. Sit, introduce, name the team, anchor it."
+                "eyebrow": "Team formation · 9 min",
+                "title": "Form the line. Count off. Sit with your team.",
+                "body": "Everyone stands. Line up by experience along the wall. Count off into mixed teams. Sit down together and do quick introductions."
               },
               {
                 "id": "opening-team-room-steps",
@@ -854,17 +864,8 @@
                 "items": [
                   "1 · Line up by experience (3 min)",
                   "2 · Count off into teams (1 min)",
-                  "3 · Sit, introduce, name the team (4 min)",
-                  "4 · Claim an anchor",
-                  "5 · Raise a hand — we record the team live"
+                  "3 · Sit down and do quick introductions (5 min)"
                 ]
-              },
-              {
-                "id": "opening-team-room-callout",
-                "type": "callout",
-                "tone": "info",
-                "title": "Follow the room.",
-                "body": "This screen is the shared anchor while the facilitator forms the teams live."
               }
             ],
             "sourceRefs": [
@@ -876,20 +877,20 @@
           },
           "cs": {
             "label": "Formování týmů (sál)",
-            "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-            "body": "Scéna na plátně pro sál. Drží po celé cvičení – devět minut.",
+            "title": "Postavte se do řady. Rozpočítejte se. Sedněte si spolu.",
+            "body": "Scéna na plátně pro sál. Drží po celé formování týmů – devět minut.",
             "facilitatorNotes": [
               "Nechte tuhle scénu na plátně po celých devět minut formování týmů.",
               "Plátno drží společné kroky pro celý sál; průběh veďte živě zepředu.",
-              "Na přechod do talku přepínejte teprve ve chvíli, kdy má každý tým jméno i kotvu na boardu."
+              "Přepínejte dál teprve ve chvíli, kdy každý tým sedí pohromadě."
             ],
             "blocks": [
               {
                 "id": "opening-team-room-hero",
                 "type": "hero",
-                "eyebrow": "Váš tým · 9 minut",
-                "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-                "body": "Všichni vstaňte. Řada podle zkušeností podél stěny. Rozpočítejte se do smíšených týmů. Sedněte si, představte se, pojmenujte tým a zakotvěte."
+                "eyebrow": "Formování týmů · 9 minut",
+                "title": "Postavte se do řady. Rozpočítejte se. Sedněte si spolu.",
+                "body": "Všichni vstaňte. Řada podle zkušeností podél stěny. Rozpočítejte se do smíšených týmů. Sedněte si spolu a krátce se seznamte."
               },
               {
                 "id": "opening-team-room-steps",
@@ -897,17 +898,8 @@
                 "items": [
                   "1 · Postavte se do řady podle zkušeností (3 min)",
                   "2 · Rozpočítejte se do týmů (1 min)",
-                  "3 · Sedněte si, představte se, pojmenujte tým (4 min)",
-                  "4 · Vyberte si kotvu",
-                  "5 · Zvedněte ruku – tým zapíšeme naživo"
+                  "3 · Sedněte si spolu a krátce se seznamte (5 min)"
                 ]
-              },
-              {
-                "id": "opening-team-room-callout",
-                "type": "callout",
-                "tone": "info",
-                "title": "Řiďte se děním v sále.",
-                "body": "Tahle obrazovka je společná kotva, zatímco facilitátor skládá týmy živě."
               }
             ],
             "sourceRefs": [
@@ -917,7 +909,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "opening-handoff",
@@ -926,7 +918,7 @@
           "chromePreset": "minimal",
           "en": {
             "label": "Handoff to the talk",
-            "title": "Your team is on the board. Look up.",
+            "title": "Teams are set. Look up.",
             "body": "Brief transition beat. Facilitator moves the room into the talk.",
             "facilitatorNotes": [
               "30-second beat. Room reset, then straight into the talk.",
@@ -936,8 +928,8 @@
               {
                 "id": "opening-handoff-hero",
                 "type": "hero",
-                "eyebrow": "A teď",
-                "title": "Your team is on the board. Look up.",
+                "eyebrow": "Now",
+                "title": "Teams are set. Look up.",
                 "body": "Next: the talk. We start by naming the craft underneath all the agent hype."
               }
             ],
@@ -950,7 +942,7 @@
           },
           "cs": {
             "label": "Přechod do talku",
-            "title": "Na boardu máte svůj tým. Podívejte se nahoru.",
+            "title": "Týmy jsou hotové. Podívejte se nahoru.",
             "body": "Krátký přechodový okamžik. Facilitátor přesune místnost do talku.",
             "facilitatorNotes": [
               "30 vteřin. Reset místnosti a rovnou do talku.",
@@ -961,8 +953,8 @@
                 "id": "opening-handoff-hero",
                 "type": "hero",
                 "eyebrow": "A teď",
-                "title": "Na boardu máte svůj tým. Podívejte se nahoru.",
-                "body": "Další krok: talk. Začínáme tím, že pojmenujeme řemeslo pod veškerým hypem kolem agentů."
+                "title": "Týmy jsou hotové. Podívejte se nahoru.",
+                "body": "Další krok: talk. Teď pojmenujeme řemeslo pod veškerým hypem kolem agentů."
               }
             ],
             "sourceRefs": [

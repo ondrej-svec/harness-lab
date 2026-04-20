@@ -103,12 +103,15 @@ export default defineConfig({
     },
     reuseExistingServer: false,
     env: {
+      HARNESS_STORAGE_MODE: "file",
       HARNESS_ADMIN_USERNAME: "facilitator",
       HARNESS_ADMIN_PASSWORD: "secret",
       HARNESS_EVENT_CODE: "lantern8-context4-handoff2",
       HARNESS_STATE_PATH: workshopStatePath,
       HARNESS_EVENT_ACCESS_PATH: eventAccessPath,
       HARNESS_DATA_DIR: runtimeDir,
+      NEON_AUTH_BASE_URL: "",
+      NEON_AUTH_COOKIE_SECRET: "",
       // Stable HMAC keys so preview → commit and event-code round-trips
       // stay deterministic across Playwright workers. Not sensitive — these
       // are test env values only.

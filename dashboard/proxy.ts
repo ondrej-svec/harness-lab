@@ -1,4 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  fileModeAuthCookieName,
+  getExpectedFileModeAuthToken,
+  getFileModeAuthCookieOptions,
+  hasValidFileModeAuthToken,
+  hasValidFileModeCredentials,
+} from "./lib/admin-auth";
 import { hasCompleteNeonAuthConfig, isNeonRuntimeMode } from "./lib/runtime-auth-configuration";
 import { participantSessionCookieName } from "@/lib/event-access";
 import { resolveUiLanguage, uiLanguageCookieName } from "@/lib/ui-language";
@@ -22,6 +29,15 @@ function isNeonAuthEnabled() {
 
 function hasBrokenNeonAuthConfiguration() {
   return isNeonRuntimeMode() && !hasCompleteNeonAuthConfig();
+}
+
+function setUiLanguageCookie(response: NextResponse, resolvedLanguage: "cs" | "en") {
+  response.cookies.set(uiLanguageCookieName, resolvedLanguage, {
+    httpOnly: false,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+  });
 }
 
 export async function proxy(request: NextRequest) {
@@ -58,7 +74,24 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(signInUrl);
       }
     }
-    // File-mode: no proxy gate — requireFacilitatorPageAccess handles auth server-side
+    if (!isNeonRuntimeMode()) {
+      const authCookie = request.cookies.get(fileModeAuthCookieName)?.value ?? null;
+      const hasAuthCookie = await hasValidFileModeAuthToken(authCookie);
+      const authorization = request.headers.get("authorization");
+
+      if (!hasAuthCookie && hasValidFileModeCredentials(authorization)) {
+        const response = NextResponse.redirect(request.nextUrl);
+        response.cookies.set(
+          fileModeAuthCookieName,
+          await getExpectedFileModeAuthToken(),
+          getFileModeAuthCookieOptions(),
+        );
+        if (urlLanguage) {
+          setUiLanguageCookie(response, resolvedLanguage);
+        }
+        return response;
+      }
+    }
   }
 
   const requestHeaders = new Headers(request.headers);
@@ -79,12 +112,7 @@ export async function proxy(request: NextRequest) {
   });
 
   if (urlLanguage) {
-    response.cookies.set(uiLanguageCookieName, resolvedLanguage, {
-      httpOnly: false,
-      sameSite: "lax",
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-    });
+    setUiLanguageCookie(response, resolvedLanguage);
   }
 
   return response;

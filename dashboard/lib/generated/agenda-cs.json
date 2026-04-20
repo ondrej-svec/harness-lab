@@ -111,15 +111,15 @@
         },
         {
           "id": "opening-day-arc",
-          "label": "Oblouk dne",
+          "label": "Agenda",
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "agenda",
-          "title": "Učit se. Stavět. Předat. Pokračovat.",
-          "body": "Jeden den, čtyři pohyby. Každý připraví ten další. Než se den zavře, vyzkoušíš si každý z nich end-to-end.",
+          "title": "Jak půjde dnešek.",
+          "body": "Co se dnes bude dít a kdy: od úvodu přes build až po závěr.",
           "facilitatorNotes": [
-            "Jedna věta na krok. Drž páteř napnutou.",
-            "Žádná pravidla – zatím jen slib oblouku."
+            "Dej místnosti časy i tvar dne.",
+            "Drž to konkrétní. Ještě ne pravidla, jen agendu."
           ],
           "sourceRefs": [
             {
@@ -131,9 +131,9 @@
             {
               "id": "opening-day-arc-hero",
               "type": "hero",
-              "eyebrow": "Den má jeden oblouk",
-              "title": "Učit se. Stavět. Předat. Pokračovat.",
-              "body": "Tohle není soutěž v promptování. Je to den, kdy se naučíte řemeslo, postavíte něco reálného, předáte to jinému týmu a uvidíte, co přežije i bez vás."
+              "eyebrow": "Dnešní agenda",
+              "title": "Jak půjde dnešek.",
+              "body": "Takhle půjde celý den: začneme spolu, před obědem rozjedete práci, po obědě na ni navážete a na konci ukážeme, co práci opravdu udrželo."
             },
             {
               "id": "opening-day-arc-steps",
@@ -141,23 +141,28 @@
               "items": [
                 {
                   "id": "arc-learn",
-                  "title": "Učit se.",
-                  "body": "Talk a demo pojmenují řemeslo a ukážou, jak vypadá v reálném repu."
+                  "title": "09:10 · Úvod, talk a demo",
+                  "body": "Nastavíme rámec dne, pojmenujeme řemeslo a ukážeme workflow, které si dnes vyzkoušíte."
                 },
                 {
                   "id": "arc-build",
-                  "title": "Stavět.",
-                  "body": "Tým si vybere zadání a postaví funkční slice – s AGENTS.md jako mapou, s plánem, s tracerem a s poznámkou o dalším kroku."
+                  "title": "10:30 · Build 1",
+                  "body": "Týmy si vyberou zadání a před obědem pošlou první funkční verzi."
                 },
                 {
                   "id": "arc-handoff",
-                  "title": "Předat.",
-                  "body": "Po obědě vaše repo už není vaše. Jiný tým ho převezme naslepo. Vy převezmete jejich."
+                  "title": "12:15 · Oběd",
+                  "body": "Než odejdete, nechte v repu čitelný další krok pro tým po vás."
                 },
                 {
                   "id": "arc-continue",
-                  "title": "Pokračovat.",
-                  "body": "Pokračuješ v převzatém repu – čteš, zachytáváš friction, posíláš další slice. Odpoledne testuje, co ráno opravdu zůstalo v repu."
+                  "title": "13:30 · Rotace a Build 2",
+                  "body": "Po obědě si znovu srovnáte stav a navážete další částí práce."
+                },
+                {
+                  "id": "arc-reveal",
+                  "title": "15:45 · Závěr a reflexe",
+                  "body": "Porovnáme, co předání ustálo a co ještě potřebuje silnější oporu v repu."
                 }
               ]
             }
@@ -169,12 +174,12 @@
           "sceneType": "briefing",
           "intent": "activation",
           "chromePreset": "minimal",
-          "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-          "body": "Scéna na plátně pro sál. Drží po celé cvičení – devět minut.",
+          "title": "Postavte se do řady. Rozpočítejte se. Sedněte si spolu.",
+          "body": "Scéna na plátně pro sál. Drží po celé formování týmů – devět minut.",
           "facilitatorNotes": [
             "Nechte tuhle scénu na plátně po celých devět minut formování týmů.",
             "Plátno drží společné kroky pro celý sál; průběh veďte živě zepředu.",
-            "Na přechod do talku přepínejte teprve ve chvíli, kdy má každý tým jméno i kotvu na boardu."
+            "Přepínejte dál teprve ve chvíli, kdy každý tým sedí pohromadě."
           ],
           "sourceRefs": [
             {
@@ -186,9 +191,9 @@
             {
               "id": "opening-team-room-hero",
               "type": "hero",
-              "eyebrow": "Váš tým · 9 minut",
-              "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-              "body": "Všichni vstaňte. Řada podle zkušeností podél stěny. Rozpočítejte se do smíšených týmů. Sedněte si, představte se, pojmenujte tým a zakotvěte."
+              "eyebrow": "Formování týmů · 9 minut",
+              "title": "Postavte se do řady. Rozpočítejte se. Sedněte si spolu.",
+              "body": "Všichni vstaňte. Řada podle zkušeností podél stěny. Rozpočítejte se do smíšených týmů. Sedněte si spolu a krátce se seznamte."
             },
             {
               "id": "opening-team-room-steps",
@@ -196,17 +201,8 @@
               "items": [
                 "1 · Postavte se do řady podle zkušeností (3 min)",
                 "2 · Rozpočítejte se do týmů (1 min)",
-                "3 · Sedněte si, představte se, pojmenujte tým (4 min)",
-                "4 · Vyberte si kotvu",
-                "5 · Zvedněte ruku – tým zapíšeme naživo"
+                "3 · Sedněte si spolu a krátce se seznamte (5 min)"
               ]
-            },
-            {
-              "id": "opening-team-room-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "Řiďte se děním v sále.",
-              "body": "Tahle obrazovka je společná kotva, zatímco facilitátor skládá týmy živě."
             }
           ]
         },
@@ -216,7 +212,7 @@
           "sceneType": "transition",
           "intent": "transition",
           "chromePreset": "minimal",
-          "title": "Na boardu máte svůj tým. Podívejte se nahoru.",
+          "title": "Týmy jsou hotové. Podívejte se nahoru.",
           "body": "Krátký přechodový okamžik. Facilitátor přesune místnost do talku.",
           "facilitatorNotes": [
             "30 vteřin. Reset místnosti a rovnou do talku.",
@@ -233,8 +229,8 @@
               "id": "opening-handoff-hero",
               "type": "hero",
               "eyebrow": "A teď",
-              "title": "Na boardu máte svůj tým. Podívejte se nahoru.",
-              "body": "Další krok: talk. Začínáme tím, že pojmenujeme řemeslo pod veškerým hypem kolem agentů."
+              "title": "Týmy jsou hotové. Podívejte se nahoru.",
+              "body": "Další krok: talk. Teď pojmenujeme řemeslo pod veškerým hypem kolem agentů."
             }
           ]
         }
@@ -263,15 +259,15 @@
         {
           "id": "opening-look-up",
           "label": "Podívejte se nahoru",
-          "title": "Tým je zapsaný. Podívejte se nahoru.",
-          "body": "Místnost se přesouvá do talku. Přerušte nastavování u stolu a vraťte pozornost dopředu.",
+          "title": "Týmy jsou hotové. Podívejte se nahoru.",
+          "body": "Talk začíná. Přerušte nastavování u stolu a vraťte pozornost dopředu.",
           "blocks": [
             {
               "id": "opening-look-up-hero",
               "type": "hero",
               "eyebrow": "Přechod",
-              "title": "Tým je zapsaný. Podívejte se nahoru.",
-              "body": "Tým je hotový. Místnost se přesouvá do talku."
+              "title": "Týmy jsou hotové. Podívejte se nahoru.",
+              "body": "Týmy jsou hotové. Jdeme do talku."
             }
           ],
           "feedbackEnabled": true,

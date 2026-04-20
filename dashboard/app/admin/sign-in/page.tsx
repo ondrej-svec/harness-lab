@@ -5,6 +5,13 @@ import { checkBotId } from "botid/server";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { auth } from "@/lib/auth/server";
 import {
+  fileModeAuthCookieName,
+  getExpectedFileModeAuthToken,
+  getFileModeAuthCookieOptions,
+  hasValidFileModeAuthToken,
+  hasValidFileModeSignInIdentity,
+} from "@/lib/admin-auth";
+import {
   getSession as proxyGetSession,
   requestPasswordReset as proxyRequestPasswordReset,
 } from "@/lib/auth/neon-auth-proxy";
@@ -31,6 +38,7 @@ export async function signInAction(formData: FormData) {
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const cookieStore = await cookies();
 
   // Test environments (Playwright Neon mode) bypass the Vercel BotId
   // check because there's no OIDC token issuer locally. Same gate as
@@ -43,7 +51,21 @@ export async function signInAction(formData: FormData) {
   }
 
   const baseUrl = process.env.NEON_AUTH_BASE_URL;
-  if (!auth || !baseUrl) {
+  if (!baseUrl) {
+    const fileModePassword = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
+    if (!hasValidFileModeSignInIdentity(email) || password !== fileModePassword) {
+      return redirect(withLang("/admin/sign-in?error=invalid", lang));
+    }
+
+    cookieStore.set(
+      fileModeAuthCookieName,
+      await getExpectedFileModeAuthToken(),
+      getFileModeAuthCookieOptions(),
+    );
+    return redirect(withLang("/admin", lang));
+  }
+
+  if (!auth) {
     return redirect(withLang("/admin/sign-in?error=unavailable", lang));
   }
 
@@ -73,7 +95,6 @@ export async function signInAction(formData: FormData) {
   // context and attach it as an explicit `Cookie` header to bypass
   // browser-level enforcement (Playwright request fixture).
   const setCookies = response.headers.getSetCookie?.() ?? [];
-  const cookieStore = await cookies();
   for (const header of setCookies) {
     const [pair, ...attrs] = header.split(";").map((s) => s.trim());
     const eq = pair.indexOf("=");
@@ -140,6 +161,11 @@ export default async function SignInPage({
   if (process.env.NEON_AUTH_BASE_URL) {
     const { data: session } = await proxyGetSession();
     if (session?.user) {
+      return redirect(withLang("/admin", lang));
+    }
+  } else {
+    const cookieStore = await cookies();
+    if (await hasValidFileModeAuthToken(cookieStore.get(fileModeAuthCookieName)?.value ?? null)) {
       return redirect(withLang("/admin", lang));
     }
   }

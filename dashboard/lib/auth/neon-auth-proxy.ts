@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import setCookieParser from "set-cookie-parser";
 
 /**
  * Server-side raw-fetch wrappers around the Neon Auth REST endpoints.
@@ -36,6 +37,16 @@ function origin(): string {
   return new URL(baseUrl()).origin;
 }
 
+const NEON_AUTH_COOKIE_PREFIX = "__Secure-neon-auth";
+
+function resolveSameSiteOption(value: string | undefined) {
+  const normalized = value?.toLowerCase();
+  if (normalized === "strict" || normalized === "none") {
+    return normalized;
+  }
+  return "lax";
+}
+
 async function buildCookieHeader(): Promise<string> {
   const store = await cookies();
   return store
@@ -47,22 +58,38 @@ async function buildCookieHeader(): Promise<string> {
 async function forwardSetCookies(setCookies: string[]): Promise<void> {
   const store = await cookies();
   for (const header of setCookies) {
-    const [pair, ...attrs] = header.split(";").map((s) => s.trim());
-    const eq = pair.indexOf("=");
-    if (eq === -1) continue;
-    const name = pair.slice(0, eq);
-    const value = pair.slice(eq + 1);
-    const opts: Record<string, unknown> = { path: "/", httpOnly: true, sameSite: "lax" };
-    for (const attr of attrs) {
-      const [k, v] = attr.split("=");
-      const lower = k.toLowerCase();
-      if (lower === "httponly") opts.httpOnly = true;
-      else if (lower === "secure") opts.secure = true;
-      else if (lower === "samesite") opts.sameSite = (v ?? "lax").toLowerCase();
-      else if (lower === "max-age") opts.maxAge = Number(v);
-      else if (lower === "path") opts.path = v;
+    const parsed = setCookieParser.parseString(header);
+    if (!parsed) {
+      continue;
     }
-    store.set(name, value, opts);
+    store.set(parsed.name, parsed.value, {
+      path: parsed.path ?? "/",
+      domain: parsed.domain,
+      expires: parsed.expires,
+      httpOnly: parsed.httpOnly ?? true,
+      maxAge: parsed.maxAge,
+      partitioned: parsed.partitioned,
+      sameSite: resolveSameSiteOption(parsed.sameSite),
+      secure: parsed.secure ?? true,
+    });
+  }
+}
+
+async function clearLocalNeonAuthCookies(): Promise<void> {
+  const store = await cookies();
+  for (const cookie of store.getAll()) {
+    if (!cookie.name.startsWith(NEON_AUTH_COOKIE_PREFIX)) {
+      continue;
+    }
+
+    store.set(cookie.name, "", {
+      path: "/",
+      expires: new Date(0),
+      httpOnly: true,
+      maxAge: 0,
+      sameSite: "lax",
+      secure: true,
+    });
   }
 }
 
@@ -118,12 +145,14 @@ export async function signOut(): Promise<{ ok: boolean; error?: string }> {
       headers: { "content-type": "application/json", origin: origin(), cookie },
     });
   } catch (e) {
+    await clearLocalNeonAuthCookies();
     return { ok: false, error: e instanceof Error ? e.message : String(e) };
   }
   if (response.ok) {
     const setCookies = response.headers.getSetCookie?.() ?? [];
     await forwardSetCookies(setCookies);
   }
+  await clearLocalNeonAuthCookies();
   return { ok: response.ok };
 }
 

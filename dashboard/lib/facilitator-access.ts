@@ -1,5 +1,6 @@
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { fileModeAuthCookieName, hasValidFileModeAuthToken, parseCookieHeader } from "./admin-auth";
 import { getCliSessionFromBearerToken, parseBearerToken } from "./facilitator-cli-auth-repository";
 import { getFacilitatorAuthService } from "./facilitator-auth-service";
 import { hasFacilitatorPlatformAccess, resolveFacilitatorGrantWithBootstrap } from "./facilitator-session";
@@ -106,6 +107,11 @@ export async function requireFacilitatorRequest(request: Request, instanceId?: s
     return authorized ? null : unauthorizedResponse();
   }
 
+  const authCookie = parseCookieHeader(request.headers.get("cookie"), fileModeAuthCookieName);
+  if (await hasValidFileModeAuthToken(authCookie)) {
+    return null;
+  }
+
   // File mode: Basic Auth from request header
   const authorized = await service.hasValidRequestCredentials({
     authorizationHeader: request.headers.get("authorization"),
@@ -132,6 +138,11 @@ export async function requireFacilitatorPageAccess(instanceId?: string | null) {
       const lang = await resolveRedirectLanguage();
       redirect(withLang("/admin/sign-in", lang));
     }
+    return;
+  }
+
+  const cookieStore = await cookies();
+  if (await hasValidFileModeAuthToken(cookieStore.get(fileModeAuthCookieName)?.value ?? null)) {
     return;
   }
 

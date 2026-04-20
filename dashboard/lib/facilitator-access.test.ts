@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const headers = vi.fn();
+const cookies = vi.fn();
 const redirect = vi.fn();
 const getCliSessionFromBearerToken = vi.fn();
 const parseBearerToken = vi.fn();
@@ -14,6 +15,7 @@ const requireTrustedActionOrigin = vi.fn();
 
 vi.mock("next/headers", () => ({
   headers,
+  cookies,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -59,6 +61,15 @@ function importFacilitatorAccessModule() {
   return import("./facilitator-access");
 }
 
+function createCookieStore(values: Record<string, string> = {}) {
+  return {
+    get(name: string) {
+      const value = values[name];
+      return value ? { name, value } : undefined;
+    },
+  };
+}
+
 describe("facilitator-access", () => {
   const originalBaseUrl = process.env.NEON_AUTH_BASE_URL;
   const originalCookieSecret = process.env.NEON_AUTH_COOKIE_SECRET;
@@ -70,6 +81,7 @@ describe("facilitator-access", () => {
     delete process.env.NEON_AUTH_COOKIE_SECRET;
     getRuntimeStorageMode.mockReturnValue("file");
     headers.mockResolvedValue(new Headers());
+    cookies.mockResolvedValue(createCookieStore());
     hasValidRequestCredentials.mockResolvedValue(true);
     hasValidSession.mockResolvedValue(true);
     hasFacilitatorPlatformAccess.mockResolvedValue(false);
@@ -96,6 +108,24 @@ describe("facilitator-access", () => {
       authorizationHeader: "Basic abc",
       instanceId: "sample-studio-a",
     });
+  });
+
+  it("allows file-mode requests when the auth cookie is present", async () => {
+    const { requireFacilitatorRequest } = await importFacilitatorAccessModule();
+    const { buildFileModeAuthToken, fileModeAuthCookieName } = await import("./admin-auth");
+    const authToken = await buildFileModeAuthToken("facilitator", "secret");
+
+    const response = await requireFacilitatorRequest(
+      new Request("http://localhost/api/workshop/instances/sample-studio-a/facilitators", {
+        headers: {
+          cookie: `${fileModeAuthCookieName}=${authToken}`,
+        },
+      }),
+      "sample-studio-a",
+    );
+
+    expect(response).toBeNull();
+    expect(hasValidRequestCredentials).not.toHaveBeenCalled();
   });
 
   it("returns 400 when no instanceId is provided and null is not passed", async () => {
@@ -211,6 +241,18 @@ describe("facilitator-access", () => {
       authorizationHeader: null,
       instanceId: "sample-studio-b",
     });
+  });
+
+  it("allows page access when the file-mode auth cookie is present", async () => {
+    const { requireFacilitatorPageAccess } = await importFacilitatorAccessModule();
+    const { buildFileModeAuthToken, fileModeAuthCookieName } = await import("./admin-auth");
+    const authToken = await buildFileModeAuthToken("facilitator", "secret");
+    cookies.mockResolvedValue(createCookieStore({ [fileModeAuthCookieName]: authToken }));
+
+    await requireFacilitatorPageAccess("sample-studio-b");
+
+    expect(hasValidRequestCredentials).not.toHaveBeenCalled();
+    expect(redirect).not.toHaveBeenCalled();
   });
 
   it("checks trusted origin before server actions", async () => {
