@@ -106,6 +106,16 @@ Treat the installed `workshop` skill as the first participant entrypoint. It sho
 
 Treat `.agents/skills/workshop` as generated workshop bundle content. The canonical authored source remains in this repository under `workshop-skill/`, `workshop-blueprint/`, selected `docs/`, and selected `materials/`.
 
+### After install — what a participant sees
+
+Installing the skill does not log anyone in. When the facilitator starts the room, a participant opens the dashboard at `/participant` and walks through three steps:
+
+1. **Event code** — the facilitator reads the shared code aloud; the participant redeems it to enter the room.
+2. **Name pick** — the participant sees a picker scoped to the roster the facilitator pre-pasted (or a walk-in path when `allow_walk_ins` is on). Prefix-matching; no free-text guessing.
+3. **Password** — first time through, the participant sets a password. On return, they enter the same password. Identity persists across browser close because each participant has a real Neon Auth account.
+
+The CLI is not in this flow — the identify surface is the dashboard. Reference: [`docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`](../docs/adr/2026-04-19-name-first-identify-with-neon-auth.md).
+
 ---
 
 ## Facilitator Commands
@@ -196,6 +206,8 @@ Environment variables:
 - `HARNESS_FACILITATOR_PASSWORD`
 - `HARNESS_CLI_HOME`
 - `HARNESS_SESSION_STORAGE` (`file`, `keychain`, `credential-manager`, or `secret-service`)
+
+Not a CLI input: `NEON_API_KEY`. It is a dashboard-side control-plane credential used server-side by `dashboard/lib/auth/admin-create-user.ts` to provision participant accounts during identify. Do not set it for the CLI — it belongs in the dashboard deployment environment only.
 
 ## Release Gate
 

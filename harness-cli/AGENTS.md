@@ -17,7 +17,7 @@ Before editing under `harness-cli/`:
 
 - New privileged operation → add a CLI command that wraps it; never hand the skill raw credentials or session material.
 - Bundle contents change → edit sources under `workshop-skill/`, `content/`, `workshop-blueprint/`, then `node harness-cli/scripts/sync-workshop-bundle.mjs` to resync. The bundle under `assets/workshop-bundle/` is a generated mirror — do not hand-edit.
-- Auth flow change → coordinate with `docs/harness-cli-foundation.md` and the relevant ADR under `docs/adr/`.
+- Auth flow change → coordinate with `docs/harness-cli-foundation.md` and the two load-bearing auth ADRs: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md` (canonical — participant identify: event code → name pick → password, dashboard-side control-plane) and `docs/adr/2026-04-06-neon-auth-for-facilitator-identity.md` (facilitator identity via Neon Auth, still load-bearing).
 - Installer behavior change → update `src/skill-install.js` and mirror the change in `src/run-cli.js` handleSkillInstall; add a regression test under `test/`.
 
 ## Verification Boundary
