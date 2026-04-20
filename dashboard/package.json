@@ -13,6 +13,8 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:neon": "playwright test --config=playwright.neon.config.ts",
+    "test:integration": "vitest run --reporter=verbose 'lib/**/*.integration.test.ts'",
     "db:migrate": "node scripts/run-migrations.mjs",
     "generate:briefs": "bun ../scripts/content/generate-briefs-inventory.ts",
     "generate:content": "bun ../scripts/content/generate-briefs-inventory.ts && bun ../scripts/content/generate-views.ts",

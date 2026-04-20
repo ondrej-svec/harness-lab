@@ -1,4 +1,6 @@
 import { auth } from "./auth/server";
+import { adminCreateParticipantUser } from "./auth/admin-create-user";
+import { setParticipantPasswordViaResetToken } from "./auth/server-set-password";
 import { getNeonSql } from "./neon-db";
 import { isNeonRuntimeMode } from "./runtime-auth-configuration";
 
@@ -61,6 +63,8 @@ type NeonAuthCallShape = {
     revokeUserSessions: (input: { userId: string }) => Promise<unknown>;
   };
   signIn: { email: (input: { email: string; password: string }) => Promise<unknown> };
+  signUp: { email: (input: { email: string; password: string; name: string }) => Promise<unknown> };
+  signOut: () => Promise<unknown>;
   getSession: () => Promise<{ data?: { user?: { id?: string } } | null }>;
   requestPasswordReset: (input: { email: string; redirectTo: string }) => Promise<unknown>;
 };
@@ -79,17 +83,6 @@ function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase();
 }
 
-function classifyCreateError(message: string | undefined): CreateParticipantFailureReason {
-  const lower = (message ?? "").toLowerCase();
-  if (lower.includes("already") && lower.includes("exist")) return "email_taken";
-  if (lower.includes("email") && lower.includes("taken")) return "email_taken";
-  if (lower.includes("password") && (lower.includes("weak") || lower.includes("short") || lower.includes("min"))) {
-    return "weak_password";
-  }
-  if (lower.includes("invalid") && lower.includes("email")) return "invalid_email";
-  return "unknown";
-}
-
 function classifyAuthError(message: string | undefined): AuthenticateParticipantFailureReason {
   const lower = (message ?? "").toLowerCase();
   if (lower.includes("rate") || lower.includes("too many")) return "rate_limited";
@@ -101,71 +94,140 @@ function classifyAuthError(message: string | undefined): AuthenticateParticipant
 }
 
 /**
- * Create a participant's Neon Auth account. Runs admin.createUser with
- * `role = "participant"` — works without a pre-existing admin session
- * per better-auth's admin plugin semantics. Does NOT sign the user in;
- * the caller pairs this with `authenticateParticipant` inside the same
- * server action to issue the Neon session cookie.
+ * Create a participant's Neon Auth account, server-side, without
+ * email or out-of-band codes.
+ *
+ * Two-step flow:
+ *   1. `adminCreateParticipantUser` hits the Neon control-plane API
+ *      (POST /projects/{id}/branches/{id}/auth/users) with NEON_API_KEY.
+ *      Creates the user row + an empty credential account + sets role
+ *      to "participant" via SQL. The control-plane endpoint silently
+ *      drops any `password` parameter, so step 2 is required.
+ *   2. `setParticipantPasswordViaResetToken` mints a reset-password
+ *      verification row directly, then calls /auth/reset-password with
+ *      the token + the participant's chosen password. Email stays out
+ *      of the loop entirely.
+ *
+ * On failure of either step, surface the classified reason for the
+ * server action to map to user-facing copy. Public signup remains
+ * disabled at the Neon Auth instance level forever — NEON_API_KEY is
+ * the only privileged credential. No service-admin user, no
+ * out-of-band code, no email.
+ *
+ * The session cookie is NOT issued here — the caller chains
+ * `authenticateParticipant` to log the new participant in, which
+ * issues the Neon Auth session cookie via the ambient response.
  */
 export async function createParticipantAccount(
   input: CreateParticipantAccountInput,
 ): Promise<CreateParticipantAccountResult> {
-  const client = requireAuth();
+  if (!isNeonRuntimeMode()) {
+    throw new Error("participant-auth requires HARNESS_STORAGE_MODE=neon");
+  }
+
   const email = normalizeEmail(input.email);
 
-  try {
-    const response = await client.admin.createUser({
-      email,
-      password: input.password,
-      name: input.displayName,
-      role: "participant",
-    });
-
-    const error = (response as { error?: { message?: string } }).error;
-    if (error) {
-      return { ok: false, reason: classifyCreateError(error.message), message: error.message };
+  // Step 1: control-plane create.
+  const created = await adminCreateParticipantUser({
+    email,
+    name: input.displayName,
+  });
+  if (!created.ok) {
+    if (created.reason === "email_taken") {
+      return { ok: false, reason: "email_taken", message: created.message };
     }
-
-    const user = (response as { data?: { user?: { id?: string } } }).data?.user;
-    if (!user?.id) {
-      return { ok: false, reason: "unknown", message: "createUser returned no user id" };
+    if (created.reason === "invalid_email") {
+      return { ok: false, reason: "invalid_email", message: created.message };
     }
-
-    return { ok: true, neonUserId: user.id };
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
-    return { ok: false, reason: classifyCreateError(message), message };
+    if (created.reason === "missing_credentials") {
+      return { ok: false, reason: "unavailable", message: created.message };
+    }
+    return { ok: false, reason: "unknown", message: created.message };
   }
+
+  // Step 2: set password via reset-token bypass (no email).
+  const passwordSet = await setParticipantPasswordViaResetToken({
+    neonUserId: created.neonUserId,
+    newPassword: input.password,
+  });
+  if (!passwordSet.ok) {
+    if (passwordSet.reason === "weak_password") {
+      return { ok: false, reason: "weak_password", message: passwordSet.message };
+    }
+    if (passwordSet.reason === "missing_neon_auth") {
+      return { ok: false, reason: "unavailable", message: passwordSet.message };
+    }
+    // The user row exists but has no usable password. The wrapper's
+    // contract is all-or-nothing, so surface as "unknown" — the
+    // caller will retry; the next attempt's email_taken branch
+    // catches the orphaned row.
+    return {
+      ok: false,
+      reason: "unknown",
+      message: `password-set-failed: ${passwordSet.message}`,
+    };
+  }
+
+  return { ok: true, neonUserId: created.neonUserId };
 }
 
 /**
- * Sign a participant in with their email + password. Issues the Neon
- * Auth session cookie as a side effect (the SDK writes it into the
- * ambient response).
+ * Sign a participant in with their email + password.
+ *
+ * Implementation note: we hit better-auth's /sign-in/email endpoint
+ * via raw fetch instead of the SDK because the SDK's server-side
+ * code doesn't reliably forward an Origin header, and Neon Auth's
+ * CSRF check rejects requests without one ("Invalid origin"). Raw
+ * fetch lets us send the canonical origin (the auth base URL itself,
+ * which is always trusted) and stay decoupled from SDK quirks.
+ *
+ * This call does NOT propagate a session cookie back to the
+ * participant's browser — the response body carries the bearer
+ * token. Callers that need the participant signed in via the Neon
+ * Auth cookie must handle that explicitly (today, the event-code
+ * session is the authoritative session for /participant routes; the
+ * Neon Auth session is checked only on auth-sensitive surfaces).
  */
 export async function authenticateParticipant(
   input: AuthenticateParticipantInput,
 ): Promise<AuthenticateParticipantResult> {
-  const client = requireAuth();
+  if (!isNeonRuntimeMode()) {
+    throw new Error("participant-auth requires HARNESS_STORAGE_MODE=neon");
+  }
+
+  const baseUrl = process.env.NEON_AUTH_BASE_URL;
+  if (!baseUrl) {
+    return { ok: false, reason: "unavailable", message: "NEON_AUTH_BASE_URL not set" };
+  }
+
   const email = normalizeEmail(input.email);
+  const origin = new URL(baseUrl).origin;
 
+  let response: Response;
   try {
-    const response = await client.signIn.email({ email, password: input.password });
-    const error = (response as { error?: { message?: string } }).error;
-    if (error) {
-      return { ok: false, reason: classifyAuthError(error.message), message: error.message };
-    }
-
-    // signIn.email doesn't always return the user id — fetch the session we just established.
-    const { data: session } = await client.getSession();
-    if (!session?.user?.id) {
-      return { ok: false, reason: "unknown", message: "signIn succeeded but no session was created" };
-    }
-    return { ok: true, neonUserId: session.user.id };
+    response = await fetch(`${baseUrl.replace(/\/$/, "")}/sign-in/email`, {
+      method: "POST",
+      headers: { "content-type": "application/json", origin },
+      body: JSON.stringify({ email, password: input.password }),
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e);
     return { ok: false, reason: classifyAuthError(message), message };
   }
+
+  if (!response.ok) {
+    const body = (await response.json().catch(() => ({}))) as { code?: string; message?: string };
+    if (response.status === 429 || /rate|too many/i.test(body.message ?? "")) {
+      return { ok: false, reason: "rate_limited", message: body.message };
+    }
+    return { ok: false, reason: "wrong_credentials", message: body.message ?? body.code };
+  }
+
+  const body = (await response.json().catch(() => ({}))) as { user?: { id?: string } };
+  if (!body.user?.id) {
+    return { ok: false, reason: "unknown", message: "signIn succeeded but no user id was returned" };
+  }
+  return { ok: true, neonUserId: body.user.id };
 }
 
 /**

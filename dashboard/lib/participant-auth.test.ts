@@ -4,18 +4,32 @@ const createUser = vi.fn();
 const setUserPassword = vi.fn();
 const revokeUserSessions = vi.fn();
 const signInEmail = vi.fn();
+const signUpEmail = vi.fn();
+const signOut = vi.fn();
 const getSession = vi.fn();
 const requestPasswordReset = vi.fn();
 const sqlQuery = vi.fn();
 const getRuntimeStorageMode = vi.fn();
+const adminCreateParticipantUser = vi.fn();
+const setParticipantPasswordViaResetToken = vi.fn();
 
 vi.mock("./auth/server", () => ({
   auth: {
     admin: { createUser, setUserPassword, revokeUserSessions },
     signIn: { email: signInEmail },
+    signUp: { email: signUpEmail },
+    signOut,
     getSession,
     requestPasswordReset,
   },
+}));
+
+vi.mock("./auth/admin-create-user", () => ({
+  adminCreateParticipantUser,
+}));
+
+vi.mock("./auth/server-set-password", () => ({
+  setParticipantPasswordViaResetToken,
 }));
 
 vi.mock("./neon-db", () => ({
@@ -48,8 +62,9 @@ describe("participant-auth", () => {
   });
 
   describe("createParticipantAccount", () => {
-    it("creates a participant-role user and returns the neon user id", async () => {
-      createUser.mockResolvedValue({ data: { user: { id: "user-abc" } } });
+    it("chains admin-create + set-password and returns the new neon user id", async () => {
+      adminCreateParticipantUser.mockResolvedValue({ ok: true, neonUserId: "user-abc" });
+      setParticipantPasswordViaResetToken.mockResolvedValue({ ok: true });
       const { createParticipantAccount } = await importParticipantAuth();
 
       const result = await createParticipantAccount({
@@ -59,16 +74,22 @@ describe("participant-auth", () => {
       });
 
       expect(result).toEqual({ ok: true, neonUserId: "user-abc" });
-      expect(createUser).toHaveBeenCalledWith({
+      expect(adminCreateParticipantUser).toHaveBeenCalledWith({
         email: "jan@acme.com", // normalized
-        password: "passw0rd!",
         name: "Jan Novák",
-        role: "participant",
+      });
+      expect(setParticipantPasswordViaResetToken).toHaveBeenCalledWith({
+        neonUserId: "user-abc",
+        newPassword: "passw0rd!",
       });
     });
 
-    it("classifies email-taken errors from the underlying SDK", async () => {
-      createUser.mockResolvedValue({ error: { message: "User with email already exists" } });
+    it("propagates email_taken from the control-plane create step", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "email_taken",
+        message: "User with email already exists",
+      });
       const { createParticipantAccount } = await importParticipantAuth();
 
       const result = await createParticipantAccount({
@@ -78,23 +99,11 @@ describe("participant-auth", () => {
       });
 
       expect(result).toMatchObject({ ok: false, reason: "email_taken" });
+      expect(setParticipantPasswordViaResetToken).not.toHaveBeenCalled();
     });
 
-    it("classifies weak-password errors", async () => {
-      createUser.mockResolvedValue({ error: { message: "Password too short" } });
-      const { createParticipantAccount } = await importParticipantAuth();
-
-      const result = await createParticipantAccount({
-        email: "jan@acme.com",
-        password: "abc",
-        displayName: "Jan",
-      });
-
-      expect(result).toMatchObject({ ok: false, reason: "weak_password" });
-    });
-
-    it("classifies invalid-email errors", async () => {
-      createUser.mockResolvedValue({ error: { message: "Invalid email format" } });
+    it("propagates invalid_email from the control-plane create step", async () => {
+      adminCreateParticipantUser.mockResolvedValue({ ok: false, reason: "invalid_email" });
       const { createParticipantAccount } = await importParticipantAuth();
 
       const result = await createParticipantAccount({
@@ -106,8 +115,29 @@ describe("participant-auth", () => {
       expect(result).toMatchObject({ ok: false, reason: "invalid_email" });
     });
 
-    it("falls back to 'unknown' for unrecognized SDK errors", async () => {
-      createUser.mockResolvedValue({ error: { message: "Upstream timeout" } });
+    it("maps missing_credentials to 'unavailable' so the route returns a clean error", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "missing_credentials",
+        message: "NEON_API_KEY missing",
+      });
+      const { createParticipantAccount } = await importParticipantAuth();
+
+      const result = await createParticipantAccount({
+        email: "jan@acme.com",
+        password: "passw0rd!",
+        displayName: "Jan",
+      });
+
+      expect(result).toMatchObject({ ok: false, reason: "unavailable" });
+    });
+
+    it("maps control-plane errors to 'unknown'", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "control_plane_error",
+        message: "503 Service Unavailable",
+      });
       const { createParticipantAccount } = await importParticipantAuth();
 
       const result = await createParticipantAccount({
@@ -119,24 +149,65 @@ describe("participant-auth", () => {
       expect(result).toMatchObject({ ok: false, reason: "unknown" });
     });
 
-    it("surfaces thrown exceptions as classified failures", async () => {
-      createUser.mockRejectedValue(new Error("Network down"));
+    it("propagates weak_password from the password-set step", async () => {
+      adminCreateParticipantUser.mockResolvedValue({ ok: true, neonUserId: "user-pwd" });
+      setParticipantPasswordViaResetToken.mockResolvedValue({ ok: false, reason: "weak_password" });
       const { createParticipantAccount } = await importParticipantAuth();
 
       const result = await createParticipantAccount({
         email: "jan@acme.com",
-        password: "passw0rd!",
+        password: "short",
         displayName: "Jan",
       });
 
-      expect(result).toMatchObject({ ok: false, reason: "unknown", message: "Network down" });
+      expect(result).toMatchObject({ ok: false, reason: "weak_password" });
+    });
+
+    it("classifies a reset_failed step as 'unknown' so the orphan row is caught on retry", async () => {
+      adminCreateParticipantUser.mockResolvedValue({ ok: true, neonUserId: "user-orphan" });
+      setParticipantPasswordViaResetToken.mockResolvedValue({
+        ok: false,
+        reason: "reset_failed",
+        message: "INVALID_TOKEN",
+      });
+      const { createParticipantAccount } = await importParticipantAuth();
+
+      const result = await createParticipantAccount({
+        email: "jan@acme.com",
+        password: "longenoughpwd",
+        displayName: "Jan",
+      });
+
+      expect(result.ok).toBe(false);
+      if (result.ok) return;
+      expect(result.reason).toBe("unknown");
+      expect(result.message).toContain("password-set-failed");
     });
   });
 
   describe("authenticateParticipant", () => {
-    it("signs in and returns the neon user id from the new session", async () => {
-      signInEmail.mockResolvedValue({ data: {} });
-      getSession.mockResolvedValue({ data: { user: { id: "user-xyz" } } });
+    let originalFetch: typeof globalThis.fetch;
+    let fetchMock: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      originalFetch = globalThis.fetch;
+      fetchMock = vi.fn();
+      globalThis.fetch = fetchMock as unknown as typeof globalThis.fetch;
+    });
+
+    afterEach(() => {
+      globalThis.fetch = originalFetch;
+    });
+
+    function jsonResponse(body: unknown, status = 200): Response {
+      return new Response(JSON.stringify(body), {
+        status,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    it("signs in and returns the neon user id from the response body", async () => {
+      fetchMock.mockResolvedValue(jsonResponse({ user: { id: "user-xyz" } }));
       const { authenticateParticipant } = await importParticipantAuth();
 
       const result = await authenticateParticipant({
@@ -145,11 +216,15 @@ describe("participant-auth", () => {
       });
 
       expect(result).toEqual({ ok: true, neonUserId: "user-xyz" });
-      expect(signInEmail).toHaveBeenCalledWith({ email: "jan@acme.com", password: "passw0rd!" });
+      const [, init] = fetchMock.mock.calls[0];
+      expect(init.method).toBe("POST");
+      expect(init.body).toBe(JSON.stringify({ email: "jan@acme.com", password: "passw0rd!" }));
+      // Origin header is required to clear better-auth's CSRF check.
+      expect(init.headers.origin).toMatch(/^https:\/\/auth\.example\.com$/);
     });
 
-    it("classifies wrong-credentials from the SDK", async () => {
-      signInEmail.mockResolvedValue({ error: { message: "Invalid email or password" } });
+    it("classifies wrong-credentials when better-auth returns 401", async () => {
+      fetchMock.mockResolvedValue(jsonResponse({ message: "Invalid email or password" }, 401));
       const { authenticateParticipant } = await importParticipantAuth();
 
       const result = await authenticateParticipant({
@@ -160,8 +235,8 @@ describe("participant-auth", () => {
       expect(result).toMatchObject({ ok: false, reason: "wrong_credentials" });
     });
 
-    it("classifies rate-limit from the SDK", async () => {
-      signInEmail.mockResolvedValue({ error: { message: "Too many requests" } });
+    it("classifies rate-limit when better-auth returns 429", async () => {
+      fetchMock.mockResolvedValue(jsonResponse({ message: "Too many requests" }, 429));
       const { authenticateParticipant } = await importParticipantAuth();
 
       const result = await authenticateParticipant({
@@ -172,9 +247,8 @@ describe("participant-auth", () => {
       expect(result).toMatchObject({ ok: false, reason: "rate_limited" });
     });
 
-    it("guards against the race where signIn succeeds but no session exists", async () => {
-      signInEmail.mockResolvedValue({ data: {} });
-      getSession.mockResolvedValue({ data: null });
+    it("guards against the race where signIn succeeds but the body has no user", async () => {
+      fetchMock.mockResolvedValue(jsonResponse({}));
       const { authenticateParticipant } = await importParticipantAuth();
 
       const result = await authenticateParticipant({

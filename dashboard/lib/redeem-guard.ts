@@ -34,7 +34,13 @@ export async function guardedRedeemEventCode(
     return { ok: false as const, reason: "untrusted_origin" as const };
   }
 
-  const botCheck = await checkBotId();
+  // Test environments (Playwright Neon mode) bypass the Vercel BotId
+  // check because there's no OIDC token issuer locally. The bypass is
+  // gated on an explicit env var so production deployments can never
+  // accidentally turn off bot protection.
+  const botCheck = process.env.HARNESS_BYPASS_BOT_CHECK === "1"
+    ? { isBot: false, isHuman: true, isVerifiedBot: false, bypassed: true }
+    : await checkBotId();
   if (botCheck.isBot) {
     emitRuntimeAlert({
       category: "participant_redeem_bot_signal",
