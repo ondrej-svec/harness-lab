@@ -2,7 +2,7 @@
 title: "feat: participant auth hardening and identify flow revamp"
 type: plan
 date: 2026-04-19
-status: in_progress
+status: complete
 brainstorm: docs/brainstorms/2026-04-16-harness-lab-product-shape-and-participant-management-brainstorm.md
 confidence: medium
 ---
@@ -616,14 +616,13 @@ the request fixture, bypassing browser enforcement.
 - [x] Tests: `__tests__/api/event-access/identify/set-password/route.test.ts` adds two Phase 6 cases (mismatched participantId + walk-in attempt with bound session). `__tests__/api/event-access/identify/authenticate/route.test.ts` adds the early-reject case + verifies `authenticateMock` is NOT called when session is already bound. Component-level coverage already in `participant-identify-flow.test.tsx`.
 - Layer 3 follow-up: Playwright e2e walking through bind → submit-different-name → assert UI surface + DB unchanged. Same Next.js-runtime constraint as the other Layer 3 items.
 
-### Phase 7 — Docs
+### Phase 7 — Docs — ✅ shipped
 
-- [ ] New ADR `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md` — records the name-first + Neon Auth decision, cross-references the v1 Q5 brainstorm as the doctrine extension.
-- [ ] Update `docs/private-workshop-instance-schema.md` with the `neon_user_id`, `allow_walk_ins`, and `participant_password_reset_tokens` additions.
-- [ ] Update `docs/private-workshop-instance-data-classification.md` to classify the participant password hashes (handled by Neon Auth, referenced only).
-- [ ] Update `docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md` (or add a companion ADR) to note that `neon_auth."user".role` is the privilege discriminator and that every admin guard must check it explicitly.
-- [ ] Mark this plan `status: complete` in frontmatter.
-- [ ] ⎘ Commit: `docs: ADR for name-first + neon-auth identify model`.
+- [x] New ADR `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md` — records the systemic decision: `disableSignUp:true` permanent, control-plane API + reset-token bypass for first password, no email, no second code. Documents rejected alternatives (signUp.email gated, service-admin user, magic links, organizations plugin).
+- [x] Update `docs/private-workshop-instance-schema.md` with `participants.neon_user_id`, `workshop_instances.allow_walk_ins`, and a fresh `participants` + `team_members` section. Cross-references the new ADR.
+- [x] Update `docs/private-workshop-instance-data-classification.md` to classify (a) Neon Auth participant accounts and (b) `NEON_API_KEY` as secret. Notes that password hashes are Neon Auth-managed; application code never reads them.
+- [x] `docs/adr/2026-04-06-private-workshop-instance-auth-boundary.md` extension is captured as a cross-reference in the new ADR rather than a separate companion — the boundary's privilege discriminator (`neon_auth."user".role === "admin"`) is now Phase 5.5's regression suite + the new ADR's recorded decision.
+- [x] Plan `status: complete`.
 
 ## Acceptance Criteria
 

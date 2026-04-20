@@ -45,6 +45,7 @@ Suggested fields:
 - `started_at`
 - `archived_at`
 - `reset_source_instance_id` nullable
+- `allow_walk_ins` boolean, default `true` — facilitator-controlled toggle. When `true` (default), unknown names on the identify prompt surface a "+ add as new" path that creates a participant + Neon Auth account. When `false`, the same input renders a polite refusal with no participant row created. Added by migration `2026-04-20-participant-auth.sql`. See ADR `2026-04-19-name-first-identify-with-neon-auth.md`.
 
 ### `facilitator_identities`
 
@@ -123,6 +124,29 @@ Suggested fields:
 - `status`
 - `created_at`
 - `updated_at`
+
+### `participants`
+
+Per-instance roster of named participants. A row appears here when a facilitator pastes the roster (pre-entered) or when a walk-in adds themselves through the identify prompt.
+
+Key fields:
+
+- `id`
+- `instance_id`
+- `display_name`
+- `email` nullable — collected at first identify, used as the Neon Auth identifier
+- `email_opt_in` boolean — facilitator-set, gates follow-up email delivery
+- `tag` nullable — free-form roster tag (team / role / cohort)
+- `neon_user_id` nullable — links to `neon_auth."user".id` once the participant sets a password. Unique when set. See ADR `2026-04-19-name-first-identify-with-neon-auth.md`.
+- `created_at`, `updated_at`, `archived_at`
+
+Unique constraint: `(instance_id, lower(display_name)) WHERE archived_at IS NULL`. Two active participants in the same instance cannot share a normalized display name.
+
+### `team_members`
+
+Active assignments of participants to teams within an instance.
+
+Key fields: `id`, `instance_id`, `team_id`, `participant_id`, `created_at`. Soft-deletable via the team-composition history table, which logs every assign/unassign event.
 
 ### `team_assignments`
 
