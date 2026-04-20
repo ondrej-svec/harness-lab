@@ -117,6 +117,9 @@ export default defineConfig({
       // are test env values only.
       HARNESS_COMMIT_TOKEN_SECRET: "playwright-commit-secret",
       HARNESS_EVENT_CODE_SECRET: "playwright-event-code-secret-at-least-32-chars",
+      // Playwright runs Next locally, so there's no Vercel-issued OIDC
+      // token available for BotID server checks on redeem/sign-in flows.
+      HARNESS_BYPASS_BOT_CHECK: "1",
     },
   },
 });
