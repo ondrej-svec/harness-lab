@@ -8,7 +8,7 @@
   "principles": [
     "Context before generation",
     "Verification is the trust boundary",
-    "Work so another team can continue"
+    "Work so a fresh reader can continue"
   ],
   "phases": [
     {
@@ -57,7 +57,7 @@
       "label": "Lunch",
       "startTime": "12:15",
       "kind": "shared",
-      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo another group can actually read."
+      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo a fresh reader can actually enter."
     },
     {
       "id": "rotation",
@@ -73,7 +73,7 @@
       "label": "Build Phase 2 · first push",
       "startTime": "13:45",
       "kind": "team",
-      "goal": "Continue from repo-native signals only, then turn the friction of the handoff into stronger maps, stronger checks, and stronger continuation guidance."
+      "goal": "Continue in your own repo after a fresh outside read, then turn that friction into stronger maps, stronger checks, and stronger continuation guidance."
     },
     {
       "id": "intermezzo-2",
@@ -97,7 +97,7 @@
       "label": "Reveal and reflection",
       "startTime": "15:45",
       "kind": "shared",
-      "goal": "Close the day by naming the signals that helped the work carry forward through handoff and by turning them into next practice, not just a pleasant ending."
+      "goal": "Close the day by naming the signals that helped the work carry forward after the reshuffle and fresh read, and turn them into next practice rather than a pleasant ending."
     }
   ],
   "inventory": {
@@ -118,7 +118,7 @@
           "Separate heuristic from certainty clearly. The tool should help the reviewer, not pretend to be infallible."
         ],
         "acceptanceCriteria": [
-          "Another team can add a new review rule within 10 minutes without reading through the whole codebase. *(Handoff test.)*",
+          "A fresh reader can add a new review rule within 10 minutes without reading through the whole codebase. *(Fresh-reader test.)*",
           "The tool produces a review checklist from a seed diff.",
           "The output clearly separates certain findings from heuristic suggestions from items still needing human judgment.",
           "The review rules themselves are readable and editable by someone who didn't write them.",
@@ -129,21 +129,21 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and survives handoff. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
+        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
         "userStories": [
           "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
           "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
-          "As a team, I want both the commands and the way of working documented so another team can continue after rotation without confusion."
+          "As a team, I want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
         ],
         "architectureNotes": [
           "Choose any language or framework, but the CLI must stay easy to run and easy to discover.",
           "Separate commands from helper utilities and configuration from the start.",
           "`AGENTS.md` should describe the build and test flow, output conventions, and the rules for future extension.",
-          "A runbook for the team that inherits the project after lunch matters as much as a working command.",
+          "A runbook for someone joining the repo after lunch matters as much as a working command.",
           "Do not build a bag of scripts. Build a small system where it is obvious where the next command, test, and doc belong."
         ],
         "acceptanceCriteria": [
-          "Another team can add or fix a command within 10 minutes of opening the repo. *(Handoff test.)*",
+          "A fresh collaborator can add or fix a command within 10 minutes of opening the repo. *(Fresh-reader test.)*",
           "At least 3 working commands, each solving a concrete developer pain point.",
           "`README` and `AGENTS.md` explain how to run and verify locally.",
           "The extension pattern is visible — a new command fits without breaking the structure.",
@@ -154,22 +154,22 @@
       {
         "id": "doc-generator",
         "title": "Doc Generator",
-        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After handoff, the next team no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
+        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
         "userStories": [
           "As a developer, I want basic technical documentation from a project without writing everything from scratch.",
           "As a reviewer, I want to understand the module structure and main entry points within minutes.",
-          "As the team after rotation, I want to discover the architecture without long detective work."
+          "As a fresh collaborator, I want to discover the architecture without long detective work."
         ],
         "architectureNotes": [
           "The input can be a local repo, seed directory, or simplified dataset.",
           "The output can be Markdown, HTML, or a simple text report.",
           "The important part is to explain what the tool can infer reliably and what remains heuristic.",
           "Design the structure from the start so another output type can be added later.",
-          "Do not optimize for AI theatre. Optimize for trust, traceability, and a clear next safe move for a team after handoff."
+          "Do not optimize for AI theatre. Optimize for trust, traceability, and a clear next safe move for a fresh collaborator."
         ],
         "acceptanceCriteria": [
-          "A reviewer can read the generated documentation and tell exactly where each claim came from — within minutes, without opening the original source. *(Handoff test — provenance is the whole point.)*",
-          "Another team can add a new output format (Markdown → HTML, report → overview) without refactoring the whole tool.",
+          "A reviewer can read the generated documentation and tell exactly where each claim came from — within minutes, without opening the original source. *(Fresh-reader test — provenance is the whole point.)*",
+          "A fresh collaborator can add a new output format (Markdown → HTML, report → overview) without refactoring the whole tool.",
           "The generated output makes it obvious which claims are *certain* (read directly from source) and which are *inference* (heuristic).",
           "The tool produces at least one complete, readable output for a real or seed codebase.",
           "`README` and `AGENTS.md` explain how to run locally and what input the tool expects."
@@ -179,21 +179,21 @@
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible after handoff to a team that didn't build it.",
+        "problem": "Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
         "userStories": [
           "As a team, I want several metrics on one screen so the current state is legible quickly.",
           "As a facilitator, I want to change seed data without touching UI logic.",
-          "As the team after rotation, I want to understand the data structure, components, and screens within minutes."
+          "As a fresh collaborator, I want to understand the data structure, components, and screens within minutes."
         ],
         "architectureNotes": [
           "Separate seed data from UI from the first commit.",
           "Mobile-first is an advantage, but the dashboard must remain readable on a projected screen too.",
           "README and monitoring should explain what already works, what is still mock, and what is still missing.",
           "Design the structure so adding another metric does not require rewriting the whole screen.",
-          "Do not optimize only for the look. Make the data model, layout rules, and verification path easy for another team to understand."
+          "Do not optimize only for the look. Make the data model, layout rules, and verification path easy for a fresh collaborator to understand."
         ],
         "acceptanceCriteria": [
-          "A team that didn't build this can add a new metric within 10 minutes without breaking the layout. *(Handoff test.)*",
+          "A fresh collaborator can add a new metric within 10 minutes without breaking the layout. *(Fresh-reader test.)*",
           "The dashboard shows at least 3 metrics and one trend or comparison.",
           "Seed data and UI logic are cleanly separated — a facilitator can swap seed data without touching the UI.",
           "The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.",
@@ -204,11 +204,11 @@
       {
         "id": "standup-bot",
         "title": "Standup Bot",
-        "problem": "Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a different team can continue working from — without the original author, without the original thread, and without a verbal handoff.",
+        "problem": "Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a fresh collaborator can continue working from — without the original author, without the original thread, and without a verbal walkthrough.",
         "userStories": [
           "As a team lead, I want standup responses collected into one readable summary.",
           "As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.",
-          "As the team after rotation, I want to understand the data flow and integration points without verbal handoff."
+          "As a fresh collaborator, I want to understand the data flow and integration points without a verbal walkthrough."
         ],
         "architectureNotes": [
           "Prefer a clear data model over complicated integration.",
@@ -218,13 +218,13 @@
           "Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible."
         ],
         "acceptanceCriteria": [
-          "Another team can continue this project without a verbal explanation from the original team. *(Handoff test.)*",
+          "A fresh collaborator can continue this project without a verbal explanation. *(Fresh-reader test.)*",
           "The tool ingests seed data in a documented format and produces an overview that surfaces blockers, dependencies, and items needing coordination.",
           "The output distinguishes what the tool is certain about from what is only a heuristic suggestion.",
           "The repo explains how to connect the ingest to a real input channel — without requiring it.",
           "Ingest, processing, and presentation are cleanly separated in the code."
         ],
-        "firstAgentPrompt": "Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a rotating team will open first. Only then propose the first implementation slice."
+        "firstAgentPrompt": "Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a fresh reader will open first. Only then propose the first implementation slice."
       }
     ],
     "challenges": [
@@ -233,7 +233,7 @@
         "title": "Create AGENTS.md as a map",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
-        "description": "Write down the goal, build and test flow, durable rules, and where the next team should look first."
+        "description": "Write down the goal, build and test flow, durable rules, and where a fresh reader should look first."
       },
       {
         "id": "review-skill",

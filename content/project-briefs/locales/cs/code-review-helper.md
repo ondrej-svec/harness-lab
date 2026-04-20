@@ -10,7 +10,7 @@ Vaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří pou
 
 - Jako reviewer chci z diffu rychle získat checklist změněných hranic, rizik, otázek a míst, na která se zaměřit.
 - Jako autor změny chci vědět, co mám ověřit ještě před samotným review.
-- Jako tým po rotaci chci navázat na heuristiky, které původní tým objevil, místo abych je znovu vymýšlel.
+- Jako někdo, kdo k repu přichází čerstvě, chci navázat na heuristiky, které už tým objevil, místo abych je znovu vynalézal.
 
 ## Architektonické poznámky
 

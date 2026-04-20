@@ -10,7 +10,7 @@
 - `Map before motion` — first make the repo a place people can navigate
 - `If it is not in the repo, it does not exist` — important agreements, rules, and next steps belong in files
 - `Verification is the trust boundary` — more autonomy requires stronger evidence
-- `Handoff is a continuous constraint` — the next team should find the first safe move without your explanation
+- `Continuation is a continuous constraint` — a fresh reader should find the first safe move without your explanation
 - `Fix the system, not just the symptom` — when the same thing repeats, do not fix the output, fix the system
 
 ## 4 elements of a good task
@@ -24,11 +24,11 @@
 
 - Does `AGENTS.md` exist?
 - Is `AGENTS.md` a short map rather than an overgrown dump?
-- Are there build and test commands in the repo that another team can run?
+- Are there build and test commands in the repo that a fresh reader can run?
 - Is it clear what already works, what is in progress, and what is still only an idea?
-- Is there a plan, runbook, or another document that helps the next team understand the intent?
+- Is there a plan, runbook, or another document that helps a fresh reader understand the intent?
 - Can you find what was actually verified?
-- Can a new team find the first safe move within a few minutes?
+- Can a fresh reader find the first safe move within a few minutes?
 
 ## 3 questions to return to when you get stuck
 

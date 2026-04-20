@@ -19,7 +19,7 @@ Code review quality varies depending on who is looking. Some changes arrive with
 
 ## Done when
 
-- Another team can add a new review rule within 10 minutes without reading through the whole codebase. *(Handoff test.)*
+- A fresh reader can add a new review rule within 10 minutes without reading through the whole codebase. *(Fresh-reader test.)*
 - The tool produces a review checklist from a seed diff.
 - The output clearly separates certain findings from heuristic suggestions from items still needing human judgment.
 - The review rules themselves are readable and editable by someone who didn't write them.

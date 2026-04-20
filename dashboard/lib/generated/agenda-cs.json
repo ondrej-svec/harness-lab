@@ -17,11 +17,11 @@
       "kind": "shared",
       "intent": "framing",
       "goal": "Otevřít den jako společný start: proč harness engineering dává smysl právě teď, co dnes budeme dělat od prvního kroku až po závěr dne a jak poznáme, že práce stojí na nohách i bez improvizované záchrany.",
-      "roomSummary": "Místnost má hned cítit, že tohle není promptovací hackathon. Je to den, ve kterém se budeme učit řídit agenty, stavět s nimi v reálném repu a odpoledne ověřit, co z práce přežije bez nás.",
+      "roomSummary": "Místnost má hned cítit, že tohle není promptovací hackathon. Je to den, ve kterém se budeme učit řídit agenty, stavět s nimi v reálném repu a odpoledne ověřit, co z práce obstojí bez nás.",
       "facilitatorPrompts": [
         "Dnes nezačínáme ukázkou nástroje ani soutěž v promptování. Začínáme den, ve kterém budeme řídit práci s coding agenty tak, aby po nás zůstalo něco použitelného.",
-        "Budete se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr, ne logistika.",
-        "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
+        "Budete se učit, stavět, promíchat se a navazovat po čerstvém čtení. Ten oblouk dne je záměr, ne logistika.",
+        "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i čerstvý čtenář dokážou bezpečně pokračovat.",
         "Co zůstane jen v hovoru u stolu, odpoledne nevydrží."
       ],
       "watchFors": [
@@ -30,7 +30,7 @@
         "Facilitátor příliš brzy vysvětlí continuation mechaniku místo toho, aby jen nastavil laťku pro pokračování."
       ],
       "checkpointQuestions": [
-        "Kde by to našel další tým bez vás?",
+        "Kde by to našel čerstvý čtenář bez vás?",
         "Co je tady skutečně ověřené?",
         "Co si má místnost odnést do první build fáze?"
       ],
@@ -44,8 +44,8 @@
         "goal": "Spustit den jako společný start pro místnost, ne jako provozní souhrn.",
         "say": [
           "Dnes nezačínáme ukázkou nástroje ani soutěž v promptování.",
-          "Budete se učit, stavět, předávat i přebírat. Ten oblouk dne je záměr workshopu.",
-          "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat."
+          "Budete se učit, stavět, promíchat se a navazovat po čerstvém čtení. Ten oblouk dne je záměr workshopu.",
+          "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i čerstvý čtenář dokážou bezpečně pokračovat."
         ],
         "show": [
           "Promítni oblouk úvodu od dnešního slibu přes analogii a aktivaci až po první pracovní kontrakt.",
@@ -73,7 +73,7 @@
           "intent": "framing",
           "chromePreset": "minimal",
           "title": "Dnes se naučíte tvarovat práci tak, aby ji zvládl převzít kdokoli – i agent",
-          "body": "To je to řemeslo pod veškerým hypem kolem agentů. Nejde o lepší prompty. Nejde o rychlejší psaní. Jde o repo, workflow a kontext, který unese další krok i bez vás. Do večera takový systém postavíte vlastníma rukama, předáte ho jinému týmu a uvidíte, co přežije. Druhý den, až si otevřete coding agenta, budete vědět, co dělat jinak.",
+          "body": "To je to řemeslo pod veškerým hypem kolem agentů. Nejde o lepší prompty. Nejde o rychlejší psaní. Jde o repo, workflow a kontext, který unese další krok i bez vás. Do večera takový systém postavíte vlastníma rukama, necháte do něj vstoupit čerstvé spolupracovníky a uvidíte, co obstojí. Druhý den, až si otevřete coding agenta, budete vědět, co dělat jinak.",
           "facilitatorNotes": [
             "Začni s ambicí a tím, kam účastníky vedeš. Žádná logistika.",
             "Titulní věta je páteř dne – přečti ji nahlas a nech ji dosednout.",
@@ -91,7 +91,7 @@
               "type": "hero",
               "eyebrow": "Harness Lab",
               "title": "Dnes se naučíte tvarovat práci tak, aby ji zvládl převzít kdokoli – i agent",
-              "body": "To je to řemeslo pod veškerým hypem kolem agentů. Nejde o lepší prompty. Nejde o rychlejší psaní. Jde o repo, workflow a kontext, který unese další krok i bez vás. Do večera takový systém postavíte vlastníma rukama, předáte ho jinému týmu a uvidíte, co přežije. Druhý den, až si otevřete coding agenta, budete vědět, co dělat jinak."
+              "body": "To je to řemeslo pod veškerým hypem kolem agentů. Nejde o lepší prompty. Nejde o rychlejší psaní. Jde o repo, workflow a kontext, který unese další krok i bez vás. Do večera takový systém postavíte vlastníma rukama, necháte do něj vstoupit čerstvé spolupracovníky a uvidíte, co obstojí. Druhý den, až si otevřete coding agenta, budete vědět, co dělat jinak."
             },
             {
               "id": "opening-main-line",
@@ -152,7 +152,7 @@
                 {
                   "id": "arc-handoff",
                   "title": "12:15 · Oběd",
-                  "body": "Než odejdete, nechte v repu čitelný další krok pro tým po vás."
+                  "body": "Než odejdete, nechte v repu čitelný další krok pro čerstvého čtenáře."
                 },
                 {
                   "id": "arc-continue",
@@ -162,7 +162,7 @@
                 {
                   "id": "arc-reveal",
                   "title": "15:45 · Závěr a reflexe",
-                  "body": "Porovnáme, co předání ustálo a co ještě potřebuje silnější oporu v repu."
+                  "body": "Porovnáme, co pomohlo čerstvému čtenáři navázat a co ještě potřebuje silnější oporu v repu."
                 }
               ]
             }
@@ -285,7 +285,7 @@
       "kind": "shared",
       "intent": "teaching",
       "goal": "Proměnit energii z úvodu v přesnou tezi: harness engineering je týmová infrastruktura pro práci s agenty a první build krok musí začít mapou, mantinely a ověřením, ne dalším promptem.",
-      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní ověření nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu předání i review.",
+      "roomSummary": "Po talku má být jasné, že `AGENTS.md`, skills, runbooky a explicitní ověření nejsou doplněk. Jsou to pracovní rozhraní, která přenášejí záměr do dalšího kroku a snižují cenu navázání i review.",
       "facilitatorPrompts": [
         "Neučíme se lépe promptovat. Učíme se postavit repo a workflow, ve kterém agent i cizí tým dokážou bezpečně pokračovat.",
         "Co není v repu, neexistuje.",
@@ -318,7 +318,7 @@
         ],
         "show": [
           "Promítněte nejdřív kontrast připravenosti repa, pak tezi, pak přechod do buildu.",
-          "Participant plochu ukažte jen jako potvrzení, že participant plocha, dashboard a repo zachycují tentýž moment."
+          "Plochu pro účastníky ukažte jen jako potvrzení, že plocha pro účastníky, dashboard a repo zachycují tentýž moment."
         ],
         "do": [
           "Spusťte kontrast: ukažte nejdřív holé repo, pak repo s harnessem a stejným promptem.",
@@ -387,7 +387,7 @@
               "type": "hero",
               "eyebrow": "Počasí se změnilo",
               "title": "Proč právě teď",
-              "body": "Nikdo pořádně neví, jak bude vypadat konec roku 2026. Modely se budou hýbat. Kontrakt v repu kolem agenta je to, co ten pohyb přežije."
+              "body": "Nikdo pořádně neví, jak bude vypadat konec roku 2026. Modely se budou hýbat. Kontrakt v repu kolem agenta je to, co ten pohyb přetrvá."
             },
             {
               "id": "talk-why-now-callout",
@@ -499,7 +499,7 @@
           "intent": "transition",
           "chromePreset": "minimal",
           "title": "Celé ráno jste v jednom seděli",
-          "body": "Workshop skill, dashboard, plátno před vámi, repo, které za chvíli otevřete. To všechno jsem postavil s agenty – a disciplínou, kterou jsme právě pojmenovali. Není to reklama. Je to důkaz. Řemeslo existuje. Funguje. Dnes trénujeme uvnitř jeho ukázky.",
+          "body": "Workshop skill, dashboard, plocha pro účastníky v prohlížeči a repa, ve kterých dnes budete pracovat. To všechno jsem postavil s agenty – a disciplínou, kterou jsme právě pojmenovali. Není to reklama. Je to důkaz. Řemeslo existuje. Funguje. Dnes trénujeme uvnitř jeho ukázky.",
           "facilitatorNotes": [
             "Přechodová věta pro facilitátora: „Ukážu vám, co tím myslím – takhle vypadá funkční session s agentem, když harness dělá svou práci.“"
           ],
@@ -515,7 +515,7 @@
               "type": "hero",
               "eyebrow": "Před demem",
               "title": "Celé ráno jste v jednom seděli",
-              "body": "Workshop skill, dashboard, plátno před vámi, repo, které za chvíli otevřete – to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance."
+              "body": "Workshop skill, dashboard, plocha pro účastníky v prohlížeči a repa, ve kterých dnes budete pracovat – to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance."
             }
           ]
         }
@@ -747,7 +747,7 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Váš toolkit, stejná disciplína",
-          "body": "Viděli jste mě pracovat ve Folderu B. Za dvacet minut budete pracovat ve vlastním Folderu B. Tady jsou podpůrné plochy pro dnešek. Participant plocha drží všechny v pohybu; workshop skill je rychlejší cesta, když máte připravený vlastní setup. Ukážu vám ji teď na svém stroji, abyste viděli, co navíc přidává.",
+          "body": "Viděli jste mě pracovat ve Folderu B. Za chvíli budete pracovat ve vlastním repu. Lidi se během dne promíchají do nových týmů, ale vaše rozpracovaná práce zůstává u vás. Základ pro dnešek je plocha pro účastníky v prohlížeči. Workshop skill je volitelná rychlejší cesta na vlastním stroji, když máte připravený setup. Ukážu vám ji teď na svém stroji, abyste viděli, co navíc přidá.",
           "facilitatorNotes": [
             "Živá instalace na jevišti. Předpřipravené 30vteřinové záložní video mít nachystané a přehratelné do 10 vteřin, kdyby něco selhalo.",
             "Instalaci otestuj ráno před workshopem čerstvě na facilitátorově stroji."
@@ -764,7 +764,7 @@
               "type": "hero",
               "eyebrow": "Workshop skill",
               "title": "Váš toolkit, stejná disciplína",
-              "body": "Jedna volitelná rychlá cesta na vlastním stroji. Jedna společná participant plocha pro celou místnost. Sledujte, jak tu rychlou cestu instaluju, abyste viděli, co přidává, když máte připravený setup."
+              "body": "Plocha pro účastníky v prohlížeči je jistota pro každého. Workshop skill je volitelná rychlejší cesta na vlastním stroji. Sledujte instalaci a dívejte se, co navíc přidá, když máte připravený setup."
             },
             {
               "id": "demo-toolkit-steps",
@@ -772,23 +772,23 @@
               "items": [
                 {
                   "id": "toolkit-install",
-                  "title": "Jedna rychlá cesta k instalaci.",
-                  "body": "V týmovém repu, když máte připravený lokální setup. Když ne, workshop nese participant plocha dál."
+                  "title": "Rychlá cesta ve vašem vlastním repu.",
+                  "body": "Když máte připravený lokální setup, skill si nainstalujete přímo tam, kde pracujete. Když ne, pokračujete dál z plochy pro účastníky."
                 },
                 {
                   "id": "toolkit-brief",
-                  "title": "Vaše zadání na požádání.",
-                  "body": "Když je skill k dispozici, ví, jaký jste tým, jaký máte projekt a v jaké jste fázi. Urychluje to, co participant plocha už stejně zpřístupňuje."
+                  "title": "Aktuální moment bez přepínání.",
+                  "body": "Plocha pro účastníky ukazuje, co se děje právě teď. Skill vám umí vytáhnout totéž do terminálu: fázi dne, zadání, reference i další krok."
                 },
                 {
                   "id": "toolkit-reference",
-                  "title": "Reference, když se zaseknete.",
-                  "body": "Patterns, příklady, kontroly. Ne tutoriál – reference, ze které si taháte v okamžiku potřeby."
+                  "title": "Reference přímo u práce.",
+                  "body": "Patterns, příklady, kontroly. Ne návod. Sáhnete po nich ve chvíli, kdy se zaseknete, a nemusíte odcházet z repa."
                 },
                 {
                   "id": "toolkit-record",
-                  "title": "Místo, kam si zapisujete, co jste se naučili.",
-                  "body": "Pokaždé, když najdete chybu, kterou má smysl opravit napříště, žije tady."
+                  "title": "Místo, kde necháváte stopu.",
+                  "body": "Když narazíte na chybu, kterou má smysl opravit napříště, uložte řešení do souboru v repu. Ať ho příště zdědí další člověk i další agent."
                 }
               ]
             },
@@ -797,7 +797,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Hashimotovo pravidlo v praxi.",
-              "body": "Pokaždé, když zjistíte, že agent udělá chybu, vezměte si čas a postavte řešení, aby tu chybu už nikdy neudělal. Tenhle skill je místo, kde to děláte – v souboru, v repu, pro dalšího člověka. Nebo pro další vás."
+              "body": "Pokaždé, když zjistíte, že agent udělá chybu, vezměte si čas a postavte řešení, aby tu chybu už nikdy neudělal. Tenhle skill a soubory kolem něj jsou místo, kde to děláte – v souboru, v repu, pro dalšího člověka. Nebo pro další vás."
             }
           ]
         },
@@ -832,18 +832,18 @@
               "items": [
                 {
                   "id": "first-ten-repo",
-                  "title": "Otevřete repo svého týmu.",
-                  "body": "Pokud potřebujete, vytvořte ho ze šablony. Jeden člověk ho otevře pro celý tým."
+                  "title": "Otevřete repo, ve kterém budete pracovat.",
+                  "body": "Když už ho máte, zůstaňte v něm. Když potřebujete start, vytvořte ho ze šablony. Otevřete ho tak, aby v něm mohl hned pracovat i člověk vedle vás."
                 },
                 {
                   "id": "first-ten-install",
                   "title": "Použijte rychlejší cestu, když máte připravený setup.",
-                  "body": "Workshop skill instalujte jen tehdy, když je to pro váš tým nejrychlejší krok. Když se to rozbije, pokračujte z participant plochy a zvedněte ruku."
+                  "body": "Workshop skill instalujte jen tehdy, když je to pro váš tým nejrychlejší krok. Když se to rozbije, pokračujte z plochy pro účastníky a zvedněte ruku."
                 },
                 {
                   "id": "first-ten-brief",
                   "title": "Dohodněte se, co stavíte.",
-                  "body": "Otevřete si připravená zadání na participant ploše, nebo si navrhněte vlastní. Když máte připravený setup, skill je rychlejší cesta. Pět minut na rozhodnutí, ne padesát."
+                  "body": "Otevřete si připravená zadání na ploše pro účastníky, nebo si navrhněte vlastní. Když máte připravený setup, skill je rychlejší cesta. Pět minut na rozhodnutí, ne padesát."
                 },
                 {
                   "id": "first-ten-agents-md",
@@ -1001,7 +1001,7 @@
           "title": "Dalších 65 minut",
           "body": "Tady je oblouk, na který tým směřuje. Nemusíte trefit každý milník na přesnou minutu. Ale do oběda by repo mělo držet celý tvar práce – ne vaše rozhovory, ne vaše hlavy, repo.",
           "facilitatorNotes": [
-            "Výchozí ambient scéna pro Build 1 – zůstává na velkém plátně i na participant ploše, dokud facilitátor nepřepne na 4.3."
+            "Výchozí ambient scéna pro Build 1 – zůstává na velkém plátně i na ploše pro účastníky, dokud facilitátor nepřepne na 4.3."
           ],
           "sourceRefs": [
             {
@@ -1039,7 +1039,7 @@
                 {
                   "id": "b1-finish",
                   "title": "11:20–11:35 · Spusťte znovu, ukliďte, zapište další krok.",
-                  "body": "Když tracer padá, opravte ho. Když drží, udělejte repo čitelné pro další tým."
+                  "body": "Když tracer padá, opravte ho. Když drží, udělejte repo čitelné pro nového člověka."
                 }
               ]
             }
@@ -1052,7 +1052,7 @@
           "intent": "build",
           "chromePreset": "participant",
           "title": "Do oběda má práci unést repo",
-          "body": "Pointa není mít do oběda jen kód. Pointa je mít repo, ve kterém umí navázat další tým.",
+          "body": "Pointa není mít do oběda jen kód. Pointa je mít repo, ve kterém umí navázat nový člověk.",
           "facilitatorNotes": [
             "Použijte tuhle scénu, když je potřeba znovu pojmenovat baseline nebo když timeline scéna už odvedla svou práci."
           ],
@@ -1170,7 +1170,7 @@
       "checkpointQuestions": [
         "Co jste přesunuli z hlavy nebo chatu do repa?",
         "Co dnes ověřujete pomocí spustitelného ověření?",
-        "Co by měl číst další tým jako první?"
+        "Co by měl číst nový člověk jako první?"
       ],
       "sourceRefs": [
         {
@@ -1233,7 +1233,7 @@
           "intent": "reflection",
           "chromePreset": "participant",
           "title": "Check-in vašeho týmu",
-          "body": "Pět minut u stolu. Porovnejte, co jste napsali. Potom jeden z vás napíše check-in týmu do karty týmu na participant ploše. Krátce, upřímně – dvě nebo tři věty stačí. Stává se součástí záznamu týmu.",
+          "body": "Pět minut u stolu. Porovnejte, co jste napsali. Potom jeden z vás napíše check-in týmu do karty týmu na ploše pro účastníky. Krátce, upřímně – dvě nebo tři věty stačí. Stává se součástí záznamu týmu.",
           "facilitatorNotes": [
             "Append-only log check-inů je tady nosný – záznam přežije celý den."
           ],
@@ -1268,7 +1268,7 @@
                 {
                   "id": "checkin-write",
                   "title": "Jeden z vás to napíše (1 min).",
-                  "body": "Na participant ploše, do pole check-inu týmu. Uloží se automaticky a zůstane součástí záznamu týmu."
+                  "body": "Na ploše pro účastníky, do pole check-inu týmu. Uloží se automaticky a zůstane součástí záznamu týmu."
                 }
               ]
             },
@@ -1348,10 +1348,10 @@
       "kind": "shared",
       "intent": "transition",
       "goal": "Zastavit flow před odpoledním posunem a připravit týmy na to, že repo musí být čitelné i bez nich.",
-      "roomSummary": "Před obědem mají týmy uklidit kontext, dopsat další bezpečný krok a připravit repo na odpolední návaznost. Oběd není pauza od předání.",
+      "roomSummary": "Před obědem mají týmy uklidit kontext, dopsat další bezpečný krok a připravit repo na odpolední návaznost. Oběd není pauza od čerstvého čtení a další spolupráce.",
       "facilitatorPrompts": [
-        "Předání není závěr dne. Je to průběžná podmínka celé práce.",
-        "Dopište, co má další tým číst jako první.",
+        "Čerstvý čtenář není závěr dne. Je to průběžná podmínka celé práce.",
+        "Dopište, co má čerstvý čtenář číst jako první.",
         "Pokud nějaké pravidlo padlo dvakrát nahlas, patří do repa."
       ],
       "watchFors": [
@@ -1360,7 +1360,7 @@
         "Repo polední stav nevysvětluje."
       ],
       "checkpointQuestions": [
-        "Co má další tým číst jako první?",
+        "Co má čerstvý čtenář číst jako první?",
         "Je z repa poznat, co je hotové, co je hypotéza a jaký je další bezpečný krok?",
         "Co ještě žije jen v hovoru a musí do repa?"
       ],
@@ -1437,7 +1437,7 @@
       "watchFors": [
         "Původní tým začíná dovysvětlovat ústně.",
         "Nový tým hned edituje první soubor bez mapy situace.",
-        "Facilitátor zachraňuje slabý signál v repu mluveným předáním."
+        "Facilitátor zachraňuje slabý signál v repu mluveným dovysvětlením."
       ],
       "checkpointQuestions": [
         "Co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok?",
@@ -1464,12 +1464,12 @@
       "scenes": [
         {
           "id": "rotation-not-yours-anymore",
-          "label": "Vaše repo už není vaše",
+          "label": "Vaše repo zůstává vaše",
           "sceneType": "briefing",
           "intent": "framing",
           "chromePreset": "minimal",
-          "title": "Vaše repo už není vaše",
-          "body": "Po zbytek dne pracujete v repu, které postavil jiný tým ráno. Jiný tým pracuje ve vašem. Jména týmů – a kotvy, které je značí – zůstávají na svých místech. Lidé se pohybují. Všechno, co jste přes oběd nechali v repu, je všechno, co nový tým má.",
+          "title": "Vaše repo zůstává vaše",
+          "body": "Odpoledne pokračujete ve stejném repu jako ráno. Mění se jen to, kdo s vámi sedí. Týmy se úplně promíchají. V novém týmu budou v prvním pracovním bloku obvykle nejvíc spolupracovat dva lidé, ale čtyřčlenný tým si pořád porovnává poznámky společně. Právě tahle nová struktura ukáže, co je z repa čitelné a co je pořád jen ve vaší hlavě.",
           "facilitatorNotes": [
             "Odhalovací moment. Držte ho klidný a přímý."
           ],
@@ -1484,26 +1484,26 @@
               "id": "rotation-reveal-hero",
               "type": "hero",
               "eyebrow": "Odpolední test",
-              "title": "Vaše repo už není vaše",
-              "body": "Po zbytek dne pracujete v repu, které postavil jiný tým ráno. Jiný tým pracuje ve vašem. Všechno, co jste přes oběd nechali v repu, je všechno, co nový tým má."
+              "title": "Vaše repo zůstává vaše",
+              "body": "Repo si necháváte. Mění se jen to, kteří čerství čtenáři a spolupracovníci teď kolem něj sedí."
             },
             {
               "id": "rotation-always-the-plan-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Není to podraz. Je to test.",
-              "body": "Úvod řekl, že budete předávat a přebírat. Oběd byl brána. Cokoli jste v poledne nechali v repu, je všechno, co nový tým má. Cokoli vám zůstalo v hlavě – oni to nikdy neuslyší. Na tohle jsme trénovali."
+              "title": "Není to měkčí verze. Je to přesnější test.",
+              "body": "Úvod neříkal, že si musíte navždy vyměnit repa. Říkal, že repo musí unést čerstvého čtenáře. Oběd je pořád brána. Test zní: pochopí nový člověk vaše repo naslepo a pomůže ho posunout dál bez komentované prohlídky?"
             }
           ]
         },
         {
           "id": "rotation-line-up",
-          "label": "Postavte se do řady, rozpočítejte se, jděte ke kotvě",
+          "label": "Postavte se do řady, rozpočítejte se, vytvořte nové týmy",
           "sceneType": "transition",
           "intent": "activation",
           "chromePreset": "participant",
-          "title": "Postavte se do řady, rozpočítejte se, jděte ke kotvě",
-          "body": "Vyvolám odpočítávání – stejný tvar jako ráno. Postavte se u své staré kotvy, odpočítejte se jedna až N a zapamatujte si své číslo. Když řeknu „jedeme“, všichni se stejným číslem si u odpovídající kotvy utvoří nový tým. Repo, historie i check-in už tam čekají.",
+          "title": "Postavte se do řady, rozpočítejte se, vytvořte nové týmy",
+          "body": "Vyvolám odpočítávání, stejný tvar jako ráno. Postavte se u své staré kotvy, odpočítejte se jedna až N a zapamatujte si své číslo. Když řeknu „jedeme“, všichni se stejným číslem utvoří u odpovídající kotvy nový tým. Každý si s sebou bere své vlastní repo. Nejdřív číst, pak porovnat poznámky a teprve potom si v týmu určit, kteří dva lidé budou v prvním bloku spolupracovat nejvíc, zatímco čtyřčlenný tým zůstává sladěný.",
           "facilitatorNotes": [
             "Fyzický pohyb. Pravidlo ticha vynucujte jemně, ale důsledně."
           ],
@@ -1518,8 +1518,8 @@
               "id": "rotation-move-hero",
               "type": "hero",
               "eyebrow": "Ten pohyb",
-              "title": "Postavte se do řady, rozpočítejte se, jděte ke kotvě",
-              "body": "Stejný mechanismus jako ráno. Vaše číslo vám řekne, k jaké kotvě jít."
+              "title": "Postavte se do řady, rozpočítejte se, vytvořte nové týmy",
+              "body": "Stejný mechanismus jako ráno. Vaše číslo vám řekne, do kterého promíchaného týmu jdete."
             },
             {
               "id": "rotation-move-steps",
@@ -1528,7 +1528,7 @@
                 {
                   "id": "move-stand",
                   "title": "Postavte se u své staré kotvy.",
-                  "body": "Laptop, blok, cokoli budete potřebovat – vezměte si to s sebou."
+                  "body": "Laptop, blok, cokoli potřebujete pro své vlastní repo, vezměte si to s sebou."
                 },
                 {
                   "id": "move-count",
@@ -1538,12 +1538,12 @@
                 {
                   "id": "move-walk",
                   "title": "Jděte ke kotvě se svým číslem.",
-                  "body": "Všechny jedničky ke Kotvě 1, všechny dvojky ke Kotvě 2 a tak dále. Repo, check-in z Intermezza 1 i jméno týmu už tam čekají."
+                  "body": "Všechny jedničky ke Kotvě 1, všechny dvojky ke Kotvě 2 a tak dále. Každý nový tým si přináší vlastní repa. První úkol je přečíst je naslepo."
                 },
                 {
                   "id": "move-introduce",
-                  "title": "Představte se – pořádně (3–5 min).",
-                  "body": "Tři věci od každého: (1) jméno a jedna věc, která vás na softwaru zajímá, (2) jedna věc, kterou si přinášíte ze starého týmu, (3) jedna věc, kterou chcete o tomhle novém repu vědět."
+                  "title": "Představte se, pak určete první pracovní dvojici (3–5 min).",
+                  "body": "Jméno, jedna věc, která vás na softwaru zajímá, a jedna věc, kterou chcete, aby čerstvý čtenář pochopil z vašeho repa bez pomoci. Pak si v týmu určete, kteří dva lidé budou v prvním bloku spolupracovat nejvíc. Čtyřčlenný tým ale zůstává pohromadě pro porovnání a 1,2,4,all."
                 }
               ]
             },
@@ -1551,8 +1551,8 @@
               "id": "rotation-silence-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Vaše staré repo už není vaše. Nepomáhejte.",
-              "body": "Opouštíte repo starého týmu. Lidé, kteří tam přicházejí, ho musí přečíst naslepo. Když vás chytí pohledem, usmějte se a ukažte na repo. Ticho je test – i pro vás."
+              "title": "Vaše repo zůstává vaše. Zatím ho nekomentujte.",
+              "body": "Člověk vedle vás ho musí nejdřív přečíst naslepo. Když se na vás podívá, usmějte se a ukažte na repo. Ticho je test, i pro vás."
             }
           ]
         },
@@ -1579,7 +1579,7 @@
             {
               "id": "rotation-read-hero",
               "type": "hero",
-              "eyebrow": "Teď sedíte v práci jiného týmu",
+              "eyebrow": "Teď vedle vás sedí čerstvý čtenář",
               "title": "Každá čerstvá session agenta je rotace",
               "body": "Přečíst repo cizince naslepo vypadá stejně jako každá čerstvá session agenta. Tenhle pohyb si teď jdete natrénovat."
             },
@@ -1594,8 +1594,8 @@
                 },
                 {
                   "id": "quiet-diagnose",
-                  "title": "Diagnóza, záznam a start (5 min).",
-                  "body": "U nového stolu pojmenujte, co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok. Zapište to do karty týmu, přidejte nové složení týmu a začněte od nejbezpečnějšího důkazu, který vidíte."
+                  "title": "Diagnóza, porovnání a start (5 min).",
+                  "body": "Jako nový promíchaný tým pojmenujte, co pomáhá, co chybí, co je rizikové a jaký je další bezpečný krok v repech, kolem kterých teď budete pracovat. Zapište nejostřejší diagnózu do karty týmu, pak určete první pracovní dvojici a pokračujte od nejbezpečnějšího důkazu, který vidíte."
                 }
               ]
             }
@@ -1611,21 +1611,21 @@
       "startTime": "13:45",
       "kind": "team",
       "intent": "build",
-      "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepšího ověřování a lepšího předání.",
-      "roomSummary": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli systém kolem agenta a repa opravdu unese nový tým.",
+      "goal": "Pokračovat ve vlastním repu po čerstvém přečtení zvenčí a přetavit zjištěné tření do lepší mapy, lepšího ověřování a lepšího pokračování.",
+      "roomSummary": "Druhá build fáze není jen pokračování práce. Je to zkouška, jestli každé repo a workflow kolem agenta rychle zorientuje promíchaný tým.",
       "facilitatorPrompts": [
-        "Nepomáhejte týmům ústním předáním nahrazovat slabý signál v repu.",
-        "Pojmenujte, co musí být po rotaci dopsáno, zpřesněno nebo ověřeno.",
+        "Nepomáhejte promíchaným týmům komentovanou prohlídkou nahrazovat slabý signál v repu.",
+        "Pojmenujte, co musí být po tichém čtení dopsáno, zpřesněno nebo ověřeno.",
         "Každá opakující se bolest je kandidát na lepší template, ověření nebo runbook."
       ],
       "watchFors": [
-        "Tým jen opravuje chaos, ale neproměňuje ho v lepší návod pro další práci.",
+        "Promíchaný tým jen zalepí zmatek, ale nepřetaví ho v lepší návod.",
         "Slabý signál v repu se pořád zachraňuje hovorem.",
-        "Chybí explicitní nová verifikace po převzetí práce."
+        "Chybí explicitní nové ověření po čerstvém přečtení."
       ],
       "checkpointQuestions": [
-        "Jaký signál v repu vám nejvíc pomohl navázat?",
-        "Co po rotaci musíte dopsat nebo zpřesnit?",
+        "Jaký signál v repu promíchanému týmu nejrychleji pomohl se zorientovat?",
+        "Co musíte po tichém čtení dopsat nebo zpřesnit?",
         "Jaké další ověření teď potřebujete, abyste mohli bezpečně pokračovat?"
       ],
       "sourceRefs": [
@@ -1639,13 +1639,16 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Navázat po rotaci jen ze signálů zapsaných v repu a přetavit frustraci do lepší mapy, lepšího ověřování a lepšího předání.",
+        "goal": "Pokračovat ve vlastním repu po čerstvém přečtení zvenčí a přetavit zjištěné tření do lepší mapy, lepšího ověřování a lepšího pokračování.",
         "say": [
-          "Když agent generuje testy jako součást stejného úkolu, ty testy odrážejí jeho interpretaci, ne vaši specifikaci. Nezávislé ověření znamená: done criteria jste napsali vy, nebo výstup vyhodnocuje nezávislá kontrola."
+          "Nepomáhejte promíchaným týmům komentovanou prohlídkou nahrazovat slabý signál v repu.",
+          "Pojmenujte, co musí být po tichém čtení dopsáno, zpřesněno nebo ověřeno.",
+          "Každá opakující se bolest je kandidát na lepší template, ověření nebo runbook.",
+          "Když agent v rámci stejného tasku vygeneruje i testy, ty testy odrážejí jeho interpretaci zadání, ne vaše specifikace. Nezávislé ověření znamená: buď jste napsali done criteria vy, nebo výstup hodnotí jiná kontrola."
         ],
         "show": [],
         "do": [
-          "Začněte codifikační pauzou. 5 minut. Teprve po zakódování alespoň jednoho bodu tření pokračujte v budování."
+          "Začněte kodifikační pauzou. 5 minut. Teprve až každé repo zachytí aspoň jedno slabé místo, promíchaný tým začne první pracovní blok."
         ],
         "watch": [],
         "fallback": []
@@ -1659,7 +1662,7 @@
           "intent": "transition",
           "chromePreset": "minimal",
           "title": "Stejné hodiny, nový kontext",
-          "body": "Jste u nové kotvy, s novým týmem, v novém repu. Deset minut nejdřív čtení – bez klávesnice. Potom zachyťte to, co vás zaskočilo, aby další hodina byla čistá. Potom stavět. Osmdesát pět minut práce, rozdělené dvacetiminutovou pauzou ve 14:30. Facilitátoři chodí, recovery na jedno kliknutí.",
+          "body": "Jste u nové kotvy, v promíchaném týmu a s čerstvým pohledem na repa. Deset minut nejdřív čtení, bez klávesnice. Potom zachyťte to, co vás zaskočilo, aby další hodina byla čistá. Potom stavět. Osmdesát pět minut práce, rozdělené dvacetiminutovou pauzou ve 14:30. Facilitátoři chodí, recovery na jedno kliknutí.",
           "facilitatorNotes": [
             "30vteřinový kickoff. Zrcadlí Scénu 4.1."
           ],
@@ -1685,7 +1688,7 @@
           "sceneType": "checkpoint",
           "intent": "build",
           "chromePreset": "participant",
-          "title": "První push: převzít, uklidit, shipnout",
+          "title": "První push: přečíst, uklidit, shipnout",
           "body": "Build fáze 2 začíná čtením a zápisem tření. Druhý push má vlastní scénu až po intermezzu.",
           "facilitatorNotes": [
             "Výchozí ambient scéna pro první push Buildu 2.",
@@ -1703,7 +1706,7 @@
               "id": "build-2a-hero-ship",
               "type": "hero",
               "eyebrow": "Build fáze 2",
-              "title": "První push: převzít, uklidit, shipnout",
+              "title": "První push: přečíst, uklidit, shipnout",
               "body": "Stejný cíl jako ráno. Jeden nový pohyb: zapište tření rychle, aby první push začal čistě."
             },
             {
@@ -1713,7 +1716,7 @@
                 {
                   "id": "b2a-quiet",
                   "title": "13:45–14:00 · Číst a zachytit tření.",
-                  "body": "Nejdřív bez klávesnice. Přečtěte si repo, napište diagnózu a nové složení týmu do karty a pak opravte největší chybějící vodítko, pravidlo nebo kontrolu."
+                  "body": "Nejdřív bez klávesnice. Přečtěte si repo, napište diagnózu a aktuální složení týmu do karty a pak opravte největší chybějící vodítko, pravidlo nebo kontrolu. Potom si určete první pracovní dvojici."
                 },
                 {
                   "id": "b2a-first-push",
@@ -1911,7 +1914,7 @@
                 {
                   "id": "i2-write",
                   "title": "Jeden z vás to napíše (1 min).",
-                  "body": "Na participant ploše, připojené k check-inu z Intermezza 1 a k diagnóze z prvního kroku Buildu 2."
+                  "body": "Na ploše pro účastníky, připojené k check-inu z Intermezza 1 a k diagnóze z prvního kroku Buildu 2."
                 }
               ]
             },
@@ -2122,11 +2125,11 @@
       "startTime": "15:45",
       "kind": "shared",
       "intent": "reflection",
-      "goal": "Uzavřít den přes konkrétní signály, díky kterým práce unese předání, a převést je do další praxe i do lepšího workshopového systému.",
-      "roomSummary": "Závěr a reflexe nejsou soutěž týmů. Sledujeme, co práci při předání drží a co ji brzdí.",
+      "goal": "Uzavřít den přes konkrétní signály, díky kterým šlo po rotaci a čerstvém čtení bezpečně navázat, a převést je do další praxe i do lepšího workshopového systému.",
+      "roomSummary": "Závěr a reflexe nejsou soutěž týmů. Sledujeme, co práci po rotaci drží a co ji brzdí.",
       "facilitatorPrompts": [
         "Nehodnotíme, který tým byl lepší.",
-        "Díváme se na systém: které signály pomáhají práci přežít předání a které ji brzdí.",
+        "Díváme se na systém: které signály pomáhají práci po rotaci navázat a které ji brzdí.",
         "Sbíráme konkrétní příklady, ne obecné dojmy."
       ],
       "watchFors": [
@@ -2146,7 +2149,7 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Uzavřít den přes konkrétní signály, díky kterým práce unese předání, a převést je do další praxe i do lepšího workshopového systému.",
+        "goal": "Uzavřít den přes konkrétní signály, díky kterým šlo po rotaci a čerstvém čtení bezpečně navázat, a převést je do další praxe i do lepšího workshopového systému.",
         "say": [
           "Tyhle postupy jsou nezávislé na nástroji. Až si příště sáhnete po jakémkoli toolchainu, principy platí: kontext v trasovaných artefaktech, plán před pohybem, ověření před důvěrou."
         ],
@@ -2215,7 +2218,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Nejde o výherce.",
-              "body": "Hledáme signály, které pomáhají práci přežít předání, a ty, které se pod tlakem lámou. Každá opakovaná bolest napříč týmy je kandidát na lepší šablonu, kontrolu nebo runbook – ne týmový fail."
+              "body": "Hledáme signály, které pomáhají práci unést čerstvý vstup dalších lidí, a ty, které se pod tlakem lámou. Každá opakovaná bolest napříč týmy je kandidát na lepší šablonu, kontrolu nebo runbook – ne týmový fail."
             }
           ]
         },
@@ -2382,7 +2385,7 @@
             {
               "id": "reveal-save-hero",
               "type": "hero",
-              "eyebrow": "Ať to přežije",
+              "eyebrow": "Ať to vydrží",
               "title": "Dejte ho tam, kde ho příště uvidíte",
               "body": "Vyberte jedno místo a uložte to teď. Nespoléhejte na paměť."
             },
@@ -2398,7 +2401,7 @@
               "type": "callout",
               "tone": "info",
               "title": "Nezávislé na nástroji.",
-              "body": "Všechno, co jste dnes trénovali, funguje s jakýmkoli coding agentem. Na repu záleží. Na ověření záleží. Na předání záleží. Nástroj ne."
+              "body": "Všechno, co jste dnes trénovali, funguje s jakýmkoli coding agentem. Na repu záleží. Na ověření záleží. Na tom, co unese čerstvý čtenář, záleží. Nástroj ne."
             }
           ]
         },
@@ -2450,7 +2453,7 @@
         "userStories": [
           "Jako reviewer chci z diffu rychle získat checklist změněných hranic, rizik, otázek a míst, na která se zaměřit.",
           "Jako autor změny chci vědět, co mám ověřit ještě před samotným review.",
-          "Jako tým po rotaci chci navázat na heuristiky, které původní tým objevil, místo abych je znovu vymýšlel."
+          "Jako někdo, kdo k repu přichází čerstvě, chci navázat na heuristiky, které už tým objevil, místo abych je znovu vynalézal."
         ],
         "architectureNotes": [
           "Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → rozbor → checklist`.",
@@ -2469,11 +2472,11 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.\n\nVaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil předání na jiný tým a nerozsypal se po přidání dalšího commandu.",
+        "problem": "Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.\n\nVaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby zůstal čitelný i po čerstvém přečtení a nerozsypal se po přidání dalšího commandu.",
         "userStories": [
           "Jako vývojář chci jedním příkazem převést log nebo JSON do čitelné podoby.",
           "Jako vývojář chci rychle dohledat podezřelé commity, větve nebo změny bez ručního skládání git příkazů.",
-          "Jako tým chci mít příkazy i způsob práce popsané tak, aby po rotaci mohl bez zmatku pokračovat někdo jiný."
+          "Jako tým chci mít příkazy i způsob práce popsané tak, aby se v tom čerstvý spolupracovník rychle zorientoval."
         ],
         "architectureNotes": [
           "Jazyk i framework si zvolte sami, ale CLI musí být snadno spustitelné a snadno objevitelné.",
@@ -2489,16 +2492,16 @@
           "Nový tým zvládne během 10 minut přidat nebo opravit další command.",
           "Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu."
         ],
-        "firstAgentPrompt": "Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command."
+        "firstAgentPrompt": "Nejdřív navrhněte minimální architekturu, která unese čerstvé přečtení. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command."
       },
       {
         "id": "doc-generator",
         "title": "Doc Generator",
-        "problem": "Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po předání pak nový tým neví, čemu má věřit a co je jen odhad.\n\nVaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.",
+        "problem": "Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po čerstvém přečtení pak člověk, který k repu přijde čerstvě, neví, čemu má věřit a co je jen odhad.\n\nVaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.",
         "userStories": [
           "Jako vývojář chci z projektu rychle získat základní technickou dokumentaci bez ručního sepisování všeho od nuly.",
           "Jako reviewer chci během 5 minut pochopit strukturu modulů a hlavní vstupní body.",
-          "Jako tým po rotaci chci objevit architekturu projektu bez dlouhého pátrání po souvislostech."
+          "Jako někdo, kdo k repu přichází čerstvě, chci objevit architekturu projektu bez dlouhého pátrání po souvislostech."
         ],
         "architectureNotes": [
           "Vstup může být lokální repo, seed adresář nebo zjednodušený dataset.",
@@ -2519,11 +2522,11 @@
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.\n\nVaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i po předání na jiný tým.",
+        "problem": "Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.\n\nVaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i pro čerstvého spolupracovníka.",
         "userStories": [
           "Jako tým chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.",
           "Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.",
-          "Jako tým po rotaci chci během 10 minut pochopit strukturu dat, komponent i obrazovek."
+          "Jako někdo, kdo k repu přichází čerstvě, chci během 10 minut pochopit strukturu dat, komponent i obrazovek."
         ],
         "architectureNotes": [
           "Vzorová data a UI oddělte hned od prvního commitu.",
@@ -2539,7 +2542,7 @@
           "Nový tým zvládne rozšířit dashboard bez rozbití struktury.",
           "Layout je čitelný na mobilu i na velkém projekčním plátně a v `README` je popsáno, jak obojí ověřit."
         ],
-        "firstAgentPrompt": "Navrhněte dashboard, který zvládne předání. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI."
+        "firstAgentPrompt": "Navrhněte dashboard, který unese čerstvé přečtení. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI."
       },
       {
         "id": "standup-bot",
@@ -2548,7 +2551,7 @@
         "userStories": [
           "Jako team lead chci sesbírat standup odpovědi do jednoho přehledného souhrnu.",
           "Jako vývojář chci rychle vidět blokery, návaznosti a témata, která potřebují domluvu.",
-          "Jako tým po rotaci chci pochopit datový tok i integrační body bez ústního předání."
+          "Jako někdo, kdo k repu přichází čerstvě, chci pochopit datový tok i integrační body bez ústního dovysvětlení."
         ],
         "architectureNotes": [
           "Upřednostněte jasný datový model před složitou integrací.",
@@ -2561,7 +2564,7 @@
           "Nástroj umí ingestovat vzorová data a vytvořit čitelný souhrn.",
           "Výstup zvýrazní blokery nebo položky, které potřebují pozornost.",
           "Repo obsahuje instrukce, jak řešení napojit na reálný chat nebo jiný vstupní kanál.",
-          "Po rotaci může nový tým pokračovat v práci z README a `AGENTS.md` bez ústního předání.",
+          "Člověk, který repo otevře čerstvě, může pokračovat v práci z README a `AGENTS.md` bez ústního dovysvětlení.",
           "Výstup jasně odliší, co nástroj ví jistě a co je jen heuristický návrh."
         ],
         "firstAgentPrompt": "Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který nový tým otevře jako první. Až potom navrhněte implementační kroky."
@@ -2573,7 +2576,7 @@
         "title": "Vytvořte AGENTS.md jako mapu",
         "category": "Context Engineering",
         "phaseHint": "before-lunch",
-        "description": "Zapište cíl, build/test postup, trvalá pravidla a kam má další tým sáhnout jako první."
+        "description": "Zapište cíl, build/test postup, trvalá pravidla a kam má nový člověk sáhnout jako první."
       },
       {
         "id": "review-skill",

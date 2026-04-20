@@ -4,7 +4,7 @@
 
 - Context is not cosmetics. It is a working system.
 - `AGENTS.md`, skills, and runbooks are not extra garnish. They are tools that help a team keep direction.
-- A good handoff is visible when the next team can start work without verbal backfilling.
+- Clean continuation is visible when a fresh reader can start work without verbal backfilling.
 
 ## 3 things to take out of the room
 
@@ -18,7 +18,7 @@
 - Add build and test commands plus a `Done When` section.
 - Move one durable rule from a prompt into the repo.
 - After a larger change, try writing a short runbook for the next person.
-- After one handoff or review, write down what the next team actually needed and what was missing.
+- After a reshuffle or review, write down what a fresh reader actually needed and what was missing.
 
 ## Your commitment
 
