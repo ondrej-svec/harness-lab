@@ -128,6 +128,7 @@ export const publicCopy = {
     quoteSourceUnknown: "zdroj neuveden",
     invalidCode: "Kód místnosti nesedí. Použijte kód, který facilitátor sdílí pro tuhle místnost.",
     expiredCode: "Tomuhle kódu místnosti vypršela platnost. Facilitátor musí vydat nový nebo ho obnovit.",
+    rateLimitedCode: "Příliš mnoho pokusů o vstup. Zkuste to znovu za chvíli.",
     unknownCodeError: "Privátní kontext místnosti se nepodařilo odemknout.",
   },
   en: {
@@ -248,6 +249,7 @@ export const publicCopy = {
     quoteSourceUnknown: "source not specified",
     invalidCode: "The event code does not match. Use the code shared by the facilitator for this room.",
     expiredCode: "This event code has expired. The facilitator must issue a new one or restore it.",
+    rateLimitedCode: "Too many attempts. Please wait a moment and try again.",
     unknownCodeError: "The private room context could not be unlocked.",
   },
 } satisfies Record<UiLanguage, Record<string, string>>;

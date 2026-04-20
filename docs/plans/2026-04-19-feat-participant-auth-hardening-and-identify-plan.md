@@ -301,14 +301,14 @@ Each phase ships as its own PR.
 
 ### Phase 2 — Guards in redeemEventCode
 
-- [ ] Refactor `lib/event-access.ts:redeemEventCode` to accept a `Request` (or a context object carrying `headers` + `origin` + `url`). Call `isTrustedOrigin` + `checkBotId` + `isRedeemRateLimited` before the DB lookup. On rate-limit, return `{ ok: false, reason: "rate_limited" }`.
-- [ ] Update `app/api/event-access/redeem/route.ts` to pass the request through instead of calling the guards itself; delete the now-duplicate guard calls in the route.
-- [ ] Update `app/page.tsx:redeemEventCodeAction` to pass its request context. Server actions can reach `headers()` from `next/headers`. For the origin field, derive from the `x-forwarded-host` + `x-forwarded-proto` headers via `getRequestOrigin` (already used in sign-in page).
-- [ ] Update `app/page.tsx`'s `!result.ok` branch to redirect with `?eventAccess=rate_limited` when that reason fires.
-- [ ] Update `lib/ui-language.ts` to add a localized error message for `rate_limited` alongside `invalid_code` / `expired_code`.
-- [ ] Unit tests: both the server action and the API route hit the rate-limit guard after 5 failures.
-- [ ] Playwright: no new test needed; existing redeem specs should still pass.
-- [ ] Full test suite green.
+- [x] Refactor guard orchestration into `lib/redeem-guard.ts:guardedRedeemEventCode`. Runs `isTrustedOrigin` + `checkBotId` + `isRedeemRateLimited` before `redeemEventCode`, records the attempt after. New failure reasons: `untrusted_origin`, `rate_limited`. (Kept `redeemEventCode` pure — tests and background callers unchanged; HTTP-surface callers funnel through `guardedRedeemEventCode`.)
+- [x] Update `app/api/event-access/redeem/route.ts` to use `guardedRedeemEventCode`; dropped the inline origin/bot/rate-limit/attempt calls.
+- [x] Update `app/page.tsx:redeemEventCodeAction` to build a `Request` via `buildServerActionRequest()` (reads `next/headers`) and call `guardedRedeemEventCode`.
+- [x] `!result.ok` branch: server action redirects with `?eventAccess=<reason>` for every reason, including `rate_limited` and `untrusted_origin`.
+- [x] `lib/ui-language.ts` gains `rateLimitedCode` (cs + en); `formatEventAccessError` maps `rate_limited`.
+- [x] Unit tests: `lib/redeem-guard.test.ts` covers untrusted origin, rate-limit threshold, success path, and failure-attempt recording. Existing route tests still pass.
+- [x] Full unit suite green (378 / 378).
+- [ ] Playwright sweep deferred to end-of-phase verification.
 - [ ] ⎘ Commit: `fix: centralize redeem guards inside redeemEventCode`.
 
 ### Phase 3 — Cookie secure flag — PARTIAL

@@ -1,41 +1,9 @@
 import { NextResponse } from "next/server";
-import { checkBotId } from "botid/server";
-import { getParticipantSessionCookieOptions, participantSessionCookieName, redeemEventCode } from "@/lib/event-access";
-import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
-import { isRedeemRateLimited, recordRedeemAttempt } from "@/lib/redeem-rate-limit";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
-import { emitRuntimeAlert } from "@/lib/runtime-alert";
+import { getParticipantSessionCookieOptions, participantSessionCookieName } from "@/lib/event-access";
+import { guardedRedeemEventCode } from "@/lib/redeem-guard";
+import { untrustedOriginResponse } from "@/lib/request-integrity";
 
 export async function POST(request: Request) {
-  if (
-    !isTrustedOrigin({
-      originHeader: request.headers.get("origin"),
-      hostHeader: request.headers.get("host"),
-      forwardedHostHeader: request.headers.get("x-forwarded-host"),
-      requestUrl: request.url,
-    })
-  ) {
-    return untrustedOriginResponse();
-  }
-
-  const botCheck = await checkBotId();
-  if (botCheck.isBot) {
-    emitRuntimeAlert({
-      category: "participant_redeem_bot_signal",
-      severity: "warning",
-      instanceId: getCurrentWorkshopInstanceId(),
-    });
-  }
-
-  if (await isRedeemRateLimited(request)) {
-    emitRuntimeAlert({
-      category: "participant_redeem_rate_limited",
-      severity: "warning",
-      instanceId: getCurrentWorkshopInstanceId(),
-    });
-    return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
-  }
-
   const contentType = request.headers.get("content-type") ?? "";
   let eventCode = "";
   let displayName: string | undefined;
@@ -54,15 +22,24 @@ export async function POST(request: Request) {
     }
   }
 
-  const result = await redeemEventCode(eventCode, displayName);
-  await recordRedeemAttempt(request, result.ok ? "success" : "failure");
+  const result = await guardedRedeemEventCode(eventCode, displayName, request);
 
   if (!result.ok) {
+    if (result.reason === "untrusted_origin") {
+      return untrustedOriginResponse();
+    }
+    if (result.reason === "rate_limited") {
+      if (contentType.includes("application/json")) {
+        return NextResponse.json({ ok: false, error: "rate_limited" }, { status: 429 });
+      }
+      const url = new URL("/", request.url);
+      url.searchParams.set("eventAccess", "rate_limited");
+      return NextResponse.redirect(url, { status: 303 });
+    }
     const status = result.reason === "invalid_display_name" ? 400 : 401;
     if (contentType.includes("application/json")) {
       return NextResponse.json({ ok: false, error: result.reason }, { status });
     }
-
     const url = new URL("/", request.url);
     url.searchParams.set("eventAccess", result.reason);
     return NextResponse.redirect(url, { status: 303 });

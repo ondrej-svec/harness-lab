@@ -4,8 +4,8 @@ import {
   getConfiguredEventCode,
   getParticipantSessionCookieOptions,
   participantSessionCookieName,
-  redeemEventCode,
 } from "@/lib/event-access";
+import { buildServerActionRequest, guardedRedeemEventCode } from "@/lib/redeem-guard";
 import {
   buildPublicAccessPanelState,
   buildPublicFooterLinks,
@@ -23,7 +23,12 @@ async function redeemEventCodeAction(formData: FormData) {
   "use server";
   const lang = resolveUiLanguage(String(formData.get("lang") ?? ""));
 
-  const result = await redeemEventCode(String(formData.get("eventCode") ?? ""));
+  const request = await buildServerActionRequest();
+  const result = await guardedRedeemEventCode(
+    String(formData.get("eventCode") ?? ""),
+    undefined,
+    request,
+  );
 
   if (!result.ok) {
     redirect(withLang(`/?eventAccess=${result.reason}`, lang));

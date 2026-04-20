@@ -624,6 +624,10 @@ export function formatEventAccessError(value: string, copy: PublicCopy) {
       return copy.invalidCode;
     case "expired_code":
       return copy.expiredCode;
+    case "rate_limited":
+      return copy.rateLimitedCode;
+    case "untrusted_origin":
+      return copy.unknownCodeError;
     default:
       return copy.unknownCodeError;
   }
