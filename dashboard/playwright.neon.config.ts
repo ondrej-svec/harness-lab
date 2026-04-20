@@ -104,7 +104,6 @@ export default defineConfig({
     env: {
       HARNESS_STORAGE_MODE: "neon",
       HARNESS_DATABASE_URL: DATABASE_URL,
-      HARNESS_WORKSHOP_INSTANCE_ID: "playwright-neon-mode",
       HARNESS_EVENT_CODE_SECRET: eventCodeSecret,
       NEON_AUTH_BASE_URL,
       NEON_AUTH_COOKIE_SECRET,

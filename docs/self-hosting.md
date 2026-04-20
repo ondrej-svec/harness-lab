@@ -89,7 +89,6 @@ Hosted mode requires `HARNESS_STORAGE_MODE=neon` and a private runtime database.
 Common hosted variables:
 
 - `HARNESS_STORAGE_MODE`
-- `HARNESS_WORKSHOP_INSTANCE_ID`
 - `HARNESS_DATABASE_URL`
 - `NEON_AUTH_BASE_URL`
 - `NEON_AUTH_COOKIE_SECRET`

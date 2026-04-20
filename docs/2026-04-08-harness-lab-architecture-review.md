@@ -6,6 +6,10 @@
 **Audience:** Ondrej (sole developer), hackathon readiness, future handoff
 **Prior review:** `docs/2026-04-06-private-workshop-instance-architecture-review.md` (Codex, focused on private runtime)
 
+> **Superseded 2026-04-20:** the `HARNESS_WORKSHOP_INSTANCE_ID` active-instance
+> env var listed below has been retired. See
+> `docs/plans/2026-04-20-refactor-retire-current-workshop-instance-singleton-plan.md`.
+
 ---
 
 ## Architecture Decision Records

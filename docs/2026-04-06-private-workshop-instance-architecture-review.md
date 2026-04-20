@@ -5,6 +5,13 @@ Author: Codex
 Repo root: `..`
 Audience: repo owner / future CTO handoff / operators shipping the private workshop-instance runtime
 
+> **Superseded 2026-04-20:** the `HARNESS_WORKSHOP_INSTANCE_ID` singleton env
+> var described here has been retired. Flat API routes now derive their
+> instance from the participant session cookie or a required `instanceId`
+> body/query param; admin facilitators moved under
+> `/api/workshop/instances/{id}/facilitators`. See
+> `docs/plans/2026-04-20-refactor-retire-current-workshop-instance-singleton-plan.md`.
+
 ## Assumed Constraints
 
 This review assumes:
