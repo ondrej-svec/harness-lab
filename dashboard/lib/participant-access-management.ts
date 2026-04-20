@@ -1,6 +1,5 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { getAuditLogRepository } from "./audit-log-repository";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import {
   getConfiguredSeedEventCode,
   getParticipantEventAccessRepository,
@@ -131,7 +130,7 @@ function resolveRecoverableCurrentCode(codeHash: string, sampleCode?: string | n
   };
 }
 
-export async function getFacilitatorParticipantAccessState(instanceId = getCurrentWorkshopInstanceId()): Promise<FacilitatorParticipantAccessState> {
+export async function getFacilitatorParticipantAccessState(instanceId: string): Promise<FacilitatorParticipantAccessState> {
   const access = await getParticipantEventAccessRepository().getActiveAccess(instanceId);
   if (!access) {
     return {
@@ -166,7 +165,7 @@ export async function issueParticipantEventAccess(
     expiresAt?: string;
     actorNeonUserId?: string | null;
   } = {},
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const repository = getParticipantEventAccessRepository();
   const current = await repository.getActiveAccess(instanceId);

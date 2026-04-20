@@ -113,7 +113,7 @@ export type ActivePollSummary = {
   }>;
 };
 
-async function getBaseWorkshopState(instanceId = getCurrentWorkshopInstanceId()) {
+async function getBaseWorkshopState(instanceId: string) {
   return getWorkshopStateRepository().getState(instanceId);
 }
 
@@ -770,7 +770,7 @@ export async function getWorkshopState(instanceId = getCurrentWorkshopInstanceId
 
 export async function updateWorkshopState(
   updater: (state: WorkshopState) => WorkshopState,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ): Promise<WorkshopState> {
   const current = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
   const next = normalizeStoredWorkshopState(updater(current));
@@ -801,7 +801,7 @@ export async function setCurrentAgendaItem(itemId: string, instanceId = getCurre
 export async function setLiveRoomScene(
   agendaItemId: string,
   sceneId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(state.agenda, agendaItemId);
@@ -836,7 +836,7 @@ export async function setLiveRoomScene(
 export async function setLiveParticipantMomentOverride(
   agendaItemId: string,
   participantMomentId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(state.agenda, agendaItemId);
@@ -883,7 +883,7 @@ export async function setLiveParticipantMomentOverride(
 
 export async function clearLiveParticipantMomentOverride(
   agendaItemId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(state.agenda, agendaItemId);
@@ -929,7 +929,7 @@ export async function updateAgendaItem(
     checkpointQuestions?: string[];
     sourceRefs?: AgendaItem["sourceRefs"];
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const agenda = normalizeAgenda(
@@ -971,7 +971,7 @@ export async function addAgendaItem(
     checkpointQuestions?: string[];
     afterItemId?: string | null;
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const afterIndex = input.afterItemId ? state.agenda.findIndex((item) => item.id === input.afterItemId) : state.agenda.length - 1;
@@ -1015,7 +1015,7 @@ export async function addAgendaItem(
   }, instanceId);
 }
 
-export async function removeAgendaItem(itemId: string, instanceId = getCurrentWorkshopInstanceId()) {
+export async function removeAgendaItem(itemId: string, instanceId: string) {
   return updateWorkshopState((state) => {
     const remaining = state.agenda.filter((item) => item.id !== itemId);
     const normalizedAgenda = normalizeAgenda(
@@ -1036,7 +1036,7 @@ export async function removeAgendaItem(itemId: string, instanceId = getCurrentWo
 export async function moveAgendaItem(
   itemId: string,
   direction: "up" | "down",
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) => {
     const agenda = [...state.agenda].sort((left, right) => left.order - right.order);
@@ -1077,7 +1077,7 @@ export async function addPresenterScene(
     sourceRefs?: PresenterScene["sourceRefs"];
     blocks?: PresenterBlock[];
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1132,7 +1132,7 @@ export async function updatePresenterScene(
     sourceRefs?: PresenterScene["sourceRefs"];
     blocks?: PresenterBlock[];
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1184,7 +1184,7 @@ export async function movePresenterScene(
   agendaItemId: string,
   sceneId: string,
   direction: "up" | "down",
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1214,7 +1214,7 @@ export async function movePresenterScene(
 export async function removePresenterScene(
   agendaItemId: string,
   sceneId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1235,7 +1235,7 @@ export async function removePresenterScene(
 export async function setDefaultPresenterScene(
   agendaItemId: string,
   sceneId: string,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1253,7 +1253,7 @@ export async function setPresenterSceneEnabled(
   agendaItemId: string,
   sceneId: string,
   enabled: boolean,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   return updateWorkshopState((state) =>
     updateAgendaScenes(state, agendaItemId, (item) => {
@@ -1583,7 +1583,7 @@ function resolveCohort(cohortHint: string | null | undefined, capturedAt: string
  */
 export async function captureRotationSignal(
   input: RotationSignalInput,
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ): Promise<RotationSignal> {
   const trimmedText = input.freeText.trim();
   if (trimmedText.length === 0) {
@@ -1624,13 +1624,13 @@ export async function captureRotationSignal(
 }
 
 export async function listRotationSignals(
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ): Promise<RotationSignal[]> {
   return getRotationSignalRepository().list(instanceId);
 }
 
 export async function getActivePollSummary(
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ): Promise<ActivePollSummary | null> {
   const state = await getWorkshopState(instanceId);
   const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
@@ -1665,7 +1665,7 @@ export async function submitActivePollResponse(
     teamId: string | null;
     optionId: string;
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const state = await getWorkshopState(instanceId);
   const { poll } = requireActivePoll(state);
@@ -1715,7 +1715,7 @@ export async function submitParticipantFeedback(
     kind: ParticipantFeedbackKind;
     message: string;
   },
-  instanceId = getCurrentWorkshopInstanceId(),
+  instanceId: string,
 ) {
   const trimmedMessage = input.message.trim();
   if (trimmedMessage.length === 0) {

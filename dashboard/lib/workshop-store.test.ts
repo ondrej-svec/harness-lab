@@ -371,6 +371,7 @@ class MemoryWorkshopInstanceRepository implements WorkshopInstanceRepository {
 }
 
 describe("workshop-store", () => {
+  const instanceId = "sample-studio-a";
   let repository: MemoryWorkshopStateRepository;
   let checkpointRepository: MemoryCheckpointRepository;
   let teamRepository: MemoryTeamRepository;
@@ -467,21 +468,21 @@ describe("workshop-store", () => {
   });
 
   it("tracks the live room scene and manual participant override separately", async () => {
-    let state = await setLiveRoomScene("opening", "opening-handoff");
+    let state = await setLiveRoomScene("opening", "opening-handoff", instanceId);
     expect(state.liveMoment).toMatchObject({
       agendaItemId: "opening",
       roomSceneId: "opening-handoff",
       participantMode: "auto",
     });
 
-    state = await setLiveParticipantMomentOverride("opening", "opening-room-start");
+    state = await setLiveParticipantMomentOverride("opening", "opening-room-start", instanceId);
     expect(state.liveMoment).toMatchObject({
       agendaItemId: "opening",
       participantMomentId: "opening-room-start",
       participantMode: "manual",
     });
 
-    state = await clearLiveParticipantMomentOverride("opening");
+    state = await clearLiveParticipantMomentOverride("opening", instanceId);
     expect(state.liveMoment.participantMode).toBe("auto");
   });
 
@@ -490,7 +491,7 @@ describe("workshop-store", () => {
       title: "Context demo",
       time: "09:45",
       description: "Lokální úprava pro tuto instanci.",
-    });
+    }, instanceId);
     expect(state.agenda.find((item) => item.id === "talk")).toMatchObject({
       title: "Context demo",
       time: "09:45",
@@ -501,19 +502,19 @@ describe("workshop-store", () => {
       time: "11:20",
       description: "Lokální blok navíc.",
       afterItemId: "build-1",
-    });
+    }, instanceId);
     const customItem = state.agenda.find((item) => item.title === "Coffee break");
     expect(customItem).toMatchObject({
       kind: "custom",
       sourceBlueprintPhaseId: null,
     });
 
-    state = await moveAgendaItem(customItem!.id, "up");
+    state = await moveAgendaItem(customItem!.id, "up", instanceId);
     expect(state.agenda.find((item) => item.id === customItem!.id)?.order).toBeLessThan(
       state.agenda.find((item) => item.id === "rotation")!.order,
     );
 
-    state = await removeAgendaItem(customItem!.id);
+    state = await removeAgendaItem(customItem!.id, instanceId);
     expect(state.agenda.find((item) => item.id === customItem!.id)).toBeUndefined();
     expect(state.agenda.filter((item) => item.status === "current")).toHaveLength(1);
   });
@@ -524,7 +525,7 @@ describe("workshop-store", () => {
       sceneType: "custom",
       title: "Custom room cue",
       body: "Lokální room-facing prompt pro tuto instanci.",
-    });
+    }, instanceId);
 
     const customScene = state.agenda
       .find((item) => item.id === "talk")
@@ -542,7 +543,7 @@ describe("workshop-store", () => {
       body: "Evidence-first prompt.",
       ctaLabel: "Napište další safe move",
       ctaHref: null,
-    });
+    }, instanceId);
     expect(
       state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id),
     ).toMatchObject({
@@ -550,21 +551,21 @@ describe("workshop-store", () => {
       sceneType: "checkpoint",
     });
 
-    state = await movePresenterScene("talk", customScene!.id, "up");
+    state = await movePresenterScene("talk", customScene!.id, "up", instanceId);
     expect(
       state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id)?.order,
     ).toBe(initialOrder - 1);
 
-    state = await setDefaultPresenterScene("talk", customScene!.id);
+    state = await setDefaultPresenterScene("talk", customScene!.id, instanceId);
     expect(state.agenda.find((item) => item.id === "talk")?.defaultPresenterSceneId).toBe(customScene!.id);
 
-    state = await setPresenterSceneEnabled("talk", customScene!.id, false);
+    state = await setPresenterSceneEnabled("talk", customScene!.id, false, instanceId);
     expect(
       state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id)?.enabled,
     ).toBe(false);
     expect(state.agenda.find((item) => item.id === "talk")?.defaultPresenterSceneId).not.toBe(customScene!.id);
 
-    state = await removePresenterScene("talk", customScene!.id);
+    state = await removePresenterScene("talk", customScene!.id, instanceId);
     expect(
       state.agenda.find((item) => item.id === "talk")?.presenterScenes.find((scene) => scene.id === customScene!.id),
     ).toBeUndefined();
@@ -577,10 +578,10 @@ describe("workshop-store", () => {
         sceneType: "custom",
         title: "Custom room cue",
         body: "Lokální room-facing prompt pro tuto instanci.",
-      }),
+      }, instanceId),
     ).rejects.toMatchObject({ code: "agenda_item_not_found" });
 
-    await expect(setDefaultPresenterScene("talk", "missing-scene")).rejects.toMatchObject({
+    await expect(setDefaultPresenterScene("talk", "missing-scene", instanceId)).rejects.toMatchObject({
       code: "presenter_scene_not_found",
     });
   });
@@ -731,7 +732,7 @@ describe("workshop-store", () => {
       tags: ["agents_md_helped", " plan_out_of_date "],
       teamId: "t2",
       artifactPaths: ["AGENTS.md", "docs/plan.md"],
-    });
+    }, instanceId);
 
     expect(signal.id).toMatch(/^[0-9a-f-]{36}$/);
     expect(signal.instanceId).toBe("sample-studio-a");
@@ -741,7 +742,7 @@ describe("workshop-store", () => {
     expect(signal.teamId).toBe("t2");
     expect(signal.artifactPaths).toEqual(["AGENTS.md", "docs/plan.md"]);
 
-    await expect(listRotationSignals()).resolves.toEqual([expect.objectContaining({ id: signal.id })]);
+    await expect(listRotationSignals(instanceId)).resolves.toEqual([expect.objectContaining({ id: signal.id })]);
 
     expect(learningsLogRepository.entries).toHaveLength(1);
     const [entry] = learningsLogRepository.entries;
@@ -752,10 +753,10 @@ describe("workshop-store", () => {
   });
 
   it("stores active poll responses outside workshop state and aggregates them by option", async () => {
-    await setCurrentAgendaItem("talk");
-    await setLiveRoomScene("talk", "talk-how-to-build");
+    await setCurrentAgendaItem("talk", instanceId);
+    await setLiveRoomScene("talk", "talk-how-to-build", instanceId);
 
-    let summary = await getActivePollSummary();
+    let summary = await getActivePollSummary(instanceId);
     expect(summary).toMatchObject({
       pollId: "talk-weakest-repo-signal",
       totalResponses: 0,
@@ -766,32 +767,32 @@ describe("workshop-store", () => {
       participantId: "participant-1",
       teamId: "t1",
       optionId: "boundaries",
-    });
+    }, instanceId);
     await submitActivePollResponse({
       sessionKey: "participant-2",
       participantId: "participant-2",
       teamId: "t2",
       optionId: "verification",
-    });
+    }, instanceId);
     await submitActivePollResponse({
       sessionKey: "participant-1",
       participantId: "participant-1",
       teamId: "t1",
       optionId: "map",
-    });
+    }, instanceId);
 
-    summary = await getActivePollSummary();
+    summary = await getActivePollSummary(instanceId);
     expect(summary?.totalResponses).toBe(2);
     expect(summary?.options.find((option) => option.id === "map")?.count).toBe(1);
     expect(summary?.options.find((option) => option.id === "verification")?.count).toBe(1);
 
-    await resetActivePollResponses();
-    await expect(getActivePollSummary()).resolves.toMatchObject({ totalResponses: 0 });
+    await resetActivePollResponses(instanceId);
+    await expect(getActivePollSummary(instanceId)).resolves.toMatchObject({ totalResponses: 0 });
   });
 
   it("captures facilitator-private participant feedback and can promote it to ticker", async () => {
-    await setCurrentAgendaItem("demo");
-    await setLiveRoomScene("demo", "demo-your-toolkit");
+    await setCurrentAgendaItem("demo", instanceId);
+    await setLiveRoomScene("demo", "demo-your-toolkit", instanceId);
 
     const feedback = await submitParticipantFeedback({
       sessionKey: "participant-1",
@@ -799,7 +800,7 @@ describe("workshop-store", () => {
       teamId: "t1",
       kind: "question",
       message: "Can we keep using the browser path if the local install fails?",
-    });
+    }, instanceId);
 
     expect(feedback.agendaItemId).toBe("demo");
     expect(feedback.participantMomentId).toBe("demo-open-build-brief");
@@ -816,7 +817,7 @@ describe("workshop-store", () => {
   });
 
   it("rejects rotation signals with empty freeText and does not log them", async () => {
-    await expect(captureRotationSignal({ freeText: "   " })).rejects.toThrow(/freeText is required/);
+    await expect(captureRotationSignal({ freeText: "   " }, instanceId)).rejects.toThrow(/freeText is required/);
     expect(learningsLogRepository.entries).toHaveLength(0);
   });
 
