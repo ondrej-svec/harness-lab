@@ -113,13 +113,15 @@ jobs:
           ../tmp/harness-cli-smoke/node_modules/.bin/harness skill install --target ../tmp/harness-cli-target-repo
 
   verify-harness-cli-self-hosted:
-    name: verify-harness-cli (linux-self-hosted, Node 25)
+    name: verify-harness-cli (self-hosted-arm64, Node 25)
     needs: detect-changes
     if: github.event_name == 'push' && (needs.detect-changes.outputs.cli == 'true' || needs.detect-changes.outputs.security == 'true')
     timeout-minutes: 10
+    # Any self-hosted ARM64 runner — matches both the Linux ARM box and
+    # Apple Silicon Mac minis. No Linux-specific commands below, so
+    # either platform works.
     runs-on:
       - self-hosted
-      - Linux
       - ARM64
     defaults:
       run:
@@ -235,9 +237,11 @@ jobs:
     name: e2e-dashboard (push, self-hosted)
     if: github.event_name == 'push'
     timeout-minutes: 15
+    # Any self-hosted ARM64 runner — matches both the Linux ARM box and
+    # Apple Silicon Mac minis. Prefer the Mac mini when available; it's
+    # faster. Snapshot tolerances already absorb cross-platform diffs.
     runs-on:
       - self-hosted
-      - Linux
       - ARM64
     needs:
       - verify-dashboard

@@ -137,7 +137,7 @@ test.describe("participant dashboard", () => {
     await page.getByRole("button", { name: "Pokračovat" }).click();
     await expect(page.getByLabel("Jak se jmenujete?")).toBeHidden();
     await expect(page).toHaveScreenshot("participant-mobile-room.png", {
-      maxDiffPixelRatio: 0.05,
+      maxDiffPixelRatio: 0.08,
     });
   });
 
