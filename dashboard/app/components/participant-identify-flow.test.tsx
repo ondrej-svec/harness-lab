@@ -63,6 +63,17 @@ function setSuggestMatches(matches: SuggestMatch[]) {
     if (href.includes("/api/event-access/identify/suggest")) {
       return makeResponse({ ok: true, status: 200, body: { ok: true, matches } });
     }
+    if (href.includes("/api/event-access/identify/selected")) {
+      const participantId = new URL(href, "http://localhost").searchParams.get("participantId");
+      if (participantId === "p1") {
+        return makeResponse({
+          ok: true,
+          status: 200,
+          body: { ok: true, participant: { id: "p1", emailDisplay: "jan@acme.com" } },
+        });
+      }
+      return makeResponse({ ok: false, status: 404, body: { ok: false, error: "not_found" } });
+    }
     return makeResponse({ ok: false, status: 500, body: { ok: false, error: "unmocked" } });
   });
 }
@@ -125,7 +136,7 @@ describe("ParticipantIdentifyFlow", () => {
         displayName: "Jan Novák",
         hasPassword: false,
         hasEmail: true,
-        emailDisplay: "j***@acme.com",
+        emailDisplay: "ja...n@acme.com",
         disambiguator: null,
       },
     ]);
@@ -137,7 +148,7 @@ describe("ParticipantIdentifyFlow", () => {
 
     expect(await screen.findByText("welcome, Jan Novák")).toBeDefined();
     expect(screen.queryByPlaceholderText("your email")).toBeNull();
-    expect(screen.getByText("j***@acme.com")).toBeDefined();
+    expect(await screen.findByText("jan@acme.com")).toBeDefined();
     expect(screen.getByPlaceholderText("password")).toBeDefined();
   });
 
@@ -217,7 +228,7 @@ describe("ParticipantIdentifyFlow", () => {
         displayName: "Jan Novák",
         hasPassword: false,
         hasEmail: true,
-        emailDisplay: "j***@acme.com",
+        emailDisplay: "ja...n@acme.com",
         disambiguator: null,
       },
     ]);
@@ -226,6 +237,7 @@ describe("ParticipantIdentifyFlow", () => {
     await type("jan");
     await waitForSuggest();
     fireEvent.click(await screen.findByText("Jan Novák"));
+    expect(await screen.findByText("jan@acme.com")).toBeDefined();
 
     fetchMock.mockResolvedValueOnce(makeResponse({ ok: true, status: 200, body: { ok: true } }));
 

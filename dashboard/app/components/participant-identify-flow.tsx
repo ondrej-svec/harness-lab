@@ -22,6 +22,8 @@ type View =
       displayName: string;
       requiresEmail: boolean;
       emailDisplay: string | null;
+      emailFallbackDisplay: string | null;
+      emailDisplayPending: boolean;
     }
   | { kind: "enter_password"; participantId: string; displayName: string }
   | { kind: "walk_in_refused" }
@@ -163,6 +165,69 @@ export function ParticipantIdentifyFlow({
     };
   }, [query, view.kind]);
 
+  useEffect(() => {
+    if (
+      view.kind !== "set_password" ||
+      view.requiresEmail ||
+      view.participantId.length === 0 ||
+      !view.emailDisplayPending
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      try {
+        const response = await fetch(
+          `/api/event-access/identify/selected?participantId=${encodeURIComponent(view.participantId)}`,
+        );
+        const data = (await response.json().catch(() => ({}))) as {
+          ok?: boolean;
+          participant?: { emailDisplay?: string | null };
+        };
+        if (cancelled) return;
+        setView((current) => {
+          if (
+            current.kind !== "set_password" ||
+            current.participantId !== view.participantId ||
+            current.requiresEmail
+          ) {
+            return current;
+          }
+          return {
+            ...current,
+            emailDisplay:
+              response.ok && data.ok
+                ? data.participant?.emailDisplay ?? current.emailFallbackDisplay
+                : current.emailFallbackDisplay,
+            emailDisplayPending: false,
+          };
+        });
+      } catch {
+        if (cancelled) return;
+        setView((current) => {
+          if (
+            current.kind !== "set_password" ||
+            current.participantId !== view.participantId ||
+            current.requiresEmail
+          ) {
+            return current;
+          }
+          return {
+            ...current,
+            emailDisplay: current.emailFallbackDisplay,
+            emailDisplayPending: false,
+          };
+        });
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [view]);
+
   const pickMatch = useCallback(
     (match: Match) => {
       setError(null);
@@ -174,7 +239,9 @@ export function ParticipantIdentifyFlow({
           participantId: match.id,
           displayName: match.displayName,
           requiresEmail: match.hasEmail !== true,
-          emailDisplay: match.emailDisplay ?? null,
+          emailDisplay: null,
+          emailFallbackDisplay: match.emailDisplay ?? null,
+          emailDisplayPending: match.hasEmail === true,
         });
       }
     },
@@ -194,6 +261,8 @@ export function ParticipantIdentifyFlow({
         displayName: typed,
         requiresEmail: true,
         emailDisplay: null,
+        emailFallbackDisplay: null,
+        emailDisplayPending: false,
       });
     },
     [allowWalkIns],
@@ -481,12 +550,14 @@ export function ParticipantIdentifyFlow({
                   className="w-full rounded-[14px] border border-[var(--border-strong)] bg-[var(--input-bg)] px-4 py-3 text-center text-[0.95rem] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] outline-none transition focus:border-[var(--text-primary)]"
                 />
               </>
-            ) : view.emailDisplay ? (
+            ) : view.emailDisplayPending || view.emailDisplay ? (
               <div className="rounded-[14px] border border-[var(--border)] bg-[color:color-mix(in_srgb,var(--surface-panel)_78%,transparent)] px-4 py-3 text-center">
                 <p className="text-[10px] uppercase tracking-[0.14em] text-[var(--text-muted)]">
                   {copy.emailLabel}
                 </p>
-                <p className="mt-1 text-[0.95rem] text-[var(--text-primary)]">{view.emailDisplay}</p>
+                <p className="mt-1 text-[0.95rem] text-[var(--text-primary)]">
+                  {view.emailDisplayPending ? copy.loadingHint : view.emailDisplay}
+                </p>
               </div>
             ) : null}
             <label className="sr-only" htmlFor="participant-password">

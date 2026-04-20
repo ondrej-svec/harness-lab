@@ -93,11 +93,12 @@ When this lands:
 5. **Pre-entered participants don't retype themselves.** Name-first everywhere. The participant types their name, the server suggests up to 5 roster matches (min 2 chars, no email/tag shipped unless needed), and the participant picks one. The roster is never shipped to the client as a whole.
 6. **Name collisions resolve privately.** When two or more roster entries share the typed name, the listbox adds a soft disambiguator per option — `tag` first (team or role), masked email only if tag isn't enough (`j***@acme.com`). No full emails, no preview of attendees outside the current query.
 7. **Participants have real credentials via Neon Auth.** Picking a roster identity for the first time prompts "set your password" (Neon Auth `role = "participant"`). Returning participants authenticate with their password — event code still required as the room key. Facilitator-initiated password reset uses a one-time code read aloud in the room (no email infrastructure).
-8. **Walk-ins are a facilitator choice, not a system default.** `workshop_instance.allow_walk_ins` toggle. When on, unknown names can "add yourself" and set a password. When off, unknown names are refused politely ("ask your facilitator to add you"); only facilitator-pasted roster members can self-select.
-9. **The privilege boundary is strict.** Participant Neon users cannot reach any facilitator surface. Every facilitator-side guard checks `role === "admin"` via `hasFacilitatorPlatformAccess`, never "has Neon session."
-10. **Session collision is surfaced.** When `bindParticipantToSession` returns `already_bound`, the UI shows an explicit error ("this session is already identified as [name]") instead of silently redirecting to the hub.
-11. **Audit log captures the new paths.** Roster pick, password set, password auth, password reset, walk-in creation, walk-in refusal, `already_bound` rejection — each appends an audit row.
-12. **Existing tests green, new regression tests for each change.** Including the participant ↔ facilitator privilege boundary as an explicit OWASP regression suite, plus e2e coverage of the lang-switch fix.
+8. **A selected roster pick can confirm the facilitator-entered email.** After a participant explicitly chooses one prefilled roster row for first-time password setup, the password card may show that row's stored email read-only so they can verify they picked the right identity. This happens after selection, not in the suggest payload.
+9. **Walk-ins are a facilitator choice, not a system default.** `workshop_instance.allow_walk_ins` toggle. When on, unknown names can "add yourself" and set a password. When off, unknown names are refused politely ("ask your facilitator to add you"); only facilitator-pasted roster members can self-select.
+10. **The privilege boundary is strict.** Participant Neon users cannot reach any facilitator surface. Every facilitator-side guard checks `role === "admin"` via `hasFacilitatorPlatformAccess`, never "has Neon session."
+11. **Session collision is surfaced.** When `bindParticipantToSession` returns `already_bound`, the UI shows an explicit error ("this session is already identified as [name]") instead of silently redirecting to the hub.
+12. **Audit log captures the new paths.** Roster pick, password set, password auth, password reset, walk-in creation, walk-in refusal, `already_bound` rejection — each appends an audit row.
+13. **Existing tests green, new regression tests for each change.** Including the participant ↔ facilitator privilege boundary as an explicit OWASP regression suite, plus e2e coverage of the lang-switch fix.
 
 ## Scope and Non-Goals
 
@@ -246,6 +247,8 @@ function computeDisambiguator(matches: ParticipantRecord[]): Record<ParticipantI
 ```
 
 Client renders the `disambiguator.value` as a small secondary line beneath the name when present. The raw email never leaves the server.
+
+For the post-pick confirmation card, the client may fetch the single selected roster row's stored email after the participant explicitly clicks that row. This keeps the suggest payload minimal while still letting the participant verify "yes, that's my facilitator-entered address" before setting their password.
 
 #### 5.5 Facilitator password reset (in-app)
 
@@ -636,6 +639,7 @@ Phase 5 (name-first identify + Neon Auth participants + walk-in policy):
 - [ ] Typing 2+ characters in the identify prompt returns up to 5 matches from the roster. The suggest endpoint returns only `{ id, displayName, disambiguator?, hasPassword }` — never raw email, never tag unless promoted to disambiguator, never password state beyond the boolean.
 - [ ] When two roster entries share a typed name, the listbox shows a tag beside each (or masked email if tags aren't present). One-match queries never show a disambiguator.
 - [ ] A pre-entered participant picks their name, sets a password once, and is in the room. On return (fresh browser, new event-code session), picking the same name prompts for the password and authenticates via Neon Auth.
+- [x] A pre-entered participant who already has a facilitator-entered email sees that exact stored email read-only on the first-time password card; they do not retype it.
 - [ ] A participant-role Neon session cannot reach any `/admin` route or facilitator server action. The `privilege-boundary.test.ts` suite is green.
 - [ ] With `allow_walk_ins = true`, typing a name not on the roster surfaces a "＋ add yourself as new" option; submitting creates a participant and prompts for a password.
 - [ ] With `allow_walk_ins = false`, the create option is absent and submitting an unknown name surfaces "ask your facilitator to add you" — no participant row is created.
