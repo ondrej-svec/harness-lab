@@ -131,8 +131,7 @@ class MemoryArchiveRepository implements InstanceArchiveRepository {
 }
 
 class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
-  async countRecentFailures(instanceId: string, fingerprint: string, since: string) {
-    void instanceId;
+  async countRecentFailures(fingerprint: string, since: string) {
     void fingerprint;
     void since;
     return 0;
@@ -140,8 +139,7 @@ class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
   async appendAttempt(attempt: RedeemAttemptRecord) {
     void attempt;
   }
-  async deleteOlderThan(instanceId: string, olderThan: string) {
-    void instanceId;
+  async deleteOlderThan(olderThan: string) {
     void olderThan;
   }
 }

@@ -158,7 +158,7 @@ export type CheckpointRecord = SprintUpdate;
 export type TeamRecord = Team;
 
 export type RedeemAttemptRecord = {
-  instanceId: WorkshopInstanceId;
+  instanceId: WorkshopInstanceId | null;
   fingerprint: string;
   result: "success" | "failure";
   createdAt: string;
@@ -387,9 +387,15 @@ export interface MonitoringSnapshotRepository {
 }
 
 export interface RedeemAttemptRepository {
-  countRecentFailures(instanceId: WorkshopInstanceId, fingerprint: string, since: string): Promise<number>;
+  /**
+   * Count recent failure attempts by fingerprint. Redeem happens before
+   * the server knows which instance a submitted code belongs to, so the
+   * rate-limit bucket is intentionally fingerprint-scoped (not instance-
+   * scoped).
+   */
+  countRecentFailures(fingerprint: string, since: string): Promise<number>;
   appendAttempt(attempt: RedeemAttemptRecord): Promise<void>;
-  deleteOlderThan(instanceId: WorkshopInstanceId, olderThan: string): Promise<void>;
+  deleteOlderThan(olderThan: string): Promise<void>;
 }
 
 export interface AuditLogRepository {

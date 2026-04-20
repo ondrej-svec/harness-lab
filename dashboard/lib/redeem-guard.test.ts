@@ -67,11 +67,10 @@ class MemoryParticipantEventAccessRepository implements ParticipantEventAccessRe
 class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
   constructor(readonly attempts: RedeemAttemptRecord[] = []) {}
 
-  async countRecentFailures(instanceId: string, fingerprint: string, since: string) {
+  async countRecentFailures(fingerprint: string, since: string) {
     const sinceMs = Date.parse(since);
     return this.attempts.filter(
       (a) =>
-        a.instanceId === instanceId &&
         a.fingerprint === fingerprint &&
         a.result === "failure" &&
         Date.parse(a.createdAt) >= sinceMs,
@@ -161,7 +160,7 @@ describe("guardedRedeemEventCode", () => {
     setRedeemAttemptRepositoryForTests(
       new MemoryRedeemAttemptRepository(
         Array.from({ length: 5 }, (_, index) => ({
-          instanceId: "sample-studio-a",
+          instanceId: null,
           fingerprint: fingerprint("vitest:unknown-language"),
           result: "failure" as const,
           createdAt: `2026-04-06T11:5${index}:00.000Z`,

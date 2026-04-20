@@ -1,10 +1,15 @@
 import { headers } from "next/headers";
 import { checkBotId } from "botid/server";
 import { redeemEventCode } from "./event-access";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { isRedeemRateLimited, recordRedeemAttempt } from "./redeem-rate-limit";
 import { isTrustedOrigin } from "./request-integrity";
 import { emitRuntimeAlert } from "./runtime-alert";
+
+// Sentinel instanceId used by runtime alerts emitted during redeem
+// before the server knows which workshop instance a submitted code
+// belongs to. The redeem path scans all active instances, so alerts
+// fired here are not tied to a specific instance.
+const redeemPreMatchInstanceSentinel = "__redeem__";
 
 export type RedeemGuardFailureReason = "rate_limited" | "untrusted_origin";
 
@@ -45,7 +50,7 @@ export async function guardedRedeemEventCode(
     emitRuntimeAlert({
       category: "participant_redeem_bot_signal",
       severity: "warning",
-      instanceId: getCurrentWorkshopInstanceId(),
+      instanceId: redeemPreMatchInstanceSentinel,
     });
   }
 
@@ -53,7 +58,7 @@ export async function guardedRedeemEventCode(
     emitRuntimeAlert({
       category: "participant_redeem_rate_limited",
       severity: "warning",
-      instanceId: getCurrentWorkshopInstanceId(),
+      instanceId: redeemPreMatchInstanceSentinel,
     });
     return { ok: false as const, reason: "rate_limited" as const };
   }

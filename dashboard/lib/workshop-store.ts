@@ -1884,7 +1884,7 @@ export async function applyRuntimeRetentionPolicy(instanceId = getCurrentWorksho
     getEventAccessRepository().deleteExpiredSessions(instanceId, now.toISOString()),
     getMonitoringSnapshotRepository().deleteOlderThan(instanceId, subtractDays(now, monitoringRetentionDays)),
     getAuditLogRepository().deleteOlderThan(instanceId, subtractDays(now, auditRetentionDays)),
-    getRedeemAttemptRepository().deleteOlderThan(instanceId, subtractDays(now, redeemAttemptRetentionDays)),
+    getRedeemAttemptRepository().deleteOlderThan(subtractDays(now, redeemAttemptRetentionDays)),
     getInstanceArchiveRepository().deleteExpiredArchives(now.toISOString()),
   ]);
 }

@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
 
 const redeemFailureWindowMinutes = 10;
@@ -18,17 +17,19 @@ function getClientFingerprint(request: Request) {
 }
 
 export async function isRedeemRateLimited(request: Request) {
-  const instanceId = getCurrentWorkshopInstanceId();
   const fingerprint = getClientFingerprint(request);
   const since = new Date(Date.now() - redeemFailureWindowMinutes * 60 * 1000).toISOString();
-  const failures = await getRedeemAttemptRepository().countRecentFailures(instanceId, fingerprint, since);
+  const failures = await getRedeemAttemptRepository().countRecentFailures(fingerprint, since);
 
   return failures >= redeemFailureLimit;
 }
 
 export async function recordRedeemAttempt(request: Request, result: "success" | "failure") {
+  // Redeem scans all instances for a code match, so the instanceId
+  // isn't known at write time. Stored as null; rate-limit reads don't
+  // use it.
   await getRedeemAttemptRepository().appendAttempt({
-    instanceId: getCurrentWorkshopInstanceId(),
+    instanceId: null,
     fingerprint: getClientFingerprint(request),
     result,
     createdAt: new Date().toISOString(),

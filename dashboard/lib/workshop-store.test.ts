@@ -221,11 +221,10 @@ class MemoryArchiveRepository implements InstanceArchiveRepository {
 class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
   constructor(private items: RedeemAttemptRecord[] = []) {}
 
-  async countRecentFailures(instanceId: string, fingerprint: string, since: string) {
+  async countRecentFailures(fingerprint: string, since: string) {
     const sinceMs = Date.parse(since);
     return this.items.filter(
       (item) =>
-        item.instanceId === instanceId &&
         item.fingerprint === fingerprint &&
         item.result === "failure" &&
         Date.parse(item.createdAt) >= sinceMs,
@@ -236,11 +235,9 @@ class MemoryRedeemAttemptRepository implements RedeemAttemptRepository {
     this.items.push(structuredClone(attempt));
   }
 
-  async deleteOlderThan(instanceId: string, olderThan: string) {
+  async deleteOlderThan(olderThan: string) {
     const olderThanMs = Date.parse(olderThan);
-    this.items = this.items.filter(
-      (item) => item.instanceId !== instanceId || Date.parse(item.createdAt) >= olderThanMs,
-    );
+    this.items = this.items.filter((item) => Date.parse(item.createdAt) >= olderThanMs);
   }
 }
 

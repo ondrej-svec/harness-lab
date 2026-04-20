@@ -5,9 +5,9 @@ import { tmpdir } from "node:os";
 import type { RedeemAttemptRecord } from "./runtime-contracts";
 
 const attempts: RedeemAttemptRecord[] = [
-  { instanceId: "instance-a", fingerprint: "fp-1", result: "failure", createdAt: "2026-04-07T10:00:00.000Z" },
-  { instanceId: "instance-a", fingerprint: "fp-1", result: "success", createdAt: "2026-04-07T11:00:00.000Z" },
-  { instanceId: "instance-a", fingerprint: "fp-1", result: "failure", createdAt: "2026-04-07T12:00:00.000Z" },
+  { instanceId: null, fingerprint: "fp-1", result: "failure", createdAt: "2026-04-07T10:00:00.000Z" },
+  { instanceId: null, fingerprint: "fp-1", result: "success", createdAt: "2026-04-07T11:00:00.000Z" },
+  { instanceId: null, fingerprint: "fp-1", result: "failure", createdAt: "2026-04-07T12:00:00.000Z" },
 ];
 
 describe("redeem-attempt-repository", () => {
@@ -27,7 +27,7 @@ describe("redeem-attempt-repository", () => {
     mod.setRedeemAttemptRepositoryForTests(null);
   });
 
-  it("counts and prunes attempts in file mode", async () => {
+  it("counts and prunes attempts in file mode by fingerprint", async () => {
     const { FileRedeemAttemptRepository } = await import("./redeem-attempt-repository");
     const repository = new FileRedeemAttemptRepository();
 
@@ -35,12 +35,12 @@ describe("redeem-attempt-repository", () => {
       await repository.appendAttempt(attempt);
     }
 
-    await expect(repository.countRecentFailures("instance-a", "fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(2);
-    await repository.deleteOlderThan("instance-a", "2026-04-07T11:30:00.000Z");
-    await expect(repository.countRecentFailures("instance-a", "fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(1);
+    await expect(repository.countRecentFailures("fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(2);
+    await repository.deleteOlderThan("2026-04-07T11:30:00.000Z");
+    await expect(repository.countRecentFailures("fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(1);
   });
 
-  it("writes neon redeem-attempt queries", async () => {
+  it("writes neon redeem-attempt queries keyed on fingerprint only", async () => {
     const query = vi
       .fn()
       .mockResolvedValueOnce([{ count: 2 }])
@@ -57,9 +57,9 @@ describe("redeem-attempt-repository", () => {
     const { NeonRedeemAttemptRepository, getRedeemAttemptRepository } = await import("./redeem-attempt-repository");
     const repository = new NeonRedeemAttemptRepository();
 
-    await expect(repository.countRecentFailures("instance-a", "fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(2);
+    await expect(repository.countRecentFailures("fp-1", "2026-04-07T09:30:00.000Z")).resolves.toBe(2);
     await repository.appendAttempt(attempts[0]);
-    await repository.deleteOlderThan("instance-a", "2026-04-07T11:30:00.000Z");
+    await repository.deleteOlderThan("2026-04-07T11:30:00.000Z");
     expect(getRedeemAttemptRepository()).toBeInstanceOf(NeonRedeemAttemptRepository);
     expect(query).toHaveBeenCalled();
   });
