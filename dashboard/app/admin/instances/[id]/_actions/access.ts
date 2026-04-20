@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
@@ -8,6 +9,7 @@ import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { getNeonSql } from "@/lib/neon-db";
+import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { issueParticipantEventAccess } from "@/lib/participant-access-management";
 import {
   participantAccessFlashCookieName,
@@ -106,5 +108,37 @@ export async function revokeFacilitatorAction(formData: FormData) {
       });
     }
   }
+  redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+/**
+ * Toggle workshop_instances.allow_walk_ins. When true (default),
+ * unknown-name identify renders a "+ add yourself as new" option;
+ * when false, the same input renders "ask your facilitator to add
+ * you" with no create affordance. Mirrors the API endpoint at
+ * PUT /api/admin/instances/[id]/walk-in-policy so agent-driven and
+ * UI-driven toggles share one audit-log shape.
+ */
+export async function toggleWalkInsAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+  const allowWalkIns = String(formData.get("allowWalkIns") ?? "true") === "true";
+
+  const repository = getWorkshopInstanceRepository();
+  const existing = await repository.getInstance(instanceId);
+
+  if (existing && existing.allowWalkIns !== allowWalkIns) {
+    await repository.updateInstance(instanceId, { ...existing, allowWalkIns });
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "facilitator_walk_in_policy",
+      result: "success",
+      createdAt: new Date().toISOString(),
+      metadata: { allowWalkIns },
+    });
+  }
+
   redirect(buildAdminHref({ lang, section, instanceId }));
 }

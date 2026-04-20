@@ -627,6 +627,17 @@ export const adminCopy = {
     participantAccessIssueHint:
       "Nechte pole prázdné, pokud chcete kód vygenerovat, nebo zadejte vlastní variantu malými písmeny s pomlčkami.",
     participantAccessIssueButton: "vydat nový event code",
+    walkInPolicyEyebrow: "politika walk-inů",
+    walkInPolicyTitle: "kdo se může přidat",
+    walkInPolicyDescription:
+      "Pokud máte předpřipravený roster, můžete walk-iny vypnout. Účastník mimo roster pak místo \"přidat se\" uvidí \"obraťte se na facilitátora\".",
+    walkInPolicyAllowLabel: "povolit přidat se jako nový",
+    walkInPolicyDenyLabel: "jen lidé z rosteru",
+    walkInPolicySaveButton: "uložit politiku",
+    participantResetPasswordButton: "reset hesla",
+    participantResetPasswordHint: "vygeneruje jednorázové heslo, které účastníkovi přečtete nahlas",
+    participantResetPasswordSuccess: "nové dočasné heslo",
+    participantResetPasswordError: "reset se nepodařil",
   },
   en: {
     deskEyebrow: "facilitator desk",
@@ -1001,5 +1012,16 @@ export const adminCopy = {
     participantAccessIssueHint:
       "Leave the field blank for a generated code, or enter your own lowercase hyphenated code.",
     participantAccessIssueButton: "issue new event code",
+    walkInPolicyEyebrow: "walk-in policy",
+    walkInPolicyTitle: "who can join",
+    walkInPolicyDescription:
+      "If your roster is pre-loaded, you can disable walk-ins. Participants not on the roster will see \"ask your facilitator\" instead of \"add yourself.\"",
+    walkInPolicyAllowLabel: "allow add as new",
+    walkInPolicyDenyLabel: "roster only",
+    walkInPolicySaveButton: "save policy",
+    participantResetPasswordButton: "reset password",
+    participantResetPasswordHint: "generates a one-time password to read aloud to the participant",
+    participantResetPasswordSuccess: "new temporary password",
+    participantResetPasswordError: "reset failed",
   },
 } satisfies Record<UiLanguage, Record<string, string>>;

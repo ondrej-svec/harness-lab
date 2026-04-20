@@ -11,6 +11,7 @@ import {
   addFacilitatorAction,
   issueParticipantAccessAction,
   revokeFacilitatorAction,
+  toggleWalkInsAction,
 } from "../../_actions/access";
 import type { ParticipantAccessFlash } from "../../_lib/participant-access-flash";
 
@@ -47,6 +48,7 @@ export function AccessSection({
   participantAccessExpiresValue,
   participantAccessFlash,
   facilitatorGrants,
+  allowWalkIns,
 }: {
   lang: UiLanguage;
   copy: Copy;
@@ -65,6 +67,7 @@ export function AccessSection({
   participantAccessExpiresValue: string;
   participantAccessFlash: ParticipantAccessFlash | null;
   facilitatorGrants: readonly FacilitatorGrant[];
+  allowWalkIns: boolean;
 }) {
   return (
     <div className="space-y-6">
@@ -142,6 +145,37 @@ export function AccessSection({
             </form>
           </div>
         </div>
+      </AdminPanel>
+
+      <AdminPanel
+        eyebrow={copy.walkInPolicyEyebrow}
+        title={copy.walkInPolicyTitle}
+        description={copy.walkInPolicyDescription}
+      >
+        <form action={toggleWalkInsAction} className="flex flex-wrap items-center gap-3">
+          <HiddenState lang={lang} instanceId={instanceId} />
+          <label className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
+            <input
+              type="radio"
+              name="allowWalkIns"
+              value="true"
+              defaultChecked={allowWalkIns}
+            />
+            {copy.walkInPolicyAllowLabel}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
+            <input
+              type="radio"
+              name="allowWalkIns"
+              value="false"
+              defaultChecked={!allowWalkIns}
+            />
+            {copy.walkInPolicyDenyLabel}
+          </label>
+          <AdminSubmitButton className={`${adminPrimaryButtonClassName} ml-auto`}>
+            {copy.walkInPolicySaveButton}
+          </AdminSubmitButton>
+        </form>
       </AdminPanel>
 
       <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>

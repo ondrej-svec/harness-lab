@@ -116,6 +116,7 @@ export default async function AdminPage({
                 participantAccessExpiresValue={vm.participantAccessExpiresValue}
                 participantAccessFlash={vm.participantAccessFlash}
                 facilitatorGrants={vm.facilitatorGrants}
+                allowWalkIns={vm.selectedInstance?.allowWalkIns ?? true}
               />
             ) : null}
 

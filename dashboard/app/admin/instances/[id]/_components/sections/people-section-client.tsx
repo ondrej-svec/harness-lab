@@ -46,6 +46,9 @@ export function PeopleWorkspace({
   const [pending, startTransition] = useTransition();
   const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [resetResult, setResetResult] = useState<
+    { participantId: string; displayName: string; temporaryPassword: string } | null
+  >(null);
 
   const poolTitle = lang === "cs" ? "Pool" : "Pool";
   const unassignedLabel = lang === "cs" ? "nepřiřazení" : "unassigned";
@@ -53,6 +56,17 @@ export function PeopleWorkspace({
   const removeLabel = lang === "cs" ? "odebrat z týmu" : "remove from team";
   const deleteLabel = lang === "cs" ? "smazat" : "delete";
   const addFromPoolLabel = lang === "cs" ? "+ přidat z poolu" : "+ add from pool";
+  const resetButtonLabel = lang === "cs" ? "reset hesla" : "reset password";
+  const resetSuccessLabel = lang === "cs" ? "nové dočasné heslo" : "new temporary password";
+  const resetSuccessHint =
+    lang === "cs"
+      ? "přečtěte ho účastníkovi nahlas — staré sezení bylo zrušeno."
+      : "read it aloud to the participant — the old session was revoked.";
+  const resetDismissLabel = lang === "cs" ? "zavřít" : "dismiss";
+  const resetConfirmLabel =
+    lang === "cs"
+      ? "vygenerovat dočasné heslo a zrušit aktivní sezení?"
+      : "generate a temporary password and revoke active sessions?";
 
   const assignmentByParticipant = useMemo(() => {
     const map = new Map<string, string>();
@@ -140,6 +154,42 @@ export function PeopleWorkspace({
     [callApi, router],
   );
 
+  const resetPassword = useCallback(
+    async (participant: ParticipantRecord) => {
+      if (participant.neonUserId === null) return;
+      if (typeof window !== "undefined" && !window.confirm(resetConfirmLabel)) return;
+      setError(null);
+      try {
+        const response = await fetch(
+          `/api/admin/participants/${encodeURIComponent(participant.id)}/reset-password`,
+          {
+            method: "POST",
+            credentials: "same-origin",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ instanceId }),
+          },
+        );
+        const payload = (await response.json().catch(() => ({}))) as {
+          ok?: boolean;
+          temporaryPassword?: string;
+          error?: string;
+        };
+        if (!response.ok || !payload.ok || !payload.temporaryPassword) {
+          setError(payload.error ?? `reset failed (${response.status})`);
+          return;
+        }
+        setResetResult({
+          participantId: participant.id,
+          displayName: participant.displayName,
+          temporaryPassword: payload.temporaryPassword,
+        });
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+      }
+    },
+    [instanceId, resetConfirmLabel],
+  );
+
   const handleDragStart = useCallback((event: DragEvent<HTMLElement>, participantId: string) => {
     event.dataTransfer.setData("text/participant-id", participantId);
     event.dataTransfer.effectAllowed = "move";
@@ -182,6 +232,30 @@ export function PeopleWorkspace({
           role="alert"
         >
           {error}
+        </div>
+      ) : null}
+
+      {resetResult ? (
+        <div
+          className="rounded-[20px] border border-[var(--accent-surface)] bg-[var(--surface-soft)] px-4 py-4 text-sm text-[var(--text-primary)]"
+          role="status"
+        >
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+              {resetSuccessLabel} — {resetResult.displayName}
+            </p>
+            <button
+              type="button"
+              onClick={() => setResetResult(null)}
+              className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)] transition hover:text-[var(--text-primary)]"
+            >
+              {resetDismissLabel}
+            </button>
+          </div>
+          <p className="mt-3 break-all text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
+            {resetResult.temporaryPassword}
+          </p>
+          <p className="mt-2 text-[13px] leading-5 text-[var(--text-secondary)]">{resetSuccessHint}</p>
         </div>
       ) : null}
 
@@ -274,6 +348,17 @@ export function PeopleWorkspace({
                     disabled={pending}
                     addFromPoolLabel={addFromPoolLabel}
                   />
+                  {participant.neonUserId ? (
+                    <button
+                      type="button"
+                      onClick={() => resetPassword(participant)}
+                      disabled={pending}
+                      className="rounded-full border border-[var(--border)] px-2.5 py-0.5 text-[11px] font-medium text-[var(--text-secondary)] transition hover:border-[var(--text-primary)] hover:text-[var(--text-primary)]"
+                      title={resetButtonLabel}
+                    >
+                      {resetButtonLabel}
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => removeParticipant(participant.id)}
