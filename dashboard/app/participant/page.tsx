@@ -8,7 +8,9 @@ import {
   revokeParticipantSession,
 } from "@/lib/event-access";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import { isNeonRuntimeMode } from "@/lib/runtime-auth-configuration";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
+import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import {
   buildParticipantReferenceGroups,
   buildWorkshopContextLine,
@@ -16,6 +18,7 @@ import {
 } from "@/lib/public-page-view-model";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
+import { ParticipantIdentifyFlow } from "../components/participant-identify-flow";
 import { ParticipantIdentifyPrompt } from "../components/participant-identify-prompt";
 import { ParticipantRoomSurface } from "../components/participant-room-surface";
 import { SiteHeader } from "../components/site-header";
@@ -38,7 +41,7 @@ async function logoutAction(formData: FormData) {
 export default async function ParticipantPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ lang?: string }>;
+  searchParams?: Promise<{ lang?: string; identify?: string }>;
 }) {
   const params = await searchParams;
   const lang = resolveUiLanguage(params?.lang);
@@ -49,10 +52,17 @@ export default async function ParticipantPage({
     redirect(withLang("/", lang));
   }
 
-  // Session exists but no bound Participant — show the one-field self-
-  // identify prompt and nothing else. See docs/previews/2026-04-16-
-  // participant-identify-flow.md for the UX contract.
+  // Session exists but no bound Participant — render the identify flow.
+  // Neon mode: name-first state machine with passwords via Neon Auth.
+  // File mode: unchanged "what's your name?" card.
   if (!participantSession.participantId) {
+    let allowWalkIns = true;
+    if (isNeonRuntimeMode()) {
+      const instance = await getWorkshopInstanceRepository().getInstance(
+        participantSession.instanceId,
+      );
+      allowWalkIns = instance?.allowWalkIns ?? true;
+    }
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
         <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
@@ -63,7 +73,15 @@ export default async function ParticipantPage({
             csHref={withLang("/participant", "cs")}
             enHref={withLang("/participant", "en")}
           />
-          <ParticipantIdentifyPrompt lang={lang} />
+          {isNeonRuntimeMode() ? (
+            <ParticipantIdentifyFlow
+              lang={lang}
+              allowWalkIns={allowWalkIns}
+              initialHint={params?.identify}
+            />
+          ) : (
+            <ParticipantIdentifyPrompt lang={lang} />
+          )}
         </div>
       </main>
     );

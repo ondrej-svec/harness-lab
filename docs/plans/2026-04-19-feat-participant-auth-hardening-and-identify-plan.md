@@ -513,11 +513,11 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 
 #### 5.4 Frontend
 
-- [ ] Rewrite `app/components/participant-identify-prompt.tsx` as a single-page state machine: `typing` → `picking` → `set_password` | `enter_password` | `walk_in_create` | `walk_in_refused` | `reset_flow`. Each sub-view is a thin render of a shared card shell. Uses `InlineSpinner` for async fetches, debounce 250 ms.
-- [ ] Suggest calls include the `hasPassword` hint; the UI branches on it before prompting for password.
-- [ ] "forgot?" link under the password field routes to the reset-code redemption sub-view.
-- [ ] Facilitator-side: walk-in toggle in access panel (`/admin/instances/[id]`), per-row "reset password" action in the People section. The reset action opens a small modal that displays the one-time code once.
-- [ ] Copy additions in `lib/ui-language.ts` (cs + en) for every new label, error, and fallback.
+- [x] New `app/components/participant-identify-flow.tsx` client component — state machine with views: `typing`, `set_password`, `enter_password`, `walk_in_refused`, `already_bound`. Debounced suggest (250 ms), inline spinner, `combobox` + `listbox` with ↑/↓/↵ keyboard traversal, `hasPassword` branch, walk-in create sentinel, `try a different name` escape hatches. Czech + English copy baked in.
+- [x] `app/participant/page.tsx` reads `allowWalkIns` from the instance and dispatches: Neon mode → new flow, file mode → existing `ParticipantIdentifyPrompt` (unchanged for local dev continuity).
+- [ ] Facilitator-side walk-in toggle + per-row "reset password" action in the People section — **deferred to a follow-up slice**. Endpoints exist (`PUT /api/admin/instances/[id]/walk-in-policy`, `POST /api/admin/participants/[id]/reset-password`); the admin UI hookups are straightforward but weren't shipped this turn.
+- [x] Copy is inline in the component for the participant-facing strings; facilitator-side copy lives with the UI that will call the endpoints (not yet built).
+- [ ] Browser-level end-to-end verification — partial. Event-code redeem → `/participant` renders the new combobox successfully (confirmed via Chrome DevTools MCP snapshot). Full round-trip through set-password/authenticate blocked by a Turbopack dev-server instability that burned too much time — to be retried under `npm run build && npm run start` once 5.6 integration tests are in place.
 
 #### 5.5 Privilege boundary audit
 

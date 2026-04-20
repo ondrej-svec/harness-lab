@@ -5,7 +5,6 @@ import {
 } from "@/lib/event-access";
 import { computeDisambiguators } from "@/lib/participant-disambiguator";
 import { getParticipantRepository } from "@/lib/participant-repository";
-import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
 import { checkSuggestRateLimit } from "@/lib/suggest-rate-limit";
 
 const MIN_QUERY_LENGTH = 2;
@@ -22,17 +21,10 @@ const MAX_RESULTS = 5;
  * disambiguator.
  */
 export async function GET(request: Request) {
-  if (
-    !isTrustedOrigin({
-      originHeader: request.headers.get("origin"),
-      hostHeader: request.headers.get("host"),
-      forwardedHostHeader: request.headers.get("x-forwarded-host"),
-      requestUrl: request.url,
-    })
-  ) {
-    return untrustedOriginResponse();
-  }
-
+  // Read-only, session-guarded. No origin check — browsers omit Origin on
+  // some same-origin GETs. Session cookie is the auth, rate limiter caps
+  // scraping, and the response contains only identifiers the session is
+  // already authorized to see.
   const rawCookie = request.headers.get("cookie") ?? "";
   const token = readCookieValue(rawCookie, participantSessionCookieName);
   const bundle = await getParticipantSessionWithTokenHash(token);
