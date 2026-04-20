@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const createUser = vi.fn();
+const setUserPassword = vi.fn();
+const revokeUserSessions = vi.fn();
 const signInEmail = vi.fn();
 const getSession = vi.fn();
 const requestPasswordReset = vi.fn();
@@ -9,7 +11,7 @@ const getRuntimeStorageMode = vi.fn();
 
 vi.mock("./auth/server", () => ({
   auth: {
-    admin: { createUser },
+    admin: { createUser, setUserPassword, revokeUserSessions },
     signIn: { email: signInEmail },
     getSession,
     requestPasswordReset,
@@ -181,6 +183,64 @@ describe("participant-auth", () => {
       });
 
       expect(result).toMatchObject({ ok: false, reason: "unknown" });
+    });
+  });
+
+  describe("resetParticipantPasswordAsAdmin", () => {
+    it("rotates the password and revokes existing sessions", async () => {
+      setUserPassword.mockResolvedValue({ data: {} });
+      revokeUserSessions.mockResolvedValue({ data: {} });
+      const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
+
+      const result = await resetParticipantPasswordAsAdmin({
+        neonUserId: "user-1",
+        newPassword: "lantern-relay-north",
+      });
+
+      expect(result).toEqual({ ok: true });
+      expect(setUserPassword).toHaveBeenCalledWith({
+        userId: "user-1",
+        newPassword: "lantern-relay-north",
+      });
+      expect(revokeUserSessions).toHaveBeenCalledWith({ userId: "user-1" });
+    });
+
+    it("classifies admin-session-missing errors distinctly so callers can surface them", async () => {
+      setUserPassword.mockResolvedValue({ error: { message: "Unauthorized: admin required" } });
+      const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
+
+      const result = await resetParticipantPasswordAsAdmin({
+        neonUserId: "user-1",
+        newPassword: "x",
+      });
+
+      expect(result).toMatchObject({ ok: false, reason: "not_admin" });
+      expect(revokeUserSessions).not.toHaveBeenCalled();
+    });
+
+    it("classifies not-found when the Neon user id has already been removed", async () => {
+      setUserPassword.mockResolvedValue({ error: { message: "User not found" } });
+      const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
+
+      const result = await resetParticipantPasswordAsAdmin({
+        neonUserId: "gone",
+        newPassword: "x",
+      });
+
+      expect(result).toMatchObject({ ok: false, reason: "not_found" });
+    });
+
+    it("tolerates revoke failures — the password was already rotated", async () => {
+      setUserPassword.mockResolvedValue({ data: {} });
+      revokeUserSessions.mockRejectedValue(new Error("revoke upstream flake"));
+      const { resetParticipantPasswordAsAdmin } = await importParticipantAuth();
+
+      const result = await resetParticipantPasswordAsAdmin({
+        neonUserId: "user-1",
+        newPassword: "ok",
+      });
+
+      expect(result).toEqual({ ok: true });
     });
   });
 

@@ -480,28 +480,26 @@ See `docs/brainstorms/2026-04-20-neon-auth-participant-role-spike.md` for the fu
 - [x] Failed-signin rate limiting — **better-auth defaults apply**; layer our own limiter on the first factor (suggest endpoint), trust Neon's on the second factor (password). Revisit if empirical.
 - [x] Spike brainstorm committed.
 
-**Open items carried to Ondrej** (Neon dashboard-level, can't verify from code):
+**Open items — status after round-2 research + probe** (2026-04-20):
 
-- Confirm email verification is *off* on the Neon Auth instance (or we'll switch to the admin-createUser path).
-- Confirm whether Neon Auth 0.2.0-beta exposes a service token for admin ops (vs needing a `HARNESS_NEON_ADMIN_*` service user).
-- Confirm `neon_auth."user".role` column accepts arbitrary strings (or extend the CHECK constraint to allow `participant`).
-- Confirm the failed-signin default threshold on the Neon Auth instance.
+- ~~Email verification toggle is OFF~~ — Ondrej reports no visible toggle in the Neon Console. Test empirically in Phase 5.6 integration suite; the wrapper works either way (user is created with `emailVerified: false`; whether signIn is gated depends on the hosted instance's configuration).
+- ~~Service token for admin ops~~ → **dropped**. No service admin user. In-room reset uses the facilitator's live admin session instead — `resetParticipantPasswordAsAdmin` in `lib/participant-auth.ts` rides the caller's cookie session.
+- ~~Role CHECK constraint~~ → **resolved**. Probed the live main branch via neonctl: `neon_auth."user".role` is plain `text` with no CHECK constraint; current distinct values = `{admin: 1}`. No schema change needed to store `participant`.
+- Raise the failed-signin rate limit — Ondrej raises in the Neon Console. Code layer stacks a per-identifier limiter on top if the raised threshold is still too tight.
 
-These block Phase 5.2's wiring to Neon, but not the schema / migration / local test work.
+#### 5.1 Preview artifact v2 — ✅ APPROVED
 
-#### 5.1 Preview artifact v2 (required before any code)
-
-- [ ] Redraw the HTML preview to match the v2 shape: single name-first prompt with disambiguation sub-view, set-password sub-view, enter-password sub-view, reset-flow entry, walk-in creation state, walk-in refusal state, facilitator walk-in toggle. Publish via `/babel-fish:visualize`. Review by Ondrej.
+Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`). Phase 5.2+ code unblocked.
 
 #### 5.2 Schema + Neon Auth integration — 🚧 in progress
 
-- [x] Migration `2026-04-20-participant-auth.sql`: `participants.neon_user_id`, `workshop_instances.allow_walk_ins` (default true), `participant_password_reset_tokens` table with redeem + expiry indexes.
+- [x] Migration `2026-04-20-participant-auth.sql`: `participants.neon_user_id` (nullable, unique when set) + `workshop_instances.allow_walk_ins` (default true). The password-reset-token table was dropped — the facilitator's live admin session does the reset directly.
 - [x] `ParticipantRecord` gains `neonUserId: string | null`. Neon repository reads/writes the new column. Every existing fixture + construction site updated. (commit `2d9d0db`)
-- [x] `lib/participant-auth.ts` — thin wrapper over Neon Auth. Exports `createParticipantAccount`, `authenticateParticipant`, `sendParticipantPasswordResetEmail`, `isNeonUserParticipant`. Error classification normalizes better-auth's string messages into typed reasons. 17 unit tests with mocked Neon Auth client. (commit `923fd33`)
-- [ ] `lib/participant-identifier.ts` — **deferred** post round-2 spike; real email is the canonical identifier now, no synthesis needed. Any identifier-shape helpers live inside `lib/participant-auth.ts`.
-- [ ] Extend `lib/participant-repository.ts` with: `listByDisplayNamePrefix(instanceId, prefix, limit)` for suggest, `findByNeonUserId(neonUserId)` for session-bind, `linkNeonUser(participantId, neonUserId, updatedAt)` for first-identify. Integration tests on Neon-mode branch.
-- [ ] `lib/participant-password-reset-token-repository.ts` — issue + consume + expire tokens. File-mode + Neon-mode impls (matches existing repo pattern).
-- [ ] Integration tests (gated on `HARNESS_TEST_DATABASE_URL`): `createParticipantAccount → authenticateParticipant` round-trip on a real Neon branch; email verification on/off behavior; role column CHECK-constraint probe.
+- [x] `lib/participant-auth.ts` — thin wrapper over Neon Auth. Exports `createParticipantAccount`, `authenticateParticipant`, `resetParticipantPasswordAsAdmin`, `sendParticipantPasswordResetEmail`, `isNeonUserParticipant`. Error classification normalizes better-auth's string messages into typed reasons. 21 unit tests with mocked Neon Auth client. (commits `923fd33`, `<pending>`)
+- [x] Extend `lib/participant-repository.ts` with `listByDisplayNamePrefix`, `findByNeonUserId`, `linkNeonUser` (file + Neon modes). 5 new file-mode tests. (commit `906c761`)
+- [x] `lib/participant-identifier.ts` — **dropped**: real email is the canonical identifier; no synthesis needed.
+- [x] `participant_password_reset_tokens` table + repo — **dropped**: facilitator resets the password in place via `resetParticipantPasswordAsAdmin`.
+- [ ] Integration tests (gated on `HARNESS_TEST_DATABASE_URL`): apply the migration to a throwaway Neon branch, run `createParticipantAccount → authenticateParticipant` round-trip, confirm email verification behavior (open item from 5.0), confirm `resetParticipantPasswordAsAdmin` path when the caller is facilitator-role.
 
 #### 5.3 Backend surfaces
 

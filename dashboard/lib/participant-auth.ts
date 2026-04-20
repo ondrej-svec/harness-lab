@@ -149,10 +149,55 @@ export async function authenticateParticipant(
 }
 
 /**
+ * In-room password reset. The caller MUST be running inside a
+ * facilitator's request context — their Neon Auth session cookie
+ * provides the admin role that `auth.admin.setUserPassword` +
+ * `auth.admin.revokeUserSessions` check for. No service admin user
+ * needed; we ride the facilitator's existing authority.
+ *
+ * The facilitator generates the new password (typically 3 random words
+ * from the event-code wordlist) and reads it aloud to the participant.
+ * This function rotates it in Neon Auth and kills any existing sessions
+ * so the stale session can't outlive the reset.
+ */
+export async function resetParticipantPasswordAsAdmin(opts: {
+  neonUserId: string;
+  newPassword: string;
+}): Promise<{ ok: true } | { ok: false; reason: "not_admin" | "not_found" | "unknown"; message?: string }> {
+  const client = requireAuth();
+
+  try {
+    const setResp = await client.admin.setUserPassword({
+      userId: opts.neonUserId,
+      newPassword: opts.newPassword,
+    });
+    const setErr = (setResp as { error?: { message?: string } }).error;
+    if (setErr) {
+      const msg = (setErr.message ?? "").toLowerCase();
+      if (msg.includes("unauthorized") || msg.includes("forbidden") || msg.includes("admin")) {
+        return { ok: false, reason: "not_admin", message: setErr.message };
+      }
+      if (msg.includes("not found") || msg.includes("no user")) {
+        return { ok: false, reason: "not_found", message: setErr.message };
+      }
+      return { ok: false, reason: "unknown", message: setErr.message };
+    }
+
+    // Best-effort session revoke. If it fails, the password was still
+    // rotated, so the stale session dies at its expiry at the latest.
+    await client.admin.revokeUserSessions({ userId: opts.neonUserId }).catch(() => {});
+    return { ok: true };
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e);
+    return { ok: false, reason: "unknown", message };
+  }
+}
+
+/**
  * Facilitator-initiated password reset that uses Neon Auth's email
- * link. No in-room code needed on this path — Neon sends the email,
- * participant clicks, sets a new password. Does NOT require a system
- * admin session; `requestPasswordReset` is public.
+ * link. Fallback when the participant isn't in the room to receive a
+ * spoken code. Does NOT require an admin session; `requestPasswordReset`
+ * is public.
  */
 export async function sendParticipantPasswordResetEmail(opts: {
   email: string;
