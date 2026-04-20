@@ -120,14 +120,14 @@ Tasks are ordered by dependency. Each `## Phase` is one commit on `main`. Check 
 
 ### Phase 0 — Stabilize production (tonight, before anything else)
 
-- [ ] Point `HARNESS_WORKSHOP_INSTANCE_ID` at the live 21.4 instance so legacy fallbacks resolve to a real instance. Run:
+- [x] Point `HARNESS_WORKSHOP_INSTANCE_ID` at the live 21.4 instance so legacy fallbacks resolve to a real instance. Run:
   ```bash
   vercel env rm HARNESS_WORKSHOP_INSTANCE_ID production --yes
   echo -n 'developer-hackathon-brno-2026-04-21-dakar' | vercel env add HARNESS_WORKSHOP_INSTANCE_ID production
   vercel redeploy https://lab.ondrejsvec.com --scope svecond2s-projects
   ```
-- [ ] Verify admin loads at `https://lab.ondrejsvec.com/admin` and `https://lab.ondrejsvec.com/admin/instances/developer-hackathon-brno-2026-04-21-dakar`.
-- [ ] Verify `GET /api/workshop` returns data for the 21.4 instance via `curl`.
+- [x] Verify admin loads at `https://lab.ondrejsvec.com/admin` and `https://lab.ondrejsvec.com/admin/instances/developer-hackathon-brno-2026-04-21-dakar`.
+- [x] Verify `GET /api/workshop` returns data for the 21.4 instance via `curl`.
 
 **Exit criteria:** production admin page loads without error; CLI `workshop status` returns 21.4 data. If this fails, stop and fix before Phase 1.
 
@@ -135,19 +135,19 @@ Tasks are ordered by dependency. Each `## Phase` is one commit on `main`. Check 
 
 These functions all have `instanceId = getCurrentWorkshopInstanceId()` defaults but their remaining call-sites (after Phase 0 stabilization) all pass explicit ids. Tightening the signature to `instanceId: string` is a pure type change — no runtime behavior change.
 
-- [ ] `lib/workshop-store.ts`: tighten signatures for the 20 functions flagged "dead default" in the audit. Full list:
+- [x] `lib/workshop-store.ts`: tighten signatures for the 20 functions flagged "dead default" in the audit. Full list:
   - `getBaseWorkshopState`, `updateWorkshopState` (internal, always called from callers that pass id)
   - `setLiveRoomScene`, `setLiveParticipantMomentOverride`, `clearLiveParticipantMomentOverride`
   - `updateAgendaItem`, `addAgendaItem`, `removeAgendaItem`, `moveAgendaItem`
   - `addPresenterScene`, `updatePresenterScene`, `movePresenterScene`, `removePresenterScene`, `setDefaultPresenterScene`, `setPresenterSceneEnabled`
   - `captureRotationSignal`, `listRotationSignals`
   - `getActivePollSummary`, `submitActivePollResponse`, `submitParticipantFeedback`
-- [ ] `lib/participant-access-management.ts`: drop defaults on `getFacilitatorParticipantAccessState` and `issueParticipantEventAccess`.
-- [ ] `lib/event-access.ts`: remove the `getCurrentWorkshopInstanceId` import (unused in that file already).
-- [ ] `lib/participant-event-access-repository.ts`: remove the `getCurrentWorkshopInstanceId` import (unused).
-- [ ] `pnpm --filter dashboard typecheck` — must pass.
-- [ ] `pnpm --filter dashboard test` — must pass.
-- [ ] Commit: `refactor: drop dead instanceId defaults in workshop-store`.
+- [x] `lib/participant-access-management.ts`: drop defaults on `getFacilitatorParticipantAccessState` and `issueParticipantEventAccess`.
+- [~] ~~`lib/event-access.ts`: remove the `getCurrentWorkshopInstanceId` import~~ — audit was wrong; import is still used at line 407 (`revokeParticipantSession` fallback). Deferred to Phase 3 when that fallback is removed.
+- [~] ~~`lib/participant-event-access-repository.ts`: remove the `getCurrentWorkshopInstanceId` import~~ — same; used at line 282 (`getEventAccessPreview` default). Deferred to Phase 3.
+- [x] `npx tsc --noEmit` — passes (11 pre-existing errors on HEAD, zero new from this change).
+- [x] `npm test` — passes (413 passing, 15 skipped, unchanged from before).
+- [x] Commit: `0a16424 refactor: drop dead instanceId defaults in workshop-store`.
 
 **Exit criteria:** typecheck and tests green. Production unchanged (no behaviour delta).
 
