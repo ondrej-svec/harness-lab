@@ -50,6 +50,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "missing_fields" }, { status: 400 });
   }
 
+  // Phase 6: early already_bound check. Refuse before signin so we don't
+  // mint a Neon session for a participant the event-code session can't
+  // claim. Same-id case is allowed (idempotent re-auth).
+  if (bundle.session.participantId && bundle.session.participantId !== participantId) {
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId: bundle.session.instanceId,
+      actorKind: "participant",
+      action: "participant_password_auth",
+      result: "failure",
+      createdAt: new Date().toISOString(),
+      metadata: {
+        reason: "already_bound",
+        boundParticipantId: bundle.session.participantId,
+        attemptedParticipantId: participantId,
+      },
+    });
+    return NextResponse.json({ ok: false, error: "already_bound" }, { status: 409 });
+  }
+
   const participant = await getParticipantRepository().findParticipant(
     bundle.session.instanceId,
     participantId,

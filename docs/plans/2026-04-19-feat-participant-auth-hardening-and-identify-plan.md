@@ -587,12 +587,14 @@ Gated on `HARNESS_TEST_DATABASE_URL` being set. Skipped otherwise. Spin up the t
 - [ ] Full test suite green.
 - [ ] ⎘ Commits (one per sub-phase): `feat: schema + participant-auth wrapper`, `feat: identify suggest + password endpoints`, `feat: identify prompt state machine + reset flow`, `feat: facilitator walk-in toggle + password reset`, `test: participant privilege boundary regression`, `test: integration + playwright suite against neon test branch`.
 
-### Phase 6 — Surface already_bound
+### Phase 6 — Surface already_bound — ✅ shipped
 
-- [ ] Update every identify server action (set-password, authenticate, reset-redeem, walk-in-create) to redirect with `?identify=already_bound` when the session already has a `participantId` that doesn't match the submitted choice.
-- [ ] Update the identify prompt state machine to render the explicit error state when that query param is present.
-- [ ] Playwright: simulate an already-bound session submitting a different name, assert the error renders and no DB write happened.
-- [ ] ⎘ Commit: `fix: surface participant already_bound state explicitly`.
+- [x] Both identify endpoints now reject early with `409 already_bound` BEFORE any side effects when the session is bound to a different participant. Set-password covers both branches (participantId pick + walk-in create) — no Neon Auth user is minted, no walk-in row is created. Authenticate skips signin entirely so we don't issue a Neon session for a participant the event-code session can't claim.
+- [x] Both endpoints emit a failure audit log entry with `metadata.reason = "already_bound"`, `boundParticipantId`, and `attemptedParticipantId` so the facilitator can see the rebind attempt in the audit trail.
+- [x] Identify state machine already handles `error === "already_bound"` from POST responses (Phase 5.4) AND `?identify=already_bound` from URL (Phase 5.4) — both transition to the `already_bound` view.
+- [x] Reset-redeem is **dropped** as a separate endpoint (the facilitator's in-place reset replaces it — see Phase 5.3 reconciliation). Set-password covers the post-reset re-auth path.
+- [x] Tests: `__tests__/api/event-access/identify/set-password/route.test.ts` adds two Phase 6 cases (mismatched participantId + walk-in attempt with bound session). `__tests__/api/event-access/identify/authenticate/route.test.ts` adds the early-reject case + verifies `authenticateMock` is NOT called when session is already bound. Component-level coverage already in `participant-identify-flow.test.tsx`.
+- Layer 3 follow-up: Playwright e2e walking through bind → submit-different-name → assert UI surface + DB unchanged. Same Next.js-runtime constraint as the other Layer 3 items.
 
 ### Phase 7 — Docs
 

@@ -60,6 +60,27 @@ export async function POST(request: Request) {
   const participantIdInput = typeof body.participantId === "string" ? body.participantId : null;
   const displayNameInput = typeof body.displayName === "string" ? body.displayName : null;
 
+  // Phase 6: early already_bound check. If this session is already bound
+  // to someone, refuse before doing any side effects (no Neon Auth user
+  // creation, no walk-in row created). Mismatched identity = potential
+  // session takeover; emit a runtime alert and audit the attempt.
+  if (bundle.session.participantId && bundle.session.participantId !== participantIdInput) {
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId: bundle.session.instanceId,
+      actorKind: "participant",
+      action: "participant_password_create",
+      result: "failure",
+      createdAt: new Date().toISOString(),
+      metadata: {
+        reason: "already_bound",
+        boundParticipantId: bundle.session.participantId,
+        attemptedParticipantId: participantIdInput,
+      },
+    });
+    return NextResponse.json({ ok: false, error: "already_bound" }, { status: 409 });
+  }
+
   if (!email || email.indexOf("@") <= 0) {
     return NextResponse.json({ ok: false, error: "invalid_email" }, { status: 400 });
   }

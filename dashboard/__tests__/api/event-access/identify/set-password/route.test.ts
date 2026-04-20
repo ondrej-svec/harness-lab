@@ -329,6 +329,56 @@ describe("POST /api/event-access/identify/set-password (walk-in policy gate)", (
     expect(payload.error).toBe("weak_password");
   });
 
+  it("Phase 6: rejects early with already_bound when session has a different participantId", async () => {
+    setEventAccessRepositoryForTests(
+      new MemoryEventAccessRepository({
+        ...makeSession(),
+        participantId: "p-existing-bound",
+      }),
+    );
+    setWorkshopInstanceRepositoryForTests(
+      new MemoryWorkshopInstanceRepository(makeInstance({ allowWalkIns: true })),
+    );
+    participantRepo.participants = [makeParticipant({ id: "p-different" })];
+    const { POST } = await importRoute();
+
+    const response = await POST(
+      buildRequest({ participantId: "p-different", email: "x@x.com", password: "longenough" }),
+    );
+
+    expect(response.status).toBe(409);
+    const payload = (await response.json()) as { error: string };
+    expect(payload.error).toBe("already_bound");
+
+    const audit = auditRepo.records.find((r) => r.metadata?.reason === "already_bound");
+    expect(audit).toBeDefined();
+    expect(audit?.metadata?.boundParticipantId).toBe("p-existing-bound");
+    expect(audit?.metadata?.attemptedParticipantId).toBe("p-different");
+  });
+
+  it("Phase 6: rejects walk-in with already_bound when session is already bound", async () => {
+    setEventAccessRepositoryForTests(
+      new MemoryEventAccessRepository({
+        ...makeSession(),
+        participantId: "p-existing-bound",
+      }),
+    );
+    setWorkshopInstanceRepositoryForTests(
+      new MemoryWorkshopInstanceRepository(makeInstance({ allowWalkIns: true })),
+    );
+    const { POST } = await importRoute();
+
+    const response = await POST(
+      buildRequest({ displayName: "Walker", email: "walk@inny.test", password: "longenough" }),
+    );
+
+    expect(response.status).toBe(409);
+    const payload = (await response.json()) as { error: string };
+    expect(payload.error).toBe("already_bound");
+    // No walk-in row should have been created
+    expect(participantRepo.participants).toHaveLength(0);
+  });
+
   it("returns 401 when no session cookie is present", async () => {
     setWorkshopInstanceRepositoryForTests(
       new MemoryWorkshopInstanceRepository(makeInstance({ allowWalkIns: true })),
