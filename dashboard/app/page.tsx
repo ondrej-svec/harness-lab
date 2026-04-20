@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   getConfiguredEventCode,
+  getParticipantSessionCookieOptions,
   participantSessionCookieName,
   redeemEventCode,
 } from "@/lib/event-access";
@@ -29,12 +30,11 @@ async function redeemEventCodeAction(formData: FormData) {
   }
 
   const cookieStore = await cookies();
-  cookieStore.set(participantSessionCookieName, result.session.token, {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(result.session.expiresAt),
-  });
+  cookieStore.set(
+    participantSessionCookieName,
+    result.session.token,
+    getParticipantSessionCookieOptions(new Date(result.session.expiresAt)),
+  );
 
   redirect(withLang("/participant", lang));
 }

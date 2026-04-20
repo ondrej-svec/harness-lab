@@ -321,10 +321,10 @@ and applied it to:
 - `app/participant/page.tsx:33` (logout cookie clear) ✅
 
 Still open for this plan:
-- [ ] Replace inline cookie options at `app/page.tsx:32-37` (server-action redeem) with `getParticipantSessionCookieOptions`. Today's inline options lack `secure` — the parallel work missed this site.
-- [ ] Update `proxy.ts:82-86` to set `secure: process.env.NODE_ENV === "production"` on the language cookie.
-- [ ] Unit test: mock `NODE_ENV` and assert `getParticipantSessionCookieOptions` returns the correct flag in both modes.
-- [ ] Manual test: `pnpm build && pnpm start`, redeem via the server action (homepage form), inspect Set-Cookie — expect `Secure`.
+- [x] Replace inline cookie options at `app/page.tsx:32-37` (server-action redeem) with `getParticipantSessionCookieOptions`. Today's inline options lack `secure` — the parallel work missed this site.
+- [x] Update `proxy.ts:82-86` to set `secure: process.env.NODE_ENV === "production"` on the language cookie.
+- [x] Unit test: mock `NODE_ENV` and assert `getParticipantSessionCookieOptions` returns the correct flag in both modes (already existed in `event-access.test.ts:242-265`).
+- [ ] Manual test: `pnpm build && pnpm start`, redeem via the server action (homepage form), inspect Set-Cookie — expect `Secure`. (Deferred: covered by NODE_ENV-gated unit test; plan should update manual-verify gate if we want it re-run before ship.)
 - [ ] ⎘ Commit: `fix: thread secure cookie helper through server-action redeem + lang cookie`.
 
 ### Phase 4 — HMAC event codes
