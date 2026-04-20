@@ -5,6 +5,15 @@ import { publicCopy, type UiLanguage, withLang } from "@/lib/ui-language";
 import { AgentPopover } from "./agent-popover";
 import { ThemeSwitcher } from "./theme-switcher";
 
+/**
+ * SiteHeader — shared chrome for the public + participant surfaces.
+ *
+ * NOTE ON LANG LINKS: `csHref` and `enHref` default to the public home
+ * page. Participant-surface callers MUST override them to the
+ * participant path (`/participant`) so clicking the language switcher
+ * doesn't drop a logged-in participant onto the public landing and
+ * make them think their session expired.
+ */
 export function SiteHeader({
   isParticipant,
   lang,
