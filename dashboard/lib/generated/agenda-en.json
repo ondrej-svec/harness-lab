@@ -552,35 +552,13 @@
               "type": "hero",
               "eyebrow": "Before Build 1",
               "title": "Find the weakest signal in your repo",
-              "body": "Pick the one gap your team already suspects. The poll is a quick room signal, not a quiz."
+              "body": "Pick the one gap your team already suspects. Name it cleanly before Build 1 starts."
             }
           ],
           "feedbackEnabled": true,
           "roomSceneIds": [
             "talk-how-to-build"
-          ],
-          "poll": {
-            "id": "talk-weakest-repo-signal",
-            "prompt": "Which part of your repo is weakest right now?",
-            "options": [
-              {
-                "id": "map",
-                "label": "Map"
-              },
-              {
-                "id": "boundaries",
-                "label": "Boundaries"
-              },
-              {
-                "id": "instructions",
-                "label": "Instructions"
-              },
-              {
-                "id": "verification",
-                "label": "Verification"
-              }
-            ]
-          }
+          ]
         },
         {
           "id": "talk-ready-for-build",

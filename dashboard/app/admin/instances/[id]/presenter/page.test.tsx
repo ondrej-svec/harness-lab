@@ -121,14 +121,14 @@ describe("PresenterPage", () => {
       roomSceneId: "talk-how-to-build",
       participantMomentId: "talk-note-one-gap",
       participantMode: "auto",
-      activePollId: "talk-weakest-repo-signal",
+      activePollId: "repo-signal-check",
     };
     getWorkshopState.mockResolvedValue(state);
     getActivePollSummary.mockResolvedValue({
       agendaItemId: "talk",
       participantMomentId: "talk-note-one-gap",
-      pollId: "talk-weakest-repo-signal",
-      prompt: "Which part of your repo is weakest right now?",
+      pollId: "repo-signal-check",
+      prompt: "Which repo signal needs work first?",
       totalResponses: 3,
       options: [
         { id: "map", label: "Map", count: 2 },
@@ -147,7 +147,7 @@ describe("PresenterPage", () => {
     const html = renderToStaticMarkup(view);
 
     expect(html).toContain("Room signal");
-    expect(html).toContain("Which part of your repo is weakest right now?");
+    expect(html).toContain("Which repo signal needs work first?");
     expect(html).toContain("3 responses");
     expect(html).toContain("Verification");
   });

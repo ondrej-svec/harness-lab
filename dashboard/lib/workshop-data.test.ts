@@ -148,12 +148,12 @@ describe("workshop-data", () => {
     ).toBe(true);
   });
 
-  it("keeps the rewritten talk and reveal flagship scenes structurally richer in English content", () => {
+  it("keeps the rewritten talk and reveal flagship scenes structurally richer in English content without forcing a default poll", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const talk = state.agenda.find((item) => item.id === "talk");
     const reveal = state.agenda.find((item) => item.id === "reveal");
     const talkHowScene = talk?.presenterScenes.find((scene) => scene.id === "talk-how-to-build");
-    const talkPollMoment = talk?.participantMoments.find((moment) => moment.id === "talk-note-one-gap");
+    const talkGapMoment = talk?.participantMoments.find((moment) => moment.id === "talk-note-one-gap");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
 
     expect(talkHowScene?.blocks).toEqual(
@@ -168,10 +168,7 @@ describe("workshop-data", () => {
         expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
       ]),
     );
-    expect(talkPollMoment?.poll).toMatchObject({
-      id: "talk-weakest-repo-signal",
-      options: expect.arrayContaining([expect.objectContaining({ id: "map", label: "Map" })]),
-    });
+    expect(talkGapMoment?.poll).toBeNull();
   });
 
   it("keeps the rewritten talk and reveal flagship scenes structurally richer in the default Czech blueprint", () => {

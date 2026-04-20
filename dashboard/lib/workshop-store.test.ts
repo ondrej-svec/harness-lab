@@ -766,12 +766,39 @@ describe("workshop-store", () => {
   });
 
   it("stores active poll responses outside workshop state and aggregates them by option", async () => {
+    const stateWithPoll = structuredClone(seedWorkshopState);
+    stateWithPoll.agenda = stateWithPoll.agenda.map((item) =>
+      item.id !== "talk"
+        ? item
+        : {
+            ...item,
+            participantMoments: item.participantMoments.map((moment) =>
+              moment.id !== "talk-note-one-gap"
+                ? moment
+                : {
+                    ...moment,
+                    poll: {
+                      id: "repo-signal-check",
+                      prompt: "Which repo signal needs work first?",
+                      options: [
+                        { id: "map", label: "Map" },
+                        { id: "boundaries", label: "Boundaries" },
+                        { id: "verification", label: "Verification" },
+                      ],
+                    },
+                  },
+            ),
+          },
+    );
+    repository = new MemoryWorkshopStateRepository(stateWithPoll);
+    setWorkshopStateRepositoryForTests(repository);
+
     await setCurrentAgendaItem("talk", instanceId);
     await setLiveRoomScene("talk", "talk-how-to-build", instanceId);
 
     let summary = await getActivePollSummary(instanceId);
     expect(summary).toMatchObject({
-      pollId: "talk-weakest-repo-signal",
+      pollId: "repo-signal-check",
       totalResponses: 0,
     });
 

@@ -552,35 +552,13 @@
               "type": "hero",
               "eyebrow": "Před Build 1",
               "title": "Najděte nejslabší signál ve svém repu",
-              "body": "Vyberte jednu mezeru, kterou už teď tušíte. Poll je krátký signál pro místnost, ne soutěž."
+              "body": "Vyberte jednu mezeru, kterou už teď tušíte. Pojmenujte ji čistě, než začne Build 1."
             }
           ],
           "feedbackEnabled": true,
           "roomSceneIds": [
             "talk-how-to-build"
-          ],
-          "poll": {
-            "id": "talk-weakest-repo-signal",
-            "prompt": "Která část vašeho repa je teď nejslabší?",
-            "options": [
-              {
-                "id": "map",
-                "label": "Mapa"
-              },
-              {
-                "id": "boundaries",
-                "label": "Mantinely"
-              },
-              {
-                "id": "instructions",
-                "label": "Instrukce"
-              },
-              {
-                "id": "verification",
-                "label": "Ověření"
-              }
-            ]
-          }
+          ]
         },
         {
           "id": "talk-ready-for-build",

@@ -1124,52 +1124,6 @@
           "roomSceneIds": [
             "talk-how-to-build"
           ],
-          "poll": {
-            "id": "talk-weakest-repo-signal",
-            "en": {
-              "prompt": "Which part of your repo is weakest right now?",
-              "options": [
-                {
-                  "id": "map",
-                  "label": "Map"
-                },
-                {
-                  "id": "boundaries",
-                  "label": "Boundaries"
-                },
-                {
-                  "id": "instructions",
-                  "label": "Instructions"
-                },
-                {
-                  "id": "verification",
-                  "label": "Verification"
-                }
-              ]
-            },
-            "cs": {
-              "prompt": "Která část vašeho repa je teď nejslabší?",
-              "options": [
-                {
-                  "id": "map",
-                  "label": "Mapa"
-                },
-                {
-                  "id": "boundaries",
-                  "label": "Mantinely"
-                },
-                {
-                  "id": "instructions",
-                  "label": "Instrukce"
-                },
-                {
-                  "id": "verification",
-                  "label": "Ověření"
-                }
-              ]
-            },
-            "cs_reviewed": false
-          },
           "en": {
             "label": "Name one gap",
             "title": "Find the weakest signal in your repo",
@@ -1180,7 +1134,7 @@
                 "type": "hero",
                 "eyebrow": "Before Build 1",
                 "title": "Find the weakest signal in your repo",
-                "body": "Pick the one gap your team already suspects. The poll is a quick room signal, not a quiz."
+                "body": "Pick the one gap your team already suspects. Name it cleanly before Build 1 starts."
               }
             ]
           },
@@ -1194,7 +1148,7 @@
                 "type": "hero",
                 "eyebrow": "Před Build 1",
                 "title": "Najděte nejslabší signál ve svém repu",
-                "body": "Vyberte jednu mezeru, kterou už teď tušíte. Poll je krátký signál pro místnost, ne soutěž."
+                "body": "Vyberte jednu mezeru, kterou už teď tušíte. Pojmenujte ji čistě, než začne Build 1."
               }
             ]
           },
