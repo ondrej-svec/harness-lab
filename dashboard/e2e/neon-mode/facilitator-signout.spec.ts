@@ -1,5 +1,8 @@
 import { expect, INSTANCE_ID, signInAsTestFacilitator, test } from "./fixtures";
 
+// Covers the real facilitator logout path, then proves the admin
+// guards send both the control-room route and the workspace route
+// back to /admin/sign-in once the session is gone.
 test("facilitator sign out clears access from both workspace and control-room surfaces", async ({ page }) => {
   await signInAsTestFacilitator(page.context());
 
