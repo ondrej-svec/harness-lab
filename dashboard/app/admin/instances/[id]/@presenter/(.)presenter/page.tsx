@@ -25,14 +25,17 @@ export default async function InterceptedPresenterPage({
   const lang = resolveUiLanguage(query?.lang);
   const copy = adminCopy[lang];
 
-  const instance = await getWorkshopInstanceRepository().getInstance(instanceId);
+  // Parallelize the instance lookup, workshop state read, and
+  // facilitator session check. Each one is an independent DB hop on
+  // Neon and sequential awaits pay the sum of cold-start penalties.
+  const [instance, state] = await Promise.all([
+    getWorkshopInstanceRepository().getInstance(instanceId),
+    getWorkshopState(instanceId),
+    requireFacilitatorPageAccess(instanceId),
+  ]);
   if (!instance) {
     redirect("/admin");
   }
-
-  await requireFacilitatorPageAccess(instanceId);
-
-  const state = await getWorkshopState(instanceId);
   const teams = state.teams;
   const presenterState = buildPresenterPageState({
     state,

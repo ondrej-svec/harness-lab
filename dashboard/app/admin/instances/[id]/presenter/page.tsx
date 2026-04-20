@@ -4,7 +4,11 @@ import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { getPresenterScenesBySurface } from "@/lib/presenter-scenes";
 import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
-import { getActivePollSummary, getWorkshopState, type ActivePollSummary } from "@/lib/workshop-store";
+import {
+  getActivePollSummaryForState,
+  getWorkshopState,
+  type ActivePollSummary,
+} from "@/lib/workshop-store";
 import type { AgendaItem, PresenterBlock, PresenterScene, Team } from "@/lib/workshop-data";
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 import { PresenterShell } from "../_components/presenter-shell";
@@ -24,16 +28,23 @@ export default async function PresenterPage({
   const lang = resolveUiLanguage(query?.lang);
   const copy = adminCopy[lang];
   const instanceId = routeParams.id;
-  const instance = await getWorkshopInstanceRepository().getInstance(instanceId);
+
+  // Kick off independent reads in parallel so a phase change pays the
+  // max, not the sum, of DB round-trip latencies. The auth check runs
+  // alongside the data reads; if it rejects it throws a redirect and
+  // the unused reads are simply dropped (their connection warming has
+  // already benefited the next request).
+  const [instance, state] = await Promise.all([
+    getWorkshopInstanceRepository().getInstance(instanceId),
+    getWorkshopState(instanceId),
+    requireFacilitatorPageAccess(instanceId),
+  ]);
 
   if (!instance) {
     redirect("/admin");
   }
 
-  await requireFacilitatorPageAccess(instanceId);
-
-  const state = await getWorkshopState(instanceId);
-  const activePollSummary = await getActivePollSummary(instanceId);
+  const activePollSummary = await getActivePollSummaryForState(instanceId, state);
   const teams = state.teams;
   const presenterState = buildPresenterPageState({
     state,

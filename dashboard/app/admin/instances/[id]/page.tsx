@@ -20,9 +20,13 @@ export default async function AdminPage({
 }) {
   const { id: instanceId } = await params;
   const query = await searchParams;
-  const vm = await loadAdminPageViewModel({ instanceId, query });
-  const pollSummary = await getActivePollSummary(instanceId);
-  const participantFeedback = await listParticipantFeedback(instanceId);
+  // Parallelize the independent reads — each is a DB round trip on
+  // Neon and sequential awaits pay the sum of their latencies.
+  const [vm, pollSummary, participantFeedback] = await Promise.all([
+    loadAdminPageViewModel({ instanceId, query }),
+    getActivePollSummary(instanceId),
+    listParticipantFeedback(instanceId),
+  ]);
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-5 text-[var(--text-primary)] sm:px-6 sm:py-6">

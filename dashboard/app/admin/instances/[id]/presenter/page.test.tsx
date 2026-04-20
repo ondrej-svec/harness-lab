@@ -6,6 +6,7 @@ import { createWorkshopStateFromTemplate, sampleWorkshopInstances, seedWorkshopS
 const redirect = vi.fn();
 const requireFacilitatorPageAccess = vi.fn();
 const getActivePollSummary = vi.fn();
+const getActivePollSummaryForState = vi.fn();
 const getWorkshopState = vi.fn();
 const getInstance = vi.fn();
 const push = vi.fn();
@@ -33,6 +34,7 @@ vi.mock("@/lib/workshop-instance-repository", () => ({
 
 vi.mock("@/lib/workshop-store", () => ({
   getActivePollSummary,
+  getActivePollSummaryForState,
   getWorkshopState,
 }));
 
@@ -43,6 +45,7 @@ describe("PresenterPage", () => {
     vi.clearAllMocks();
     getInstance.mockResolvedValue(structuredClone(sampleWorkshopInstances[0]));
     getActivePollSummary.mockResolvedValue(null);
+    getActivePollSummaryForState.mockResolvedValue(null);
     getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
     requireFacilitatorPageAccess.mockResolvedValue(undefined);
   });
@@ -124,7 +127,7 @@ describe("PresenterPage", () => {
       activePollId: "repo-signal-check",
     };
     getWorkshopState.mockResolvedValue(state);
-    getActivePollSummary.mockResolvedValue({
+    const pollSummary = {
       agendaItemId: "talk",
       participantMomentId: "talk-note-one-gap",
       pollId: "repo-signal-check",
@@ -134,7 +137,9 @@ describe("PresenterPage", () => {
         { id: "map", label: "Map", count: 2 },
         { id: "verification", label: "Verification", count: 1 },
       ],
-    });
+    };
+    getActivePollSummary.mockResolvedValue(pollSummary);
+    getActivePollSummaryForState.mockResolvedValue(pollSummary);
     getInstance.mockResolvedValue({
       ...structuredClone(sampleWorkshopInstances[0]),
       workshopMeta: state.workshopMeta,

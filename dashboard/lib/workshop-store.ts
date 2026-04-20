@@ -1660,10 +1660,15 @@ export async function listRotationSignals(
   return getRotationSignalRepository().list(instanceId);
 }
 
-export async function getActivePollSummary(
+/**
+ * Build an ActivePollSummary when the caller already has the workshop
+ * state in hand. Used by PresenterPage to avoid a redundant state read
+ * on every render / phase change.
+ */
+export async function getActivePollSummaryForState(
   instanceId: string,
+  state: WorkshopState,
 ): Promise<ActivePollSummary | null> {
-  const state = await getWorkshopState(instanceId);
   const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
   const poll = participantMoment?.poll ?? null;
   if (!agendaItem || !participantMoment || !poll) {
@@ -1687,6 +1692,13 @@ export async function getActivePollSummary(
       count: counts.get(option.id) ?? 0,
     })),
   };
+}
+
+export async function getActivePollSummary(
+  instanceId: string,
+): Promise<ActivePollSummary | null> {
+  const state = await getWorkshopState(instanceId);
+  return getActivePollSummaryForState(instanceId, state);
 }
 
 export async function submitActivePollResponse(
