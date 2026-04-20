@@ -78,6 +78,13 @@
 - `compound` or a short runbook when something is worth preserving
 - ongoing cleanup work: move build and test commands, constraints, and handoff notes from chat into the repo
 
+## External references worth opening during the day
+
+- [Martin Fowler — Harness engineering for coding agent users](https://martinfowler.com/articles/harness-engineering.html) — the guides/sensors/feedforward/feedback framing the talk is built on
+- [OpenAI — Giving Codex a full observability stack](https://openai.com/index/harness-engineering/) — what the ambitious end-state looks like when you close the loop all the way
+- [agents.md](https://agents.md) — the emerging standard for `AGENTS.md` files; useful when you are writing your own
+- [agentskills.io](https://agentskills.io/home) — a catalog of skills beyond this workshop; somewhere to look after the day is done
+
 ## Verification ladder
 
 The more the agent does, the more holistic your checks have to be. With agents, your verification needs to prove the whole thing works, not that one function returned 4. Climb the ladder in order; add each rung only when you need it.
