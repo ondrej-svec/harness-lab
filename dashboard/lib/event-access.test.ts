@@ -18,6 +18,7 @@ import {
   type EventAccessRepository,
 } from "./event-access-repository";
 import {
+  hashEventCode,
   hashSecret,
   setParticipantEventAccessRepositoryForTests,
   type ParticipantEventAccessRepository,
@@ -342,5 +343,46 @@ describe("event-access", () => {
     // Cross-instance lookup should find the expired session and delete from sample-studio-a
     await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
     await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
+  });
+
+  describe("HMAC event-code migration", () => {
+    it("redeems a code whose stored hash was written with the new HMAC", async () => {
+      await accessRepository.saveAccess("sample-studio-a", {
+        id: "pea-sample-studio-a",
+        instanceId: "sample-studio-a",
+        version: 2,
+        codeHash: hashEventCode("lantern8-context4-handoff2"),
+        expiresAt: "2026-04-20T12:00:00.000Z",
+        revokedAt: null,
+        sampleCode: "lantern8-context4-handoff2",
+      });
+
+      const result = await redeemEventCode("lantern8-context4-handoff2");
+      expect(result.ok).toBe(true);
+    });
+
+    it("redeems a legacy SHA-256 row and upgrades the stored hash to HMAC in place", async () => {
+      await accessRepository.saveAccess("sample-studio-a", {
+        id: "pea-sample-studio-a",
+        instanceId: "sample-studio-a",
+        version: 2,
+        codeHash: hashSecret("lantern8-context4-handoff2"),
+        expiresAt: "2026-04-20T12:00:00.000Z",
+        revokedAt: null,
+        sampleCode: "lantern8-context4-handoff2",
+      });
+
+      const result = await redeemEventCode("lantern8-context4-handoff2");
+      expect(result.ok).toBe(true);
+
+      const upgraded = await accessRepository.getActiveAccess("sample-studio-a");
+      expect(upgraded?.codeHash).toBe(hashEventCode("lantern8-context4-handoff2"));
+      expect(upgraded?.codeHash).not.toBe(hashSecret("lantern8-context4-handoff2"));
+    });
+
+    it("rejects a code whose hash does not match under either hash family", async () => {
+      const result = await redeemEventCode("not-the-code");
+      expect(result).toEqual({ ok: false, reason: "invalid_code" });
+    });
   });
 });

@@ -109,9 +109,11 @@ export default defineConfig({
       HARNESS_STATE_PATH: workshopStatePath,
       HARNESS_EVENT_ACCESS_PATH: eventAccessPath,
       HARNESS_DATA_DIR: runtimeDir,
-      // Stable HMAC key so preview → commit round-trips across Playwright
-      // workers. Not sensitive — this is a test env.
+      // Stable HMAC keys so preview → commit and event-code round-trips
+      // stay deterministic across Playwright workers. Not sensitive — these
+      // are test env values only.
       HARNESS_COMMIT_TOKEN_SECRET: "playwright-commit-secret",
+      HARNESS_EVENT_CODE_SECRET: "playwright-event-code-secret-at-least-32-chars",
     },
   },
 });

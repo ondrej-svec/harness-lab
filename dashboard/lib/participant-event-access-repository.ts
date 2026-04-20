@@ -1,8 +1,9 @@
 import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 import path from "node:path";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getNeonSql } from "./neon-db";
+import { isNeonRuntimeMode } from "./runtime-auth-configuration";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { ParticipantEventAccessRecord, ParticipantEventAccessRepository } from "./runtime-contracts";
 
@@ -10,6 +11,34 @@ export type { ParticipantEventAccessRepository };
 
 const sampleEventCode = "lantern8-context4-handoff2";
 export const participantEventCodeValidityDays = 14;
+
+const devEventCodeKey = "harness-dev-event-code-key-not-for-production-use-only-local";
+const minEventCodeKeyLength = 32;
+let warnedAboutDevEventCodeKey = false;
+
+function resolveEventCodeKey(): string {
+  const key = process.env.HARNESS_EVENT_CODE_SECRET;
+  if (key && key.length >= minEventCodeKeyLength) {
+    return key;
+  }
+  if (isNeonRuntimeMode()) {
+    throw new Error(
+      `HARNESS_EVENT_CODE_SECRET must be set and at least ${minEventCodeKeyLength} characters when HARNESS_STORAGE_MODE=neon`,
+    );
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      `HARNESS_EVENT_CODE_SECRET must be set and at least ${minEventCodeKeyLength} characters in production`,
+    );
+  }
+  if (!warnedAboutDevEventCodeKey) {
+    warnedAboutDevEventCodeKey = true;
+    console.warn(
+      "HARNESS_EVENT_CODE_SECRET not set — using insecure dev fallback. Not safe outside local file-mode.",
+    );
+  }
+  return devEventCodeKey;
+}
 
 export function getConfiguredSeedEventCode() {
   if (getRuntimeStorageMode() === "neon" && !process.env.HARNESS_EVENT_CODE) {
@@ -28,8 +57,24 @@ export function getConfiguredSeedEventCode() {
   };
 }
 
+/**
+ * Session-token hash. Tokens are already 128-bit CSPRNG UUIDs, so plain
+ * SHA-256 is enough and rainbow tables don't help. Kept as-is to preserve
+ * live session cookies across the HMAC migration.
+ */
 export function hashSecret(value: string) {
   return createHash("sha256").update(value).digest("hex");
+}
+
+/**
+ * Event-code hash. Event codes are three-word human-memorable strings
+ * with a small keyspace — plain SHA-256 is rainbow-table-attackable if
+ * the access table ever leaks. HMAC with a server-side key fixes this.
+ * `keyOverride` exists for tests; production always reads the env var.
+ */
+export function hashEventCode(value: string, options: { keyOverride?: string } = {}) {
+  const key = options.keyOverride ?? resolveEventCodeKey();
+  return createHmac("sha256", key).update(value).digest("hex");
 }
 
 type StoredParticipantEventAccess = {
@@ -52,7 +97,7 @@ export class FileParticipantEventAccessRepository implements ParticipantEventAcc
       id: `pea-${instanceId}`,
       instanceId,
       version: 1,
-      codeHash: hashSecret(seed.code),
+      codeHash: hashEventCode(seed.code),
       expiresAt: seed.expiresAt,
       revokedAt: null,
       sampleCode: seed.isSample ? seed.code : null,
@@ -131,7 +176,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
         INSERT INTO participant_event_access (id, instance_id, version, code_hash, expires_at, revoked_at)
         VALUES ($1, $2, $3, $4, $5::timestamptz, $6)
       `,
-      [`pea-${instanceId}`, instanceId, 1, hashSecret(seed.code), seed.expiresAt, null],
+      [`pea-${instanceId}`, instanceId, 1, hashEventCode(seed.code), seed.expiresAt, null],
     );
   }
 

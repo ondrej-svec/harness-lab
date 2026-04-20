@@ -329,14 +329,15 @@ Still open for this plan:
 
 ### Phase 4 — HMAC event codes
 
-- [ ] Add `hashEventCode(code, { keyOverride }?)` in `lib/participant-event-access-repository.ts`. Read key from `process.env.HARNESS_EVENT_CODE_SECRET`. Dev fallback: a stable constant with `console.warn` if env var is missing and NODE_ENV !== production.
-- [ ] Add production-only guard in `lib/runtime-auth-configuration.ts`: asserts `HARNESS_EVENT_CODE_SECRET` is set and ≥32 bytes when `isNeonRuntimeMode() === true`.
-- [ ] In `redeemEventCode` (now passed a request), compute both `hashEventCode(code)` and `hashSecret(code)` (legacy SHA-256). Compare with `safeCompare` to each stored `codeHash`. If SHA-256 matches but HMAC doesn't, upgrade the stored row's `codeHash` to HMAC.
-- [ ] In `buildSeedAccess` (file mode) and the equivalent Neon seeding path, switch to HMAC at creation time.
-- [ ] Add `.env.example` entry for `HARNESS_EVENT_CODE_SECRET`.
-- [ ] Document in `docs/private-workshop-instance-schema.md` (or equivalent): the stored `codeHash` is HMAC-SHA256 with a server-side key; legacy rows are accepted and upgraded on first redeem.
-- [ ] Unit tests: (a) HMAC path matches on redeem; (b) SHA-256 legacy row matches on redeem and gets upgraded in-place; (c) seeded code writes HMAC directly.
-- [ ] Full test suite green including Playwright (which uses `HARNESS_EVENT_CODE` env for its seeded code — ensure the Playwright config also sets `HARNESS_EVENT_CODE_SECRET`).
+- [x] Add `hashEventCode(code, { keyOverride }?)` in `lib/participant-event-access-repository.ts`. Reads `HARNESS_EVENT_CODE_SECRET`. In file-mode dev, falls back to a stable constant with a one-shot `console.warn`; in Neon mode or production, missing / short keys throw.
+- [x] Production / Neon guard enforced inside `resolveEventCodeKey()` (same file) — throws on first use if the env var is missing or shorter than 32 chars. Avoids a separate one-off assertion in `runtime-auth-configuration.ts` while still failing fast at boot.
+- [x] `redeemEventCode` computes both `hashEventCode(code)` and `hashSecret(code)`, matches stored rows against either, and upgrades SHA-256 rows to HMAC in place on first successful redeem.
+- [x] `buildSeedAccess` (file mode) and the Neon `ensureSeedAccess` path switched to HMAC at creation time. `issueParticipantEventAccess` now writes HMAC; `resolveRecoverableCurrentCode` recognizes either hash family so existing seeded rows still reveal.
+- [x] `.env.example` documents `HARNESS_EVENT_CODE_SECRET`. `playwright.config.ts` sets a stable 32+ char test key so the E2E server has what it needs.
+- [x] `docs/private-workshop-instance-schema.md` notes HMAC hashing + dual-hash migration on `code_hash`.
+- [x] Unit tests (`event-access.test.ts` / `participant-event-access-repository.test.ts`): HMAC redeem, SHA-256 legacy redeem + upgrade, seed writes HMAC, no-match rejection.
+- [x] Full unit suite green (381 / 381).
+- [ ] Playwright sweep deferred to end-of-phase verification.
 - [ ] ⎘ Commit: `feat: hmac-hash event codes with legacy sha256 migration`.
 
 ### Phase 5 — Identify flow revamp

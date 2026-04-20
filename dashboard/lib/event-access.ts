@@ -6,7 +6,12 @@ import { getAuditLogRepository } from "./audit-log-repository";
 import { getEventAccessRepository } from "./event-access-repository";
 import { getCurrentWorkshopInstanceId } from "./instance-context";
 import { getParticipantRepository } from "./participant-repository";
-import { getEventAccessPreview, getParticipantEventAccessRepository, hashSecret } from "./participant-event-access-repository";
+import {
+  getEventAccessPreview,
+  getParticipantEventAccessRepository,
+  hashEventCode,
+  hashSecret,
+} from "./participant-event-access-repository";
 import type { ParticipantRecord, ParticipantSession, ParticipantSessionRecord } from "./runtime-contracts";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import { getWorkshopState } from "./workshop-store";
@@ -120,19 +125,25 @@ export async function findOrCreateParticipant(
 
 export async function redeemEventCode(submittedCode: string, displayName?: string) {
   const normalized = submittedCode.trim();
-  const codeHash = hashSecret(normalized);
+  const newHash = hashEventCode(normalized);
+  const legacyHash = hashSecret(normalized);
   const auditLogRepository = getAuditLogRepository();
   const accessRepository = getParticipantEventAccessRepository();
+
+  const matchesStoredHash = (access: { codeHash: string }) =>
+    safeCompare(newHash, access.codeHash) || safeCompare(legacyHash, access.codeHash);
+  const storedHashIsLegacy = (access: { codeHash: string }) =>
+    !safeCompare(newHash, access.codeHash) && safeCompare(legacyHash, access.codeHash);
 
   // Scan all instances' active event codes to find which one this code belongs to.
   const allAccess = await accessRepository.listAllActiveAccess();
   const matchedAccess = allAccess.find(
-    (access) => Date.parse(access.expiresAt) > Date.now() && safeCompare(codeHash, access.codeHash),
+    (access) => Date.parse(access.expiresAt) > Date.now() && matchesStoredHash(access),
   );
 
   if (!matchedAccess) {
     // Determine whether to report "invalid" or "expired" for audit purposes.
-    const expiredMatch = allAccess.find((access) => safeCompare(codeHash, access.codeHash));
+    const expiredMatch = allAccess.find((access) => matchesStoredHash(access));
     const reason = expiredMatch ? "expired_code" : "invalid_code";
     await auditLogRepository.append({
       id: `audit-${randomUUID()}`,
@@ -144,6 +155,14 @@ export async function redeemEventCode(submittedCode: string, displayName?: strin
       metadata: { reason },
     });
     return { ok: false as const, reason: reason as "expired_code" | "invalid_code" };
+  }
+
+  // Legacy SHA-256 rows get upgraded to HMAC on first successful redeem.
+  if (storedHashIsLegacy(matchedAccess)) {
+    await accessRepository.saveAccess(matchedAccess.instanceId, {
+      ...matchedAccess,
+      codeHash: newHash,
+    });
   }
 
   const instanceId = matchedAccess.instanceId;

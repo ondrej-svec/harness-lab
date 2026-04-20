@@ -4,6 +4,7 @@ import { getCurrentWorkshopInstanceId } from "./instance-context";
 import {
   getConfiguredSeedEventCode,
   getParticipantEventAccessRepository,
+  hashEventCode,
   hashSecret,
   participantEventCodeValidityDays,
 } from "./participant-event-access-repository";
@@ -114,7 +115,10 @@ function resolveRecoverableCurrentCode(codeHash: string, sampleCode?: string | n
   }
 
   const configuredSeed = getConfiguredSeedEventCode();
-  if (configuredSeed && hashSecret(configuredSeed.code) === codeHash) {
+  if (
+    configuredSeed &&
+    (hashEventCode(configuredSeed.code) === codeHash || hashSecret(configuredSeed.code) === codeHash)
+  ) {
     return {
       currentCode: configuredSeed.code,
       source: configuredSeed.isSample ? ("sample" as const) : ("bootstrap" as const),
@@ -184,7 +188,7 @@ export async function issueParticipantEventAccess(
     id: `pea-${randomUUID()}`,
     instanceId,
     version: (current?.version ?? 0) + 1,
-    codeHash: hashSecret(nextCode.value),
+    codeHash: hashEventCode(nextCode.value),
     expiresAt: options.expiresAt ?? buildDefaultParticipantAccessExpiry(),
     revokedAt: null,
     sampleCode: null,

@@ -27,9 +27,11 @@ describe("participant-event-access-repository", () => {
     mod.setParticipantEventAccessRepositoryForTests(null);
   });
 
-  it("hashes secrets consistently and seeds file-mode access", async () => {
+  it("hashes secrets consistently and seeds file-mode access with HMAC", async () => {
     const mod = await import("./participant-event-access-repository");
     expect(mod.hashSecret("abc")).toBe(mod.hashSecret("abc"));
+    expect(mod.hashEventCode("abc")).toBe(mod.hashEventCode("abc"));
+    expect(mod.hashEventCode("abc")).not.toBe(mod.hashSecret("abc"));
 
     const repository = new mod.FileParticipantEventAccessRepository();
     const access = await repository.getActiveAccess("instance-a");
@@ -40,6 +42,7 @@ describe("participant-event-access-repository", () => {
       revokedAt: null,
     });
     expect(access?.sampleCode).toBe("lantern8-context4-handoff2");
+    expect(access?.codeHash).toBe(mod.hashEventCode("lantern8-context4-handoff2"));
   });
 
   it("saves access records in file mode and hides revoked ones", async () => {

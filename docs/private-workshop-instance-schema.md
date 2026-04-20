@@ -85,7 +85,7 @@ Suggested fields:
 - `id`
 - `instance_id`
 - `version`
-- `code_hash`
+- `code_hash` — HMAC-SHA256 of the plaintext event code, keyed on `HARNESS_EVENT_CODE_SECRET`. Legacy rows written before the HMAC migration are plain SHA-256 and get upgraded to HMAC in place on the first successful redeem. `HARNESS_EVENT_CODE_SECRET` must be set (≥32 chars) in production and whenever `HARNESS_STORAGE_MODE=neon`.
 - `issued_at`
 - `expires_at`
 - `revoked_at`
