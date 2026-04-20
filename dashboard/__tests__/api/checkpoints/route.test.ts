@@ -134,12 +134,10 @@ class AllowFacilitatorAuthService implements FacilitatorAuthService {
 }
 
 describe("checkpoints route", () => {
-  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
   let checkpointRepository: MemoryCheckpointRepository;
   let eventAccessRepository: MemoryEventAccessRepository;
 
   beforeEach(() => {
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
     checkpointRepository = new MemoryCheckpointRepository({
       "sample-studio-a": [
         {
@@ -197,11 +195,6 @@ describe("checkpoints route", () => {
   });
 
   afterEach(() => {
-    if (originalInstanceId === undefined) {
-      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-    } else {
-      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
-    }
     setWorkshopStateRepositoryForTests(null);
     setCheckpointRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);

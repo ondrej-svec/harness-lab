@@ -94,7 +94,6 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 }
 
 describe("event-access", () => {
-  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
   const originalDataDir = process.env.HARNESS_DATA_DIR;
   const originalStatePath = process.env.HARNESS_STATE_PATH;
   const originalInstancesPath = process.env.HARNESS_INSTANCES_PATH;
@@ -104,7 +103,6 @@ describe("event-access", () => {
 
   beforeEach(() => {
     vi.resetModules();
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
     tempDir = null;
     delete process.env.HARNESS_STATE_PATH;
     delete process.env.HARNESS_INSTANCES_PATH;
@@ -126,11 +124,6 @@ describe("event-access", () => {
   });
 
   afterEach(() => {
-    if (originalInstanceId === undefined) {
-      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-    } else {
-      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
-    }
     if (originalDataDir === undefined) {
       delete process.env.HARNESS_DATA_DIR;
     } else {
@@ -213,8 +206,6 @@ describe("event-access", () => {
     if (!result.ok) {
       return;
     }
-
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
 
     const session = await getParticipantSession(result.session.token);
     expect(session).not.toBeNull();
@@ -302,45 +293,36 @@ describe("event-access", () => {
     await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
   });
 
-  it("revokes sessions across instances when env var differs", async () => {
+  it("revokes a session using the instance id stored on the session row", async () => {
     const result = await redeemEventCode("lantern8-context4-handoff2");
     expect(result.ok).toBe(true);
     if (!result.ok) {
       return;
     }
-
-    // Switch the env var to a different instance
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
 
     await revokeParticipantSession(result.session.token);
 
-    // Session should be removed from the original instance
+    // Session should be removed from its original instance.
     await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
-    // And should not be findable via cross-instance lookup
     await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
   });
 
-  it("revokes gracefully when token is not in the repository", async () => {
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
-
-    // Should not throw — falls back to env var instanceId for cleanup
+  it("revokes gracefully when the token is not in the repository", async () => {
+    // Unknown token: no row exists, so no-op (no audit write, no throw).
     await expect(revokeParticipantSession("nonexistent-token")).resolves.toBeUndefined();
   });
 
-  it("cleans up expired sessions from the correct instance in cross-instance scenario", async () => {
+  it("cleans up expired sessions from their own instance on lookup", async () => {
     const result = await redeemEventCode("lantern8-context4-handoff2");
     expect(result.ok).toBe(true);
     if (!result.ok) {
       return;
     }
-
-    // Switch env var to a different instance
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
 
     // Advance time past expiry
     vi.setSystemTime(new Date("2026-04-08T00:00:00.000Z"));
 
-    // Cross-instance lookup should find the expired session and delete from sample-studio-a
+    // Expired session lookup should find and delete from the session's instance.
     await expect(getParticipantSession(result.session.token)).resolves.toBeNull();
     await expect(repository.listSessions("sample-studio-a")).resolves.toEqual([]);
   });

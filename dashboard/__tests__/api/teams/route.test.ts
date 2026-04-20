@@ -112,10 +112,7 @@ class MemoryAuditLogRepository implements AuditLogRepository {
 }
 
 describe("teams route", () => {
-  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-
   beforeEach(() => {
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-lab-c";
     setWorkshopStateRepositoryForTests(
       new MemoryWorkshopStateRepository({
         "sample-studio-a": structuredClone(seedWorkshopState),
@@ -183,11 +180,6 @@ describe("teams route", () => {
   });
 
   afterEach(() => {
-    if (originalInstanceId === undefined) {
-      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-    } else {
-      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
-    }
     setWorkshopStateRepositoryForTests(null);
     setTeamRepositoryForTests(null);
     setEventAccessRepositoryForTests(null);

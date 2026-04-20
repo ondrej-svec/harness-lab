@@ -104,10 +104,7 @@ function buildRequest(headers: Record<string, string>) {
 }
 
 describe("guardedRedeemEventCode", () => {
-  const originalInstanceId = process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-
   beforeEach(() => {
-    process.env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
     setEventAccessRepositoryForTests(new MemoryEventAccessRepository());
     setParticipantEventAccessRepositoryForTests(
       new MemoryParticipantEventAccessRepository({
@@ -126,11 +123,6 @@ describe("guardedRedeemEventCode", () => {
   });
 
   afterEach(() => {
-    if (originalInstanceId === undefined) {
-      delete process.env.HARNESS_WORKSHOP_INSTANCE_ID;
-    } else {
-      process.env.HARNESS_WORKSHOP_INSTANCE_ID = originalInstanceId;
-    }
     setEventAccessRepositoryForTests(null);
     setParticipantEventAccessRepositoryForTests(null);
     setRedeemAttemptRepositoryForTests(null);
