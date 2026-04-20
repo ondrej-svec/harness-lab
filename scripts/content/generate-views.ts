@@ -13,6 +13,7 @@ import type {
   BilingualAgenda,
   BilingualPhase,
   BilingualScene,
+  BilingualParticipantMoment,
   BilingualSceneContent,
   BilingualPhaseContent,
   BilingualProjectBrief,
@@ -112,6 +113,9 @@ function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs") {
     facilitatorRunner: content.facilitatorRunner,
     defaultSceneId: phase.defaultSceneId,
     scenes: phase.scenes.map((scene) => generateSceneView(scene, lang)),
+    participantMoments: (phase.participantMoments ?? []).map((moment) =>
+      generateParticipantMomentView(moment, lang),
+    ),
   };
 }
 
@@ -131,6 +135,34 @@ function generateSceneView(scene: BilingualScene, lang: "en" | "cs") {
   };
 
   if (scene.surface) result.surface = scene.surface;
+  if (content.ctaLabel != null) result.ctaLabel = content.ctaLabel;
+  if (content.ctaHref != null) result.ctaHref = content.ctaHref;
+
+  return result;
+}
+
+function generateParticipantMomentView(moment: BilingualParticipantMoment, lang: "en" | "cs") {
+  const content = moment[lang];
+  const result: Record<string, unknown> = {
+    id: moment.id,
+    label: content.label,
+    title: content.title,
+    body: content.body,
+    blocks: content.blocks,
+    feedbackEnabled: moment.feedbackEnabled ?? true,
+  };
+
+  if (Array.isArray(moment.roomSceneIds) && moment.roomSceneIds.length > 0) {
+    result.roomSceneIds = moment.roomSceneIds;
+  }
+  if (moment.poll) {
+    const pollContent = moment.poll[lang];
+    result.poll = {
+      id: moment.poll.id,
+      prompt: pollContent.prompt,
+      options: pollContent.options,
+    };
+  }
   if (content.ctaLabel != null) result.ctaLabel = content.ctaLabel;
   if (content.ctaHref != null) result.ctaHref = content.ctaHref;
 

@@ -105,6 +105,32 @@ export type BilingualSceneContent = {
   blocks: PresenterBlock[];
 };
 
+export type BilingualPollOption = {
+  id: string;
+  label: string;
+};
+
+export type BilingualPollContent = {
+  prompt: string;
+  options: BilingualPollOption[];
+};
+
+export type BilingualPollDefinition = {
+  id: string;
+  en: BilingualPollContent;
+  cs: BilingualPollContent;
+  cs_reviewed: boolean;
+};
+
+export type BilingualParticipantMomentContent = {
+  label: string;
+  title: string;
+  body: string;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  blocks: PresenterBlock[];
+};
+
 // ---------------------------------------------------------------------------
 // Scene — structural fields + per-language content
 // ---------------------------------------------------------------------------
@@ -118,6 +144,17 @@ export type BilingualScene = {
 
   en: BilingualSceneContent;
   cs: BilingualSceneContent;
+  cs_reviewed: boolean;
+};
+
+export type BilingualParticipantMoment = {
+  id: string;
+  roomSceneIds?: string[];
+  feedbackEnabled?: boolean;
+  poll?: BilingualPollDefinition | null;
+
+  en: BilingualParticipantMomentContent;
+  cs: BilingualParticipantMomentContent;
   cs_reviewed: boolean;
 };
 
@@ -153,6 +190,7 @@ export type BilingualPhase = {
   cs_reviewed: boolean;
 
   scenes: BilingualScene[];
+  participantMoments?: BilingualParticipantMoment[];
 };
 
 // ---------------------------------------------------------------------------

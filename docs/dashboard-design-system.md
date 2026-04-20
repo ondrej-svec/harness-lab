@@ -256,6 +256,7 @@ If a new UI requires many custom card species, the structure probably needs simp
 ### Participant
 
 - live phase first
+- live participant moment before generic agenda explanation
 - one obvious next move
 - room context as working material, not architecture explanation
 - stable home model with `Next / Build / Reference`
@@ -263,12 +264,14 @@ If a new UI requires many custom card species, the structure probably needs simp
 - `Build` carries the minimum useful working set, not a dense status board
 - `Reference` stays evergreen and clearly secondary
 - live checkpoint residue belongs in a structured feed, not a chat-like note wall
+- scene-bound polls and persistent feedback must read as workshop signal tools, not as a chat or quiz product
 - facilitator-only concepts removed
 
 ### Facilitator
 
 - speed and safety over exposition
 - persistent status context
+- live room state, participant state, polls, and private feedback belong in one operational cluster near the top of `Run`
 - explicit grouping by operational intent
 - editing separated from live control
 

@@ -49,7 +49,9 @@ describe("workshop-data", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const opening = state.agenda[0];
     const framingScene = opening?.presenterScenes.find((scene) => scene.id === "opening-framing");
-    const teamFormationScene = opening?.presenterScenes.find((scene) => scene.id === "opening-team-formation");
+    const teamFormationMoment = opening?.participantMoments.find(
+      (moment) => moment.id === "opening-team-formation-moment",
+    );
 
     expect(state.workshopMeta.contentLang).toBe("en");
     expect(state.workshopMeta.subtitle).toBe("Workshop operating system for working with AI agents");
@@ -64,11 +66,11 @@ describe("workshop-data", () => {
       type: "hero",
     });
     expect(framingScene?.surface).toBe("room");
-    expect(teamFormationScene?.title).toBe("Form the line. Count off. Claim your anchor.");
-    expect(teamFormationScene?.surface).toBe("participant");
-    expect(teamFormationScene?.blocks[0]).toMatchObject({
-      id: "opening-team-hero",
-      title: "Form the line. Count off. Claim your anchor.",
+    expect(teamFormationMoment?.title).toBe("Stand up. Line up. Claim the anchor.");
+    expect(teamFormationMoment?.roomSceneIds).toEqual(["opening-team-formation-room"]);
+    expect(teamFormationMoment?.blocks[0]).toMatchObject({
+      id: "opening-team-formation-moment-hero",
+      title: "Stand up. Line up. Claim the anchor.",
     });
     expect(state.briefs[0]?.problem).toContain("Developers lose time");
     expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
@@ -152,6 +154,7 @@ describe("workshop-data", () => {
     const talk = state.agenda.find((item) => item.id === "talk");
     const reveal = state.agenda.find((item) => item.id === "reveal");
     const talkHowScene = talk?.presenterScenes.find((scene) => scene.id === "talk-how-to-build");
+    const talkPollMoment = talk?.participantMoments.find((moment) => moment.id === "talk-note-one-gap");
     const revealScene = reveal?.presenterScenes.find((scene) => scene.id === "reveal-1-2-4-all");
 
     expect(talkHowScene?.blocks).toEqual(
@@ -166,6 +169,10 @@ describe("workshop-data", () => {
         expect.objectContaining({ id: "reveal-system-frame", type: "callout" }),
       ]),
     );
+    expect(talkPollMoment?.poll).toMatchObject({
+      id: "talk-weakest-repo-signal",
+      options: expect.arrayContaining([expect.objectContaining({ id: "map", label: "Map" })]),
+    });
   });
 
   it("keeps the rewritten talk and reveal flagship scenes structurally richer in the default Czech blueprint", () => {

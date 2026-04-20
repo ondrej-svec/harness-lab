@@ -9,7 +9,7 @@ import {
   useTransition,
   type ReactNode,
 } from "react";
-import { advancePresenterToAgendaItemAction } from "../_actions/agenda";
+import { advancePresenterToAgendaItemAction, syncPresenterSceneAction } from "../_actions/agenda";
 import { SceneRail, type SceneRailItem } from "./scene-rail";
 
 // Local-state presenter carousel.
@@ -60,6 +60,7 @@ export function PresenterShell({
   railItems,
   initialSceneId,
   instanceId,
+  agendaItemId,
   lang,
   previousAgendaItemId,
   nextAgendaItemId,
@@ -70,6 +71,7 @@ export function PresenterShell({
   railItems: readonly SceneRailItem[];
   initialSceneId: string | null;
   instanceId: string;
+  agendaItemId: string | null;
   lang: "cs" | "en";
   /** Agenda item id of the previous phase. Cross-agenda nav
    *  fall-through fires when the user gestures backward off the
@@ -84,6 +86,7 @@ export function PresenterShell({
 }) {
   const reduceMotion = useReducedMotion();
   const [isCrossingAgenda, startCrossingAgenda] = useTransition();
+  const [, startSyncingScene] = useTransition();
   const shellRef = useRef<HTMLDivElement | null>(null);
   const slideRefs = useRef<Array<HTMLElement | null>>([]);
 
@@ -112,10 +115,15 @@ export function PresenterShell({
   const wheelGestureFiredRef = useRef(false);
   const wheelGestureDirectionRef = useRef(0); // sign of the navigation that fired (1, -1, or 0 if not fired)
   const wheelMinMagSinceFiredRef = useRef(Infinity); // smallest |deltaY| seen since last fire — inertia decays, so a later larger delta means new input
+  const lastSyncedSceneIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
+
+  useEffect(() => {
+    lastSyncedSceneIdRef.current = null;
+  }, [agendaItemId]);
 
   useEffect(() => {
     slidesRef.current = slides;
@@ -184,6 +192,22 @@ export function PresenterShell({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex]);
+
+  useEffect(() => {
+    const activeSceneId = slides[activeIndex]?.id ?? null;
+    if (!agendaItemId || !activeSceneId || lastSyncedSceneIdRef.current === activeSceneId) {
+      return;
+    }
+
+    lastSyncedSceneIdRef.current = activeSceneId;
+    startSyncingScene(async () => {
+      const formData = new FormData();
+      formData.set("instanceId", instanceId);
+      formData.set("agendaId", agendaItemId);
+      formData.set("sceneId", activeSceneId);
+      await syncPresenterSceneAction(formData);
+    });
+  }, [activeIndex, agendaItemId, instanceId, slides, startSyncingScene]);
 
   const crossAgenda = useCallback(
     (targetAgendaId: string) => {

@@ -131,6 +131,7 @@ export default async function InterceptedPresenterPage({
         railItems={railItems}
         initialSceneId={selectedScene.id}
         instanceId={instanceId}
+        agendaItemId={activeAgendaItem.id}
         lang={lang}
         previousAgendaItemId={previousAgendaItem?.id ?? null}
         nextAgendaItemId={nextAgendaItem?.id ?? null}

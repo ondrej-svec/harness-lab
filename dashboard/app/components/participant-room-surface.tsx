@@ -13,10 +13,13 @@ import type { Challenge, PresenterBlock, ProjectBrief, Team, WorkshopState } fro
 import { CopyActionButton } from "./copy-action-button";
 import { ParticipantCheckpointFeed } from "./participant-checkpoint-feed";
 import { ParticipantCheckInForm } from "./participant-check-in-form";
+import { ParticipantFeedbackForm } from "./participant-feedback-form";
 import { SubmitButton } from "./submit-button";
+import { ParticipantPollForm } from "./participant-poll-form";
 
 type AgendaItem = WorkshopState["agenda"][number];
 type PublicNote = WorkshopState["ticker"][number];
+type LiveMoment = WorkshopState["liveMoment"];
 
 export function ParticipantRoomSurface({
   copy,
@@ -24,6 +27,7 @@ export function ParticipantRoomSurface({
   workshopContextLine,
   currentAgendaItem,
   nextAgendaItem,
+  liveMoment,
   agenda,
   participantSession,
   participantTeams,
@@ -42,6 +46,7 @@ export function ParticipantRoomSurface({
   workshopContextLine: string;
   currentAgendaItem: AgendaItem | undefined;
   nextAgendaItem: AgendaItem | undefined;
+  liveMoment: LiveMoment;
   agenda: WorkshopState["agenda"];
   participantSession: ParticipantSession;
   participantTeams: ParticipantTeamLookup | null;
@@ -61,6 +66,7 @@ export function ParticipantRoomSurface({
     lang,
     currentAgendaItem,
     nextAgendaItem,
+    liveMoment,
     participantSession,
     rotationRevealed,
   });
@@ -184,6 +190,42 @@ export function ParticipantRoomSurface({
           ) : null}
           {!homeState.showBuildPhaseOneProofSlice && participantPanel.guidanceCtaLabel ? (
             <GuidanceCta href={participantPanel.guidanceCtaHref} label={participantPanel.guidanceCtaLabel} openLabel={copy.openLinkLabel} />
+          ) : null}
+
+          {!homeState.showBuildPhaseOneProofSlice &&
+          (participantPanel.activePoll || participantPanel.feedbackEnabled) ? (
+            <div className="mt-6 grid gap-4 lg:grid-cols-2">
+              {participantPanel.activePoll ? (
+                <ParticipantPollForm
+                  poll={participantPanel.activePoll}
+                  labels={{
+                    title: sectionCopy.pollTitle,
+                    body: sectionCopy.pollBody,
+                    submitLabel: sectionCopy.pollSubmit,
+                    missingOption: sectionCopy.pollMissingOption,
+                    successMessage: sectionCopy.pollSuccess,
+                    genericError: sectionCopy.pollGenericError,
+                  }}
+                />
+              ) : null}
+              {participantPanel.feedbackEnabled ? (
+                <ParticipantFeedbackForm
+                  labels={{
+                    title: sectionCopy.feedbackTitle,
+                    body: sectionCopy.feedbackBody,
+                    kindLabel: sectionCopy.feedbackKindLabel,
+                    blockerLabel: sectionCopy.feedbackBlockerLabel,
+                    questionLabel: sectionCopy.feedbackQuestionLabel,
+                    messageLabel: sectionCopy.feedbackMessageLabel,
+                    messagePlaceholder: sectionCopy.feedbackMessagePlaceholder,
+                    submitLabel: sectionCopy.feedbackSubmit,
+                    missingMessage: sectionCopy.feedbackMissingMessage,
+                    successMessage: sectionCopy.feedbackSuccess,
+                    genericError: sectionCopy.feedbackGenericError,
+                  }}
+                />
+              ) : null}
+            </div>
           ) : null}
         </div>
       </section>
@@ -477,6 +519,23 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
       feedLegacy: "legacy note",
       referenceTitle: "reference",
       referenceBody: "Keep the evergreen material reachable, but quieter than the live workshop move.",
+      pollTitle: "room signal",
+      pollBody: "Pick one option only. The facilitator sees room-safe aggregate only.",
+      pollSubmit: "Send signal",
+      pollMissingOption: "Choose one option first.",
+      pollSuccess: "Signal sent.",
+      pollGenericError: "Could not send the room signal.",
+      feedbackTitle: "facilitator lane",
+      feedbackBody: "Use this for a blocker or a facilitator question. It stays private unless the facilitator explicitly promotes it.",
+      feedbackKindLabel: "kind",
+      feedbackBlockerLabel: "blocker",
+      feedbackQuestionLabel: "question",
+      feedbackMessageLabel: "message",
+      feedbackMessagePlaceholder: "What is blocked or what does the facilitator need to answer?",
+      feedbackSubmit: "Send privately",
+      feedbackMissingMessage: "Write the message first.",
+      feedbackSuccess: "Private note sent.",
+      feedbackGenericError: "Could not send the private note.",
     };
   }
 
@@ -539,6 +598,23 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
     feedLegacy: "starší poznámka",
     referenceTitle: "podklady",
     referenceBody: "Důležité materiály mějte po ruce, ale až za tím, co máte udělat právě teď.",
+    pollTitle: "signál z místnosti",
+    pollBody: "Vyberte jednu možnost. Facilitátor uvidí jen souhrn za místnost, ne jednotlivé odpovědi.",
+    pollSubmit: "Odeslat signál",
+    pollMissingOption: "Nejdřív vyberte jednu možnost.",
+    pollSuccess: "Signál odeslán.",
+    pollGenericError: "Signál se nepodařilo odeslat.",
+    feedbackTitle: "soukromá linka pro facilitátora",
+    feedbackBody: "Použijte ji pro blocker nebo otázku na facilitátora. Zůstává soukromá, dokud ji facilitátor vědomě nepovýší do poznámky pro místnost.",
+    feedbackKindLabel: "typ",
+    feedbackBlockerLabel: "blocker",
+    feedbackQuestionLabel: "otázka",
+    feedbackMessageLabel: "zpráva",
+    feedbackMessagePlaceholder: "Co vás blokuje nebo na co potřebujete odpověď od facilitátora?",
+    feedbackSubmit: "Odeslat soukromě",
+    feedbackMissingMessage: "Nejdřív napište zprávu.",
+    feedbackSuccess: "Soukromá zpráva odeslána.",
+    feedbackGenericError: "Soukromou zprávu se nepodařilo odeslat.",
   };
 }
 

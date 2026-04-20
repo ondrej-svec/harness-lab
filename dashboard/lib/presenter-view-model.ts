@@ -35,8 +35,19 @@ export function buildPresenterControlState(options: {
   lang: UiLanguage;
 }) {
   const { state, instanceId, lang } = options;
-  const currentAgendaItem = state.agenda.find((item) => item.status === "current") ?? state.agenda[0] ?? null;
-  const currentDefaultScene = getDefaultPresenterScene(currentAgendaItem);
+  const currentAgendaItem =
+    state.agenda.find((item) => item.id === state.liveMoment.agendaItemId) ??
+    state.agenda.find((item) => item.status === "current") ??
+    state.agenda[0] ??
+    null;
+  const liveRoomSceneId = state.liveMoment.roomSceneId;
+  const currentLiveScene =
+    currentAgendaItem && liveRoomSceneId
+      ? currentAgendaItem.presenterScenes.find(
+          (scene) => scene.enabled && scene.surface === "room" && scene.id === liveRoomSceneId,
+        ) ?? null
+      : null;
+  const currentDefaultScene = currentLiveScene ?? getDefaultPresenterScene(currentAgendaItem);
   const participantPreviewScene = getPresenterScenesBySurface(currentAgendaItem, "participant")[0] ?? null;
 
   return {

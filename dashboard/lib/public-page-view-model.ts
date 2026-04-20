@@ -3,6 +3,7 @@ import type { ParticipantSession } from "./runtime-contracts";
 import { buildRepoBlobUrl, getBlueprintRepoUrl, getPublicRepoUrl } from "./repo-links";
 import type {
   Challenge,
+  ParticipantPollDefinition,
   PresenterBlock,
   ProjectBrief,
   SetupPath,
@@ -16,6 +17,7 @@ import { publicCopy, type UiLanguage, withLang } from "./ui-language";
 
 type PublicCopy = (typeof publicCopy)[UiLanguage];
 type AgendaItem = WorkshopState["agenda"][number];
+type LiveMoment = WorkshopState["liveMoment"];
 
 export type HeaderNavLink = {
   href: string;
@@ -29,6 +31,7 @@ export type ParticipantMetric = {
 };
 
 export type ParticipantPanelState = {
+  participantMomentId: string | null;
   title: string;
   body: string;
   metrics: ParticipantMetric[];
@@ -43,6 +46,8 @@ export type ParticipantPanelState = {
   guidanceCtaLabel: string | null;
   guidanceCtaHref: string | null;
   guidanceBlocks: PresenterBlock[];
+  activePoll: ParticipantPollDefinition | null;
+  feedbackEnabled: boolean;
 };
 
 export type ParticipantPrimaryAction = {
@@ -157,7 +162,9 @@ export type PublicAccessPanelState = {
 
 export function deriveHomePageState(state: WorkshopState) {
   const { agenda, rotation, ticker, workshopMeta } = state;
-  const currentAgendaItem = agenda.find((item) => item.status === "current") ?? agenda[0];
+  const currentAgendaItem =
+    agenda.find((item) => item.status === "current") ??
+    agenda[0];
   const nextAgendaItem = agenda.find((item) => item.status === "upcoming");
 
   return {
@@ -165,8 +172,29 @@ export function deriveHomePageState(state: WorkshopState) {
     nextAgendaItem,
     participantNotes: ticker,
     rotationRevealed: rotation.revealed,
+    liveMoment: state.liveMoment,
     workshopMeta,
   };
+}
+
+export function resolveActiveParticipantMoment(
+  currentAgendaItem: AgendaItem | undefined,
+  liveMoment: LiveMoment | undefined,
+) {
+  if (!currentAgendaItem) {
+    return null;
+  }
+
+  if (liveMoment?.agendaItemId === currentAgendaItem.id && liveMoment.participantMomentId) {
+    const targeted = currentAgendaItem.participantMoments.find(
+      (moment) => moment.enabled && moment.id === liveMoment.participantMomentId,
+    );
+    if (targeted) {
+      return targeted;
+    }
+  }
+
+  return currentAgendaItem.participantMoments.find((moment) => moment.enabled) ?? null;
 }
 
 export function buildWorkshopContextLine(meta: WorkshopMeta): string {
@@ -238,19 +266,19 @@ export function buildParticipantPanelState(options: {
   lang: UiLanguage;
   currentAgendaItem: AgendaItem | undefined;
   nextAgendaItem: AgendaItem | undefined;
+  liveMoment: LiveMoment | undefined;
   participantSession: ParticipantSession;
   rotationRevealed: boolean;
 }): ParticipantPanelState {
-  const { copy, lang, currentAgendaItem, nextAgendaItem, participantSession, rotationRevealed } = options;
+  const { copy, lang, currentAgendaItem, nextAgendaItem, liveMoment, participantSession, rotationRevealed } = options;
   const currentTitle = currentAgendaItem?.title ?? copy.participantTitleFallback;
-  const participantScene = currentAgendaItem?.presenterScenes.find(
-    (scene) => scene.enabled && scene.surface === "participant",
-  );
+  const participantMoment = resolveActiveParticipantMoment(currentAgendaItem, liveMoment);
   const fallbackGuidance = buildFallbackParticipantGuidance({ currentAgendaItem, copy });
   const sessionUntilValue = formatSessionExpiry(participantSession.expiresAt, lang);
   const nextPhaseTitle = nextAgendaItem ? `${nextAgendaItem.time} • ${nextAgendaItem.title}` : null;
 
   return {
+    participantMomentId: participantMoment?.id ?? null,
     title: currentTitle,
     body: rotationRevealed ? copy.participantBodyRevealed : copy.participantBodyHidden,
     metrics: [
@@ -265,10 +293,12 @@ export function buildParticipantPanelState(options: {
     nextPhaseTitle,
     sessionUntilLabel: copy.metricSessionUntil,
     sessionUntilValue,
-    guidanceLabel: participantScene?.label ?? fallbackGuidance.label,
-    guidanceCtaLabel: participantScene?.ctaLabel ?? null,
-    guidanceCtaHref: participantScene?.ctaHref ?? null,
-    guidanceBlocks: participantScene?.blocks ?? fallbackGuidance.blocks,
+    guidanceLabel: participantMoment?.label ?? fallbackGuidance.label,
+    guidanceCtaLabel: participantMoment?.ctaLabel ?? null,
+    guidanceCtaHref: participantMoment?.ctaHref ?? null,
+    guidanceBlocks: participantMoment?.blocks ?? fallbackGuidance.blocks,
+    activePoll: participantMoment?.poll ?? null,
+    feedbackEnabled: participantMoment?.feedbackEnabled ?? true,
   };
 }
 

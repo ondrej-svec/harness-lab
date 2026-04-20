@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import {
   getParticipantSessionFromCookieStore,
   getParticipantTeamLookup,
+  getParticipantSessionCookieOptions,
   participantSessionCookieName,
   revokeParticipantSession,
 } from "@/lib/event-access";
@@ -29,12 +30,7 @@ async function logoutAction(formData: FormData) {
   const cookieStore = await cookies();
   const token = cookieStore.get(participantSessionCookieName)?.value;
   await revokeParticipantSession(token);
-  cookieStore.set(participantSessionCookieName, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    expires: new Date(0),
-  });
+  cookieStore.set(participantSessionCookieName, "", getParticipantSessionCookieOptions(new Date(0)));
 
   redirect(withLang("/", lang));
 }
@@ -60,7 +56,13 @@ export default async function ParticipantPage({
     return (
       <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
         <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
-          <SiteHeader isParticipant lang={lang} copy={copy} />
+          <SiteHeader
+            isParticipant
+            lang={lang}
+            copy={copy}
+            csHref={withLang("/participant", "cs")}
+            enHref={withLang("/participant", "en")}
+          />
           <ParticipantIdentifyPrompt lang={lang} />
         </div>
       </main>
@@ -79,7 +81,7 @@ export default async function ParticipantPage({
   const activeParticipantTeam = participantTeamAssignment
     ? state.teams.find((team) => team.id === participantTeamAssignment.teamId) ?? null
     : null;
-  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, workshopMeta } = deriveHomePageState(state);
+  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, liveMoment, workshopMeta } = deriveHomePageState(state);
   const workshopContextLine = buildWorkshopContextLine(workshopMeta);
   const referenceGroups = buildParticipantReferenceGroups({
     lang,
@@ -89,15 +91,29 @@ export default async function ParticipantPage({
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
-        <SiteHeader isParticipant lang={lang} copy={copy} />
+        <SiteHeader
+          isParticipant
+          lang={lang}
+          copy={copy}
+          csHref={withLang("/participant", "cs")}
+          enHref={withLang("/participant", "en")}
+        />
 
-        <ParticipantLiveRefresh currentAgendaItemId={currentAgendaItem?.id} />
+        <ParticipantLiveRefresh
+          currentFingerprint={[
+            liveMoment.agendaItemId ?? "",
+            liveMoment.roomSceneId ?? "",
+            liveMoment.participantMomentId ?? "",
+            liveMoment.activePollId ?? "",
+          ].join(":")}
+        />
         <ParticipantRoomSurface
           copy={copy}
           lang={lang}
           workshopContextLine={workshopContextLine}
           currentAgendaItem={currentAgendaItem}
           nextAgendaItem={nextAgendaItem}
+          liveMoment={liveMoment}
           participantSession={participantSession}
           participantTeams={participantTeams}
           activeParticipantTeam={activeParticipantTeam}

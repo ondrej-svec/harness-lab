@@ -12,6 +12,8 @@ import {
   setParticipantEventAccessRepositoryForTests,
   type ParticipantEventAccessRepository,
 } from "./participant-event-access-repository";
+import { setParticipantFeedbackRepositoryForTests, type ParticipantFeedbackRepository } from "./participant-feedback-repository";
+import { setPollResponseRepositoryForTests, type PollResponseRepository } from "./poll-response-repository";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "./redeem-attempt-repository";
 import { setRotationSignalRepositoryForTests } from "./rotation-signal-repository";
 import { setLearningsLogRepositoryForTests } from "./learnings-log-repository";
@@ -23,7 +25,9 @@ import type {
   LearningsLogEntry,
   LearningsLogRepository,
   ParticipantEventAccessRecord,
+  ParticipantFeedbackRecord,
   ParticipantSessionRecord,
+  PollResponseRecord,
   RedeemAttemptRecord,
   RotationSignal,
   RotationSignalRepository,
@@ -39,13 +43,17 @@ import {
   captureRotationSignal,
   createWorkshopInstance,
   createWorkshopArchive,
+  clearLiveParticipantMomentOverride,
   completeChallenge,
+  getActivePollSummary,
   getWorkshopState,
   getWorkshopInstances,
   getLatestWorkshopArchive,
   listRotationSignals,
+  listParticipantFeedback,
   moveAgendaItem,
   movePresenterScene,
+  promoteParticipantFeedbackToTicker,
   removeAgendaItem,
   removePresenterScene,
   removeWorkshopInstance,
@@ -53,7 +61,12 @@ import {
   setDefaultPresenterScene,
   setPresenterSceneEnabled,
   setCurrentAgendaItem,
+  setLiveParticipantMomentOverride,
+  setLiveRoomScene,
   setRotationReveal,
+  resetActivePollResponses,
+  submitActivePollResponse,
+  submitParticipantFeedback,
   updateAgendaItem,
   updatePresenterScene,
   appendCheckIn,
@@ -259,6 +272,63 @@ class MemoryRotationSignalRepository implements RotationSignalRepository {
   }
 }
 
+class MemoryPollResponseRepository implements PollResponseRepository {
+  private readonly items = new Map<string, PollResponseRecord[]>();
+
+  async list(instanceId: string, pollId?: string) {
+    const items = this.items.get(instanceId) ?? [];
+    return structuredClone(items.filter((item) => !pollId || item.pollId === pollId));
+  }
+
+  async upsert(instanceId: string, response: PollResponseRecord) {
+    const items = this.items.get(instanceId) ?? [];
+    const next = items.some((item) => item.pollId === response.pollId && item.sessionKey === response.sessionKey)
+      ? items.map((item) =>
+          item.pollId === response.pollId && item.sessionKey === response.sessionKey ? structuredClone(response) : item,
+        )
+      : [...items, structuredClone(response)];
+    this.items.set(instanceId, next);
+  }
+
+  async deletePoll(instanceId: string, pollId: string) {
+    const items = this.items.get(instanceId) ?? [];
+    this.items.set(instanceId, items.filter((item) => item.pollId !== pollId));
+  }
+}
+
+class MemoryParticipantFeedbackRepository implements ParticipantFeedbackRepository {
+  private readonly items = new Map<string, ParticipantFeedbackRecord[]>();
+
+  async list(instanceId: string) {
+    return structuredClone(this.items.get(instanceId) ?? []);
+  }
+
+  async append(instanceId: string, feedback: ParticipantFeedbackRecord) {
+    const items = this.items.get(instanceId) ?? [];
+    this.items.set(instanceId, [structuredClone(feedback), ...items]);
+  }
+
+  async markPromoted(
+    instanceId: string,
+    feedbackId: string,
+    promotion: { promotedToTickerAt: string; promotedTickerId: string },
+  ) {
+    const items = this.items.get(instanceId) ?? [];
+    this.items.set(
+      instanceId,
+      items.map((item) =>
+        item.id === feedbackId
+          ? {
+              ...item,
+              promotedToTickerAt: promotion.promotedToTickerAt,
+              promotedTickerId: promotion.promotedTickerId,
+            }
+          : item,
+      ),
+    );
+  }
+}
+
 class MemoryLearningsLogRepository implements LearningsLogRepository {
   entries: LearningsLogEntry[] = [];
 
@@ -312,6 +382,8 @@ describe("workshop-store", () => {
   let auditLogRepository: MemoryAuditLogRepository;
   let instanceRepository: MemoryWorkshopInstanceRepository;
   let rotationSignalRepository: MemoryRotationSignalRepository;
+  let pollResponseRepository: MemoryPollResponseRepository;
+  let participantFeedbackRepository: MemoryParticipantFeedbackRepository;
   let learningsLogRepository: MemoryLearningsLogRepository;
 
   beforeEach(() => {
@@ -350,6 +422,8 @@ describe("workshop-store", () => {
     ]);
     auditLogRepository = new MemoryAuditLogRepository();
     rotationSignalRepository = new MemoryRotationSignalRepository();
+    pollResponseRepository = new MemoryPollResponseRepository();
+    participantFeedbackRepository = new MemoryParticipantFeedbackRepository();
     learningsLogRepository = new MemoryLearningsLogRepository();
     setWorkshopStateRepositoryForTests(repository);
     setCheckpointRepositoryForTests(checkpointRepository);
@@ -362,6 +436,8 @@ describe("workshop-store", () => {
     setAuditLogRepositoryForTests(auditLogRepository);
     setWorkshopInstanceRepositoryForTests(instanceRepository);
     setRotationSignalRepositoryForTests(rotationSignalRepository);
+    setPollResponseRepositoryForTests(pollResponseRepository);
+    setParticipantFeedbackRepositoryForTests(participantFeedbackRepository);
     setLearningsLogRepositoryForTests(learningsLogRepository);
   });
 
@@ -377,6 +453,8 @@ describe("workshop-store", () => {
     setAuditLogRepositoryForTests(null);
     setWorkshopInstanceRepositoryForTests(null);
     setRotationSignalRepositoryForTests(null);
+    setPollResponseRepositoryForTests(null);
+    setParticipantFeedbackRepositoryForTests(null);
     setLearningsLogRepositoryForTests(null);
   });
 
@@ -386,6 +464,25 @@ describe("workshop-store", () => {
     expect(state.workshopMeta.currentPhaseLabel).toBe("Rotace týmů");
     expect(state.agenda.find((item) => item.id === "rotation")?.status).toBe("current");
     expect(state.agenda.find((item) => item.id === "opening")?.status).toBe("done");
+  });
+
+  it("tracks the live room scene and manual participant override separately", async () => {
+    let state = await setLiveRoomScene("opening", "opening-handoff");
+    expect(state.liveMoment).toMatchObject({
+      agendaItemId: "opening",
+      roomSceneId: "opening-handoff",
+      participantMode: "auto",
+    });
+
+    state = await setLiveParticipantMomentOverride("opening", "opening-team-formation-moment");
+    expect(state.liveMoment).toMatchObject({
+      agendaItemId: "opening",
+      participantMomentId: "opening-team-formation-moment",
+      participantMode: "manual",
+    });
+
+    state = await clearLiveParticipantMomentOverride("opening");
+    expect(state.liveMoment.participantMode).toBe("auto");
   });
 
   it("supports local agenda editing, insertion, reordering, and removal", async () => {
@@ -652,6 +749,70 @@ describe("workshop-store", () => {
     expect(entry?.signal.id).toBe(signal.id);
     expect(entry?.loggedAt).toBe(signal.capturedAt);
     expect(entry?.cohort).toMatch(/^\d{4}-Q[1-4]$/);
+  });
+
+  it("stores active poll responses outside workshop state and aggregates them by option", async () => {
+    await setCurrentAgendaItem("talk");
+    await setLiveRoomScene("talk", "talk-how-to-build");
+
+    let summary = await getActivePollSummary();
+    expect(summary).toMatchObject({
+      pollId: "talk-weakest-repo-signal",
+      totalResponses: 0,
+    });
+
+    await submitActivePollResponse({
+      sessionKey: "participant-1",
+      participantId: "participant-1",
+      teamId: "t1",
+      optionId: "boundaries",
+    });
+    await submitActivePollResponse({
+      sessionKey: "participant-2",
+      participantId: "participant-2",
+      teamId: "t2",
+      optionId: "verification",
+    });
+    await submitActivePollResponse({
+      sessionKey: "participant-1",
+      participantId: "participant-1",
+      teamId: "t1",
+      optionId: "map",
+    });
+
+    summary = await getActivePollSummary();
+    expect(summary?.totalResponses).toBe(2);
+    expect(summary?.options.find((option) => option.id === "map")?.count).toBe(1);
+    expect(summary?.options.find((option) => option.id === "verification")?.count).toBe(1);
+
+    await resetActivePollResponses();
+    await expect(getActivePollSummary()).resolves.toMatchObject({ totalResponses: 0 });
+  });
+
+  it("captures facilitator-private participant feedback and can promote it to ticker", async () => {
+    await setCurrentAgendaItem("demo");
+    await setLiveRoomScene("demo", "demo-your-toolkit");
+
+    const feedback = await submitParticipantFeedback({
+      sessionKey: "participant-1",
+      participantId: "participant-1",
+      teamId: "t1",
+      kind: "question",
+      message: "Can we keep using the browser path if the local install fails?",
+    });
+
+    expect(feedback.agendaItemId).toBe("demo");
+    expect(feedback.participantMomentId).toBe("demo-open-build-brief");
+
+    let storedFeedback = await listParticipantFeedback();
+    expect(storedFeedback[0]?.message).toBe("Can we keep using the browser path if the local install fails?");
+    expect(storedFeedback[0]?.promotedTickerId).toBeNull();
+
+    const state = await promoteParticipantFeedbackToTicker(feedback.id);
+    expect(state.ticker[0]?.label).toBe("Can we keep using the browser path if the local install fails?");
+
+    storedFeedback = await listParticipantFeedback();
+    expect(storedFeedback[0]?.promotedTickerId).toBe(`participant-feedback-${feedback.id}`);
   });
 
   it("rejects rotation signals with empty freeText and does not log them", async () => {

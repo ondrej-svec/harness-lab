@@ -41,7 +41,7 @@ export default async function AdminParticipantMirrorPage({
   await requireFacilitatorPageAccess(instanceId);
 
   const state = await getWorkshopState(instanceId);
-  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed } = deriveHomePageState(state);
+  const { currentAgendaItem, nextAgendaItem, participantNotes, rotationRevealed, liveMoment } = deriveHomePageState(state);
   const referenceGroups = buildParticipantReferenceGroups({
     lang,
     setupPaths: state.setupPaths,
@@ -63,6 +63,7 @@ export default async function AdminParticipantMirrorPage({
           workshopContextLine=""
           currentAgendaItem={currentAgendaItem}
           nextAgendaItem={nextAgendaItem}
+          liveMoment={liveMoment}
           participantSession={buildParticipantMirrorSession(instanceId)}
           participantTeams={{
             items: state.teams.map((team) => ({

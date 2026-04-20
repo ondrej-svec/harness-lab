@@ -4,7 +4,7 @@ import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { getPresenterScenesBySurface } from "@/lib/presenter-scenes";
 import { buildPresenterPageState, buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
-import { getWorkshopState } from "@/lib/workshop-store";
+import { getActivePollSummary, getWorkshopState, type ActivePollSummary } from "@/lib/workshop-store";
 import type { AgendaItem, PresenterBlock, PresenterScene, Team } from "@/lib/workshop-data";
 import { adminCopy, resolveUiLanguage, type UiLanguage } from "@/lib/ui-language";
 import { PresenterShell } from "../_components/presenter-shell";
@@ -33,6 +33,7 @@ export default async function PresenterPage({
   await requireFacilitatorPageAccess(instanceId);
 
   const state = await getWorkshopState(instanceId);
+  const activePollSummary = await getActivePollSummary(instanceId);
   const teams = state.teams;
   const presenterState = buildPresenterPageState({
     state,
@@ -79,7 +80,18 @@ export default async function PresenterPage({
           agendaItem={presenterState.activeAgendaItem}
         />
       ) : (
-        <RoomScene copy={copy} agendaItem={presenterState.activeAgendaItem} scene={scene} />
+        <RoomScene
+          copy={copy}
+          lang={lang}
+          agendaItem={presenterState.activeAgendaItem}
+          scene={scene}
+          pollSummary={
+            presenterState.activeAgendaItem?.id === state.liveMoment.agendaItemId &&
+            scene.id === state.liveMoment.roomSceneId
+              ? activePollSummary
+              : null
+          }
+        />
       ),
   }));
 
@@ -93,6 +105,7 @@ export default async function PresenterPage({
           railItems={railItems}
           initialSceneId={presenterState.selectedScene?.id ?? sceneSlides[0]?.id ?? null}
           instanceId={instanceId}
+          agendaItemId={activeAgendaItemId}
           lang={lang}
           previousAgendaItemId={previousAgendaItem?.id ?? null}
           nextAgendaItemId={nextAgendaItem?.id ?? null}
@@ -110,12 +123,16 @@ export default async function PresenterPage({
 
 function RoomScene({
   copy,
+  lang,
   agendaItem,
   scene,
+  pollSummary,
 }: {
   copy: (typeof adminCopy)["cs" | "en"];
+  lang: UiLanguage;
   agendaItem: AgendaItem | null;
   scene: PresenterScene;
+  pollSummary: ActivePollSummary | null;
 }) {
   const blocks = scene.blocks.length > 0 ? scene.blocks : buildFallbackBlocks(scene);
 
@@ -129,6 +146,54 @@ function RoomScene({
       />
 
       {scene.ctaLabel ? <SceneCta href={scene.ctaHref} label={scene.ctaLabel} openLabel={copy.openLinkLabel} /> : null}
+      {pollSummary ? <RoomSignalPollSummary lang={lang} pollSummary={pollSummary} /> : null}
+    </div>
+  );
+}
+
+function RoomSignalPollSummary({
+  lang,
+  pollSummary,
+}: {
+  lang: UiLanguage;
+  pollSummary: ActivePollSummary;
+}) {
+  const labels =
+    lang === "en"
+      ? {
+          eyebrow: "Room signal",
+          responses: "responses",
+        }
+      : {
+          eyebrow: "Signál z místnosti",
+          responses: "odpovědí",
+        };
+
+  return (
+    <div className="rounded-[28px] border border-[var(--border)] bg-[var(--surface-soft)] px-6 py-6 sm:px-8 sm:py-8">
+      <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--text-muted)]">{labels.eyebrow}</p>
+      <h3 className="mt-4 max-w-4xl text-2xl font-medium leading-tight text-[var(--text-primary)] sm:text-3xl">
+        {pollSummary.prompt}
+      </h3>
+      <p className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
+        {pollSummary.totalResponses} {labels.responses}
+      </p>
+      <div className="mt-6 space-y-3">
+        {pollSummary.options.map((option) => {
+          const width = pollSummary.totalResponses > 0 ? (option.count / pollSummary.totalResponses) * 100 : 0;
+          return (
+            <div key={option.id} className="space-y-2">
+              <div className="flex items-center justify-between gap-3 text-sm text-[var(--text-primary)]">
+                <span>{option.label}</span>
+                <span className="text-[var(--text-muted)]">{option.count}</span>
+              </div>
+              <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-panel)]">
+                <div className="h-full rounded-full bg-[var(--text-primary)]" style={{ width: `${width}%` }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

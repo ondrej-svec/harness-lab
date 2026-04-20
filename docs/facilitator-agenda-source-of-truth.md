@@ -23,6 +23,7 @@ The top-level unit is the agenda item. Each agenda item owns:
 - `checkpointQuestions`
 - `sourceRefs`
 - `presenterScenes`
+- `participantMoments`
 
 Ownership inside the maintained source pair is split deliberately:
 
@@ -36,8 +37,9 @@ Agenda-owned presenter content is split across three outputs:
   - scene sequence for what the room should see
   - only room-safe structured `blocks`
 - participant mirror
-  - participant-oriented scene content for the participant surface
+  - participant-oriented `participantMoments` for the participant surface
   - still agenda-owned, but not part of the room projection sequence
+  - may carry scene-bound poll definitions and a `feedbackEnabled` flag
 - facilitator support
   - `facilitatorRunner.goal`
   - `facilitatorRunner.say`
@@ -51,7 +53,9 @@ Agenda-owned presenter content is split across three outputs:
 
 ## Runtime Shape
 
-The runtime model keeps one `presenterScenes` array for backward compatibility, but every scene now carries an explicit `surface` contract:
+The runtime model keeps one `presenterScenes` array for room-facing sequencing and one `participantMoments` array for participant-safe beats.
+
+Presenter scenes carry an explicit `surface` contract:
 
 - `surface: "room"`
   - eligible for `/admin/instances/[id]/presenter`
@@ -62,6 +66,35 @@ The runtime model keeps one `presenterScenes` array for backward compatibility, 
 
 Legacy `sceneType: "participant-view"` content should normalize to `surface: "participant"` on read so existing instance data keeps working without silently changing ids.
 
+Participant moments are the stronger participant contract:
+
+- they are authored per agenda item, not as a second free-floating content system
+- they may target one or more room scenes via `roomSceneIds`
+- they may expose one lightweight poll definition with predefined options only
+- they may enable the persistent facilitator-private feedback affordance
+- they drive the participant surface before any room-summary fallback is considered
+
+Runtime state also persists one `liveMoment` object so the system can explain what is live without reading URL state:
+
+- `agendaItemId`
+- `roomSceneId`
+- `participantMomentId`
+- `participantMode` (`auto` or `manual`)
+- `activePollId`
+
+Normal path:
+
+- facilitator changes the room scene
+- runtime updates `liveMoment.roomSceneId`
+- participant moment resolves automatically from the authored room-scene mapping
+- participant mode stays `auto`
+
+Safety path:
+
+- facilitator may pin a different participant moment temporarily
+- runtime switches `participantMode` to `manual`
+- clearing the override returns the participant surface to authored auto-follow behavior
+
 ## Ownership Boundary
 
 What belongs in the structured blueprint:
@@ -69,6 +102,7 @@ What belongs in the structured blueprint:
 - workshop moments that matter operationally
 - room-safe presenter content
 - participant mirror content that teams genuinely need
+- explicit participant moments for beats where the participant surface matters inside one agenda item
 - short facilitator guidance needed in the normal path
 - concise runner guidance for what to say, show, do, watch, and how to recover if the beat slips
 - explicit source references back to long-form materials
@@ -92,6 +126,7 @@ What stays in long-form docs:
 - Blueprint content is canonical for new imports and resets.
 - Runtime instances may override the copied agenda and scenes locally.
 - The dashboard and facilitator skill must use the same agenda ids and the same scene semantics.
+- Participant-moment ids are part of that shared contract; do not infer participant behavior from presenter copy when a moment should be authored explicitly.
 - Intermezzos stay first-class agenda items, not implicit notes hidden only in docs.
 
 If future work adds richer workshop content, extend this shared agenda model instead of creating a second facilitator-only content system.

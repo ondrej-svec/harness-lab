@@ -5,6 +5,7 @@ import { createWorkshopStateFromTemplate, sampleWorkshopInstances, seedWorkshopS
 
 const redirect = vi.fn();
 const requireFacilitatorPageAccess = vi.fn();
+const getActivePollSummary = vi.fn();
 const getWorkshopState = vi.fn();
 const getInstance = vi.fn();
 const push = vi.fn();
@@ -31,6 +32,7 @@ vi.mock("@/lib/workshop-instance-repository", () => ({
 }));
 
 vi.mock("@/lib/workshop-store", () => ({
+  getActivePollSummary,
   getWorkshopState,
 }));
 
@@ -40,6 +42,7 @@ describe("PresenterPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     getInstance.mockResolvedValue(structuredClone(sampleWorkshopInstances[0]));
+    getActivePollSummary.mockResolvedValue(null);
     getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
     requireFacilitatorPageAccess.mockResolvedValue(undefined);
   });
@@ -96,14 +99,57 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "talk", scene: "talk-got-a-name" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "talk", scene: "talk-how-to-build" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("Last week, it got a name");
-    expect(html).toContain("Agent = Model + Harness");
-    expect(html).toContain("Birgitta Böckeler, Thoughtworks");
+    expect(html).toContain("How you actually build one");
+    expect(html).toContain("Four pillars. Four moves. All visible in the repo.");
+    expect(html).toContain("Context as infrastructure.");
     expect(html).not.toContain("What the room should see now");
+  });
+
+  it("renders room-safe poll aggregates on the live presenter scene", async () => {
+    const { default: PresenterPage } = await presenterPageModulePromise;
+    const state = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "en");
+    state.agenda = state.agenda.map((item) => ({
+      ...item,
+      status: item.id === "talk" ? "current" : "upcoming",
+    }));
+    state.liveMoment = {
+      agendaItemId: "talk",
+      roomSceneId: "talk-how-to-build",
+      participantMomentId: "talk-note-one-gap",
+      participantMode: "auto",
+      activePollId: "talk-weakest-repo-signal",
+    };
+    getWorkshopState.mockResolvedValue(state);
+    getActivePollSummary.mockResolvedValue({
+      agendaItemId: "talk",
+      participantMomentId: "talk-note-one-gap",
+      pollId: "talk-weakest-repo-signal",
+      prompt: "Which part of your repo is weakest right now?",
+      totalResponses: 3,
+      options: [
+        { id: "map", label: "Map", count: 2 },
+        { id: "verification", label: "Verification", count: 1 },
+      ],
+    });
+    getInstance.mockResolvedValue({
+      ...structuredClone(sampleWorkshopInstances[0]),
+      workshopMeta: state.workshopMeta,
+    });
+
+    const view = await PresenterPage({
+      params: Promise.resolve({ id: "sample-studio-a" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "talk", scene: "talk-how-to-build" }),
+    });
+    const html = renderToStaticMarkup(view);
+
+    expect(html).toContain("Room signal");
+    expect(html).toContain("Which part of your repo is weakest right now?");
+    expect(html).toContain("3 responses");
+    expect(html).toContain("Verification");
   });
 
   it("renders attributed quotes and actionable link-list items in presenter scenes", async () => {
@@ -215,12 +261,12 @@ describe("PresenterPage", () => {
 
     const view = await PresenterPage({
       params: Promise.resolve({ id: "sample-studio-a" }),
-      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-day-schedule" }),
+      searchParams: Promise.resolve({ lang: "en", agendaItem: "opening", scene: "opening-day-arc" }),
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain("09:10");
-    expect(html).toContain("Day schedule");
+    expect(html).toContain("Learn. Build. Hand off. Continue.");
+    expect(html).toContain("The talk and the demo name the craft");
     expect(html).not.toContain("What the room should see now");
   });
 

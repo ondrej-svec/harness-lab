@@ -14,6 +14,7 @@ Purpose:
 
 Public responsibilities:
 - current phase
+- current participant moment when one is explicitly live
 - agenda
 - project briefs
 - challenge cards
@@ -21,6 +22,8 @@ Public responsibilities:
 - team-facing status that is safe to expose in-room
 - links to the participant learner kit artifacts the team should use next
 - phase-aware next-step CTA
+- scene-bound room-signal polls with anonymous aggregate semantics
+- persistent facilitator-private feedback input for blockers and facilitator questions
 - stable participant-home navigation: `Next / Build / Reference`
 - repo or starter-material access
 - setup-failure fallback guidance
@@ -35,6 +38,9 @@ Design rules:
 - must be sufficient for core workshop progression without requiring the CLI or skill first
 - the first viewport is led by `Next`; `Build` and `Reference` are persistent but secondary
 - live participant residue must stay structured and attributable enough that it reads as signal, not chat
+- participant guidance should come from explicit `participantMoments` first; room-oriented agenda summaries are only a conservative safe fallback when no participant moment is authored for the live beat
+- participant polls never expose individual identity or response history on the participant surface
+- participant feedback stays facilitator-private unless a facilitator explicitly promotes it into a room-safe note
 
 ## Facilitator Surface
 
@@ -44,10 +50,13 @@ Purpose:
 Protected responsibilities:
 - run the workshop through four sections: `Run`, `People`, `Access`, `Settings`
 - move the live workshop moment
+- inspect and, only when needed, override the live participant moment
 - launch presenter and participant-facing outputs
 - reveal or hide the continuation window when the handoff moment needs it
 - register teams and repo URLs
 - capture sprint updates and challenge completion signals as quiet runtime notes
+- review active poll aggregate state and reset it when the room beat needs a clean restart
+- review facilitator-private participant feedback and selectively promote safe items to the shared ticker
 - inspect team-composition history during live reshaping
 - manage participant event access and facilitator grants
 - reset or archive the instance from a clearly secondary safety layer
@@ -58,6 +67,7 @@ Design rules:
 - writes go through explicit admin actions
 - instance lifecycle belongs in the dashboard too: create, switch, reset, and safe remove should be visible product operations rather than script-only paths
 - `Run` is the default canvas and stays agenda-centered
+- `Run` is also the home of the live contract: what the room sees, what participants see, whether participant mode is `auto` or `manual`, and which poll or feedback stream is active
 - `People` owns team formation, team repair, and team-history review
 - `Access` and `Settings` remain reachable but must not compete with `Run`
 - agenda timeline index and agenda-moment detail may be separate page states when that reduces duplication and keeps editing off the default canvas
@@ -73,6 +83,7 @@ Purpose:
 Responsibilities:
 - render the default room-facing scene for the current agenda item
 - allow facilitator-triggered jumps to another scene or agenda item without changing the live agenda phase
+- write the room-facing selection back into the persisted live workshop contract so participant moments can follow inside one agenda item
 - stay projection-friendly and room-safe even when launched from protected admin routes
 
 Design rules:
@@ -107,6 +118,12 @@ There are now two explicit layers:
   - instance create/reset imports blueprint-owned fields into the active workshop instance
   - imported agenda becomes the runtime copy that live operation reads from
   - facilitator dashboard actions move only the current phase and other runtime-local state
+  - runtime-local state now includes one persisted `liveMoment` object:
+    - `agendaItemId`
+    - `roomSceneId`
+    - `participantMomentId`
+    - `participantMode` (`auto` by default, `manual` only as a safety override)
+    - `activePollId`
   - agenda and presenter-scene mutations remain available through instance-scoped APIs for CLI and coding-agent workflows, not the default dashboard UI
   - file mode persists that runtime copy in `dashboard/data/<instance>/workshop-state.json`
   - neon mode persists that runtime copy in `workshop_instances.workshop_state`
@@ -117,6 +134,7 @@ Important consequence:
 - reusable blueprint edits still belong in the repo
 - instance-local agenda wording/order/time or presenter-scene changes are supported through CLI/agent flows that call the runtime APIs directly
 - presenter scenes follow the same rule: blueprint defines reusable defaults, runtime may own per-instance overrides even though the dashboard no longer exposes that editor
+- participant moments follow the same rule: blueprint defines the participant-safe beats, runtime owns which moment is live right now
 - dashboard copy should describe reset as blueprint import, not as an opaque seed reset
 - participant and public repo links should use repo-relative blueprint references resolved by deployment config, not hardcoded upstream URLs
 

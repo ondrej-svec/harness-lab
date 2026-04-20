@@ -55,6 +55,29 @@ type WorkshopBlueprintScene = {
   blocks?: PresenterBlock[];
 };
 
+type WorkshopBlueprintPollOption = {
+  id: string;
+  label: string;
+};
+
+type WorkshopBlueprintPollDefinition = {
+  id: string;
+  prompt: string;
+  options: WorkshopBlueprintPollOption[];
+};
+
+type WorkshopBlueprintParticipantMoment = {
+  id: string;
+  label: string;
+  title: string;
+  body: string;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  blocks?: PresenterBlock[];
+  roomSceneIds?: string[];
+  feedbackEnabled?: boolean;
+  poll?: WorkshopBlueprintPollDefinition | null;
+};
 
 type WorkshopBlueprintPhase = {
   id: string;
@@ -72,6 +95,7 @@ type WorkshopBlueprintPhase = {
   sourceRefs?: WorkshopSourceRef[];
   defaultSceneId?: string | null;
   scenes?: WorkshopBlueprintScene[];
+  participantMoments?: WorkshopBlueprintParticipantMoment[];
 };
 
 export type FacilitatorRunner = {
@@ -102,6 +126,7 @@ export type AgendaItem = {
   status: "done" | "current" | "upcoming";
   defaultPresenterSceneId: string | null;
   presenterScenes: PresenterScene[];
+  participantMoments: ParticipantMoment[];
 };
 
 export type WorkshopSourceRef = {
@@ -149,6 +174,42 @@ export type PresenterChromePreset =
   | "checkpoint"
   | "participant"
   | "team-trail";
+
+export type ParticipantPollOption = {
+  id: string;
+  label: string;
+};
+
+export type ParticipantPollDefinition = {
+  id: string;
+  prompt: string;
+  options: ParticipantPollOption[];
+};
+
+export type ParticipantMoment = {
+  id: string;
+  label: string;
+  title: string;
+  body: string;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  blocks: PresenterBlock[];
+  roomSceneIds: string[];
+  feedbackEnabled: boolean;
+  poll: ParticipantPollDefinition | null;
+  order: number;
+  enabled: boolean;
+  sourceBlueprintMomentId: string | null;
+  kind: "blueprint" | "custom";
+};
+
+export type LiveWorkshopMoment = {
+  agendaItemId: string | null;
+  roomSceneId: string | null;
+  participantMomentId: string | null;
+  participantMode: "auto" | "manual";
+  activePollId: string | null;
+};
 
 function getDefaultRunnerDoSteps(intent: AgendaItemIntent, contentLang: WorkshopContentLanguage) {
   if (contentLang === "en") {
@@ -449,6 +510,33 @@ function normalizePresenterBlocks(value: unknown, fallback: PresenterBlock[] = [
   return Array.isArray(value) ? (value as PresenterBlock[]) : fallback;
 }
 
+export function normalizeParticipantPollDefinition(value: unknown): ParticipantPollDefinition | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const poll = value as Partial<ParticipantPollDefinition>;
+  if (typeof poll.id !== "string" || typeof poll.prompt !== "string" || !Array.isArray(poll.options)) {
+    return null;
+  }
+
+  const options = poll.options
+    .filter((option): option is ParticipantPollOption => {
+      return Boolean(option) && typeof option.id === "string" && typeof option.label === "string";
+    })
+    .map((option) => ({ id: option.id, label: option.label }));
+
+  if (options.length === 0) {
+    return null;
+  }
+
+  return {
+    id: poll.id,
+    prompt: poll.prompt,
+    options,
+  };
+}
+
 function resolvePresenterBlockLinks(blocks: PresenterBlock[]) {
   return blocks.map((block) => {
     if (block.type === "link-list") {
@@ -498,6 +586,99 @@ function normalizePresenterSceneIntent(value: string): PresenterSceneIntent {
 
 function normalizePresenterChromePreset(value: string): PresenterChromePreset {
   return presenterChromePresets.includes(value as PresenterChromePreset) ? (value as PresenterChromePreset) : "minimal";
+}
+
+function resolveParticipantMomentBlocks(moment: {
+  title: string;
+  body: string;
+  blocks?: PresenterBlock[];
+}) {
+  const baseBlocks = normalizePresenterBlocks(moment.blocks, []);
+  if (baseBlocks.length > 0) {
+    return resolvePresenterBlockLinks(baseBlocks);
+  }
+
+  return buildFallbackPresenterBlocks({
+    sceneType: "participant-view",
+    title: moment.title,
+    body: moment.body,
+  });
+}
+
+function buildParticipantMomentFromScene(scene: PresenterScene, index: number): ParticipantMoment {
+  return {
+    id: `${scene.id}-moment`,
+    label: scene.label,
+    title: scene.title,
+    body: scene.body,
+    ctaLabel: scene.ctaLabel,
+    ctaHref: scene.ctaHref,
+    blocks: scene.blocks,
+    roomSceneIds: [],
+    feedbackEnabled: true,
+    poll: null,
+    order: index + 1,
+    enabled: scene.enabled,
+    sourceBlueprintMomentId: scene.sourceBlueprintSceneId ? `${scene.sourceBlueprintSceneId}-moment` : null,
+    kind: scene.kind,
+  };
+}
+
+export function resolveParticipantMomentForRoomScene(
+  moments: ParticipantMoment[],
+  roomSceneId: string | null | undefined,
+): ParticipantMoment | null {
+  const enabledMoments = moments.filter((moment) => moment.enabled);
+  if (enabledMoments.length === 0) {
+    return null;
+  }
+
+  if (roomSceneId) {
+    const targeted = enabledMoments.find((moment) => moment.roomSceneIds.includes(roomSceneId));
+    if (targeted) {
+      return targeted;
+    }
+  }
+
+  const untargeted = enabledMoments.find((moment) => moment.roomSceneIds.length === 0);
+  return untargeted ?? enabledMoments[0] ?? null;
+}
+
+export function createLiveMomentState(agenda: AgendaItem[], requestedAgendaItemId?: string | null): LiveWorkshopMoment {
+  const activeAgendaItem =
+    agenda.find((item) => item.id === requestedAgendaItemId) ??
+    agenda.find((item) => item.status === "current") ??
+    agenda[0] ??
+    null;
+
+  if (!activeAgendaItem) {
+    return {
+      agendaItemId: null,
+      roomSceneId: null,
+      participantMomentId: null,
+      participantMode: "auto",
+      activePollId: null,
+    };
+  }
+
+  const roomScene =
+    activeAgendaItem.presenterScenes.find(
+      (scene) => scene.enabled && scene.surface === "room" && scene.id === activeAgendaItem.defaultPresenterSceneId,
+    ) ??
+    activeAgendaItem.presenterScenes.find((scene) => scene.enabled && scene.surface === "room") ??
+    null;
+  const participantMoment = resolveParticipantMomentForRoomScene(
+    activeAgendaItem.participantMoments,
+    roomScene?.id ?? null,
+  );
+
+  return {
+    agendaItemId: activeAgendaItem.id,
+    roomSceneId: roomScene?.id ?? null,
+    participantMomentId: participantMoment?.id ?? null,
+    participantMode: "auto",
+    activePollId: participantMoment?.poll?.id ?? null,
+  };
 }
 
 export type TeamCheckIn = {
@@ -632,6 +813,7 @@ export type WorkshopState = {
   workshopId: string;
   workshopMeta: WorkshopMeta;
   agenda: AgendaItem[];
+  liveMoment: LiveWorkshopMoment;
   teams: Team[];
   briefs: ProjectBrief[];
   challenges: Challenge[];
@@ -719,6 +901,63 @@ export function createAgendaFromBlueprint(
     const roomSceneLabels = (phase.scenes ?? [])
       .filter((scene) => normalizePresenterSceneSurface(scene.surface, normalizePresenterSceneType(scene.sceneType)) === "room")
       .map((scene) => scene.label);
+    const presenterScenes = (phase.scenes ?? []).map((scene, sceneIndex) => {
+      const normalizedSceneType = normalizePresenterSceneType(scene.sceneType);
+      const baseBlocks = normalizePresenterBlocks(scene.blocks);
+      const resolvedBlocks =
+        baseBlocks.length > 0
+          ? resolvePresenterBlockLinks(baseBlocks)
+          : buildFallbackPresenterBlocks({
+              sceneType: normalizedSceneType,
+              title: scene.title,
+              body: scene.body,
+            });
+
+      return {
+        id: scene.id,
+        label: scene.label,
+        sceneType: normalizedSceneType,
+        surface: normalizePresenterSceneSurface(scene.surface, normalizedSceneType),
+        intent: normalizePresenterSceneIntent(scene.intent ?? scene.sceneType ?? "custom"),
+        chromePreset: normalizePresenterChromePreset(scene.chromePreset ?? "minimal"),
+        title: scene.title,
+        body: scene.body,
+        ctaLabel: scene.ctaLabel ?? null,
+        ctaHref: resolveRepoLinkedHref(scene.ctaHref ?? null),
+        facilitatorNotes: scene.facilitatorNotes ?? [],
+        sourceRefs: scene.sourceRefs ? [...scene.sourceRefs] : [],
+        blocks: resolvePresenterBlockLinks(resolvedBlocks),
+        order: sceneIndex + 1,
+        enabled: true,
+        sourceBlueprintSceneId: scene.id,
+        kind: "blueprint" as const,
+      } satisfies PresenterScene;
+    });
+    const explicitParticipantMoments = (phase.participantMoments ?? []).map((moment, momentIndex) => ({
+      id: moment.id,
+      label: moment.label,
+      title: moment.title,
+      body: moment.body,
+      ctaLabel: moment.ctaLabel ?? null,
+      ctaHref: resolveRepoLinkedHref(moment.ctaHref ?? null),
+      blocks: resolveParticipantMomentBlocks(moment),
+      roomSceneIds: Array.isArray(moment.roomSceneIds) ? [...moment.roomSceneIds] : [],
+      feedbackEnabled: moment.feedbackEnabled ?? true,
+      poll: normalizeParticipantPollDefinition(moment.poll),
+      order: momentIndex + 1,
+      enabled: true,
+      sourceBlueprintMomentId: moment.id,
+      kind: "blueprint" as const,
+    }));
+    const participantMoments =
+      explicitParticipantMoments.length > 0
+        ? explicitParticipantMoments
+        : presenterScenes
+            .filter((scene) => scene.surface === "participant")
+            .map((scene, momentIndex) => ({
+              ...buildParticipantMomentFromScene(scene, momentIndex),
+              sourceBlueprintMomentId: scene.id,
+            }));
 
     return {
       id: phase.id,
@@ -747,38 +986,8 @@ export function createAgendaFromBlueprint(
       kind: "blueprint" as const,
       status: index < currentIndex ? "done" : index === currentIndex ? "current" : "upcoming",
       defaultPresenterSceneId: phase.defaultSceneId ?? phase.scenes?.[0]?.id ?? null,
-      presenterScenes: (phase.scenes ?? []).map((scene, sceneIndex) => {
-        const normalizedSceneType = normalizePresenterSceneType(scene.sceneType);
-        const baseBlocks = normalizePresenterBlocks(scene.blocks);
-        const resolvedBlocks =
-          baseBlocks.length > 0
-            ? resolvePresenterBlockLinks(baseBlocks)
-            : buildFallbackPresenterBlocks({
-                sceneType: normalizedSceneType,
-                title: scene.title,
-                body: scene.body,
-              });
-
-        return {
-          id: scene.id,
-          label: scene.label,
-          sceneType: normalizedSceneType,
-          surface: normalizePresenterSceneSurface(scene.surface, normalizedSceneType),
-          intent: normalizePresenterSceneIntent(scene.intent ?? scene.sceneType ?? "custom"),
-          chromePreset: normalizePresenterChromePreset(scene.chromePreset ?? "minimal"),
-          title: scene.title,
-          body: scene.body,
-          ctaLabel: scene.ctaLabel ?? null,
-          ctaHref: resolveRepoLinkedHref(scene.ctaHref ?? null),
-          facilitatorNotes: scene.facilitatorNotes ?? [],
-          sourceRefs: scene.sourceRefs ? [...scene.sourceRefs] : [],
-          blocks: resolvePresenterBlockLinks(resolvedBlocks),
-          order: sceneIndex + 1,
-          enabled: true,
-          sourceBlueprintSceneId: scene.id,
-          kind: "blueprint" as const,
-        };
-      }),
+      presenterScenes,
+      participantMoments,
     };
   });
 }
@@ -1276,6 +1485,8 @@ export const sampleWorkshopInstances: WorkshopInstanceRecord[] = [
   }),
 ];
 
+const seedAgenda = createAgendaFromBlueprint("cs");
+
 export const seedWorkshopState: WorkshopState = {
   version: 1,
   workshopId: "sample-studio-a",
@@ -1284,7 +1495,8 @@ export const seedWorkshopState: WorkshopState = {
     eventTitle: "Ukázkový workshop Harness Lab",
     currentPhaseLabel: "Build Phase 1",
   },
-  agenda: createAgendaFromBlueprint("cs"),
+  agenda: seedAgenda,
+  liveMoment: createLiveMomentState(seedAgenda),
   teams: [
     {
       id: "t1",
@@ -1427,6 +1639,7 @@ export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord
     briefs: inventory.briefs,
     challenges: inventory.challenges.map((challenge) => ({ ...challenge, completedBy: [] })),
     agenda,
+    liveMoment: createLiveMomentState(agenda),
     ticker: createPreparedInstanceTicker(template.label, instance.workshopMeta.contentLang),
     setupPaths: inventory.setupPaths,
   };

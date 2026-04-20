@@ -2,7 +2,7 @@ import { AdminRouteLink } from "@/app/admin/admin-route-link";
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import { ExternalOpenButton } from "@/app/admin/external-open-button";
 import { buildAdminHref } from "@/lib/admin-page-view-model";
-import type { RotationSignal } from "@/lib/runtime-contracts";
+import type { ParticipantFeedbackRecord, RotationSignal } from "@/lib/runtime-contracts";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
 import type { RotationPlan, WorkshopState } from "@/lib/workshop-data";
 import {
@@ -17,8 +17,12 @@ import {
   adminSecondaryButtonClassName,
 } from "../../../../admin-ui";
 import {
+  clearParticipantMomentOverrideAction,
   captureRotationSignalAction,
+  promoteParticipantFeedbackAction,
+  resetActivePollAction,
   setAgendaAction,
+  setParticipantMomentOverrideAction,
 } from "../../_actions/agenda";
 import {
   addCheckpointFeedAction,
@@ -27,6 +31,7 @@ import {
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import type { RichAgendaItem } from "../agenda/types";
+import type { ActivePollSummary } from "@/lib/workshop-store";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
@@ -46,6 +51,8 @@ export function RunSection({
   nextAgendaItem,
   overviewState,
   rotationSignals,
+  pollSummary,
+  participantFeedback,
   handoffIsLive,
   selectedAgendaOwnsHandoffControls,
   handoffAgendaHref,
@@ -58,13 +65,15 @@ export function RunSection({
   instanceId: string;
   state: Pick<
     WorkshopState,
-    "agenda" | "teams" | "rotation" | "workshopMeta" | "challenges"
+    "agenda" | "teams" | "rotation" | "workshopMeta" | "challenges" | "liveMoment"
   >;
   selectedAgendaItem: RichAgendaItem | null | undefined;
   currentAgendaItem: RichAgendaItem | null | undefined;
   nextAgendaItem: RichAgendaItem | null | undefined;
   overviewState: OverviewStateLike;
   rotationSignals: RotationSignal[];
+  pollSummary: ActivePollSummary | null;
+  participantFeedback: ParticipantFeedbackRecord[];
   handoffIsLive: boolean;
   selectedAgendaOwnsHandoffControls: boolean;
   handoffAgendaHref: string | null;
@@ -77,8 +86,60 @@ export function RunSection({
     focusItem?.status === "current"
       ? copy.liveNow
       : focusItem?.status === "done"
-        ? copy.agendaStatusDone
-        : copy.agendaStatusUpcoming;
+      ? copy.agendaStatusDone
+      : copy.agendaStatusUpcoming;
+  const activeParticipantMoment =
+    focusItem?.id === state.liveMoment.agendaItemId && state.liveMoment.participantMomentId
+      ? focusItem.participantMoments.find((moment) => moment.id === state.liveMoment.participantMomentId) ?? null
+      : null;
+  const liveCopy =
+    lang === "en"
+      ? {
+          liveMomentTitle: "live participant contract",
+          liveMomentDescription: "Projection now drives the room, participant moments follow automatically, and manual override stays as a safety path only.",
+          roomSceneLabel: "room scene",
+          participantMomentLabel: "participant moment",
+          participantModeLabel: "mode",
+          participantModeAuto: "auto",
+          participantModeManual: "manual override",
+          noParticipantMoments: "No explicit participant moments are authored for this moment yet.",
+          setAutoButton: "return to auto",
+          activePollTitle: "active room signal poll",
+          activePollEmpty: "No active poll is attached to the live participant moment.",
+          activePollResponses: "responses",
+          resetPollButton: "reset poll",
+          feedbackTitle: "participant feedback",
+          feedbackDescription: "Private blocker/question lane. Nothing reaches the room until you explicitly promote it.",
+          feedbackEmpty: "No private participant notes yet.",
+          promoteButton: "promote to room note",
+          promotedLabel: "promoted",
+          blockerLabel: "blocker",
+          questionLabel: "question",
+          unknownTeam: "room",
+        }
+      : {
+          liveMomentTitle: "živý kontrakt pro účastníky",
+          liveMomentDescription: "Projekce teď řídí sál, participant momenty ji následují automaticky a ruční override zůstává jen jako pojistka.",
+          roomSceneLabel: "scéna pro sál",
+          participantMomentLabel: "participant moment",
+          participantModeLabel: "režim",
+          participantModeAuto: "auto",
+          participantModeManual: "ruční override",
+          noParticipantMoments: "Pro tenhle moment zatím nejsou explicitní participant momenty.",
+          setAutoButton: "vrátit auto režim",
+          activePollTitle: "aktivní room-signal poll",
+          activePollEmpty: "Na živý participant moment teď není navázaný žádný poll.",
+          activePollResponses: "odpovědí",
+          resetPollButton: "resetovat poll",
+          feedbackTitle: "participant feedback",
+          feedbackDescription: "Soukromá linka pro blocker nebo otázku. Do místnosti se nic nedostane bez vědomého promote kroku.",
+          feedbackEmpty: "Zatím žádné soukromé participant poznámky.",
+          promoteButton: "povýšit do poznámky pro místnost",
+          promotedLabel: "promováno",
+          blockerLabel: "blocker",
+          questionLabel: "otázka",
+          unknownTeam: "místnost",
+        };
 
   return (
     <AdminPanel
@@ -154,6 +215,91 @@ export function RunSection({
 
         {focusItem ? (
           <MomentGuideCard item={focusItem} copy={copy} />
+        ) : null}
+
+        {focusItem ? (
+          <ControlCard title={liveCopy.liveMomentTitle} description={liveCopy.liveMomentDescription}>
+            <div className="space-y-4">
+              <div className="grid gap-3 lg:grid-cols-3">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{liveCopy.roomSceneLabel}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">
+                    {focusItem.presenterScenes.find((scene) => scene.id === state.liveMoment.roomSceneId)?.label ?? "—"}
+                  </p>
+                </div>
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{liveCopy.participantMomentLabel}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{activeParticipantMoment?.label ?? "—"}</p>
+                </div>
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+                  <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{liveCopy.participantModeLabel}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">
+                    {state.liveMoment.participantMode === "manual"
+                      ? liveCopy.participantModeManual
+                      : liveCopy.participantModeAuto}
+                  </p>
+                </div>
+              </div>
+
+              {focusItem.participantMoments.length > 0 ? (
+                <div className="grid gap-3 xl:grid-cols-2">
+                  {focusItem.participantMoments
+                    .filter((moment) => moment.enabled)
+                    .map((moment) => {
+                      const isActive = state.liveMoment.participantMomentId === moment.id;
+                      const isManual = isActive && state.liveMoment.participantMode === "manual";
+                      return (
+                        <div
+                          key={moment.id}
+                          className={`rounded-[20px] border p-4 ${
+                            isActive
+                              ? "border-[var(--border-strong)] bg-[var(--surface-panel)]"
+                              : "border-[var(--border)] bg-[var(--surface-soft)]"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-medium text-[var(--text-primary)]">{moment.label}</p>
+                              <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{moment.body}</p>
+                            </div>
+                            {moment.poll ? <StatusPill label="poll" tone="neutral" /> : null}
+                          </div>
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {isManual ? (
+                              <StatusPill label={liveCopy.participantModeManual} tone="live" />
+                            ) : null}
+                            {!isManual ? (
+                              <form action={setParticipantMomentOverrideAction}>
+                                <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
+                                <input name="agendaId" type="hidden" value={focusItem.id} />
+                                <input name="participantMomentId" type="hidden" value={moment.id} />
+                                <AdminSubmitButton className={adminSecondaryButtonClassName}>
+                                  {copy.presenterShowSceneButton}
+                                </AdminSubmitButton>
+                              </form>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
+              ) : (
+                <p className="text-sm leading-6 text-[var(--text-secondary)]">{liveCopy.noParticipantMoments}</p>
+              )}
+
+              {state.liveMoment.participantMode === "manual" ? (
+                <div className="flex justify-end">
+                  <form action={clearParticipantMomentOverrideAction}>
+                    <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
+                    <input name="agendaId" type="hidden" value={focusItem.id} />
+                    <AdminSubmitButton className={adminGhostButtonClassName}>
+                      {liveCopy.setAutoButton}
+                    </AdminSubmitButton>
+                  </form>
+                </div>
+              ) : null}
+            </div>
+          </ControlCard>
         ) : null}
 
         {selectedAgendaOwnsHandoffControls ? (
@@ -263,6 +409,94 @@ export function RunSection({
                 {copy.recordCompletionButton}
               </AdminSubmitButton>
             </form>
+          </ControlCard>
+        </div>
+
+        <div className="grid gap-6 xl:grid-cols-2">
+          <ControlCard title={liveCopy.activePollTitle} description={pollSummary?.prompt ?? liveCopy.activePollEmpty}>
+            {pollSummary ? (
+              <div className="space-y-4">
+                <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
+                  {pollSummary.totalResponses} {liveCopy.activePollResponses}
+                </div>
+                <div className="space-y-3">
+                  {pollSummary.options.map((option) => {
+                    const width = pollSummary.totalResponses > 0 ? (option.count / pollSummary.totalResponses) * 100 : 0;
+                    return (
+                      <div key={option.id} className="space-y-2">
+                        <div className="flex items-center justify-between gap-3 text-sm text-[var(--text-primary)]">
+                          <span>{option.label}</span>
+                          <span className="text-[var(--text-muted)]">{option.count}</span>
+                        </div>
+                        <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-soft)]">
+                          <div className="h-full rounded-full bg-[var(--text-primary)]" style={{ width: `${width}%` }} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex justify-end">
+                  <form action={resetActivePollAction}>
+                    <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
+                    <input name="agendaId" type="hidden" value={focusItem?.id ?? ""} />
+                    <AdminSubmitButton className={adminGhostButtonClassName}>
+                      {liveCopy.resetPollButton}
+                    </AdminSubmitButton>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm leading-6 text-[var(--text-secondary)]">{liveCopy.activePollEmpty}</p>
+            )}
+          </ControlCard>
+
+          <ControlCard title={liveCopy.feedbackTitle} description={liveCopy.feedbackDescription}>
+            {participantFeedback.length > 0 ? (
+              <div className="space-y-3">
+                {participantFeedback.slice(0, 8).map((feedback) => {
+                  const teamLabel =
+                    feedback.teamId ? state.teams.find((team) => team.id === feedback.teamId)?.name ?? feedback.teamId : liveCopy.unknownTeam;
+                  const kindLabel =
+                    feedback.kind === "blocker" ? liveCopy.blockerLabel : liveCopy.questionLabel;
+                  return (
+                    <div key={feedback.id} className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                            <span>{kindLabel}</span>
+                            <span>·</span>
+                            <span>{teamLabel}</span>
+                          </div>
+                          <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{feedback.message}</p>
+                        </div>
+                        <time className="shrink-0 text-xs text-[var(--text-muted)]" dateTime={feedback.createdAt}>
+                          {new Date(feedback.createdAt).toLocaleTimeString(lang === "cs" ? "cs-CZ" : "en-US", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </time>
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {feedback.promotedTickerId ? (
+                          <StatusPill label={liveCopy.promotedLabel} tone="live" />
+                        ) : (
+                          <form action={promoteParticipantFeedbackAction}>
+                            <AdminActionStateFields lang={lang} section="run" instanceId={instanceId} />
+                            <input name="agendaId" type="hidden" value={focusItem?.id ?? ""} />
+                            <input name="feedbackId" type="hidden" value={feedback.id} />
+                            <AdminSubmitButton className={adminSecondaryButtonClassName}>
+                              {liveCopy.promoteButton}
+                            </AdminSubmitButton>
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm leading-6 text-[var(--text-secondary)]">{liveCopy.feedbackEmpty}</p>
+            )}
           </ControlCard>
         </div>
       </div>

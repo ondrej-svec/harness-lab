@@ -170,6 +170,7 @@ describe("public page helpers", () => {
       id: "custom-fallback",
       title: "Custom fallback",
       presenterScenes: seedWorkshopState.agenda[0]!.presenterScenes.filter((scene) => scene.sceneType !== "participant-view"),
+      participantMoments: [],
     };
     const fallbackPanel = buildParticipantPanelState({
       copy: publicCopy.en,

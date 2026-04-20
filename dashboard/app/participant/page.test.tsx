@@ -142,8 +142,8 @@ describe("ParticipantPage", () => {
 
     expect(getWorkshopState).toHaveBeenCalledWith("sample-studio-a");
     expect(html).toContain("Opening and orientation");
-    expect(html).toContain("Experience line + team formation");
-    expect(html).toContain("Form the line. Count off. Claim your anchor.");
+    expect(html).toContain("Look up and orient");
+    expect(html).toContain("Stay with the room");
     expect(html).not.toContain("Agree on the brief. Open the repo. Draft the first map.");
   });
 });

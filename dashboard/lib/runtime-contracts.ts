@@ -180,6 +180,34 @@ export type RotationSignal = {
   artifactPaths?: string[];
 };
 
+export type PollResponseRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  pollId: string;
+  participantId: string | null;
+  sessionKey: string;
+  teamId: string | null;
+  optionId: string;
+  submittedAt: string;
+};
+
+export type ParticipantFeedbackKind = "blocker" | "question";
+
+export type ParticipantFeedbackRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  agendaItemId: string | null;
+  participantMomentId: string | null;
+  participantId: string | null;
+  sessionKey: string;
+  teamId: string | null;
+  kind: ParticipantFeedbackKind;
+  message: string;
+  createdAt: string;
+  promotedToTickerAt: string | null;
+  promotedTickerId: string | null;
+};
+
 /**
  * LearningsLogEntry — the cross-cohort append-only wrapper around a
  * RotationSignal. Lives outside any instance directory so it survives
@@ -349,6 +377,22 @@ export interface AuditLogRepository {
 export interface RotationSignalRepository {
   list(instanceId: WorkshopInstanceId): Promise<RotationSignal[]>;
   append(instanceId: WorkshopInstanceId, signal: RotationSignal): Promise<void>;
+}
+
+export interface PollResponseRepository {
+  list(instanceId: WorkshopInstanceId, pollId?: string): Promise<PollResponseRecord[]>;
+  upsert(instanceId: WorkshopInstanceId, response: PollResponseRecord): Promise<void>;
+  deletePoll(instanceId: WorkshopInstanceId, pollId: string): Promise<void>;
+}
+
+export interface ParticipantFeedbackRepository {
+  list(instanceId: WorkshopInstanceId): Promise<ParticipantFeedbackRecord[]>;
+  append(instanceId: WorkshopInstanceId, feedback: ParticipantFeedbackRecord): Promise<void>;
+  markPromoted(
+    instanceId: WorkshopInstanceId,
+    feedbackId: string,
+    promotion: { promotedToTickerAt: string; promotedTickerId: string },
+  ): Promise<void>;
 }
 
 /**

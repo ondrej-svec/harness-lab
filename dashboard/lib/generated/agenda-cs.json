@@ -164,58 +164,6 @@
           ]
         },
         {
-          "id": "opening-day-schedule",
-          "label": "Program dne",
-          "sceneType": "briefing",
-          "intent": "agenda",
-          "chromePreset": "agenda",
-          "title": "Jak bude den vypadat",
-          "body": "Tohle jsou vodítka, ne termíny. Zvlášť oběd se na místě dojednává.",
-          "facilitatorNotes": [
-            "Umístěte to před formování týmů – účastníci mají vědět, k čemu se připojují.",
-            "Přečtěte odpolední rozdělení jednou – Build 2 se rozpadá kolem Intermezza 2."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Facilitační průvodce: Otevření a welcome",
-              "path": "content/facilitation/master-guide.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "opening-schedule-hero",
-              "type": "hero",
-              "eyebrow": "Dnešní rozvrh",
-              "title": "Jak bude den vypadat",
-              "body": "Vodítka, ne termíny. Čas oběda dojednáváme podle nálady v místnosti."
-            },
-            {
-              "id": "opening-schedule-list",
-              "type": "bullet-list",
-              "items": [
-                "09:10 · Úvod",
-                "09:40 · Řemeslo pod povrchem (talk)",
-                "10:05 · Ukážu vám to (demo)",
-                "10:30 · Build fáze 1",
-                "11:35 · Intermezzo 1",
-                "12:15 · Oběd",
-                "13:30 · Rotace",
-                "13:45 · Build fáze 2 · první push",
-                "14:30 · Intermezzo 2 (pauza uprostřed)",
-                "14:50 · Build fáze 2 · druhý push",
-                "15:45 · Závěr"
-              ]
-            },
-            {
-              "id": "opening-schedule-note",
-              "type": "callout",
-              "tone": "info",
-              "title": "Časy jsou vodítka, ne termíny.",
-              "body": "Zvlášť oběd dojednáváme během dne podle nálady v místnosti. Den končí zhruba v 16:45."
-            }
-          ]
-        },
-        {
           "id": "opening-team-formation-room",
           "label": "Formování týmů (sál)",
           "sceneType": "briefing",
@@ -263,62 +211,6 @@
           ]
         },
         {
-          "id": "opening-team-formation",
-          "label": "Řada zkušeností a formování týmů",
-          "sceneType": "participant-view",
-          "intent": "activation",
-          "chromePreset": "participant",
-          "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-          "body": "Devět minut. Takhle si dnes tvoříme týmy – podle řady zkušeností a odpočítávání. Stejný postup použijeme znovu při rotaci po obědě.",
-          "facilitatorNotes": [
-            "Nechej všechny vstát a postavit se do jedné řady podle zkušeností s AI agenty.",
-            "Počítejte živě podle počtu lidí. Před odpočtem nahlas oznamte, jak velké týmy chcete.",
-            "Jména týmů jdou do admin dashboardu naživo, jak přicházejí.",
-            "Pokud se formování zadrhne déle než čtyři minuty, začni přiřazovat manuálně."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Facilitační průvodce: Otevření a welcome",
-              "path": "content/facilitation/master-guide.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "opening-team-hero",
-              "type": "hero",
-              "eyebrow": "Váš tým",
-              "title": "Postavte se do řady. Rozpočítejte se. Vyberte si kotvu.",
-              "body": "Devět minut. Takhle si dnes tvoříme týmy – a stejný postup použijeme znovu při rotaci po obědě."
-            },
-            {
-              "id": "opening-team-steps",
-              "type": "steps",
-              "items": [
-                {
-                  "id": "team-line",
-                  "title": "Postav se do řady (3 min).",
-                  "body": "Vstaňte. Postavte se do jedné řady podél stěny podle zkušeností s AI agenty."
-                },
-                {
-                  "id": "team-count",
-                  "title": "Rozpočítejte se do týmů (1 min).",
-                  "body": "Počítejte podél řady do cílové velikosti týmu. Stejná čísla tvoří tým."
-                },
-                {
-                  "id": "team-sit",
-                  "title": "Sedněte si, představte se, pojmenujte tým (4 min).",
-                  "body": "Jděte spolu ke stolu. Řekněte jméno a co vás sem přivedlo. Vyberte jméno týmu."
-                },
-                {
-                  "id": "team-anchor-record",
-                  "title": "Vyberte kotvu a zvedněte ruku.",
-                  "body": "Vyberte kotvu na stole. Facilitátor zapíše jméno týmu naživo na participant plochu."
-                }
-              ]
-            }
-          ]
-        },
-        {
           "id": "opening-handoff",
           "label": "Přechod do talku",
           "sceneType": "transition",
@@ -344,6 +236,87 @@
               "title": "Na boardu máte svůj tým. Podívejte se nahoru.",
               "body": "Další krok: talk. Začínáme tím, že pojmenujeme řemeslo pod veškerým hypem kolem agentů."
             }
+          ]
+        }
+      ],
+      "participantMoments": [
+        {
+          "id": "opening-room-start",
+          "label": "Zorientujte se",
+          "title": "Zůstaňte s místností",
+          "body": "Teď ještě nic nedělejte. Poslouchejte oblouk dne a laťku pro práci, která přežije bez záchrany.",
+          "blocks": [
+            {
+              "id": "opening-room-start-hero",
+              "type": "hero",
+              "eyebrow": "Úvod",
+              "title": "Zůstaňte s místností",
+              "body": "Teď ještě nic nedělejte. Poslouchejte oblouk dne a laťku pro práci, která přežije předání bez záchrany."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-framing",
+            "opening-day-arc"
+          ]
+        },
+        {
+          "id": "opening-team-formation-moment",
+          "label": "Složte tým",
+          "title": "Vstaňte. Postavte se do řady. Vyberte kotvu.",
+          "body": "Řiďte se sledem v místnosti: řada podle zkušeností, rozpočet, usadit se spolu, pojmenovat tým a vybrat kotvu stolu.",
+          "blocks": [
+            {
+              "id": "opening-team-formation-moment-hero",
+              "type": "hero",
+              "eyebrow": "Teď jste na tahu",
+              "title": "Vstaňte. Postavte se do řady. Vyberte kotvu.",
+              "body": "Řiďte se sledem v místnosti. Tohle je jediný participant beat, na kterém teď záleží."
+            },
+            {
+              "id": "opening-team-formation-moment-steps",
+              "type": "steps",
+              "items": [
+                {
+                  "id": "opening-team-line",
+                  "title": "Postavte se do řady.",
+                  "body": "Vstaňte a seřaďte se podle zkušeností s AI agenty."
+                },
+                {
+                  "id": "opening-team-count",
+                  "title": "Rozpočítejte se do týmů.",
+                  "body": "Facilitátor ohlásí rozpočet. Stejná čísla tvoří tým."
+                },
+                {
+                  "id": "opening-team-anchor",
+                  "title": "Sedněte si, pojmenujte tým a vyberte kotvu.",
+                  "body": "Domluvte si název týmu a fyzickou kotvu u stolu."
+                }
+              ]
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-team-formation-room"
+          ]
+        },
+        {
+          "id": "opening-look-up",
+          "label": "Podívejte se nahoru",
+          "title": "Tým je zapsaný. Podívejte se nahoru.",
+          "body": "Místnost se přesouvá do talku. Přerušte nastavování u stolu a vraťte pozornost dopředu.",
+          "blocks": [
+            {
+              "id": "opening-look-up-hero",
+              "type": "hero",
+              "eyebrow": "Přechod",
+              "title": "Tým je zapsaný. Podívejte se nahoru.",
+              "body": "Tým je hotový. Místnost se přesouvá do talku."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-handoff"
           ]
         }
       ]
@@ -470,46 +443,6 @@
           ]
         },
         {
-          "id": "talk-got-a-name",
-          "label": "Dostalo to jméno",
-          "sceneType": "briefing",
-          "intent": "framing",
-          "chromePreset": "minimal",
-          "title": "Minulý týden to dostalo jméno",
-          "body": "Před deseti dny publikovala Birgitta Böckeler na webu Martina Fowlera tuhle rovnici: Agent = Model + Harness. Nejčistší verze, jakou jsem viděl. Model má sílu. Harness je to, co tu sílu mění v užitečnou práci, ne v task drift.",
-          "facilitatorNotes": [
-            "Jedna rovnice, jeden citát, jeden reframe. Nerozbíhejte na slidu dlouhou analogii s motorem."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Talk: The Craft Underneath",
-              "path": "content/talks/context-is-king.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "talk-got-a-name-hero",
-              "type": "hero",
-              "eyebrow": "Disciplína má jméno",
-              "title": "Minulý týden to dostalo jméno",
-              "body": "Před deseti dny publikovala Birgitta Böckeler na webu Martina Fowlera tuhle rovnici: Agent = Model + Harness. Model má sílu. Harness je to, co tu sílu mění v užitečnou práci, ne v task drift."
-            },
-            {
-              "id": "talk-bockeler-quote",
-              "type": "quote",
-              "attribution": "Birgitta Böckeler, Thoughtworks",
-              "quote": "A good harness doesn’t aim to eliminate human input. It directs human input to where it matters most."
-            },
-            {
-              "id": "talk-reframe-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "Mezera mezi modely se zužuje. Mezera mezi harnessy roste.",
-              "body": "Dva týmy můžou mít stejný model a stejně shipnout úplně jiné výsledky. Ten rozdíl dělá harness: kontext, pravidla, kontroly, předání."
-            }
-          ]
-        },
-        {
           "id": "talk-how-to-build",
           "label": "Čtyři sloupy",
           "sceneType": "briefing",
@@ -604,47 +537,6 @@
           ]
         },
         {
-          "id": "talk-humans-steer",
-          "label": "Klíčová věta",
-          "sceneType": "briefing",
-          "intent": "framing",
-          "chromePreset": "minimal",
-          "title": "Lidé řídí. Agenti vykonávají.",
-          "body": "Čtyři slova od Ryana Lopopola. Všechno ostatní, co dnes trénujete, je způsob, jak je uvést do praxe.",
-          "facilitatorNotes": [
-            "Nejzapamatovatelnější věta celého workshopu. Chraňte ji.",
-            "Nechte jen jeden podpůrný citát."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Talk: The Craft Underneath",
-              "path": "content/talks/context-is-king.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "talk-humans-steer-hero",
-              "type": "hero",
-              "eyebrow": "Klíčová věta",
-              "title": "Lidé řídí. Agenti vykonávají.",
-              "body": "Čtyři slova od Ryana Lopopola, OpenAI Frontier & Symphony. Jeho základní princip. Všechno ostatní na něm stojí."
-            },
-            {
-              "id": "talk-hashimoto-quote",
-              "type": "quote",
-              "attribution": "Mitchell Hashimoto, HashiCorp",
-              "quote": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again."
-            },
-            {
-              "id": "talk-monday-promise",
-              "type": "callout",
-              "tone": "info",
-              "title": "Druhý den, až si otevřete coding agenta, budete pracovat jinak.",
-              "body": "Ne s novým nástrojem. S jinou rolí. Přestanete být ten, koho se agent ptá, a stanete se tím, kdo staví prostředí, do kterého agent vchází."
-            }
-          ]
-        },
-        {
           "id": "talk-sitting-inside",
           "label": "Celé ráno jste v něm seděli",
           "sceneType": "transition",
@@ -669,6 +561,89 @@
               "title": "Celé ráno jste v jednom seděli",
               "body": "Workshop skill, dashboard, plátno před vámi, repo, které za chvíli otevřete – to všechno bylo postavené s agenty a disciplínou, kterou jsme právě pojmenovali. To, co uvidíte v demu, není slib. Je to funkční instance."
             }
+          ]
+        }
+      ],
+      "participantMoments": [
+        {
+          "id": "talk-listen",
+          "label": "Zůstaňte s místností",
+          "title": "Poslouchejte, v čem je posun",
+          "body": "Teď ještě nepracujte u stolu. Sledujte kontrast: prompt není systém, systém je kontrakt v repu kolem agenta.",
+          "blocks": [
+            {
+              "id": "talk-listen-hero",
+              "type": "hero",
+              "eyebrow": "Talk",
+              "title": "Poslouchejte, v čem je posun",
+              "body": "Teď ještě nepracujte u stolu. Zůstaňte s argumentem a s kontrastem."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-argued-about-prompts",
+            "talk-why-now"
+          ]
+        },
+        {
+          "id": "talk-note-one-gap",
+          "label": "Pojmenujte jednu mezeru",
+          "title": "Najděte nejslabší signál ve svém repu",
+          "body": "Vyberte jednu mezeru, kterou váš tým už teď tuší. Ještě ji neopravujte. Pojmenujte ji čistě, aby Build 1 začal od něčeho skutečného.",
+          "blocks": [
+            {
+              "id": "talk-gap-hero",
+              "type": "hero",
+              "eyebrow": "Před Build 1",
+              "title": "Najděte nejslabší signál ve svém repu",
+              "body": "Vyberte jednu mezeru, kterou už teď tušíte. Poll je krátký signál pro místnost, ne soutěž."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-how-to-build"
+          ],
+          "poll": {
+            "id": "talk-weakest-repo-signal",
+            "prompt": "Která část vašeho repa je teď nejslabší?",
+            "options": [
+              {
+                "id": "map",
+                "label": "Mapa"
+              },
+              {
+                "id": "boundaries",
+                "label": "Mantinely"
+              },
+              {
+                "id": "instructions",
+                "label": "Instrukce"
+              },
+              {
+                "id": "verification",
+                "label": "Ověření"
+              }
+            ]
+          }
+        },
+        {
+          "id": "talk-ready-for-build",
+          "label": "Připravte se na Build 1",
+          "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním proof targetem",
+          "body": "Za chvíli se vracíte do repa. Odneste si jeden explicitní další krok: co práci zmapuje, co ji ohraničí a co ji ověří.",
+          "blocks": [
+            {
+              "id": "talk-ready-hero",
+              "type": "hero",
+              "eyebrow": "Další krok",
+              "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním proof targetem",
+              "body": "Build 1 nemá začít dalším hledáním promptu, ale jedním explicitním pracovním kontraktem."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-managing-agents",
+            "talk-sitting-inside"
           ]
         }
       ]
@@ -952,6 +927,66 @@
             }
           ]
         }
+      ],
+      "participantMoments": [
+        {
+          "id": "demo-watch-the-contrast",
+          "label": "Sledujte kontrast",
+          "title": "Sledujte, co mění repo",
+          "body": "Zůstaňte s demem. Nejde o příkaz. Jde o to, který artefakt v repu mění chování agenta.",
+          "blocks": [
+            {
+              "id": "demo-watch-hero",
+              "type": "hero",
+              "eyebrow": "Demo",
+              "title": "Sledujte, co mění repo",
+              "body": "Zůstaňte s kontrastem. Hledejte artefakt, který mění výsledek."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-same-prompt"
+          ]
+        },
+        {
+          "id": "demo-name-your-first-artifact",
+          "label": "Pojmenujte první artefakt",
+          "title": "Rozhodněte, co váš tým vytvoří jako první",
+          "body": "Za chvíli tenhle postup kopírujete. Vyberte první artefakt v repu, který musí vzniknout dřív, než se práce rozběhne do šířky.",
+          "blocks": [
+            {
+              "id": "demo-first-artifact-hero",
+              "type": "hero",
+              "eyebrow": "Příprava buildu",
+              "title": "Rozhodněte, co váš tým vytvoří jako první",
+              "body": "AGENTS.md, plán, tracer nebo jiný explicitní kontrakt. Pojmenujte ho dřív, než začne Build 1."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-hold-together"
+          ]
+        },
+        {
+          "id": "demo-open-build-brief",
+          "label": "Otevřete pracovní materiály",
+          "title": "Otevřete zadání, repo a fallback cestu",
+          "body": "Build 1 začíná hned potom. Otevřete zadání, otevřete repo a nechte si po ruce browser fallback, pokud lokální setup ještě neběží.",
+          "blocks": [
+            {
+              "id": "demo-open-build-hero",
+              "type": "hero",
+              "eyebrow": "Další krok",
+              "title": "Otevřete zadání, repo a fallback cestu",
+              "body": "Participant plocha je stabilní cesta. Skill použijte jen tehdy, když je pro váš stůl opravdu rychlejší."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-your-toolkit",
+            "demo-first-ten-minutes"
+          ]
+        }
       ]
     },
     {
@@ -1176,7 +1211,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "intermezzo-1",
@@ -1367,7 +1403,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "lunch-reset",
@@ -1446,7 +1483,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "rotation",
@@ -1629,7 +1667,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "build-2",
@@ -1811,7 +1850,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "intermezzo-2",
@@ -2005,7 +2045,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "build-2-second-push",
@@ -2137,7 +2178,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "reveal",
@@ -2461,7 +2503,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     }
   ],
   "inventory": {

@@ -7,6 +7,7 @@ import { PeopleSection } from "./_components/sections/people-section";
 import { RunSection } from "./_components/sections/run-section";
 import { SettingsSection } from "./_components/sections/settings-section";
 import { loadAdminPageViewModel, type AdminPageSearchParams } from "./_lib/admin-page-loader";
+import { getActivePollSummary, listParticipantFeedback } from "@/lib/workshop-store";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,8 @@ export default async function AdminPage({
   const { id: instanceId } = await params;
   const query = await searchParams;
   const vm = await loadAdminPageViewModel({ instanceId, query });
+  const pollSummary = await getActivePollSummary(instanceId);
+  const participantFeedback = await listParticipantFeedback(instanceId);
 
   return (
     <main className="min-h-screen bg-[var(--surface-admin)] bg-[radial-gradient(circle_at_top_left,var(--ambient-right),transparent_34%),radial-gradient(circle_at_top_right,var(--ambient-left),transparent_24%),linear-gradient(180deg,var(--surface-admin),var(--surface-elevated))] px-4 py-5 text-[var(--text-primary)] sm:px-6 sm:py-6">
@@ -79,6 +82,8 @@ export default async function AdminPage({
                 nextAgendaItem={vm.nextAgendaItem ?? null}
                 overviewState={vm.overviewState}
                 rotationSignals={vm.rotationSignals}
+                pollSummary={pollSummary}
+                participantFeedback={participantFeedback}
                 handoffIsLive={vm.handoffIsLive}
                 selectedAgendaOwnsHandoffControls={vm.selectedAgendaOwnsHandoffControls}
                 handoffAgendaHref={vm.handoffAgendaHref}

@@ -58,6 +58,7 @@ export function resolvePresenterSelection(options: {
   const { state, requestedAgendaItemId, requestedSceneId } = options;
   const activeAgendaItem =
     state.agenda.find((item) => item.id === requestedAgendaItemId) ??
+    state.agenda.find((item) => item.id === state.liveMoment.agendaItemId) ??
     state.agenda.find((item) => item.status === "current") ??
     state.agenda[0] ??
     null;
@@ -65,7 +66,13 @@ export function resolvePresenterSelection(options: {
     requestedSceneId && activeAgendaItem
       ? activeAgendaItem.presenterScenes.find((scene) => scene.enabled && scene.id === requestedSceneId) ?? null
       : null;
-  const selectedScene = requestedScene ?? getDefaultPresenterScene(activeAgendaItem);
+  const liveScene =
+    activeAgendaItem && state.liveMoment.roomSceneId
+      ? activeAgendaItem.presenterScenes.find(
+          (scene) => scene.enabled && scene.surface === "room" && scene.id === state.liveMoment.roomSceneId,
+        ) ?? null
+      : null;
+  const selectedScene = requestedScene ?? liveScene ?? getDefaultPresenterScene(activeAgendaItem);
 
   return {
     activeAgendaItem,

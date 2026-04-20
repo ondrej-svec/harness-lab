@@ -7,10 +7,15 @@ import { buildPresenterRouteHref } from "@/lib/presenter-view-model";
 import { resolveUiLanguage } from "@/lib/ui-language";
 import {
   addAgendaItem,
+  clearLiveParticipantMomentOverride,
   captureRotationSignal,
   moveAgendaItem,
+  promoteParticipantFeedbackToTicker,
   removeAgendaItem,
+  resetActivePollResponses,
   setCurrentAgendaItem,
+  setLiveParticipantMomentOverride,
+  setLiveRoomScene,
   updateAgendaItem,
 } from "@/lib/workshop-store";
 
@@ -154,6 +159,66 @@ export async function advancePresenterToAgendaItemAction(formData: FormData) {
   await requireFacilitatorActionAccess(instanceId);
   await setCurrentAgendaItem(agendaId, instanceId);
   redirect(buildPresenterRouteHref({ lang, instanceId, agendaItemId: agendaId, sceneId: null }));
+}
+
+export async function syncPresenterSceneAction(formData: FormData) {
+  const instanceId = String(formData.get("instanceId") ?? "");
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const sceneId = String(formData.get("sceneId") ?? "");
+
+  if (!instanceId || !agendaId || !sceneId) {
+    return;
+  }
+
+  await requireFacilitatorActionAccess(instanceId);
+  await setLiveRoomScene(agendaId, sceneId, instanceId);
+}
+
+export async function setParticipantMomentOverrideAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const participantMomentId = String(formData.get("participantMomentId") ?? "");
+  if (agendaId && participantMomentId) {
+    await setLiveParticipantMomentOverride(agendaId, participantMomentId, instanceId);
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+export async function clearParticipantMomentOverrideAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const agendaId = String(formData.get("agendaId") ?? "");
+  if (agendaId) {
+    await clearLiveParticipantMomentOverride(agendaId, instanceId);
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+export async function resetActivePollAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const agendaId = String(formData.get("agendaId") ?? "");
+  await resetActivePollResponses(instanceId);
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
+}
+
+export async function promoteParticipantFeedbackAction(formData: FormData) {
+  const { lang, section, instanceId } = readActionState(formData);
+  await requireFacilitatorActionAccess(instanceId);
+
+  const agendaId = String(formData.get("agendaId") ?? "");
+  const feedbackId = String(formData.get("feedbackId") ?? "");
+  if (feedbackId) {
+    await promoteParticipantFeedbackToTicker(feedbackId, instanceId);
+  }
+
+  redirect(buildAdminHref({ lang, section, instanceId, agendaItemId: agendaId || null }));
 }
 
 export async function captureRotationSignalAction(formData: FormData) {

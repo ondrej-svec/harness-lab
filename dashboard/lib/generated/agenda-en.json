@@ -164,58 +164,6 @@
           ]
         },
         {
-          "id": "opening-day-schedule",
-          "label": "Day schedule",
-          "sceneType": "briefing",
-          "intent": "agenda",
-          "chromePreset": "agenda",
-          "title": "The shape of the day",
-          "body": "These are guides, not deadlines. Lunch in particular is negotiable on the day.",
-          "facilitatorNotes": [
-            "Place this before team formation so teams know what they're joining.",
-            "Read the afternoon split once — Build 2 splits around Intermezzo 2."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Facilitation guide: Opening and welcome",
-              "path": "content/facilitation/master-guide.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "opening-schedule-hero",
-              "type": "hero",
-              "eyebrow": "Dnešní rozvrh",
-              "title": "The shape of the day",
-              "body": "Guides, not deadlines. Lunch timing is negotiated on the day based on room energy."
-            },
-            {
-              "id": "opening-schedule-list",
-              "type": "bullet-list",
-              "items": [
-                "09:10 · Opening",
-                "09:40 · The Craft Underneath (talk)",
-                "10:05 · Let me show you (demo)",
-                "10:30 · Build Phase 1",
-                "11:35 · Intermezzo 1",
-                "12:15 · Lunch",
-                "13:30 · Rotation",
-                "13:45 · Build Phase 2 · first push",
-                "14:30 · Intermezzo 2 (mid-point pause)",
-                "14:50 · Build Phase 2 · second push",
-                "15:45 · Reveal"
-              ]
-            },
-            {
-              "id": "opening-schedule-note",
-              "type": "callout",
-              "tone": "info",
-              "title": "Times are guides, not deadlines.",
-              "body": "Lunch in particular is negotiated on the day based on room energy. The day lands around 16:45."
-            }
-          ]
-        },
-        {
           "id": "opening-team-formation-room",
           "label": "Team formation (room)",
           "sceneType": "briefing",
@@ -263,62 +211,6 @@
           ]
         },
         {
-          "id": "opening-team-formation",
-          "label": "Experience line + team formation",
-          "sceneType": "participant-view",
-          "intent": "activation",
-          "chromePreset": "participant",
-          "title": "Form the line. Count off. Claim your anchor.",
-          "body": "Nine minutes. We form teams by experience line, then each team claims an anchor — a physical marker that the team, the repo, and the day's check-ins live at.",
-          "facilitatorNotes": [
-            "Start by having everyone stand and form one line by experience with AI agents.",
-            "Count off live based on head count. Announce the target team size before counting.",
-            "Team names go into the admin dashboard live as they come in.",
-            "If the room stalls past four minutes, start assigning manually."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Facilitation guide: Opening and welcome",
-              "path": "content/facilitation/master-guide.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "opening-team-hero",
-              "type": "hero",
-              "eyebrow": "Váš tým",
-              "title": "Form the line. Count off. Claim your anchor.",
-              "body": "Nine minutes. This is how we form teams for the day — the same mechanic we'll use again at rotation after lunch."
-            },
-            {
-              "id": "opening-team-steps",
-              "type": "steps",
-              "items": [
-                {
-                  "id": "team-line",
-                  "title": "Form the line (3 min).",
-                  "body": "Stand up. Form one line along the wall by experience with AI agents."
-                },
-                {
-                  "id": "team-count",
-                  "title": "Count off into teams (1 min).",
-                  "body": "Count down the line to the target team size. Matching numbers form a team."
-                },
-                {
-                  "id": "team-sit",
-                  "title": "Sit, introduce, name (4 min).",
-                  "body": "Go to a table together. Share your name and what brought you here. Pick a team name."
-                },
-                {
-                  "id": "team-anchor-record",
-                  "title": "Claim your anchor and raise a hand.",
-                  "body": "Pick the anchor at your table. The facilitator records the team name live on the board."
-                }
-              ]
-            }
-          ]
-        },
-        {
           "id": "opening-handoff",
           "label": "Handoff to the talk",
           "sceneType": "transition",
@@ -344,6 +236,87 @@
               "title": "Your team is on the board. Look up.",
               "body": "Next: the talk. We start by naming the craft underneath all the agent hype."
             }
+          ]
+        }
+      ],
+      "participantMoments": [
+        {
+          "id": "opening-room-start",
+          "label": "Look up and orient",
+          "title": "Stay with the room",
+          "body": "No action yet. Listen for the shape of the day and the bar for what must survive without rescue.",
+          "blocks": [
+            {
+              "id": "opening-room-start-hero",
+              "type": "hero",
+              "eyebrow": "Opening",
+              "title": "Stay with the room",
+              "body": "No action yet. Listen for the day arc and the standard for work that survives handoff."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-framing",
+            "opening-day-arc"
+          ]
+        },
+        {
+          "id": "opening-team-formation-moment",
+          "label": "Form the team",
+          "title": "Stand up. Line up. Claim the anchor.",
+          "body": "Follow the room sequence: experience line, count off, sit down together, choose the team name and the table anchor.",
+          "blocks": [
+            {
+              "id": "opening-team-formation-moment-hero",
+              "type": "hero",
+              "eyebrow": "Your move",
+              "title": "Stand up. Line up. Claim the anchor.",
+              "body": "Follow the room sequence. This is the one participant beat that matters right now."
+            },
+            {
+              "id": "opening-team-formation-moment-steps",
+              "type": "steps",
+              "items": [
+                {
+                  "id": "opening-team-line",
+                  "title": "Form the line.",
+                  "body": "Stand and line up by experience with AI agents."
+                },
+                {
+                  "id": "opening-team-count",
+                  "title": "Count off into teams.",
+                  "body": "The facilitator announces the count. Matching numbers form the team."
+                },
+                {
+                  "id": "opening-team-anchor",
+                  "title": "Sit, name the team, claim the anchor.",
+                  "body": "Choose the team name and the physical anchor at the table."
+                }
+              ]
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-team-formation-room"
+          ]
+        },
+        {
+          "id": "opening-look-up",
+          "label": "Look up",
+          "title": "Your team is recorded. Look up.",
+          "body": "The room is moving into the talk. Pause the table setup and switch your attention back to the front.",
+          "blocks": [
+            {
+              "id": "opening-look-up-hero",
+              "type": "hero",
+              "eyebrow": "Transition",
+              "title": "Your team is recorded. Look up.",
+              "body": "Team is set. The room is moving into the talk."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "opening-handoff"
           ]
         }
       ]
@@ -470,46 +443,6 @@
           ]
         },
         {
-          "id": "talk-got-a-name",
-          "label": "It got a name",
-          "sceneType": "briefing",
-          "intent": "framing",
-          "chromePreset": "minimal",
-          "title": "Last week, it got a name",
-          "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. It's the cleanest version I've seen. The model has the power. The harness is what turns that power into useful work instead of drift.",
-          "facilitatorNotes": [
-            "One equation, one quote, one reframe. Do not rebuild the long engine analogy on the slide."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Talk: The Craft Underneath",
-              "path": "content/talks/locales/en/context-is-king.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "talk-got-a-name-hero",
-              "type": "hero",
-              "eyebrow": "The discipline has a name",
-              "title": "Last week, it got a name",
-              "body": "Ten days ago, Birgitta Böckeler published this equation on Martin Fowler's site: Agent = Model + Harness. The model has the power. The harness is what turns that power into useful work instead of drift."
-            },
-            {
-              "id": "talk-bockeler-quote",
-              "type": "quote",
-              "attribution": "Birgitta Böckeler, Thoughtworks",
-              "quote": "A good harness doesn't aim to eliminate human input. It directs human input to where it matters most."
-            },
-            {
-              "id": "talk-reframe-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "The gap between models is narrowing. The gap between harnesses is widening.",
-              "body": "Two teams can use the same model and still ship radically different outcomes. The gap is the harness: context, rules, checks, handoff."
-            }
-          ]
-        },
-        {
           "id": "talk-how-to-build",
           "label": "The four pillars",
           "sceneType": "briefing",
@@ -604,47 +537,6 @@
           ]
         },
         {
-          "id": "talk-humans-steer",
-          "label": "The core line",
-          "sceneType": "briefing",
-          "intent": "framing",
-          "chromePreset": "minimal",
-          "title": "Humans steer. Agents execute.",
-          "body": "Four words from Ryan Lopopolo. Everything else you practice today is a way of making them real.",
-          "facilitatorNotes": [
-            "This is the most memorable line in the whole workshop. Protect it.",
-            "Keep one supporting quote only."
-          ],
-          "sourceRefs": [
-            {
-              "label": "Talk: The Craft Underneath",
-              "path": "content/talks/locales/en/context-is-king.md"
-            }
-          ],
-          "blocks": [
-            {
-              "id": "talk-humans-steer-hero",
-              "type": "hero",
-              "eyebrow": "The core line",
-              "title": "Humans steer. Agents execute.",
-              "body": "Four words from Ryan Lopopolo, OpenAI Frontier & Symphony. His foundational principle. Everything else rests on this."
-            },
-            {
-              "id": "talk-hashimoto-quote",
-              "type": "quote",
-              "attribution": "Mitchell Hashimoto, HashiCorp",
-              "quote": "Anytime you find an agent makes a mistake, you take the time to engineer a solution such that the agent never makes that mistake again."
-            },
-            {
-              "id": "talk-monday-promise",
-              "type": "callout",
-              "tone": "info",
-              "title": "The next day you open a coding agent, you'll work differently.",
-              "body": "Not with a new tool. With a different role. You'll stop being the person the agent asks questions of, and start being the person who builds the room it walks into."
-            }
-          ]
-        },
-        {
           "id": "talk-sitting-inside",
           "label": "You've been sitting inside one",
           "sceneType": "transition",
@@ -669,6 +561,89 @@
               "title": "You've been sitting inside one all morning",
               "body": "The workshop skill, the dashboard, the participant board, the repo you're about to open — all of it was built with agents, using the discipline we just named. What you're about to see in the demo is a working instance, not a promise."
             }
+          ]
+        }
+      ],
+      "participantMoments": [
+        {
+          "id": "talk-listen",
+          "label": "Stay with the room",
+          "title": "Listen for the shift",
+          "body": "No table action yet. Track the contrast: prompts are not the system; the repo contract around the agent is.",
+          "blocks": [
+            {
+              "id": "talk-listen-hero",
+              "type": "hero",
+              "eyebrow": "Talk",
+              "title": "Listen for the shift",
+              "body": "No table action yet. Stay with the argument and the contrast."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-argued-about-prompts",
+            "talk-why-now"
+          ]
+        },
+        {
+          "id": "talk-note-one-gap",
+          "label": "Name one gap",
+          "title": "Find the weakest signal in your repo",
+          "body": "Pick the one gap your team already suspects. Don't solve it yet. Name it cleanly so Build 1 starts from something real.",
+          "blocks": [
+            {
+              "id": "talk-gap-hero",
+              "type": "hero",
+              "eyebrow": "Before Build 1",
+              "title": "Find the weakest signal in your repo",
+              "body": "Pick the one gap your team already suspects. The poll is a quick room signal, not a quiz."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-how-to-build"
+          ],
+          "poll": {
+            "id": "talk-weakest-repo-signal",
+            "prompt": "Which part of your repo is weakest right now?",
+            "options": [
+              {
+                "id": "map",
+                "label": "Map"
+              },
+              {
+                "id": "boundaries",
+                "label": "Boundaries"
+              },
+              {
+                "id": "instructions",
+                "label": "Instructions"
+              },
+              {
+                "id": "verification",
+                "label": "Verification"
+              }
+            ]
+          }
+        },
+        {
+          "id": "talk-ready-for-build",
+          "label": "Get ready for Build 1",
+          "title": "Return to the repo with one map, one boundary, one proof target",
+          "body": "You are about to go back to the repo. Carry one explicit next move: what will map the work, what will bound it, and what will prove it.",
+          "blocks": [
+            {
+              "id": "talk-ready-hero",
+              "type": "hero",
+              "eyebrow": "Next",
+              "title": "Return to the repo with one map, one boundary, one proof target",
+              "body": "Build 1 should start from one explicit operating contract, not from more prompt exploration."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "talk-managing-agents",
+            "talk-sitting-inside"
           ]
         }
       ]
@@ -960,6 +935,66 @@
             }
           ]
         }
+      ],
+      "participantMoments": [
+        {
+          "id": "demo-watch-the-contrast",
+          "label": "Watch the contrast",
+          "title": "Watch what the repo changes",
+          "body": "Stay with the demo. The point is not the command. The point is which repo artifact changes the agent's behavior.",
+          "blocks": [
+            {
+              "id": "demo-watch-hero",
+              "type": "hero",
+              "eyebrow": "Demo",
+              "title": "Watch what the repo changes",
+              "body": "Stay with the contrast. Look for the artifact that changes the outcome."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-same-prompt"
+          ]
+        },
+        {
+          "id": "demo-name-your-first-artifact",
+          "label": "Name your first artifact",
+          "title": "Decide what your team will create first",
+          "body": "You are about to copy this flow. Choose the first repo artifact your team must create before implementation expands.",
+          "blocks": [
+            {
+              "id": "demo-first-artifact-hero",
+              "type": "hero",
+              "eyebrow": "Build setup",
+              "title": "Decide what your team will create first",
+              "body": "AGENTS.md, a plan, a tracer, or another explicit contract. Name it before Build 1 starts."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-hold-together"
+          ]
+        },
+        {
+          "id": "demo-open-build-brief",
+          "label": "Open the working materials",
+          "title": "Open the brief, repo, and fallback path now",
+          "body": "Build 1 starts next. Open the brief, open the repo, and keep the browser fallback visible if local setup is not ready.",
+          "blocks": [
+            {
+              "id": "demo-open-build-hero",
+              "type": "hero",
+              "eyebrow": "Next move",
+              "title": "Open the brief, repo, and fallback path now",
+              "body": "Use the participant surface as the stable path. Use the skill only if it is genuinely faster for your table."
+            }
+          ],
+          "feedbackEnabled": true,
+          "roomSceneIds": [
+            "demo-your-toolkit",
+            "demo-first-ten-minutes"
+          ]
+        }
       ]
     },
     {
@@ -1191,7 +1226,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "intermezzo-1",
@@ -1389,7 +1425,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "lunch-reset",
@@ -1475,7 +1512,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "rotation",
@@ -1665,7 +1703,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "build-2",
@@ -1854,7 +1893,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "intermezzo-2",
@@ -2055,7 +2095,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "build-2-second-push",
@@ -2187,7 +2228,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     },
     {
       "id": "reveal",
@@ -2518,7 +2560,8 @@
             }
           ]
         }
-      ]
+      ],
+      "participantMoments": []
     }
   ],
   "inventory": {

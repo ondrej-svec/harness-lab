@@ -16,6 +16,8 @@ const getInstance = vi.fn();
 const cookies = vi.fn();
 const getFacilitatorParticipantAccessState = vi.fn();
 const issueParticipantEventAccess = vi.fn();
+const getActivePollSummary = vi.fn();
+const listParticipantFeedback = vi.fn();
 const redirect = vi.fn();
 const push = vi.fn();
 const replace = vi.fn();
@@ -90,8 +92,10 @@ vi.mock("@/lib/workshop-store", () => ({
   captureRotationSignal: vi.fn(),
   createWorkshopArchive: vi.fn(),
   completeChallenge: vi.fn(),
+  getActivePollSummary,
   getLatestWorkshopArchive,
   getWorkshopState,
+  listParticipantFeedback,
   listRotationSignals: vi.fn().mockResolvedValue([]),
   moveAgendaItem: vi.fn(),
   removeAgendaItem: vi.fn(),
@@ -116,10 +120,12 @@ describe("Admin control room page", () => {
     requireFacilitatorPageAccess.mockResolvedValue(undefined);
     getRuntimeStorageMode.mockReturnValue("file");
     getWorkshopState.mockResolvedValue(structuredClone(seedWorkshopState));
+    getActivePollSummary.mockResolvedValue(null);
     getLatestWorkshopArchive.mockResolvedValue({
       createdAt: "2026-04-06T12:00:00.000Z",
       retentionUntil: "2026-04-20T12:00:00.000Z",
     });
+    listParticipantFeedback.mockResolvedValue([]);
     cookies.mockResolvedValue({
       get: vi.fn(() => undefined),
     });

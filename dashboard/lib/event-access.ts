@@ -29,6 +29,7 @@ export type ParticipantCoreBundle = {
   challenges: Pick<Challenge, "id" | "title" | "category" | "phaseHint" | "description">[];
   keyLinks: SetupPath[];
   announcements: SprintUpdate[];
+  liveMomentFingerprint: string;
 };
 
 export type ParticipantTeamLookup = {
@@ -50,6 +51,16 @@ export function getParticipantSessionExpiryDate() {
 
 export function getParticipantSessionAbsoluteExpiryDate() {
   return new Date(Date.now() + participantSessionAbsoluteHours * 60 * 60 * 1000);
+}
+
+export function getParticipantSessionCookieOptions(expires: Date) {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    expires,
+  };
 }
 
 function safeCompare(left: string, right: string) {
@@ -373,6 +384,12 @@ export async function getParticipantCoreBundle(instanceId?: string): Promise<Par
     })),
     keyLinks: state.setupPaths,
     announcements: state.sprintUpdates,
+    liveMomentFingerprint: [
+      state.liveMoment.agendaItemId ?? "",
+      state.liveMoment.roomSceneId ?? "",
+      state.liveMoment.participantMomentId ?? "",
+      state.liveMoment.activePollId ?? "",
+    ].join(":"),
   };
 }
 

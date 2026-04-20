@@ -6,16 +6,16 @@ import { useRouter } from "next/navigation";
 const POLL_INTERVAL_MS = 30_000;
 
 export function ParticipantLiveRefresh({
-  currentAgendaItemId,
+  currentFingerprint,
 }: {
-  currentAgendaItemId: string | undefined;
+  currentFingerprint: string;
 }) {
   const router = useRouter();
-  const knownItemId = useRef(currentAgendaItemId);
+  const knownFingerprint = useRef(currentFingerprint);
 
   useEffect(() => {
-    knownItemId.current = currentAgendaItemId;
-  }, [currentAgendaItemId]);
+    knownFingerprint.current = currentFingerprint;
+  }, [currentFingerprint]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -28,12 +28,12 @@ export function ParticipantLiveRefresh({
           const response = await fetch("/api/event-context/core");
           if (!response.ok) return;
           const data = await response.json();
-          const currentItem = data.agenda?.find(
-            (item: { status: string }) => item.status === "current",
-          );
-          const newId = currentItem?.id ?? data.agenda?.[0]?.id;
-          if (newId && newId !== knownItemId.current) {
-            knownItemId.current = newId;
+          const newFingerprint =
+            typeof data.liveMomentFingerprint === "string" && data.liveMomentFingerprint.length > 0
+              ? data.liveMomentFingerprint
+              : "";
+          if (newFingerprint && newFingerprint !== knownFingerprint.current) {
+            knownFingerprint.current = newFingerprint;
             router.refresh();
           }
         } catch {

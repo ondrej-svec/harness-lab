@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getAuditLogRepository } from "./audit-log-repository";
 import {
   createAgendaFromBlueprint,
+  createLiveMomentState,
   createPreparedInstanceTicker,
   createWorkshopInstanceRecord,
   createWorkshopInventory,
@@ -11,12 +12,15 @@ import {
   type AgendaItem,
   type BlueprintAgenda,
   type FacilitatorRunner,
+  type LiveWorkshopMoment,
   type MonitoringSnapshot,
+  type ParticipantMoment,
   type PresenterBlock,
   type PresenterChromePreset,
   type PresenterScene,
   type PresenterSceneIntent,
   type PresenterSceneSurface,
+  resolveParticipantMomentForRoomScene,
   type SprintUpdate,
   type Team,
   type TeamCheckIn,
@@ -33,10 +37,17 @@ import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 import { getLearningsLogRepository } from "./learnings-log-repository";
 import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
+import { getParticipantFeedbackRepository } from "./participant-feedback-repository";
 import { getParticipantEventAccessRepository } from "./participant-event-access-repository";
+import { getPollResponseRepository } from "./poll-response-repository";
 import { getRedeemAttemptRepository } from "./redeem-attempt-repository";
 import { getRotationSignalRepository } from "./rotation-signal-repository";
-import type { RotationSignal } from "./runtime-contracts";
+import type {
+  ParticipantFeedbackKind,
+  ParticipantFeedbackRecord,
+  PollResponseRecord,
+  RotationSignal,
+} from "./runtime-contracts";
 import { emitRuntimeAlert } from "./runtime-alert";
 import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
@@ -45,7 +56,12 @@ export { isWorkshopStateConflictError } from "./workshop-state-repository";
 
 export class WorkshopStateTargetError extends Error {
   constructor(
-    readonly code: "agenda_item_not_found" | "presenter_scene_not_found",
+    readonly code:
+      | "agenda_item_not_found"
+      | "presenter_scene_not_found"
+      | "participant_moment_not_found"
+      | "poll_not_found"
+      | "feedback_not_found",
     message: string,
   ) {
     super(message);
@@ -56,6 +72,46 @@ export class WorkshopStateTargetError extends Error {
 export function isWorkshopStateTargetError(error: unknown): error is WorkshopStateTargetError {
   return error instanceof WorkshopStateTargetError;
 }
+
+function normalizeStoredPollDefinition(value: unknown): ParticipantMoment["poll"] {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+
+  const poll = value as ParticipantMoment["poll"];
+  if (!poll || typeof poll.id !== "string" || typeof poll.prompt !== "string" || !Array.isArray(poll.options)) {
+    return null;
+  }
+
+  const options = poll.options
+    .filter((option): option is NonNullable<ParticipantMoment["poll"]>["options"][number] => {
+      return Boolean(option) && typeof option.id === "string" && typeof option.label === "string";
+    })
+    .map((option) => ({ id: option.id, label: option.label }));
+
+  if (options.length === 0) {
+    return null;
+  }
+
+  return {
+    id: poll.id,
+    prompt: poll.prompt,
+    options,
+  };
+}
+
+export type ActivePollSummary = {
+  agendaItemId: string;
+  participantMomentId: string;
+  pollId: string;
+  prompt: string;
+  totalResponses: number;
+  options: Array<{
+    id: string;
+    label: string;
+    count: number;
+  }>;
+};
 
 async function getBaseWorkshopState(instanceId = getCurrentWorkshopInstanceId()) {
   return getWorkshopStateRepository().getState(instanceId);
@@ -276,6 +332,40 @@ function mergeLocalizedAgenda(existingAgenda: AgendaItem[], localizedAgenda: Age
         order: mergedScenes.length + index + 1,
       }));
 
+    const localizedParticipantMomentsById = new Map(
+      localizedItem.participantMoments.map((moment) => [moment.sourceBlueprintMomentId ?? moment.id, moment] as const),
+    );
+    const mergedParticipantMoments = item.participantMoments.map((moment) => {
+      if (moment.kind !== "blueprint") {
+        return moment;
+      }
+
+      const localizedMoment = localizedParticipantMomentsById.get(moment.sourceBlueprintMomentId ?? moment.id);
+      if (!localizedMoment) {
+        return moment;
+      }
+
+      return {
+        ...localizedMoment,
+        order: moment.order,
+        enabled: moment.enabled,
+        kind: "blueprint" as const,
+        sourceBlueprintMomentId: moment.sourceBlueprintMomentId ?? localizedMoment.sourceBlueprintMomentId,
+      };
+    });
+
+    const existingBlueprintMomentIds = new Set(
+      mergedParticipantMoments
+        .filter((moment) => moment.kind === "blueprint")
+        .map((moment) => moment.sourceBlueprintMomentId ?? moment.id),
+    );
+    const appendedParticipantMoments = localizedItem.participantMoments
+      .filter((moment) => !existingBlueprintMomentIds.has(moment.sourceBlueprintMomentId ?? moment.id))
+      .map((moment, index) => ({
+        ...moment,
+        order: mergedParticipantMoments.length + index + 1,
+      }));
+
     const normalizedSceneState = normalizePresenterScenes(
       [...mergedScenes, ...appendedScenes],
       item.defaultPresenterSceneId ?? localizedItem.defaultPresenterSceneId,
@@ -300,6 +390,7 @@ function mergeLocalizedAgenda(existingAgenda: AgendaItem[], localizedAgenda: Age
       },
       sourceRefs: [...localizedItem.sourceRefs],
       presenterScenes: normalizedSceneState.scenes,
+      participantMoments: [...mergedParticipantMoments, ...appendedParticipantMoments],
       defaultPresenterSceneId: normalizedSceneState.defaultPresenterSceneId,
     };
   });
@@ -388,6 +479,87 @@ function normalizeStoredPresenterScene(
   };
 }
 
+function normalizeStoredParticipantMoment(
+  moment: Partial<ParticipantMoment>,
+  fallbackMoment: ParticipantMoment | undefined,
+  fallbackScene: PresenterScene | undefined,
+  agendaItemId: string,
+  momentIndex: number,
+): ParticipantMoment {
+  const label = moment.label ?? fallbackMoment?.label ?? fallbackScene?.label ?? `Participant moment ${momentIndex + 1}`;
+  const blocks = normalizeBlocks(moment.blocks, fallbackMoment?.blocks ?? fallbackScene?.blocks ?? []);
+  const title = resolveSceneTitle(label, moment.title ?? fallbackMoment?.title ?? fallbackScene?.title, blocks);
+  const body = resolveSceneBody(moment.body ?? fallbackMoment?.body ?? fallbackScene?.body, blocks);
+
+  return {
+    id: moment.id ?? fallbackMoment?.id ?? `${agendaItemId}-moment-${momentIndex + 1}`,
+    label,
+    title,
+    body,
+    ctaLabel: moment.ctaLabel ?? fallbackMoment?.ctaLabel ?? fallbackScene?.ctaLabel ?? null,
+    ctaHref: moment.ctaHref ?? fallbackMoment?.ctaHref ?? fallbackScene?.ctaHref ?? null,
+    blocks: blocks.length > 0 ? blocks : buildFallbackPresenterBlocks({ sceneType: "participant-view", title, body }),
+    roomSceneIds: Array.isArray(moment.roomSceneIds)
+      ? moment.roomSceneIds.filter((id): id is string => typeof id === "string")
+      : fallbackMoment?.roomSceneIds ?? [],
+    feedbackEnabled: moment.feedbackEnabled ?? fallbackMoment?.feedbackEnabled ?? true,
+    poll: normalizeStoredPollDefinition(moment.poll) ?? fallbackMoment?.poll ?? null,
+    order: moment.order ?? fallbackMoment?.order ?? momentIndex + 1,
+    enabled: moment.enabled ?? fallbackMoment?.enabled ?? true,
+    sourceBlueprintMomentId:
+      moment.sourceBlueprintMomentId ?? fallbackMoment?.sourceBlueprintMomentId ?? null,
+    kind: moment.kind ?? fallbackMoment?.kind ?? (fallbackMoment ? "blueprint" : "custom"),
+  };
+}
+
+function normalizeStoredLiveMoment(
+  liveMoment: Partial<LiveWorkshopMoment> | undefined,
+  agenda: AgendaItem[],
+): LiveWorkshopMoment {
+  const currentAgendaItemId = agenda.find((item) => item.status === "current")?.id ?? agenda[0]?.id ?? null;
+  const baseline = createLiveMomentState(
+    agenda,
+    currentAgendaItemId ?? liveMoment?.agendaItemId ?? null,
+  );
+  const activeAgendaItem =
+    agenda.find((item) => item.id === baseline.agendaItemId) ??
+    agenda.find((item) => item.status === "current") ??
+    agenda[0] ??
+    null;
+
+  if (!activeAgendaItem) {
+    return baseline;
+  }
+
+  const roomScene =
+    activeAgendaItem.presenterScenes.find(
+      (scene) => scene.enabled && scene.surface === "room" && scene.id === liveMoment?.roomSceneId,
+    ) ??
+    activeAgendaItem.presenterScenes.find(
+      (scene) => scene.enabled && scene.surface === "room" && scene.id === baseline.roomSceneId,
+    ) ??
+    activeAgendaItem.presenterScenes.find((scene) => scene.enabled && scene.surface === "room") ??
+    null;
+  const participantMode = liveMoment?.participantMode === "manual" ? "manual" : "auto";
+  const manualMoment =
+    participantMode === "manual"
+      ? activeAgendaItem.participantMoments.find(
+          (moment) => moment.enabled && moment.id === liveMoment?.participantMomentId,
+        ) ?? null
+      : null;
+  const participantMoment =
+    manualMoment ??
+    resolveParticipantMomentForRoomScene(activeAgendaItem.participantMoments, roomScene?.id ?? null);
+
+  return {
+    agendaItemId: activeAgendaItem.id,
+    roomSceneId: roomScene?.id ?? null,
+    participantMomentId: participantMoment?.id ?? null,
+    participantMode,
+    activePollId: participantMoment?.poll?.id ?? null,
+  };
+}
+
 function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): AgendaItem {
   const fallbackItem = seedWorkshopState.agenda.find((agendaItem) => agendaItem.id === item.id);
   const rawScenes =
@@ -405,6 +577,36 @@ function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): Ag
   const normalizedSceneState = normalizePresenterScenes(
     normalizedScenes,
     item.defaultPresenterSceneId ?? fallbackItem?.defaultPresenterSceneId ?? null,
+  );
+  const rawParticipantMoments =
+    Array.isArray(item.participantMoments) && item.participantMoments.length > 0
+      ? item.participantMoments
+      : fallbackItem?.participantMoments?.length
+        ? fallbackItem.participantMoments
+        : normalizedSceneState.scenes
+            .filter((scene) => scene.surface === "participant")
+            .map((scene, momentIndex) => ({
+              id: `${scene.id}-moment`,
+              label: scene.label,
+              title: scene.title,
+              body: scene.body,
+              ctaLabel: scene.ctaLabel,
+              ctaHref: scene.ctaHref,
+              blocks: scene.blocks,
+              order: momentIndex + 1,
+              enabled: scene.enabled,
+              kind: scene.kind,
+              sourceBlueprintMomentId: scene.sourceBlueprintSceneId ? `${scene.sourceBlueprintSceneId}-moment` : null,
+            }));
+  const normalizedParticipantMoments = rawParticipantMoments.map((moment, momentIndex) =>
+    normalizeStoredParticipantMoment(
+      moment,
+      fallbackItem?.participantMoments?.find((fallbackMoment) => fallbackMoment.id === moment.id) ??
+        fallbackItem?.participantMoments?.[momentIndex],
+      normalizedSceneState.scenes.filter((scene) => scene.surface === "participant")[momentIndex],
+      item.id ?? fallbackItem?.id ?? `agenda-${index + 1}`,
+      momentIndex,
+    ),
   );
 
   return {
@@ -436,6 +638,7 @@ function normalizeStoredAgendaItem(item: Partial<AgendaItem>, index: number): Ag
     kind: item.kind ?? fallbackItem?.kind ?? (fallbackItem ? "blueprint" : "custom"),
     status: item.status ?? fallbackItem?.status ?? "upcoming",
     presenterScenes: normalizedSceneState.scenes,
+    participantMoments: normalizedParticipantMoments,
     defaultPresenterSceneId: normalizedSceneState.defaultPresenterSceneId,
   };
 }
@@ -454,6 +657,7 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
     ...state,
     version: state.version ?? 1,
     agenda: normalizedAgenda,
+    liveMoment: normalizeStoredLiveMoment(state.liveMoment, normalizedAgenda),
     workshopMeta: {
       ...state.workshopMeta,
       contentLang: resolveStoredContentLanguage(state.workshopMeta?.contentLang),
@@ -486,6 +690,64 @@ function requirePresenterScene(item: AgendaItem, sceneId: string) {
   }
 
   return scene;
+}
+
+function requireParticipantMoment(item: AgendaItem, participantMomentId: string) {
+  const participantMoment = item.participantMoments.find((candidate) => candidate.id === participantMomentId);
+  if (!participantMoment) {
+    throw new WorkshopStateTargetError(
+      "participant_moment_not_found",
+      `participant moment '${participantMomentId}' not found`,
+    );
+  }
+
+  return participantMoment;
+}
+
+function getLiveAgendaItem(state: WorkshopState) {
+  return (
+    state.agenda.find((item) => item.id === state.liveMoment.agendaItemId) ??
+    state.agenda.find((item) => item.status === "current") ??
+    state.agenda[0] ??
+    null
+  );
+}
+
+function getLiveParticipantMoment(state: WorkshopState) {
+  const activeAgendaItem = getLiveAgendaItem(state);
+  if (!activeAgendaItem) {
+    return { agendaItem: null, participantMoment: null };
+  }
+
+  const liveParticipantMomentId = state.liveMoment.participantMomentId;
+  const targetedParticipantMoment =
+    liveParticipantMomentId
+      ? activeAgendaItem.participantMoments.find(
+          (moment) => moment.enabled && moment.id === liveParticipantMomentId,
+        ) ?? null
+      : null;
+  const participantMoment =
+    targetedParticipantMoment ??
+    resolveParticipantMomentForRoomScene(
+      activeAgendaItem.participantMoments,
+      state.liveMoment.roomSceneId ?? activeAgendaItem.defaultPresenterSceneId,
+    );
+
+  return { agendaItem: activeAgendaItem, participantMoment };
+}
+
+function requireActivePoll(state: WorkshopState) {
+  const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
+  const poll = participantMoment?.poll ?? null;
+  if (!agendaItem || !participantMoment || !poll) {
+    throw new WorkshopStateTargetError("poll_not_found", "active poll not found");
+  }
+
+  return {
+    agendaItem,
+    participantMoment,
+    poll,
+  };
 }
 
 export async function getWorkshopState(instanceId = getCurrentWorkshopInstanceId()): Promise<WorkshopState> {
@@ -530,7 +792,131 @@ export async function setCurrentAgendaItem(itemId: string, instanceId = getCurre
     return {
       ...state,
       agenda,
+      liveMoment: createLiveMomentState(agenda, itemId),
       workshopMeta: { ...state.workshopMeta, currentPhaseLabel: resolveCurrentPhaseLabel(agenda, state.workshopMeta.currentPhaseLabel) },
+    };
+  }, instanceId);
+}
+
+export async function setLiveRoomScene(
+  agendaItemId: string,
+  sceneId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) => {
+    const agenda = normalizeAgenda(state.agenda, agendaItemId);
+    const agendaItem = agenda.find((item) => item.id === agendaItemId) ?? null;
+    if (!agendaItem) {
+      throw new WorkshopStateTargetError("agenda_item_not_found", `agenda item '${agendaItemId}' not found`);
+    }
+    const roomScene = requirePresenterScene(agendaItem, sceneId);
+    if (!roomScene.enabled || roomScene.surface !== "room") {
+      throw new WorkshopStateTargetError("presenter_scene_not_found", `room scene '${sceneId}' not found`);
+    }
+    const participantMoment = resolveParticipantMomentForRoomScene(agendaItem.participantMoments, roomScene.id);
+
+    return {
+      ...state,
+      agenda,
+      liveMoment: {
+        agendaItemId: agendaItemId,
+        roomSceneId: roomScene.id,
+        participantMomentId: participantMoment?.id ?? null,
+        participantMode: "auto",
+        activePollId: participantMoment?.poll?.id ?? null,
+      },
+      workshopMeta: {
+        ...state.workshopMeta,
+        currentPhaseLabel: resolveCurrentPhaseLabel(agenda, state.workshopMeta.currentPhaseLabel),
+      },
+    };
+  }, instanceId);
+}
+
+export async function setLiveParticipantMomentOverride(
+  agendaItemId: string,
+  participantMomentId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) => {
+    const agenda = normalizeAgenda(state.agenda, agendaItemId);
+    const agendaItem = agenda.find((item) => item.id === agendaItemId) ?? null;
+    if (!agendaItem) {
+      throw new WorkshopStateTargetError("agenda_item_not_found", `agenda item '${agendaItemId}' not found`);
+    }
+
+    const participantMoment = requireParticipantMoment(agendaItem, participantMomentId);
+    if (!participantMoment.enabled) {
+      throw new WorkshopStateTargetError(
+        "participant_moment_not_found",
+        `participant moment '${participantMomentId}' is disabled`,
+      );
+    }
+
+    const currentRoomScene =
+      agendaItem.presenterScenes.find(
+        (scene) => scene.enabled && scene.surface === "room" && scene.id === state.liveMoment.roomSceneId,
+      ) ??
+      agendaItem.presenterScenes.find(
+        (scene) => scene.enabled && scene.surface === "room" && scene.id === agendaItem.defaultPresenterSceneId,
+      ) ??
+      agendaItem.presenterScenes.find((scene) => scene.enabled && scene.surface === "room") ??
+      null;
+
+    return {
+      ...state,
+      agenda,
+      liveMoment: {
+        agendaItemId,
+        roomSceneId: currentRoomScene?.id ?? null,
+        participantMomentId: participantMoment.id,
+        participantMode: "manual",
+        activePollId: participantMoment.poll?.id ?? null,
+      },
+      workshopMeta: {
+        ...state.workshopMeta,
+        currentPhaseLabel: resolveCurrentPhaseLabel(agenda, state.workshopMeta.currentPhaseLabel),
+      },
+    };
+  }, instanceId);
+}
+
+export async function clearLiveParticipantMomentOverride(
+  agendaItemId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  return updateWorkshopState((state) => {
+    const agenda = normalizeAgenda(state.agenda, agendaItemId);
+    const agendaItem = agenda.find((item) => item.id === agendaItemId) ?? null;
+    if (!agendaItem) {
+      throw new WorkshopStateTargetError("agenda_item_not_found", `agenda item '${agendaItemId}' not found`);
+    }
+
+    const roomScene =
+      agendaItem.presenterScenes.find(
+        (scene) => scene.enabled && scene.surface === "room" && scene.id === state.liveMoment.roomSceneId,
+      ) ??
+      agendaItem.presenterScenes.find(
+        (scene) => scene.enabled && scene.surface === "room" && scene.id === agendaItem.defaultPresenterSceneId,
+      ) ??
+      agendaItem.presenterScenes.find((scene) => scene.enabled && scene.surface === "room") ??
+      null;
+    const participantMoment = resolveParticipantMomentForRoomScene(agendaItem.participantMoments, roomScene?.id ?? null);
+
+    return {
+      ...state,
+      agenda,
+      liveMoment: {
+        agendaItemId,
+        roomSceneId: roomScene?.id ?? null,
+        participantMomentId: participantMoment?.id ?? null,
+        participantMode: "auto",
+        activePollId: participantMoment?.poll?.id ?? null,
+      },
+      workshopMeta: {
+        ...state.workshopMeta,
+        currentPhaseLabel: resolveCurrentPhaseLabel(agenda, state.workshopMeta.currentPhaseLabel),
+      },
     };
   }, instanceId);
 }
@@ -615,6 +1001,7 @@ export async function addAgendaItem(
       status: "upcoming",
       defaultPresenterSceneId: null,
       presenterScenes: [],
+      participantMoments: [],
     });
     const normalizedAgenda = normalizeAgenda(agenda, state.agenda.find((item) => item.status === "current")?.id);
     return {
@@ -1240,6 +1627,154 @@ export async function listRotationSignals(
   instanceId = getCurrentWorkshopInstanceId(),
 ): Promise<RotationSignal[]> {
   return getRotationSignalRepository().list(instanceId);
+}
+
+export async function getActivePollSummary(
+  instanceId = getCurrentWorkshopInstanceId(),
+): Promise<ActivePollSummary | null> {
+  const state = await getWorkshopState(instanceId);
+  const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
+  const poll = participantMoment?.poll ?? null;
+  if (!agendaItem || !participantMoment || !poll) {
+    return null;
+  }
+  const responses = await getPollResponseRepository().list(instanceId, poll.id);
+  const counts = new Map<string, number>();
+  for (const response of responses) {
+    counts.set(response.optionId, (counts.get(response.optionId) ?? 0) + 1);
+  }
+
+  return {
+    agendaItemId: agendaItem.id,
+    participantMomentId: participantMoment.id,
+    pollId: poll.id,
+    prompt: poll.prompt,
+    totalResponses: responses.length,
+    options: poll.options.map((option) => ({
+      id: option.id,
+      label: option.label,
+      count: counts.get(option.id) ?? 0,
+    })),
+  };
+}
+
+export async function submitActivePollResponse(
+  input: {
+    sessionKey: string;
+    participantId: string | null;
+    teamId: string | null;
+    optionId: string;
+  },
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  const state = await getWorkshopState(instanceId);
+  const { poll } = requireActivePoll(state);
+  const option = poll.options.find((candidate) => candidate.id === input.optionId);
+  if (!option) {
+    throw new WorkshopStateTargetError("poll_not_found", `poll option '${input.optionId}' not found`);
+  }
+
+  const response: PollResponseRecord = {
+    id: randomUUID(),
+    instanceId,
+    pollId: poll.id,
+    participantId: input.participantId,
+    sessionKey: input.sessionKey,
+    teamId: input.teamId,
+    optionId: option.id,
+    submittedAt: new Date().toISOString(),
+  };
+
+  await getPollResponseRepository().upsert(instanceId, response);
+  return getActivePollSummary(instanceId);
+}
+
+export async function resetActivePollResponses(
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  const summary = await getActivePollSummary(instanceId);
+  if (!summary) {
+    throw new WorkshopStateTargetError("poll_not_found", "active poll not found");
+  }
+
+  await getPollResponseRepository().deletePoll(instanceId, summary.pollId);
+  return getActivePollSummary(instanceId);
+}
+
+export async function listParticipantFeedback(
+  instanceId = getCurrentWorkshopInstanceId(),
+): Promise<ParticipantFeedbackRecord[]> {
+  return getParticipantFeedbackRepository().list(instanceId);
+}
+
+export async function submitParticipantFeedback(
+  input: {
+    sessionKey: string;
+    participantId: string | null;
+    teamId: string | null;
+    kind: ParticipantFeedbackKind;
+    message: string;
+  },
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  const trimmedMessage = input.message.trim();
+  if (trimmedMessage.length === 0) {
+    throw new Error("submitParticipantFeedback: message is required");
+  }
+
+  const state = await getWorkshopState(instanceId);
+  const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
+  const feedback: ParticipantFeedbackRecord = {
+    id: randomUUID(),
+    instanceId,
+    agendaItemId: agendaItem?.id ?? null,
+    participantMomentId: participantMoment?.id ?? null,
+    participantId: input.participantId,
+    sessionKey: input.sessionKey,
+    teamId: input.teamId,
+    kind: input.kind,
+    message: trimmedMessage,
+    createdAt: new Date().toISOString(),
+    promotedToTickerAt: null,
+    promotedTickerId: null,
+  };
+
+  await getParticipantFeedbackRepository().append(instanceId, feedback);
+  return feedback;
+}
+
+export async function promoteParticipantFeedbackToTicker(
+  feedbackId: string,
+  instanceId = getCurrentWorkshopInstanceId(),
+) {
+  const feedbackItems = await getParticipantFeedbackRepository().list(instanceId);
+  const feedback = feedbackItems.find((item) => item.id === feedbackId) ?? null;
+  if (!feedback) {
+    throw new WorkshopStateTargetError("feedback_not_found", `participant feedback '${feedbackId}' not found`);
+  }
+
+  if (feedback.promotedTickerId) {
+    return getWorkshopState(instanceId);
+  }
+
+  const promotedTickerId = `participant-feedback-${feedback.id}`;
+  const promotedToTickerAt = new Date().toISOString();
+  await getParticipantFeedbackRepository().markPromoted(instanceId, feedback.id, {
+    promotedToTickerAt,
+    promotedTickerId,
+  });
+
+  return updateWorkshopState((state) => ({
+    ...state,
+    ticker: [
+      {
+        id: promotedTickerId,
+        label: feedback.message,
+        tone: "signal",
+      },
+      ...state.ticker.filter((item) => item.id !== promotedTickerId),
+    ],
+  }), instanceId);
 }
 
 export async function addSprintUpdate(update: SprintUpdate, instanceId = getCurrentWorkshopInstanceId()) {
