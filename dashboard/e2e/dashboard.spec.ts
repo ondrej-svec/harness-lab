@@ -407,7 +407,7 @@ test.describe("facilitator admin (file mode)", () => {
 
     // Presenter renders the default room scene for the rotation phase —
     // `rotation-not-yours-anymore` after the 2026-04-12 content review.
-    await expect(page.getByRole("heading", { name: "Vaše repo zůstává vaše" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vaše repo už není vaše" })).toBeVisible();
   });
 
   test("keeps the default room screen visually stable on ipad", async ({ page }) => {
@@ -597,7 +597,7 @@ test.describe("one canvas phase 5 — presenter scene coverage", () => {
     await page.setViewportSize({ width: 1024, height: 768 });
     await page.goto("/admin/instances/sample-studio-a/presenter?agendaItem=rotation&scene=rotation-not-yours-anymore");
     // The rotation scene headline after the 2026-04-12 rename.
-    await expect(page.getByRole("heading", { name: "Vaše repo zůstává vaše" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vaše repo už není vaše" })).toBeVisible();
   });
 
   test("hard-load presenter URL with unknown scene falls back gracefully", async ({ page }) => {
