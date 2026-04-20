@@ -537,10 +537,10 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 
 ##### Setup
 
-- [ ] Add `scripts/create-test-branch.mjs` using `neonctl branches create --project-id … --parent main`. Stores the returned connection URI in a gitignored `.env.test.local` for the test runner to pick up. Optional `--name` arg defaults to `test-<timestamp>`.
-- [ ] Add `scripts/delete-test-branch.mjs` for cleanup. Takes the branch name or reads it from `.env.test.local`.
-- [ ] Update `.env.example` with a `HARNESS_TEST_DATABASE_URL` stub and a comment pointing at the create-branch script.
-- [ ] Document the workflow in `docs/dashboard-testing-strategy.md`: "Neon-mode integration + e2e tests spin up a throwaway branch; never run them against `main`."
+- [x] Add `dashboard/scripts/create-test-branch.mjs` using `neonctl branches create --project-id … --parent main`. Stores the returned connection URI in a gitignored `dashboard/.env.test.local` for the test runner to pick up. Optional `--name` arg defaults to `test-<timestamp>`. Writes `HARNESS_TEST_BRANCH_NAME` + `HARNESS_TEST_BRANCH_ID` alongside `HARNESS_TEST_DATABASE_URL`.
+- [x] Add `dashboard/scripts/delete-test-branch.mjs` for cleanup. Takes the branch name or reads it from `.env.test.local`. Refuses to delete `main` / `production`. Idempotent on missing branches.
+- [x] Update `dashboard/.env.example` with the `HARNESS_TEST_DATABASE_URL` stub + a comment pointing at the create-branch script.
+- [x] Document the workflow in `docs/dashboard-testing-strategy.md` ("Test Isolation: Neon-mode tests run on throwaway branches" section).
 
 ##### Layer 1 — unit tests
 

@@ -79,6 +79,48 @@ Preferred workflow:
 
 This is not ceremony. It is how we keep agent-generated code aligned with intent.
 
+## Test Isolation: Neon-mode tests run on throwaway branches
+
+**Hard rule:** every test that needs real Neon Postgres or real Neon
+Auth (integration tests, the Neon-mode Playwright project, the agentic
+browser smoke script) runs against a dedicated Neon branch — never
+against `main`. Production participant rows, facilitator grants, audit
+log entries, and seeded event codes must not be touched by an
+automated test run.
+
+### One-liner setup + teardown
+
+```bash
+# Spin up a throwaway branch off main, write
+# dashboard/.env.test.local with HARNESS_TEST_DATABASE_URL +
+# HARNESS_TEST_BRANCH_NAME / _ID:
+node dashboard/scripts/create-test-branch.mjs
+
+# Run the layers that need it (integration / Playwright Neon project /
+# smoke). They auto-skip when HARNESS_TEST_DATABASE_URL is absent.
+cd dashboard && npm run test -- --run
+cd dashboard && HARNESS_STORAGE_MODE=neon HARNESS_DATABASE_URL=$(grep ^HARNESS_TEST_DATABASE_URL .env.test.local | cut -d= -f2-) npm run test:e2e
+
+# Tear the branch down:
+node dashboard/scripts/delete-test-branch.mjs
+```
+
+### What goes against the test branch
+
+- `*.integration.test.ts` — gated on `HARNESS_TEST_DATABASE_URL`
+- Neon-mode Playwright project — gated on the same env var
+- `scripts/smoke/phase-5-identify.mjs` — agentic browser happy path
+
+### What stays mocked
+
+- Unit tests under `lib/**/*.test.ts` and `app/**/*.test.ts` — Neon
+  Auth client is mocked, no network.
+- Anything that runs in CI's default fast lane — branch creation is
+  scheduled nightly only.
+
+If you need to debug against a long-lived branch, pass `--name <slug>`
+to the create script and `--keep` to skip writing the env file.
+
 ## Coverage Boundaries
 
 - Include `app/**/*.ts`, `app/**/*.tsx`, and `lib/**/*.ts` because those files hold real product behavior.
