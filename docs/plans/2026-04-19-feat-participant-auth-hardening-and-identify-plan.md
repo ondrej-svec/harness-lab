@@ -470,13 +470,24 @@ Still open for this plan:
 
 ### Phase 5 — Name-first identify + Neon Auth participants + walk-in policy
 
-#### 5.0 Pre-flight spike (required before any design or code)
+#### 5.0 Pre-flight spike (required before any design or code) — ✅ COMPLETE
 
-- [ ] Confirm Neon Auth supports creating users with `role = "participant"` via server-side API (not only email-verified signup). Document findings in `docs/brainstorms/2026-04-20-neon-auth-participant-role-spike.md`.
-- [ ] Confirm Neon Auth accepts non-email identifiers OR decide on a synthetic identifier scheme (`<slug>@<instance>.harness.local`) and document the choice.
-- [ ] Confirm Neon Auth cookie namespace behavior with two concurrent roles. Decide: shared cookie with role-strict guards (default) or per-role cookie split (fallback).
-- [ ] Confirm Neon Auth failed-signin rate limiting. If not sufficient, decide whether to stack our own limiter on top.
-- [ ] One-page summary committed before any Phase 5 code lands.
+See `docs/brainstorms/2026-04-20-neon-auth-participant-role-spike.md` for the full write-up.
+
+- [x] Confirm Neon Auth supports creating users with `role = "participant"` via server-side API — **yes**, via `signUp.email` + direct SQL role update (matches existing pattern). `admin.createUser` also available.
+- [x] Non-email identifier decision — **synthesize** `p-<participantShortId>@<instanceSlug>.harness.local`. Never deliverable, never shown, stable per participant per instance.
+- [x] Cookie namespace — **single shared cookie** (`__Secure-neon-auth.session_token`). App-layer role check is already strict; "one Neon session per browser" is a documented UX rule, not a security gap.
+- [x] Failed-signin rate limiting — **better-auth defaults apply**; layer our own limiter on the first factor (suggest endpoint), trust Neon's on the second factor (password). Revisit if empirical.
+- [x] Spike brainstorm committed.
+
+**Open items carried to Ondrej** (Neon dashboard-level, can't verify from code):
+
+- Confirm email verification is *off* on the Neon Auth instance (or we'll switch to the admin-createUser path).
+- Confirm whether Neon Auth 0.2.0-beta exposes a service token for admin ops (vs needing a `HARNESS_NEON_ADMIN_*` service user).
+- Confirm `neon_auth."user".role` column accepts arbitrary strings (or extend the CHECK constraint to allow `participant`).
+- Confirm the failed-signin default threshold on the Neon Auth instance.
+
+These block Phase 5.2's wiring to Neon, but not the schema / migration / local test work.
 
 #### 5.1 Preview artifact v2 (required before any code)
 
