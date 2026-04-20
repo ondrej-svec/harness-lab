@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.9.0",
-  "contentHash": "1ed63f3b8777094f9c532abd0a008f95088b4d179be33a8323a75d6dda240b40",
+  "contentHash": "efe7e6fde4f37f3f3f42b266d9b5a9ac81793c7aa5e8f422080d035b7c96755a",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -210,7 +210,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "0ff4bc7426bae558dd18be8cf188156d4477e81f87603cc4468429740f9c5144"
+      "sha256": "f1705d6148b6c71b77c546e4222f14cef5aa56b4a9036a51d7e6431102ea0a46"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

@@ -208,6 +208,85 @@ Rules:
 - if a local selection already exists, the CLI may omit `<instance-id>` and use the stored target
 - use `--json` for agent consumption so the skill can quote the issued code exactly without scraping prose
 - keep the participant event code separate from facilitator credentials and do not present it as an admin password
+- the event code is the **room key** — it gates access to the identify surface; every participant still sets and enters a personal password during identify. Rotating the code does not affect participant accounts. Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`
+
+### `/workshop facilitator participants import`
+
+The preferred roster pre-paste path:
+
+```bash
+harness --json workshop participants import --stdin
+```
+
+Or from a file:
+
+```bash
+harness --json workshop participants import --file roster.csv
+```
+
+Optional dry-run:
+
+```bash
+harness --json workshop participants import --file roster.csv --dry-run
+```
+
+The parser accepts one participant per line:
+- `Name`
+- `Name, email`
+- `Name, email, tag`
+
+Separators are `,`, `\t`, or `;`. The server uses the same smart parser as the dashboard UI and returns per-entry `created` and `skipped` arrays. Emails default to `emailOptIn: false`; flip consent separately with `participants update --consent on`.
+
+Rules:
+- use this before the room opens so participants land on a name picker scoped to the roster instead of the walk-in path
+- prefer `--dry-run` first when the facilitator is unsure about format or wants to see what the parser would accept
+- for a single participant, use `harness workshop participants add <name>` instead of a one-line stdin
+- the resulting entries show in the admin People section; late additions can be made through either the CLI or the UI
+
+Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
+
+### `/workshop facilitator walk-in-policy`
+
+Control whether participants whose names are not on the pre-pasted roster can still enter the room.
+
+The CLI does not expose a dedicated `--allow-walk-ins` toggle. Route the facilitator to the dashboard:
+
+```
+/admin/instances/{instanceId}?section=access
+```
+
+The Access section contains a toggle that writes the instance's `allow_walk_ins` flag through the admin server action.
+
+Consequences:
+- `allow_walk_ins = true` (default) — unknown names see a walk-in input on the identify surface and can proceed to the password step
+- `allow_walk_ins = false` — unknown names see "ask your facilitator to add you" and cannot proceed until the roster is updated
+
+Invite-only hand-off pattern:
+1. pre-paste the roster with `harness workshop participants import`
+2. flip `allow_walk_ins` off in the dashboard Access section
+3. late additions either add a CLI `participants add` or flip the toggle back on briefly
+
+Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
+
+### `/workshop facilitator reset-participant-password`
+
+Help a participant who forgot their password during the session.
+
+There is no CLI flag for this by design — the reset must stay in-room. Steps:
+
+1. open `/admin/instances/{instanceId}?section=people` on the dashboard
+2. find the participant's row and click the reset-password control
+3. the dashboard returns a 3-word temporary password (e.g. `orbit-bridge-shift`). The server rotates the participant's password through `dashboard/lib/auth/neon-auth-proxy.ts` and revokes any existing sessions for that account
+4. read the 3 words aloud to the participant
+5. the participant enters the 3-word password on the identify surface and sets a new password of their choosing
+
+Rules:
+- do not ask the participant for their old password and do not repeat it back if they volunteer it; it is useless after reset and the skill must not be a password store
+- the temporary password is single-shot — if the facilitator dismisses the dialog without reading it aloud, issue a new one
+- the underlying implementation is `dashboard/lib/participant-auth.ts:resetParticipantPasswordAsAdmin`, invoked by the `/api/admin/participants/[id]/reset-password` route
+- an email-based participant reset path exists as infrastructure (`sendParticipantPasswordResetEmail`) but no UI surfaces it — in-room reset is the documented doctrine
+
+Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
 
 ### `/workshop facilitator grant <email> <role>`
 
