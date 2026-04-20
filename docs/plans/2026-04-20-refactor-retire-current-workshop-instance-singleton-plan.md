@@ -2,7 +2,7 @@
 title: "refactor: retire HARNESS_WORKSHOP_INSTANCE_ID singleton"
 type: plan
 date: 2026-04-20
-status: approved
+status: complete
 brainstorm: null
 confidence: high
 ---
