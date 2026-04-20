@@ -91,9 +91,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const url = new URL(request.url);
-  const instanceId = url.searchParams.get("instanceId")?.trim();
+  const body = (await request.json().catch(() => ({}))) as { instanceId?: string };
+  const instanceId =
+    body.instanceId?.trim() || url.searchParams.get("instanceId")?.trim() || undefined;
   if (!instanceId) {
-    return NextResponse.json({ ok: false, error: "instanceId query parameter is required" }, { status: 400 });
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
   }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
