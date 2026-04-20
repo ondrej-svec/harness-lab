@@ -28,6 +28,8 @@ Tenhle seznam není dogma. Je to datová sada. Když reviewer najde další opak
 | `v kontextu + čeho` | `při`, `v`, vynechat | Slovo „kontext" v textu o kontextu je v pořádku. Jako výplňová vazba ne. |
 | `jedná se o` | `je to`, vynechat | „Jedná se o workshop" → „Je to workshop" / „Workshop je…". |
 | `tvoří součást` | `patří do`, `je součástí`, `je v` | Knižní varianta, kterou AI ráda generuje. |
+| `Zůstaňte s + X` | `Teď jen poslouchejte` / `Sledujte X` / `Všímejte si X` / `Držte se X` podle kontextu | Kalk anglického „stay with X". V češtině `zůstat s` implikuje fyzickou společnost (osobu, zvíře), ne pozornost směřovanou k sálu nebo konceptu. Zachycen 2026-04-20 ve 6 participant moments jedné commit-dávky. **Layer 1 trap:** `/\bzůstaňte\s+s\b/giu` v `scripts/content/check-czech-anglicisms.ts`. |
+| `oblouk dne` / `oblouk X-u` | `plán dne` / `průběh dne` / `program dne` | Kalk anglického „arc of the day / arc of X". `Oblouk` má v češtině fyzický nebo geometrický význam (klenba, křivka); temporální metafora „arc of X" je anglický otisk. **Layer 2 only** — na `participant-facing` surfaces striktně nepoužívat. Na `facilitator-facing` (facilitatorPrompts, facilitatorRunner.say, scene labels v prezenterských scénách) je přípustný, pokud je záměrně v mluveném projevu. Proto není v Layer 1 regex. |
 
 ## Nominální řetězy (slovesné vs jmenné vyjadřování)
 

@@ -2,7 +2,7 @@
 title: "feat: participant-facing Czech audit and native-voice rewrite"
 type: plan
 date: 2026-04-20
-status: in_progress
+status: complete
 confidence: medium
 ---
 
@@ -194,18 +194,23 @@ Tasks are dependency-ordered. Phases 2 and 3 are strictly sequential (proof slic
 
 ### Phase 5 — Guardrails
 
-- [ ] 5.1 Add regex patterns to `scripts/content/check-czech-anglicisms.ts` covering the "Zůstaňte s X" family. Draft: `/\bZůstaňte\s+s\s+\S+/i` with a suggestion pointing to the style-guide entry. Validate it doesn't false-positive on the rewrites.
-- [ ] 5.2 Add `\boblouk\s+dne\b` pattern.
-- [ ] 5.3 Add hybrid-fragment patterns if any generalize (e.g. `/\b\w+\s+targetem\b/` may be too narrow; discuss with user whether this category warrants a script rule vs reject-list-only).
-- [ ] 5.4 Document all new entries in `content/czech-reject-list.md` → "Kalky z angličtiny" and "AI-generated fingerprints" sections with "Why" blurbs.
-- [ ] 5.5 Run full check suite; confirm zero failures on the rewritten corpus.
-- [ ] 5.6 If Phase 1.6 confirmed `.copy-editor.lock.json` is active: refresh SHA-256 hashes for `workshop-content/agenda.json` and any edited dashboard/lib files.
-- [ ] 5.7 Commit: `chore(content): extend Czech reject list and anglicism check for participant surfaces`.
+- [x] 5.1 Added `/\bzůstaňte\s+s\b/giu` trap. Smoke-tested: catches all 3 calque variants (`místností`, `argumentem`, `demem`); ignores reflexive `se`/`si` constructions and the replacement phrases.
+- [x] 5.2 **"oblouk dne" regex dropped** — surface-specific rule (allowed in facilitator content, banned only on participant surfaces). 3 legitimate hits exist in `phases[0].cs.facilitatorPrompts[1]`, `facilitatorRunner.say[1]`, and `scenes[1].cs.label`. Enforcing globally would false-positive. Documented as Layer 2 only in the reject list.
+- [x] 5.3 Hybrid-fragment regex skipped — pattern too narrow to generalize safely. Reject-list-only.
+- [x] 5.4 Two new entries added to `content/czech-reject-list.md` → "Kalky z angličtiny" table: `Zůstaňte s + X` (Layer 1 trap) and `oblouk dne` (Layer 2 only, with the surface-profile rationale).
+- [x] 5.5 Full check suite passes on current corpus.
+- [x] 5.6 Skipped per Phase 1.6 finding — lock file scope is markdown-only, doesn't gate `agenda.json` or `.ts` surfaces touched by this plan.
+- [x] 5.7 Commit landed in this phase's push.
 
 ### Phase 6 — Close-out
 
-- [ ] 6.1 Mark this plan `status: complete` in frontmatter.
+- [x] 6.1 Plan status flipped to `complete` in frontmatter.
 - [ ] 6.2 Cross-reference from the agenda-scene-surface-split plan (`docs/plans/2026-04-19-feat-agenda-scene-surface-split-and-lightweight-interaction-plan.md`) under its rollout-gate task, noting the Czech gap is closed for the proof slice.
+
+### Deferred to follow-up plan
+
+- **Phase 4 (Adjacent Participant UI Surfaces)** — `git diff ff85c84..HEAD` on the UI files shows +1261/-357 lines of drift since the 2026-04-13 lock. Way above this plan's 50-line threshold (task 4.5). Files in scope for follow-up: `dashboard/lib/ui-language.ts`, `dashboard/lib/public-page-view-model.ts`, `dashboard/app/components/participant-room-surface.tsx`, `dashboard/app/components/participant-identify-prompt.tsx`. Recommend a dedicated plan: `2026-04-20-feat-participant-ui-czech-re-audit-plan.md`.
+- **Phase-level CS goal rewrite** — `talk.cs.goal` contains `z openingu` (hybrid). Not participant-visible (fallback-only path in the three proof-slice phases), but reads inconsistently with `opening` phase label (`Úvod`). Worth a future phase-level editorial pass covering phases 3–10 `cs.goal` strings (which DO render on participant surfaces for those phases, since they have no `participantMoments` yet).
 
 ## Acceptance Criteria
 

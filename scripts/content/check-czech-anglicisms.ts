@@ -24,6 +24,7 @@ const SOURCE_PATH = join(ROOT, "workshop-content/agenda.json");
 const REJECT_LIST: Array<{ pattern: RegExp; word: string; suggestion: string }> = [
   { pattern: /\brescue\b/gi, word: "rescue", suggestion: "záchrana / pomoc" },
   { pattern: /\bhandoff[uůemy]?\b/gi, word: "handoff", suggestion: "předání" },
+  { pattern: /\bzůstaňte\s+s\b/giu, word: "Zůstaňte s …", suggestion: "Teď jen poslouchejte / Sledujte … / Všímejte si … (nepoužívat kalk 'stay with X')" },
   { pattern: /\bReveal\b/g, word: "Reveal", suggestion: "Závěr / Závěr a reflexe" },
   { pattern: /(?<![/-])\breveal\b/gi, word: "reveal", suggestion: "závěr / závěr dne" },
   { pattern: /\bbridge\b/gi, word: "bridge", suggestion: "přechod / přemostění" },
