@@ -493,15 +493,15 @@ These block Phase 5.2's wiring to Neon, but not the schema / migration / local t
 
 - [ ] Redraw the HTML preview to match the v2 shape: single name-first prompt with disambiguation sub-view, set-password sub-view, enter-password sub-view, reset-flow entry, walk-in creation state, walk-in refusal state, facilitator walk-in toggle. Publish via `/babel-fish:visualize`. Review by Ondrej.
 
-#### 5.2 Schema + Neon Auth integration
+#### 5.2 Schema + Neon Auth integration — 🚧 in progress
 
-- [ ] Add migration: `ALTER TABLE participants ADD COLUMN neon_user_id text NULL`.
-- [ ] Add migration: `ALTER TABLE workshop_instance ADD COLUMN allow_walk_ins boolean NOT NULL DEFAULT true`.
-- [ ] Add migration: create `participant_password_reset_tokens (id, instance_id, participant_id, token_hash, issued_at, expires_at, consumed_at)`.
-- [ ] Add `lib/participant-auth.ts` — the single integration point for Neon Auth in the participant role. Exports `createParticipantPassword(identifier, password, metadata)`, `authenticateParticipant(identifier, password)`, `issueResetToken(participantId, issuedBy)`, `consumeResetToken(token, newPassword)`.
-- [ ] Add `lib/participant-identifier.ts` — resolves `participant` → Neon Auth identifier (prefers `email` when present, synthesizes otherwise).
-- [ ] Update `lib/participant-repository.ts`: add `listByDisplayNamePrefix(instanceId, prefix, limit)`, `findByNeonUserId(neonUserId)`, `linkNeonUser(participantId, neonUserId)`, `listReserveForSuggest(instanceId, prefix)`.
-- [ ] Update `ParticipantRecord` in `runtime-contracts.ts` to include `neonUserId: string | null`.
+- [x] Migration `2026-04-20-participant-auth.sql`: `participants.neon_user_id`, `workshop_instances.allow_walk_ins` (default true), `participant_password_reset_tokens` table with redeem + expiry indexes.
+- [x] `ParticipantRecord` gains `neonUserId: string | null`. Neon repository reads/writes the new column. Every existing fixture + construction site updated. (commit `2d9d0db`)
+- [x] `lib/participant-auth.ts` — thin wrapper over Neon Auth. Exports `createParticipantAccount`, `authenticateParticipant`, `sendParticipantPasswordResetEmail`, `isNeonUserParticipant`. Error classification normalizes better-auth's string messages into typed reasons. 17 unit tests with mocked Neon Auth client. (commit `923fd33`)
+- [ ] `lib/participant-identifier.ts` — **deferred** post round-2 spike; real email is the canonical identifier now, no synthesis needed. Any identifier-shape helpers live inside `lib/participant-auth.ts`.
+- [ ] Extend `lib/participant-repository.ts` with: `listByDisplayNamePrefix(instanceId, prefix, limit)` for suggest, `findByNeonUserId(neonUserId)` for session-bind, `linkNeonUser(participantId, neonUserId, updatedAt)` for first-identify. Integration tests on Neon-mode branch.
+- [ ] `lib/participant-password-reset-token-repository.ts` — issue + consume + expire tokens. File-mode + Neon-mode impls (matches existing repo pattern).
+- [ ] Integration tests (gated on `HARNESS_TEST_DATABASE_URL`): `createParticipantAccount → authenticateParticipant` round-trip on a real Neon branch; email verification on/off behavior; role column CHECK-constraint probe.
 
 #### 5.3 Backend surfaces
 
