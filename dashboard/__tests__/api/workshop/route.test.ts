@@ -226,8 +226,8 @@ describe("workshop route", () => {
     setFacilitatorAuthServiceForTests(null);
   });
 
-  it("returns workshop metadata and available templates", async () => {
-    const response = await GET();
+  it("returns workshop metadata and available templates when instanceId is provided", async () => {
+    const response = await GET(new Request("http://localhost/api/workshop?instanceId=sample-studio-a"));
     const payload = await response.json();
 
     expect(response.status).toBe(200);
@@ -239,6 +239,18 @@ describe("workshop route", () => {
     expect(payload).not.toHaveProperty("instances");
   });
 
+  it("returns just templates without instanceId (auth probe mode)", async () => {
+    const response = await GET(new Request("http://localhost/api/workshop"));
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload).toMatchObject({
+      ok: true,
+      templates: expect.arrayContaining([expect.objectContaining({ id: "blueprint-default" })]),
+    });
+    expect(payload).not.toHaveProperty("workshopId");
+  });
+
   it("resets a workshop runtime while preserving its instance metadata", async () => {
     const response = await POST(
       new Request("http://localhost/api/workshop", {
@@ -247,7 +259,7 @@ describe("workshop route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({ templateId: "blueprint-default" }),
+        body: JSON.stringify({ templateId: "blueprint-default", instanceId: "sample-studio-a" }),
       }),
     );
 
@@ -261,7 +273,7 @@ describe("workshop route", () => {
       },
     });
 
-    const current = await GET();
+    const current = await GET(new Request("http://localhost/api/workshop?instanceId=sample-studio-a"));
     await expect(current.json()).resolves.toMatchObject({
       workshopId: "sample-studio-a",
       workshopMeta: { currentPhaseLabel: "Úvod a\u00a0naladění" },
@@ -276,7 +288,7 @@ describe("workshop route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ instanceId: "sample-studio-a" }),
       }),
     );
 
@@ -285,6 +297,21 @@ describe("workshop route", () => {
       ok: true,
       workshopId: "sample-studio-a",
     });
+  });
+
+  it("rejects reset action without instanceId", async () => {
+    const response = await POST(
+      new Request("http://localhost/api/workshop", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          origin: "http://localhost",
+        },
+        body: JSON.stringify({}),
+      }),
+    );
+
+    expect(response.status).toBe(400);
   });
 
   it("creates a rich instance record through the legacy workshop action route", async () => {

@@ -20,18 +20,23 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const body = (await request.json()) as SprintUpdate & { instanceId?: string };
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
 
-  const body = (await request.json()) as SprintUpdate;
   if (!body.id || !body.teamId || !body.text || !body.at) {
     return NextResponse.json({ ok: false, error: "id, teamId, text and at are required" }, { status: 400 });
   }
 
   try {
-    const state = await addSprintUpdate(body);
+    const state = await addSprintUpdate(body, instanceId);
     return NextResponse.json({ ok: true, items: state.sprintUpdates });
   } catch (error) {
     return workshopMutationErrorResponse(error);

@@ -267,6 +267,7 @@ describe("checkpoints route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-lab-c",
           id: "u-new",
           teamId: "t3",
           text: "Nový checkpoint",
@@ -288,6 +289,7 @@ describe("checkpoints route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-lab-c",
           id: "u-new",
           teamId: "t3",
         }),

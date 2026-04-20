@@ -104,6 +104,7 @@ describe("admin teams route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-studio-a",
           id: "t9",
           name: "Tým 9",
           city: "Studio E",
@@ -131,6 +132,7 @@ describe("admin teams route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-studio-a",
           id: "t9",
           name: "Tým 9",
         }),
@@ -153,6 +155,7 @@ describe("admin teams route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-studio-a",
           teamId: "t1",
           phaseId: "opening",
           content: "Checkpoint po facilitaci",
@@ -182,6 +185,7 @@ describe("admin teams route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-studio-a",
           teamId: "t1",
         }),
       }),

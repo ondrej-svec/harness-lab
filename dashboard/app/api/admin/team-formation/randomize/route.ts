@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { recordTeamReplacementHistory } from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
@@ -37,7 +36,10 @@ type RandomizeBody = {
  */
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as RandomizeBody;
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;

@@ -6,12 +6,17 @@ import type { Team } from "@/lib/workshop-data";
 import { appendCheckIn, upsertTeam } from "@/lib/workshop-store";
 
 export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const body = (await request.json()) as Team & { instanceId?: string };
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
 
-  const body = (await request.json()) as Team;
   if (!body.id || !body.name || !body.repoUrl || !body.projectBriefId) {
     return NextResponse.json({ ok: false, error: "id, name, repoUrl and projectBriefId are required" }, { status: 400 });
   }
@@ -27,7 +32,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const state = await upsertTeam({ ...body, repoUrl: repoUrl.value });
+    const state = await upsertTeam({ ...body, repoUrl: repoUrl.value }, instanceId);
     return NextResponse.json({ ok: true, items: state.teams });
   } catch (error) {
     return workshopMutationErrorResponse(error);
@@ -35,17 +40,23 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
-  if (denied) {
-    return denied;
-  }
-
   const body = (await request.json()) as {
     teamId?: string;
     phaseId?: string;
     content?: string;
     writtenBy?: string | null;
+    instanceId?: string;
   };
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
+  if (denied) {
+    return denied;
+  }
+
   if (!body.teamId || !body.phaseId || !body.content) {
     return NextResponse.json(
       { ok: false, error: "teamId, phaseId and content are required" },
@@ -54,11 +65,15 @@ export async function PATCH(request: Request) {
   }
 
   try {
-    const state = await appendCheckIn(body.teamId, {
-      phaseId: body.phaseId,
-      content: body.content,
-      writtenBy: body.writtenBy ?? null,
-    });
+    const state = await appendCheckIn(
+      body.teamId,
+      {
+        phaseId: body.phaseId,
+        content: body.content,
+        writtenBy: body.writtenBy ?? null,
+      },
+      instanceId,
+    );
     return NextResponse.json({ ok: true, items: state.teams });
   } catch (error) {
     return workshopMutationErrorResponse(error);

@@ -6,8 +6,23 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { workshopTemplates } from "@/lib/workshop-data";
 import { createWorkshopInstance, getWorkshopState, prepareWorkshopInstance, resetWorkshopState } from "@/lib/workshop-store";
 
-export async function GET() {
-  const state = await getWorkshopState();
+export async function GET(request: Request) {
+  // Facilitator auth probe. When called with `?instanceId=<id>` it returns
+  // that instance's state summary; without the query param it returns just
+  // the platform-level templates list (used by CLI login to verify auth).
+  const url = new URL(request.url);
+  const instanceId = url.searchParams.get("instanceId")?.trim() || null;
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
+  if (denied) {
+    return denied;
+  }
+
+  if (!instanceId) {
+    return NextResponse.json({ ok: true, templates: workshopTemplates });
+  }
+
+  const state = await getWorkshopState(instanceId);
   return NextResponse.json({
     workshopId: state.workshopId,
     workshopMeta: state.workshopMeta,
@@ -63,11 +78,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, instance });
   }
 
-  const denied = await requireFacilitatorRequest(request);
+  // reset — now requires explicit instanceId
+  const targetInstanceId = body.instanceId?.trim();
+  if (!targetInstanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, targetInstanceId);
   if (denied) {
     return denied;
   }
 
-  const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id);
+  const state = await resetWorkshopState(body.templateId ?? workshopTemplates[0]?.id, targetInstanceId);
   return NextResponse.json({ ok: true, workshopId: state.workshopId, workshopMeta: state.workshopMeta });
 }

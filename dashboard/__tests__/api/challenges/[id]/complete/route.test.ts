@@ -21,12 +21,34 @@ describe("challenge completion route", () => {
     requireFacilitatorRequest.mockResolvedValue(null);
   });
 
+  it("rejects when instanceId is missing from body", async () => {
+    const { POST } = await routeModulePromise;
+
+    const response = await POST(
+      new NextRequest("http://localhost/api/challenges/c1/complete", {
+        method: "POST",
+        body: JSON.stringify({ teamId: "t1" }),
+      }),
+      { params: Promise.resolve({ id: "c1" }) },
+    );
+
+    expect(response.status).toBe(400);
+    await expect(response.json()).resolves.toMatchObject({
+      ok: false,
+      error: "Pole instanceId je povinné.",
+    });
+    expect(completeChallenge).not.toHaveBeenCalled();
+  });
+
   it("returns facilitator denial responses unchanged", async () => {
     const { POST } = await routeModulePromise;
     requireFacilitatorRequest.mockResolvedValue(new Response("Authentication required", { status: 401 }));
 
     const response = await POST(
-      new NextRequest("http://localhost/api/challenges/c1/complete", { method: "POST" }),
+      new NextRequest("http://localhost/api/challenges/c1/complete", {
+        method: "POST",
+        body: JSON.stringify({ instanceId: "sample-studio-a", teamId: "t1" }),
+      }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
@@ -40,7 +62,7 @@ describe("challenge completion route", () => {
     const response = await POST(
       new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
-        body: JSON.stringify({}),
+        body: JSON.stringify({ instanceId: "sample-studio-a" }),
       }),
       { params: Promise.resolve({ id: "c1" }) },
     );
@@ -62,7 +84,7 @@ describe("challenge completion route", () => {
     const response = await POST(
       new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
-        body: JSON.stringify({ teamId: "t1" }),
+        body: JSON.stringify({ instanceId: "sample-studio-a", teamId: "t1" }),
       }),
       { params: Promise.resolve({ id: "c1" }) },
     );
@@ -85,12 +107,12 @@ describe("challenge completion route", () => {
     const response = await POST(
       new NextRequest("http://localhost/api/challenges/c1/complete", {
         method: "POST",
-        body: JSON.stringify({ teamId: "t2" }),
+        body: JSON.stringify({ instanceId: "sample-studio-a", teamId: "t2" }),
       }),
       { params: Promise.resolve({ id: "c1" }) },
     );
 
-    expect(completeChallenge).toHaveBeenCalledWith("c1", "t2");
+    expect(completeChallenge).toHaveBeenCalledWith("c1", "t2", "sample-studio-a");
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       ok: true,

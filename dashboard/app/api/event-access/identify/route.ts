@@ -5,7 +5,6 @@ import {
   participantSessionCookieName,
 } from "@/lib/event-access";
 import { isTrustedOrigin, untrustedOriginResponse } from "@/lib/request-integrity";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { emitRuntimeAlert } from "@/lib/runtime-alert";
 
 /**
@@ -62,7 +61,7 @@ export async function POST(request: Request) {
       emitRuntimeAlert({
         category: "participant_identify_rebind_attempt",
         severity: "warning",
-        instanceId: bundle.session.instanceId ?? getCurrentWorkshopInstanceId(),
+        instanceId: bundle.session.instanceId,
       });
       return NextResponse.json({ ok: false, error: "already_bound" }, { status: 409 });
     }

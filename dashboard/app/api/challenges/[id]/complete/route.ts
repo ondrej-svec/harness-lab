@@ -7,13 +7,21 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const denied = await requireFacilitatorRequest(request);
+  const { id } = await params;
+  const body = (await request.json().catch(() => ({}))) as { teamId?: string; instanceId?: string };
+
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json(
+      { ok: false, error: "Pole instanceId je povinné." },
+      { status: 400 },
+    );
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
-
-  const { id } = await params;
-  const body = (await request.json().catch(() => ({}))) as { teamId?: string };
 
   if (!body.teamId) {
     return NextResponse.json(
@@ -27,7 +35,7 @@ export async function POST(
 
   let state;
   try {
-    state = await completeChallenge(id, body.teamId);
+    state = await completeChallenge(id, body.teamId, instanceId);
   } catch (error) {
     return workshopMutationErrorResponse(error);
   }

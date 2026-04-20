@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import {
   recordTeamAssignmentHistory,
@@ -25,7 +24,10 @@ type AssignBody = {
  */
 async function handleAssign(request: Request) {
   const body = (await request.json().catch(() => ({}))) as AssignBody;
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
@@ -81,7 +83,10 @@ export async function DELETE(request: Request) {
     instanceId?: string;
     participantId?: string;
   };
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;

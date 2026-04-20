@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { parseParticipantPaste, type ParseError } from "@/lib/participant-paste-parser";
@@ -16,7 +15,10 @@ import type { ParticipantRecord } from "@/lib/runtime-contracts";
  */
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const instanceId = url.searchParams.get("instanceId") ?? getCurrentWorkshopInstanceId();
+  const instanceId = url.searchParams.get("instanceId")?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId query parameter is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
@@ -58,7 +60,10 @@ export async function POST(request: Request) {
     rawText?: string;
     entries?: Array<{ displayName?: string; email?: string | null; tag?: string | null }>;
   };
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;

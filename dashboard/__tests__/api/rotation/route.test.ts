@@ -2,11 +2,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { seedWorkshopState } from "@/lib/workshop-data";
 
 const requireFacilitatorRequest = vi.fn();
+const requireParticipantSession = vi.fn();
 const getWorkshopState = vi.fn();
 const setRotationReveal = vi.fn();
 
 vi.mock("@/lib/facilitator-access", () => ({
   requireFacilitatorRequest,
+}));
+
+vi.mock("@/lib/event-access", () => ({
+  requireParticipantSession,
+  participantSessionCookieName: "harness_event_session",
 }));
 
 vi.mock("@/lib/workshop-store", () => ({
@@ -30,12 +36,33 @@ describe("rotation route", () => {
         revealed: true,
       },
     });
+    requireParticipantSession.mockResolvedValue({
+      ok: true,
+      session: {
+        instanceId: "sample-studio-a",
+        expiresAt: "2099-01-01T00:00:00.000Z",
+        lastValidatedAt: "2026-04-06T12:00:00.000Z",
+        absoluteExpiresAt: "2099-01-01T00:00:00.000Z",
+        participantId: null,
+      },
+    });
   });
 
-  it("returns the current rotation plan", async () => {
+  it("returns 401 when no participant session", async () => {
+    const { GET } = await routeModulePromise;
+    requireParticipantSession.mockResolvedValue({
+      ok: false,
+      response: new Response("Authentication required", { status: 401 }),
+    });
+
+    const response = await GET(new Request("http://localhost/api/rotation"));
+    expect(response.status).toBe(401);
+  });
+
+  it("returns the current rotation plan for an authenticated participant", async () => {
     const { GET } = await routeModulePromise;
 
-    const response = await GET();
+    const response = await GET(new Request("http://localhost/api/rotation"));
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual(seedWorkshopState.rotation);
@@ -48,12 +75,25 @@ describe("rotation route", () => {
     const response = await PATCH(
       new Request("http://localhost/api/rotation", {
         method: "PATCH",
-        body: JSON.stringify({ revealed: true }),
+        body: JSON.stringify({ revealed: true, instanceId: "sample-studio-a" }),
       }),
     );
 
     expect(response.status).toBe(401);
     expect(setRotationReveal).not.toHaveBeenCalled();
+  });
+
+  it("rejects PATCH without instanceId", async () => {
+    const { PATCH } = await routeModulePromise;
+
+    const response = await PATCH(
+      new Request("http://localhost/api/rotation", {
+        method: "PATCH",
+        body: JSON.stringify({ revealed: true }),
+      }),
+    );
+
+    expect(response.status).toBe(400);
   });
 
   it("validates the revealed payload type", async () => {
@@ -63,7 +103,7 @@ describe("rotation route", () => {
     const response = await PATCH(
       new Request("http://localhost/api/rotation", {
         method: "PATCH",
-        body: JSON.stringify({ revealed: "yes" }),
+        body: JSON.stringify({ revealed: "yes", instanceId: "sample-studio-a" }),
       }),
     );
 
@@ -81,11 +121,11 @@ describe("rotation route", () => {
     const response = await PATCH(
       new Request("http://localhost/api/rotation", {
         method: "PATCH",
-        body: JSON.stringify({ revealed: true }),
+        body: JSON.stringify({ revealed: true, instanceId: "sample-studio-a" }),
       }),
     );
 
-    expect(setRotationReveal).toHaveBeenCalledWith(true);
+    expect(setRotationReveal).toHaveBeenCalledWith(true, "sample-studio-a");
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       ok: true,
@@ -103,7 +143,7 @@ describe("rotation route", () => {
     const response = await PATCH(
       new Request("http://localhost/api/rotation", {
         method: "PATCH",
-        body: JSON.stringify({ revealed: true }),
+        body: JSON.stringify({ revealed: true, instanceId: "sample-studio-a" }),
       }),
     );
 

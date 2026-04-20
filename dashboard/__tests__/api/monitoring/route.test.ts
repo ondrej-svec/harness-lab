@@ -77,12 +77,17 @@ describe("monitoring route", () => {
   });
 
   it("reads facilitator monitoring data from the normalized repository path", async () => {
-    const response = await GET(new Request("http://localhost/api/monitoring"));
+    const response = await GET(new Request("http://localhost/api/monitoring?instanceId=sample-studio-a"));
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toMatchObject({
       items: [{ teamId: "t2", skillsCount: 2 }],
     });
+  });
+
+  it("requires instanceId query param on GET", async () => {
+    const response = await GET(new Request("http://localhost/api/monitoring"));
+    expect(response.status).toBe(400);
   });
 
   it("writes facilitator monitoring data through the normalized repository path", async () => {
@@ -94,6 +99,7 @@ describe("monitoring route", () => {
           origin: "http://localhost",
         },
         body: JSON.stringify({
+          instanceId: "sample-studio-a",
           items: [
             {
               teamId: "t4",
@@ -119,7 +125,7 @@ describe("monitoring route", () => {
           "content-type": "application/json",
           origin: "http://localhost",
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ instanceId: "sample-studio-a" }),
       }),
     );
 

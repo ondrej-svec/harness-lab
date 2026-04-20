@@ -1,31 +1,21 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { captureRotationSignal, listRotationSignals, type RotationSignalInput } from "@/lib/workshop-store";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 
 type PostBody = Partial<RotationSignalInput> & { instanceId?: string };
 
-function extractInstanceId(body: PostBody, url: URL): string {
-  if (body.instanceId && body.instanceId.trim().length > 0) {
-    return body.instanceId.trim();
-  }
-  const queryInstance = url.searchParams.get("instanceId");
-  if (queryInstance && queryInstance.trim().length > 0) {
-    return queryInstance.trim();
-  }
-  return getCurrentWorkshopInstanceId();
-}
-
 export async function GET(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
+  const url = new URL(request.url);
+  const instanceId = url.searchParams.get("instanceId")?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId query parameter is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) {
     return denied;
   }
-
-  const url = new URL(request.url);
-  const instanceId =
-    url.searchParams.get("instanceId")?.trim() || getCurrentWorkshopInstanceId();
 
   try {
     const signals = await listRotationSignals(instanceId);
@@ -36,16 +26,23 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const denied = await requireFacilitatorRequest(request);
-  if (denied) {
-    return denied;
-  }
-
   let body: PostBody;
   try {
     body = (await request.json()) as PostBody;
   } catch {
     return NextResponse.json({ ok: false, error: "invalid JSON body" }, { status: 400 });
+  }
+
+  const url = new URL(request.url);
+  const instanceId =
+    body.instanceId?.trim() || url.searchParams.get("instanceId")?.trim() || undefined;
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
+
+  const denied = await requireFacilitatorRequest(request, instanceId);
+  if (denied) {
+    return denied;
   }
 
   if (typeof body.freeText !== "string" || body.freeText.trim().length === 0) {
@@ -80,9 +77,6 @@ export async function POST(request: Request) {
       );
     }
   }
-
-  const url = new URL(request.url);
-  const instanceId = extractInstanceId(body, url);
 
   try {
     const signal = await captureRotationSignal(

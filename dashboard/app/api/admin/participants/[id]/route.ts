@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
-import { getCurrentWorkshopInstanceId } from "@/lib/instance-context";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { recordTeamUnassignmentHistory } from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
@@ -19,7 +18,10 @@ const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = (await request.json().catch(() => ({}))) as UpdateBody;
-  const instanceId = body.instanceId ?? getCurrentWorkshopInstanceId();
+  const instanceId = body.instanceId?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
@@ -89,8 +91,10 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const url = new URL(request.url);
-  const instanceId =
-    url.searchParams.get("instanceId") ?? getCurrentWorkshopInstanceId();
+  const instanceId = url.searchParams.get("instanceId")?.trim();
+  if (!instanceId) {
+    return NextResponse.json({ ok: false, error: "instanceId query parameter is required" }, { status: 400 });
+  }
 
   const denied = await requireFacilitatorRequest(request, instanceId);
   if (denied) return denied;
