@@ -26,6 +26,8 @@ For the full operational reference with API routes, payload shapes, and rules, s
 
 This skill should be loaded only when the facilitator has an active facilitator session. Participant sessions do not grant access to these commands.
 
+For the participant-side identify model (event code → name pick → password) that several of these commands interact with, read `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
+
 ## Language Resolution
 
 Facilitator-control commands are operational rather than room-facing delivery:
@@ -81,11 +83,20 @@ Inspect or rotate the shared participant event code for the current workshop ins
 Prefer invoking `harness --json workshop participant-access` for inspection and `harness --json workshop participant-access --rotate` to issue a fresh code.
 If the current raw code is no longer recoverable from the hash-only runtime store, issue a new code instead of guessing.
 
+The event code is the **room key** — it gets participants to the identify surface, but every participant also sets and enters their own password during identify. Rotating the code does not touch participant accounts; forgotten-password help lives in `workshop facilitator reset-participant-password` below. Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
+
 ### `workshop facilitator participants`
 
 Manage the named-participant pool for the current instance. Every action has a matching UI
 control in the admin People section; the CLI is the scriptable path for batch workflows and
 the agent-native demo. See `docs/previews/2026-04-16-cli-surface.md` for the full matrix.
+
+**Why pre-paste matters:** the identify surface shows a name picker scoped to the
+pre-pasted roster. Participants who are on the roster pick their name and set a password
+in two taps. Participants who are not get the walk-in path if enabled, or a "ask your
+facilitator" dead-end if not. Pasting the roster before the session starts is the single
+biggest quality-of-life win for facilitators running a fixed cohort. Use
+`harness --json workshop participants import` for the bulk flow below.
 
 Commands:
 
@@ -123,6 +134,54 @@ Team-membership operations for the current instance.
 Strategy default is `cross-level`: participants are grouped by `tag` and round-robin distributed
 across teams with a rotating offset per group, so each team receives a mixed set of tags. Use
 `random` for pure shuffle. Seed is a timestamp, so repeated previews reroll.
+
+### `workshop facilitator walk-in-policy`
+
+Control whether participants whose names are not on the pre-pasted roster can still enter the
+room. Every instance has an `allow_walk_ins` flag (default `true`).
+
+The CLI does not currently expose this flag as a dedicated toggle. Route the facilitator to
+the dashboard UI at `/admin/instances/{instanceId}?section=access` — the Access section has
+a toggle control that writes the flag through the admin server action.
+
+Consequences to name explicitly:
+- `allow_walk_ins = true` (default): unknown names see a walk-in path on the identify
+  surface; they type a display name and continue to the password step.
+- `allow_walk_ins = false`: unknown names see "ask your facilitator to add you" with no
+  input field. Use this for invite-only cohorts where the roster is the contract.
+
+Hand-off pattern for an invite-only workshop:
+1. Pre-paste the roster with `harness workshop participants import`.
+2. Flip `allow_walk_ins` off in the dashboard Access section.
+3. Tell the facilitator that any last-minute additions need a new `participants add` or a
+   one-off flip of the walk-in toggle.
+
+### `workshop facilitator reset-participant-password`
+
+Help a participant who forgot their password during the session. The flow is deliberately
+in-room only — the facilitator issues a temporary password from the admin UI, reads it
+aloud, and the participant enters it at the dashboard identify surface.
+
+Steps to walk the facilitator through:
+1. Open `/admin/instances/{instanceId}?section=people` on the dashboard.
+2. Find the participant's row and click the reset-password control.
+3. The dashboard returns a 3-word temporary password (e.g. `orbit-bridge-shift`). The
+   server rotates the participant's password through the Neon Auth proxy and revokes any
+   existing sessions for that account.
+4. Read the 3 words aloud to the participant. They enter it on the identify surface and
+   set a new password of their choosing.
+
+Rules:
+- do not ask the participant for their old password and do not repeat it back if they
+  volunteer it — it is useless after reset and the skill must not be a password store
+- the temporary password is single-shot; if the facilitator closes the dialog without
+  reading it aloud, they need to issue a new one
+- the reset works through the dashboard control-plane path; there is no CLI flag for
+  this by design (privacy: reset must stay in-room)
+- the underlying implementation is `dashboard/lib/participant-auth.ts:resetParticipantPasswordAsAdmin`,
+  which goes through `dashboard/lib/auth/neon-auth-proxy.ts` and session revocation
+
+Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
 
 ### `workshop facilitator grant <email> <role>`
 
