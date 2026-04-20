@@ -474,10 +474,10 @@ describe("workshop-store", () => {
       participantMode: "auto",
     });
 
-    state = await setLiveParticipantMomentOverride("opening", "opening-team-formation-moment");
+    state = await setLiveParticipantMomentOverride("opening", "opening-room-start");
     expect(state.liveMoment).toMatchObject({
       agendaItemId: "opening",
-      participantMomentId: "opening-team-formation-moment",
+      participantMomentId: "opening-room-start",
       participantMode: "manual",
     });
 

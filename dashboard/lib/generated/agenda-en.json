@@ -261,46 +261,6 @@
           ]
         },
         {
-          "id": "opening-team-formation-moment",
-          "label": "Form the team",
-          "title": "Stand up. Line up. Claim the anchor.",
-          "body": "Follow the room sequence: experience line, count off, sit down together, choose the team name and the table anchor.",
-          "blocks": [
-            {
-              "id": "opening-team-formation-moment-hero",
-              "type": "hero",
-              "eyebrow": "Your move",
-              "title": "Stand up. Line up. Claim the anchor.",
-              "body": "Follow the room sequence. This is the one participant beat that matters right now."
-            },
-            {
-              "id": "opening-team-formation-moment-steps",
-              "type": "steps",
-              "items": [
-                {
-                  "id": "opening-team-line",
-                  "title": "Form the line.",
-                  "body": "Stand and line up by experience with AI agents."
-                },
-                {
-                  "id": "opening-team-count",
-                  "title": "Count off into teams.",
-                  "body": "The facilitator announces the count. Matching numbers form the team."
-                },
-                {
-                  "id": "opening-team-anchor",
-                  "title": "Sit, name the team, claim the anchor.",
-                  "body": "Choose the team name and the physical anchor at the table."
-                }
-              ]
-            }
-          ],
-          "feedbackEnabled": true,
-          "roomSceneIds": [
-            "opening-team-formation-room"
-          ]
-        },
-        {
           "id": "opening-look-up",
           "label": "Look up",
           "title": "Your team is recorded. Look up.",

@@ -261,46 +261,6 @@
           ]
         },
         {
-          "id": "opening-team-formation-moment",
-          "label": "Složte tým",
-          "title": "Vstaňte. Postavte se do řady. Vyberte kotvu.",
-          "body": "Řiďte se sledem v místnosti: řada podle zkušeností, rozpočet, usadit se spolu, pojmenovat tým a vybrat kotvu stolu.",
-          "blocks": [
-            {
-              "id": "opening-team-formation-moment-hero",
-              "type": "hero",
-              "eyebrow": "Teď jste na tahu",
-              "title": "Vstaňte. Postavte se do řady. Vyberte kotvu.",
-              "body": "Řiďte se sledem v místnosti. Tohle je jediný okamžik pro účastníky, na kterém teď záleží."
-            },
-            {
-              "id": "opening-team-formation-moment-steps",
-              "type": "steps",
-              "items": [
-                {
-                  "id": "opening-team-line",
-                  "title": "Postavte se do řady.",
-                  "body": "Vstaňte a seřaďte se podle zkušeností s AI agenty."
-                },
-                {
-                  "id": "opening-team-count",
-                  "title": "Rozpočítejte se do týmů.",
-                  "body": "Facilitátor ohlásí rozpočet. Stejná čísla tvoří tým."
-                },
-                {
-                  "id": "opening-team-anchor",
-                  "title": "Sedněte si, pojmenujte tým a vyberte kotvu.",
-                  "body": "Domluvte si název týmu a fyzickou kotvu u stolu."
-                }
-              ]
-            }
-          ],
-          "feedbackEnabled": true,
-          "roomSceneIds": [
-            "opening-team-formation-room"
-          ]
-        },
-        {
           "id": "opening-look-up",
           "label": "Podívejte se nahoru",
           "title": "Tým je zapsaný. Podívejte se nahoru.",

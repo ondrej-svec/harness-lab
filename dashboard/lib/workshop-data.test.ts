@@ -49,8 +49,8 @@ describe("workshop-data", () => {
     const state = createWorkshopStateFromTemplate("blueprint-default", "english-workshop", "en");
     const opening = state.agenda[0];
     const framingScene = opening?.presenterScenes.find((scene) => scene.id === "opening-framing");
-    const teamFormationMoment = opening?.participantMoments.find(
-      (moment) => moment.id === "opening-team-formation-moment",
+    const roomStartMoment = opening?.participantMoments.find(
+      (moment) => moment.id === "opening-room-start",
     );
 
     expect(state.workshopMeta.contentLang).toBe("en");
@@ -66,12 +66,11 @@ describe("workshop-data", () => {
       type: "hero",
     });
     expect(framingScene?.surface).toBe("room");
-    expect(teamFormationMoment?.title).toBe("Stand up. Line up. Claim the anchor.");
-    expect(teamFormationMoment?.roomSceneIds).toEqual(["opening-team-formation-room"]);
-    expect(teamFormationMoment?.blocks[0]).toMatchObject({
-      id: "opening-team-formation-moment-hero",
-      title: "Stand up. Line up. Claim the anchor.",
-    });
+    expect(
+      opening?.participantMoments.some((moment) => moment.id === "opening-team-formation-moment"),
+    ).toBe(false);
+    expect(roomStartMoment?.title).toBe("Stay with the room");
+    expect(roomStartMoment?.roomSceneIds).toEqual(["opening-framing", "opening-day-arc"]);
     expect(state.briefs[0]?.problem).toContain("Developers lose time");
     expect(state.challenges[0]?.title).toBe("Create AGENTS.md as a map");
     expect(state.setupPaths[0]?.summary).toContain("fastest path");
