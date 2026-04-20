@@ -14,6 +14,7 @@ function p(id: string, tag: string | null): ParticipantRecord {
     email: null,
     emailOptIn: false,
     tag,
+    neonUserId: null,
     createdAt: "2026-04-16T00:00:00.000Z",
     updatedAt: "2026-04-16T00:00:00.000Z",
     archivedAt: null,

@@ -111,6 +111,7 @@ export async function POST(request: Request) {
       email: entry.email,
       emailOptIn: false, // always false on paste — consent is separate
       tag: entry.tag,
+      neonUserId: null,
       createdAt: now,
       updatedAt: now,
       archivedAt: null,

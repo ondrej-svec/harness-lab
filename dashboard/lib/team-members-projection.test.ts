@@ -26,6 +26,7 @@ function makeParticipant(overrides: Partial<ParticipantRecord> = {}): Participan
     email: null,
     emailOptIn: false,
     tag: null,
+    neonUserId: null,
     createdAt: "2026-04-16T10:00:00.000Z",
     updatedAt: "2026-04-16T10:00:00.000Z",
     archivedAt: null,

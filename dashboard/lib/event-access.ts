@@ -115,6 +115,7 @@ export async function findOrCreateParticipant(
     email: null,
     emailOptIn: false,
     tag: null,
+    neonUserId: null,
     createdAt: now,
     updatedAt: now,
     archivedAt: null,

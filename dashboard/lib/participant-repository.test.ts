@@ -11,6 +11,7 @@ const baseParticipant: ParticipantRecord = {
   email: null,
   emailOptIn: false,
   tag: "senior",
+  neonUserId: null,
   createdAt: "2026-04-16T10:00:00.000Z",
   updatedAt: "2026-04-16T10:00:00.000Z",
   archivedAt: null,

@@ -96,6 +96,7 @@ type ParticipantRow = {
   email: string | null;
   email_opt_in: boolean;
   tag: string | null;
+  neon_user_id: string | null;
   created_at: string;
   updated_at: string;
   archived_at: string | null;
@@ -109,6 +110,7 @@ function rowToRecord(row: ParticipantRow): ParticipantRecord {
     email: row.email,
     emailOptIn: row.email_opt_in,
     tag: row.tag,
+    neonUserId: row.neon_user_id,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     archivedAt: row.archived_at,
@@ -121,14 +123,14 @@ export class NeonParticipantRepository implements ParticipantRepository {
     const query = options?.includeArchived
       ? `
           SELECT id, instance_id, display_name, email, email_opt_in, tag,
-                 created_at, updated_at, archived_at
+                 neon_user_id, created_at, updated_at, archived_at
           FROM participants
           WHERE instance_id = $1
           ORDER BY created_at ASC
         `
       : `
           SELECT id, instance_id, display_name, email, email_opt_in, tag,
-                 created_at, updated_at, archived_at
+                 neon_user_id, created_at, updated_at, archived_at
           FROM participants
           WHERE instance_id = $1 AND archived_at IS NULL
           ORDER BY created_at ASC
@@ -175,13 +177,14 @@ export class NeonParticipantRepository implements ParticipantRepository {
       `
         INSERT INTO participants
           (id, instance_id, display_name, email, email_opt_in, tag,
-           created_at, updated_at, archived_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+           neon_user_id, created_at, updated_at, archived_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         ON CONFLICT (id) DO UPDATE
         SET display_name = EXCLUDED.display_name,
             email = EXCLUDED.email,
             email_opt_in = EXCLUDED.email_opt_in,
             tag = EXCLUDED.tag,
+            neon_user_id = EXCLUDED.neon_user_id,
             updated_at = EXCLUDED.updated_at,
             archived_at = EXCLUDED.archived_at
       `,
@@ -192,6 +195,7 @@ export class NeonParticipantRepository implements ParticipantRepository {
         participant.email,
         participant.emailOptIn,
         participant.tag,
+        participant.neonUserId,
         participant.createdAt,
         participant.updatedAt,
         participant.archivedAt,

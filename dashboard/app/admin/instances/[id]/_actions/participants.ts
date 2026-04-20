@@ -43,6 +43,7 @@ export async function addParticipantsFromPasteAction(formData: FormData) {
       email: entry.email,
       emailOptIn: false,
       tag: entry.tag,
+      neonUserId: null,
       createdAt: now,
       updatedAt: now,
       archivedAt: null,

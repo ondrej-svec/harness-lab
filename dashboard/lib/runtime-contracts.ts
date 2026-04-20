@@ -40,6 +40,7 @@ export type ParticipantRecord = {
   email: string | null;
   emailOptIn: boolean;
   tag: string | null;
+  neonUserId: string | null;
   createdAt: string;
   updatedAt: string;
   archivedAt: string | null;
