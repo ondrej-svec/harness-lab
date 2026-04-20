@@ -11,6 +11,12 @@ confidence: medium
 
 **One-line summary:** close the submit-review security gaps (rate-limit bypass, cookie secure flag, unsalted code hash), fix the language-switcher link that drops participants onto the public page, and reshape the identify flow so pre-entered participants don't have to retype their own identity — email-first when the roster has emails, name-with-autocomplete otherwise, walk-in path unchanged.
 
+## Test isolation rule (2026-04-20)
+
+Every test against Neon — integration, Playwright, or agentic browser — runs on a dedicated Neon branch spun up per-run, not on `main`. This session shipped the first migration against `main` (safe, additive, idempotent) but seeded a test event code there, ran a local dev server against it, and almost wrote a test participant into it. All of that is cleaned up, but going forward **Phase 5.6's scripts create a throwaway branch first**. See that section for the three-layer setup.
+
+---
+
 ## Session handoff (2026-04-20 · v2 · scope expanded)
 
 **What changed between v1 and v2:** Phase 5 used to be "name-autocomplete OR email-first, dispatched from roster contents, walk-in fallback always open." After reviewing the v1 preview, Ondrej reshaped it:
@@ -525,14 +531,58 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 - [ ] Add `lib/privilege-boundary.test.ts` — parametrized test that creates a participant-role Neon session, enumerates every facilitator API route, asserts each returns 401/403.
 - [ ] Add an ESLint rule or code review checklist note in `dashboard/AGENTS.md`: "any new `/admin` or facilitator server action must reference the privilege-boundary test."
 
-#### 5.6 Tests
+#### 5.6 Tests (three layers · NEVER against production)
 
-- [ ] Unit: suggest endpoint (min chars, cap, disambiguation logic tag-first then masked-email), `participant-auth.ts` wrapper, walk-in policy gate on set-password path, reset token issue/redeem/expire, walk-in toggle action.
-- [ ] Unit: `lib/participant-identifier.ts` (synthetic identifier generation, collision handling).
-- [ ] Page test: identify prompt state machine transitions on each input / response.
-- [ ] Playwright: (a) redeem → pick-from-roster → set-password → room; (b) re-login → enter password → room; (c) password reset end-to-end (facilitator issues, participant redeems); (d) walk-in enabled → create new → set password → room; (e) walk-in disabled → refusal state; (f) participant-role session cannot reach `/admin` routes.
+**Hard rule:** every Neon-mode test runs against a dedicated Neon branch, not against `main`. The branch is created per-run (or pinned for CI) and torn down after. Production participant rows and facilitator grants must never be touched by a test run. This also protects against accidental writes when a test mis-targets the env.
+
+##### Setup
+
+- [ ] Add `scripts/create-test-branch.mjs` using `neonctl branches create --project-id … --parent main`. Stores the returned connection URI in a gitignored `.env.test.local` for the test runner to pick up. Optional `--name` arg defaults to `test-<timestamp>`.
+- [ ] Add `scripts/delete-test-branch.mjs` for cleanup. Takes the branch name or reads it from `.env.test.local`.
+- [ ] Update `.env.example` with a `HARNESS_TEST_DATABASE_URL` stub and a comment pointing at the create-branch script.
+- [ ] Document the workflow in `docs/dashboard-testing-strategy.md`: "Neon-mode integration + e2e tests spin up a throwaway branch; never run them against `main`."
+
+##### Layer 1 — unit tests
+
+- [ ] Suggest endpoint: min-chars, cap, rate-limit, instance scoping, disambiguation (tag-first / masked-email / id-suffix).
+- [ ] `participant-auth.ts` wrapper: classification of every failure reason for create / authenticate / reset-as-admin / reset-via-email. **Shipped (21 tests).**
+- [ ] Walk-in policy gate on set-password: rejects with `walk_in_refused` when toggle is off, accepts when on, rejects when `participantId` absent + `displayName` empty.
+- [ ] Identify-flow component: state-machine transitions on each input / response (React Testing Library).
+- [ ] `participant-disambiguator.ts`: tag-first / masked-email / id-suffix. **Shipped (9 tests).**
+
+##### Layer 2 — integration tests (Neon test branch)
+
+Gated on `HARNESS_TEST_DATABASE_URL` + `NEON_AUTH_BASE_URL` being set. Skipped otherwise. Spin up the test branch first (see Setup above).
+
+- [ ] `participant-auth.integration.test.ts` — end-to-end wrapper round-trip: `createParticipantAccount` → `authenticateParticipant` → `resetParticipantPasswordAsAdmin` → re-auth with new password. Validates that each call actually touches Neon Auth (not mocked).
+- [ ] Email verification behavior probe: `createParticipantAccount` on the test branch's Neon Auth instance, then try `authenticateParticipant` immediately. Document whether the hosted instance blocks signin pre-verification — resolves the one open item from Phase 5.0 empirically.
+- [ ] Privilege boundary: create a `role="participant"` Neon user, sign in as them, hit every `/api/admin/*` route, assert 401/403. (This is also Phase 5.5's test; land it here if 5.5 hasn't shipped yet.)
+- [ ] Schema drift probe: read `neon_auth."user"` schema from the test branch, confirm the columns we rely on (`id`, `email`, `emailVerified`, `role`, `name`) exist and match the shape in `lib/participant-auth.ts`.
+
+##### Layer 3 — Playwright e2e + scripted browser smoke (Neon test branch)
+
+- [ ] Playwright config extended with a Neon-mode project: `HARNESS_STORAGE_MODE=neon`, `HARNESS_DATABASE_URL` from `.env.test.local`, `NEON_AUTH_BASE_URL` + `NEON_AUTH_COOKIE_SECRET` from prod env, `HARNESS_EVENT_CODE_SECRET` fresh per run. Ignored when `HARNESS_TEST_DATABASE_URL` is absent.
+- [ ] Seeder: per-run script that issues an event code, pastes a small roster with tag / email / no-email variants so every disambiguation path has a fixture.
+- [ ] Playwright specs:
+  - (a) redeem → pick from roster → set-password → room
+  - (b) sign out → re-login → enter password → room
+  - (c) wrong password → generic error → retry → room
+  - (d) ambiguous name → disambiguator shown → pick → set-password → room
+  - (e) walk-in allowed → create new → set-password → room
+  - (f) walk-in disabled → refusal state
+  - (g) facilitator reset → participant signs in with the new 3-word password → room
+  - (h) participant-role Neon session cannot reach `/admin`
+  - (i) `already_bound` surface when a bound session submits a different identity
+- [ ] Scripted agentic-browser smoke test (Chrome DevTools MCP): one happy-path run that's deterministic enough to re-run between commits. Lives in `scripts/smoke/phase-5-identify.mjs` or similar — writes a brief pass/fail summary so it can be invoked from a harness prompt when verifying a change. Uses the same seeder as the Playwright project.
+
+##### Teardown + CI hygiene
+
+- [ ] Every test command in this phase must leave the test branch in a known state (either torn down or reset) — idempotent re-runs.
+- [ ] CI: scheduled nightly run against a pinned test branch. On failure, notify; on success, recycle the branch.
+- [ ] Manual run recipe documented in `docs/dashboard-testing-strategy.md`: "one-liner to spin up branch + run all three layers + tear down."
+
 - [ ] Full test suite green.
-- [ ] ⎘ Commits (one per sub-phase): `feat: schema + participant-auth wrapper`, `feat: identify suggest + password endpoints`, `feat: identify prompt state machine + reset flow`, `feat: facilitator walk-in toggle + password reset`, `test: participant privilege boundary regression`.
+- [ ] ⎘ Commits (one per sub-phase): `feat: schema + participant-auth wrapper`, `feat: identify suggest + password endpoints`, `feat: identify prompt state machine + reset flow`, `feat: facilitator walk-in toggle + password reset`, `test: participant privilege boundary regression`, `test: integration + playwright suite against neon test branch`.
 
 ### Phase 6 — Surface already_bound
 
