@@ -184,6 +184,7 @@ type InstanceRow = {
   blueprint_version: number | null;
   imported_at: string | null;
   removed_at: string | null;
+  allow_walk_ins: boolean | null;
   workshop_meta: WorkshopInstanceRecord["workshopMeta"];
 };
 
@@ -196,6 +197,7 @@ function mapInstanceRow(row: InstanceRow) {
     blueprintVersion: row.blueprint_version ?? undefined,
     importedAt: row.imported_at ?? undefined,
     removedAt: row.removed_at,
+    allowWalkIns: row.allow_walk_ins ?? undefined,
     workshopMeta: row.workshop_meta,
   });
 }
@@ -205,6 +207,7 @@ type WorkshopInstanceColumnSupport = {
   blueprintVersion: boolean;
   importedAt: boolean;
   removedAt: boolean;
+  allowWalkIns: boolean;
 };
 
 async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColumnSupport> {
@@ -215,7 +218,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
       FROM information_schema.columns
       WHERE table_schema = current_schema()
         AND table_name = 'workshop_instances'
-        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at')
+        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at', 'allow_walk_ins')
     `,
   )) as Array<{ column_name: string }>;
   const columns = new Set(rows.map((row) => row.column_name));
@@ -225,6 +228,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
     blueprintVersion: columns.has("blueprint_version"),
     importedAt: columns.has("imported_at"),
     removedAt: columns.has("removed_at"),
+    allowWalkIns: columns.has("allow_walk_ins"),
   };
 }
 
@@ -237,6 +241,7 @@ function buildInstanceSelectList(columnSupport: WorkshopInstanceColumnSupport) {
     columnSupport.blueprintVersion ? "blueprint_version" : "NULL::integer AS blueprint_version",
     columnSupport.importedAt ? "imported_at" : "NULL::timestamptz AS imported_at",
     columnSupport.removedAt ? "removed_at" : "NULL::timestamptz AS removed_at",
+    columnSupport.allowWalkIns ? "allow_walk_ins" : "TRUE AS allow_walk_ins",
     "workshop_meta",
   ].join(", ");
 }
@@ -252,7 +257,7 @@ function buildActiveInstanceFilter(columnSupport: WorkshopInstanceColumnSupport,
 function buildCreateInstanceQuery(instance: WorkshopInstanceRecord, columnSupport: WorkshopInstanceColumnSupport) {
   const columns = ["id", "template_id", "workshop_meta", "workshop_state", "status"];
   const placeholders = ["$1", "$2", "$3::jsonb", "$4::jsonb", "$5"];
-  const values: Array<string | number | null> = [
+  const values: Array<string | number | boolean | null> = [
     instance.id,
     instance.templateId,
     JSON.stringify(instance.workshopMeta),
@@ -286,6 +291,13 @@ function buildCreateInstanceQuery(instance: WorkshopInstanceRecord, columnSuppor
     columns.push("removed_at");
     placeholders.push(`$${nextIndex}::timestamptz`);
     values.push(instance.removedAt);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.allowWalkIns) {
+    columns.push("allow_walk_ins");
+    placeholders.push(`$${nextIndex}`);
+    values.push(instance.allowWalkIns);
   }
 
   return {
@@ -305,7 +317,7 @@ function buildUpdateInstanceQuery(
   instance: WorkshopInstanceRecord,
   columnSupport: WorkshopInstanceColumnSupport,
 ) {
-  const values: Array<string | number | null> = [
+  const values: Array<string | number | boolean | null> = [
     instanceId,
     instance.templateId,
     JSON.stringify(instance.workshopMeta),
@@ -335,6 +347,12 @@ function buildUpdateInstanceQuery(
   if (columnSupport.removedAt) {
     assignments.push(`removed_at = $${nextIndex}::timestamptz`);
     values.push(instance.removedAt);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.allowWalkIns) {
+    assignments.push(`allow_walk_ins = $${nextIndex}`);
+    values.push(instance.allowWalkIns);
   }
 
   assignments.push("updated_at = NOW()");

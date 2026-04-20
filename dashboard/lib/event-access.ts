@@ -284,6 +284,65 @@ export async function bindParticipantToSession(
   return { ok: true, participantId: participant.id };
 }
 
+/**
+ * Bind a pre-existing participant id to the event-code session. Used
+ * by Phase 5's name-first flow after Neon Auth has authenticated the
+ * participant — the caller already knows which roster row to attach,
+ * and this just writes the link. Validates the participant belongs to
+ * the session's instance and isn't archived. Idempotent on re-bind
+ * with the same id.
+ */
+export async function bindParticipantIdToSession(
+  session: ParticipantSession,
+  tokenHash: string,
+  participantId: string,
+): Promise<
+  | { ok: true; participantId: string }
+  | { ok: false; reason: "already_bound" | "not_found" | "wrong_instance" }
+> {
+  if (session.participantId) {
+    if (session.participantId === participantId) {
+      return { ok: true, participantId };
+    }
+    return { ok: false, reason: "already_bound" };
+  }
+
+  const participant = await getParticipantRepository().findParticipant(session.instanceId, participantId);
+  if (!participant) {
+    return { ok: false, reason: "not_found" };
+  }
+  if (participant.archivedAt !== null) {
+    return { ok: false, reason: "not_found" };
+  }
+  if (participant.instanceId !== session.instanceId) {
+    return { ok: false, reason: "wrong_instance" };
+  }
+
+  const repository = getEventAccessRepository();
+  const fullSession = await repository.findSessionByTokenHash(tokenHash);
+  if (!fullSession) {
+    return { ok: true, participantId };
+  }
+
+  await repository.upsertSession(session.instanceId, {
+    ...fullSession,
+    participantId,
+    lastValidatedAt: new Date().toISOString(),
+  });
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId: session.instanceId,
+    actorKind: "participant",
+    action: "participant_identify_by_roster_pick",
+    result: "success",
+    createdAt: new Date().toISOString(),
+    metadata: { participantId },
+  });
+
+  return { ok: true, participantId };
+}
+
 export async function getParticipantSession(token: string | undefined | null): Promise<ParticipantSession | null> {
   if (!token) {
     return null;

@@ -124,6 +124,40 @@ class MemoryParticipantRepository implements ParticipantRepository {
     );
   }
 
+  async listByDisplayNamePrefix(instanceId: string, prefix: string, limit: number) {
+    const normalized = prefix.trim().toLocaleLowerCase();
+    if (normalized.length === 0) return [];
+    return structuredClone(
+      this.items
+        .filter(
+          (item) =>
+            item.instanceId === instanceId &&
+            item.archivedAt === null &&
+            item.displayName.toLocaleLowerCase().includes(normalized),
+        )
+        .slice(0, Math.max(0, limit)),
+    );
+  }
+
+  async findByNeonUserId(instanceId: string, neonUserId: string) {
+    return structuredClone(
+      this.items.find(
+        (item) =>
+          item.instanceId === instanceId &&
+          item.archivedAt === null &&
+          item.neonUserId === neonUserId,
+      ) ?? null,
+    );
+  }
+
+  async linkNeonUser(instanceId: string, participantId: string, neonUserId: string, updatedAt: string) {
+    this.items = this.items.map((item) =>
+      item.instanceId === instanceId && item.id === participantId
+        ? { ...item, neonUserId, updatedAt }
+        : item,
+    );
+  }
+
   async upsertParticipant(instanceId: string, participant: ParticipantRecord) {
     this.items = this.items.some((item) => item.instanceId === instanceId && item.id === participant.id)
       ? this.items.map((item) =>

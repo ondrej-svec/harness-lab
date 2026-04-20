@@ -28,38 +28,58 @@ export type CreateParticipantAccountInput = {
   displayName: string;
 };
 
+export type CreateParticipantFailureReason =
+  | "email_taken"
+  | "weak_password"
+  | "invalid_email"
+  | "unavailable"
+  | "unknown";
+
 export type CreateParticipantAccountResult =
   | { ok: true; neonUserId: string }
-  | {
-      ok: false;
-      reason: "email_taken" | "weak_password" | "invalid_email" | "unavailable" | "unknown";
-      message?: string;
-    };
+  | { ok: false; reason: CreateParticipantFailureReason; message?: string };
 
 export type AuthenticateParticipantInput = {
   email: string;
   password: string;
 };
 
+export type AuthenticateParticipantFailureReason =
+  | "wrong_credentials"
+  | "rate_limited"
+  | "unavailable"
+  | "unknown";
+
 export type AuthenticateParticipantResult =
   | { ok: true; neonUserId: string }
-  | { ok: false; reason: "wrong_credentials" | "rate_limited" | "unavailable" | "unknown"; message?: string };
+  | { ok: false; reason: AuthenticateParticipantFailureReason; message?: string };
 
-function requireAuth() {
+type NeonAuthCallShape = {
+  admin: {
+    createUser: (input: { email: string; password: string; name: string; role: string }) => Promise<unknown>;
+    setUserPassword: (input: { userId: string; newPassword: string }) => Promise<unknown>;
+    revokeUserSessions: (input: { userId: string }) => Promise<unknown>;
+  };
+  signIn: { email: (input: { email: string; password: string }) => Promise<unknown> };
+  getSession: () => Promise<{ data?: { user?: { id?: string } } | null }>;
+  requestPasswordReset: (input: { email: string; redirectTo: string }) => Promise<unknown>;
+};
+
+function requireAuth(): NeonAuthCallShape {
   if (!isNeonRuntimeMode()) {
     throw new Error("participant-auth requires HARNESS_STORAGE_MODE=neon");
   }
   if (!auth) {
     throw new Error("participant-auth requires NEON_AUTH_BASE_URL + NEON_AUTH_COOKIE_SECRET");
   }
-  return auth;
+  return auth as unknown as NeonAuthCallShape;
 }
 
 function normalizeEmail(email: string): string {
   return email.trim().toLocaleLowerCase();
 }
 
-function classifyCreateError(message: string | undefined): CreateParticipantAccountResult["reason"] {
+function classifyCreateError(message: string | undefined): CreateParticipantFailureReason {
   const lower = (message ?? "").toLowerCase();
   if (lower.includes("already") && lower.includes("exist")) return "email_taken";
   if (lower.includes("email") && lower.includes("taken")) return "email_taken";
@@ -70,7 +90,7 @@ function classifyCreateError(message: string | undefined): CreateParticipantAcco
   return "unknown";
 }
 
-function classifyAuthError(message: string | undefined): AuthenticateParticipantResult["reason"] {
+function classifyAuthError(message: string | undefined): AuthenticateParticipantFailureReason {
   const lower = (message ?? "").toLowerCase();
   if (lower.includes("rate") || lower.includes("too many")) return "rate_limited";
   if (lower.includes("invalid") || lower.includes("wrong") || lower.includes("incorrect")) {
