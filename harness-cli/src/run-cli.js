@@ -247,13 +247,6 @@ function resolveCurrentInstanceTarget(session, env) {
     };
   }
 
-  if (typeof env?.HARNESS_WORKSHOP_INSTANCE_ID === "string" && env.HARNESS_WORKSHOP_INSTANCE_ID.trim().length > 0) {
-    return {
-      instanceId: env.HARNESS_WORKSHOP_INSTANCE_ID.trim(),
-      source: "env",
-    };
-  }
-
   return {
     instanceId: null,
     source: "none",

@@ -187,40 +187,21 @@ test("workshop select-instance stores a validated local target and current-insta
   assert.match(currentIo.getStdout(), /"eventTitle": "Prague Hackathon"/);
 });
 
-test("workshop current-instance falls back to HARNESS_WORKSHOP_INSTANCE_ID when no local selection exists", async () => {
+test("workshop current-instance reports source=none when no local selection exists", async () => {
   const env = await createEnv();
-  env.HARNESS_WORKSHOP_INSTANCE_ID = "sample-studio-a";
   await writeSession(env, {
     authType: "basic",
     dashboardUrl: "http://localhost:3000",
     loggedInAt: "2026-04-09T10:00:00.000Z",
   });
 
-  const fetchFn = createFetchStub(
-    new Map([
-      [
-        "GET http://localhost:3000/api/workshop/instances/sample-studio-a",
-        async () =>
-          jsonResponse(200, {
-            instance: {
-              id: "sample-studio-a",
-              templateId: "blueprint-default",
-              status: "prepared",
-              workshopMeta: {
-                contentLang: "cs",
-                eventTitle: "Brno Hackathon",
-              },
-            },
-          }),
-      ],
-    ]),
-  );
+  const fetchFn = createFetchStub(new Map());
 
   const io = createMemoryIo(env);
   const exitCode = await runCli(["instance", "current"], io, { fetchFn });
   assert.equal(exitCode, 0);
-  assert.match(io.getStdout(), /"source": "env"/);
-  assert.match(io.getStdout(), /"instanceId": "sample-studio-a"/);
+  assert.match(io.getStdout(), /"source": "none"/);
+  assert.match(io.getStdout(), /"instanceId": null/);
 });
 
 test("workshop status uses the selected local instance instead of the deployment default routes", async () => {
