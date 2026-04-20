@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.9.0",
-  "contentHash": "9258d8aafddfce1ff8d26fea7910c463bac3ac451083b06729ac54db48eebd08",
+  "contentHash": "dc07884c65dd4785db57cc897b226aabe8b8d7cbec72ec73ce91afd63ccb9a6d",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -166,7 +166,7 @@
     },
     {
       "path": "SKILL.md",
-      "sha256": "93a86c827cf1c23871c02f35edd6ad4a3b56ac15075e6ad1da4da2c0d741f8af"
+      "sha256": "4ea6c4fa759e04a1083d4f9dac382be23b5b70b80eb6f08817a24b5b0be75b17"
     },
     {
       "path": "workshop-blueprint/agenda.json",

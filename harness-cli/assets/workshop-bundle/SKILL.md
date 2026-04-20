@@ -77,6 +77,21 @@ Rule:
 - the `workshop-skill/locales/` tree is a legacy parallel structure that is being retired; new skill reference content goes only to the English root files. Existing Czech legacy files in `workshop-skill/locales/cs/` (if any) or at the root should be migrated in a follow-up session, not extended.
 - do not translate workshop scene copy or brief text ad hoc when a reviewed locale exists in `workshop-content/` or `content/`
 
+## Identity Model
+
+How a participant actually gets into a live workshop:
+
+1. **Event code is the room key.** The facilitator reads it aloud. Redeeming it via `harness auth login --code <CODE>` (or directly on `/participant`) grants access to the room's identify surface, nothing more.
+2. **Name pick.** After redeem, the dashboard shows a picker scoped to the roster the facilitator pre-pasted for this instance. The participant selects their name by prefix-match. If the facilitator enabled walk-ins (`allow_walk_ins = true` on the instance), a participant whose name isn't pre-pasted can still enter by typing a display name; if walk-ins are off, the dashboard tells them to ask the facilitator to add them and stops there.
+3. **Password.** On first entry, the participant sets a password. On return, they enter the same password. Each participant has a real Neon Auth account, so identity persists across browser close — they don't need to redeem the event code again unless their session genuinely ends.
+
+Rules for this skill:
+- The agent **never** collects, relays, or stores participant passwords. Passwords are set and entered on the dashboard UI only.
+- The agent does not make HTTP requests to identify endpoints directly. Identify is a dashboard flow; the CLI's role ends at event-code redemption.
+- If a participant gets stuck on the password step, direct them to the in-room password reset: their facilitator can issue a 3-word temporary password from the admin People section. Do not invent recovery flows.
+
+Reference: `docs/adr/2026-04-19-name-first-identify-with-neon-auth.md`.
+
 ## Commands
 
 Syntax:
@@ -95,16 +110,24 @@ Show:
 
 ### `workshop login`
 
-Ask the participant for the shared event code, then run `harness auth login --code <CODE>` to authenticate.
-After success:
+Ask the participant for the shared event code, then run `harness auth login --code <CODE>` to redeem it. This gets them through the room gate, not all the way in.
+
+After the code is redeemed, tell the participant to open `/participant` on the dashboard (or return to it if it's already open) to complete identify:
+- pick their name from the roster picker (or type it under the walk-in path if the facilitator enabled walk-ins)
+- set a password the first time, or enter their existing password on return
+
+Only after the password step is the participant truly in the room.
+
+After identify:
 - confirm live mode is active
-- say when the participant may need to log in again
+- note that identity persists across browser close because the participant has a real Neon Auth account — they don't need to redeem the event code again for casual return visits
 - keep facilitator-only data unavailable
-The CLI handles all HTTP requests, cookies, and session storage. The skill must not make HTTP requests directly.
+
+The CLI handles event-code redemption (HTTP, cookies, session storage). The skill must not make HTTP requests directly. The agent must never collect, store, or relay the participant's password — passwords live only in the dashboard UI. If the participant says they forgot their password, point them at their facilitator's in-room reset rather than inventing a recovery flow.
 
 ### `workshop logout`
 
-Run `harness auth logout` to clear the current session and return to fallback/public-only mode.
+Run `harness auth logout` to clear the event-code session and return to fallback/public-only mode. This does not invalidate the participant's Neon Auth account — on the next visit they can redeem the event code again and enter their existing password to come back in.
 
 ### `workshop setup`
 
