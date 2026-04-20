@@ -5,6 +5,37 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.10.0 — 2026-04-20
+
+### Added
+
+- **`instance sync-local` for live content patching.** Facilitators can now
+  sync a git-ignored local agenda pack into an existing workshop instance
+  through the protected instance-scoped `agenda` and `scenes` APIs instead
+  of relying on an ad hoc script or a full instance reset. The command
+  updates matching agenda items, updates existing presenter scenes, adds
+  missing scenes, and sets the default room scene when the local blueprint
+  declares one.
+
+### Changed
+
+- **`instance reset --blueprint-file <path>` is now a first-class local-pack
+  path.** The CLI accepts an explicit local agenda JSON file, validates that
+  it looks like a workshop blueprint, and forwards it to the reset API.
+- **CLI docs now consistently use the `instance` scope** for
+  create/list/show/select/current/update/reset/remove operations. Earlier
+  docs had drifted into the older `workshop ...` naming even though the live
+  command surface had already moved.
+- **Published package metadata is back in sync.** `package-lock.json` now
+  matches the package version again instead of carrying an older `0.7.2`
+  stamp.
+
+### Notes
+
+- This release was driven by a real production gap: the reset endpoint did
+  not reliably pick up a local-only agenda variant on an already-running
+  instance, so the CLI now exposes the narrower content-sync path directly.
+
 ## 0.9.0 — 2026-04-20
 
 ### Changed

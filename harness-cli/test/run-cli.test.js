@@ -778,6 +778,73 @@ test("workshop reset-instance patches the shared instance route with reset seman
   assert.match(io.getStdout(), /"workshopId": "sample-studio-a"/);
 });
 
+test("workshop reset-instance accepts a custom local blueprint file", async () => {
+  const env = await createEnv();
+  env.HARNESS_SESSION_STORAGE = "file";
+  const loginIo = createMemoryIo(env);
+  let requestBody = null;
+  const blueprintPath = path.join(env.HARNESS_CLI_HOME, "custom-blueprint.json");
+  const customBlueprint = {
+    blueprintId: "custom-local-pack",
+    version: 1,
+    phases: [
+      {
+        id: "opening",
+        label: "Opening",
+        startTime: "09:00",
+        goal: "Local custom pack",
+        scenes: [],
+      },
+    ],
+    briefs: [],
+    challenges: [],
+    setupPaths: [],
+  };
+  await fs.writeFile(blueprintPath, JSON.stringify(customBlueprint), "utf-8");
+
+  const fetchFn = createFetchStub(
+    new Map([
+      ["GET http://localhost:3000/api/workshop", async () => jsonResponse(200, { workshopId: "sample-studio-a" })],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a",
+        async (_url, options) => {
+          assert.equal(options.headers.origin, "http://localhost:3000");
+          requestBody = JSON.parse(String(options.body));
+          return jsonResponse(200, {
+            ok: true,
+            workshopId: "sample-studio-a",
+            workshopMeta: {
+              currentPhaseLabel: "Opening",
+            },
+            contentSummary: {
+              phases: 1,
+              scenes: 0,
+              briefs: 0,
+              challenges: 0,
+            },
+          });
+        },
+      ],
+    ]),
+  );
+
+  await runCli(["auth", "login", "--auth", "basic"], loginIo, { fetchFn });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(
+    ["instance", "reset", "sample-studio-a", "--blueprint-file", blueprintPath],
+    io,
+    { fetchFn },
+  );
+  assert.equal(exitCode, 0);
+  assert.deepEqual(requestBody, {
+    action: "reset",
+    blueprint: customBlueprint,
+  });
+  assert.match(io.getStdout(), /"workshopId": "sample-studio-a"/);
+  assert.match(io.getStdout(), /Loaded local blueprint/);
+});
+
 test("workshop reset-instance reports API failures from the shared instance route", async () => {
   const env = await createEnv();
   env.HARNESS_SESSION_STORAGE = "file";
@@ -798,6 +865,182 @@ test("workshop reset-instance reports API failures from the shared instance rout
   const exitCode = await runCli(["instance", "reset", "sample-studio-a"], io, { fetchFn });
   assert.equal(exitCode, 1);
   assert.match(io.getStderr(), /Reset instance failed: owner role required/);
+});
+
+test("instance sync-local patches matching agenda items and scenes through the agenda/scenes APIs", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-a",
+  });
+
+  const blueprintPath = path.join(env.HARNESS_CLI_HOME, "sync-local-blueprint.json");
+  const localBlueprint = {
+    blueprintId: "custom-local-pack",
+    version: 1,
+    phases: [
+      {
+        id: "opening",
+        label: "Opening, reframed",
+        startTime: "09:15",
+        goal: "Reframe the day",
+        roomSummary: "Room summary for the opening",
+        facilitatorPrompts: ["Start with the day promise."],
+        watchFors: ["Do not drift into logistics."],
+        checkpointQuestions: ["What should survive the morning?"],
+        defaultSceneId: "opening-extra",
+        scenes: [
+          {
+            id: "opening-framing",
+            label: "Opening framing",
+            sceneType: "briefing",
+            intent: "framing",
+            chromePreset: "minimal",
+            title: "Updated opening",
+            body: "Updated opening body",
+            facilitatorNotes: ["Keep it short."],
+            sourceRefs: [{ label: "Guide", path: "content/facilitation/master-guide.md" }],
+            blocks: [{ id: "hero", type: "hero", title: "Updated opening", body: "Updated opening body" }],
+          },
+          {
+            id: "opening-extra",
+            label: "Extra scene",
+            sceneType: "briefing",
+            intent: "framing",
+            chromePreset: "minimal",
+            title: "Extra scene",
+            body: "Extra scene body",
+            facilitatorNotes: [],
+            sourceRefs: [],
+            blocks: [],
+          },
+        ],
+      },
+    ],
+  };
+  await fs.writeFile(blueprintPath, JSON.stringify(localBlueprint), "utf8");
+
+  const agendaPatchBodies = [];
+  const scenePatchBodies = [];
+  const scenePostBodies = [];
+  const fetchFn = createFetchStub(
+    new Map([
+      [
+        "GET http://localhost:3000/api/workshop/instances/sample-studio-a/agenda",
+        async () =>
+          jsonResponse(200, {
+            phase: null,
+            items: [
+              {
+                id: "opening",
+                title: "Old opening",
+                time: "09:10",
+                presenterScenes: [{ id: "opening-framing" }],
+              },
+            ],
+          }),
+      ],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a/agenda",
+        async (_url, options) => {
+          agendaPatchBodies.push(JSON.parse(String(options.body)));
+          return jsonResponse(200, { ok: true, items: [] });
+        },
+      ],
+      [
+        "PATCH http://localhost:3000/api/workshop/instances/sample-studio-a/scenes",
+        async (_url, options) => {
+          scenePatchBodies.push(JSON.parse(String(options.body)));
+          return jsonResponse(200, { ok: true, agendaItem: { id: "opening" } });
+        },
+      ],
+      [
+        "POST http://localhost:3000/api/workshop/instances/sample-studio-a/scenes",
+        async (_url, options) => {
+          scenePostBodies.push(JSON.parse(String(options.body)));
+          return jsonResponse(200, { ok: true, agendaItem: { id: "opening" } });
+        },
+      ],
+    ]),
+  );
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["instance", "sync-local", "--blueprint-file", blueprintPath], io, { fetchFn });
+  assert.equal(exitCode, 0);
+  assert.deepEqual(agendaPatchBodies, [
+    {
+      action: "update",
+      itemId: "opening",
+      title: "Opening, reframed",
+      time: "09:15",
+      description: "Room summary for the opening",
+      goal: "Reframe the day",
+      roomSummary: "Room summary for the opening",
+      facilitatorPrompts: ["Start with the day promise."],
+      watchFors: ["Do not drift into logistics."],
+      checkpointQuestions: ["What should survive the morning?"],
+    },
+  ]);
+  assert.deepEqual(scenePatchBodies, [
+    {
+      action: "update",
+      agendaItemId: "opening",
+      sceneId: "opening-framing",
+      label: "Opening framing",
+      sceneType: "briefing",
+      title: "Updated opening",
+      body: "Updated opening body",
+      intent: "framing",
+      chromePreset: "minimal",
+      ctaLabel: null,
+      ctaHref: null,
+      facilitatorNotes: ["Keep it short."],
+      sourceRefs: [{ label: "Guide", path: "content/facilitation/master-guide.md" }],
+      blocks: [{ id: "hero", type: "hero", title: "Updated opening", body: "Updated opening body" }],
+    },
+    {
+      action: "set_default",
+      agendaItemId: "opening",
+      sceneId: "opening-extra",
+    },
+  ]);
+  assert.deepEqual(scenePostBodies, [
+    {
+      agendaItemId: "opening",
+      label: "Extra scene",
+      sceneType: "briefing",
+      title: "Extra scene",
+      body: "Extra scene body",
+      intent: "framing",
+      chromePreset: "minimal",
+      ctaLabel: null,
+      ctaHref: null,
+      facilitatorNotes: [],
+      sourceRefs: [],
+      blocks: [],
+    },
+  ]);
+  assert.match(io.getStdout(), /"agendaUpdated": 1/);
+  assert.match(io.getStdout(), /"scenesUpdated": 1/);
+  assert.match(io.getStdout(), /"scenesAdded": 1/);
+  assert.match(io.getStdout(), /"defaultScenesSet": 1/);
+});
+
+test("instance sync-local rejects conflicting scope flags", async () => {
+  const env = await createEnv();
+  await writeSession(env, {
+    authType: "basic",
+    dashboardUrl: "http://localhost:3000",
+    loggedInAt: "2026-04-09T10:00:00.000Z",
+    selectedInstanceId: "sample-studio-a",
+  });
+
+  const io = createMemoryIo(env);
+  const exitCode = await runCli(["instance", "sync-local", "--agenda-only", "--scenes-only"], io, { fetchFn: createFetchStub(new Map()) });
+  assert.equal(exitCode, 1);
+  assert.match(io.getStderr(), /Use only one of --agenda-only or --scenes-only/);
 });
 
 test("workshop prepare sends the target instance id", async () => {

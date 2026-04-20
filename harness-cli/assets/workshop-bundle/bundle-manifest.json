@@ -1,7 +1,7 @@
 {
   "manifestVersion": 1,
   "bundleName": "workshop",
-  "bundleVersion": "0.9.0",
+  "bundleVersion": "0.10.0",
   "contentHash": "1c5fec4bdd63129be38a7eeacdcedb5a30c9e67aff33033d7db7fad8bd885f97",
   "files": [
     {

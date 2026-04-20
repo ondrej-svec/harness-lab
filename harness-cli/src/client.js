@@ -105,6 +105,50 @@ export function createHarnessClient({ fetchFn, session }) {
     getWorkshopAgenda(instanceId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`);
     },
+    updateWorkshopAgendaItem(instanceId, itemId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "PATCH",
+        body: {
+          action: "update",
+          itemId,
+          ...input,
+        },
+      });
+    },
+    getWorkshopScenes(instanceId, input = {}) {
+      const query = input.agendaItemId ? `?agendaItemId=${encodeURIComponent(input.agendaItemId)}` : "";
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes${query}`);
+    },
+    updateWorkshopScene(instanceId, agendaItemId, sceneId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: {
+          action: "update",
+          agendaItemId,
+          sceneId,
+          ...input,
+        },
+      });
+    },
+    addWorkshopScene(instanceId, agendaItemId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "POST",
+        body: {
+          agendaItemId,
+          ...input,
+        },
+      });
+    },
+    setDefaultWorkshopScene(instanceId, agendaItemId, sceneId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: {
+          action: "set_default",
+          agendaItemId,
+          sceneId,
+        },
+      });
+    },
     setCurrentPhaseForInstance(instanceId, currentId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
         method: "PATCH",

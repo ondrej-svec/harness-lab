@@ -18,17 +18,18 @@ Current shipped scope:
 - `harness auth login`
 - `harness auth logout`
 - `harness auth status`
-- `harness workshop current-instance`
-- `harness workshop select-instance`
+- `harness instance current`
+- `harness instance select`
 - `harness workshop status`
-- `harness workshop list-instances`
-- `harness workshop show-instance`
+- `harness instance list`
+- `harness instance show`
 - `harness workshop participant-access`
-- `harness workshop create-instance`
-- `harness workshop update-instance`
-- `harness workshop reset-instance`
+- `harness instance create`
+- `harness instance update`
+- `harness instance reset`
+- `harness instance sync-local`
 - `harness workshop prepare`
-- `harness workshop remove-instance`
+- `harness instance remove`
 - `harness workshop archive`
 - `harness workshop phase set <phase-id>`
 
@@ -155,28 +156,30 @@ Workshop commands:
 ```bash
 harness auth status
 harness skill install
-harness workshop list-instances
-harness workshop select-instance sample-workshop-demo-orbit
-harness workshop current-instance
+harness instance list
+harness instance select sample-workshop-demo-orbit
+harness instance current
 harness workshop status
-harness workshop show-instance sample-workshop-demo-orbit
+harness instance show sample-workshop-demo-orbit
 harness workshop participant-access
 harness workshop participant-access --rotate
 harness workshop participant-access --rotate --code orbit7-bridge4-shift2
-harness workshop create-instance sample-workshop-demo-orbit --event-title "Sample Workshop Demo"
-harness workshop update-instance --room-name Orbit
-harness workshop reset-instance --template-id blueprint-default
+harness instance create sample-workshop-demo-orbit --event-title "Sample Workshop Demo"
+harness instance update --room-name Orbit
+harness instance reset --template-id blueprint-default
+harness instance reset --blueprint-file .local/workshop-packs/no-repo-switching-cs.json
+harness instance sync-local --blueprint-file .local/workshop-packs/no-repo-switching-cs.json --phase-ids opening,intermezzo-1,intermezzo-2
 harness workshop prepare
-harness workshop remove-instance
+harness instance remove
 harness workshop phase set rotation
 harness workshop archive --notes "Manual archive"
-harness workshop select-instance --clear
+harness instance select --clear
 harness auth logout
 ```
 
 Targeting model:
 
-- `harness workshop list-instances` is the discovery entrypoint for facilitator-visible workshops
+- `harness instance list` is the discovery entrypoint for facilitator-visible workshops
 - `harness instance select <instance-id>` stores a local current target for later workshop commands
 - `harness instance current` reports the stored target and resolves its current server state
 - `harness workshop status`, `harness workshop phase set <phase-id>`, and `harness workshop archive` require a selected instance and hard-error with "No instance selected" when none is pinned
@@ -195,6 +198,14 @@ Facilitator lifecycle commands are intentionally CLI-first:
 - skill invokes `harness`
 - `harness` invokes the protected dashboard APIs
 - the dashboard APIs remain the source of truth for authorization, validation, idempotency, and audit logging
+
+Local blueprint override:
+
+- `harness instance reset --from-local` reads the generated local blueprint from `dashboard/lib/generated/agenda-{lang}.json`
+- `harness instance reset --blueprint-file <path>` reads an explicit local agenda pack JSON file and sends it to the reset API directly
+- use `--blueprint-file` for one-off workshop variants that should stay local and git-ignored rather than mutating the tracked blueprint
+- `harness instance sync-local --blueprint-file <path>` patches matching agenda items and presenter scenes through the protected `agenda` / `scenes` APIs instead of relying on reset semantics
+- use `sync-local` when you want an existing instance to pick up local-only content edits without resetting the whole instance
 
 Environment variables:
 

@@ -29,6 +29,8 @@ function parseArgs(argv) {
     "stdin",
     "dry-run",
     "preview",
+    "agenda-only",
+    "scenes-only",
   ]);
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -178,6 +180,28 @@ async function findRepoRoot(startDir) {
 }
 
 async function readLocalBlueprint(io, ui, flags) {
+  const blueprintFile = readStringFlag(flags, "blueprint-file");
+  if (blueprintFile) {
+    const resolvedPath = path.resolve(process.cwd(), blueprintFile);
+    try {
+      const raw = await fs.readFile(resolvedPath, "utf-8");
+      const blueprint = JSON.parse(raw);
+      if (!blueprint || !Array.isArray(blueprint.phases)) {
+        ui.status("error", `Blueprint file does not look like a workshop agenda: ${resolvedPath}`, { stream: "stderr" });
+        return null;
+      }
+      ui.status("ok", `Loaded local blueprint from ${path.relative(process.cwd(), resolvedPath)} (${blueprint.phases.length} phases)`);
+      return blueprint;
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        ui.status("error", `Blueprint file not found at ${resolvedPath}`, { stream: "stderr" });
+      } else {
+        ui.status("error", `Failed to read blueprint file: ${error.message}`, { stream: "stderr" });
+      }
+      return null;
+    }
+  }
+
   const contentLang = readStringFlag(flags, "content-lang", "content-language") ?? "cs";
   const langFile = contentLang === "en" ? "agenda-en.json" : "agenda-cs.json";
 
@@ -201,6 +225,52 @@ async function readLocalBlueprint(io, ui, flags) {
     }
     return null;
   }
+}
+
+function readStringArrayFlag(flags, ...keys) {
+  const raw = readStringFlag(flags, ...keys);
+  if (!raw) {
+    return [];
+  }
+
+  return raw
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+}
+
+function buildAgendaItemUpdateFromBlueprintPhase(phase, currentItem) {
+  const title = phase.label ?? phase.title ?? currentItem?.title ?? phase.id;
+  const time = phase.startTime ?? phase.time ?? currentItem?.time ?? "";
+  const roomSummary = phase.roomSummary ?? phase.description ?? phase.goal ?? currentItem?.roomSummary ?? currentItem?.description ?? "";
+  const goal = phase.goal ?? roomSummary;
+
+  return {
+    title,
+    time,
+    description: roomSummary,
+    goal,
+    roomSummary,
+    facilitatorPrompts: Array.isArray(phase.facilitatorPrompts) ? phase.facilitatorPrompts : [],
+    watchFors: Array.isArray(phase.watchFors) ? phase.watchFors : [],
+    checkpointQuestions: Array.isArray(phase.checkpointQuestions) ? phase.checkpointQuestions : [],
+  };
+}
+
+function buildSceneInputFromBlueprintScene(scene) {
+  return {
+    label: scene.label,
+    sceneType: scene.sceneType,
+    title: scene.title,
+    body: scene.body,
+    intent: scene.intent,
+    chromePreset: scene.chromePreset,
+    ctaLabel: scene.ctaLabel ?? null,
+    ctaHref: scene.ctaHref ?? null,
+    facilitatorNotes: Array.isArray(scene.facilitatorNotes) ? scene.facilitatorNotes : [],
+    sourceRefs: Array.isArray(scene.sourceRefs) ? scene.sourceRefs : [],
+    blocks: Array.isArray(scene.blocks) ? scene.blocks : [],
+  };
 }
 
 function summarizeWorkshopInstance(instance) {
@@ -324,7 +394,10 @@ function printUsage(io, ui) {
     helpLine("instance current", "Show the locally selected instance"),
     helpLine("instance update [<id>]", "Update event metadata"),
     helpLine("instance reset [<id>] [--template-id ID]", "Reset from the blueprint"),
-    helpLine("  [--from-local]", "Use local blueprint (no deploy needed)"),
+    helpLine("  [--from-local] [--blueprint-file PATH]", "Use a local blueprint (no deploy needed)"),
+    helpLine("instance sync-local [<id>] [--blueprint-file PATH]", "Patch instance agenda/scenes from a local blueprint"),
+    helpLine("  [--phase-ids ID1,ID2] [--scene-ids ID1,ID2]", ""),
+    helpLine("  [--agenda-only | --scenes-only]", ""),
     helpLine("instance remove [<id>]", "Soft-remove an instance"),
   ]);
   ui.blank();
@@ -1315,7 +1388,7 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
     return 1;
   }
 
-  const fromLocal = flags["from-local"] === true || flags["local"] === true;
+  const fromLocal = flags["from-local"] === true || flags["local"] === true || Boolean(readStringFlag(flags, "blueprint-file"));
   let blueprint;
   if (fromLocal) {
     blueprint = await readLocalBlueprint(io, ui, flags);
@@ -1341,6 +1414,133 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
   } catch (error) {
     if (error instanceof HarnessApiError) {
       ui.status("error", `Reset instance failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopSyncLocal(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+
+  if (flags["agenda-only"] === true && flags["scenes-only"] === true) {
+    ui.status("error", "Use only one of --agenda-only or --scenes-only.", { stream: "stderr" });
+    return 1;
+  }
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const blueprint = await readLocalBlueprint(io, ui, flags);
+  if (!blueprint) {
+    return 1;
+  }
+
+  const phaseIds = new Set(readStringArrayFlag(flags, "phase-ids", "phase-id", "phase"));
+  const sceneIds = new Set(readStringArrayFlag(flags, "scene-ids", "scene-id", "scene"));
+  const restrictPhases = phaseIds.size > 0;
+  const restrictScenes = sceneIds.size > 0;
+  const agendaOnly = flags["agenda-only"] === true;
+  const scenesOnly = flags["scenes-only"] === true;
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const agenda = await client.getWorkshopAgenda(instanceId);
+    const currentItems = Array.isArray(agenda.items) ? agenda.items : [];
+    const currentItemsById = new Map(currentItems.map((item) => [item.id, item]));
+    const phases = Array.isArray(blueprint.phases) ? blueprint.phases : [];
+    const selectedPhases = phases.filter((phase) => !restrictPhases || phaseIds.has(phase.id));
+
+    const result = {
+      ok: true,
+      instanceId,
+      source: readStringFlag(flags, "blueprint-file") ? "blueprint-file" : "generated-local-blueprint",
+      phaseFilter: [...phaseIds],
+      sceneFilter: [...sceneIds],
+      agendaUpdated: 0,
+      scenesUpdated: 0,
+      scenesAdded: 0,
+      defaultScenesSet: 0,
+      skippedPhases: [],
+      skippedScenes: [],
+    };
+
+    for (const phase of selectedPhases) {
+      const currentItem = currentItemsById.get(phase.id);
+      if (!currentItem) {
+        result.skippedPhases.push({ phaseId: phase.id, reason: "agenda_item_not_found" });
+        continue;
+      }
+
+      if (!scenesOnly) {
+        await client.updateWorkshopAgendaItem(instanceId, phase.id, buildAgendaItemUpdateFromBlueprintPhase(phase, currentItem));
+        result.agendaUpdated += 1;
+      }
+
+      if (agendaOnly) {
+        continue;
+      }
+
+      const currentSceneIds = new Set(
+        Array.isArray(currentItem.presenterScenes) ? currentItem.presenterScenes.map((scene) => scene.id) : [],
+      );
+      const phaseScenes = Array.isArray(phase.scenes) ? phase.scenes : [];
+      const selectedScenes = phaseScenes.filter((scene) => !restrictScenes || sceneIds.has(scene.id));
+
+      for (const scene of selectedScenes) {
+        const sceneInput = buildSceneInputFromBlueprintScene(scene);
+        if (currentSceneIds.has(scene.id)) {
+          await client.updateWorkshopScene(instanceId, phase.id, scene.id, sceneInput);
+          result.scenesUpdated += 1;
+          continue;
+        }
+
+        if (!sceneInput.label || !sceneInput.sceneType) {
+          result.skippedScenes.push({ phaseId: phase.id, sceneId: scene.id, reason: "scene_missing_required_fields" });
+          continue;
+        }
+
+        await client.addWorkshopScene(instanceId, phase.id, sceneInput);
+        currentSceneIds.add(scene.id);
+        result.scenesAdded += 1;
+      }
+
+      if (phase.defaultSceneId && (!restrictScenes || sceneIds.has(phase.defaultSceneId)) && currentSceneIds.has(phase.defaultSceneId)) {
+        await client.setDefaultWorkshopScene(instanceId, phase.id, phase.defaultSceneId);
+        result.defaultScenesSet += 1;
+      }
+    }
+
+    ui.json("Instance Sync Local", result);
+    if (!ui.jsonMode) {
+      const filters = [
+        restrictPhases ? `${phaseIds.size} phase filter` : null,
+        restrictScenes ? `${sceneIds.size} scene filter` : null,
+      ].filter(Boolean).join(", ");
+      ui.status(
+        "ok",
+        `Synced ${result.agendaUpdated} agenda items, ${result.scenesUpdated} scenes, added ${result.scenesAdded} scenes, set ${result.defaultScenesSet} defaults${filters ? ` (${filters})` : ""}.`,
+      );
+      if (result.skippedPhases.length > 0 || result.skippedScenes.length > 0) {
+        ui.status("warn", "Some targets were skipped; inspect the JSON output for details.", { stream: "stderr" });
+      }
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Sync local failed: ${error.message}`, { stream: "stderr" });
       return 1;
     }
     throw error;
@@ -2232,6 +2432,10 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "instance" && action === "reset") {
     return handleWorkshopResetInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "sync-local") {
+    return handleWorkshopSyncLocal(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   if (scope === "instance" && action === "remove") {

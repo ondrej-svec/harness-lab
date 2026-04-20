@@ -100,6 +100,8 @@ When public workshop content changes before an upcoming event:
 - treat existing instances as stale if the change affects blueprint-owned agenda, presenter, or participant-facing content that was imported during instance creation
 - re-import the affected instance from the current blueprint with `harness instance reset <instance-id> [--template-id blueprint-default]`
 - to skip the deployment wait, use `harness instance reset <instance-id> --from-local` after running `bun scripts/content/generate-views.ts` locally
+- for a one-off local event variant that must stay out of git, use `harness instance reset <instance-id> --blueprint-file <path-to-local-pack.json>`
+- if the live instance should keep its operational state and you only need to patch content, use `harness instance sync-local <instance-id> --blueprint-file <path-to-local-pack.json>` to update matching agenda items and scenes through the protected content APIs
 - do not reset just for dashboard-only code changes unless the imported instance content itself changed
 
 ### 5. Archive

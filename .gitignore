@@ -25,6 +25,7 @@ monitoring/team-repos.tsv
 
 harness-cli/*.tgz
 
+.local/
 .agents/skills/workshop/
 .agents/skills/workshop-facilitator/
 .claude/scheduled_tasks.lock
