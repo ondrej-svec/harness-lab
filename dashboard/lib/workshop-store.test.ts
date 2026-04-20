@@ -612,6 +612,22 @@ describe("workshop-store", () => {
     expect(state.agenda.every((item) => typeof item.order === "number")).toBe(true);
   });
 
+  it("normalizes legacy workshop state without rotation on read", async () => {
+    const legacyState = structuredClone(seedWorkshopState) as Partial<WorkshopState>;
+    delete legacyState.rotation;
+
+    repository = new MemoryWorkshopStateRepository(legacyState as WorkshopState);
+    setWorkshopStateRepositoryForTests(repository);
+
+    const state = await getWorkshopState(instanceId);
+
+    expect(state.rotation).toMatchObject({
+      revealed: false,
+      scenario: seedWorkshopState.rotation.scenario,
+      slots: seedWorkshopState.rotation.slots,
+    });
+  });
+
   it("projects English blueprint content for legacy English workshop state on read", async () => {
     repository = new MemoryWorkshopStateRepository({
       ...structuredClone(seedWorkshopState),

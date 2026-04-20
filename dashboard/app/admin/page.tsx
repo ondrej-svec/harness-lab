@@ -423,7 +423,7 @@ export default async function AdminWorkspacePage({
                     const state = workshopStateMap.get(instance.id);
                     const locationLines = getWorkshopLocationLines(instance);
                     const controlRoomHref = buildAdminInstanceHref({ lang, instanceId: instance.id });
-                    const participantSignal = state?.rotation.revealed ? copy.workspaceSignalRevealed : copy.workspaceSignalHidden;
+                    const participantSignal = state?.rotation?.revealed ? copy.workspaceSignalRevealed : copy.workspaceSignalHidden;
                     return (
                       <article
                         key={instance.id}

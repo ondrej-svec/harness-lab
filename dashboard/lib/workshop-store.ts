@@ -651,12 +651,31 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
     agenda.find((item) => item.status === "current")?.id ??
     agenda[0]?.id;
   const normalizedAgenda = normalizeAgenda(agenda, currentAgendaItemId);
+  const normalizedRotation = {
+    ...seedWorkshopState.rotation,
+    ...(state.rotation ?? {}),
+    revealed: typeof state.rotation?.revealed === "boolean" ? state.rotation.revealed : seedWorkshopState.rotation.revealed,
+    scenario:
+      state.rotation?.scenario === "17-participants" || state.rotation?.scenario === "20-participants"
+        ? state.rotation.scenario
+        : seedWorkshopState.rotation.scenario,
+    slots: Array.isArray(state.rotation?.slots)
+      ? state.rotation.slots.filter(
+          (slot): slot is WorkshopState["rotation"]["slots"][number] =>
+            Boolean(slot) &&
+            typeof slot.fromTeam === "string" &&
+            typeof slot.toTeam === "string" &&
+            typeof slot.note === "string",
+        )
+      : seedWorkshopState.rotation.slots,
+  };
 
   const normalizedState = {
     ...state,
     version: state.version ?? 1,
     agenda: normalizedAgenda,
     liveMoment: normalizeStoredLiveMoment(state.liveMoment, normalizedAgenda),
+    rotation: normalizedRotation,
     workshopMeta: {
       ...(state.workshopMeta ?? seedWorkshopState.workshopMeta),
       contentLang: resolveStoredContentLanguage(state.workshopMeta?.contentLang),
