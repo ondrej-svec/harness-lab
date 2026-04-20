@@ -168,37 +168,20 @@ Tasks are dependency-ordered. Phases 2 and 3 are strictly sequential (proof slic
 
 ### Phase 1 — Voice Calibration and Render-Path Verification
 
-- [ ] 1.1 Enumerate every occurrence of the "Zůstaňte s X" pattern in participant-facing sources (agenda.json + ui-language.ts + participant-room-surface.tsx). Expected: 5 in agenda, possibly more in UI.
-- [ ] 1.2 Propose 2–3 native Czech house phrases for the motif. Options to weigh: *Sledujte místnost*, *Soustřeďte se dopředu*, *Teď jen poslouchejte*, *Nechte se vést sálem*. Get user signoff on the short list.
-- [ ] 1.3 Decide "oblouk dne" resolution: replace with *program dne* / restructure the sentence / drop entirely.
-- [ ] 1.4 Decide hybrid-fragment policy: "proof targetem" → full Czech vs kept-English; same for "Participant plocha", "z openingu". Capture the pattern in the review note so it extends to any future hybrid.
-- [ ] 1.5 Verify render path for `phases[*].cs.{label, goal}`. Read `dashboard/lib/public-page-view-model.ts` + `participant-room-surface.tsx` + `dashboard/app/participant/page.tsx` and confirm whether phase label/goal reach the participant screen. If facilitator-only, drop them from scope in the review notes. If participant-visible, include in the per-phase rewrite.
-- [ ] 1.6 Verify `.copy-editor.lock.json` status: is it still referenced by any CI workflow or pre-commit hook? If dormant, skip lock refresh in Phase 5.
+- [x] 1.1 Enumerate every occurrence of the "Zůstaňte s X" pattern in participant-facing sources — **6 hits in agenda.json, 0 in UI files.**
+- [x] 1.2 House phrases signed off by user: **A2** `Teď jen poslouchejte` (room/presenter attention), **B3** `Všímejte si, co se mění` (content attention), **C2** `Sledujte, co se právě děje` (live-action attention).
+- [x] 1.3 "oblouk dne" resolution: **option 3 — drop the metaphor.** Replace with `plán dne` (neutral concrete noun).
+- [x] 1.4 Hybrid-fragment policy: **a-iv** (restructure for "proof targetem"), **b-ii** (`Plocha pro účastníky` for "Participant plocha"). "z openingu" is out of scope (doesn't render to participants).
+- [x] 1.5 Render path verified: `phase.cs.label` → `currentAgendaItem.title` (rendered in metric + breadcrumb); `phase.cs.roomSummary` → `currentAgendaItem.description` (rendered); `phase.cs.goal` renders only in fallback block (bypassed when moment has blocks, always the case for proof-slice phases). **`phase.cs.label` + `roomSummary` for opening/talk/demo are already clean Czech — no rewrite needed at phase level.**
+- [x] 1.6 Lock status: active but scoped to markdown locale files only (`scripts/content/verify-copy-editor.ts:41-51`). Not applicable to `agenda.json` or `.ts` surfaces. **Phase 5.6 is a no-op, removing from scope.**
 
 ### Phase 2 — Proof Slice: Opening Phase
 
-- [ ] 2.1 Create `docs/reviews/workshop-content/2026-04-20-participant-moments-opening.md` with before/after table for all 10 CS strings across `opening-room-start` + `opening-look-up` (including hero blocks and any phase label/goal if 1.5 confirmed participant visibility).
-- [ ] 2.2 Each row: moment id + field path + current CS + proposed CS + one-line rationale referencing the reject-list category (calque / nominalization / AI-fingerprint / participant-clarity).
-- [ ] 2.3 Run `bun scripts/content/check-czech-anglicisms.ts` on a local scratch copy of the proposed strings to confirm Layer 1 clean.
-- [ ] 2.4 Submit review note for native-speaker signoff (user). Iterate per row until every entry is approved.
-- [ ] 2.5 Apply approved rewrites to `workshop-content/agenda.json`.
-- [ ] 2.6 Flip `cs_reviewed: true` on `opening-room-start` and `opening-look-up`.
-- [ ] 2.7 Regenerate views: `bun scripts/content/generate-views.ts`.
-- [ ] 2.8 Verify all three content checks pass locally.
-- [ ] 2.9 Run affected vitest suites.
-- [ ] 2.10 Commit: `feat(content): rewrite opening participant moments for native Czech voice` — include the review note in the same commit.
+- [x] 2.1–2.10 **Shipped in commit `831e7d1`.** Review note at `docs/reviews/workshop-content/2026-04-20-participant-moments-opening.md`. In-session additional user direction captured: **defocus the "přežije bez záchrany" / rescue motif on participant surfaces** (saved to project memory; carries into Phase 3). `opening-room-start` rewritten (3 strings changed, 3 kept); `opening-look-up` verified clean and flag flipped. All content checks + 196 vitest tests pass.
 
 ### Phase 3 — Fan-out: Talk and Demo
 
-- [ ] 3.1 `docs/reviews/workshop-content/2026-04-20-participant-moments-talk.md` — before/after table for all 3 talk moments (`talk-listen`, `talk-note-one-gap`, `talk-ready-for-build`).
-- [ ] 3.2 `docs/reviews/workshop-content/2026-04-20-participant-moments-demo.md` — before/after for all 3 demo moments.
-- [ ] 3.3 Apply calibrated house phrases from Phase 1 consistently across all hits.
-- [ ] 3.4 Layer 1 check + native review (iterate).
-- [ ] 3.5 Apply rewrites to agenda.json.
-- [ ] 3.6 Flip `cs_reviewed: true` on all 6 moments.
-- [ ] 3.7 Regenerate views.
-- [ ] 3.8 Verify checks + tests.
-- [ ] 3.9 Commit per phase (two commits: talk, demo) or one combined — per scope at commit time.
+- [x] 3.1–3.9 **Shipping in this commit.** Review notes at `docs/reviews/workshop-content/2026-04-20-participant-moments-{talk,demo}.md`. 7 string rewrites across the 6 moments (4 talk + 3 demo); 29 strings kept as already clean. All 6 moments now `cs_reviewed: true`. Combined commit (talk + demo) chosen over per-phase split because the fan-out was uniform — same calibrated phrases, same defocus-rescue preference, no phase-specific judgment calls beyond the per-moment table in the review notes. All content checks + 205 vitest tests pass.
 
 ### Phase 4 — Adjacent Participant Surfaces (parallel to Phase 2 review)
 

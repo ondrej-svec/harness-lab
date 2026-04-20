@@ -527,7 +527,7 @@
       "participantMoments": [
         {
           "id": "talk-listen",
-          "label": "Zůstaňte s místností",
+          "label": "Teď jen poslouchejte",
           "title": "Poslouchejte, v čem je posun",
           "body": "Teď ještě nepracujte u stolu. Sledujte kontrast: prompt není systém, systém je kontrakt v repu kolem agenta.",
           "blocks": [
@@ -536,7 +536,7 @@
               "type": "hero",
               "eyebrow": "Talk",
               "title": "Poslouchejte, v čem je posun",
-              "body": "Teď ještě nepracujte u stolu. Zůstaňte s argumentem a s kontrastem."
+              "body": "Teď ještě nepracujte u stolu. Všímejte si, co se mění."
             }
           ],
           "feedbackEnabled": true,
@@ -589,14 +589,14 @@
         {
           "id": "talk-ready-for-build",
           "label": "Připravte se na Build 1",
-          "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním proof targetem",
+          "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním ověřením",
           "body": "Za chvíli se vracíte do repa. Odneste si jeden explicitní další krok: co práci zmapuje, co ji ohraničí a co ji ověří.",
           "blocks": [
             {
               "id": "talk-ready-hero",
               "type": "hero",
               "eyebrow": "Další krok",
-              "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním proof targetem",
+              "title": "Vraťte se do repa s jednou mapou, jedním mantinelem a jedním ověřením",
               "body": "Build 1 nemá začít dalším hledáním promptu, ale jedním explicitním pracovním kontraktem."
             }
           ],
@@ -893,14 +893,14 @@
           "id": "demo-watch-the-contrast",
           "label": "Sledujte kontrast",
           "title": "Sledujte, co mění repo",
-          "body": "Zůstaňte s demem. Nejde o příkaz. Jde o to, který artefakt v repu mění chování agenta.",
+          "body": "Sledujte, co se právě děje. Nejde o příkaz. Jde o to, který artefakt v repu mění chování agenta.",
           "blocks": [
             {
               "id": "demo-watch-hero",
               "type": "hero",
               "eyebrow": "Demo",
               "title": "Sledujte, co mění repo",
-              "body": "Zůstaňte s kontrastem. Hledejte artefakt, který mění výsledek."
+              "body": "Všímejte si kontrastu. Hledejte artefakt, který mění výsledek."
             }
           ],
           "feedbackEnabled": true,
@@ -938,7 +938,7 @@
               "type": "hero",
               "eyebrow": "Další krok",
               "title": "Otevřete zadání, repo a záložní cestu",
-              "body": "Participant plocha je stabilní cesta. Skill použijte jen tehdy, když je pro váš stůl opravdu rychlejší."
+              "body": "Plocha pro účastníky je stabilní cesta. Skill použijte jen tehdy, když je pro váš stůl opravdu rychlejší."
             }
           ],
           "feedbackEnabled": true,
