@@ -527,9 +527,10 @@ Published + approved by Ondrej on 2026-04-20 (`artifact--2026-04-20--63c8c85b`).
 
 #### 5.5 Privilege boundary audit
 
-- [ ] Grep every facilitator route/action handler; confirm `hasFacilitatorPlatformAccess` is called (not just `getAuthenticatedFacilitator`). Fix any drift.
-- [ ] Add `lib/privilege-boundary.test.ts` — parametrized test that creates a participant-role Neon session, enumerates every facilitator API route, asserts each returns 401/403.
-- [ ] Add an ESLint rule or code review checklist note in `dashboard/AGENTS.md`: "any new `/admin` or facilitator server action must reference the privilege-boundary test."
+- [x] Audit complete: every `/api/admin/*` route handler funnels through `requireFacilitatorRequest`; every server action goes through `requireFacilitatorActionAccess`; every Server Component goes through `requireFacilitatorPageAccess`. All three converge on `resolveFacilitatorGrant` / `resolveFacilitatorGrantWithBootstrap`. Both helpers now do a `hasFacilitatorPlatformAccess` role check **before** returning a grant — closes a defense-in-depth gap where a participant-role Neon user with a stale `instance_grants` row could have passed (no UI/code path writes such a row today, but the boundary now survives future refactors).
+- [x] Added `lib/privilege-boundary.test.ts` (8 cases): admin + grant → grant returned; participant + grant → null (the regression case the audit closed); admin without grant → null; participant without grant → null; bootstrap blocked for participant on empty instance; bootstrap allowed for admin on empty instance. If this suite ever fails, treat it as a P0 — a participant-role user has become able to authenticate as a facilitator.
+- [x] Updated `dashboard/AGENTS.md` with a "Privilege Boundary" section: the four guards to use, the rule that new admin surfaces must go through one of them, and the explicit ban on gating on `getAuthenticatedFacilitator` alone (presence ≠ role). Code-review-checklist style — lighter touch than an ESLint rule for now.
+- Layer 3 follow-up: end-to-end Playwright run that creates a real `role="participant"` Neon user, signs in, hits every `/admin/*` and `/api/admin/*` route, asserts 401/403. Same Next.js-runtime constraint as Phase 5.6 Layer 3.
 
 #### 5.6 Tests (three layers · NEVER against production)
 

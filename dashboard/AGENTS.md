@@ -34,3 +34,21 @@ Before editing code under `dashboard/`:
 2. Design system docs still describe reality if a recurring pattern landed.
 3. The change was verified against the design doc baseline, not just "it compiles."
 4. The next safe move is stated if the work is partial.
+
+## Privilege Boundary
+
+Any new `/admin` route, facilitator server action, or auth helper that
+gates access on a Neon Auth session MUST go through one of the existing
+guards: `requireFacilitatorRequest` (API routes), `requireFacilitatorPageAccess`
+(Server Components), `requireFacilitatorActionAccess` (server actions),
+or `getFacilitatorSession` / `resolveFacilitatorGrant` (programmatic).
+
+All four enforce `role = "admin"` on the underlying Neon Auth user as a
+defense-in-depth check — even when an `instance_grants` row exists.
+The regression suite for this lives in `lib/privilege-boundary.test.ts`.
+If you change any of the guards, the suite must stay green; if you add
+a new guard, extend the suite with a participant-role-with-stale-grant
+case proving the boundary holds.
+
+Never gate on `getAuthenticatedFacilitator` alone — that only checks
+that a Neon session exists, not that the user has admin role.

@@ -279,7 +279,10 @@ describe("facilitator-auth-service (neon mode)", () => {
         metadata: { neonUserId: "user-3", role: "operator" },
       }),
     );
-    expect(query).not.toHaveBeenCalled();
+    // Privilege boundary: role lookup runs even when a grant exists,
+    // so a participant-role user with a stale grant cannot pass. The
+    // role query returns admin → grant is honored.
+    expect(query).toHaveBeenCalledTimes(1);
   });
 
   it("denies platform-scoped access to authenticated non-admin facilitators", async () => {

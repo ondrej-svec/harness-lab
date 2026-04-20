@@ -5,6 +5,7 @@ const getActiveGrantByNeonUserId = vi.fn();
 const countActiveGrants = vi.fn();
 const createGrant = vi.fn();
 const getRuntimeStorageMode = vi.fn();
+const sqlQuery = vi.fn();
 
 vi.mock("./auth/server", () => ({
   auth: {
@@ -28,6 +29,10 @@ vi.mock("./runtime-storage", () => ({
   getRuntimeStorageMode,
 }));
 
+vi.mock("./neon-db", () => ({
+  getNeonSql: () => ({ query: sqlQuery }),
+}));
+
 function importFacilitatorSessionModule() {
   return import("./facilitator-session");
 }
@@ -44,6 +49,9 @@ describe("facilitator-session", () => {
     getRuntimeStorageMode.mockReturnValue("neon");
     countActiveGrants.mockResolvedValue(1);
     createGrant.mockResolvedValue(null);
+    // Default: signed-in user is admin-role. Tests that probe the
+    // privilege boundary override this with a participant-role user.
+    sqlQuery.mockResolvedValue([{ role: "admin" }]);
   });
 
   it("returns null outside neon mode", async () => {

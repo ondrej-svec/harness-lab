@@ -58,13 +58,22 @@ export async function resolveFacilitatorGrantWithBootstrap(
   instanceId: string,
   neonUserId: string,
 ): Promise<ResolvedFacilitatorGrant> {
+  // Defense-in-depth privilege boundary: a participant-role Neon user
+  // with a stale grant must not pass the facilitator gate. Role check
+  // first, grant lookup second. Bootstrap path keeps the same role
+  // requirement (it always did), now made explicit at the entry.
+  const hasPlatformAccess = await hasFacilitatorPlatformAccess(neonUserId);
+  if (!hasPlatformAccess) {
+    return { grant: null, autoBootstrapped: false };
+  }
+
   const repo = getInstanceGrantRepository();
   let grant = await repo.getActiveGrantByNeonUserId(instanceId, neonUserId);
   let autoBootstrapped = false;
 
   if (!grant) {
     const grantCount = await repo.countActiveGrants(instanceId);
-    if (grantCount === 0 && (await hasFacilitatorPlatformAccess(neonUserId))) {
+    if (grantCount === 0) {
       grant = await repo.createGrant(instanceId, neonUserId, "owner");
       autoBootstrapped = true;
     }
@@ -74,6 +83,12 @@ export async function resolveFacilitatorGrantWithBootstrap(
 }
 
 export async function resolveFacilitatorGrant(instanceId: string, neonUserId: string): Promise<InstanceGrantRecord | null> {
+  // Same privilege boundary as the bootstrap variant — never return a
+  // grant for a non-admin Neon user, even if a row exists in
+  // instance_grants. Today no code path can write such a row, but the
+  // role check makes the boundary survive future refactors.
+  const hasPlatformAccess = await hasFacilitatorPlatformAccess(neonUserId);
+  if (!hasPlatformAccess) return null;
   return getInstanceGrantRepository().getActiveGrantByNeonUserId(instanceId, neonUserId);
 }
 
