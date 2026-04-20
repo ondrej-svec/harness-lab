@@ -583,19 +583,19 @@
           },
           "cs": {
             "label": "Zorientujte se",
-            "title": "Zůstaňte s místností",
-            "body": "Teď ještě nic nedělejte. Poslouchejte oblouk dne a laťku pro práci, která přežije bez záchrany.",
+            "title": "Teď jen poslouchejte",
+            "body": "Ještě nic nedělejte. Poslouchejte plán dne a laťku, kterou dnes nasazujeme.",
             "blocks": [
               {
                 "id": "opening-room-start-hero",
                 "type": "hero",
                 "eyebrow": "Úvod",
-                "title": "Zůstaňte s místností",
-                "body": "Teď ještě nic nedělejte. Poslouchejte oblouk dne a laťku pro práci, která přežije předání bez záchrany."
+                "title": "Teď jen poslouchejte",
+                "body": "Ještě nic nedělejte. Poslouchejte plán dne a laťku pro práci, kterou zvládne převzít člověk i agent."
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         },
         {
           "id": "opening-look-up",
@@ -630,7 +630,7 @@
               }
             ]
           },
-          "cs_reviewed": false
+          "cs_reviewed": true
         }
       ],
       "scenes": [
