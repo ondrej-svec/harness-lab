@@ -64,6 +64,48 @@ export class FileParticipantRepository implements ParticipantRepository {
     );
   }
 
+  async listByDisplayNamePrefix(instanceId: string, prefix: string, limit: number) {
+    const normalized = normalizeDisplayName(prefix);
+    if (normalized.length === 0) return [];
+    const items = await this.readAll(instanceId);
+    return items
+      .filter(
+        (p) =>
+          p.archivedAt === null &&
+          normalizeDisplayName(p.displayName).includes(normalized),
+      )
+      .slice(0, Math.max(0, limit));
+  }
+
+  async findByNeonUserId(instanceId: string, neonUserId: string) {
+    const items = await this.readAll(instanceId);
+    return (
+      items.find(
+        (p) => p.archivedAt === null && p.neonUserId === neonUserId,
+      ) ?? null
+    );
+  }
+
+  async linkNeonUser(
+    instanceId: string,
+    participantId: string,
+    neonUserId: string,
+    updatedAt: string,
+  ) {
+    const items = await this.readAll(instanceId);
+    const existing = items.find((p) => p.id === participantId);
+    if (!existing) return;
+    const conflict = items.find(
+      (p) =>
+        p.id !== participantId && p.neonUserId === neonUserId && p.archivedAt === null,
+    );
+    if (conflict) return;
+    const next = items.map((p) =>
+      p.id === participantId ? { ...p, neonUserId, updatedAt } : p,
+    );
+    await this.replaceParticipants(instanceId, next);
+  }
+
   async upsertParticipant(instanceId: string, participant: ParticipantRecord) {
     const items = await this.readAll(instanceId);
     const nextItems = items.some((p) => p.id === participant.id)
@@ -159,7 +201,7 @@ export class NeonParticipantRepository implements ParticipantRepository {
     const rows = (await sql.query(
       `
         SELECT id, instance_id, display_name, email, email_opt_in, tag,
-               created_at, updated_at, archived_at
+               neon_user_id, created_at, updated_at, archived_at
         FROM participants
         WHERE instance_id = $1
           AND archived_at IS NULL
@@ -169,6 +211,69 @@ export class NeonParticipantRepository implements ParticipantRepository {
       [instanceId, displayName.trim()],
     )) as ParticipantRow[];
     return rows[0] ? rowToRecord(rows[0]) : null;
+  }
+
+  async listByDisplayNamePrefix(instanceId: string, prefix: string, limit: number) {
+    const normalized = prefix.trim().toLocaleLowerCase();
+    if (normalized.length === 0) return [];
+    const sql = getNeonSql();
+    const escaped = normalized.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_");
+    const rows = (await sql.query(
+      `
+        SELECT id, instance_id, display_name, email, email_opt_in, tag,
+               neon_user_id, created_at, updated_at, archived_at
+        FROM participants
+        WHERE instance_id = $1
+          AND archived_at IS NULL
+          AND LOWER(display_name) LIKE $2 ESCAPE '\\'
+        ORDER BY display_name ASC
+        LIMIT $3
+      `,
+      [instanceId, `%${escaped}%`, Math.max(0, limit)],
+    )) as ParticipantRow[];
+    return rows.map(rowToRecord);
+  }
+
+  async findByNeonUserId(instanceId: string, neonUserId: string) {
+    const sql = getNeonSql();
+    const rows = (await sql.query(
+      `
+        SELECT id, instance_id, display_name, email, email_opt_in, tag,
+               neon_user_id, created_at, updated_at, archived_at
+        FROM participants
+        WHERE instance_id = $1
+          AND archived_at IS NULL
+          AND neon_user_id = $2
+        LIMIT 1
+      `,
+      [instanceId, neonUserId],
+    )) as ParticipantRow[];
+    return rows[0] ? rowToRecord(rows[0]) : null;
+  }
+
+  async linkNeonUser(
+    instanceId: string,
+    participantId: string,
+    neonUserId: string,
+    updatedAt: string,
+  ) {
+    const sql = getNeonSql();
+    // The unique index on neon_user_id already stops two participants
+    // from pointing at the same user. WHERE (neon_user_id IS NULL OR =
+    // new) makes this idempotent when the same participant re-links
+    // the same user, and a no-op (no rows affected) when another
+    // participant already owns the id.
+    await sql.query(
+      `
+        UPDATE participants
+        SET neon_user_id = $3,
+            updated_at = $4
+        WHERE instance_id = $1
+          AND id = $2
+          AND (neon_user_id IS NULL OR neon_user_id = $3)
+      `,
+      [instanceId, participantId, neonUserId, updatedAt],
+    );
   }
 
   async upsertParticipant(instanceId: string, participant: ParticipantRecord) {

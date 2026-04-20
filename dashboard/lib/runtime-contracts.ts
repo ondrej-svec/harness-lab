@@ -300,6 +300,32 @@ export interface ParticipantRepository {
     instanceId: WorkshopInstanceId,
     displayName: string,
   ): Promise<ParticipantRecord | null>;
+  /**
+   * Return up to `limit` non-archived participants whose display name
+   * contains `prefix` (case-insensitive). Backs the identify suggest
+   * endpoint — the caller enforces min-chars and rate limiting.
+   */
+  listByDisplayNamePrefix(
+    instanceId: WorkshopInstanceId,
+    prefix: string,
+    limit: number,
+  ): Promise<ParticipantRecord[]>;
+  findByNeonUserId(
+    instanceId: WorkshopInstanceId,
+    neonUserId: string,
+  ): Promise<ParticipantRecord | null>;
+  /**
+   * Link a participant row to its Neon Auth user. Idempotent when the
+   * link already matches. Rejects silently when another participant row
+   * already owns that neon_user_id — the caller checks with
+   * `findByNeonUserId` first if they care.
+   */
+  linkNeonUser(
+    instanceId: WorkshopInstanceId,
+    participantId: string,
+    neonUserId: string,
+    updatedAt: string,
+  ): Promise<void>;
   upsertParticipant(
     instanceId: WorkshopInstanceId,
     participant: ParticipantRecord,

@@ -59,6 +59,59 @@ describe("participant-repository", () => {
     await expect(repo.findParticipantByDisplayName("instance-a", "Ada Lovelace")).resolves.toBeNull();
   });
 
+  it("suggests participants by display-name substring, capped, archived excluded", async () => {
+    const { FileParticipantRepository } = await import("./participant-repository");
+    const repo = new FileParticipantRepository();
+    const mkp = (id: string, name: string, archivedAt: string | null = null) => ({
+      ...baseParticipant,
+      id,
+      displayName: name,
+      archivedAt,
+    });
+
+    await repo.upsertParticipant("instance-a", mkp("p1", "Jan Novák"));
+    await repo.upsertParticipant("instance-a", mkp("p2", "Jana Dvořáková"));
+    await repo.upsertParticipant("instance-a", mkp("p3", "Josef Vrba"));
+    await repo.upsertParticipant("instance-a", mkp("p4", "Janek Horák", "2026-04-19T00:00:00.000Z"));
+
+    // Case-insensitive prefix/substring match on "jan"
+    const jans = await repo.listByDisplayNamePrefix("instance-a", "jan", 5);
+    expect(jans.map((p) => p.id)).toEqual(["p1", "p2"]);
+
+    // Archived Janek is excluded
+    expect(jans.find((p) => p.id === "p4")).toBeUndefined();
+
+    // Limit is honored
+    const capped = await repo.listByDisplayNamePrefix("instance-a", "", 5);
+    expect(capped).toEqual([]); // empty prefix returns nothing
+
+    const oneResult = await repo.listByDisplayNamePrefix("instance-a", "j", 1);
+    expect(oneResult).toHaveLength(1);
+  });
+
+  it("links a participant to a Neon user id, idempotently", async () => {
+    const { FileParticipantRepository } = await import("./participant-repository");
+    const repo = new FileParticipantRepository();
+
+    await repo.upsertParticipant("instance-a", baseParticipant);
+    await repo.upsertParticipant("instance-a", { ...baseParticipant, id: "p2", displayName: "Jan" });
+
+    await repo.linkNeonUser("instance-a", "p1", "neon-user-1", "2026-04-20T00:00:00.000Z");
+    const linked = await repo.findByNeonUserId("instance-a", "neon-user-1");
+    expect(linked?.id).toBe("p1");
+    expect(linked?.neonUserId).toBe("neon-user-1");
+
+    // Idempotent re-link with the same id is a no-op
+    await repo.linkNeonUser("instance-a", "p1", "neon-user-1", "2026-04-20T01:00:00.000Z");
+    const still = await repo.findByNeonUserId("instance-a", "neon-user-1");
+    expect(still?.id).toBe("p1");
+
+    // Conflict: p2 cannot grab neon-user-1 while p1 owns it
+    await repo.linkNeonUser("instance-a", "p2", "neon-user-1", "2026-04-20T02:00:00.000Z");
+    const p2 = await repo.findParticipant("instance-a", "p2");
+    expect(p2?.neonUserId).toBeNull();
+  });
+
   it("scopes reads to a single instance", async () => {
     const { FileParticipantRepository } = await import("./participant-repository");
     const repo = new FileParticipantRepository();
