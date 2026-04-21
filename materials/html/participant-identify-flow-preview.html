@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Participant identify flow preview</title>
+    <style>
+      :root {
+        --bg: #f1efe8;
+        --paper: #fffdf8;
+        --ink: #1d1914;
+        --muted: #655b50;
+        --line: #d9ceb8;
+        --accent: #8f4b26;
+        --soft: #f5ebe2;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background: linear-gradient(180deg, #ece4d8, var(--bg));
+        color: var(--ink);
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 28px 20px 56px;
+      }
+      article {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 18px 42px rgba(29, 25, 20, 0.08);
+      }
+      h1, h2, h3 { line-height: 1.1; }
+      h1 { margin: 0 0 16px; font-size: clamp(2rem, 5vw, 3.6rem); }
+      h2 { margin: 28px 0 10px; font-size: 1.45rem; }
+      h3 { margin: 0 0 6px; font-size: 1.1rem; }
+      p, li { font-size: 1.04rem; line-height: 1.65; }
+      ol { padding-left: 1.2rem; }
+      .eyebrow {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 18px;
+      }
+      @media (min-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 18px;
+        background: var(--soft);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <article>
+        <p class="eyebrow">Harness Lab reference</p>
+        <h1>Participant identify flow preview</h1>
+        <p>
+          The participant flow is intentionally narrow: one shared room key,
+          one name choice, one personal password. It gives the room a clean
+          entry path without turning the participant surface into an admin tool.
+        </p>
+
+        <h2>Flow</h2>
+        <ol>
+          <li>Enter the shared event code on the public homepage.</li>
+          <li>Pick your name from the room roster.</li>
+          <li>Set a password on first entry, or enter it on return.</li>
+          <li>Land in the participant room with the live workshop context.</li>
+        </ol>
+
+        <div class="grid">
+          <section class="card">
+            <h3>Why this works</h3>
+            <p>
+              The shared code unlocks the room context, but each participant
+              still has their own ongoing identity. The facilitator does not
+              need to hand out individual credentials in advance.
+            </p>
+          </section>
+          <section class="card">
+            <h3>What it avoids</h3>
+            <p>
+              No facilitator password leakage. No free-text identity guessing.
+              No need to re-enter the shared code for every casual return.
+            </p>
+          </section>
+          <section class="card">
+            <h3>Walk-ins</h3>
+            <p>
+              If walk-ins are enabled, a participant whose name is not in the
+              prepared roster can still enter by creating a room-safe display
+              identity through the supported path.
+            </p>
+          </section>
+          <section class="card">
+            <h3>Password recovery</h3>
+            <p>
+              Password resets stay on the facilitator side. The participant
+              surface should never collect or relay someone else’s password.
+            </p>
+          </section>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>

@@ -322,34 +322,11 @@ export function ParticipantRoomSurface({
                 )}
               </div>
             </ParticipantBlockCard>
-
-            <ParticipantBlockCard title={sectionCopy.challengeTitle}>
-              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.challengeBody}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {homeState.visibleChallenges.map((challenge) => (
-                  <span
-                    key={challenge.id}
-                    className="rounded-full border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-2 text-xs font-medium text-[var(--text-secondary)]"
-                  >
-                    {challenge.title}
-                  </span>
-                ))}
-              </div>
-            </ParticipantBlockCard>
-
-            <ParticipantBlockCard title={sectionCopy.fallbackTitle}>
-              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.fallbackBody}</p>
-              <div className="mt-4 space-y-3">
-                <FallbackStep title={sectionCopy.fallbackNow} body={sectionCopy.fallbackNowBody} />
-                <FallbackStep title={sectionCopy.fallbackHelp} body={sectionCopy.fallbackHelpBody} />
-                <FallbackStep title={sectionCopy.fallbackFast} body={sectionCopy.fallbackFastBody} />
-              </div>
-            </ParticipantBlockCard>
           </div>
 
           <div className="space-y-4">
-            <ParticipantBlockCard title={sectionCopy.acceleratorTitle}>
-              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.acceleratorBody}</p>
+            <ParticipantBlockCard title={sectionCopy.roomToolsTitle}>
+              <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.roomToolsBody}</p>
             </ParticipantBlockCard>
 
             {homeState.teamCards.length > 0 ? (
@@ -468,9 +445,9 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
       contextTitle: "compact working context",
       teamLabel: "team",
       participantLabel: "participant",
-      buildTitle: "build",
+      buildTitle: "materials",
       buildBody:
-        "Keep the working set close: brief, repo, challenge prompts, fallback, and a short evidence trail that the room can actually read.",
+        "Keep the participant surface narrow: brief, repo, materials, and the smallest room signal you need right now.",
       briefTitleActive: "your brief",
       briefTitleRoom: "prepared briefs in this room",
       briefBodyActive: "Your assigned brief is visible here so the workshop does not depend on the skill path first.",
@@ -481,20 +458,9 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
       copyRepoUrl: "Copy repo URL",
       copyCloneCommand: "Copy clone command",
       copied: "Copied",
-      challengeTitle: "challenge prompts",
-      challengeBody: "Keep prompts reachable, but secondary to the main move.",
-      fallbackTitle: "setup fallback",
-      fallbackBody:
-        "If setup is blocking you, stay on the browser-first path: align on the brief, open the repo, write the first map, then decide whether local setup deserves more time.",
-      fallbackNow: "0–5 minutes blocked",
-      fallbackNowBody: "Stay here. Align on scope, first verification, and the smallest next move.",
-      fallbackHelp: "Still blocked after that?",
-      fallbackHelpBody: "Raise a hand. The facilitator helps you choose between browser path, starter package, or local-tool fallback.",
-      fallbackFast: "If setup is ready",
-      fallbackFastBody: "Use the workshop skill as a stronger accelerator for coaching and repo-native prompts.",
-      acceleratorTitle: "optional accelerator",
-      acceleratorBody:
-        "CLI and skill support belong here as a clear secondary move. Valuable, visible, and never emotionally framed as the prerequisite.",
+      roomToolsTitle: "room signal tools",
+      roomToolsBody:
+        "Keep these available, but secondary. Use them only when you need to leave a short structured trail for the room or the next team.",
       captureTitle: "structured checkpoint",
       captureBody: "Write one short evidence item the room can reuse: what changed, what verifies it, and the next safe move.",
       captureChangedLabel: "what changed",
@@ -518,7 +484,7 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
       feedEmptyMine: "You have not written a structured checkpoint yet.",
       feedLegacy: "legacy note",
       referenceTitle: "reference",
-      referenceBody: "Keep the evergreen material reachable, but quieter than the live workshop move.",
+      referenceBody: "This is the main reference shelf: workshop materials first, then setup and plugins, then the external reads and published HTMLs.",
       pollTitle: "room signal",
       pollBody: "Pick one option only. The facilitator sees room-safe aggregate only.",
       pollSubmit: "Send signal",
@@ -547,33 +513,22 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
     contextTitle: "pracovní kontext",
     teamLabel: "tým",
     participantLabel: "účastník",
-    buildTitle: "práce",
+    buildTitle: "materiály",
     buildBody:
-      "Mějte po ruce to podstatné: zadání, repo, prompty k výzvám, fallback a krátký záznam, ke kterému se dá vrátit.",
+      "Držte participant surface úzký: zadání, repo, materiály a jen takový room signal, který právě potřebujete.",
     briefTitleActive: "vaše zadání",
     briefTitleRoom: "připravená zadání pro tuto místnost",
     briefBodyActive: "Vaše přiřazené zadání je vidět tady, aby se nezačínalo až po cestě přes skill.",
     briefBodyRoom: "Připravená zadání zůstávají vidět tady, takže si tým potvrdí směr ještě dřív, než bude lokální setup dokonalý.",
     materialsTitle: "materiály týmu",
-    materialsBody: "Otevřete repo, zkopírujte si, co potřebujete, a do práce v repu se pusťte až po zadání a prvním ověření.",
+    materialsBody: "Otevřete repo, vezměte si potřebné odkazy a do práce v repu se pusťte až po zadání a prvním ověření.",
     openRepo: "Otevřít repo",
     copyRepoUrl: "Kopírovat adresu repa",
     copyCloneCommand: "Kopírovat git clone",
     copied: "Zkopírováno",
-    challengeTitle: "prompty k výzvám",
-    challengeBody: "Prompty držte po ruce, ale pořád až za hlavním krokem.",
-    fallbackTitle: "když vás brzdí setup",
-    fallbackBody:
-      "Když vás zastaví setup, zůstaňte v prohlížeči: ujasněte si zadání, otevřete repo, napište první mapu a teprve potom řešte, jestli má smysl setup dál ladit.",
-    fallbackNow: "0–5 minut bez posunu",
-    fallbackNowBody: "Zůstaňte tady. Ujasněte si rozsah, první ověření a nejmenší další krok.",
-    fallbackHelp: "Pořád jste zaseklí?",
-    fallbackHelpBody: "Zvedněte ruku. Facilitátor vám pomůže vybrat cestu v prohlížeči, startovní balíček nebo lokální fallback.",
-    fallbackFast: "Když už setup běží",
-    fallbackFastBody: "Když už setup běží, použijte workshop skill jako rychlejší pomoc pro coaching a prompty navázané na repo.",
-    acceleratorTitle: "když chcete zrychlit",
-    acceleratorBody:
-      "CLI a skill patří sem jako druhý krok. Pomůžou, ale nejsou podmínkou, abyste mohli začít.",
+    roomToolsTitle: "nástroje pro signál z místnosti",
+    roomToolsBody:
+      "Mějte je po ruce, ale až jako druhý krok. Použijte je ve chvíli, kdy potřebujete zanechat krátkou strukturovanou stopu pro místnost nebo další tým.",
     captureTitle: "strukturovaný checkpoint",
     captureBody: "Zapište stručně to, k čemu se má místnost vrátit: co jste změnili, čím jste to ověřili a co má přijít dál.",
     captureChangedLabel: "co se změnilo",
@@ -597,8 +552,8 @@ function getParticipantSurfaceCopy(lang: UiLanguage) {
     feedEmptyMine: "Ještě jste nezapsali žádný checkpoint.",
     feedLegacy: "starší poznámka",
     referenceTitle: "podklady",
-    referenceBody: "Důležité materiály mějte po ruce, ale až za tím, co máte udělat právě teď.",
-    pollTitle: "signál z místnosti",
+    referenceBody: "Tady je hlavní police s podklady: nejdřív workshopové materiály, potom setup a pluginy a nakonec externí čtení a publikované HTML artefakty.",
+    pollTitle: "signál z místnosti",
     pollBody: "Vyberte jednu možnost. Facilitátor uvidí jen souhrn za místnost, ne jednotlivé odpovědi.",
     pollSubmit: "Odeslat signál",
     pollMissingOption: "Nejdřív vyberte jednu možnost.",
@@ -627,15 +582,6 @@ function KeyValuePair({ label, value }: { label: string; value: string }) {
     <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-3 py-3">
       <p className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{label}</p>
       <p className="mt-2 text-sm leading-6 text-[var(--text-primary)]">{value}</p>
-    </div>
-  );
-}
-
-function FallbackStep({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-      <p className="text-sm font-medium text-[var(--text-primary)]">{title}</p>
-      <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">{body}</p>
     </div>
   );
 }

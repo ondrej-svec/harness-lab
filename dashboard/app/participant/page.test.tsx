@@ -96,8 +96,14 @@ describe("ParticipantPage", () => {
     expect(html).toMatch(/view-transition-name:\s*room-access/);
     expect(html).toContain("Ujasněte si zadání. Otevřete repo. Sepište první mapu.");
     expect(html).toContain("připravená zadání pro tuto místnost");
-    expect(html).toContain("když vás brzdí setup");
-    expect(html).toContain("živý přehled checkpointů");
+    expect(html).toContain("nástroje pro signál z místnosti");
+    expect(html).toContain("participant-resource-kit.md");
+    expect(html).toContain("https://developers.openai.com/codex/plugins");
+    expect(html).toContain("https://modelcontextprotocol.io/docs/getting-started/intro");
+    expect(html).toContain("https://agents.md/");
+    expect(html).toContain("materials/html/codex-model-guide.html");
+    expect(html).toContain("materials/html/coding-agent-working-loop.html");
+    expect(html).toContain("materials/html/participant-identify-flow-preview.html");
     expect(html).toContain("podklady");
   });
 

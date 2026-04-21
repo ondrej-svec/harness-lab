@@ -1,6 +1,6 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
-import { buildRepoBlobUrl, getBlueprintRepoUrl, getPublicRepoUrl } from "./repo-links";
+import { buildRepoBlobUrl, getBlueprintRepoUrl, getPublicRepoUrl, resolveRepoLinkedHref } from "./repo-links";
 import type {
   Challenge,
   ParticipantPollDefinition,
@@ -355,12 +355,12 @@ export function buildParticipantHomeState(options: {
       ? [
           { href: "#build-briefs", label: "Open the brief" },
           { href: "#build-materials", label: "Get team materials" },
-          { href: "#checkpoint-capture", label: "Capture a checkpoint" },
+          { href: "#reference", label: "Open resources" },
         ]
       : [
           { href: "#build-briefs", label: "Otevřít zadání" },
           { href: "#build-materials", label: "Dostat se k materiálům týmu" },
-          { href: "#checkpoint-capture", label: "Zapsat checkpoint" },
+          { href: "#reference", label: "Otevřít podklady" },
         ];
 
   return {
@@ -393,20 +393,201 @@ function buildParticipantReferenceHref(id: string) {
   }
 }
 
+function buildParticipantResourceCatalog(lang: UiLanguage) {
+  const isEnglish = lang === "en";
+
+  const repoMaterials: ParticipantReferenceEntry[] = [
+    {
+      id: "participant-resource-kit",
+      label: isEnglish ? "Participant resource kit" : "Participant resource kit",
+      description:
+        isEnglish
+          ? "The shortest portable takeaway: AGENTS.md, one trust anchor, and the next safe move."
+          : "Nejkratší přenositelný základ: `AGENTS.md`, jeden trust anchor a další bezpečný krok.",
+      href: resolveRepoLinkedHref("materials/participant-resource-kit.md"),
+      external: true,
+    },
+    {
+      id: "workshop-reference",
+      label: isEnglish ? "Workshop reference" : "Workshop reference",
+        description:
+          isEnglish
+            ? "Commands, defaults, and workshop framing collected in one repo-native reference."
+            : "Příkazy, výchozí postupy a rámec workshopu v jednom repo-native přehledu.",
+      href: resolveRepoLinkedHref("workshop-skill/reference.md"),
+      external: true,
+    },
+    {
+      id: "template-agents",
+      label: isEnglish ? "AGENTS.md template" : "Šablona `AGENTS.md`",
+      description:
+        isEnglish
+          ? "The starter map you can copy into a real repo today."
+          : "Výchozí mapa, kterou si můžete ještě dnes zkopírovat do reálného repa.",
+      href: resolveRepoLinkedHref("workshop-skill/template-agents.md"),
+      external: true,
+    },
+    {
+      id: "learner-gallery",
+      label: isEnglish ? "Learner reference gallery" : "Galerie navazujících zdrojů",
+      description:
+        isEnglish
+          ? "A short curation of official docs, public repos, and next-step references."
+          : "Krátký výběr oficiálních docs, veřejných rep a navazujících zdrojů.",
+      href: resolveRepoLinkedHref("docs/learner-reference-gallery.md"),
+      external: true,
+    },
+    {
+      id: "harness-cli",
+      label: isEnglish ? "Harness CLI" : "Harness CLI",
+      description:
+        isEnglish
+          ? "Install path for the workshop skill and the participant bootstrap."
+          : "Instalační cesta pro workshop skill a participant bootstrap.",
+      href: resolveRepoLinkedHref("harness-cli/README.md"),
+      external: true,
+    },
+  ];
+
+  const setupAndPlugins: ParticipantReferenceEntry[] = [
+    {
+      id: "codex-skills-docs",
+      label: isEnglish ? "OpenAI Codex skills" : "OpenAI Codex skills",
+      description:
+        isEnglish
+          ? "Official docs for repo-native skills."
+          : "Oficiální docs pro repo-native skills.",
+      href: "https://developers.openai.com/codex/skills",
+      external: true,
+    },
+    {
+      id: "codex-plugins-docs",
+      label: isEnglish ? "OpenAI Codex plugins" : "OpenAI Codex plugins",
+      description:
+        isEnglish
+          ? "When a plugin makes more sense than another skill file."
+          : "Kdy dává plugin větší smysl než další skill soubor.",
+      href: "https://developers.openai.com/codex/plugins",
+      external: true,
+    },
+    {
+      id: "codex-build-plugins-docs",
+      label: isEnglish ? "Build Codex plugins" : "Build Codex plugins",
+      description:
+        isEnglish
+          ? "Plugin packaging and marketplace model."
+          : "Balení pluginů a marketplace model.",
+      href: "https://developers.openai.com/codex/plugins/build",
+      external: true,
+    },
+    {
+      id: "mcp-intro",
+      label: isEnglish ? "Model Context Protocol" : "Model Context Protocol",
+      description:
+        isEnglish
+          ? "Getting started with MCP servers and tool wiring."
+          : "Rychlý vstup do MCP serverů a zapojení nástrojů.",
+      href: "https://modelcontextprotocol.io/docs/getting-started/intro",
+      external: true,
+    },
+    {
+      id: "agent-skills-catalog",
+      label: isEnglish ? "agentskills.io" : "agentskills.io",
+      description:
+        isEnglish
+          ? "External skill catalog for more workflow building blocks."
+          : "Externí katalog skills pro další workflow stavebnice.",
+      href: "https://agentskills.io/home",
+      external: true,
+    },
+  ];
+
+  const sharedArtifactsAndReads: ParticipantReferenceEntry[] = [
+    {
+      id: "agents-md",
+      label: isEnglish ? "agents.md" : "agents.md",
+      description:
+        isEnglish
+          ? "The emerging standard around AGENTS.md files."
+          : "Vznikající standard kolem souborů `AGENTS.md`.",
+      href: "https://agents.md/",
+      external: true,
+    },
+    {
+      id: "fowler-harness",
+      label: isEnglish ? "Martin Fowler on harness engineering" : "Martin Fowler o harness engineeringu",
+      description:
+        isEnglish
+          ? "Guides, sensors, feedforward, feedback."
+          : "Guides, sensors, feedforward a feedback.",
+      href: "https://martinfowler.com/articles/harness-engineering.html",
+      external: true,
+    },
+    {
+      id: "openai-harness",
+      label: isEnglish ? "OpenAI on harness engineering" : "OpenAI o harness engineeringu",
+      description:
+        isEnglish
+          ? "The observability-stack end state and the closing loop."
+          : "Ambiciózní end-state s observability stackem a uzavřenou smyčkou.",
+      href: "https://openai.com/index/harness-engineering/",
+      external: true,
+    },
+    {
+      id: "artifact-model-picker",
+      label: isEnglish ? "HTML: picking a GPT-5 model" : "HTML: výběr GPT-5 modelu",
+      description:
+        isEnglish
+          ? "Repo-hosted HTML reference for choosing a GPT-5 model during coding work."
+          : "Repo-hosted HTML přehled pro výběr GPT-5 modelu při práci s kódem.",
+      href: resolveRepoLinkedHref("materials/html/codex-model-guide.html"),
+      external: true,
+    },
+    {
+      id: "artifact-meta-analysis",
+      label: isEnglish ? "HTML: coding-agent working loop" : "HTML: pracovní loop s coding agenty",
+      description:
+        isEnglish
+          ? "Repo-hosted HTML artifact on how to keep the coding-agent loop healthy."
+          : "Repo-hosted HTML artefakt o tom, jak udržet zdravý loop s coding agenty.",
+      href: resolveRepoLinkedHref("materials/html/coding-agent-working-loop.html"),
+      external: true,
+    },
+    {
+      id: "artifact-identify-flow",
+      label: isEnglish ? "HTML: participant identify flow" : "HTML: participant identify flow",
+      description:
+        isEnglish
+          ? "Repo-hosted HTML preview of the participant sign-in and identify flow."
+          : "Repo-hosted HTML náhled participant sign-in a identify flow.",
+      href: resolveRepoLinkedHref("materials/html/participant-identify-flow-preview.html"),
+      external: true,
+    },
+  ];
+
+  return {
+    repoMaterials,
+    setupAndPlugins,
+    sharedArtifactsAndReads,
+  };
+}
+
 export function buildParticipantReferenceGroups(options: {
   lang: UiLanguage;
   setupPaths: SetupPath[];
 }) {
   const { lang, setupPaths } = options;
+  const catalog = buildParticipantResourceCatalog(lang);
 
   const defaults: ParticipantReferenceGroup = {
     id: "defaults",
-    title: lang === "en" ? "Curated defaults" : "Základní podklady",
+    title: lang === "en" ? "Workshop materials" : "Workshopové materiály",
     description:
       lang === "en"
-        ? "Start here when you need the workshop path, not more options."
-        : "Začněte tady, když potřebujete workshopovou cestu, ne další volby.",
+        ? "Start with the repo-native workshop materials before you browse outward."
+        : "Začněte u repo-native workshopových materiálů a až potom choďte dál.",
     items: [
+      ...catalog.repoMaterials,
       {
         id: "blueprint",
         label: lang === "en" ? "Workshop blueprint" : "Blueprint workshopu",
@@ -417,42 +598,35 @@ export function buildParticipantReferenceGroups(options: {
         href: getBlueprintRepoUrl() ?? buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
         external: true,
       },
-      {
-        id: "skill-reference",
-        label: lang === "en" ? "Workshop reference" : "Workshopové podklady",
-        description:
-          lang === "en"
-            ? "Repo-native prompts, commands, and support material for the day."
-            : "Prompty, příkazy a podpůrné materiály pro dnešní práci.",
-        href: buildRepoBlobUrl("workshop-skill/reference.md"),
-        external: true,
-      },
     ],
   };
 
   const accelerators: ParticipantReferenceGroup = {
     id: "accelerators",
-    title: lang === "en" ? "Optional accelerators" : "Když chcete zrychlit",
+    title: lang === "en" ? "Setup, skills, plugins" : "Setup, skills a pluginy",
     description:
       lang === "en"
-        ? "Useful when local setup is ready, but never required for workshop progress."
-        : "Hodí se, když už máte připravený lokální setup, ale nejsou nutné, abyste se ve workshopu posunuli dál.",
-    items: setupPaths.map((path) => ({
-      id: path.id,
-      label: path.label,
-      description: `${path.audience} · ${path.summary}`,
-      href: buildParticipantReferenceHref(path.id),
-      external: true,
-    })),
+        ? "Useful when you want to keep going after the workshop or tighten your local toolkit."
+        : "Hodí se ve chvíli, kdy chcete po workshopu pokračovat nebo si zpřesnit lokální toolkit.",
+    items: [
+      ...setupPaths.map((path) => ({
+        id: path.id,
+        label: path.label,
+        description: `${path.audience} · ${path.summary}`,
+        href: buildParticipantReferenceHref(path.id),
+        external: true,
+      })),
+      ...catalog.setupAndPlugins,
+    ],
   };
 
   const explore: ParticipantReferenceGroup = {
     id: "explore",
-    title: lang === "en" ? "Explore more" : "Do hloubky",
+    title: lang === "en" ? "Published HTML and external reads" : "Publikované HTML a externí čtení",
     description:
       lang === "en"
-        ? "Deeper repo-native references when the immediate workshop move is already clear."
-        : "Hlubší materiály ve chvíli, kdy už je jasné, co máte udělat právě teď.",
+        ? "Open these when the immediate room move is already clear and you want deeper context."
+        : "Otevírejte je ve chvíli, kdy už je jasné, co máte udělat teď, a chcete jít víc do hloubky.",
     items: [
       {
         id: "public-repo",
@@ -474,6 +648,7 @@ export function buildParticipantReferenceGroups(options: {
         href: buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
         external: true,
       },
+      ...catalog.sharedArtifactsAndReads,
     ],
   };
 
