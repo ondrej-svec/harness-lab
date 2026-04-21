@@ -542,9 +542,11 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=settings");
 
     // The settings page now renders two confirmation forms sharing the
-    // same placeholder (end-workshop + reset). Scope to the reset form
-    // by the unique hint text; its <details> summary opens the block.
-    const resetForm = page.locator("form").filter({ hasText: /Pro potvrzení napište id instance/ });
+    // same placeholder and the same hint phrase (end-workshop + reset).
+    // Scope to the reset form by its summary copy — "resetovat data"
+    // appears only in the reset <summary>, "uzavřít workshop" only in
+    // the end-workshop <summary>.
+    const resetForm = page.locator("form").filter({ hasText: /resetovat data/ });
     await resetForm.locator("summary").first().click();
 
     const confirmation = resetForm.getByPlaceholder("sample-studio-a");
