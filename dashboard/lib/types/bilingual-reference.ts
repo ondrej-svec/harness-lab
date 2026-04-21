@@ -58,12 +58,48 @@ export type HostedReferenceItemShape = ReferenceItemBase & {
   sourceUrl?: string;
 };
 
-export type ReferenceItemShape =
+/**
+ * A cohort-scoped artifact uploaded via `harness workshop artifact
+ * upload` and stored in Vercel Blob (private mode). Rendered at
+ * `/participant/artifact/<artifactId>` via the authenticated serve
+ * route; the participant UI opens it in a new tab and offers a
+ * download affordance.
+ *
+ * **OVERRIDE-ONLY.** This kind MUST NOT appear in
+ * `workshop-content/reference.json` — artifacts are inherently
+ * instance-specific, and permitting them in the compiled default
+ * would create dangling references on every other instance. The
+ * build-time validator in `scripts/content/generate-views.ts`
+ * rejects it; the runtime PATCH validator on the reference-override
+ * endpoint additionally requires the `artifactId` to exist in
+ * `workshop_artifacts` for the target instance.
+ */
+export type ArtifactReferenceItemShape = ReferenceItemBase & {
+  kind: "artifact";
+  /** FK to `workshop_artifacts.id` (scoped to the override's instance). */
+  artifactId: string;
+};
+
+/**
+ * The kinds allowed in the bilingual authoring source
+ * (`workshop-content/reference.json`). Excludes `artifact` by
+ * construction — artifacts are cohort-scoped and override-only.
+ */
+export type BilingualReferenceItemShape =
   | ExternalReferenceItemShape
   | RepoBlobReferenceItemShape
   | RepoTreeReferenceItemShape
   | RepoRootReferenceItemShape
   | HostedReferenceItemShape;
+
+/**
+ * Full union: bilingual kinds PLUS the override-only `artifact` kind.
+ * Used on the wire for per-instance `reference_groups` override
+ * payloads and for the generated view's render-time types.
+ */
+export type ReferenceItemShape =
+  | BilingualReferenceItemShape
+  | ArtifactReferenceItemShape;
 
 export type ReferenceItemKind = ReferenceItemShape["kind"];
 
@@ -85,7 +121,7 @@ export type BilingualReferenceGroupContent = {
 // Bilingual nodes — structural fields + per-language content
 // ---------------------------------------------------------------------------
 
-export type BilingualReferenceItem = ReferenceItemShape & {
+export type BilingualReferenceItem = BilingualReferenceItemShape & {
   en: BilingualReferenceItemContent;
   cs: BilingualReferenceItemContent;
   cs_reviewed: boolean;

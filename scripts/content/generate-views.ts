@@ -415,6 +415,17 @@ function validateReference(source: BilingualReferenceSource): ValidationError[] 
             }
           }
           break;
+        case "artifact":
+          // `artifact` kind is override-only. Cohort-scoped artifacts
+          // live in `workshop_artifacts` and are referenced only via a
+          // per-instance `reference_groups` override — never via the
+          // bilingual source. See types/bilingual-reference.ts.
+          errors.push({
+            path: `${path}.kind`,
+            message:
+              "`artifact` kind is override-only and cannot appear in the bilingual source; attach uploaded artifacts via `harness workshop artifact attach` instead",
+          });
+          break;
         default:
           errors.push({
             path: `${path}.kind`,
