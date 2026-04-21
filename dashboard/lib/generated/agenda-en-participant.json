@@ -16,13 +16,13 @@
       "startTime": "09:10",
       "kind": "shared",
       "intent": "framing",
-      "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
+      "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand on its own when a fresh reader picks it up.",
       "roomSummary": "The room should feel immediately that this is not a prompting hackathon. It is a day of steering agents, building with them in a real repo, and later testing what holds up without us.",
       "facilitatorPrompts": [
         "We are not starting with a tool demo or a prompting contest. We are starting a day of steering work with coding agents so something durable stays behind.",
         "You will learn, build, reshuffle, and continue from a fresh read. That day arc is the point, not workshop logistics.",
         "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and a fresh reader can continue safely.",
-        "Whatever stays only in table talk will not survive the afternoon."
+        "Whatever stays only in table talk will not carry into the afternoon."
       ],
       "watchFors": [
         "The opening slips into rules before it offers ambition and a reason to care.",
@@ -61,7 +61,7 @@
         ],
         "fallback": [
           "If time slips, keep the framing, the analogy, and the first contract. Shorten the activation to a quick show of hands.",
-          "If energy drops, return to the line that the afternoon will test what remains without rescue."
+          "If energy drops, return to the line that the afternoon will test what the work can carry forward without authors in the room."
         ]
       },
       "defaultSceneId": "opening-framing",
@@ -91,14 +91,14 @@
               "type": "hero",
               "eyebrow": "Harness Lab",
               "title": "Today you learn to shape the work so anyone — or any agent — can carry it",
-              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, watched fresh collaborators step into it, and seen how it holds up. The next day you open a coding agent, you'll know what to do differently."
+              "body": "That's the craft underneath all the agent hype. Not better prompts. Not faster typing. A repo, a workflow, a context that carries the next move without you standing over it. By tonight you'll have built one with your hands, watched fresh readers step into it, and seen how it holds up. The next day you open a coding agent, you'll know what to do differently."
             },
             {
               "id": "opening-main-line",
               "type": "callout",
               "tone": "info",
               "title": "The main line for today",
-              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is a teammate who joined today or a fresh agent you open the next day."
+              "body": "We are not learning to prompt better. We are learning to build a working system that carries the next move — whether the next reader is another participant who joined today or a fresh agent you open the next day."
             },
             {
               "id": "opening-what-should-change",
@@ -131,38 +131,30 @@
             {
               "id": "opening-day-arc-hero",
               "type": "hero",
-              "eyebrow": "Today's agenda",
-              "title": "Today at a glance.",
-              "body": "Here is the day in one view: we start together, get the work moving before lunch, continue in the afternoon, and end by naming what carried the work."
+              "eyebrow": "The arc",
+              "title": "Learn, build, reshuffle, continue",
+              "body": "Four beats shape the whole day. Talk sets the spine. Demo shows the first ten minutes of harness engineering with a coding agent. Build puts it in your hands. In the afternoon the work gets picked up by another participant or a fresh agent who wasn't there when it started — the test of what you built."
             },
             {
               "id": "opening-day-arc-steps",
               "type": "steps",
+              "title": "The day arc",
               "items": [
                 {
-                  "id": "arc-learn",
-                  "title": "09:10 · Opening, talk, and demo",
-                  "body": "We set the frame, name the craft, and show the workflow you will use."
+                  "title": "Talk · 10:00",
+                  "body": "Tight framing: what harness engineering is and why it matters now."
                 },
                 {
-                  "id": "arc-build",
-                  "title": "10:30 · Build 1",
-                  "body": "Your team picks a brief and ships a first working version before lunch."
+                  "title": "Build 1 · 10:45",
+                  "body": "Pick a brief and ship a first working version before lunch."
                 },
                 {
-                  "id": "arc-handoff",
-                  "title": "12:15 · Lunch reset",
-                  "body": "Before you go, leave the repo readable enough for a fresh reader to continue."
+                  "title": "Reshuffle · 13:30",
+                  "body": "Work gets handed to a fresh reader. Your repo is read and continued without you explaining it."
                 },
                 {
-                  "id": "arc-continue",
-                  "title": "13:30 · Rotation and Build 2",
-                  "body": "After lunch you reset, name the current state, and continue with the next block of work."
-                },
-                {
-                  "id": "arc-reveal",
-                  "title": "15:45 · Reveal",
-                  "body": "We compare what helped fresh readers continue and what still needs a stronger harness."
+                  "title": "Continue · 14:15",
+                  "body": "The second push extends the work under fresh eyes. The reveal is what holds up."
                 }
               ]
             }
@@ -170,16 +162,16 @@
         },
         {
           "id": "opening-team-formation-room",
-          "label": "Team formation (room)",
+          "label": "Find your seat (room)",
           "sceneType": "briefing",
           "intent": "activation",
           "chromePreset": "minimal",
-          "title": "Form the line. Count off. Sit with your team.",
-          "body": "Wall scene that holds for the full nine minutes of team formation.",
+          "title": "Line up by experience. Find a seat. Introduce yourself.",
+          "body": "Wall scene that holds for the full nine minutes of orientation.",
           "facilitatorNotes": [
-            "Hold this on the wall for the full nine minutes of team formation.",
-            "The wall holds the shared steps for the room; facilitate the sequence live from the front.",
-            "Advance only once every team is seated together."
+            "Hold this on the wall for the full nine minutes of orientation.",
+            "After the count-off, let participants find a seat and introduce themselves briefly to the person next to them.",
+            "Advance only once everyone is seated."
           ],
           "sourceRefs": [
             {
@@ -191,17 +183,19 @@
             {
               "id": "opening-team-room-hero",
               "type": "hero",
-              "eyebrow": "Team formation · 9 min",
-              "title": "Form the line. Count off. Sit with your team.",
-              "body": "Everyone stands. Line up by experience along the wall. Count off into mixed teams. Sit down together and do quick introductions."
+              "eyebrow": "Orientation · 9 min",
+              "title": "Line up by experience. Find a seat. Introduce yourself.",
+              "body": "Everyone stands. Line up by experience along the wall. Count off and find a seat. Sit down and do quick introductions with the person next to you."
             },
             {
               "id": "opening-team-room-steps",
               "type": "bullet-list",
+              "title": "How the next nine minutes go",
               "items": [
-                "1 · Line up by experience (3 min)",
-                "2 · Count off into teams (1 min)",
-                "3 · Sit down and do quick introductions (5 min)"
+                "1 · Line up by experience (2 min)",
+                "2 · Count off and find a seat (1 min)",
+                "3 · Short introductions at your table (5 min)",
+                "4 · Look up when the room is ready (1 min)"
               ]
             }
           ]
@@ -212,11 +206,11 @@
           "sceneType": "transition",
           "intent": "transition",
           "chromePreset": "minimal",
-          "title": "Teams are set. Look up.",
+          "title": "Seats are set. Look up.",
           "body": "Brief transition beat. Facilitator moves the room into the talk.",
           "facilitatorNotes": [
-            "30-second beat. Room reset, then straight into the talk.",
-            "May be collapsed into a verbal transition if the team formation runs long."
+            "Short bridge between orientation and the talk.",
+            "May be collapsed into a verbal transition if orientation runs long."
           ],
           "sourceRefs": [
             {
@@ -228,9 +222,9 @@
             {
               "id": "opening-handoff-hero",
               "type": "hero",
-              "eyebrow": "Now",
-              "title": "Teams are set. Look up.",
-              "body": "Next: the talk. We start by naming the craft underneath all the agent hype."
+              "eyebrow": "Transition",
+              "title": "Seats are set. Look up.",
+              "body": "Everyone is seated. The room is moving into the talk."
             }
           ]
         }
@@ -259,15 +253,15 @@
         {
           "id": "opening-look-up",
           "label": "Look up",
-          "title": "Teams are set. Look up.",
+          "title": "Seats are set. Look up.",
           "body": "The room is moving into the talk. Pause the table setup and switch your attention back to the front.",
           "blocks": [
             {
               "id": "opening-look-up-hero",
               "type": "hero",
               "eyebrow": "Transition",
-              "title": "Teams are set. Look up.",
-              "body": "Teams are set. The room is moving into the talk."
+              "title": "Seats are set. Look up.",
+              "body": "Everyone is seated. The room is moving into the talk."
             }
           ],
           "feedbackEnabled": true,
@@ -284,18 +278,18 @@
       "startTime": "09:40",
       "kind": "shared",
       "intent": "teaching",
-      "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
+      "goal": "Turn the opening energy into a precise thesis: harness engineering is the infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
       "roomSummary": "By the end of the talk, the room should see AGENTS.md, skills, runbooks, and explicit verification as working infrastructure rather than optional polish, and Build Phase 1 should feel like the obvious next move.",
       "facilitatorPrompts": [
-        "We are not learning to prompt better. We are learning to build a repo and workflow where an agent and a fresh reader can continue safely.",
-        "If it is not in the repo, it does not exist.",
-        "When the agent does more, you need to verify better.",
-        "After this talk, teams should return to the repo with a concrete operating system, not with a search for a smarter prompt."
+        "We are not learning to prompt better. We are learning to build a repo and workflow where the agent and a fresh reader can continue safely.",
+        "Everyone tried prompting. The question is whether the next reader can continue without you.",
+        "Harness engineering is what holds up when the room is gone.",
+        "After this talk, the room should return to the repo with a concrete operating system, not with a search for a smarter prompt."
       ],
       "watchFors": [
-        "The talk turns into a tool feature tour.",
-        "Teams hear prompting tips instead of workflow discipline.",
-        "There is no clean bridge into the first build phase."
+        "The thesis gets lost in long examples.",
+        "The room hears prompting tips instead of workflow discipline.",
+        "The facilitator rushes the bridge into build and the precision is lost."
       ],
       "checkpointQuestions": [
         "What will you move from your head or from chat into the repo today?",
@@ -309,29 +303,26 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Make harness engineering precise, memorable, and immediately actionable so the room returns to the repo with a concrete first working contract.",
+        "goal": "Land a precise thesis the room can build against.",
         "say": [
-          "Open with the repo-readiness contrast: same prompt, two repos. Let the room see the difference before you name it.",
-          "After the contrast, ask the room: 'What changed?' Let two voices answer.",
-          "Name what you saw: the agent in the bare repo made plausible but wrong decisions because it had no constraints. This is task drift.",
-          "Context is leverage, not cosmetics. The repo did the work, not the prompt."
+          "Harness engineering is the infrastructure around every coding-agent session.",
+          "You need context, boundaries, and checks that hold up as the model changes."
         ],
         "show": [
-          "Show the repo-readiness contrast first, then the thesis scene, then the bridge into build.",
-          "Use the participant surface only as proof that the room, dashboard, and repo still describe the same moment."
+          "Walk the four pillars: goal, context, constraints, done-when.",
+          "Use the lead analogy sparingly — it is a bridge, not the thesis."
         ],
         "do": [
-          "Run the contrast: show the bare repo variant first, then the harnessed variant with the same prompt.",
-          "After the contrast lands, transition to the thesis scene. Say the thesis once clearly.",
-          "Send the room into Build Phase 1 with one expectation: map and verification first, feature motion second."
+          "Keep the talk tight. Every minute should change the room's mental model.",
+          "End with a clear hand-off into the demo."
         ],
         "watch": [
-          "The talk must not collapse into prompt tips or tool theatrics.",
-          "By the end, the room should know what to do in the repo in the next few minutes."
+          "The talk should not drift into generic agent hype.",
+          "Watch for the room shifting into prompting examples."
         ],
         "fallback": [
-          "If live demo drags, use pre-prepared screenshots. The contrast matters more than live generation.",
-          "If attention drops, keep the core line, the team-lead analogy, and one concrete build expectation."
+          "If time slips, keep the thesis, the four pillars, and the bridge.",
+          "If attention drops, keep the core line and one concrete build expectation."
         ]
       },
       "defaultSceneId": "talk-argued-about-prompts",
@@ -385,16 +376,16 @@
             {
               "id": "talk-why-now-hero",
               "type": "hero",
-              "eyebrow": "The weather changed",
-              "title": "Why this matters now",
-              "body": "Nobody actually knows what the end of 2026 looks like. The models will move. The repo contract around the agent is what outlasts the movement."
+              "eyebrow": "Why now",
+              "title": "The work has to hold up to the next model",
+              "body": "You do not need to know which model wins next. You need context, boundaries, and checks that hold up as the next model arrives."
             },
             {
               "id": "talk-why-now-callout",
               "type": "callout",
               "tone": "info",
-              "title": "The hedge is not prediction.",
-              "body": "You do not need to know which model wins next. You need context, boundaries, and checks that survive the next model."
+              "title": "What stays, what changes",
+              "body": "The model changes. The harness holds. That's the bet this day is built on."
             }
           ]
         },
@@ -473,22 +464,22 @@
             {
               "id": "talk-managing-hero",
               "type": "hero",
-              "eyebrow": "The role shift",
-              "title": "Managing agents changes your role",
-              "body": "You stop feeding the agent line by line and become the person who builds the room it can work inside."
+              "eyebrow": "Managing agents",
+              "title": "You're not writing code alongside the agent. You're shaping the system it runs in.",
+              "body": "The craft shifts. You build the context, the boundaries, the checks. The agent moves inside them."
             },
             {
               "id": "talk-managing-quote",
               "type": "quote",
-              "attribution": "Charlie Guo, OpenAI",
-              "quote": "I'm moving away from chatting with AIs and moving towards managing them."
+              "quote": "A good lead builds the system the work runs in.",
+              "attribution": "The talk's core analogy"
             },
             {
               "id": "talk-managing-callout",
               "type": "callout",
               "tone": "info",
-              "title": "A team lead builds the system the team runs in.",
-              "body": "Rules, rituals, feedback loops, next moves. That is the job today too."
+              "title": "A lead builds the system the work runs in.",
+              "body": "Same frame for agents. Your job is the harness around them."
             }
           ]
         },
@@ -545,14 +536,14 @@
           "id": "talk-note-one-gap",
           "label": "Name one gap",
           "title": "Find the weakest signal in your repo",
-          "body": "Pick the one gap your team already suspects. Don't solve it yet. Name it cleanly so Build 1 starts from something real.",
+          "body": "Pick the one gap you already suspect. Don't solve it yet. Name it cleanly so Build 1 starts from something real.",
           "blocks": [
             {
               "id": "talk-gap-hero",
               "type": "hero",
-              "eyebrow": "Before Build 1",
-              "title": "Find the weakest signal in your repo",
-              "body": "Pick the one gap your team already suspects. Name it cleanly before Build 1 starts."
+              "eyebrow": "Note one gap",
+              "title": "The gap you already suspect",
+              "body": "Pick the one gap you already suspect. Name it cleanly before Build 1 starts."
             }
           ],
           "feedbackEnabled": true,
@@ -650,41 +641,20 @@
           ],
           "blocks": [
             {
-              "id": "demo-same-prompt-hero",
+              "id": "demo-watch-hero",
               "type": "hero",
-              "eyebrow": "Let me show you",
-              "title": "Same prompt. Two repos. Watch what happens.",
-              "body": "I'm going to run the same simple prompt in two repos — one bare, one with a harness. Same words. Same model. Watch what changes."
+              "eyebrow": "Two folders",
+              "title": "Same brief, two folders, very different continuations",
+              "body": "Folder A runs against the prompt alone. Folder B runs against the same brief plus AGENTS.md, a short plan, and the prepared workshop support path."
             },
             {
-              "id": "demo-two-folders",
-              "type": "steps",
+              "id": "demo-watch-steps",
+              "type": "bullet-list",
+              "title": "What each folder has",
               "items": [
-                {
-                  "id": "folder-a",
-                  "title": "Folder A — the bare repo.",
-                  "body": "Project brief, nothing else. No AGENTS.md. No constraints. No plan. Most repos look exactly like this when you open them."
-                },
-                {
-                  "id": "folder-b",
-                  "title": "Folder B — the same repo, with a harness.",
-                  "body": "Same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus a workshop support path ready if the team wants it."
-                }
+                "Folder A: prompt only. No repo context, no plan.",
+                "Folder B: same brief. Plus AGENTS.md (Goal, Context, Constraints, Done When). Plus a short plan. Plus a workshop support path ready when you want it."
               ]
-            },
-            {
-              "id": "demo-task-drift-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "That was task drift.",
-              "body": "The agent started without constraints and made plausible but wrong decisions. Without a harness, it filled in the blanks with its own assumptions. This is what happens in every repo without AGENTS.md. It has a name: task drift. Once you can name it, you can build for it."
-            },
-            {
-              "id": "demo-key-line-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "The prompt didn't change. The repo did.",
-              "body": "Same words, same model, different harness, different outcome. That's the whole day in thirty seconds."
             }
           ]
         },
@@ -709,42 +679,27 @@
             {
               "id": "demo-hold-hero",
               "type": "hero",
-              "eyebrow": "The full flow",
-              "title": "Now watch it hold together",
-              "body": "Four beats. Each one feeds the next. This is the workflow you'll run in your own Folder B in twenty minutes."
+              "eyebrow": "What holds it together",
+              "title": "Four artifacts keep the harness upright",
+              "body": "They sit in the repo, not in anyone's head. Any fresh reader — human or agent — can pick the work up from them."
             },
             {
               "id": "demo-working-flow",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "The four artifacts",
               "items": [
-                {
-                  "id": "flow-agents",
-                  "title": "AGENTS.md — the map.",
-                  "body": "Goal, Context, Constraints, Done When. Four headings. The agent reads this first, every session. This is the team's memory."
-                },
-                {
-                  "id": "flow-plan",
-                  "title": "/plan — the next safe step.",
-                  "body": "The agent breaks the work into bounded steps. You see the plan before anything is written."
-                },
-                {
-                  "id": "flow-slice",
-                  "title": "Small slice.",
-                  "body": "The agent implements one bounded piece. Not the whole feature. Small enough to verify."
-                },
-                {
-                  "id": "flow-review",
-                  "title": "/review — change control inside the flow.",
-                  "body": "Review is not a panic brake at the end. It's how the agent and the team agree on what just shipped."
-                }
+                "Goal, Context, Constraints, Done When. Four headings. The agent reads this first, every session. This is the shared working memory.",
+                "A short plan, updated as the work moves. Not a novel — just enough for continuation.",
+                "A tight working flow: write, commit, review, repeat. Small steps, clear checks.",
+                "Review is not a panic brake at the end. It's how the agent and the next reader agree on what just shipped."
               ]
             },
             {
               "id": "demo-review-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Review is not an emergency brake.",
-              "body": "It's part of the workflow. Every beat feeds the next. When something goes wrong — and things go wrong — you catch it one beat away, not ten."
+              "title": "The review is part of the harness",
+              "body": "Not a separate step after everything is done. It's how the work stays legible as it moves."
             }
           ]
         },
@@ -755,7 +710,7 @@
           "intent": "demonstration",
           "chromePreset": "minimal",
           "title": "Your toolkit, same discipline",
-          "body": "You've been watching me work in Folder B. In a moment, you'll be working in your own repo. Teams will reshuffle during the day, but your in-progress work stays with you. The foundation for today is the browser participant surface. The workshop skill is an optional faster path on your own machine when your setup is ready. Let me show you that path on my machine so you see what it adds.",
+          "body": "You've been watching me work in Folder B. In a moment, you'll be working in your own repo. People will reshuffle during the day, but your in-progress work stays with you. The foundation for today is the browser participant surface. The workshop skill is an optional faster path on your own machine when your setup is ready. Let me show you that path on my machine so you see what it adds.",
           "facilitatorNotes": [
             "Live install on stage. Pre-recorded 30-second fallback video cued and ready to play in under 10 seconds if anything breaks.",
             "Test the install fresh on the facilitator's machine the morning of."
@@ -816,7 +771,7 @@
           "intent": "transition",
           "chromePreset": "participant",
           "title": "Your first ten minutes",
-          "body": "In ten minutes I want every team at the point where the agent is actually helping you draft your plan. Here's how you get there — four moves. Don't skip any of them.",
+          "body": "In ten minutes I want everyone at the point where the agent is actually helping you draft your plan. Here's how you get there — four moves. Don't skip any of them.",
           "facilitatorNotes": [
             "Facilitator transition to Build 1: \"Clock starts now. Build Phase 1 is open.\""
           ],
@@ -830,42 +785,34 @@
             {
               "id": "demo-first-ten-hero",
               "type": "hero",
-              "eyebrow": "Build Phase 1 starts now",
-              "title": "Your first ten minutes",
-              "body": "Four moves. Don't skip any of them. In ten minutes the agent should be helping you draft the plan."
+              "eyebrow": "First ten minutes",
+              "title": "Get the agent to help you draft the plan",
+              "body": "In ten minutes I want everyone at the point where the agent is actually helping draft the plan. Four moves. Don't skip any."
             },
             {
               "id": "demo-first-ten-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "Four moves",
               "items": [
-                {
-                  "id": "first-ten-repo",
-                  "title": "Open the repo you'll actually work in.",
-                  "body": "If you already have one, stay in it. If you need a start, create it from the template. Open it so the person next to you can work there with you right away."
-                },
-                {
-                  "id": "first-ten-install",
-                  "title": "Use the faster path if your setup is ready.",
-                  "body": "Install the workshop skill only if that is the fastest move for your team. If it breaks, keep moving from the participant surface and raise a hand."
-                },
-                {
-                  "id": "first-ten-brief",
-                  "title": "Agree on what you're building.",
-                  "body": "Use the participant surface to open the prepared briefs, or propose your own. If your setup is ready, the skill is the faster path. Five minutes to decide, not fifty."
-                },
-                {
-                  "id": "first-ten-agents-md",
-                  "title": "Start your AGENTS.md with the agent.",
-                  "body": "Open a session and draft three things together: what done looks like, what's not in scope, what you'll verify first. The agent is your first collaborator. Let it ask you questions."
-                }
+                "1 · Open the participant surface in your browser.",
+                "Install the workshop skill only if that is the fastest move for you. If it breaks, keep moving from the participant surface and raise a hand.",
+                "2 · Pick a brief and open the repo. Don't start writing code yet.",
+                "3 · Ask the agent to draft AGENTS.md and a short plan. Review both before you accept them."
               ]
+            },
+            {
+              "id": "demo-align-callout",
+              "type": "callout",
+              "tone": "info",
+              "title": "Agree first, then ask the agent.",
+              "body": "You have to know what you want before you can ask the agent for it. Five minutes of alignment saves an hour of drift."
             },
             {
               "id": "demo-starting-move-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Align with your team, then align with the agent.",
-              "body": "Your team has to know what it wants before you can ask the agent for it. Five minutes of team alignment saves an hour of drift."
+              "title": "The starting move matters",
+              "body": "Don't skip AGENTS.md. It's the first thing the agent reads and the first thing a fresh reader opens."
             }
           ]
         }
@@ -893,15 +840,15 @@
         {
           "id": "demo-name-your-first-artifact",
           "label": "Name your first artifact",
-          "title": "Decide what your team will create first",
-          "body": "You are about to copy this flow. Choose the first repo artifact your team must create before implementation expands.",
+          "title": "Decide what you will create first",
+          "body": "You are about to copy this flow. Choose the first repo artifact you must create before implementation expands.",
           "blocks": [
             {
-              "id": "demo-first-artifact-hero",
+              "id": "demo-open-build-hero",
               "type": "hero",
-              "eyebrow": "Build setup",
-              "title": "Decide what your team will create first",
-              "body": "AGENTS.md, a plan, a tracer, or another explicit contract. Name it before Build 1 starts."
+              "eyebrow": "Open the brief",
+              "title": "Decide what you will create first",
+              "body": "Pick the first artifact. AGENTS.md, a plan, or the first failing test — one of them, cleanly named, before any code moves."
             }
           ],
           "feedbackEnabled": true,
@@ -912,15 +859,15 @@
         {
           "id": "demo-open-build-brief",
           "label": "Open the working materials",
-          "title": "Open the brief, repo, and fallback path now",
-          "body": "Build 1 starts next. Open the brief, open the repo, and keep the browser fallback visible if local setup is not ready.",
+          "title": "Decide what you will create first",
+          "body": "You are about to copy this flow. Choose the first repo artifact you must create before implementation expands.",
           "blocks": [
             {
               "id": "demo-open-build-hero",
               "type": "hero",
-              "eyebrow": "Next move",
-              "title": "Open the brief, repo, and fallback path now",
-              "body": "Use the participant surface as the stable path. Use the skill only if it is genuinely faster for your table."
+              "eyebrow": "Open the brief",
+              "title": "Decide what you will create first",
+              "body": "Pick the first artifact. AGENTS.md, a plan, or the first failing test — one of them, cleanly named, before any code moves."
             }
           ],
           "feedbackEnabled": true,
@@ -938,17 +885,15 @@
       "startTime": "11:35",
       "kind": "shared",
       "intent": "checkpoint",
-      "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself.",
-      "roomSummary": "Each team gives one tight signal. The facilitator then connects repo evidence, room observations, and one principle point grounded in what is actually happening.",
+      "goal": "Make learning visible across the room and remind participants that workflow matters as much as the artifact itself.",
+      "roomSummary": "A short stop between the first push and lunch. Participants write a brief check-in, compare, and the facilitator ties one principle back to what actually happened in the room.",
       "facilitatorPrompts": [
-        "What did you change and why?",
-        "What did you move from chat or from your head into the repo?",
-        "What are you verifying today with an executable check?"
+        "Everyone is writing a check-in. Two or three sentences each.",
+        "We're looking for what's actually true right now — not a summary for show."
       ],
       "watchFors": [
-        "The intermezzo slips into reporting without a principle point.",
-        "Only the loudest team speaks while the others stay passive.",
-        "The facilitator summarizes impressions instead of evidence."
+        "Only the loudest voice speaks and everyone else goes quiet.",
+        "Check-ins drift into polished summaries instead of honest notes."
       ],
       "checkpointQuestions": [
         "What did you move from your head or chat into the repo?",
@@ -962,23 +907,27 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself.",
+        "goal": "Make the first round of learning visible across the room and reconnect participants to the discipline behind the output, not only to the output itself.",
         "say": [
-          "What did you change and why?",
-          "What did you move from chat or from your head into the repo?",
-          "What are you verifying today with an executable check?"
+          "Two or three sentences each. What's actually true right now?",
+          "We're not grading the morning. We're catching what the room already knows."
         ],
-        "show": [],
+        "show": [
+          "Read the check-ins aloud, one after another.",
+          "Pull one principle that cuts across the room's notes."
+        ],
         "do": [
-          "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes team discussion, then room sharing."
+          "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes pair discussion, then room sharing.",
+          "Move briskly into the recap; don't let the writing phase stretch."
         ],
         "watch": [
-          "The intermezzo slips into reporting without a principle point.",
-          "Only the loudest team speaks while the others stay passive.",
-          "The facilitator summarizes impressions instead of evidence.",
-          "If someone starts talking during the silent phase, redirect. The retrieval benefit requires individual production before social sharing."
+          "The room defaults to polished summaries.",
+          "Only the loudest voice speaks while everyone else stays passive."
         ],
-        "fallback": []
+        "fallback": [
+          "If time slips, skip the pair discussion and go straight to the recap.",
+          "If energy drops, read a handful of check-ins out loud to reanimate the room."
+        ]
       },
       "defaultSceneId": "intermezzo-1-write",
       "scenes": [
@@ -1018,14 +967,15 @@
         },
         {
           "id": "intermezzo-1-check-in",
-          "label": "Your team's check-in",
+          "label": "Your check-in",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "participant",
-          "title": "Your team's check-in",
-          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in into the team card on the participant surface. Short, honest — two or three sentences is fine. It becomes part of your team's record.",
+          "title": "Your check-in",
+          "body": "Five minutes at your table. Compare what you wrote. Then write your check-in into the participant surface. Short, honest — two or three sentences is fine. It becomes part of your record.",
           "facilitatorNotes": [
-            "Team card append-only check-in log is load-bearing here. The entry persists across the day."
+            "Append-only check-in log carries the day — the record holds up across the full day.",
+            "Encourage short, honest entries over polished summaries."
           ],
           "sourceRefs": [
             {
@@ -1037,37 +987,19 @@
             {
               "id": "intermezzo-1-checkin-hero",
               "type": "hero",
-              "eyebrow": "Intermezzo 1",
-              "title": "Your team's check-in",
-              "body": "Compare what you wrote. One person types the team's check-in into the team card. Short, honest — two or three sentences."
+              "eyebrow": "Check-in",
+              "title": "Your check-in",
+              "body": "Compare what you wrote. Then write your check-in. Two or three sentences."
             },
             {
               "id": "intermezzo-1-checkin-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "How to write it",
               "items": [
-                {
-                  "id": "checkin-share",
-                  "title": "Share what you wrote (3 min).",
-                  "body": "Go around the table. Read what you wrote out loud to each other. No debate, just listen."
-                },
-                {
-                  "id": "checkin-agree",
-                  "title": "Agree on the check-in (1 min).",
-                  "body": "What's actually true about your team right now? What's surprising? What do you want to try differently?"
-                },
-                {
-                  "id": "checkin-write",
-                  "title": "One person writes it (1 min).",
-                  "body": "On the participant surface, in the team check-in field. It saves automatically and becomes part of your team's record."
-                }
+                "1 · Compare what you wrote with the person next to you (2 min).",
+                "2 · What's actually true about your work right now? What's surprising? What do you want to try differently?",
+                "3 · Write your check-in on the participant surface, in the check-in field. It saves automatically and becomes part of your record."
               ]
-            },
-            {
-              "id": "intermezzo-1-record-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "If it's not recorded, it didn't happen.",
-              "body": "Same rule as the repo. A check-in spoken at the table and lost is not a check-in. Type it. Two sentences is enough. It will be here for your future self and for whoever reads this project next."
             }
           ]
         },
@@ -1078,10 +1010,10 @@
           "intent": "reflection",
           "chromePreset": "team-trail",
           "title": "The thread",
-          "body": "Your check-ins are on screen. I'm going to read them out loud, one team at a time. Then I'll pull the thread that connects them — one principle point for the morning.",
+          "body": "Your check-ins are on screen. I'm going to read them out loud, one after another. Then I'll pull the thread that connects them — one principle point for the morning.",
           "facilitatorNotes": [
-            "The principle point is ad hoc, read from the room. Don't pre-can it.",
-            "Uses the team-trail chrome preset to render all team check-in trails."
+            "Keep the reading brisk. One check-in at a time, no debate.",
+            "Uses the participant-trail chrome preset to render all check-in trails."
           ],
           "sourceRefs": [
             {
@@ -1093,37 +1025,26 @@
             {
               "id": "intermezzo-1-thread-hero",
               "type": "hero",
-              "eyebrow": "Intermezzo 1",
-              "title": "The thread",
-              "body": "Your check-ins are on screen. I read them out loud, one team at a time. Then I pull the thread that connects them — one principle point for the morning."
+              "eyebrow": "Thread",
+              "title": "One principle for the morning",
+              "body": "Your check-ins are on screen. I read them out loud, one after another. Then I pull the thread that connects them — one principle point for the morning."
             },
             {
               "id": "intermezzo-1-thread-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "How the recap goes",
               "items": [
-                {
-                  "id": "thread-read",
-                  "title": "Read the check-ins on screen.",
-                  "body": "Facilitator scrolls through each team's recorded check-in and reads it aloud. No debate, just listening."
-                },
-                {
-                  "id": "thread-pull",
-                  "title": "The thread.",
-                  "body": "Facilitator names the one thing that connects the check-ins — a pattern, a tension, a shared gap, a common win. Grounded in what is literally on screen, not in impressions."
-                },
-                {
-                  "id": "thread-carry",
-                  "title": "One thing to carry.",
-                  "body": "What each person takes into the afternoon. Verbal, or written back into the team card — facilitator's call."
-                }
+                "Facilitator scrolls through each recorded check-in and reads it aloud. No debate, just listening.",
+                "One thread: the shared principle across the room's notes.",
+                "What each person takes into the afternoon. Verbal, or written back into the check-in — facilitator's call."
               ]
             },
             {
               "id": "intermezzo-1-evidence-callout",
               "type": "callout",
               "tone": "info",
-              "title": "The principle comes from the screen, not from vibes.",
-              "body": "Every team's check-in is on screen. The thread is whatever is actually there, not what the facilitator hopes is there."
+              "title": "The thread is what's actually there",
+              "body": "Every check-in is on screen. The thread is whatever is actually there, not what the facilitator hopes is there."
             }
           ]
         }
@@ -1137,17 +1058,16 @@
       "startTime": "12:15",
       "kind": "shared",
       "intent": "transition",
-      "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo a fresh reader can actually enter.",
-      "roomSummary": "Before lunch, teams need to clean up context, record the next safe move, and leave the repo in a state that does not rely on their memory. Lunch is not a pause in the fresh-reader constraint.",
+      "goal": "Interrupt the momentum before the afternoon shift and force participants to leave behind a repo a fresh reader can actually enter.",
+      "roomSummary": "Before lunch, participants need to clean up context, record the next safe move, and leave the repo in a state that does not rely on their memory. Lunch is not a pause in the fresh-reader constraint.",
       "facilitatorPrompts": [
         "Fresh readers are not the end of the day. They are a design constraint throughout the day.",
         "Write down what a fresh reader should open first.",
         "If the same rule was said aloud twice, it belongs in the repo."
       ],
       "watchFors": [
-        "Teams leave for lunch without a clear next step and without cleaned-up context.",
-        "A key decision is still only in people’s heads.",
-        "The repo does not explain the midday state."
+        "Participants leave for lunch without a clear next step and without cleaned-up context.",
+        "The repo ends up in a state only the author can enter after the break."
       ],
       "checkpointQuestions": [
         "What should a fresh reader open first?",
@@ -1165,23 +1085,24 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo a fresh reader can actually enter.",
+        "goal": "Stop the flow before the afternoon shift and prepare the room to leave repos readable without them.",
         "say": [
-          "Fresh readers are not the end of the day. They are a design constraint throughout the day.",
-          "Write down what a fresh reader should read first.",
-          "If the same rule was said aloud twice, it belongs in the repo."
+          "Clean the context. Write the next safe move. Then go to lunch.",
+          "A repo a fresh reader can enter is the bar we're holding."
         ],
-        "show": [],
+        "show": [
+          "The fresh-reader constraint. It applies across lunch."
+        ],
         "do": [
-          "During lunch, quietly check each team repo. If a repo is genuinely unusable (no AGENTS.md at all, no code, broken setup), help the team write the minimum. Frame it as normal coaching, not a gate."
+          "During lunch, quietly check each repo. If a repo is genuinely unusable (no AGENTS.md, no code, broken setup), help the author write the minimum. Frame it as normal coaching, not a gate."
         ],
         "watch": [
-          "Teams leave for lunch without a clear next step and without cleaned-up context.",
-          "A key decision is still only in people’s heads.",
-          "The repo does not explain the midday state.",
-          "The gate is silent — participants should not know there is a check. Only intervene on genuinely broken repos, not weak ones."
+          "People drift into lunch without cleaning up.",
+          "Context stays in heads, not in the repo."
         ],
-        "fallback": []
+        "fallback": [
+          "If time slips, the minimum is an updated plan and a cleaned-up AGENTS.md."
+        ]
       },
       "defaultSceneId": "lunch-back-at",
       "scenes": [
@@ -1252,23 +1173,25 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
+        "goal": "Make the second-push prep visible and send people back with one concrete move.",
         "say": [
-          "What helped you continue after rotation?",
-          "What was missing or slowing you down?",
-          "Which repo signal saved you the most time?"
+          "Two or three sentences each. What do you want to try in the second push?",
+          "We're not rewriting the morning. We're catching what you want to change before you go back in."
         ],
-        "show": [],
+        "show": [
+          "Read the check-ins aloud, one after another.",
+          "Pull the shared pattern across what the room wrote."
+        ],
         "do": [
-          "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes team discussion, then room sharing."
+          "Start with the silent retrieval scene. 3 minutes individual writing, then 2 minutes pair discussion, then room sharing."
         ],
         "watch": [
-          "The intermezzo stays general and without concrete examples.",
-          "You collect opinions, not signals from the repo.",
-          "No link appears to the closing reflection.",
-          "If someone starts talking during the silent phase, redirect. The retrieval benefit requires individual production before social sharing."
+          "Only the loudest voice speaks while everyone else stays passive.",
+          "Writing stretches and the recap gets squeezed."
         ],
-        "fallback": []
+        "fallback": [
+          "If time slips, skip pair discussion and read a handful of check-ins out loud."
+        ]
       },
       "defaultSceneId": "intermezzo-2-write",
       "scenes": [
@@ -1308,12 +1231,12 @@
         },
         {
           "id": "intermezzo-2-check-in",
-          "label": "Your team's check-in",
+          "label": "Your check-in",
           "sceneType": "reflection",
           "intent": "reflection",
           "chromePreset": "participant",
-          "title": "Your team's check-in",
-          "body": "Five minutes at your table. Compare what you wrote. Then one person writes the team's check-in on your team card. Short, honest — two or three sentences is fine. Another entry in the story the card is telling.",
+          "title": "Your check-in",
+          "body": "Five minutes at your table. Compare what you wrote. Then add your entry on the participant surface. Short, honest — two or three sentences is fine. Another entry in the story your record is telling.",
           "facilitatorNotes": [
             "This is not the final check-in. Another entry in the append-only log."
           ],
@@ -1327,37 +1250,19 @@
             {
               "id": "intermezzo-2-checkin-hero",
               "type": "hero",
-              "eyebrow": "Intermezzo 2 · mid-point pause",
-              "title": "Your team's check-in",
-              "body": "Compare what you wrote. Append to the team card. Two or three sentences."
+              "eyebrow": "Check-in",
+              "title": "Your check-in",
+              "body": "Compare what you wrote. Add another entry to your record. Two or three sentences."
             },
             {
               "id": "intermezzo-2-checkin-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "What to write",
               "items": [
-                {
-                  "id": "i2-share",
-                  "title": "Share what you wrote (3 min).",
-                  "body": "Go around the table. Read it out loud. No debate."
-                },
-                {
-                  "id": "i2-agree",
-                  "title": "Agree on the check-in (1 min).",
-                  "body": "What does your team want to try in the second push?"
-                },
-                {
-                  "id": "i2-write",
-                  "title": "One person writes it (1 min).",
-                  "body": "On the participant surface, appended to the team card alongside the Intermezzo 1 check-in and the Build 2 first-beat diagnosis."
-                }
+                "1 · Compare with the person next to you (2 min).",
+                "2 · What do you want to try in the second push?",
+                "3 · Write it on the participant surface. It's another entry in the story your record is telling."
               ]
-            },
-            {
-              "id": "intermezzo-2-mid-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "This is one of several check-ins.",
-              "body": "The team card is accumulating a story. Intermezzo 1 check-in, rotation diagnosis, now this, and maybe more. Don't treat it like a final report. Treat it like a commit message — a small honest note about where your team is right now."
             }
           ]
         },
@@ -1368,7 +1273,7 @@
           "intent": "reflection",
           "chromePreset": "team-trail",
           "title": "Back to the work",
-          "body": "Your check-ins are on screen. I'll read them, pull the thread, and send you back to your team with one thing to try in the second push.",
+          "body": "Your check-ins are on screen. I'll read them, pull the thread, and send you back in with one thing to try in the second push.",
           "facilitatorNotes": [
             "Don't let Intermezzo 2 become a mini-Reveal. Keep it brisk."
           ],
@@ -1382,37 +1287,26 @@
             {
               "id": "intermezzo-2-thread-hero",
               "type": "hero",
-              "eyebrow": "Intermezzo 2 · back in two minutes",
-              "title": "Back to the work",
-              "body": "I read your check-ins, pull the thread, and send you back with one thing to try in the second push."
+              "eyebrow": "Back to work",
+              "title": "One thing to try in the second push",
+              "body": "Your check-ins are on screen. I read them, pull the thread, and send you back in with one concrete move to try."
             },
             {
               "id": "intermezzo-2-thread-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "How the recap goes",
               "items": [
-                {
-                  "id": "i2-thread-read",
-                  "title": "Read the check-ins on screen.",
-                  "body": "Facilitator scrolls through each team's check-in and reads it aloud. Same rhythm as the first intermezzo."
-                },
-                {
-                  "id": "i2-thread-pull",
-                  "title": "The thread.",
-                  "body": "Facilitator names the shared pattern across the first push — what reshuffled teams are discovering during the fresh read, where the friction is concentrated. Grounded in what is literally on screen."
-                },
-                {
-                  "id": "i2-thread-back",
-                  "title": "Back to work.",
-                  "body": "No extended reflection, no closing framing. Closing line: \"Forty more minutes. Back to your teams.\""
-                }
+                "Facilitator reads each check-in aloud. No debate.",
+                "One thread: what the room is converging on.",
+                "Send everyone back in with one concrete move to try in the second push."
               ]
             },
             {
               "id": "intermezzo-2-pause-callout",
               "type": "callout",
               "tone": "info",
-              "title": "This is a pause, not an ending.",
-              "body": "Same rhythm as the first intermezzo — retrieve, share, move on. No carrying home yet. That is for later. Right now: what is working, what is not, and what you want to do in the next forty minutes."
+              "title": "Second push is not a rewrite",
+              "body": "Carry one concrete move. Don't rework everything. The room sees you in forty minutes."
             }
           ]
         }
@@ -1427,14 +1321,14 @@
       "kind": "shared",
       "intent": "build",
       "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal.",
-      "roomSummary": "Second push of Build 2. The team acts on what it surfaced in the intermezzo and readies the repo for Reveal.",
+      "roomSummary": "Second push of Build 2. Everyone acts on what surfaced in the intermezzo and readies the repo for the Reveal.",
       "facilitatorPrompts": [
         "You just paused. Now act on the signal.",
         "Commit what holds. Make the repo readable. Decide what you'll show at Reveal."
       ],
       "watchFors": [
-        "Teams revert to overbuilding instead of closing the slice.",
-        "Teams skip the final cleanup and arrive at Reveal with a repo nobody can read."
+        "Participants revert to overbuilding instead of closing the slice.",
+        "Final cleanup gets skipped and the Reveal lands on a repo no one can read."
       ],
       "checkpointQuestions": [
         "What did the intermezzo tell you? Did you act on it?",
@@ -1448,24 +1342,24 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Hold the tempo from the first push. The work is the same; the test is whether the team can act on the intermezzo signal.",
+        "goal": "Hold the tempo from the first push. The work is the same; the test is whether each person can act on the signal from the intermezzo.",
         "say": [
-          "Forty minutes. Back to the work.",
-          "Apply what you surfaced in the intermezzo.",
-          "At 15:30, commit and decide what you'll show."
+          "Close the slice. Final cleanup. Leave the repo in a state the room can read.",
+          "The second push is not a rewrite. It's one concrete move from the intermezzo."
         ],
         "show": [
-          "Ambient timeline scene. Recovery pattern one flip away."
+          "The fresh-reader bar. Apply it to the final state of the repo."
         ],
         "do": [
-          "Walk the room. Watch for teams skipping the final cleanup."
+          "Walk the room. Watch for participants skipping final cleanup.",
+          "Coach anyone who drifts back to recovery — the minimum is a readable repo."
         ],
         "watch": [
-          "Teams over-extend instead of closing the slice cleanly.",
-          "Self-validation trap re-appearing in the second push."
+          "People overwrite the slice instead of closing it cleanly.",
+          "Final cleanup is the first thing skipped when time runs short."
         ],
         "fallback": [
-          "If a team loses the thread, flip to the recovery scene and coach them back to the proof."
+          "If someone loses the thread, switch to the recovery scene and coach them back to the smallest proof."
         ]
       },
       "defaultSceneId": "build-2b-second-push-timeline",
@@ -1506,9 +1400,9 @@
           "title": "Forty minutes left. Make it count.",
           "body": "The work is the same discipline. The test now is whether you can take the signal from the intermezzo, sharpen the same story, and land it cleanly for Reveal.",
           "facilitatorNotes": [
-            "Default ambient scene for the second push.",
-            "This should feel like a pair with the first push: same clock, narrower decision.",
-            "If teams drift into a brand new direction, pull them back to the smallest reveal-worthy proof."
+            "Hold the timeline on the wall for the full stretch — don't switch back to recovery scenes unless someone asks.",
+            "The timeline is a shared map; individual coaching happens at tables, not on the wall.",
+            "If someone opens a wholly new direction, pull them back to the smallest proof worth the Reveal."
           ],
           "sourceRefs": [
             {
@@ -1560,16 +1454,14 @@
       "kind": "shared",
       "intent": "reflection",
       "goal": "Close the day by naming the signals that helped the work carry forward after the reshuffle and fresh read, and turn them into next practice rather than a pleasant ending.",
-      "roomSummary": "Reveal and reflection are not a team ranking. They are the moment where the room decides which signals helped the work continue after rotation and which ones repeatedly failed.",
+      "roomSummary": "The Reveal and reflection aren't a competition. We watch what holds the work up across the day and what grinds it down.",
       "facilitatorPrompts": [
-        "We are not judging which team was better.",
-        "We are looking at the system: which signals help work continue after fresh readers step in and which ones slow it down.",
-        "Collect concrete examples, not general impressions."
+        "We're not grading anyone.",
+        "We're looking at what actually carried the work across the day."
       ],
       "watchFors": [
-        "The reflection turns into ranking teams.",
-        "The questions stay too general and detached from the repo.",
-        "No next step emerges for next week or for improving the blueprint."
+        "Reflection slides into comparison of who did better.",
+        "The facilitator's read drifts from the evidence into general praise."
       ],
       "checkpointQuestions": [
         "What helped you continue?",
@@ -1583,23 +1475,26 @@
         }
       ],
       "facilitatorRunner": {
-        "goal": "Close the day by naming the signals that helped the work carry forward after the reshuffle and fresh read, and turn them into next practice rather than a pleasant ending.",
+        "goal": "Close the day on evidence, not on encouragement. Reflect against the records.",
         "say": [
-          "We are not judging which team was better.",
-          "We are looking at the system: which signals help work continue after fresh readers step in and which ones slow it down.",
-          "Collect concrete examples, not general impressions.",
-          "These practices are tool-agnostic. The next time you pick up any toolchain, the principles transfer: context in tracked artifacts, plan before motion, verification before trust."
+          "We are not judging who did better.",
+          "We look at what carried the work across the day."
         ],
-        "show": [],
+        "show": [
+          "Point at specific check-in records as evidence.",
+          "Surface the shared patterns, not individual stories."
+        ],
         "do": [
-          "After W3, run the next-day commitments: each person writes one sentence. Collect them."
+          "Open with 1-2-4-All. Close with a personal commitment.",
+          "Read the check-in records during the buffer, not during the Reveal itself."
         ],
         "watch": [
-          "The reflection turns into ranking teams.",
-          "The questions stay too general and detached from the repo.",
-          "No next step emerges for next week or for improving the blueprint."
+          "The reflection turns into comparing who performed better.",
+          "Facilitator's read drifts from evidence into general encouragement."
         ],
-        "fallback": []
+        "fallback": [
+          "If time slips, keep the 1-2-4-All and the personal commitment. Cut the facilitator's outside read."
+        ]
       },
       "defaultSceneId": "reveal-1-2-4-all",
       "scenes": [
@@ -1624,33 +1519,30 @@
             {
               "id": "reveal-hero",
               "type": "hero",
-              "eyebrow": "Reflection",
-              "title": "Alone, pairs, fours, all",
-              "body": "Four layers of reflection. Each one a little wider than the last."
+              "eyebrow": "1-2-4-All",
+              "title": "What carried the work. What ground it down.",
+              "body": "We look for the signals that helped the work carry fresh input, and the ones that broke under pressure. Every recurring pain across the room is a candidate for a better template, check, or runbook — not a personal failure."
             },
             {
               "id": "reveal-steps",
               "type": "steps",
+              "title": "The 1-2-4-All rhythm",
               "items": [
                 {
-                  "id": "reveal-alone",
-                  "title": "Alone · 3 minutes.",
-                  "body": "Individual writing. What signal helped you continue after rotation? What was missing? What's the one thing from today you actually want in your own work next time?"
+                  "title": "1 · Alone",
+                  "body": "One minute silent. What carried? What ground it down?"
                 },
                 {
-                  "id": "reveal-pairs",
-                  "title": "Pairs · 4 minutes.",
-                  "body": "Turn to one neighbor. Compare what you wrote. Find the one thing between the two of you that's most worth sharing."
+                  "title": "2 · Pairs",
+                  "body": "Two minutes with the person next to you. Compare notes."
                 },
                 {
-                  "id": "reveal-fours",
-                  "title": "Fours · 5 minutes.",
-                  "body": "Two pairs become a four. Compare again. Find the signal, the gap, or the insight that the four of you think the whole room needs to hear."
+                  "title": "4 · Fours",
+                  "body": "Four minutes in a small cluster. Surface the shared pattern."
                 },
                 {
-                  "id": "reveal-all",
-                  "title": "All · 10 minutes.",
-                  "body": "One thing per group of four, shared with the whole room. Brief. Specific. Honest. No summaries, no rankings."
+                  "title": "All · Room",
+                  "body": "Shared harvest across the room. One thread at a time."
                 }
               ]
             },
@@ -1658,8 +1550,8 @@
               "id": "reveal-system-frame",
               "type": "callout",
               "tone": "info",
-              "title": "This isn't about winners.",
-              "body": "We're looking for the signals that helped work continue when fresh readers stepped in, and the ones that still break under pressure. Every repeated pain across teams is a candidate for a better template, check, or runbook — not a team failure."
+              "title": "Patterns, not blame",
+              "body": "Recurring pain across the room is a system signal, not a personal failure. The next version of this day fixes it in the template."
             }
           ]
         },
@@ -1670,10 +1562,10 @@
           "intent": "demonstration",
           "chromePreset": "participant",
           "title": "Show us what you built",
-          "body": "Each team has five minutes. You just spent twenty minutes articulating what you learned — now show us what carries it. Run the tracer. Walk the repo. Say the thing that surprised you most.",
+          "body": "Each person gets five minutes. You just spent twenty minutes naming what you learned — now show us what it carries. Run the tracer. Walk the repo. Tell us the thing that surprised you most.",
           "facilitatorNotes": [
-            "Five minutes per team, no Q&A during demos. Hold questions for after.",
-            "With 6+ teams, decide between 5 min each (runs long) or 4 min each (tightest)."
+            "Five minutes per participant, no Q&A during demos. Hold questions for later.",
+            "With 6+ participants, decide before Scene 10.2 between 5 and 4 minutes per person."
           ],
           "sourceRefs": [
             {
@@ -1685,37 +1577,26 @@
             {
               "id": "reveal-show-hero",
               "type": "hero",
-              "eyebrow": "Reveal",
-              "title": "Show us what you built",
-              "body": "Five minutes per team. Share your screen. Run what runs. Walk the repo."
+              "eyebrow": "Show us",
+              "title": "Five minutes each. What does your repo carry?",
+              "body": "Run the tracer. Walk the repo. Tell us the thing that surprised you most."
             },
             {
               "id": "reveal-show-steps",
-              "type": "steps",
+              "type": "bullet-list",
+              "title": "How each demo goes",
               "items": [
-                {
-                  "id": "show-team",
-                  "title": "One team at a time, five minutes each.",
-                  "body": "Share your screen. Run what runs. Walk the repo. Point at something specific."
-                },
-                {
-                  "id": "show-beats",
-                  "title": "Three beats for each demo.",
-                  "body": "The running code or repo walk (most of the five minutes). The single signal you wished had been in this repo when you arrived. The single thing you're proud of leaving behind."
-                },
-                {
-                  "id": "show-no-qa",
-                  "title": "No Q&A during demos.",
-                  "body": "Hold questions for after. Each team gets their five minutes clean."
-                }
+                "One person at a time, five minutes each.",
+                "No Q&A during demos. Hold questions for later.",
+                "Run the tracer. Walk the repo. Tell us the surprise."
               ]
             },
             {
               "id": "reveal-show-callout",
               "type": "callout",
               "tone": "info",
-              "title": "The reflection did the work.",
-              "body": "You spent twenty minutes in the 1-2-4-All figuring out what you learned. The demo isn't about finding words — you already have them. It's about showing the thing the words point at."
+              "title": "The demo is the evidence",
+              "body": "Not a pitch. Not a summary. The tracer and the repo do the talking."
             }
           ]
         },
@@ -1726,10 +1607,10 @@
           "intent": "reflection",
           "chromePreset": "team-trail",
           "title": "What I saw today",
-          "body": "Now my part. I walked the room all day. I read every team's card as the afternoon moved. Here's what I saw from outside — the patterns, the surprises, the things everyone collectively figured out that maybe nobody felt individually.",
+          "body": "Now my part. I walked the room all day. I read every check-in record as the afternoon moved. Here's what I saw from outside — the patterns, the surprises, the things the room collectively figured out that maybe nobody felt individually.",
           "facilitatorNotes": [
-            "This is the hardest beat in the day. Prepare by reading team cards during the pre-Reveal buffer, not by preparing generic remarks.",
-            "Uses the team-trail chrome preset so facilitator can point at specific team card entries as evidence."
+            "The hardest moment of the day. Prepare by reading each check-in record during the buffer before the Reveal, not with generic closing notes.",
+            "Uses the participant-trail chrome preset so the facilitator can point to specific entries in the records as evidence."
           ],
           "sourceRefs": [
             {
@@ -1741,16 +1622,16 @@
             {
               "id": "reveal-what-i-saw-hero",
               "type": "hero",
-              "eyebrow": "From outside the teams",
-              "title": "What I saw today",
-              "body": "Two or three patterns, one or two surprises, and the craft observation — what this group did well. Grounded, specific, honest. Not a pep talk."
+              "eyebrow": "From outside the room",
+              "title": "What I saw",
+              "body": "I walked the room all day. I read every check-in record as the afternoon moved. Here's what I saw from outside — the patterns, the surprises, the things the room collectively figured out."
             },
             {
               "id": "reveal-what-i-saw-callout",
               "type": "callout",
               "tone": "info",
-              "title": "Evidence, not praise.",
-              "body": "The facilitator's observations should be grounded in what's on the team cards and what was just shared in the 1-2-4-All and the demos. Not general encouragement. Specific signals, specific surprises, specific patterns. If you can't point at it, don't say it."
+              "title": "Grounded in the evidence",
+              "body": "The facilitator's observations should be grounded in what's on the check-in records and what was just shared in the 1-2-4-All and the demos. Not general encouragement. Specific signals, specific surprises, specific patterns. If you can't point at it, don't say it."
             }
           ]
         },
@@ -1826,23 +1707,9 @@
             {
               "id": "reveal-save-hero",
               "type": "hero",
-              "eyebrow": "Make it survive",
-              "title": "Put it where you'll see it next time",
-              "body": "Pick one place and store it now. Do not trust memory."
-            },
-            {
-              "id": "reveal-save-storage-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "Four options — pick one.",
-              "body": "Pick whichever actually fits how you work: (1) The workshop skill on your machine — save the commitment with the skill's notes command. (2) A physical card. (3) An email to yourself. (4) Wherever you already keep your own notes. Pick one. Do not pick none."
-            },
-            {
-              "id": "reveal-save-tool-agnostic-callout",
-              "type": "callout",
-              "tone": "info",
-              "title": "Tool-agnostic.",
-              "body": "Everything you practiced today works with any coding agent. The repo matters. The verification matters. The continuation matters. The tool doesn't."
+              "eyebrow": "Hold up",
+              "title": "What holds up tomorrow",
+              "body": "Name the one commitment you want to carry into your next session. Write it down while it's still clear."
             }
           ]
         },
@@ -1890,11 +1757,11 @@
       {
         "id": "code-review-helper",
         "title": "Code Review Helper",
-        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
+        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and consistency breaks exactly where it should be tightest. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
         "userStories": [
           "As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.",
           "As the author of a change, I want to know what I should verify before the review starts.",
-          "As the team after rotation, I want to continue from the heuristics the original team already discovered instead of reinventing them."
+          "As a fresh reader coming into this repo, I want to continue from the heuristics already discovered instead of reinventing them."
         ],
         "architectureNotes": [
           "This can be a CLI, web app, or simple script. The important part is a clear `diff -> analysis -> checklist` flow.",
@@ -1914,11 +1781,11 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
+        "problem": "Every codebase accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
         "userStories": [
           "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
           "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
-          "As a team, I want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
+          "As a working group, we want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
         ],
         "architectureNotes": [
           "Choose any language or framework, but the CLI must stay easy to run and easy to discover.",
@@ -1939,7 +1806,7 @@
       {
         "id": "doc-generator",
         "title": "Doc Generator",
-        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
+        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, it gets postponed, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
         "userStories": [
           "As a developer, I want basic technical documentation from a project without writing everything from scratch.",
           "As a reviewer, I want to understand the module structure and main entry points within minutes.",
@@ -1964,9 +1831,9 @@
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
+        "problem": "Every codebase has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
         "userStories": [
-          "As a team, I want several metrics on one screen so the current state is legible quickly.",
+          "As a user, I want several metrics on one screen so the current state is legible quickly.",
           "As a facilitator, I want to change seed data without touching UI logic.",
           "As a fresh collaborator, I want to understand the data structure, components, and screens within minutes."
         ],
@@ -1991,7 +1858,7 @@
         "title": "Standup Bot",
         "problem": "Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a fresh collaborator can continue working from — without the original author, without the original thread, and without a verbal walkthrough.",
         "userStories": [
-          "As a team lead, I want standup responses collected into one readable summary.",
+          "As a lead, I want standup responses collected into one readable summary.",
           "As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.",
           "As a fresh collaborator, I want to understand the data flow and integration points without a verbal walkthrough."
         ],
@@ -1999,7 +1866,7 @@
           "Prefer a clear data model over complicated integration.",
           "Mock data is fine if the workflow feels realistic and is documented clearly.",
           "Separate ingest, processing, and presentation of the output.",
-          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original team.",
+          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original authors.",
           "Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible."
         ],
         "acceptanceCriteria": [

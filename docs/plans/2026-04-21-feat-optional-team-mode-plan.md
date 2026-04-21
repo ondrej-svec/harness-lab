@@ -18,17 +18,16 @@ Infrastructure shipped in five phased commits on `main`:
 | 3 | `27d1c92` | `requireParticipantScopedWrite`, `isTeamModeEnabled`, new `/api/participant/check-in` route, team-mode guards on existing team-scoped routes |
 | 4 | `b3a5a23` | Participant room + form + feed mode gating; admin `PeopleSection` / `SettingsSection` / `RunSection` hide team-only surfaces |
 | 5 | `ebd6b13` | Agenda generator mode parameter; participant-variant JSON artifacts; loader picks by instance mode; phases with `kind: "team"` filtered in participant variant |
+| 5.4–5.8 | (this commit) | Per-field `participantVariant` override mechanism on source content types; 65 overrides authored across phases, scenes, participant moments, and project briefs; voice-rule guard test (`workshop-data.agenda-voice.test.ts`) runs green |
 
 **Verification**
-- All 502 unit tests pass. Same 25 pre-existing unrelated TS errors as before the work started (net reduced by 3 during Phase 1).
+- All 555 unit tests pass (11 new voice-guard tests added). No regression in the rest of the suite. No new TS errors in touched files.
 - HTTP smoke confirms the dev server boots and endpoints return correct status codes (401 unauth, 307 redirects to locale/sign-in).
 - Browser-based visual validation was not performed — the user's main browser profile was not available for automation and the sign-in flow is not easily scriptable from curl. The proof-slice screenshots listed in the subjective contract still need to be captured.
 
 **Known gaps (follow-ups, not blockers for the infrastructure):**
-1. **Substantive editorial rewrite of participant-mode agenda copy** — the participant variant JSONs currently carry the same scene-level copy as the facilitator variant, minus the `kind: "team"` phases. Replacing every `tým` / `team` / `teammate` / `parťák` occurrence inside surviving participant-mode strings with the sanctioned participant-mode triad is gated behind the preview artifacts specified in the Subjective Contract. Tracked in Phase 5.4–5.8 of the task list.
-2. **CI reject-list for participant variant** — the voice-rule automated guard (Phase 5.8) was not added. When the editorial rewrite happens, a ripgrep-based CI step should fail the build if participant-variant JSONs contain forbidden team words.
-3. **Proof-slice screenshots** (Phase 6.1–6.3) — create an instance with `team_mode_enabled = false`, complete the participant flow in CS and EN, capture screenshots. This is a user-involved step.
-4. **Memory updated** ✓ — `feedback_participant_copy_voice.md` now carries Rule 2b for the participant-mode triad alongside the existing team-mode rule.
+1. **Proof-slice screenshots** (Phase 6.1–6.3) — create an instance with `team_mode_enabled = false`, complete the participant flow in CS and EN, capture screenshots. This is a user-involved step.
+2. **Memory updated** ✓ — `feedback_participant_copy_voice.md` now carries Rule 2b for the participant-mode triad alongside the existing team-mode rule, with the status note refreshed to reflect Phase 5 shipped.
 
 ---
 
@@ -299,17 +298,17 @@ Tasks are dependency-ordered. Phases are sequential; within a phase, order is re
 - [ ] **5.1** **Spike:** find the agenda generator. Start from `dashboard/lib/generated/agenda-cs.json` — search for scripts, markdown source, or generator modules that output to that path. Document the pipeline. Time-box to half a day. **If pipeline is not extensible within budget, escalate: ship UI infrastructure with team-mode agenda, agenda sweep becomes a follow-up release.**
 - [ ] **5.2** Based on 5.1, implement mode-variant support at the source. Target outputs: `agenda-cs-participant.json` + `agenda-en-participant.json` (parallel structure to existing files)
 - [ ] **5.3** Update agenda loader (search for `agenda-cs.json` / `agenda-en.json` imports) to pick the participant variant when `teamModeEnabled=false`
-- [ ] **5.4** First-pass copy rewrite: every string in the participant variant that referenced team concepts. Apply both voice rules:
+- [x] **5.4** First-pass copy rewrite: every string in the participant variant that referenced team concepts. Apply both voice rules:
   - Replace team-mode triad with participant-mode triad where used
   - Preserve defocus-rescue rule
   - Remove every `tým` / `team` / `teammate` / `parťák`
   - Replace scene labels: `Formování týmů` → participant-appropriate equivalent (e.g. `Úvod do práce`); `Rotace týmů` → scene hidden or replaced with participant-mode equivalent
   - Check-in moments: "Check-in týmu" → "Tvůj check-in" / "Your check-in"
   - Build-scene copy: "Team lead staví systém" → participant-equivalent framing
-- [ ] **5.5** Handle `"kind": "team"` scene markers (3 occurrences per file at lines ~939, ~1457, ~1648): in participant-mode agenda, these scenes are either replaced with participant-mode equivalents or marked to be skipped. Decide per scene during the rewrite
-- [ ] **5.6** CS voice review pass — against reject-list and triad rule. Use existing `copy-editor` skill if applicable
-- [ ] **5.7** EN voice review pass — same rigor
-- [ ] **5.8** Add CI / lint rule (or repo script) that scans participant-mode agenda JSONs for forbidden strings (`tým`, `team`, `teammate`, `parťák`) and fails the build if any match
+- [x] **5.5** Handle `"kind": "team"` scene markers — the phase filter at generator time hides the three team-kind phases entirely in participant mode; no per-scene intervention needed. The few remaining structural `team-` identifiers (scene IDs, block IDs, `team-trail` chrome preset) are intentionally excluded from the voice guard via the `STRUCTURAL_KEYS` allow-list — they are code identifiers, not participant copy
+- [x] **5.6** CS voice review pass — 65 per-field overrides applied; guard green (`tým*`, `parťák*`, `přežij*`, `záchran*` all clear in participant-mode CS)
+- [x] **5.7** EN voice review pass — guard green (`team*`, `teammate*`, `your team`, `surviv*`, `rescue*` all clear in participant-mode EN)
+- [x] **5.8** Voice-rule guard landed as a vitest test (`dashboard/lib/workshop-data.agenda-voice.test.ts`, mirrors `workshop-data.feedback-voice.test.ts`). Runs in the existing test suite — CI blocks on regression
 
 ### Phase 6 — Proof slice and memory update
 

@@ -97,60 +97,85 @@ function validate(source: BilingualAgenda): ValidationError[] {
 
 type AgendaMode = "facilitator" | "participant";
 
-function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs", _mode: AgendaMode = "facilitator") {
+/**
+ * Pick a field from a language content object, letting a
+ * participant-mode override take precedence when generating a
+ * participant view. Overrides are declared on the language content
+ * object itself (e.g. `scene.cs.participantVariant.body`). Any field
+ * not overridden falls back to the facilitator/canonical value.
+ */
+function pickField<C extends { participantVariant?: Partial<C> }, K extends keyof C>(
+  content: C,
+  key: K,
+  mode: AgendaMode,
+): C[K] {
+  if (mode === "participant" && content.participantVariant) {
+    const override = content.participantVariant[key];
+    if (override !== undefined) return override as C[K];
+  }
+  return content[key];
+}
+
+function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
   const content = phase[lang];
   return {
     id: phase.id,
     order: phase.order,
-    label: content.label,
+    label: pickField(content, "label", mode),
     startTime: phase.startTime,
     kind: phase.kind,
     intent: phase.intent,
-    goal: content.goal,
-    roomSummary: content.roomSummary,
-    facilitatorPrompts: content.facilitatorPrompts,
-    watchFors: content.watchFors,
-    checkpointQuestions: content.checkpointQuestions,
-    sourceRefs: content.sourceRefs,
-    facilitatorRunner: content.facilitatorRunner,
+    goal: pickField(content, "goal", mode),
+    roomSummary: pickField(content, "roomSummary", mode),
+    facilitatorPrompts: pickField(content, "facilitatorPrompts", mode),
+    watchFors: pickField(content, "watchFors", mode),
+    checkpointQuestions: pickField(content, "checkpointQuestions", mode),
+    sourceRefs: pickField(content, "sourceRefs", mode),
+    facilitatorRunner: pickField(content, "facilitatorRunner", mode),
     defaultSceneId: phase.defaultSceneId,
-    scenes: phase.scenes.map((scene) => generateSceneView(scene, lang)),
+    scenes: phase.scenes.map((scene) => generateSceneView(scene, lang, mode)),
     participantMoments: (phase.participantMoments ?? []).map((moment) =>
-      generateParticipantMomentView(moment, lang),
+      generateParticipantMomentView(moment, lang, mode),
     ),
   };
 }
 
-function generateSceneView(scene: BilingualScene, lang: "en" | "cs") {
+function generateSceneView(scene: BilingualScene, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
   const content = scene[lang];
   const result: Record<string, unknown> = {
     id: scene.id,
-    label: content.label,
+    label: pickField(content, "label", mode),
     sceneType: scene.sceneType,
     intent: scene.intent,
     chromePreset: scene.chromePreset,
-    title: content.title,
-    body: content.body,
-    facilitatorNotes: content.facilitatorNotes,
-    sourceRefs: content.sourceRefs,
-    blocks: content.blocks,
+    title: pickField(content, "title", mode),
+    body: pickField(content, "body", mode),
+    facilitatorNotes: pickField(content, "facilitatorNotes", mode),
+    sourceRefs: pickField(content, "sourceRefs", mode),
+    blocks: pickField(content, "blocks", mode),
   };
 
   if (scene.surface) result.surface = scene.surface;
-  if (content.ctaLabel != null) result.ctaLabel = content.ctaLabel;
-  if (content.ctaHref != null) result.ctaHref = content.ctaHref;
+  const ctaLabel = pickField(content, "ctaLabel", mode);
+  const ctaHref = pickField(content, "ctaHref", mode);
+  if (ctaLabel != null) result.ctaLabel = ctaLabel;
+  if (ctaHref != null) result.ctaHref = ctaHref;
 
   return result;
 }
 
-function generateParticipantMomentView(moment: BilingualParticipantMoment, lang: "en" | "cs") {
+function generateParticipantMomentView(
+  moment: BilingualParticipantMoment,
+  lang: "en" | "cs",
+  mode: AgendaMode = "facilitator",
+) {
   const content = moment[lang];
   const result: Record<string, unknown> = {
     id: moment.id,
-    label: content.label,
-    title: content.title,
-    body: content.body,
-    blocks: content.blocks,
+    label: pickField(content, "label", mode),
+    title: pickField(content, "title", mode),
+    body: pickField(content, "body", mode),
+    blocks: pickField(content, "blocks", mode),
     feedbackEnabled: moment.feedbackEnabled ?? true,
   };
 
@@ -165,22 +190,24 @@ function generateParticipantMomentView(moment: BilingualParticipantMoment, lang:
       options: pollContent.options,
     };
   }
-  if (content.ctaLabel != null) result.ctaLabel = content.ctaLabel;
-  if (content.ctaHref != null) result.ctaHref = content.ctaHref;
+  const ctaLabel = pickField(content, "ctaLabel", mode);
+  const ctaHref = pickField(content, "ctaHref", mode);
+  if (ctaLabel != null) result.ctaLabel = ctaLabel;
+  if (ctaHref != null) result.ctaHref = ctaHref;
 
   return result;
 }
 
-function generateBriefView(brief: BilingualProjectBrief, lang: "en" | "cs") {
+function generateBriefView(brief: BilingualProjectBrief, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
   const content = brief[lang];
   return {
     id: brief.id,
-    title: content.title,
-    problem: content.problem,
-    userStories: content.userStories,
-    architectureNotes: content.architectureNotes,
-    acceptanceCriteria: content.acceptanceCriteria,
-    firstAgentPrompt: content.firstAgentPrompt,
+    title: pickField(content, "title", mode),
+    problem: pickField(content, "problem", mode),
+    userStories: pickField(content, "userStories", mode),
+    architectureNotes: pickField(content, "architectureNotes", mode),
+    acceptanceCriteria: pickField(content, "acceptanceCriteria", mode),
+    firstAgentPrompt: pickField(content, "firstAgentPrompt", mode),
   };
 }
 
@@ -195,20 +222,22 @@ function generateChallengeView(challenge: BilingualChallenge, lang: "en" | "cs")
   };
 }
 
-function generateInventoryView(source: BilingualAgenda, lang: "en" | "cs") {
+function generateInventoryView(source: BilingualAgenda, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
   return {
-    briefs: source.inventory.briefs.map((brief) => generateBriefView(brief, lang)),
+    briefs: source.inventory.briefs.map((brief) => generateBriefView(brief, lang, mode)),
     challenges: source.inventory.challenges.map((challenge) => generateChallengeView(challenge, lang)),
   };
 }
 
 function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
-  // Participant mode strips phases whose `kind` is "team" (rotation and
-  // the team-specific build blocks). These phases have no meaning when
-  // teams are invisible on the participant surface. The remaining phases
-  // carry the same copy as the facilitator variant today; substantive
-  // editorial rewrite for team/tým language is a follow-up task tracked
-  // in docs/plans/2026-04-21-feat-optional-team-mode-plan.md (Phase 5).
+  // Participant mode:
+  //   1. Strips phases whose `kind` is "team" (rotation, team-specific
+  //      build blocks — meaningless when teams are invisible).
+  //   2. Applies per-field `participantVariant` overrides declared on
+  //      the surviving phases, scenes, and participant moments. Any
+  //      field without an override falls back to the facilitator copy.
+  //      See dashboard/lib/types/bilingual-agenda.ts and the voice
+  //      guard `dashboard/lib/workshop-data.agenda-voice.test.ts`.
   const phases = source.phases.filter((phase) => {
     if (mode === "participant" && phase.kind === "team") {
       return false;
@@ -223,7 +252,7 @@ function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs", mode: Ag
     subtitle: source.meta[lang].subtitle,
     principles: source.meta[lang].principles,
     phases: phases.map((phase) => generatePhaseView(phase, lang, mode)),
-    inventory: generateInventoryView(source, lang),
+    inventory: generateInventoryView(source, lang, mode),
   };
 }
 

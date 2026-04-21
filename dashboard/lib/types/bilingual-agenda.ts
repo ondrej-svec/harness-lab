@@ -103,6 +103,7 @@ export type BilingualSceneContent = {
   facilitatorNotes: string[];
   sourceRefs: WorkshopSourceRef[];
   blocks: PresenterBlock[];
+  participantVariant?: Partial<Omit<BilingualSceneContent, "participantVariant">>;
 };
 
 export type BilingualPollOption = {
@@ -129,6 +130,7 @@ export type BilingualParticipantMomentContent = {
   ctaLabel?: string | null;
   ctaHref?: string | null;
   blocks: PresenterBlock[];
+  participantVariant?: Partial<Omit<BilingualParticipantMomentContent, "participantVariant">>;
 };
 
 // ---------------------------------------------------------------------------
@@ -171,6 +173,7 @@ export type BilingualPhaseContent = {
   checkpointQuestions: string[];
   sourceRefs: WorkshopSourceRef[];
   facilitatorRunner: FacilitatorRunner;
+  participantVariant?: Partial<Omit<BilingualPhaseContent, "participantVariant">>;
 };
 
 // ---------------------------------------------------------------------------
@@ -220,24 +223,20 @@ export type BilingualMeta = {
 // Inventory — bilingual project briefs, challenges, ticker, setup paths
 // ---------------------------------------------------------------------------
 
+type BilingualProjectBriefContent = {
+  title: string;
+  problem: string;
+  userStories: string[];
+  architectureNotes: string[];
+  acceptanceCriteria: string[];
+  firstAgentPrompt: string;
+  participantVariant?: Partial<Omit<BilingualProjectBriefContent, "participantVariant">>;
+};
+
 export type BilingualProjectBrief = {
   id: string;
-  en: {
-    title: string;
-    problem: string;
-    userStories: string[];
-    architectureNotes: string[];
-    acceptanceCriteria: string[];
-    firstAgentPrompt: string;
-  };
-  cs: {
-    title: string;
-    problem: string;
-    userStories: string[];
-    architectureNotes: string[];
-    acceptanceCriteria: string[];
-    firstAgentPrompt: string;
-  };
+  en: BilingualProjectBriefContent;
+  cs: BilingualProjectBriefContent;
 };
 
 export type BilingualChallenge = {
