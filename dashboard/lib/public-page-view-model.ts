@@ -1,6 +1,8 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
 import {
+  buildParticipantArtifactDownloadHref,
+  buildParticipantArtifactHref,
   buildRepoBlobUrl,
   buildRepoTreeUrl,
   getBlueprintRepoUrl,
@@ -112,6 +114,12 @@ export type ParticipantReferenceEntry = {
   description: string;
   href: string | null;
   external?: boolean;
+  /**
+   * Secondary URL that forces a browser download. Only set on
+   * cohort-scoped artifact items (kind: "artifact") where the UI
+   * exposes both "open in new tab" and a download affordance.
+   */
+  downloadHref?: string | null;
 };
 
 export type ParticipantReferenceGroup = {
@@ -419,19 +427,29 @@ function resolveReferenceItemHref(item: GeneratedReferenceItem): string | null {
       // Internal dashboard route — the body is rendered inside
       // participant chrome via dashboard/app/participant/reference/[itemId].
       return `/participant/reference/${encodeURIComponent(item.id)}`;
+    case "artifact":
+      // Cohort-scoped upload served by the auth-gated Route Handler at
+      // /participant/artifact/[artifactId]. Opens in a new tab.
+      return buildParticipantArtifactHref(item.artifactId);
   }
 }
 
 function toReferenceEntry(item: GeneratedReferenceItem): ParticipantReferenceEntry {
-  return {
+  const href = resolveReferenceItemHref(item);
+  const entry: ParticipantReferenceEntry = {
     id: item.id,
     label: item.label,
     description: item.description,
-    href: resolveReferenceItemHref(item),
+    href,
     // Hosted bodies live inside the participant surface; keep them in the
-    // current tab. External, repo, and root links still open externally.
+    // current tab. External, repo, root, and artifact links all open in a
+    // new tab (artifacts because they're self-contained HTML/PDF/image).
     external: item.kind !== "hosted",
   };
+  if (item.kind === "artifact") {
+    entry.downloadHref = buildParticipantArtifactDownloadHref(item.artifactId);
+  }
+  return entry;
 }
 
 function getDefaultReferenceView(lang: UiLanguage): GeneratedReferenceView {

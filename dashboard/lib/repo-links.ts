@@ -68,3 +68,18 @@ export function resolveRepoLinkedHref(href: string | null | undefined) {
 
   return buildRepoBlobUrl(href);
 }
+
+/**
+ * Build the internal participant route for a cohort-scoped artifact.
+ * These live on the dashboard origin (behind participant auth) and
+ * are not repo-linked, but grouping the builder here keeps every
+ * participant-facing href construction in one file.
+ */
+export function buildParticipantArtifactHref(artifactId: string) {
+  return `/participant/artifact/${encodeURIComponent(artifactId)}`;
+}
+
+/** Same route as `buildParticipantArtifactHref`, but with `?download=1`. */
+export function buildParticipantArtifactDownloadHref(artifactId: string) {
+  return `${buildParticipantArtifactHref(artifactId)}?download=1`;
+}
