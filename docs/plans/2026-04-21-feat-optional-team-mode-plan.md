@@ -2,9 +2,34 @@
 title: "feat: optional team mode (participant-first toggle)"
 type: plan
 date: 2026-04-21
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-04-21-optional-team-mode-brainstorm.md
 confidence: medium
+---
+
+## Implementation log (2026-04-21)
+
+Infrastructure shipped in five phased commits on `main`:
+
+| Phase | Commit | Scope |
+|---|---|---|
+| 1 | `e34fc7a` | `team_mode_enabled` column + schema-drift probe + admin toggle UI + server action |
+| 2 | `5dc4647` | `ProgressSubject` type, `checkpoints.participant_id` + XOR constraint, `workshop_state.participantCheckIns`, `appendParticipantCheckIn`, normalization |
+| 3 | `27d1c92` | `requireParticipantScopedWrite`, `isTeamModeEnabled`, new `/api/participant/check-in` route, team-mode guards on existing team-scoped routes |
+| 4 | `b3a5a23` | Participant room + form + feed mode gating; admin `PeopleSection` / `SettingsSection` / `RunSection` hide team-only surfaces |
+| 5 | `ebd6b13` | Agenda generator mode parameter; participant-variant JSON artifacts; loader picks by instance mode; phases with `kind: "team"` filtered in participant variant |
+
+**Verification**
+- All 502 unit tests pass. Same 25 pre-existing unrelated TS errors as before the work started (net reduced by 3 during Phase 1).
+- HTTP smoke confirms the dev server boots and endpoints return correct status codes (401 unauth, 307 redirects to locale/sign-in).
+- Browser-based visual validation was not performed — the user's main browser profile was not available for automation and the sign-in flow is not easily scriptable from curl. The proof-slice screenshots listed in the subjective contract still need to be captured.
+
+**Known gaps (follow-ups, not blockers for the infrastructure):**
+1. **Substantive editorial rewrite of participant-mode agenda copy** — the participant variant JSONs currently carry the same scene-level copy as the facilitator variant, minus the `kind: "team"` phases. Replacing every `tým` / `team` / `teammate` / `parťák` occurrence inside surviving participant-mode strings with the sanctioned participant-mode triad is gated behind the preview artifacts specified in the Subjective Contract. Tracked in Phase 5.4–5.8 of the task list.
+2. **CI reject-list for participant variant** — the voice-rule automated guard (Phase 5.8) was not added. When the editorial rewrite happens, a ripgrep-based CI step should fail the build if participant-variant JSONs contain forbidden team words.
+3. **Proof-slice screenshots** (Phase 6.1–6.3) — create an instance with `team_mode_enabled = false`, complete the participant flow in CS and EN, capture screenshots. This is a user-involved step.
+4. **Memory updated** ✓ — `feedback_participant_copy_voice.md` now carries Rule 2b for the participant-mode triad alongside the existing team-mode rule.
+
 ---
 
 # feat: optional team mode (participant-first toggle)
