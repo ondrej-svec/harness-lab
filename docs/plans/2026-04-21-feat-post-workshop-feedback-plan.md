@@ -2,9 +2,40 @@
 title: "feat: post-workshop phase and participant feedback form"
 type: plan
 date: 2026-04-21
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-04-21-post-workshop-feedback-brainstorm.md
 confidence: medium
+---
+
+## Implementation log (2026-04-21)
+
+Six commits shipped to `main`. Phase 7 (proof slice on a real workshop) is the remaining user-involved step.
+
+| Phase | Commit | Scope |
+|---|---|---|
+| 1 | `2c3ac24` | Migration (feedback_form column + submissions table) + ProgressSubject-adjacent types + FeedbackSubmissionRepository + `ended` status enum + default template |
+| 2 | `338b784` | `endWorkshopAction` server action + admin panel with "type instance id" confirmation in settings-section |
+| 3 | `37cfbd4` | Event-code expiration dropdown in admin access-section (1 / 7 / 14 / 30 days, default 14) |
+| 4 | `9c8e66e` | PostWorkshopSurface + FeedbackFormRenderer + POST/GET /api/participant/feedback-submission + participant/page.tsx branches on status |
+| 5 | `93a2d77` | New `summary` admin section with per-question aggregate cards + print-friendly CSS |
+| 6a | `0948baa` | Phase 6 preview artifacts (HTML mockups + copy table) |
+| 6b | `6704c7c` | Phase 6 final — 4-point forced-choice Likert, per-question anchors, Czech Q8/Q9 rewritten to kill `Můžeme` / `Můžete` echo, reject-list voice guard |
+
+**Verification**
+- 544 unit tests pass (was 509 before this plan; +35 new). Same 25 pre-existing unrelated TS errors as at plan start.
+- HTTP smoke of the dev server from the optional-team-mode work carries over — the admin UI and participant surface boot cleanly.
+- Memory file `feedback_participant_copy_voice.md` extended with Rule 3a (anchors match the verb), Rule 3b (avoid `Můžeme` / `Můžete` echo), Rule 3c (forced-choice Likert as the default).
+
+**Remaining: Phase 7 proof slice (user-involved)**
+1. Facilitator opens admin for today's hackathon instance → **settings section** → the new "end and open feedback" panel → type instance id → end.
+2. Open **access section** → re-issue event code with 14-day expiration via the new dropdown.
+3. Share URL + code with participants via Slack / email.
+4. Participants return, authenticate with their saved password, complete the form.
+5. Facilitator opens the **feedback section** in admin → aggregate summary → Cmd/Ctrl+P for print-friendly screenshot.
+6. Any voice / UX issues surfaced by real responses loop back into the memory file and the default template before the feature is opened for broader use.
+
+Known-limited retroactive scope: walk-in participants who never set a Neon Auth password cannot return after their 16-hour absolute session cap expires (accepted v1 limitation, documented in Out of Scope). Leadership reports should note "X of Y participants with passwords responded."
+
 ---
 
 # feat: post-workshop phase and participant feedback form
