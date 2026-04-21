@@ -307,8 +307,14 @@ Upload cohort-scoped files (HTML explainers, PDF handouts, images) that live onl
 - `harness workshop artifact upload --file <path> --label "..." [--description "..."] [--content-type MIME]` — upload a file. Default content-type is guessed from the extension (`.html`, `.pdf`, `.png`, `.jpg`/`.jpeg`, `.svg`, `.webp`). Max 25 MiB per file.
 - `harness workshop artifact list` — see every artifact for the instance with id, label, filename, size, upload timestamp.
 - `harness workshop artifact remove <artifactId>` — delete the row and the blob. Cross-instance removal returns 404 (cohort isolation).
+- `harness workshop artifact attach <artifactId> --group <groupId> [--label "..."] [--description "..."]` — show the artifact to participants inside the named reference group (`defaults`, `accelerators`, `explore`). Label + description default to the uploaded artifact's own metadata; pass flags to override per-cohort. Re-running replaces the existing attachment so edits are idempotent.
+- `harness workshop artifact detach <artifactId>` — pull every reference item that points at this artifactId out of the catalog. Idempotent — detaching something that isn't attached exits OK with "nothing to detach".
 
-Artifacts are inherently cohort-specific — they are **not** in `workshop-content/reference.json`, only in this instance's storage. The participant-facing catalog entry for an uploaded artifact lands with Phase 3 of `docs/plans/2026-04-21-feat-cohort-artifacts-plan.md`; until then, uploads are visible only to the facilitator via `list`.
+Artifacts are inherently cohort-specific — they are **not** in `workshop-content/reference.json`, only in this instance's storage. Attach uses a `kind: "artifact"` reference item that only ever lives in per-instance `reference_groups` overrides; an artifactId from a different cohort is rejected at PATCH with a 400.
+
+### Participant experience
+
+On the participant room and the post-workshop surface, an attached artifact appears exactly like other reference items — label + description inside the group's card. The primary click opens the artifact in a new tab (authenticated, sandboxed HTML / PDF / image); a small download icon in the top-right offers the direct download.
 
 ### `workshop closing`
 

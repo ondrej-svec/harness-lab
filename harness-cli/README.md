@@ -188,6 +188,8 @@ harness workshop copy import --file ./brno-copy.json
 harness workshop copy reset
 harness workshop artifact upload --file ./case-study.html --label "16-day harness case study"
 harness workshop artifact list
+harness workshop artifact attach <artifactId> --group defaults
+harness workshop artifact detach <artifactId>
 harness workshop artifact remove <artifactId>
 harness instance select --clear
 harness auth logout
@@ -211,7 +213,9 @@ Cohort-scoped artifacts (HTML/PDF/image uploads for this workshop instance, serv
 - `harness workshop artifact upload --file <path> --label "..." [--description "..."]` uploads a file to Vercel Blob (private mode). Content-type is guessed from the filename extension (`.html`, `.pdf`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.webp`); override with `--content-type MIME`. Max 25 MiB by default (`ARTIFACT_MAX_BYTES` on the server overrides).
 - `harness workshop artifact list` shows every artifact uploaded to the instance with id, label, filename, size, and upload timestamp.
 - `harness workshop artifact remove <artifactId>` deletes the row and the underlying blob. Cross-instance removal returns 404 — the CLI refuses to touch another cohort's artifacts.
-- Artifacts do **not** appear in `workshop-content/reference.json`. They are cohort-scoped by design — listing them for participants goes through a per-instance reference-catalog override once the `artifact` kind lands (Phase 3).
+- `harness workshop artifact attach <artifactId> --group <groupId> [--label TEXT] [--description TEXT]` adds a `kind: "artifact"` reference item to the group. Label and description default to the uploaded artifact's metadata; flags override per-cohort. Re-running replaces the existing attachment (idempotent).
+- `harness workshop artifact detach <artifactId>` removes every reference item that targets this artifact. Attaching an artifact from another cohort is rejected at PATCH with a 400.
+- Artifacts do **not** appear in `workshop-content/reference.json`. They live only in the instance's `reference_groups` override. Participants see them in the same reference card layout as other items, with a download icon next to the open affordance.
 
 Participant copy overrides (narrow whitelist — currently post-workshop welcome / feedback / reference bodies):
 
