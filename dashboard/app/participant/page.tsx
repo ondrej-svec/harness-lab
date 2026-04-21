@@ -88,6 +88,10 @@ export default async function ParticipantPage({
   }
 
   const state = await getWorkshopState(participantSession.instanceId);
+  const workshopInstance = await getWorkshopInstanceRepository().getInstance(
+    participantSession.instanceId,
+  );
+  const teamModeEnabled = workshopInstance?.teamModeEnabled ?? true;
   const participantTeams = await getParticipantTeamLookup(participantSession.instanceId);
   const participantTeamAssignment = participantSession.participantId
     ? await getTeamMemberRepository().findMemberByParticipant(participantSession.instanceId, participantSession.participantId)
@@ -143,6 +147,7 @@ export default async function ParticipantPage({
           referenceGroups={referenceGroups}
           rotationRevealed={rotationRevealed}
           logoutAction={logoutAction}
+          teamModeEnabled={teamModeEnabled}
         />
       </div>
     </main>

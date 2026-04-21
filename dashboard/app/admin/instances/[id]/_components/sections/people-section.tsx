@@ -37,11 +37,13 @@ export async function PeopleSection({
   instanceId,
   copy,
   teams,
+  teamModeEnabled = true,
 }: {
   lang: UiLanguage;
   copy: Copy;
   instanceId: string;
   teams: readonly Team[];
+  teamModeEnabled?: boolean;
 }) {
   const [participants, members, history] = await Promise.all([
     getParticipantRepository().listParticipants(instanceId),
@@ -65,13 +67,15 @@ export async function PeopleSection({
 
   return (
     <div className="flex flex-col gap-6">
-      <PeopleRandomize
-        lang={lang}
-        instanceId={instanceId}
-        existingTeamCount={teams.length}
-        participantCount={serializedParticipants.filter((p) => p.archivedAt === null).length}
-      />
-      <div className="grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]">
+      {teamModeEnabled ? (
+        <PeopleRandomize
+          lang={lang}
+          instanceId={instanceId}
+          existingTeamCount={teams.length}
+          participantCount={serializedParticipants.filter((p) => p.archivedAt === null).length}
+        />
+      ) : null}
+      <div className={teamModeEnabled ? "grid gap-6 xl:grid-cols-[minmax(22rem,0.9fr)_minmax(0,1.1fr)]" : "grid gap-6"}>
         <AdminPanel
           eyebrow={pasteLabel}
           title={lang === "cs" ? "vlož seznam" : "paste your roster"}
@@ -91,30 +95,36 @@ export async function PeopleSection({
           </form>
         </AdminPanel>
 
-        <PeopleWorkspace
-          lang={lang}
-          instanceId={instanceId}
-          teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
-          participants={serializedParticipants}
-          members={serializedMembers}
-        />
+        {teamModeEnabled ? (
+          <PeopleWorkspace
+            lang={lang}
+            instanceId={instanceId}
+            teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
+            participants={serializedParticipants}
+            members={serializedMembers}
+          />
+        ) : null}
       </div>
 
-      <TeamsSection
-        lang={lang}
-        copy={copy}
-        instanceId={instanceId}
-        state={{ teams: teams.map((team) => ({ ...team })) }}
-      />
+      {teamModeEnabled ? (
+        <TeamsSection
+          lang={lang}
+          copy={copy}
+          instanceId={instanceId}
+          state={{ teams: teams.map((team) => ({ ...team })) }}
+        />
+      ) : null}
 
-      <TeamHistoryPanel
-        lang={lang}
-        copy={copy}
-        instanceId={instanceId}
-        history={history}
-        participants={serializedParticipants}
-        teams={teams.map((team) => ({ id: team.id, name: team.name }))}
-      />
+      {teamModeEnabled ? (
+        <TeamHistoryPanel
+          lang={lang}
+          copy={copy}
+          instanceId={instanceId}
+          history={history}
+          participants={serializedParticipants}
+          teams={teams.map((team) => ({ id: team.id, name: team.name }))}
+        />
+      ) : null}
     </div>
   );
 }

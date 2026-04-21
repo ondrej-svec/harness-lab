@@ -11,11 +11,17 @@ export function ParticipantCheckpointFeed({
   items,
   defaultScope,
   showMineFilter,
+  showTeamScope = true,
   labels,
 }: {
   items: ParticipantCheckpointFeedItem[];
   defaultScope: ParticipantCheckpointFeedScope;
   showMineFilter: boolean;
+  /**
+   * Whether the "my team" scope tab is visible. False in participant-mode
+   * instances where teams do not exist on the participant surface.
+   */
+  showTeamScope?: boolean;
   labels: {
     title: string;
     body: string;
@@ -44,7 +50,9 @@ export function ParticipantCheckpointFeed({
         <div className="flex flex-wrap gap-2">
           <ScopeButton active={scope === "room"} label={labels.room} onClick={() => setScope("room")} />
           <ScopeButton active={scope === "phase"} label={labels.phase} onClick={() => setScope("phase")} />
-          <ScopeButton active={scope === "team"} label={labels.team} onClick={() => setScope("team")} />
+          {showTeamScope ? (
+            <ScopeButton active={scope === "team"} label={labels.team} onClick={() => setScope("team")} />
+          ) : null}
           {showMineFilter ? (
             <ScopeButton active={scope === "mine"} label={labels.mine} onClick={() => setScope("mine")} />
           ) : null}

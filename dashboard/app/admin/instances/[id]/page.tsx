@@ -94,6 +94,7 @@ export default async function AdminPage({
                 liveAgendaHref={vm.liveAgendaHref}
                 selectedAgendaProjectionHref={vm.selectedAgendaProjectionHref}
                 selectedAgendaParticipantMirrorHref={vm.selectedAgendaParticipantMirrorHref}
+                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
               />
             ) : null}
 
@@ -103,6 +104,7 @@ export default async function AdminPage({
                 copy={vm.copy}
                 instanceId={instanceId}
                 teams={vm.state.teams}
+                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
               />
             ) : null}
 
@@ -139,6 +141,7 @@ export default async function AdminPage({
                 participantStateLabel={vm.overviewState.participantState}
                 passwordParam={vm.passwordParam}
                 errorParam={vm.errorParam}
+                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
               />
             ) : null}
           </div>

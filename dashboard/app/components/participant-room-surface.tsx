@@ -40,6 +40,7 @@ export function ParticipantRoomSurface({
   rotationRevealed,
   logoutAction,
   checkInEnabled = true,
+  teamModeEnabled = true,
 }: {
   copy: (typeof publicCopy)[UiLanguage];
   lang: UiLanguage;
@@ -59,6 +60,14 @@ export function ParticipantRoomSurface({
   rotationRevealed: boolean;
   logoutAction?: ((formData: FormData) => Promise<void>) | undefined;
   checkInEnabled?: boolean;
+  /**
+   * Workshop instance mode. When false, team concepts are hidden from
+   * the participant UI — check-ins attach to the participant directly,
+   * the team materials card does not render, and the feed drops its
+   * "my team" scope. Defaults to true (team mode) so existing call sites
+   * preserve their behavior.
+   */
+  teamModeEnabled?: boolean;
 }) {
   const sectionCopy = getParticipantSurfaceCopy(lang);
   const participantPanel = buildParticipantPanelState({
@@ -89,7 +98,7 @@ export function ParticipantRoomSurface({
     activeParticipantName: activeParticipant?.displayName ?? null,
     currentPhaseId: currentAgendaItem?.id ?? null,
   });
-  const defaultFeedScope = activeParticipantTeam ? "team" : "phase";
+  const defaultFeedScope = teamModeEnabled && activeParticipantTeam ? "team" : "phase";
   const activeTeamCards = activeParticipantTeam
     ? homeState.teamCards.filter((team) => team.id === activeParticipantTeam.id)
     : homeState.teamCards;
@@ -153,7 +162,7 @@ export function ParticipantRoomSurface({
               <ParticipantBlockCard title={sectionCopy.contextTitle}>
                 <div className="grid gap-3">
                   <KeyValuePair label={homeState.workingContext.modeLabel} value={homeState.workingContext.modeValue} />
-                  {homeState.workingContext.teamLabel ? (
+                  {teamModeEnabled && homeState.workingContext.teamLabel ? (
                     <KeyValuePair label={sectionCopy.teamLabel} value={homeState.workingContext.teamLabel} />
                   ) : null}
                   {homeState.workingContext.participantLabel ? (
@@ -253,7 +262,8 @@ export function ParticipantRoomSurface({
               </div>
             </ParticipantBlockCard>
 
-            <ParticipantBlockCard title={sectionCopy.materialsTitle}>
+            {teamModeEnabled ? (
+              <ParticipantBlockCard title={sectionCopy.materialsTitle}>
               <div id="build-materials">
                 <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.materialsBody}</p>
                 {activeTeamCards.length > 0 ? (
@@ -322,6 +332,7 @@ export function ParticipantRoomSurface({
                 )}
               </div>
             </ParticipantBlockCard>
+            ) : null}
           </div>
 
           <div className="space-y-4">
@@ -329,9 +340,39 @@ export function ParticipantRoomSurface({
               <p className="text-sm leading-7 text-[var(--text-secondary)]">{sectionCopy.roomToolsBody}</p>
             </ParticipantBlockCard>
 
-            {homeState.teamCards.length > 0 ? (
+            {!teamModeEnabled ? (
               <div id="checkpoint-capture">
                 <ParticipantCheckInForm
+                  mode="participant"
+                  initialTeamId={null}
+                  teamOptions={[]}
+                  currentPhaseId={currentAgendaItem?.id ?? null}
+                  activeParticipantName={activeParticipant?.displayName ?? null}
+                  disabled={!checkInEnabled}
+                  labels={{
+                    title: sectionCopy.captureTitle,
+                    body: sectionCopy.captureBody,
+                    changedLabel: sectionCopy.captureChangedLabel,
+                    changedPlaceholder: sectionCopy.captureChangedPlaceholder,
+                    verifiedLabel: sectionCopy.captureVerifiedLabel,
+                    verifiedPlaceholder: sectionCopy.captureVerifiedPlaceholder,
+                    nextStepLabel: sectionCopy.captureNextStepLabel,
+                    nextStepPlaceholder: sectionCopy.captureNextStepPlaceholder,
+                    participantPrefix: sectionCopy.participantLabel,
+                    teamLabel: sectionCopy.teamLabel,
+                    submitLabel: sectionCopy.captureSubmit,
+                    successMessage: sectionCopy.captureSuccess,
+                    missingTeam: sectionCopy.captureMissingTeam,
+                    missingStructuredFields: sectionCopy.captureMissing,
+                    missingPhase: copy.teamCheckInMissingPhase,
+                    genericError: copy.teamCheckInGenericError,
+                  }}
+                />
+              </div>
+            ) : homeState.teamCards.length > 0 ? (
+              <div id="checkpoint-capture">
+                <ParticipantCheckInForm
+                  mode="team"
                   initialTeamId={activeParticipantTeam?.id ?? null}
                   teamOptions={homeState.teamCards.map((team) => ({
                     id: team.id,
@@ -370,6 +411,7 @@ export function ParticipantRoomSurface({
               items={checkpointFeed}
               defaultScope={defaultFeedScope}
               showMineFilter={Boolean(activeParticipant)}
+              showTeamScope={teamModeEnabled}
               labels={{
                 title: sectionCopy.feedTitle,
                 body: sectionCopy.feedBody,

@@ -59,6 +59,7 @@ export function RunSection({
   liveAgendaHref,
   selectedAgendaProjectionHref,
   selectedAgendaParticipantMirrorHref,
+  teamModeEnabled = true,
 }: {
   lang: UiLanguage;
   copy: Copy;
@@ -80,6 +81,7 @@ export function RunSection({
   liveAgendaHref: string;
   selectedAgendaProjectionHref: string | null;
   selectedAgendaParticipantMirrorHref: string;
+  teamModeEnabled?: boolean;
 }) {
   const focusItem = selectedAgendaItem ?? currentAgendaItem ?? null;
   const focusStatusLabel =
@@ -302,7 +304,7 @@ export function RunSection({
           </ControlCard>
         ) : null}
 
-        {selectedAgendaOwnsHandoffControls ? (
+        {teamModeEnabled && selectedAgendaOwnsHandoffControls ? (
           <HandoffMomentCard
             copy={copy}
             lang={lang}

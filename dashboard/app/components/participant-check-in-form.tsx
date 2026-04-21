@@ -7,6 +7,7 @@ import { InlineSpinner } from "./inline-spinner";
 type Status = { tone: "idle" | "success" | "error"; message: string };
 
 export function ParticipantCheckInForm({
+  mode = "team",
   initialTeamId,
   teamOptions = [],
   currentPhaseId,
@@ -14,6 +15,13 @@ export function ParticipantCheckInForm({
   disabled = false,
   labels,
 }: {
+  /**
+   * "team" posts to /api/participant/teams/[teamId]/check-in with a required
+   * team selection. "participant" posts to /api/participant/check-in with
+   * no team — the write attaches to the session's participantId on the
+   * server side. Default "team" preserves existing behavior.
+   */
+  mode?: "team" | "participant";
   initialTeamId?: string | null;
   teamOptions?: Array<{ id: string; label: string }>;
   currentPhaseId: string | null;
@@ -55,7 +63,7 @@ export function ParticipantCheckInForm({
       setStatus({ tone: "error", message: labels.missingStructuredFields });
       return;
     }
-    if (!teamId) {
+    if (mode === "team" && !teamId) {
       setStatus({ tone: "error", message: labels.missingTeam });
       return;
     }
@@ -66,16 +74,27 @@ export function ParticipantCheckInForm({
 
     startTransition(async () => {
       try {
-        const response = await fetch(`/api/participant/teams/${encodeURIComponent(teamId)}/check-in`, {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            phaseId: currentPhaseId,
-            changed: changedValue,
-            verified: verifiedValue,
-            nextStep: nextStepValue,
-          }),
-        });
+        const response = mode === "team"
+          ? await fetch(`/api/participant/teams/${encodeURIComponent(teamId)}/check-in`, {
+              method: "PATCH",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                phaseId: currentPhaseId,
+                changed: changedValue,
+                verified: verifiedValue,
+                nextStep: nextStepValue,
+              }),
+            })
+          : await fetch("/api/participant/check-in", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({
+                phaseId: currentPhaseId,
+                changed: changedValue,
+                verified: verifiedValue,
+                nextStep: nextStepValue,
+              }),
+            });
         if (!response.ok) {
           const payload = (await response.json().catch(() => null)) as { error?: string } | null;
           setStatus({ tone: "error", message: payload?.error ?? labels.genericError });
@@ -102,7 +121,7 @@ export function ParticipantCheckInForm({
             {labels.participantPrefix}: {activeParticipantName}
           </p>
         ) : null}
-        {teamOptions.length > 1 || !initialTeamId ? (
+        {mode === "team" && (teamOptions.length > 1 || !initialTeamId) ? (
           <label className="mt-3 grid gap-2">
             <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">{labels.teamLabel}</span>
             <select

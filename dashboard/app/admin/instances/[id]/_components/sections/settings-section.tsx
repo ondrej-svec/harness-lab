@@ -45,6 +45,7 @@ export function SettingsSection({
   participantStateLabel,
   passwordParam,
   errorParam,
+  teamModeEnabled = true,
 }: {
   lang: UiLanguage;
   copy: Copy;
@@ -57,6 +58,7 @@ export function SettingsSection({
   participantStateLabel: string;
   passwordParam: string | undefined;
   errorParam: string | undefined;
+  teamModeEnabled?: boolean;
 }) {
   const blueprintRepoUrl = getBlueprintRepoUrl();
   const canChangePassword = isNeonMode && hasAuth;
@@ -87,18 +89,20 @@ export function SettingsSection({
             <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 text-sm leading-6 text-[var(--text-secondary)]">
               {copy.participantStatePrefix} {participantStateLabel}.
             </div>
-            <form action={toggleRotationAction} className="space-y-4">
-              <HiddenState lang={lang} instanceId={instanceId} />
-              <div className="grid grid-cols-2 gap-3">
-                <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
-                  {copy.unlockButton}
-                </AdminSubmitButton>
-                <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
-                  {copy.hideAgainButton}
-                </AdminSubmitButton>
-              </div>
-              <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantSurfaceRecoveryHint}</p>
-            </form>
+            {teamModeEnabled ? (
+              <form action={toggleRotationAction} className="space-y-4">
+                <HiddenState lang={lang} instanceId={instanceId} />
+                <div className="grid grid-cols-2 gap-3">
+                  <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`} name="revealed" value="true">
+                    {copy.unlockButton}
+                  </AdminSubmitButton>
+                  <AdminSubmitButton className={`${adminSecondaryButtonClassName} w-full`} name="revealed" value="false">
+                    {copy.hideAgainButton}
+                  </AdminSubmitButton>
+                </div>
+                <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantSurfaceRecoveryHint}</p>
+              </form>
+            ) : null}
           </div>
         </AdminPanel>
 
