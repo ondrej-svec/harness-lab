@@ -31,6 +31,7 @@ const SECTIONS: readonly { key: AdminSection; copyKey: keyof (typeof adminCopy)[
   { key: "run", copyKey: "navAgenda" },
   { key: "people", copyKey: "navPeople" },
   { key: "access", copyKey: "navAccess" },
+  { key: "summary", copyKey: "navSummary" },
   { key: "settings", copyKey: "navSettings" },
 ];
 
@@ -45,7 +46,7 @@ export function OutlineRail({
 }: OutlineRailProps) {
   return (
     <aside
-      className="hidden xl:block"
+      className="hidden xl:block print:hidden"
       style={{ viewTransitionName: "outline-rail" }}
       aria-label="workshop outline"
     >

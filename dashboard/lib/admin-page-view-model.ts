@@ -1,7 +1,7 @@
 import type { WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 
-export const controlRoomSections = ["run", "people", "access", "settings"] as const;
+export const controlRoomSections = ["run", "people", "access", "settings", "summary"] as const;
 export type ControlRoomSection = (typeof controlRoomSections)[number];
 export type AdminSection = ControlRoomSection;
 export const controlRoomOverlays = ["agenda-edit", "agenda-add", "scene-edit", "scene-add"] as const;
