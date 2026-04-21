@@ -140,6 +140,25 @@ export function AccessSection({
                   className={`${adminInputClassName} mt-2`}
                 />
               </div>
+              <div>
+                <FieldLabel htmlFor="participant-access-expires-in">
+                  {copy.participantAccessExpiresInLabel}
+                </FieldLabel>
+                <select
+                  id="participant-access-expires-in"
+                  name="expiresInDays"
+                  defaultValue="14"
+                  className={`${adminInputClassName} mt-2`}
+                >
+                  <option value="1">{copy.participantAccessExpiresIn1Day}</option>
+                  <option value="7">{copy.participantAccessExpiresIn7Days}</option>
+                  <option value="14">{copy.participantAccessExpiresIn14Days}</option>
+                  <option value="30">{copy.participantAccessExpiresIn30Days}</option>
+                </select>
+                <p className="mt-2 text-xs leading-5 text-[var(--text-muted)]">
+                  {copy.participantAccessExpiresInHint}
+                </p>
+              </div>
               <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.participantAccessIssueHint}</p>
               {errorParam ? (
                 <p className="rounded-[20px] border border-[var(--danger-border)] bg-[var(--danger-surface)] px-4 py-3 text-sm text-[var(--danger)]">

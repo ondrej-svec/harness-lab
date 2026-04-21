@@ -637,6 +637,13 @@ export const adminCopy = {
     participantAccessIssueHint:
       "Nechte pole prázdné, pokud chcete kód vygenerovat, nebo zadejte vlastní variantu malými písmeny s pomlčkami.",
     participantAccessIssueButton: "vydat nový event code",
+    participantAccessExpiresInLabel: "platnost",
+    participantAccessExpiresIn1Day: "1 den",
+    participantAccessExpiresIn7Days: "7 dní",
+    participantAccessExpiresIn14Days: "14 dní",
+    participantAccessExpiresIn30Days: "30 dní",
+    participantAccessExpiresInHint:
+      "Kolik dní má nový kód platit. Pro zpětnou vazbu po workshopu nechte delší platnost, aby se účastníci mohli vrátit a vyplnit formulář.",
     walkInPolicyEyebrow: "politika walk-inů",
     walkInPolicyTitle: "kdo se může přidat",
     walkInPolicyDescription:
@@ -1041,6 +1048,13 @@ export const adminCopy = {
     participantAccessIssueHint:
       "Leave the field blank for a generated code, or enter your own lowercase hyphenated code.",
     participantAccessIssueButton: "issue new event code",
+    participantAccessExpiresInLabel: "valid for",
+    participantAccessExpiresIn1Day: "1 day",
+    participantAccessExpiresIn7Days: "7 days",
+    participantAccessExpiresIn14Days: "14 days",
+    participantAccessExpiresIn30Days: "30 days",
+    participantAccessExpiresInHint:
+      "How long the new code stays valid. For post-workshop feedback, keep it longer so participants can come back and fill in the form.",
     walkInPolicyEyebrow: "walk-in policy",
     walkInPolicyTitle: "who can join",
     walkInPolicyDescription:

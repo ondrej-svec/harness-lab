@@ -16,14 +16,41 @@ import {
   type ParticipantAccessFlash,
 } from "../_lib/participant-access-flash";
 
+/**
+ * Clamp the caller-supplied expiration-in-days to a sane range:
+ * 1 day minimum (can't be in the past), 365 days maximum (anything
+ * longer should be a deliberate multi-event reuse, not a workshop
+ * re-issue). Returns null when the input can't be parsed — which
+ * triggers the backend 14-day default in issueParticipantEventAccess.
+ */
+function parseExpiresInDays(raw: unknown): number | null {
+  if (typeof raw !== "string") {
+    return null;
+  }
+  const trimmed = raw.trim();
+  if (!trimmed) {
+    return null;
+  }
+  const value = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(value) || value < 1) {
+    return null;
+  }
+  return Math.min(value, 365);
+}
+
 export async function issueParticipantAccessAction(formData: FormData) {
   const { lang, section, instanceId } = readActionState(formData);
   await requireFacilitatorActionAccess(instanceId);
   const facilitator = await getFacilitatorSession(instanceId);
   const codeInput = String(formData.get("code") ?? "").trim();
+  const expiresInDays = parseExpiresInDays(formData.get("expiresInDays"));
+  const expiresAt = expiresInDays
+    ? new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000).toISOString()
+    : undefined;
   const result = await issueParticipantEventAccess(
     {
       code: codeInput || undefined,
+      expiresAt,
       actorNeonUserId: facilitator?.neonUserId ?? null,
     },
     instanceId,
