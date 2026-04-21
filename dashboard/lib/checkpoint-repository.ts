@@ -68,12 +68,22 @@ export class NeonCheckpointRepository implements CheckpointRepository {
 
   async appendCheckpoint(instanceId: string, checkpoint: CheckpointRecord) {
     const sql = getNeonSql();
+    // Enforce the XOR invariant at the app layer too (the DB has a CHECK
+    // constraint added in 2026-04-21-checkpoints-participant-subject.sql).
+    // Fails fast with a clearer error than a Postgres constraint violation.
+    const teamId = checkpoint.teamId ?? null;
+    const participantId = checkpoint.participantId ?? null;
+    if ((teamId === null) === (participantId === null)) {
+      throw new Error(
+        "Checkpoint must reference exactly one subject — either teamId or participantId, not both and not neither.",
+      );
+    }
     await sql.query(
       `
-        INSERT INTO checkpoints (id, instance_id, team_id, payload, created_at)
-        VALUES ($1, $2, $3, $4::jsonb, NOW())
+        INSERT INTO checkpoints (id, instance_id, team_id, participant_id, payload, created_at)
+        VALUES ($1, $2, $3, $4, $5::jsonb, NOW())
       `,
-      [checkpoint.id, instanceId, checkpoint.teamId, JSON.stringify(checkpoint)],
+      [checkpoint.id, instanceId, teamId, participantId, JSON.stringify(checkpoint)],
     );
   }
 

@@ -157,6 +157,16 @@ export type FacilitatorGrantInfo = {
 export type CheckpointRecord = SprintUpdate;
 export type TeamRecord = Team;
 
+/**
+ * ProgressSubject — the unit a checkpoint, progress entry, or room
+ * view attaches to. In team mode the subject is a team. In participant
+ * mode (team_mode_enabled = false on the workshop instance) the
+ * subject is a participant directly. Callers discriminate on `kind`.
+ */
+export type ProgressSubject =
+  | { kind: "team"; teamId: string }
+  | { kind: "participant"; participantId: string };
+
 export type RedeemAttemptRecord = {
   instanceId: WorkshopInstanceId | null;
   fingerprint: string;

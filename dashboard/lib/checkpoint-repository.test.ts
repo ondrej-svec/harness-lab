@@ -64,5 +64,78 @@ describe("checkpoint-repository", () => {
     await repository.replaceCheckpoints("instance-a", [checkpoint]);
     expect(getCheckpointRepository()).toBeInstanceOf(NeonCheckpointRepository);
     expect(query).toHaveBeenCalled();
+
+    const insertCalls = query.mock.calls.filter(([sql]) =>
+      typeof sql === "string" && sql.includes("INSERT INTO checkpoints"),
+    );
+    expect(insertCalls.length).toBeGreaterThan(0);
+    expect(insertCalls[0][0]).toContain("participant_id");
+    // Team-scoped insert passes teamId and NULL for participant_id
+    expect(insertCalls[0][1]).toEqual(["c1", "instance-a", "t1", null, JSON.stringify(checkpoint)]);
+  });
+
+  it("writes participant-subject checkpoints with participant_id and null team_id", async () => {
+    const query = vi.fn().mockResolvedValue(undefined);
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonCheckpointRepository } = await import("./checkpoint-repository");
+    const repository = new NeonCheckpointRepository();
+
+    const participantCheckpoint: CheckpointRecord = {
+      id: "c-p-1",
+      teamId: null,
+      participantId: "p-alice",
+      text: "Participant-scoped sprint update",
+      at: "11:00",
+    };
+    await repository.appendCheckpoint("instance-a", participantCheckpoint);
+
+    expect(query.mock.calls[0][1]).toEqual([
+      "c-p-1",
+      "instance-a",
+      null,
+      "p-alice",
+      JSON.stringify(participantCheckpoint),
+    ]);
+  });
+
+  it("rejects checkpoints that set neither or both subjects", async () => {
+    const query = vi.fn().mockResolvedValue(undefined);
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonCheckpointRepository } = await import("./checkpoint-repository");
+    const repository = new NeonCheckpointRepository();
+
+    await expect(
+      repository.appendCheckpoint("instance-a", {
+        id: "c-bad-none",
+        teamId: null,
+        participantId: null,
+        text: "Neither subject",
+        at: "11:00",
+      }),
+    ).rejects.toThrow(/exactly one subject/);
+
+    await expect(
+      repository.appendCheckpoint("instance-a", {
+        id: "c-bad-both",
+        teamId: "t1",
+        participantId: "p1",
+        text: "Both subjects",
+        at: "11:00",
+      }),
+    ).rejects.toThrow(/exactly one subject/);
+
+    expect(query).not.toHaveBeenCalled();
   });
 });

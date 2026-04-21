@@ -70,6 +70,7 @@ import {
   updateAgendaItem,
   updatePresenterScene,
   appendCheckIn,
+  appendParticipantCheckIn,
   upsertTeam,
 } from "./workshop-store";
 
@@ -739,6 +740,48 @@ describe("workshop-store", () => {
     await expect(
       appendCheckIn("t-missing", { phaseId: "opening", content: "x", writtenBy: null }, instanceId),
     ).rejects.toThrow(/Team not found/);
+  });
+
+  it("appendParticipantCheckIn stores entries on participantCheckIns with participantId set", async () => {
+    await appendParticipantCheckIn(
+      "p-alice",
+      { phaseId: "opening", content: "Participant-scoped check-in", writtenBy: "Alice" },
+      instanceId,
+    );
+    await appendParticipantCheckIn(
+      "p-alice",
+      { phaseId: "intermezzo-1", content: "Second entry", writtenBy: null },
+      instanceId,
+    );
+    await appendParticipantCheckIn(
+      "p-bob",
+      { phaseId: "opening", content: "Bob's progress", writtenBy: "Bob" },
+      instanceId,
+    );
+
+    const state = await getWorkshopState(instanceId);
+    expect(state.participantCheckIns).toHaveLength(3);
+    expect(state.participantCheckIns[0]).toMatchObject({
+      participantId: "p-alice",
+      phaseId: "opening",
+      content: "Participant-scoped check-in",
+      writtenBy: "Alice",
+    });
+    expect(state.participantCheckIns[0].writtenAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+    expect(state.participantCheckIns.filter((entry) => entry.participantId === "p-alice")).toHaveLength(2);
+    expect(state.participantCheckIns.filter((entry) => entry.participantId === "p-bob")).toHaveLength(1);
+  });
+
+  it("normalizeStoredWorkshopState backfills participantCheckIns to [] for legacy state documents", async () => {
+    // Simulate a pre-2026-04-21 state document that lacks participantCheckIns entirely.
+    const legacy = structuredClone(seedWorkshopState);
+    const { participantCheckIns: _dropped, ...legacyShape } = legacy;
+    void _dropped;
+    // Cast because the stripped shape deliberately lacks the new required field.
+    await repository.saveState(instanceId, legacyShape as unknown as WorkshopState);
+
+    const state = await getWorkshopState(instanceId);
+    expect(state.participantCheckIns).toEqual([]);
   });
 
   it("seedWorkshopState teams start with empty checkIns", async () => {

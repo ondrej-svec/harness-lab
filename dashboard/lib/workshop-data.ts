@@ -756,7 +756,10 @@ export type MonitoringSnapshot = {
 
 export type SprintUpdate = {
   id: string;
-  teamId: string;
+  /** Team subject for team-mode sprint updates. Null for participant-mode. */
+  teamId: string | null;
+  /** Participant subject for participant-mode sprint updates. Null for team-mode. */
+  participantId?: string | null;
   text: string;
   at: string;
 };
@@ -821,6 +824,13 @@ export type WorkshopState = {
   ticker: TickerItem[];
   monitoring: MonitoringSnapshot[];
   sprintUpdates: SprintUpdate[];
+  /**
+   * Participant-scoped check-ins (participant mode only). Parallel
+   * storage to `teams[].checkIns`: team-mode writes go there, participant-
+   * mode writes go here. Each entry must have `participantId` set.
+   * See appendParticipantCheckIn in workshop-store.ts.
+   */
+  participantCheckIns: TeamCheckIn[];
   setupPaths: SetupPath[];
 };
 
@@ -1580,6 +1590,7 @@ export const seedWorkshopState: WorkshopState = {
       at: "10:58",
     },
   ],
+  participantCheckIns: [],
   setupPaths: seedWorkshopSetupPaths.map(cloneSetupPath),
 };
 

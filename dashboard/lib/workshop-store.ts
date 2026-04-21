@@ -687,6 +687,11 @@ function normalizeStoredWorkshopState(state: WorkshopState): WorkshopState {
     ticker: Array.isArray(state.ticker) ? state.ticker : seedWorkshopState.ticker,
     monitoring: Array.isArray(state.monitoring) ? state.monitoring : seedWorkshopState.monitoring,
     sprintUpdates: Array.isArray(state.sprintUpdates) ? state.sprintUpdates : seedWorkshopState.sprintUpdates,
+    // Legacy state documents (pre-2026-04-21) lack participantCheckIns;
+    // normalize to an empty array so admin/participant reads don't crash
+    // when iterating. Mirrors the tolerance pattern documented in
+    // docs/solutions/infrastructure/facilitator-admin-production-state-and-schema-drift.md.
+    participantCheckIns: Array.isArray(state.participantCheckIns) ? state.participantCheckIns : [],
     setupPaths: Array.isArray(state.setupPaths) ? state.setupPaths : seedWorkshopState.setupPaths,
     workshopMeta: {
       ...seedWorkshopState.workshopMeta,
@@ -1378,6 +1383,37 @@ export async function appendCheckIn(
     ...state,
     version: state.version + 1,
     teams: nextTeams,
+  }, {
+    expectedVersion: state.version,
+  });
+
+  return getWorkshopState(instanceId);
+}
+
+/**
+ * Append a participant-scoped check-in. Used when the workshop instance
+ * has team_mode_enabled = false — participants write progress directly
+ * against their own participantId, not a team. Storage sits in the
+ * parallel `workshop_state.participantCheckIns` array (read-time
+ * normalized to [] for legacy state documents).
+ */
+export async function appendParticipantCheckIn(
+  participantId: string,
+  entry: Omit<TeamCheckIn, "writtenAt" | "participantId">,
+  instanceId: string,
+) {
+  const state = normalizeStoredWorkshopState(await getBaseWorkshopState(instanceId));
+  const checkIn: TeamCheckIn = {
+    ...entry,
+    participantId,
+    writtenAt: new Date().toISOString(),
+  };
+  const nextCheckIns = [...state.participantCheckIns, checkIn];
+
+  await getWorkshopStateRepository().saveState(instanceId, {
+    ...state,
+    version: state.version + 1,
+    participantCheckIns: nextCheckIns,
   }, {
     expectedVersion: state.version,
   });
