@@ -1,5 +1,6 @@
 import { AdminSubmitButton } from "@/app/admin/admin-submit-button";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
+import type { WorkshopInstanceStatus } from "@/lib/workshop-data";
 import {
   AdminPanel,
   FieldLabel,
@@ -13,6 +14,7 @@ import {
   revokeFacilitatorAction,
   toggleWalkInsAction,
 } from "../../_actions/access";
+import { toggleTeamModeAction } from "../../_actions/workshop-mode";
 import type { ParticipantAccessFlash } from "../../_lib/participant-access-flash";
 
 type Copy = (typeof adminCopy)[UiLanguage];
@@ -49,6 +51,8 @@ export function AccessSection({
   participantAccessFlash,
   facilitatorGrants,
   allowWalkIns,
+  teamModeEnabled,
+  instanceStatus,
 }: {
   lang: UiLanguage;
   copy: Copy;
@@ -68,7 +72,10 @@ export function AccessSection({
   participantAccessFlash: ParticipantAccessFlash | null;
   facilitatorGrants: readonly FacilitatorGrant[];
   allowWalkIns: boolean;
+  teamModeEnabled: boolean;
+  instanceStatus: WorkshopInstanceStatus;
 }) {
+  const workshopModeLocked = instanceStatus === "running";
   return (
     <div className="space-y-6">
       <AdminPanel
@@ -176,6 +183,47 @@ export function AccessSection({
             {copy.walkInPolicySaveButton}
           </AdminSubmitButton>
         </form>
+      </AdminPanel>
+
+      <AdminPanel
+        eyebrow={copy.workshopModeEyebrow}
+        title={copy.workshopModeTitle}
+        description={copy.workshopModeDescription}
+      >
+        <form action={toggleTeamModeAction} className="flex flex-wrap items-center gap-3">
+          <HiddenState lang={lang} instanceId={instanceId} />
+          <label className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
+            <input
+              type="radio"
+              name="teamModeEnabled"
+              value="true"
+              defaultChecked={teamModeEnabled}
+              disabled={workshopModeLocked}
+            />
+            {copy.workshopModeTeamLabel}
+          </label>
+          <label className="flex items-center gap-2 text-sm text-[var(--text-primary)]">
+            <input
+              type="radio"
+              name="teamModeEnabled"
+              value="false"
+              defaultChecked={!teamModeEnabled}
+              disabled={workshopModeLocked}
+            />
+            {copy.workshopModeParticipantLabel}
+          </label>
+          <AdminSubmitButton
+            className={`${adminPrimaryButtonClassName} ml-auto`}
+            disabled={workshopModeLocked}
+          >
+            {copy.workshopModeSaveButton}
+          </AdminSubmitButton>
+        </form>
+        {workshopModeLocked ? (
+          <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
+            {copy.workshopModeLockedWhileRunning}
+          </p>
+        ) : null}
       </AdminPanel>
 
       <AdminPanel eyebrow={copy.facilitatorsEyebrow} title={copy.facilitatorsTitle} description={copy.facilitatorsDescription}>

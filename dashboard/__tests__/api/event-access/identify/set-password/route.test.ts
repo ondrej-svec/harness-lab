@@ -80,6 +80,7 @@ function makeInstance(overrides: Partial<WorkshopInstanceRecord> = {}): Workshop
     createdAt: "2026-04-20T00:00:00.000Z",
     updatedAt: "2026-04-20T00:00:00.000Z",
     allowWalkIns: true,
+    teamModeEnabled: true,
     ...overrides,
   };
 }

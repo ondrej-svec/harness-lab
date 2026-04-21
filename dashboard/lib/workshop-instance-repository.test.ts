@@ -151,4 +151,58 @@ describe("workshop-instance-repository", () => {
     await repository.removeInstance(sampleWorkshopInstances[0].id, "2026-04-07T12:00:00.000Z");
     expect(query.mock.calls[2]?.[0]).not.toContain("removed_at = $2::timestamptz");
   });
+
+  it("includes team_mode_enabled in SELECT and writes once the column is present", async () => {
+    const query = vi
+      .fn()
+      // 1st call: column-support probe — report all new columns present
+      .mockResolvedValueOnce([
+        { column_name: "blueprint_id" },
+        { column_name: "blueprint_version" },
+        { column_name: "imported_at" },
+        { column_name: "removed_at" },
+        { column_name: "allow_walk_ins" },
+        { column_name: "team_mode_enabled" },
+      ])
+      // 2nd call: listInstances
+      .mockResolvedValueOnce([
+        {
+          id: "workshop-a",
+          template_id: "blueprint-default",
+          status: "prepared",
+          blueprint_id: sampleWorkshopInstances[0].blueprintId,
+          blueprint_version: sampleWorkshopInstances[0].blueprintVersion,
+          imported_at: sampleWorkshopInstances[0].importedAt,
+          removed_at: null,
+          allow_walk_ins: true,
+          team_mode_enabled: false,
+          workshop_meta: sampleWorkshopInstances[0].workshopMeta,
+        },
+      ])
+      // subsequent create/update calls
+      .mockResolvedValue(undefined);
+
+    vi.doMock("./runtime-storage", () => ({
+      getRuntimeStorageMode: () => "neon",
+    }));
+    vi.doMock("./neon-db", () => ({
+      getNeonSql: () => ({ query }),
+    }));
+
+    const { NeonWorkshopInstanceRepository } = await import("./workshop-instance-repository");
+    const repository = new NeonWorkshopInstanceRepository();
+
+    const rows = await repository.listInstances();
+    expect(rows[0]).toMatchObject({ id: "workshop-a", teamModeEnabled: false });
+    expect(query.mock.calls[1]?.[0]).toContain("team_mode_enabled");
+
+    await repository.createInstance({ ...sampleWorkshopInstances[0], teamModeEnabled: false });
+    expect(query.mock.calls[2]?.[0]).toContain("team_mode_enabled");
+
+    await repository.updateInstance(sampleWorkshopInstances[0].id, {
+      ...sampleWorkshopInstances[0],
+      teamModeEnabled: false,
+    });
+    expect(query.mock.calls[3]?.[0]).toContain("team_mode_enabled = $");
+  });
 });

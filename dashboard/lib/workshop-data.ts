@@ -845,6 +845,7 @@ export type WorkshopInstanceRecord = {
   importedAt: string;
   removedAt: string | null;
   allowWalkIns: boolean;
+  teamModeEnabled: boolean;
   workshopMeta: WorkshopMeta;
 };
 
@@ -1597,6 +1598,7 @@ export function createWorkshopInstanceRecord(input: {
   importedAt?: string;
   removedAt?: string | null;
   allowWalkIns?: boolean;
+  teamModeEnabled?: boolean;
 }): WorkshopInstanceRecord {
   const template = workshopTemplates.find((item) => item.id === input.templateId) ?? workshopTemplates[0];
 
@@ -1609,6 +1611,7 @@ export function createWorkshopInstanceRecord(input: {
     importedAt: input.importedAt ?? new Date().toISOString(),
     removedAt: input.removedAt ?? null,
     allowWalkIns: input.allowWalkIns ?? true,
+    teamModeEnabled: input.teamModeEnabled ?? true,
     workshopMeta: normalizeWorkshopMeta(
       input.workshopMeta ?? createWorkshopMetaFromTemplate(template, input.contentLang),
       template,

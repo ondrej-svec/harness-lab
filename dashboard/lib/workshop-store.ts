@@ -1415,6 +1415,11 @@ export async function createWorkshopInstance(input: {
     templateId,
     importedAt: now,
     contentLang: input.contentLang,
+    // New instances default to participant mode. The DB column default
+    // is TRUE so existing rows backfill to team mode on migration, but
+    // newly-created workshops start in the expected common case:
+    // participant-first, with teams as an opt-in via the admin toggle.
+    teamModeEnabled: false,
   });
   const nextInstance: WorkshopInstanceRecord = {
     ...instance,

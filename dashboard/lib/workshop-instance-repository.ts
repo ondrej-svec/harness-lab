@@ -185,6 +185,7 @@ type InstanceRow = {
   imported_at: string | null;
   removed_at: string | null;
   allow_walk_ins: boolean | null;
+  team_mode_enabled: boolean | null;
   workshop_meta: WorkshopInstanceRecord["workshopMeta"];
 };
 
@@ -198,6 +199,7 @@ function mapInstanceRow(row: InstanceRow) {
     importedAt: row.imported_at ?? undefined,
     removedAt: row.removed_at,
     allowWalkIns: row.allow_walk_ins ?? undefined,
+    teamModeEnabled: row.team_mode_enabled ?? undefined,
     workshopMeta: row.workshop_meta,
   });
 }
@@ -208,6 +210,7 @@ type WorkshopInstanceColumnSupport = {
   importedAt: boolean;
   removedAt: boolean;
   allowWalkIns: boolean;
+  teamModeEnabled: boolean;
 };
 
 async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColumnSupport> {
@@ -218,7 +221,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
       FROM information_schema.columns
       WHERE table_schema = current_schema()
         AND table_name = 'workshop_instances'
-        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at', 'allow_walk_ins')
+        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at', 'allow_walk_ins', 'team_mode_enabled')
     `,
   )) as Array<{ column_name: string }>;
   const columns = new Set(rows.map((row) => row.column_name));
@@ -229,6 +232,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
     importedAt: columns.has("imported_at"),
     removedAt: columns.has("removed_at"),
     allowWalkIns: columns.has("allow_walk_ins"),
+    teamModeEnabled: columns.has("team_mode_enabled"),
   };
 }
 
@@ -242,6 +246,7 @@ function buildInstanceSelectList(columnSupport: WorkshopInstanceColumnSupport) {
     columnSupport.importedAt ? "imported_at" : "NULL::timestamptz AS imported_at",
     columnSupport.removedAt ? "removed_at" : "NULL::timestamptz AS removed_at",
     columnSupport.allowWalkIns ? "allow_walk_ins" : "TRUE AS allow_walk_ins",
+    columnSupport.teamModeEnabled ? "team_mode_enabled" : "TRUE AS team_mode_enabled",
     "workshop_meta",
   ].join(", ");
 }
@@ -298,6 +303,13 @@ function buildCreateInstanceQuery(instance: WorkshopInstanceRecord, columnSuppor
     columns.push("allow_walk_ins");
     placeholders.push(`$${nextIndex}`);
     values.push(instance.allowWalkIns);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.teamModeEnabled) {
+    columns.push("team_mode_enabled");
+    placeholders.push(`$${nextIndex}`);
+    values.push(instance.teamModeEnabled);
   }
 
   return {
@@ -353,6 +365,12 @@ function buildUpdateInstanceQuery(
   if (columnSupport.allowWalkIns) {
     assignments.push(`allow_walk_ins = $${nextIndex}`);
     values.push(instance.allowWalkIns);
+    nextIndex += 1;
+  }
+
+  if (columnSupport.teamModeEnabled) {
+    assignments.push(`team_mode_enabled = $${nextIndex}`);
+    values.push(instance.teamModeEnabled);
   }
 
   assignments.push("updated_at = NOW()");

@@ -121,6 +121,8 @@ export default async function AdminPage({
                 participantAccessFlash={vm.participantAccessFlash}
                 facilitatorGrants={vm.facilitatorGrants}
                 allowWalkIns={vm.selectedInstance?.allowWalkIns ?? true}
+                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
+                instanceStatus={vm.selectedInstance?.status ?? "prepared"}
               />
             ) : null}
 

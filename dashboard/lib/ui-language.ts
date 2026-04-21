@@ -634,6 +634,15 @@ export const adminCopy = {
     walkInPolicyAllowLabel: "povolit přidat se jako nový",
     walkInPolicyDenyLabel: "jen lidé z rosteru",
     walkInPolicySaveButton: "uložit politiku",
+    workshopModeEyebrow: "režim workshopu",
+    workshopModeTitle: "týmy, nebo účastníci",
+    workshopModeDescription:
+      "Když týmová dynamika reálně nefunguje (vzdáleně, rozdílné časy, málo lidí), přepněte na účastnický režim. Týmy zmizí z rozhraní účastníků — check-iny, feed i postup se vážou přímo na účastníka.",
+    workshopModeTeamLabel: "týmový režim",
+    workshopModeParticipantLabel: "účastnický režim",
+    workshopModeSaveButton: "uložit režim",
+    workshopModeLockedWhileRunning:
+      "Režim nelze měnit, dokud workshop běží. Archivujte tuto instanci a vytvořte novou.",
     participantResetPasswordButton: "reset hesla",
     participantResetPasswordHint: "vygeneruje jednorázové heslo, které účastníkovi přečtete nahlas",
     participantResetPasswordSuccess: "nové dočasné heslo",
@@ -1019,6 +1028,15 @@ export const adminCopy = {
     walkInPolicyAllowLabel: "allow add as new",
     walkInPolicyDenyLabel: "roster only",
     walkInPolicySaveButton: "save policy",
+    workshopModeEyebrow: "workshop mode",
+    workshopModeTitle: "teams or participants",
+    workshopModeDescription:
+      "When real team work is hard to arrange (remote, mixed schedules, too few people), switch to participant mode. Teams disappear from the participant UI — check-ins, feed, and progress attach to the participant directly.",
+    workshopModeTeamLabel: "team mode",
+    workshopModeParticipantLabel: "participant mode",
+    workshopModeSaveButton: "save mode",
+    workshopModeLockedWhileRunning:
+      "Mode can't change while the workshop is running. Archive this instance and create a new one.",
     participantResetPasswordButton: "reset password",
     participantResetPasswordHint: "generates a one-time password to read aloud to the participant",
     participantResetPasswordSuccess: "new temporary password",
