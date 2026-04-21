@@ -269,7 +269,31 @@ jobs:
 
       - run: npx playwright install chromium webkit
 
+      - name: Free port 3100 from any stale process
+        shell: bash
+        run: |
+          if command -v lsof >/dev/null 2>&1; then
+            PIDS="$(lsof -ti :3100 || true)"
+            if [ -n "${PIDS}" ]; then
+              echo "Killing stale process(es) on port 3100: ${PIDS}"
+              kill -9 ${PIDS} || true
+              sleep 1
+            fi
+          fi
+
       - run: npm run test:e2e
+
+      - name: Reap any lingering dev server on port 3100
+        if: always()
+        shell: bash
+        run: |
+          if command -v lsof >/dev/null 2>&1; then
+            PIDS="$(lsof -ti :3100 || true)"
+            if [ -n "${PIDS}" ]; then
+              echo "Reaping process(es) on port 3100: ${PIDS}"
+              kill -9 ${PIDS} || true
+            fi
+          fi
 
   secret-scan:
     name: secret-scan
