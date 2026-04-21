@@ -95,15 +95,14 @@ export async function PeopleSection({
           </form>
         </AdminPanel>
 
-        {teamModeEnabled ? (
-          <PeopleWorkspace
-            lang={lang}
-            instanceId={instanceId}
-            teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
-            participants={serializedParticipants}
-            members={serializedMembers}
-          />
-        ) : null}
+        <PeopleWorkspace
+          lang={lang}
+          instanceId={instanceId}
+          teams={teams.map((team) => ({ id: team.id, name: team.name, projectBriefId: team.projectBriefId }))}
+          participants={serializedParticipants}
+          members={serializedMembers}
+          teamModeEnabled={teamModeEnabled}
+        />
       </div>
 
       {teamModeEnabled ? (

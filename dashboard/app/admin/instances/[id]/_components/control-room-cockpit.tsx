@@ -226,6 +226,13 @@ export function ControlRoomCockpit({
           />
           <CockpitSectionTab
             lang={lang}
+            section="summary"
+            activeSection={visibleSection}
+            label={copy.navSummary}
+            instanceId={instanceId}
+          />
+          <CockpitSectionTab
+            lang={lang}
             section="settings"
             activeSection={visibleSection}
             label={copy.navSettings}

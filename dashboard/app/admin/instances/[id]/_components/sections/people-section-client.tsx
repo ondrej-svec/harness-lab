@@ -25,6 +25,14 @@ type PeopleWorkspaceProps = {
   teams: readonly TeamSummary[];
   participants: readonly ParticipantRecord[];
   members: readonly TeamMemberRecord[];
+  /**
+   * When false, team-assignment affordances (team grid, per-row
+   * TeamPicker, DnD drop targets, "drop to assign" hints) are hidden —
+   * the pool renders as a flat participant roster with delete /
+   * consent / reset-password controls only. Defaults to true for
+   * team-mode workshops.
+   */
+  teamModeEnabled?: boolean;
 };
 
 /**
@@ -41,6 +49,7 @@ export function PeopleWorkspace({
   teams,
   participants,
   members,
+  teamModeEnabled = true,
 }: PeopleWorkspaceProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -280,9 +289,13 @@ export function PeopleWorkspace({
             </h2>
           </div>
           <p className="mt-2 max-w-2xl text-[13px] leading-5 text-[var(--text-secondary)] sm:text-sm sm:leading-6">
-            {lang === "cs"
-              ? "Přetáhněte na tým, nebo použijte +přiřadit. Consent toggle řídí follow-up e-maily."
-              : "Drag onto a team or use +assign. The consent toggle gates follow-up emails."}
+            {teamModeEnabled
+              ? lang === "cs"
+                ? "Přetáhněte na tým, nebo použijte +přiřadit. Consent toggle řídí follow-up e-maily."
+                : "Drag onto a team or use +assign. The consent toggle gates follow-up emails."
+              : lang === "cs"
+                ? "Seznam účastníků workshopu. Consent toggle řídí follow-up e-maily."
+                : "Workshop roster. The consent toggle gates follow-up emails."}
           </p>
           <div className="mt-4">
         {unassigned.length === 0 ? (
@@ -342,12 +355,14 @@ export function PeopleWorkspace({
                         : "no follow-up"}
                     </button>
                   ) : null}
-                  <TeamPicker
-                    teams={teams}
-                    onPick={(teamId) => assignToTeam(participant.id, teamId)}
-                    disabled={pending}
-                    addFromPoolLabel={addFromPoolLabel}
-                  />
+                  {teamModeEnabled ? (
+                    <TeamPicker
+                      teams={teams}
+                      onPick={(teamId) => assignToTeam(participant.id, teamId)}
+                      disabled={pending}
+                      addFromPoolLabel={addFromPoolLabel}
+                    />
+                  ) : null}
                   {participant.neonUserId ? (
                     <button
                       type="button"
@@ -378,7 +393,8 @@ export function PeopleWorkspace({
         </div>
       </section>
 
-      {/* Teams */}
+      {/* Teams — hidden in participant-only mode */}
+      {teamModeEnabled ? (
       <section className={`${panelSurface} p-5 sm:p-6`}>
         <div className={panelAmbient} aria-hidden />
         <div className="relative">
@@ -466,6 +482,7 @@ export function PeopleWorkspace({
           </div>
         </div>
       </section>
+      ) : null}
     </div>
   );
 }
