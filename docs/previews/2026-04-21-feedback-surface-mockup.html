@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Post-workshop feedback surface — CS + EN mockup</title>
+  <style>
+    :root {
+      --bg: #faf7f2;
+      --surface: #ffffff;
+      --surface-panel: #f5f1ea;
+      --surface-soft: #ede7dc;
+      --border: #d6cfc1;
+      --border-strong: #b8ad98;
+      --text-primary: #1c1917;
+      --text-secondary: #44403c;
+      --text-muted: #78716c;
+      --ambient-left: rgba(220, 180, 110, 0.18);
+      --accent: #1c1917;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif; color: var(--text-primary); background: var(--bg); }
+    body { padding: 32px; }
+    h1 { font-size: 16px; text-transform: lowercase; letter-spacing: 0.2em; color: var(--text-muted); font-weight: 500; margin: 0 0 24px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 1680px; margin: 0 auto; }
+    .col { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 24px; }
+    .col-label { font-size: 11px; text-transform: lowercase; letter-spacing: 0.22em; color: var(--text-muted); margin-bottom: 16px; }
+    .hero { background: var(--surface-panel); border: 1px solid var(--border); border-radius: 24px; padding: 24px; margin-bottom: 20px; }
+    .eyebrow { font-size: 11px; text-transform: lowercase; letter-spacing: 0.22em; color: var(--text-muted); }
+    .title { font-size: 28px; font-weight: 600; letter-spacing: -0.03em; margin: 12px 0 0; }
+    .body { font-size: 15px; line-height: 1.55; color: var(--text-secondary); margin: 16px 0 0; max-width: 52ch; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px; }
+    .q-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.18em; color: var(--text-muted); }
+    .q-prompt { font-size: 15px; font-weight: 500; margin: 12px 0 0; }
+    .likert-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+    .likert-pill { height: 40px; min-width: 44px; border: 1px solid var(--border); border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; padding: 0 12px; font-size: 14px; font-weight: 500; background: var(--surface-panel); cursor: pointer; }
+    .likert-pill.selected { background: var(--text-primary); color: var(--surface); border-color: var(--text-primary); }
+    .anchor-row { display: flex; justify-content: space-between; margin-top: 10px; font-size: 12px; color: var(--text-muted); }
+    .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .choice-pill { padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; font-size: 14px; background: var(--surface-panel); cursor: pointer; }
+    .choice-pill.selected { background: var(--text-primary); color: var(--surface); border-color: var(--text-primary); }
+    textarea { width: 100%; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-panel); padding: 10px 12px; font: inherit; font-size: 14px; line-height: 1.5; margin-top: 12px; min-height: 72px; resize: vertical; }
+    .consent { display: flex; gap: 12px; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface-panel); margin-top: 16px; align-items: flex-start; }
+    .consent input { margin-top: 4px; }
+    .consent span { font-size: 14px; line-height: 1.5; color: var(--text-secondary); }
+    .submit { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--surface-soft); font-size: 14px; font-weight: 500; cursor: pointer; }
+    .optional { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 8px; }
+    .placeholder-hint { color: var(--text-muted); font-style: italic; font-size: 13px; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Post-workshop feedback surface — participant view · mockup v1</h1>
+  <div class="two-col">
+    <!-- CS -->
+    <div class="col">
+      <p class="col-label">cs · čeština</p>
+      <div class="hero">
+        <div class="eyebrow">workshop doběhl</div>
+        <h2 class="title">Díky, že jste byli u toho.</h2>
+        <p class="body">Workshop skončil, ale místnost ještě chvíli zůstává otevřená. Nejjednodušší věc, kterou teď můžete udělat: nechat nám krátkou zpětnou vazbu. Pomáhá to nejen tomuto, ale hlavně dalšímu workshopu.</p>
+      </div>
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px;">
+        <div class="eyebrow">zpětná vazba</div>
+        <h3 style="font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 8px 0 0;">Jak to dopadlo?</h3>
+        <p class="body">Krátké a upřímné je lepší než uhlazené. Cokoli nesedí, přeskočte. Do 24 hodin se můžete vrátit a upravit.</p>
+
+        <div style="margin-top: 24px;">
+          <div class="card">
+            <div class="q-prompt">Jak to celkově dopadlo?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill selected">4</div><div class="likert-pill">5</div>
+            </div>
+            <div class="anchor-row"><span>vůbec</span><span>výborně</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Jak vám sedlo téma?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill">4</div><div class="likert-pill selected">5</div>
+            </div>
+            <div class="anchor-row"><span>vůbec</span><span>výborně</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Jak vám sedla facilitace?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill">4</div><div class="likert-pill selected">5</div>
+            </div>
+            <div class="anchor-row"><span>vůbec</span><span>výborně</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Jedna věc, kterou si z dneška odnášíte?</div>
+            <textarea placeholder="Jedna věta, která vám zůstane."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Co pro vás bylo nejcennější?</div>
+            <textarea placeholder="Co vám ta zkušenost otevřela."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Co by šlo udělat líp?</div>
+            <textarea placeholder="Krátká a konkrétní poznámka pomáhá nejvíc."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Doporučili byste to kolegovi nebo kolegyni?</div>
+            <div class="choice-row">
+              <div class="choice-pill selected">ano</div>
+              <div class="choice-pill">možná</div>
+              <div class="choice-pill">ne</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Můžeme z toho citovat? Pár vět, které bychom mohli použít. <span class="optional">nepovinné</span></div>
+            <textarea placeholder="Jen pokud chcete."></textarea>
+          </div>
+
+          <div class="consent">
+            <input type="checkbox" />
+            <span>Můžete mě jmenovitě citovat v marketingových materiálech.</span>
+          </div>
+
+          <button class="submit">Odeslat zpětnou vazbu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EN -->
+    <div class="col">
+      <p class="col-label">en · english</p>
+      <div class="hero">
+        <div class="eyebrow">workshop ended</div>
+        <h2 class="title">Thanks for being here.</h2>
+        <p class="body">The workshop is over, but the room stays open for a bit. The quickest thing you can do: leave us a short piece of feedback below. It shapes the next workshop, not just this one.</p>
+      </div>
+
+      <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 24px;">
+        <div class="eyebrow">feedback</div>
+        <h3 style="font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 8px 0 0;">How did it land?</h3>
+        <p class="body">Short and honest beats polished. Skip anything that does not fit. You can come back and edit within 24 hours.</p>
+
+        <div style="margin-top: 24px;">
+          <div class="card">
+            <div class="q-prompt">Overall, how was the workshop?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill selected">4</div><div class="likert-pill">5</div>
+            </div>
+            <div class="anchor-row"><span>not really</span><span>excellent</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">How well did the theme land?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill">4</div><div class="likert-pill selected">5</div>
+            </div>
+            <div class="anchor-row"><span>not really</span><span>excellent</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">How was the facilitation?</div>
+            <div class="likert-row">
+              <div class="likert-pill">1</div><div class="likert-pill">2</div><div class="likert-pill">3</div><div class="likert-pill">4</div><div class="likert-pill selected">5</div>
+            </div>
+            <div class="anchor-row"><span>not really</span><span>excellent</span></div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">One thing you're taking with you from today?</div>
+            <textarea placeholder="One sentence that stays with you."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">What was the most valuable part?</div>
+            <textarea placeholder="What opened up for you."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">What could be better?</div>
+            <textarea placeholder="Short and concrete helps most."></textarea>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">Would you recommend this to a colleague?</div>
+            <div class="choice-row">
+              <div class="choice-pill selected">yes</div>
+              <div class="choice-pill">maybe</div>
+              <div class="choice-pill">no</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="q-prompt">A sentence or two we could quote as a testimonial? <span class="optional">optional</span></div>
+            <textarea placeholder="Only if you'd like."></textarea>
+          </div>
+
+          <div class="consent">
+            <input type="checkbox" />
+            <span>You can quote me by name in marketing materials.</span>
+          </div>
+
+          <button class="submit">Send feedback</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 1680px; margin: 40px auto 0; color: var(--text-muted); font-size: 13px; line-height: 1.6;">
+    <p><strong>Voice review notes (against feedback_participant_copy_voice.md):</strong></p>
+    <ul>
+      <li>Rule 1 (defocus rescue/survives motif) — no rescue/survives language used anywhere.</li>
+      <li>Rule 2/2b (name the triad) — not directly invoked on this surface; the form is a light feedback context, not a handoff narrative. If reviewer feels a triad line is needed, a short footer could say "Díky tomu, co nám napíšete, víme, jak příští workshop posunout dál — pro další účastníky, člověka i agenta." / "What you write here shapes the next workshop — for another participant, teammate, or agent."</li>
+      <li>Testimonial consent is unchecked by default; opt-in language is clear.</li>
+      <li>No `tým` / `team` / `teammate` / `parťák` appears. Participant-mode safe.</li>
+    </ul>
+  </div>
+</body>
+</html>
