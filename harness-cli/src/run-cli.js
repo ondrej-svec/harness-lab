@@ -1553,6 +1553,27 @@ async function handleWorkshopReferenceImport(io, ui, env, positionals, flags, de
   }
 }
 
+/**
+ * Hosted items in the compiled default carry an inlined `body` (and
+ * sometimes `bodyPath`) that belong to build-time only. The PATCH
+ * validator rejects both on the wire — bodies are managed through the
+ * /reference/<itemId>/body endpoint, not the catalog. Strip them
+ * before handing the groups to any mutator.
+ */
+function stripBuildTimeFieldsFromGroups(groups) {
+  return groups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => {
+      if (item && item.kind === "hosted") {
+        // eslint-disable-next-line no-unused-vars
+        const { body, bodyPath, ...rest } = item;
+        return rest;
+      }
+      return item;
+    }),
+  }));
+}
+
 async function resolveCurrentReferenceGroups(client, instanceId, ui) {
   // Fetch the effective catalog. When the API returns null the instance
   // has no override — surgical edits need a starting point, so we fall
@@ -1560,7 +1581,7 @@ async function resolveCurrentReferenceGroups(client, instanceId, ui) {
   // the CLI can express edits against the same shape the UI renders.
   const result = await client.getWorkshopReferenceGroups(instanceId);
   if (Array.isArray(result?.referenceGroups)) {
-    return result.referenceGroups;
+    return stripBuildTimeFieldsFromGroups(result.referenceGroups);
   }
   // No override set → load default from local filesystem.
   const repoRoot = await findRepoRoot(process.cwd());
@@ -1579,7 +1600,7 @@ async function resolveCurrentReferenceGroups(client, instanceId, ui) {
   try {
     const raw = await fs.readFile(fallbackFile, "utf-8");
     const parsed = JSON.parse(raw);
-    return parsed.groups ?? [];
+    return stripBuildTimeFieldsFromGroups(parsed.groups ?? []);
   } catch {
     ui.status(
       "error",

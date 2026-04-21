@@ -5,6 +5,19 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.11.1 — 2026-04-21
+
+### Fixed
+
+- `workshop reference add-item|set-item|remove-item` and
+  `workshop artifact attach|detach` failed with
+  `items[...].body is not allowed on the catalog` when the instance
+  had no existing override, because the compiled-default fallback
+  carries an inlined Markdown body on hosted items. The fallback path
+  now strips `body` and `bodyPath` from hosted items before handing
+  the groups to any PATCH — bodies belong to the separate
+  `/reference/<itemId>/body` endpoint.
+
 ## 0.11.0 — 2026-04-21
 
 ### Added
