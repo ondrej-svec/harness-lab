@@ -402,6 +402,19 @@ function validateReference(source: BilingualReferenceSource): ValidationError[] 
           break;
         case "repo-root":
           break;
+        case "hosted":
+          if (!item.bodyPath) {
+            errors.push({ path: `${path}.bodyPath`, message: "Empty bodyPath on hosted item" });
+          } else {
+            const absoluteBodyPath = join(ROOT, item.bodyPath);
+            if (!existsSync(absoluteBodyPath)) {
+              errors.push({
+                path: `${path}.bodyPath`,
+                message: `Hosted item bodyPath does not exist: ${item.bodyPath}`,
+              });
+            }
+          }
+          break;
         default:
           errors.push({
             path: `${path}.kind`,
@@ -437,6 +450,19 @@ function generateReferenceItem(
       return { ...base, kind: "repo-tree", path: item.path };
     case "repo-root":
       return { ...base, kind: "repo-root" };
+    case "hosted": {
+      // Inline the MD body from bodyPath; validated non-missing by
+      // validateReference above. bodyPath is stripped from the generated
+      // view (build-time only). sourceUrl passes through unchanged when
+      // provided.
+      const body = require("node:fs").readFileSync(join(ROOT, item.bodyPath!), "utf-8") as string;
+      return {
+        ...base,
+        kind: "hosted",
+        body,
+        ...(item.sourceUrl ? { sourceUrl: item.sourceUrl } : {}),
+      };
+    }
   }
 }
 

@@ -233,7 +233,11 @@ describe("public page helpers", () => {
       lang: "en",
       setupPaths: stateWithStructuredCheckIn.setupPaths,
     });
-    expect(referenceGroups[0]?.items.some((item) => item.href?.includes("materials/participant-resource-kit.md"))).toBe(true);
+    // participant-resource-kit became a `hosted` item — it now links to
+    // the internal dashboard route instead of a GitHub blob URL.
+    const kit = referenceGroups[0]?.items.find((item) => item.id === "participant-resource-kit");
+    expect(kit?.href).toBe("/participant/reference/participant-resource-kit");
+    expect(kit?.external).toBe(false);
     expect(referenceGroups[1]?.items.some((item) => item.href === "https://developers.openai.com/codex/plugins")).toBe(true);
     expect(referenceGroups[1]?.items.some((item) => item.href === "https://modelcontextprotocol.io/docs/getting-started/intro")).toBe(true);
     expect(referenceGroups[2]?.items.some((item) => item.href === "https://agents.md/")).toBe(true);

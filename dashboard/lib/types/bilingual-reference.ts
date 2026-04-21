@@ -43,11 +43,27 @@ export type RepoRootReferenceItemShape = ReferenceItemBase & {
   kind: "repo-root";
 };
 
+/**
+ * A dashboard-hosted Markdown document — the body is authored in
+ * `bodyPath` (a repo-relative .md file), inlined at build time into the
+ * generated view as `body`, and rendered via the dashboard at
+ * `/participant/reference/<id>`. An optional `sourceUrl` surfaces a
+ * "view source" link back to GitHub for audit/trust.
+ */
+export type HostedReferenceItemShape = ReferenceItemBase & {
+  kind: "hosted";
+  /** Repo-relative path to the source .md file (build-time only). */
+  bodyPath?: string;
+  /** Optional GitHub link surfaced as "view source" on the body page. */
+  sourceUrl?: string;
+};
+
 export type ReferenceItemShape =
   | ExternalReferenceItemShape
   | RepoBlobReferenceItemShape
   | RepoTreeReferenceItemShape
-  | RepoRootReferenceItemShape;
+  | RepoRootReferenceItemShape
+  | HostedReferenceItemShape;
 
 export type ReferenceItemKind = ReferenceItemShape["kind"];
 
@@ -94,7 +110,21 @@ export type BilingualReferenceSource = {
 // Generated view shape (single locale, pre-resolution)
 // ---------------------------------------------------------------------------
 
-export type GeneratedReferenceItem = ReferenceItemShape & BilingualReferenceItemContent;
+/**
+ * Generated (per-locale) item. Hosted items carry an inlined Markdown
+ * `body` from the build step; bodyPath is stripped from the generated
+ * view since it's only meaningful during generation. Other kinds leave
+ * `body` undefined.
+ */
+export type GeneratedReferenceItem = ReferenceItemShape & BilingualReferenceItemContent & {
+  /**
+   * Markdown body, inlined from `bodyPath` at build time. Only set on
+   * hosted items in the compiled default view. Wire-side (API PATCH of
+   * the catalog) this field is rejected by the validator — bodies are
+   * managed through a separate body endpoint + sidecar table.
+   */
+  body?: string;
+};
 
 export type GeneratedReferenceGroup = {
   id: ReferenceGroupId;

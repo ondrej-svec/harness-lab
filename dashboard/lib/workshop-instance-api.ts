@@ -2,7 +2,13 @@ import { workshopTemplates, type WorkshopContentLanguage } from "./workshop-data
 import type { GeneratedReferenceGroup, ReferenceGroupId } from "./types/bilingual-reference";
 
 const KNOWN_REFERENCE_GROUP_IDS: ReferenceGroupId[] = ["defaults", "accelerators", "explore"];
-const KNOWN_REFERENCE_ITEM_KINDS = ["external", "repo-blob", "repo-tree", "repo-root"] as const;
+const KNOWN_REFERENCE_ITEM_KINDS = [
+  "external",
+  "repo-blob",
+  "repo-tree",
+  "repo-root",
+  "hosted",
+] as const;
 
 export type WorkshopInstanceCreateInput = {
   id: string;
@@ -164,6 +170,28 @@ function parseReferenceItem(raw: unknown, path: string): ValidationResult<Genera
     }
     case "repo-root":
       return { ok: true, value: { id, kind: "repo-root", label, description } };
+    case "hosted": {
+      // Bodies are managed through a separate sidecar endpoint — reject
+      // body in the catalog PATCH to keep the two responsibilities split.
+      if (record.body !== undefined) {
+        return {
+          ok: false,
+          error: `${path}.body is not allowed on the catalog; use the /reference/<itemId>/body endpoint instead`,
+        };
+      }
+      if (record.bodyPath !== undefined) {
+        return {
+          ok: false,
+          error: `${path}.bodyPath is authoring-source-only; not accepted at the wire`,
+        };
+      }
+      const sourceUrl = typeof record.sourceUrl === "string" ? record.sourceUrl.trim() : undefined;
+      const base = { id, kind: "hosted" as const, label, description };
+      return {
+        ok: true,
+        value: sourceUrl ? { ...base, sourceUrl } : base,
+      };
+    }
     default:
       return { ok: false, error: `${path}.kind unknown` };
   }

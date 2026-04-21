@@ -97,7 +97,9 @@ describe("ParticipantPage", () => {
     expect(html).toContain("Ujasněte si zadání. Otevřete repo. Sepište první mapu.");
     expect(html).toContain("připravená zadání pro tuto místnost");
     expect(html).toContain("nástroje pro signál z místnosti");
-    expect(html).toContain("participant-resource-kit.md");
+    // participant-resource-kit became a dashboard-hosted item — the link
+    // now points at /participant/reference/<id> instead of the blob URL.
+    expect(html).toContain("/participant/reference/participant-resource-kit");
     expect(html).toContain("https://developers.openai.com/codex/plugins");
     expect(html).toContain("https://modelcontextprotocol.io/docs/getting-started/intro");
     expect(html).toContain("https://agents.md/");

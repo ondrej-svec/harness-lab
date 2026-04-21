@@ -389,6 +389,9 @@ function printUsage(io, ui) {
     helpLine("workshop reference set-item <groupId> <itemId> [<id>]", "Upsert (replace or add) an item"),
     helpLine("  --kind ... --label TEXT --description TEXT [--href URL | --path PATH]", ""),
     helpLine("workshop reference remove-item <groupId> <itemId> [<id>]", "Remove an item from a group"),
+    helpLine("workshop reference show-body <itemId> [<id>]", "Fetch the effective MD body for a hosted item"),
+    helpLine("workshop reference set-body <itemId> [<id>] --file PATH", "Push a custom MD body override"),
+    helpLine("workshop reference reset-body <itemId> [<id>]", "Clear the body override → compiled default renders"),
   ]);
   ui.blank();
 
@@ -1837,6 +1840,160 @@ async function handleWorkshopReferenceRemoveItem(io, ui, env, positionals, flags
   }
 }
 
+async function handleWorkshopReferenceShowBody(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const itemId = readOptionalPositional(positionals, 3);
+  if (!itemId) {
+    ui.status("error", "Usage: workshop reference show-body <itemId> [<instanceId>]", { stream: "stderr" });
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopReferenceBody(instanceId, itemId);
+    ui.json("Workshop Reference Body", result);
+    ui.status(
+      "ok",
+      `${itemId} on ${instanceId}: source=${result.source}, ${result.body.length} chars` +
+        (result.updatedAt ? `, updated ${result.updatedAt}` : ""),
+    );
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference show-body failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceSetBody(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const itemId = readOptionalPositional(positionals, 3);
+  if (!itemId) {
+    ui.status(
+      "error",
+      "Usage: workshop reference set-body <itemId> [<instanceId>] --file PATH",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  const filePath = readStringFlag(flags, "file");
+  if (!filePath) {
+    ui.status("error", "--file <path.md> is required.", { stream: "stderr" });
+    return 1;
+  }
+  const resolvedPath = path.resolve(process.cwd(), filePath);
+  let body;
+  try {
+    body = await fs.readFile(resolvedPath, "utf-8");
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      ui.status("error", `Body file not found at ${resolvedPath}`, { stream: "stderr" });
+    } else {
+      ui.status("error", `Failed to read body file: ${error.message}`, { stream: "stderr" });
+    }
+    return 1;
+  }
+
+  if (!body.trim()) {
+    ui.status("error", `Body file is empty: ${resolvedPath}`, { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.setWorkshopReferenceBody(instanceId, itemId, body);
+    ui.json("Workshop Reference Set Body", result);
+    ui.status(
+      "ok",
+      `Pushed ${body.length} chars for ${itemId} on ${instanceId}.`,
+    );
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference set-body failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceResetBody(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const itemId = readOptionalPositional(positionals, 3);
+  if (!itemId) {
+    ui.status(
+      "error",
+      "Usage: workshop reference reset-body <itemId> [<instanceId>]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.resetWorkshopReferenceBody(instanceId, itemId);
+    ui.json("Workshop Reference Reset Body", result);
+    ui.status("ok", `Cleared body override for ${itemId} on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference reset-body failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopReferenceReset(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
@@ -2876,6 +3033,18 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "reference" && subaction === "remove-item") {
     return handleWorkshopReferenceRemoveItem(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "show-body") {
+    return handleWorkshopReferenceShowBody(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "set-body") {
+    return handleWorkshopReferenceSetBody(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "reset-body") {
+    return handleWorkshopReferenceResetBody(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)

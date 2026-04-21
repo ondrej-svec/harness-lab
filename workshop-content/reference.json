@@ -15,8 +15,9 @@
       "items": [
         {
           "id": "participant-resource-kit",
-          "kind": "repo-blob",
-          "path": "materials/participant-resource-kit.md",
+          "kind": "hosted",
+          "bodyPath": "materials/participant-resource-kit.md",
+          "sourceUrl": "materials/participant-resource-kit.md",
           "cs_reviewed": true,
           "en": {
             "label": "Participant resource kit",

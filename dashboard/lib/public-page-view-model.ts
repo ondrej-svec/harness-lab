@@ -415,6 +415,10 @@ function resolveReferenceItemHref(item: GeneratedReferenceItem): string | null {
       return buildRepoTreeUrl(item.path);
     case "repo-root":
       return getPublicRepoUrl();
+    case "hosted":
+      // Internal dashboard route — the body is rendered inside
+      // participant chrome via dashboard/app/participant/reference/[itemId].
+      return `/participant/reference/${encodeURIComponent(item.id)}`;
   }
 }
 
@@ -424,7 +428,9 @@ function toReferenceEntry(item: GeneratedReferenceItem): ParticipantReferenceEnt
     label: item.label,
     description: item.description,
     href: resolveReferenceItemHref(item),
-    external: true,
+    // Hosted bodies live inside the participant surface; keep them in the
+    // current tab. External, repo, and root links still open externally.
+    external: item.kind !== "hosted",
   };
 }
 

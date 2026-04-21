@@ -125,9 +125,74 @@ describe("parseWorkshopInstanceReferenceGroupsBody", () => {
     expect(result.ok === false && result.error).toMatch(/path required for repo-blob/);
   });
 
-  it("accepts the currently-compiled reference catalog as a self-round-trip", async () => {
+  it("accepts the currently-compiled reference catalog as a self-round-trip (without bodies)", async () => {
     const { default: view } = await import("./generated/reference-en.json");
-    const result = parseWorkshopInstanceReferenceGroupsBody({ referenceGroups: view.groups });
+    // Compiled-default hosted items carry an inlined `body` field that is
+    // not part of the wire contract — the CLI import flow reads the file,
+    // drops bodies per `hosted` items, and pushes only the structural
+    // catalog. Mirror that here so the round-trip is a fair check.
+    const groupsWithoutBody = view.groups.map((group) => ({
+      ...group,
+      items: group.items.map((item) => {
+        if (item.kind !== "hosted") return item;
+        const { body: _body, ...rest } = item as { body?: string } & Record<string, unknown>;
+        return rest;
+      }),
+    }));
+    const result = parseWorkshopInstanceReferenceGroupsBody({ referenceGroups: groupsWithoutBody });
+    expect(result.ok).toBe(true);
+  });
+
+  it("rejects a hosted item with body at the wire (body belongs to sidecar)", () => {
+    const result = parseWorkshopInstanceReferenceGroupsBody({
+      referenceGroups: [
+        {
+          id: "defaults",
+          title: "t",
+          description: "d",
+          items: [
+            { id: "kit", kind: "hosted", label: "Kit", description: "D", body: "# Hi" },
+          ],
+        },
+      ],
+    });
+    expect(result.ok).toBe(false);
+    expect(result.ok === false && result.error).toMatch(/body is not allowed on the catalog/);
+  });
+
+  it("accepts a hosted item without body or sourceUrl", () => {
+    const result = parseWorkshopInstanceReferenceGroupsBody({
+      referenceGroups: [
+        {
+          id: "defaults",
+          title: "t",
+          description: "d",
+          items: [{ id: "kit", kind: "hosted", label: "Kit", description: "D" }],
+        },
+      ],
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("accepts a hosted item with sourceUrl", () => {
+    const result = parseWorkshopInstanceReferenceGroupsBody({
+      referenceGroups: [
+        {
+          id: "defaults",
+          title: "t",
+          description: "d",
+          items: [
+            {
+              id: "kit",
+              kind: "hosted",
+              label: "Kit",
+              description: "D",
+              sourceUrl: "materials/brno-kit.md",
+            },
+          ],
+        },
+      ],
+    });
     expect(result.ok).toBe(true);
   });
 });
