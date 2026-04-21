@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "id": "defaults",
+      "title": "Workshopové materiály",
+      "description": "Začněte u repo-native workshopových materiálů a až potom choďte dál.",
+      "items": [
+        {
+          "id": "participant-resource-kit",
+          "label": "Participant resource kit",
+          "description": "Nejkratší přenositelný základ: `AGENTS.md`, jeden trust anchor a další bezpečný krok.",
+          "kind": "repo-blob",
+          "path": "materials/participant-resource-kit.md"
+        },
+        {
+          "id": "workshop-reference",
+          "label": "Workshop reference",
+          "description": "Příkazy, výchozí postupy a rámec workshopu v jednom repo-native přehledu.",
+          "kind": "repo-blob",
+          "path": "workshop-skill/reference.md"
+        },
+        {
+          "id": "template-agents",
+          "label": "Šablona `AGENTS.md`",
+          "description": "Výchozí mapa, kterou si můžete ještě dnes zkopírovat do reálného repa.",
+          "kind": "repo-blob",
+          "path": "workshop-skill/template-agents.md"
+        },
+        {
+          "id": "learner-gallery",
+          "label": "Galerie navazujících zdrojů",
+          "description": "Krátký výběr oficiálních docs, veřejných rep a navazujících zdrojů.",
+          "kind": "repo-blob",
+          "path": "docs/learner-reference-gallery.md"
+        },
+        {
+          "id": "harness-cli",
+          "label": "Harness CLI",
+          "description": "Instalační cesta pro workshop skill a participant bootstrap.",
+          "kind": "repo-blob",
+          "path": "harness-cli/README.md"
+        },
+        {
+          "id": "blueprint",
+          "label": "Blueprint workshopu",
+          "description": "Veřejná metoda: jak funguje den a co patří do repa.",
+          "kind": "repo-tree",
+          "path": "workshop-blueprint"
+        }
+      ]
+    },
+    {
+      "id": "accelerators",
+      "title": "Setup, skills a pluginy",
+      "description": "Hodí se ve chvíli, kdy chcete po workshopu pokračovat nebo si zpřesnit lokální toolkit.",
+      "items": [
+        {
+          "id": "codex-skills-docs",
+          "label": "OpenAI Codex skills",
+          "description": "Oficiální docs pro repo-native skills.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/skills"
+        },
+        {
+          "id": "codex-plugins-docs",
+          "label": "OpenAI Codex plugins",
+          "description": "Kdy dává plugin větší smysl než další skill soubor.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/plugins"
+        },
+        {
+          "id": "codex-build-plugins-docs",
+          "label": "Build Codex plugins",
+          "description": "Balení pluginů a marketplace model.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/plugins/build"
+        },
+        {
+          "id": "mcp-intro",
+          "label": "Model Context Protocol",
+          "description": "Rychlý vstup do MCP serverů a zapojení nástrojů.",
+          "kind": "external",
+          "href": "https://modelcontextprotocol.io/docs/getting-started/intro"
+        },
+        {
+          "id": "agent-skills-catalog",
+          "label": "agentskills.io",
+          "description": "Externí katalog skills pro další workflow stavebnice.",
+          "kind": "external",
+          "href": "https://agentskills.io/home"
+        }
+      ]
+    },
+    {
+      "id": "explore",
+      "title": "Externí čtení",
+      "description": "Otevírejte je ve chvíli, kdy už je jasné, co máte udělat teď, a chcete jít víc do hloubky.",
+      "items": [
+        {
+          "id": "public-repo",
+          "label": "Veřejné repo",
+          "description": "Projděte si přímo veřejné ukázkové repo.",
+          "kind": "repo-root"
+        },
+        {
+          "id": "control-surfaces",
+          "label": "Oddělené vrstvy",
+          "description": "Proč zůstávají oddělené prohlížeč, skill, CLI a facilitátorská vrstva.",
+          "kind": "repo-blob",
+          "path": "workshop-blueprint/control-surfaces.md"
+        },
+        {
+          "id": "agents-md",
+          "label": "agents.md",
+          "description": "Vznikající standard kolem souborů `AGENTS.md`.",
+          "kind": "external",
+          "href": "https://agents.md/"
+        },
+        {
+          "id": "fowler-harness",
+          "label": "Martin Fowler o harness engineeringu",
+          "description": "Guides, sensors, feedforward a feedback.",
+          "kind": "external",
+          "href": "https://martinfowler.com/articles/harness-engineering.html"
+        },
+        {
+          "id": "openai-harness",
+          "label": "OpenAI o harness engineeringu",
+          "description": "Ambiciózní end-state s observability stackem a uzavřenou smyčkou.",
+          "kind": "external",
+          "href": "https://openai.com/index/harness-engineering/"
+        }
+      ]
+    }
+  ]
+}

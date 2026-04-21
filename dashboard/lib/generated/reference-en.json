@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "groups": [
+    {
+      "id": "defaults",
+      "title": "Workshop materials",
+      "description": "Start with the repo-native workshop materials before you browse outward.",
+      "items": [
+        {
+          "id": "participant-resource-kit",
+          "label": "Participant resource kit",
+          "description": "The shortest portable takeaway: AGENTS.md, one trust anchor, and the next safe move.",
+          "kind": "repo-blob",
+          "path": "materials/participant-resource-kit.md"
+        },
+        {
+          "id": "workshop-reference",
+          "label": "Workshop reference",
+          "description": "Commands, defaults, and workshop framing collected in one repo-native reference.",
+          "kind": "repo-blob",
+          "path": "workshop-skill/reference.md"
+        },
+        {
+          "id": "template-agents",
+          "label": "AGENTS.md template",
+          "description": "The starter map you can copy into a real repo today.",
+          "kind": "repo-blob",
+          "path": "workshop-skill/template-agents.md"
+        },
+        {
+          "id": "learner-gallery",
+          "label": "Learner reference gallery",
+          "description": "A short curation of official docs, public repos, and next-step references.",
+          "kind": "repo-blob",
+          "path": "docs/learner-reference-gallery.md"
+        },
+        {
+          "id": "harness-cli",
+          "label": "Harness CLI",
+          "description": "Install path for the workshop skill and the participant bootstrap.",
+          "kind": "repo-blob",
+          "path": "harness-cli/README.md"
+        },
+        {
+          "id": "blueprint",
+          "label": "Workshop blueprint",
+          "description": "The public method: how the day works and what belongs in the repo.",
+          "kind": "repo-tree",
+          "path": "workshop-blueprint"
+        }
+      ]
+    },
+    {
+      "id": "accelerators",
+      "title": "Setup, skills, plugins",
+      "description": "Useful when you want to keep going after the workshop or tighten your local toolkit.",
+      "items": [
+        {
+          "id": "codex-skills-docs",
+          "label": "OpenAI Codex skills",
+          "description": "Official docs for repo-native skills.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/skills"
+        },
+        {
+          "id": "codex-plugins-docs",
+          "label": "OpenAI Codex plugins",
+          "description": "When a plugin makes more sense than another skill file.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/plugins"
+        },
+        {
+          "id": "codex-build-plugins-docs",
+          "label": "Build Codex plugins",
+          "description": "Plugin packaging and marketplace model.",
+          "kind": "external",
+          "href": "https://developers.openai.com/codex/plugins/build"
+        },
+        {
+          "id": "mcp-intro",
+          "label": "Model Context Protocol",
+          "description": "Getting started with MCP servers and tool wiring.",
+          "kind": "external",
+          "href": "https://modelcontextprotocol.io/docs/getting-started/intro"
+        },
+        {
+          "id": "agent-skills-catalog",
+          "label": "agentskills.io",
+          "description": "External skill catalog for more workflow building blocks.",
+          "kind": "external",
+          "href": "https://agentskills.io/home"
+        }
+      ]
+    },
+    {
+      "id": "explore",
+      "title": "External reads",
+      "description": "Open these when the immediate room move is already clear and you want deeper context.",
+      "items": [
+        {
+          "id": "public-repo",
+          "label": "Public repo",
+          "description": "Browse the template repo directly.",
+          "kind": "repo-root"
+        },
+        {
+          "id": "control-surfaces",
+          "label": "Control surfaces",
+          "description": "Why the browser surface, skill, CLI, and facilitator layer stay separate.",
+          "kind": "repo-blob",
+          "path": "workshop-blueprint/control-surfaces.md"
+        },
+        {
+          "id": "agents-md",
+          "label": "agents.md",
+          "description": "The emerging standard around AGENTS.md files.",
+          "kind": "external",
+          "href": "https://agents.md/"
+        },
+        {
+          "id": "fowler-harness",
+          "label": "Martin Fowler on harness engineering",
+          "description": "Guides, sensors, feedforward, feedback.",
+          "kind": "external",
+          "href": "https://martinfowler.com/articles/harness-engineering.html"
+        },
+        {
+          "id": "openai-harness",
+          "label": "OpenAI on harness engineering",
+          "description": "The observability-stack end state and the closing loop.",
+          "kind": "external",
+          "href": "https://openai.com/index/harness-engineering/"
+        }
+      ]
+    }
+  ]
+}
