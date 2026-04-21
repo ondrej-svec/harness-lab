@@ -396,6 +396,16 @@ export async function getParticipantSessionFromCookieStore() {
   return getParticipantSession(cookieStore.get(participantSessionCookieName)?.value);
 }
 
+/**
+ * Like `getParticipantSessionFromCookieStore`, but reads the cookie
+ * directly from the Request rather than next/headers' async storage.
+ * Use this in Route Handlers that need the session without the 401
+ * response wrapping provided by `requireParticipantSession`.
+ */
+export async function getParticipantSessionFromRequest(request: Request) {
+  return getParticipantSession(readCookieValue(request, participantSessionCookieName));
+}
+
 export async function revokeParticipantSession(token: string | undefined | null) {
   if (!token) {
     return;
