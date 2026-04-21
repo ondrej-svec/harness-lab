@@ -129,29 +129,65 @@ export function PostWorkshopSurface({
                     {group.description}
                   </p>
                   <div className="mt-4 space-y-3">
-                    {group.items.map((item) => (
-                      <a
-                        key={item.id}
-                        href={item.href ?? "#"}
-                        rel={item.href?.startsWith("http") ? "noreferrer" : undefined}
-                        target={item.href?.startsWith("http") ? "_blank" : undefined}
-                        className="block rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
-                          {item.href ? (
-                            <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                              {copy.openLinkLabel}
-                            </span>
+                    {group.items.map((item) => {
+                      const opensInNewTab =
+                        item.href?.startsWith("http") ||
+                        Boolean(item.href?.startsWith("/participant/artifact/"));
+                      const card = (
+                        <a
+                          key={item.id}
+                          href={item.href ?? "#"}
+                          rel={opensInNewTab ? "noreferrer" : undefined}
+                          target={opensInNewTab ? "_blank" : undefined}
+                          className="block rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <p className="text-sm font-medium text-[var(--text-primary)]">{item.label}</p>
+                            {item.href ? (
+                              <span className="text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                                {copy.openLinkLabel}
+                              </span>
+                            ) : null}
+                          </div>
+                          {item.description ? (
+                            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
+                              {item.description}
+                            </p>
                           ) : null}
+                        </a>
+                      );
+                      if (!item.downloadHref) {
+                        return card;
+                      }
+                      return (
+                        <div key={item.id} className="relative">
+                          {card}
+                          <a
+                            className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-panel)] text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+                            href={item.downloadHref}
+                            rel="noreferrer"
+                            target="_blank"
+                            aria-label={copy.downloadLinkLabel}
+                            title={copy.downloadLinkLabel}
+                          >
+                            <svg
+                              aria-hidden="true"
+                              className="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={1.8}
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
+                              />
+                            </svg>
+                          </a>
                         </div>
-                        {item.description ? (
-                          <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
-                            {item.description}
-                          </p>
-                        ) : null}
-                      </a>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               ))}

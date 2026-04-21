@@ -449,6 +449,8 @@ export function ParticipantRoomSurface({
                       label={item.label}
                       description={item.description}
                       openLabel={copy.openLinkLabel}
+                      downloadHref={item.downloadHref ?? null}
+                      downloadLabel={copy.downloadLinkLabel}
                     />
                   ))}
                 </div>
@@ -835,11 +837,15 @@ function ActionablePanelLink({
   label,
   description,
   openLabel,
+  downloadHref,
+  downloadLabel,
 }: {
   href: string | null;
   label: string;
   description?: string;
   openLabel: string;
+  downloadHref?: string | null;
+  downloadLabel?: string;
 }) {
   const className =
     "dashboard-motion-card dashboard-motion-link rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3 transition hover:border-[var(--border-strong)] hover:bg-[var(--surface)]";
@@ -857,15 +863,47 @@ function ActionablePanelLink({
     return <div className={className}>{content}</div>;
   }
 
-  return (
+  const primary = (
     <a
       className={`block ${className}`}
       href={href}
       rel={isExternalHref(href) ? "noreferrer" : undefined}
-      target={isExternalHref(href) ? "_blank" : undefined}
+      target={isExternalHref(href) || href.startsWith("/participant/artifact/") ? "_blank" : undefined}
     >
       {content}
     </a>
+  );
+
+  if (!downloadHref) {
+    return primary;
+  }
+
+  // For items that carry a download affordance (cohort artifacts), sit the
+  // download button in the card's top-right corner outside the primary
+  // anchor so nested <a> tags stay out of the markup.
+  return (
+    <div className="relative">
+      {primary}
+      <a
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface-panel)] text-[var(--text-muted)] transition hover:border-[var(--border-strong)] hover:text-[var(--text-primary)]"
+        href={downloadHref}
+        rel="noreferrer"
+        target="_blank"
+        aria-label={downloadLabel ?? "download"}
+        title={downloadLabel ?? "download"}
+      >
+        <svg
+          aria-hidden="true"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.8}
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+        </svg>
+      </a>
+    </div>
   );
 }
 
