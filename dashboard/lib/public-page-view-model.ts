@@ -1,6 +1,18 @@
 import type { ParticipantTeamLookup } from "./event-access";
 import type { ParticipantSession } from "./runtime-contracts";
-import { buildRepoBlobUrl, getBlueprintRepoUrl, getPublicRepoUrl, resolveRepoLinkedHref } from "./repo-links";
+import {
+  buildRepoBlobUrl,
+  buildRepoTreeUrl,
+  getBlueprintRepoUrl,
+  getPublicRepoUrl,
+} from "./repo-links";
+import type {
+  GeneratedReferenceGroup,
+  GeneratedReferenceItem,
+  GeneratedReferenceView,
+} from "./types/bilingual-reference";
+import referenceViewEn from "./generated/reference-en.json";
+import referenceViewCs from "./generated/reference-cs.json";
 import type {
   Challenge,
   ParticipantPollDefinition,
@@ -393,153 +405,31 @@ function buildParticipantReferenceHref(id: string) {
   }
 }
 
-function buildParticipantResourceCatalog(lang: UiLanguage) {
-  const isEnglish = lang === "en";
+function resolveReferenceItemHref(item: GeneratedReferenceItem): string | null {
+  switch (item.kind) {
+    case "external":
+      return item.href;
+    case "repo-blob":
+      return buildRepoBlobUrl(item.path);
+    case "repo-tree":
+      return buildRepoTreeUrl(item.path);
+    case "repo-root":
+      return getPublicRepoUrl();
+  }
+}
 
-  const repoMaterials: ParticipantReferenceEntry[] = [
-    {
-      id: "participant-resource-kit",
-      label: isEnglish ? "Participant resource kit" : "Participant resource kit",
-      description:
-        isEnglish
-          ? "The shortest portable takeaway: AGENTS.md, one trust anchor, and the next safe move."
-          : "Nejkratší přenositelný základ: `AGENTS.md`, jeden trust anchor a další bezpečný krok.",
-      href: resolveRepoLinkedHref("materials/participant-resource-kit.md"),
-      external: true,
-    },
-    {
-      id: "workshop-reference",
-      label: isEnglish ? "Workshop reference" : "Workshop reference",
-        description:
-          isEnglish
-            ? "Commands, defaults, and workshop framing collected in one repo-native reference."
-            : "Příkazy, výchozí postupy a rámec workshopu v jednom repo-native přehledu.",
-      href: resolveRepoLinkedHref("workshop-skill/reference.md"),
-      external: true,
-    },
-    {
-      id: "template-agents",
-      label: isEnglish ? "AGENTS.md template" : "Šablona `AGENTS.md`",
-      description:
-        isEnglish
-          ? "The starter map you can copy into a real repo today."
-          : "Výchozí mapa, kterou si můžete ještě dnes zkopírovat do reálného repa.",
-      href: resolveRepoLinkedHref("workshop-skill/template-agents.md"),
-      external: true,
-    },
-    {
-      id: "learner-gallery",
-      label: isEnglish ? "Learner reference gallery" : "Galerie navazujících zdrojů",
-      description:
-        isEnglish
-          ? "A short curation of official docs, public repos, and next-step references."
-          : "Krátký výběr oficiálních docs, veřejných rep a navazujících zdrojů.",
-      href: resolveRepoLinkedHref("docs/learner-reference-gallery.md"),
-      external: true,
-    },
-    {
-      id: "harness-cli",
-      label: isEnglish ? "Harness CLI" : "Harness CLI",
-      description:
-        isEnglish
-          ? "Install path for the workshop skill and the participant bootstrap."
-          : "Instalační cesta pro workshop skill a participant bootstrap.",
-      href: resolveRepoLinkedHref("harness-cli/README.md"),
-      external: true,
-    },
-  ];
-
-  const setupAndPlugins: ParticipantReferenceEntry[] = [
-    {
-      id: "codex-skills-docs",
-      label: isEnglish ? "OpenAI Codex skills" : "OpenAI Codex skills",
-      description:
-        isEnglish
-          ? "Official docs for repo-native skills."
-          : "Oficiální docs pro repo-native skills.",
-      href: "https://developers.openai.com/codex/skills",
-      external: true,
-    },
-    {
-      id: "codex-plugins-docs",
-      label: isEnglish ? "OpenAI Codex plugins" : "OpenAI Codex plugins",
-      description:
-        isEnglish
-          ? "When a plugin makes more sense than another skill file."
-          : "Kdy dává plugin větší smysl než další skill soubor.",
-      href: "https://developers.openai.com/codex/plugins",
-      external: true,
-    },
-    {
-      id: "codex-build-plugins-docs",
-      label: isEnglish ? "Build Codex plugins" : "Build Codex plugins",
-      description:
-        isEnglish
-          ? "Plugin packaging and marketplace model."
-          : "Balení pluginů a marketplace model.",
-      href: "https://developers.openai.com/codex/plugins/build",
-      external: true,
-    },
-    {
-      id: "mcp-intro",
-      label: isEnglish ? "Model Context Protocol" : "Model Context Protocol",
-      description:
-        isEnglish
-          ? "Getting started with MCP servers and tool wiring."
-          : "Rychlý vstup do MCP serverů a zapojení nástrojů.",
-      href: "https://modelcontextprotocol.io/docs/getting-started/intro",
-      external: true,
-    },
-    {
-      id: "agent-skills-catalog",
-      label: isEnglish ? "agentskills.io" : "agentskills.io",
-      description:
-        isEnglish
-          ? "External skill catalog for more workflow building blocks."
-          : "Externí katalog skills pro další workflow stavebnice.",
-      href: "https://agentskills.io/home",
-      external: true,
-    },
-  ];
-
-  const sharedArtifactsAndReads: ParticipantReferenceEntry[] = [
-    {
-      id: "agents-md",
-      label: isEnglish ? "agents.md" : "agents.md",
-      description:
-        isEnglish
-          ? "The emerging standard around AGENTS.md files."
-          : "Vznikající standard kolem souborů `AGENTS.md`.",
-      href: "https://agents.md/",
-      external: true,
-    },
-    {
-      id: "fowler-harness",
-      label: isEnglish ? "Martin Fowler on harness engineering" : "Martin Fowler o harness engineeringu",
-      description:
-        isEnglish
-          ? "Guides, sensors, feedforward, feedback."
-          : "Guides, sensors, feedforward a feedback.",
-      href: "https://martinfowler.com/articles/harness-engineering.html",
-      external: true,
-    },
-    {
-      id: "openai-harness",
-      label: isEnglish ? "OpenAI on harness engineering" : "OpenAI o harness engineeringu",
-      description:
-        isEnglish
-          ? "The observability-stack end state and the closing loop."
-          : "Ambiciózní end-state s observability stackem a uzavřenou smyčkou.",
-      href: "https://openai.com/index/harness-engineering/",
-      external: true,
-    },
-  ];
-
+function toReferenceEntry(item: GeneratedReferenceItem): ParticipantReferenceEntry {
   return {
-    repoMaterials,
-    setupAndPlugins,
-    sharedArtifactsAndReads,
+    id: item.id,
+    label: item.label,
+    description: item.description,
+    href: resolveReferenceItemHref(item),
+    external: true,
   };
+}
+
+function getDefaultReferenceView(lang: UiLanguage): GeneratedReferenceView {
+  return (lang === "en" ? referenceViewEn : referenceViewCs) as GeneratedReferenceView;
 }
 
 export function buildParticipantReferenceGroups(options: {
@@ -547,82 +437,36 @@ export function buildParticipantReferenceGroups(options: {
   setupPaths: SetupPath[];
 }) {
   const { lang, setupPaths } = options;
-  const catalog = buildParticipantResourceCatalog(lang);
+  const view = getDefaultReferenceView(lang);
 
-  const defaults: ParticipantReferenceGroup = {
-    id: "defaults",
-    title: lang === "en" ? "Workshop materials" : "Workshopové materiály",
-    description:
-      lang === "en"
-        ? "Start with the repo-native workshop materials before you browse outward."
-        : "Začněte u repo-native workshopových materiálů a až potom choďte dál.",
-    items: [
-      ...catalog.repoMaterials,
-      {
-        id: "blueprint",
-        label: lang === "en" ? "Workshop blueprint" : "Blueprint workshopu",
-        description:
-          lang === "en"
-            ? "The public method: how the day works and what belongs in the repo."
-            : "Veřejná metoda: jak funguje den a co patří do repa.",
-        href: getBlueprintRepoUrl() ?? buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
-        external: true,
-      },
-    ],
-  };
+  // Dynamic setupPaths items (instance-driven via workshop state) are
+  // injected into the `accelerators` group ahead of the authored external
+  // items, preserving the order used when this logic lived inline in TSX.
+  const setupPathEntries: ParticipantReferenceEntry[] = setupPaths.map((path) => ({
+    id: path.id,
+    label: path.label,
+    description: `${path.audience} · ${path.summary}`,
+    href: buildParticipantReferenceHref(path.id),
+    external: true,
+  }));
 
-  const accelerators: ParticipantReferenceGroup = {
-    id: "accelerators",
-    title: lang === "en" ? "Setup, skills, plugins" : "Setup, skills a pluginy",
-    description:
-      lang === "en"
-        ? "Useful when you want to keep going after the workshop or tighten your local toolkit."
-        : "Hodí se ve chvíli, kdy chcete po workshopu pokračovat nebo si zpřesnit lokální toolkit.",
-    items: [
-      ...setupPaths.map((path) => ({
-        id: path.id,
-        label: path.label,
-        description: `${path.audience} · ${path.summary}`,
-        href: buildParticipantReferenceHref(path.id),
-        external: true,
-      })),
-      ...catalog.setupAndPlugins,
-    ],
-  };
-
-  const explore: ParticipantReferenceGroup = {
-    id: "explore",
-    title: lang === "en" ? "External reads" : "Externí čtení",
-    description:
-      lang === "en"
-        ? "Open these when the immediate room move is already clear and you want deeper context."
-        : "Otevírejte je ve chvíli, kdy už je jasné, co máte udělat teď, a chcete jít víc do hloubky.",
-    items: [
-      {
-        id: "public-repo",
-        label: lang === "en" ? "Public repo" : "Veřejné repo",
-        description:
-          lang === "en"
-            ? "Browse the template repo directly."
-            : "Projděte si přímo veřejné ukázkové repo.",
-        href: getPublicRepoUrl(),
-        external: true,
-      },
-      {
-        id: "control-surfaces",
-        label: lang === "en" ? "Control surfaces" : "Oddělené vrstvy",
-        description:
-          lang === "en"
-            ? "Why the browser surface, skill, CLI, and facilitator layer stay separate."
-            : "Proč zůstávají oddělené prohlížeč, skill, CLI a facilitátorská vrstva.",
-        href: buildRepoBlobUrl("workshop-blueprint/control-surfaces.md"),
-        external: true,
-      },
-      ...catalog.sharedArtifactsAndReads,
-    ],
-  };
-
-  return [defaults, accelerators, explore] satisfies ParticipantReferenceGroup[];
+  return view.groups.map<ParticipantReferenceGroup>((group) => {
+    const items = group.items.map(toReferenceEntry);
+    if (group.id === "accelerators") {
+      return {
+        id: group.id,
+        title: group.title,
+        description: group.description,
+        items: [...setupPathEntries, ...items],
+      };
+    }
+    return {
+      id: group.id,
+      title: group.title,
+      description: group.description,
+      items,
+    };
+  });
 }
 
 export function buildParticipantCheckpointFeed(options: {

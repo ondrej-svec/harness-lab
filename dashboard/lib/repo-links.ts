@@ -36,12 +36,7 @@ export function getPublicRepoUrl() {
 }
 
 export function getBlueprintRepoUrl() {
-  const repoUrl = readRepoUrl();
-  if (!repoUrl) {
-    return null;
-  }
-
-  return `${repoUrl}/tree/${readRepoBranch()}/workshop-blueprint`;
+  return buildRepoTreeUrl("workshop-blueprint");
 }
 
 export function buildRepoBlobUrl(path: string) {
@@ -51,6 +46,15 @@ export function buildRepoBlobUrl(path: string) {
   }
 
   return `${repoUrl}/blob/${readRepoBranch()}/${normalizeRepoPath(path)}`;
+}
+
+export function buildRepoTreeUrl(path: string) {
+  const repoUrl = readRepoUrl();
+  if (!repoUrl) {
+    return null;
+  }
+
+  return `${repoUrl}/tree/${readRepoBranch()}/${normalizeRepoPath(path)}`;
 }
 
 export function resolveRepoLinkedHref(href: string | null | undefined) {
