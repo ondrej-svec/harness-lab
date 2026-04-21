@@ -5,6 +5,29 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## 0.11.0 — 2026-04-21
+
+### Added
+
+- **`workshop artifact upload|list|remove`** — upload cohort-scoped files
+  (HTML / PDF / image, max 25 MiB) to Vercel Blob (private mode) via a
+  multipart POST. Files are visible only to authenticated participants
+  of the same workshop instance. Content-type is guessed from the
+  filename extension; override with `--content-type MIME`.
+- **`workshop artifact attach|detach <artifactId> --group <groupId>`** —
+  surface or hide an uploaded artifact in a participant reference group
+  (`defaults`, `accelerators`, `explore`). Attach is idempotent; detach
+  is a no-op when the artifact isn't already in the catalog. Attempts
+  to attach an artifact from a different cohort are rejected at the
+  API with a 400.
+
+### Changed
+
+- `harness-cli/README.md` and the facilitator skill document the full
+  upload → attach → detach → remove flow end-to-end, including the
+  participant-side render (open in new tab + download icon) and the
+  cross-instance isolation guarantees.
+
 ## 0.10.0 — 2026-04-20
 
 ### Added
