@@ -1569,6 +1569,40 @@ export async function updateWorkshopInstanceMetadata(
   return nextInstance;
 }
 
+export async function updateWorkshopInstanceReferenceGroups(
+  instanceId: string,
+  referenceGroups: import("./types/bilingual-reference").GeneratedReferenceGroup[] | null,
+  actorNeonUserId?: string | null,
+) {
+  const repository = getWorkshopInstanceRepository();
+  const current = await repository.getInstance(instanceId);
+  if (!current) {
+    return null;
+  }
+
+  const nextInstance = {
+    ...current,
+    referenceGroups: referenceGroups === null || referenceGroups.length === 0 ? null : referenceGroups,
+  };
+  await repository.updateInstance(instanceId, nextInstance);
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId,
+    actorKind: "facilitator",
+    action: referenceGroups === null ? "instance_reference_groups_cleared" : "instance_reference_groups_updated",
+    result: "success",
+    createdAt: new Date().toISOString(),
+    metadata: {
+      actorNeonUserId: actorNeonUserId ?? null,
+      groupCount: referenceGroups?.length ?? 0,
+      itemCount: referenceGroups?.reduce((sum, group) => sum + group.items.length, 0) ?? 0,
+    },
+  });
+
+  return nextInstance;
+}
+
 export async function prepareWorkshopInstance(instanceId: string, actorNeonUserId?: string | null) {
   const repository = getWorkshopInstanceRepository();
   const current = await repository.getInstance(instanceId);
