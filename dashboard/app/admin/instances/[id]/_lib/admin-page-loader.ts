@@ -48,6 +48,7 @@ export type AdminPageSearchParams = {
   agendaItem?: string;
   scene?: string;
   overlay?: string;
+  endError?: string;
 };
 
 function parseEvidenceSummary(value: string) {

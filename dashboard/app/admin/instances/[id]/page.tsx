@@ -142,6 +142,8 @@ export default async function AdminPage({
                 passwordParam={vm.passwordParam}
                 errorParam={vm.errorParam}
                 teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
+                instanceStatus={vm.selectedInstance?.status ?? "prepared"}
+                endError={query?.endError}
               />
             ) : null}
           </div>

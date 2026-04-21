@@ -16,6 +16,8 @@ import {
   resetWorkshopAction,
   toggleRotationAction,
 } from "../../_actions/settings";
+import { endWorkshopAction } from "../../_actions/lifecycle";
+import type { WorkshopInstanceStatus } from "@/lib/workshop-data";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
@@ -46,6 +48,8 @@ export function SettingsSection({
   passwordParam,
   errorParam,
   teamModeEnabled = true,
+  instanceStatus,
+  endError,
 }: {
   lang: UiLanguage;
   copy: Copy;
@@ -59,9 +63,12 @@ export function SettingsSection({
   passwordParam: string | undefined;
   errorParam: string | undefined;
   teamModeEnabled?: boolean;
+  instanceStatus: WorkshopInstanceStatus;
+  endError?: string | undefined;
 }) {
   const blueprintRepoUrl = getBlueprintRepoUrl();
   const canChangePassword = isNeonMode && hasAuth;
+  const alreadyEnded = instanceStatus === "ended";
 
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(20rem,0.82fr)_minmax(0,1.18fr)]">
@@ -146,6 +153,48 @@ export function SettingsSection({
               <AdminSubmitButton className={adminPrimaryButtonClassName}>
                 {copy.changePasswordButton}
               </AdminSubmitButton>
+            </form>
+          )}
+        </AdminPanel>
+
+        <AdminPanel
+          eyebrow={copy.endWorkshopEyebrow}
+          title={copy.endWorkshopTitle}
+          description={copy.endWorkshopDescription}
+        >
+          {alreadyEnded ? (
+            <div className="rounded-[20px] border border-[var(--border)] bg-[var(--surface-soft)] p-4">
+              <p className="text-sm leading-6 text-[var(--text-secondary)]">{copy.endWorkshopAlreadyEnded}</p>
+            </div>
+          ) : (
+            <form
+              action={endWorkshopAction}
+              className="space-y-3 rounded-[20px] border border-[var(--border-strong)] bg-[var(--surface-soft)] p-4"
+            >
+              <HiddenState lang={lang} instanceId={instanceId} />
+              <details className="rounded-[14px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3">
+                <summary className="cursor-pointer list-none text-sm font-medium text-[var(--text-primary)]">
+                  {copy.endWorkshopButton}
+                </summary>
+                <div className="mt-4 space-y-3">
+                  <p className="text-xs leading-5 text-[var(--text-muted)]">{copy.endWorkshopConfirmHint}</p>
+                  <input
+                    type="text"
+                    name="confirmation"
+                    required
+                    autoComplete="off"
+                    aria-label={copy.endWorkshopConfirmPlaceholder}
+                    placeholder={instanceId}
+                    className="w-full rounded-[10px] border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-sm"
+                  />
+                  {endError === "confirm" ? (
+                    <p className="text-xs leading-5 text-[var(--danger)]">{copy.endWorkshopConfirmError}</p>
+                  ) : null}
+                  <AdminSubmitButton className={`${adminPrimaryButtonClassName} w-full`}>
+                    {copy.endWorkshopButton}
+                  </AdminSubmitButton>
+                </div>
+              </details>
             </form>
           )}
         </AdminPanel>
