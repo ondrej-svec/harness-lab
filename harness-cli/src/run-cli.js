@@ -392,6 +392,10 @@ function printUsage(io, ui) {
     helpLine("workshop reference show-body <itemId> [<id>]", "Fetch the effective MD body for a hosted item"),
     helpLine("workshop reference set-body <itemId> [<id>] --file PATH", "Push a custom MD body override"),
     helpLine("workshop reference reset-body <itemId> [<id>]", "Clear the body override → compiled default renders"),
+    helpLine("workshop copy show [<id>]", "Show the effective participant copy override"),
+    helpLine("workshop copy set <key.path> <value> [<id>]", "Override one key (e.g. postWorkshop.title)"),
+    helpLine("workshop copy import [<id>] --file PATH", "Bulk-import participant copy overrides"),
+    helpLine("workshop copy reset [<id>]", "Clear all participant copy overrides"),
   ]);
   ui.blank();
 
@@ -1994,6 +1998,201 @@ async function handleWorkshopReferenceResetBody(io, ui, env, positionals, flags,
   }
 }
 
+const COPY_ALLOWED_KEY_PATHS = new Set([
+  "postWorkshop.title",
+  "postWorkshop.body",
+  "postWorkshop.feedbackBody",
+  "postWorkshop.referenceBody",
+]);
+
+function setNestedCopyKey(copy, keyPath, value) {
+  const segments = keyPath.split(".");
+  let cursor = copy;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const seg = segments[i];
+    if (!cursor[seg] || typeof cursor[seg] !== "object") {
+      cursor[seg] = {};
+    }
+    cursor = cursor[seg];
+  }
+  cursor[segments[segments.length - 1]] = value;
+}
+
+async function handleWorkshopCopyShow(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readOptionalPositional(positionals, 3) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopParticipantCopy(instanceId);
+    ui.json("Workshop Participant Copy", result);
+    if (!result.participantCopy) {
+      ui.status("ok", "No override set — participants see compiled defaults.");
+    } else {
+      const keyCount = Object.entries(result.participantCopy).reduce(
+        (sum, [, section]) => sum + (section && typeof section === "object" ? Object.keys(section).length : 0),
+        0,
+      );
+      ui.status("ok", `Override active: ${keyCount} keys.`);
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Copy show failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopCopySet(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const keyPath = readOptionalPositional(positionals, 3);
+  const value = readOptionalPositional(positionals, 4);
+  if (!keyPath || value === undefined) {
+    ui.status(
+      "error",
+      "Usage: workshop copy set <key.path> <value> [<instanceId>]\n" +
+        `Allowed keys: ${Array.from(COPY_ALLOWED_KEY_PATHS).join(", ")}`,
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  if (!COPY_ALLOWED_KEY_PATHS.has(keyPath)) {
+    ui.status(
+      "error",
+      `Key '${keyPath}' is not overridable. Allowed: ${Array.from(COPY_ALLOWED_KEY_PATHS).join(", ")}`,
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 5) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const current = await client.getWorkshopParticipantCopy(instanceId);
+    const nextCopy = current.participantCopy
+      ? JSON.parse(JSON.stringify(current.participantCopy))
+      : {};
+    setNestedCopyKey(nextCopy, keyPath, value);
+    const result = await client.updateWorkshopParticipantCopy(instanceId, nextCopy);
+    ui.json("Workshop Copy Set", result);
+    ui.status("ok", `Set ${keyPath} on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Copy set failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopCopyImport(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readOptionalPositional(positionals, 3) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  const filePath = readStringFlag(flags, "file");
+  if (!filePath) {
+    ui.status("error", "--file <path.json> is required.", { stream: "stderr" });
+    return 1;
+  }
+  const resolvedPath = path.resolve(process.cwd(), filePath);
+  let parsed;
+  try {
+    const raw = await fs.readFile(resolvedPath, "utf-8");
+    parsed = JSON.parse(raw);
+  } catch (error) {
+    ui.status("error", `Failed to read ${resolvedPath}: ${error.message}`, { stream: "stderr" });
+    return 1;
+  }
+
+  // Accept either `{ participantCopy: {...} }` or the bare copy object.
+  const copyPayload = parsed?.participantCopy !== undefined ? parsed.participantCopy : parsed;
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateWorkshopParticipantCopy(instanceId, copyPayload);
+    ui.json("Workshop Copy Import", result);
+    ui.status("ok", `Imported participant copy from ${filePath} for ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Copy import failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopCopyReset(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readOptionalPositional(positionals, 3) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateWorkshopParticipantCopy(instanceId, null);
+    ui.json("Workshop Copy Reset", result);
+    ui.status("ok", `Cleared participant copy override on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Copy reset failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopReferenceReset(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
@@ -3045,6 +3244,22 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "reference" && subaction === "reset-body") {
     return handleWorkshopReferenceResetBody(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "copy" && subaction === "show") {
+    return handleWorkshopCopyShow(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "copy" && subaction === "set") {
+    return handleWorkshopCopySet(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "copy" && subaction === "import") {
+    return handleWorkshopCopyImport(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "copy" && subaction === "reset") {
+    return handleWorkshopCopyReset(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)

@@ -898,7 +898,30 @@ export type WorkshopInstanceRecord = {
    * are verbatim — the whole catalog replaces the default.
    */
   referenceGroups: GeneratedReferenceGroup[] | null;
+  /**
+   * Per-instance overrides for a narrow, documented set of participant-
+   * facing copy keys. Null means "use the compiled defaults" (which are
+   * localised per instance contentLang). Deep-merged over defaults at
+   * render time — missing keys fall back to the compiled string.
+   */
+  participantCopy: OverridableParticipantCopy | null;
   workshopMeta: WorkshopMeta;
+};
+
+/**
+ * Curated whitelist of participant-facing copy keys that can be
+ * overridden per instance. Deliberately narrow: only section-level
+ * bodies (welcome, feedback, reference) on the post-workshop surface.
+ * Adding a new key is a code change with a review gate — resist
+ * pressure to expose button labels or form field labels.
+ */
+export type OverridableParticipantCopy = {
+  postWorkshop?: {
+    title?: string;
+    body?: string;
+    feedbackBody?: string;
+    referenceBody?: string;
+  };
 };
 
 function createSampleWorkshopMeta(input: {
@@ -1796,6 +1819,24 @@ export function resolveEffectiveReferenceGroups(
   return instance.referenceGroups;
 }
 
+/**
+ * Resolve overridable participant copy for an instance. Returns null
+ * when the instance has no override; consumers then render the compiled
+ * default verbatim. Non-null returns contain ONLY the keys the
+ * facilitator actually set — consumers deep-merge over the compiled
+ * default so un-set keys fall through.
+ */
+export function resolveEffectiveParticipantCopy(
+  instance: Pick<WorkshopInstanceRecord, "participantCopy">,
+): OverridableParticipantCopy | null {
+  const override = instance.participantCopy;
+  if (!override) return null;
+  const hasAnyKey = Object.values(override).some(
+    (section) => section && Object.values(section).some((v) => typeof v === "string" && v.length > 0),
+  );
+  return hasAnyKey ? override : null;
+}
+
 export function createWorkshopInstanceRecord(input: {
   id: string;
   templateId: string;
@@ -1810,6 +1851,7 @@ export function createWorkshopInstanceRecord(input: {
   teamModeEnabled?: boolean;
   feedbackForm?: FeedbackFormTemplate | null;
   referenceGroups?: GeneratedReferenceGroup[] | null;
+  participantCopy?: OverridableParticipantCopy | null;
 }): WorkshopInstanceRecord {
   const template = workshopTemplates.find((item) => item.id === input.templateId) ?? workshopTemplates[0];
 
@@ -1825,6 +1867,7 @@ export function createWorkshopInstanceRecord(input: {
     teamModeEnabled: input.teamModeEnabled ?? true,
     feedbackForm: input.feedbackForm ?? null,
     referenceGroups: input.referenceGroups ?? null,
+    participantCopy: input.participantCopy ?? null,
     workshopMeta: normalizeWorkshopMeta(
       input.workshopMeta ?? createWorkshopMetaFromTemplate(template, input.contentLang),
       template,

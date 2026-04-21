@@ -3,6 +3,7 @@ import type {
   FeedbackSubmissionRecord,
 } from "@/lib/runtime-contracts";
 import type { ParticipantReferenceGroup } from "@/lib/public-page-view-model";
+import type { OverridableParticipantCopy } from "@/lib/workshop-data";
 import { publicCopy, type UiLanguage } from "@/lib/ui-language";
 import { FeedbackFormRenderer } from "./feedback-form-renderer";
 import { SubmitButton } from "./submit-button";
@@ -25,6 +26,7 @@ export function PostWorkshopSurface({
   template,
   existingSubmission,
   referenceGroups,
+  participantCopy,
   logoutAction,
 }: {
   copy: Copy;
@@ -33,9 +35,21 @@ export function PostWorkshopSurface({
   template: FeedbackFormTemplate;
   existingSubmission: FeedbackSubmissionRecord | null;
   referenceGroups: ParticipantReferenceGroup[];
+  participantCopy?: OverridableParticipantCopy | null;
   logoutAction?: ((formData: FormData) => Promise<void>) | undefined;
 }) {
-  const surfaceCopy = getPostWorkshopCopy(lang);
+  const defaults = getPostWorkshopCopy(lang);
+  const override = participantCopy?.postWorkshop;
+  // Deep-merge narrow: only named keys flow through. Anything not in the
+  // OverridableParticipantCopy whitelist stays compiled — that's the
+  // point of keeping the surface tightly scoped.
+  const surfaceCopy = {
+    ...defaults,
+    ...(override?.title ? { title: override.title } : {}),
+    ...(override?.body ? { body: override.body } : {}),
+    ...(override?.feedbackBody ? { feedbackBody: override.feedbackBody } : {}),
+    ...(override?.referenceBody ? { referenceBody: override.referenceBody } : {}),
+  };
 
   return (
     <>

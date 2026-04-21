@@ -188,6 +188,7 @@ type InstanceRow = {
   team_mode_enabled: boolean | null;
   feedback_form: WorkshopInstanceRecord["feedbackForm"] | null;
   reference_groups: WorkshopInstanceRecord["referenceGroups"] | null;
+  participant_copy: WorkshopInstanceRecord["participantCopy"] | null;
   workshop_meta: WorkshopInstanceRecord["workshopMeta"];
 };
 
@@ -204,6 +205,7 @@ function mapInstanceRow(row: InstanceRow) {
     teamModeEnabled: row.team_mode_enabled ?? undefined,
     feedbackForm: row.feedback_form ?? null,
     referenceGroups: row.reference_groups ?? null,
+    participantCopy: row.participant_copy ?? null,
     workshopMeta: row.workshop_meta,
   });
 }
@@ -217,6 +219,7 @@ type WorkshopInstanceColumnSupport = {
   teamModeEnabled: boolean;
   feedbackForm: boolean;
   referenceGroups: boolean;
+  participantCopy: boolean;
 };
 
 async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColumnSupport> {
@@ -227,7 +230,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
       FROM information_schema.columns
       WHERE table_schema = current_schema()
         AND table_name = 'workshop_instances'
-        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at', 'allow_walk_ins', 'team_mode_enabled', 'feedback_form', 'reference_groups')
+        AND column_name IN ('blueprint_id', 'blueprint_version', 'imported_at', 'removed_at', 'allow_walk_ins', 'team_mode_enabled', 'feedback_form', 'reference_groups', 'participant_copy')
     `,
   )) as Array<{ column_name: string }>;
   const columns = new Set(rows.map((row) => row.column_name));
@@ -241,6 +244,7 @@ async function loadWorkshopInstanceColumnSupport(): Promise<WorkshopInstanceColu
     teamModeEnabled: columns.has("team_mode_enabled"),
     feedbackForm: columns.has("feedback_form"),
     referenceGroups: columns.has("reference_groups"),
+    participantCopy: columns.has("participant_copy"),
   };
 }
 
@@ -257,6 +261,7 @@ function buildInstanceSelectList(columnSupport: WorkshopInstanceColumnSupport) {
     columnSupport.teamModeEnabled ? "team_mode_enabled" : "TRUE AS team_mode_enabled",
     columnSupport.feedbackForm ? "feedback_form" : "NULL::jsonb AS feedback_form",
     columnSupport.referenceGroups ? "reference_groups" : "NULL::jsonb AS reference_groups",
+    columnSupport.participantCopy ? "participant_copy" : "NULL::jsonb AS participant_copy",
     "workshop_meta",
   ].join(", ");
 }
@@ -334,6 +339,13 @@ function buildCreateInstanceQuery(instance: WorkshopInstanceRecord, columnSuppor
     columns.push("reference_groups");
     placeholders.push(`$${nextIndex}::jsonb`);
     values.push(instance.referenceGroups === null ? null : JSON.stringify(instance.referenceGroups));
+    nextIndex += 1;
+  }
+
+  if (columnSupport.participantCopy) {
+    columns.push("participant_copy");
+    placeholders.push(`$${nextIndex}::jsonb`);
+    values.push(instance.participantCopy === null ? null : JSON.stringify(instance.participantCopy));
   }
 
   return {
@@ -407,6 +419,12 @@ function buildUpdateInstanceQuery(
   if (columnSupport.referenceGroups) {
     assignments.push(`reference_groups = $${nextIndex}::jsonb`);
     values.push(instance.referenceGroups === null ? null : JSON.stringify(instance.referenceGroups));
+    nextIndex += 1;
+  }
+
+  if (columnSupport.participantCopy) {
+    assignments.push(`participant_copy = $${nextIndex}::jsonb`);
+    values.push(instance.participantCopy === null ? null : JSON.stringify(instance.participantCopy));
     nextIndex += 1;
   }
 

@@ -184,6 +184,15 @@ export function createHarnessClient({ fetchFn, session }) {
         { method: "DELETE" },
       );
     },
+    getWorkshopParticipantCopy(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/copy`);
+    },
+    updateWorkshopParticipantCopy(instanceId, participantCopy) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/copy`, {
+        method: "PATCH",
+        body: { participantCopy },
+      });
+    },
     archiveWorkshop(instanceId, notes) {
       return request("/api/workshop/archive", {
         method: "POST",

@@ -1603,6 +1603,39 @@ export async function updateWorkshopInstanceReferenceGroups(
   return nextInstance;
 }
 
+export async function updateWorkshopInstanceParticipantCopy(
+  instanceId: string,
+  participantCopy: import("./workshop-data").OverridableParticipantCopy | null,
+  actorNeonUserId?: string | null,
+) {
+  const repository = getWorkshopInstanceRepository();
+  const current = await repository.getInstance(instanceId);
+  if (!current) {
+    return null;
+  }
+
+  const nextInstance = {
+    ...current,
+    participantCopy: participantCopy ?? null,
+  };
+  await repository.updateInstance(instanceId, nextInstance);
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId,
+    actorKind: "facilitator",
+    action: participantCopy === null ? "instance_participant_copy_cleared" : "instance_participant_copy_updated",
+    result: "success",
+    createdAt: new Date().toISOString(),
+    metadata: {
+      actorNeonUserId: actorNeonUserId ?? null,
+      sections: participantCopy ? Object.keys(participantCopy) : [],
+    },
+  });
+
+  return nextInstance;
+}
+
 export async function prepareWorkshopInstance(instanceId: string, actorNeonUserId?: string | null) {
   const repository = getWorkshopInstanceRepository();
   const current = await repository.getInstance(instanceId);

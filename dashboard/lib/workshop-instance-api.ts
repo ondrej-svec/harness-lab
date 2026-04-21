@@ -1,4 +1,8 @@
-import { workshopTemplates, type WorkshopContentLanguage } from "./workshop-data";
+import {
+  workshopTemplates,
+  type OverridableParticipantCopy,
+  type WorkshopContentLanguage,
+} from "./workshop-data";
 import type { GeneratedReferenceGroup, ReferenceGroupId } from "./types/bilingual-reference";
 
 const KNOWN_REFERENCE_GROUP_IDS: ReferenceGroupId[] = ["defaults", "accelerators", "explore"];
@@ -269,4 +273,104 @@ export function parseWorkshopInstanceReferenceGroupsBody(
   }
 
   return { ok: true, value: { referenceGroups: groups } };
+}
+
+// ---------------------------------------------------------------------------
+// Participant copy override (Phase 3)
+// ---------------------------------------------------------------------------
+
+export type WorkshopInstanceParticipantCopyUpdateInput = {
+  participantCopy: OverridableParticipantCopy | null;
+};
+
+const POST_WORKSHOP_KEYS = ["title", "body", "feedbackBody", "referenceBody"] as const;
+
+function parseOptionalStringField(
+  record: Record<string, unknown>,
+  key: string,
+  path: string,
+): ValidationResult<string | undefined> {
+  if (!(key in record)) return { ok: true, value: undefined };
+  const raw = record[key];
+  if (raw === null || raw === undefined) return { ok: true, value: undefined };
+  if (typeof raw !== "string") {
+    return { ok: false, error: `${path}.${key} must be a string or omitted` };
+  }
+  const trimmed = raw.trim();
+  return { ok: true, value: trimmed.length > 0 ? trimmed : undefined };
+}
+
+/**
+ * Validate the participant-copy PATCH body. Accepts `{ participantCopy: null }`
+ * to clear, or `{ participantCopy: { postWorkshop: { ... } } }` where
+ * postWorkshop's keys are a narrow whitelist. Unknown keys are rejected —
+ * that's the guardrail against the "half a CMS" failure mode described
+ * in the plan.
+ */
+export function parseWorkshopInstanceParticipantCopyBody(
+  body: unknown,
+): ValidationResult<WorkshopInstanceParticipantCopyUpdateInput> {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return { ok: false, error: "request body must be a JSON object" };
+  }
+  const record = body as Record<string, unknown>;
+  if (!("participantCopy" in record)) {
+    return {
+      ok: false,
+      error: "participantCopy key is required (null to clear the override)",
+    };
+  }
+  const raw = record.participantCopy;
+  if (raw === null) {
+    return { ok: true, value: { participantCopy: null } };
+  }
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    return { ok: false, error: "participantCopy must be an object or null" };
+  }
+
+  const rawCopy = raw as Record<string, unknown>;
+  // Guard against unknown top-level sections.
+  for (const key of Object.keys(rawCopy)) {
+    if (key !== "postWorkshop") {
+      return { ok: false, error: `participantCopy.${key} is not an overridable section` };
+    }
+  }
+
+  const rawPostWorkshop = rawCopy.postWorkshop;
+  const result: OverridableParticipantCopy = {};
+
+  if (rawPostWorkshop !== undefined) {
+    if (!rawPostWorkshop || typeof rawPostWorkshop !== "object" || Array.isArray(rawPostWorkshop)) {
+      return { ok: false, error: "participantCopy.postWorkshop must be an object" };
+    }
+    const postWorkshopRecord = rawPostWorkshop as Record<string, unknown>;
+    // Reject unknown keys so typos surface at the API instead of
+    // silently being stored and ignored at render.
+    for (const key of Object.keys(postWorkshopRecord)) {
+      if (!(POST_WORKSHOP_KEYS as readonly string[]).includes(key)) {
+        return {
+          ok: false,
+          error: `participantCopy.postWorkshop.${key} is not an overridable key; allowed: ${POST_WORKSHOP_KEYS.join(", ")}`,
+        };
+      }
+    }
+    const postWorkshop: NonNullable<OverridableParticipantCopy["postWorkshop"]> = {};
+    for (const key of POST_WORKSHOP_KEYS) {
+      const parsed = parseOptionalStringField(postWorkshopRecord, key, "participantCopy.postWorkshop");
+      if (!parsed.ok) return parsed;
+      if (parsed.value !== undefined) {
+        postWorkshop[key] = parsed.value;
+      }
+    }
+    if (Object.keys(postWorkshop).length > 0) {
+      result.postWorkshop = postWorkshop;
+    }
+  }
+
+  // Empty override collapses to null so resolvers treat "empty" and
+  // "no override" the same way (same as referenceGroups).
+  if (Object.keys(result).length === 0) {
+    return { ok: true, value: { participantCopy: null } };
+  }
+  return { ok: true, value: { participantCopy: result } };
 }
