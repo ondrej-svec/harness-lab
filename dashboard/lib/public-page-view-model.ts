@@ -533,36 +533,6 @@ function buildParticipantResourceCatalog(lang: UiLanguage) {
       href: "https://openai.com/index/harness-engineering/",
       external: true,
     },
-    {
-      id: "artifact-model-picker",
-      label: isEnglish ? "HTML: picking a GPT-5 model" : "HTML: výběr GPT-5 modelu",
-      description:
-        isEnglish
-          ? "Repo-hosted HTML reference for choosing a GPT-5 model during coding work."
-          : "Repo-hosted HTML přehled pro výběr GPT-5 modelu při práci s kódem.",
-      href: resolveRepoLinkedHref("materials/html/codex-model-guide.html"),
-      external: true,
-    },
-    {
-      id: "artifact-meta-analysis",
-      label: isEnglish ? "HTML: coding-agent working loop" : "HTML: pracovní loop s coding agenty",
-      description:
-        isEnglish
-          ? "Repo-hosted HTML artifact on how to keep the coding-agent loop healthy."
-          : "Repo-hosted HTML artefakt o tom, jak udržet zdravý loop s coding agenty.",
-      href: resolveRepoLinkedHref("materials/html/coding-agent-working-loop.html"),
-      external: true,
-    },
-    {
-      id: "artifact-identify-flow",
-      label: isEnglish ? "HTML: participant identify flow" : "HTML: participant identify flow",
-      description:
-        isEnglish
-          ? "Repo-hosted HTML preview of the participant sign-in and identify flow."
-          : "Repo-hosted HTML náhled participant sign-in a identify flow.",
-      href: resolveRepoLinkedHref("materials/html/participant-identify-flow-preview.html"),
-      external: true,
-    },
   ];
 
   return {
@@ -622,7 +592,7 @@ export function buildParticipantReferenceGroups(options: {
 
   const explore: ParticipantReferenceGroup = {
     id: "explore",
-    title: lang === "en" ? "Published HTML and external reads" : "Publikované HTML a externí čtení",
+    title: lang === "en" ? "External reads" : "Externí čtení",
     description:
       lang === "en"
         ? "Open these when the immediate room move is already clear and you want deeper context."

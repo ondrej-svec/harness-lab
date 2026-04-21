@@ -101,9 +101,6 @@ describe("ParticipantPage", () => {
     expect(html).toContain("https://developers.openai.com/codex/plugins");
     expect(html).toContain("https://modelcontextprotocol.io/docs/getting-started/intro");
     expect(html).toContain("https://agents.md/");
-    expect(html).toContain("materials/html/codex-model-guide.html");
-    expect(html).toContain("materials/html/coding-agent-working-loop.html");
-    expect(html).toContain("materials/html/participant-identify-flow-preview.html");
     expect(html).toContain("podklady");
   });
 

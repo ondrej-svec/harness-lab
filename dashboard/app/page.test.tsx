@@ -237,9 +237,6 @@ describe("public page helpers", () => {
     expect(referenceGroups[1]?.items.some((item) => item.href === "https://developers.openai.com/codex/plugins")).toBe(true);
     expect(referenceGroups[1]?.items.some((item) => item.href === "https://modelcontextprotocol.io/docs/getting-started/intro")).toBe(true);
     expect(referenceGroups[2]?.items.some((item) => item.href === "https://agents.md/")).toBe(true);
-    expect(referenceGroups[2]?.items.some((item) => item.href?.includes("materials/html/codex-model-guide.html"))).toBe(true);
-    expect(referenceGroups[2]?.items.some((item) => item.href?.includes("materials/html/coding-agent-working-loop.html"))).toBe(true);
-    expect(referenceGroups[2]?.items.some((item) => item.href?.includes("materials/html/participant-identify-flow-preview.html"))).toBe(true);
     expect(buildParticipantTeamCards(null)).toEqual([]);
     expect(buildSharedRoomNotes(seedWorkshopState.ticker)).toEqual(seedWorkshopState.ticker.map((item) => item.label));
   });
