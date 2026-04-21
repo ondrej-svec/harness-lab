@@ -1648,36 +1648,40 @@ export function getDefaultFeedbackTemplate(): FeedbackFormTemplate {
     version: 1,
     questions: [
       {
+        // Forced-choice 4-point scale — no neutral middle, so participants
+        // have to commit to a direction. Anchors are tuned per question so
+        // the endpoint labels match the question's verb ("dopadlo" does
+        // not pair naturally with "vůbec").
         id: "overall",
         type: "likert",
-        scale: 5,
+        scale: 4,
         prompt: {
           cs: "Jak to celkově dopadlo?",
           en: "Overall, how was the workshop?",
         },
-        anchorMin: { cs: "vůbec", en: "not really" },
+        anchorMin: { cs: "špatně", en: "poorly" },
         anchorMax: { cs: "výborně", en: "excellent" },
       },
       {
         id: "theme",
         type: "likert",
-        scale: 5,
+        scale: 4,
         prompt: {
           cs: "Jak vám sedlo téma?",
           en: "How well did the theme land?",
         },
-        anchorMin: { cs: "vůbec", en: "not really" },
-        anchorMax: { cs: "výborně", en: "excellent" },
+        anchorMin: { cs: "vůbec", en: "not at all" },
+        anchorMax: { cs: "úplně", en: "completely" },
       },
       {
         id: "facilitation",
         type: "likert",
-        scale: 5,
+        scale: 4,
         prompt: {
           cs: "Jak vám sedla facilitace?",
           en: "How was the facilitation?",
         },
-        anchorMin: { cs: "vůbec", en: "not really" },
+        anchorMin: { cs: "špatně", en: "poorly" },
         anchorMax: { cs: "výborně", en: "excellent" },
       },
       {
@@ -1725,11 +1729,15 @@ export function getDefaultFeedbackTemplate(): FeedbackFormTemplate {
         ],
       },
       {
+        // Q8 + Q9 are paired (testimonial + consent). Czech rewritten so
+        // "Můžeme" on the prompt and "Můžete" on the consent don't echo
+        // within a few lines. Q8 is now a short invitation; Q9 is an
+        // explicit consent sentence using "Souhlasím".
         id: "testimonial",
         type: "open-text",
         optional: true,
         prompt: {
-          cs: "Můžeme z toho citovat? Pár vět, které bychom mohli použít.",
+          cs: "Máte pár vět, které bychom mohli použít jako citát?",
           en: "A sentence or two we could quote as a testimonial?",
         },
         placeholder: {
@@ -1743,7 +1751,7 @@ export function getDefaultFeedbackTemplate(): FeedbackFormTemplate {
         type: "checkbox",
         defaultChecked: false,
         prompt: {
-          cs: "Můžete mě jmenovitě citovat v marketingových materiálech.",
+          cs: "Souhlasím, aby byl citát zveřejněn pod mým jménem.",
           en: "You can quote me by name in marketing materials.",
         },
       },

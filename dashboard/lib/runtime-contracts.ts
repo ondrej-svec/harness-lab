@@ -218,9 +218,14 @@ export type FeedbackQuestion =
   | {
       id: string;
       type: "likert";
-      scale: 5 | 7;
+      /**
+       * Allowed scales: 4 (forced-choice, no neutral — preferred default
+       * so participants cannot park in the middle), 5 (classic Likert with
+       * neutral), 7 (extended). 6 is reserved for future needs.
+       */
+      scale: 4 | 5 | 7;
       prompt: BilingualText;
-      /** Optional endpoint anchor labels (e.g. "vůbec" / "výborně"). */
+      /** Optional endpoint anchor labels (e.g. "špatně" / "výborně"). */
       anchorMin?: BilingualText;
       anchorMax?: BilingualText;
       optional?: boolean;

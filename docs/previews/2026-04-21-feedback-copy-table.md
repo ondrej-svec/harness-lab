@@ -38,29 +38,31 @@
 
 ## 3 · Questions (default template — 9 total)
 
-### Q1 — Overall quality (Likert 1–5)
+### Q1 — Overall quality (Likert 1–4, forced choice — no middle)
 
 | slot | CS | EN |
 |---|---|---|
 | prompt | Jak to celkově dopadlo? | Overall, how was the workshop? |
-| anchor min | vůbec | not really |
+| anchor min | špatně | poorly |
 | anchor max | výborně | excellent |
 
-### Q2 — Theme fit (Likert 1–5)
+### Q2 — Theme fit (Likert 1–4, forced choice)
 
 | slot | CS | EN |
 |---|---|---|
 | prompt | Jak vám sedlo téma? | How well did the theme land? |
-| anchor min | vůbec | not really |
-| anchor max | výborně | excellent |
+| anchor min | vůbec | not at all |
+| anchor max | úplně | completely |
 
-### Q3 — Facilitation quality (Likert 1–5)
+### Q3 — Facilitation quality (Likert 1–4, forced choice)
 
 | slot | CS | EN |
 |---|---|---|
 | prompt | Jak vám sedla facilitace? | How was the facilitation? |
-| anchor min | vůbec | not really |
+| anchor min | špatně | poorly |
 | anchor max | výborně | excellent |
+
+**Note on scale:** 4-point forced choice. No neutral midpoint — participants must commit to a direction. Anchors are tuned per question so the endpoint labels match the question's verb ("dopadlo" does not pair naturally with "vůbec").
 
 ### Q4 — Takeaway (open text)
 
@@ -100,7 +102,7 @@
 
 | slot | CS | EN |
 |---|---|---|
-| prompt | Můžeme z toho citovat? Pár vět, které bychom mohli použít. | A sentence or two we could quote as a testimonial? |
+| prompt | Máte pár vět, které bychom mohli použít jako citát? | A sentence or two we could quote as a testimonial? |
 | optional hint | nepovinné | optional |
 | placeholder | Jen pokud chcete. | Only if you'd like. |
 
@@ -108,8 +110,10 @@
 
 | slot | CS | EN |
 |---|---|---|
-| prompt | Můžete mě jmenovitě citovat v marketingových materiálech. | You can quote me by name in marketing materials. |
+| prompt | Souhlasím, aby byl citát zveřejněn pod mým jménem. | You can quote me by name in marketing materials. |
 | default | **unchecked** | **unchecked** |
+
+**Note:** Czech rewritten to avoid the `Můžeme` / `Můžete` echo between Q8's prompt and Q9's consent. Q8 now invites ("Máte pár vět…?"); Q9 is explicit consent ("Souhlasím…").
 
 **Consent rule:** default must be false. v1 admin summary shows a "quote consent" badge next to consented-to testimonial responses; no participant names are rendered at all in v1 (stricter than the consent rule requires — safer default).
 
