@@ -163,8 +163,16 @@ describe("participant/artifact/[artifactId] route", () => {
     expect(response.headers.get("content-disposition")).toBe(
       'inline; filename="case-study.html"',
     );
-    expect(response.headers.get("content-security-policy")).toContain("sandbox");
-    expect(response.headers.get("content-security-policy")).toContain("allow-scripts");
+    const csp = response.headers.get("content-security-policy") ?? "";
+    expect(csp).toContain("sandbox");
+    expect(csp).toContain("allow-scripts");
+    // Must NOT carry allow-same-origin — that flag would re-attach the
+    // document to the dashboard origin and defeat the isolation goal.
+    expect(csp).not.toContain("allow-same-origin");
+    // Must NOT pin default-src 'self' — it would block the inline
+    // <style>/<script> blocks the uploaded artifacts rely on; the
+    // sandbox itself is the security boundary.
+    expect(csp).not.toContain("default-src");
     expect(response.headers.get("x-content-type-options")).toBe("nosniff");
     expect(response.headers.get("x-frame-options")).toBe("DENY");
     expect(response.headers.get("cache-control")).toContain("private");

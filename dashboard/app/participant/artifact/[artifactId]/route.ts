@@ -85,13 +85,19 @@ export async function GET(
       "content-type": contentType,
       "content-length": String(byteSize),
       "content-disposition": disposition,
-      // Sandbox is the security boundary for uploaded HTML. `allow-scripts`
-      // keeps interactive artifacts (theme toggles, chart JS) working;
-      // `allow-same-origin` lets the artifact fetch its own same-origin
-      // assets but is NOT a privilege escalation — sandboxed documents get
-      // a unique opaque origin distinct from the embedder's.
+      // Sandbox is the security boundary for uploaded HTML. The flags
+      // chosen here deliberately DO NOT include `allow-same-origin` —
+      // without it the document renders with a unique opaque origin, so
+      // its scripts cannot read cookies, localStorage, or any other
+      // state on the dashboard origin. `allow-scripts` keeps interactive
+      // artifacts (theme toggles, charts) working; `allow-popups` and
+      // `allow-forms` preserve everyday document behaviour inside the
+      // sandbox. We deliberately do NOT pin `default-src 'self'`: the
+      // sandbox's origin isolation is the boundary, and a stricter CSP
+      // on top would only break legitimate inline `<style>` / `<script>`
+      // blocks that these artifacts rely on for their own visual system.
       "content-security-policy":
-        "sandbox allow-scripts allow-same-origin allow-popups allow-forms; default-src 'self'",
+        "sandbox allow-scripts allow-popups allow-forms allow-downloads",
       "x-content-type-options": "nosniff",
       // Never cache at intermediaries; cohort membership can change mid-session.
       "cache-control": "private, max-age=0, must-revalidate",
