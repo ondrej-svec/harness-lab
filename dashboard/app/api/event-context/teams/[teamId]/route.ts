@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
-import { isParticipantTeamAccessError, requireParticipantTeamAccess } from "@/lib/participant-team-access";
+import {
+  isParticipantTeamAccessError,
+  isTeamModeEnabled,
+  requireParticipantTeamAccess,
+} from "@/lib/participant-team-access";
 import { normalizeTeamRepoUrl } from "@/lib/team-repo-url";
 import { updateTeamFromParticipant, isWorkshopStateTargetError } from "@/lib/workshop-store";
 
@@ -48,6 +52,13 @@ export async function PATCH(
 
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ ok: false, error: "no valid fields to update" }, { status: 400 });
+  }
+
+  // Team metadata edits are a team-mode-only surface. In participant
+  // mode there's no team to edit; return 404 rather than a confusing
+  // 403 that would suggest the participant lacks a membership row.
+  if (!(await isTeamModeEnabled(access.session.instanceId))) {
+    return NextResponse.json({ ok: false, error: "team_mode_disabled" }, { status: 404 });
   }
 
   try {

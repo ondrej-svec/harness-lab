@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
-import { isParticipantTeamAccessError, requireParticipantTeamAccess } from "@/lib/participant-team-access";
+import {
+  isParticipantTeamAccessError,
+  isTeamModeEnabled,
+  requireParticipantTeamAccess,
+} from "@/lib/participant-team-access";
 import { getParticipantRepository } from "@/lib/participant-repository";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
 import { appendCheckIn, getWorkshopState } from "@/lib/workshop-store";
@@ -49,6 +53,15 @@ export async function PATCH(
   }
 
   const instanceId = access.session.instanceId;
+
+  // Team-mode-only endpoint. Participant-mode instances should call
+  // POST /api/participant/check-in instead; return 404 so clients that
+  // accidentally route here (cached UI, racing mode switch) see a
+  // clean "not available" rather than a membership-required 403.
+  if (!(await isTeamModeEnabled(instanceId))) {
+    return NextResponse.json({ ok: false, error: "team_mode_disabled" }, { status: 404 });
+  }
+
   try {
     await requireParticipantTeamAccess({
       instanceId,

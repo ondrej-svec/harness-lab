@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const requireParticipantSession = vi.fn();
 const requireParticipantTeamAccess = vi.fn();
 const isParticipantTeamAccessError = vi.fn();
+const isTeamModeEnabled = vi.fn();
 const updateTeamFromParticipant = vi.fn();
 const isWorkshopStateTargetError = vi.fn();
 
@@ -13,6 +14,7 @@ vi.mock("@/lib/event-access", () => ({
 vi.mock("@/lib/participant-team-access", () => ({
   requireParticipantTeamAccess,
   isParticipantTeamAccessError,
+  isTeamModeEnabled,
 }));
 
 vi.mock("@/lib/workshop-store", () => ({
@@ -27,6 +29,9 @@ describe("PATCH /api/event-context/teams/[teamId]", () => {
     vi.clearAllMocks();
     requireParticipantTeamAccess.mockResolvedValue({ teamId: "t1" });
     isParticipantTeamAccessError.mockReturnValue(false);
+    // Default to team mode; individual tests override when exercising
+    // the participant-mode 404 path.
+    isTeamModeEnabled.mockResolvedValue(true);
     updateTeamFromParticipant.mockResolvedValue({});
     isWorkshopStateTargetError.mockReturnValue(false);
   });
