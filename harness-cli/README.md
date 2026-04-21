@@ -179,6 +179,13 @@ harness workshop reference reset
 harness workshop reference add-item defaults --id brno-kit --kind external --href https://example.com/brno-kit --label "Brno kit" --description "Per-event addition"
 harness workshop reference set-item defaults participant-resource-kit --kind repo-blob --path materials/participant-resource-kit-brno.md --label "Brno resource kit" --description "Updated for this cohort"
 harness workshop reference remove-item defaults harness-cli
+harness workshop reference show-body participant-resource-kit
+harness workshop reference set-body participant-resource-kit --file ./brno-kit.md
+harness workshop reference reset-body participant-resource-kit
+harness workshop copy show
+harness workshop copy set postWorkshop.title "Brno, thanks for the day."
+harness workshop copy import --file ./brno-copy.json
+harness workshop copy reset
 harness instance select --clear
 harness auth logout
 ```
@@ -188,7 +195,20 @@ Reference catalog override:
 - `harness workshop reference list` prints the effective override (or null when the instance uses the compiled default). Compiled defaults live in `dashboard/lib/generated/reference-{en,cs}.json`, generated from the bilingual source at `workshop-content/reference.json`.
 - `harness workshop reference import --file <path>` replaces the catalog verbatim. The file may be a bare `GeneratedReferenceGroup[]` array or the generated-view shape `{ schemaVersion, groups }` (export a locale default, tweak, push).
 - `harness workshop reference reset` clears the override so participants see the compiled default again on next reload.
-- `harness workshop reference add-item|set-item|remove-item` edit surgically: the CLI fetches the current effective catalog (override or compiled default), applies the edit, and writes the full catalog back. Item `--kind` is one of `external` (needs `--href`), `repo-blob` or `repo-tree` (both need `--path`), or `repo-root` (no extra flags).
+- `harness workshop reference add-item|set-item|remove-item` edit surgically: the CLI fetches the current effective catalog (override or compiled default), applies the edit, and writes the full catalog back. Item `--kind` is one of `external` (needs `--href`), `repo-blob` or `repo-tree` (both need `--path`), `repo-root` (no extra flags), or `hosted` (body is managed through `set-body`, not here).
+
+Hosted reference bodies (dashboard-rendered Markdown for items with `kind: hosted`):
+
+- `harness workshop reference show-body <itemId>` prints the effective body, reporting `source=override` or `source=default` so you can tell whether an instance-specific edit is active.
+- `harness workshop reference set-body <itemId> --file <path.md>` pushes a custom Markdown body for this instance. Bodies are sanitised at render (no `<script>`, no `javascript:` hrefs, no `<iframe>`), so facilitator input is safe to render.
+- `harness workshop reference reset-body <itemId>` clears the override — the compiled-default body (inlined at build from `workshop-content/reference.json`) renders again.
+
+Participant copy overrides (narrow whitelist — currently post-workshop welcome / feedback / reference bodies):
+
+- `harness workshop copy show` prints the active override (or null when the compiled defaults are live).
+- `harness workshop copy set <key.path> <value>` edits one key. Allowed keys: `postWorkshop.title`, `postWorkshop.body`, `postWorkshop.feedbackBody`, `postWorkshop.referenceBody`. Missing keys fall through to the compiled default at render time.
+- `harness workshop copy import --file <path.json>` bulk-pushes a copy object (either bare or wrapped in `{ participantCopy: {...} }`).
+- `harness workshop copy reset` clears all overrides.
 
 Targeting model:
 
