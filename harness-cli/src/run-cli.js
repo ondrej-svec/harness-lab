@@ -400,6 +400,9 @@ function printUsage(io, ui) {
     helpLine("  [--description TEXT] [--content-type MIME]", ""),
     helpLine("workshop artifact list [<id>]", "List artifacts uploaded to this instance"),
     helpLine("workshop artifact remove <artifactId> [<id>]", "Delete an artifact (row + blob)"),
+    helpLine("workshop artifact attach <artifactId> --group <gid> [<id>]", "Add the artifact to a reference group"),
+    helpLine("  [--label TEXT] [--description TEXT]", ""),
+    helpLine("workshop artifact detach <artifactId> [<id>]", "Remove every reference item linking this artifact"),
   ]);
   ui.blank();
 
@@ -2355,6 +2358,176 @@ async function handleWorkshopArtifactList(io, ui, env, positionals, flags, deps)
   }
 }
 
+function buildAttachedArtifactItemId(artifactId) {
+  // Namespace the reference-item id so it cannot collide with other
+  // kinds (e.g. an external item named the same as an artifactId) and
+  // is recognisable in `reference list` output.
+  return `artifact-${artifactId}`;
+}
+
+async function handleWorkshopArtifactAttach(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const artifactId = readOptionalPositional(positionals, 3);
+  if (!artifactId) {
+    ui.status(
+      "error",
+      "Usage: workshop artifact attach <artifactId> --group <groupId> [<instanceId>] [--label TEXT] [--description TEXT]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  const groupId = readStringFlag(flags, "group");
+  if (!groupId) {
+    ui.status("error", "--group is required (e.g. defaults, accelerators, explore).", {
+      stream: "stderr",
+    });
+    return 1;
+  }
+
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const artifactList = await client.listWorkshopArtifacts(instanceId);
+    const artifact = (artifactList?.artifacts ?? []).find((a) => a.id === artifactId);
+    if (!artifact) {
+      ui.status(
+        "error",
+        `Artifact '${artifactId}' not found on instance ${instanceId}. Upload it first or run 'workshop artifact list'.`,
+        { stream: "stderr" },
+      );
+      return 1;
+    }
+
+    const label = readStringFlag(flags, "label") ?? artifact.label;
+    const description = readStringFlag(flags, "description") ?? artifact.description ?? "";
+    if (!description) {
+      ui.status(
+        "error",
+        "Artifact has no description; pass --description TEXT when attaching.",
+        { stream: "stderr" },
+      );
+      return 1;
+    }
+
+    const groups = await resolveCurrentReferenceGroups(client, instanceId, ui);
+    if (!groups) return 1;
+
+    const itemId = buildAttachedArtifactItemId(artifactId);
+    let groupFound = false;
+    const nextGroups = groups.map((group) => {
+      if (group.id !== groupId) return group;
+      groupFound = true;
+      const filtered = group.items.filter(
+        (item) => !(item.kind === "artifact" && item.artifactId === artifactId) && item.id !== itemId,
+      );
+      return {
+        ...group,
+        items: [...filtered, { id: itemId, kind: "artifact", artifactId, label, description }],
+      };
+    });
+    if (!groupFound) {
+      ui.status("error", `Group '${groupId}' not found in current catalog.`, { stream: "stderr" });
+      return 1;
+    }
+
+    const result = await client.updateWorkshopReferenceGroups(instanceId, nextGroups);
+    ui.json("Workshop Artifact Attach", result);
+    ui.status(
+      "ok",
+      `Attached artifact ${artifactId} ("${label}") to group '${groupId}' on ${instanceId}.`,
+    );
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Artifact attach failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopArtifactDetach(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const artifactId = readOptionalPositional(positionals, 3);
+  if (!artifactId) {
+    ui.status(
+      "error",
+      "Usage: workshop artifact detach <artifactId> [<instanceId>]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const groups = await resolveCurrentReferenceGroups(client, instanceId, ui);
+    if (!groups) return 1;
+
+    let removed = 0;
+    const nextGroups = groups.map((group) => {
+      const filtered = group.items.filter(
+        (item) => !(item.kind === "artifact" && item.artifactId === artifactId),
+      );
+      removed += group.items.length - filtered.length;
+      return { ...group, items: filtered };
+    });
+
+    if (removed === 0) {
+      ui.status(
+        "ok",
+        `No reference item references artifact '${artifactId}' on ${instanceId}; nothing to detach.`,
+      );
+      return 0;
+    }
+
+    const result = await client.updateWorkshopReferenceGroups(instanceId, nextGroups);
+    ui.json("Workshop Artifact Detach", result);
+    ui.status(
+      "ok",
+      `Detached artifact ${artifactId} (${removed} item${removed === 1 ? "" : "s"}) on ${instanceId}.`,
+    );
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Artifact detach failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopArtifactRemove(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) return 1;
@@ -3477,6 +3650,14 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "artifact" && subaction === "remove") {
     return handleWorkshopArtifactRemove(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "artifact" && subaction === "attach") {
+    return handleWorkshopArtifactAttach(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "artifact" && subaction === "detach") {
+    return handleWorkshopArtifactDetach(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)
