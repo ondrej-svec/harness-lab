@@ -2012,35 +2012,28 @@ const COPY_ALLOWED_KEY_PATHS = new Set([
 const UNSAFE_KEY_SEGMENTS = new Set(["__proto__", "constructor", "prototype"]);
 
 function setNestedCopyKey(copy, keyPath, value) {
+  // COPY_ALLOWED_KEY_PATHS currently covers only two-segment keys
+  // (section.key) — we validate that shape here and assign explicitly
+  // without a cursor-walk loop. Avoiding `cursor = cursor[seg]` in a
+  // loop makes the function trivially immune to prototype-pollution
+  // and satisfies semgrep's pattern-based rule as well as the semantic
+  // guard.
   const segments = keyPath.split(".");
-  // Belt-and-suspenders prototype-pollution guard. The keyPath is already
-  // gated by COPY_ALLOWED_KEY_PATHS at the call site, but explicit
-  // segment checks here keep the helper self-contained and satisfy the
-  // semgrep prototype-pollution-loop rule.
-  for (const seg of segments) {
-    if (UNSAFE_KEY_SEGMENTS.has(seg)) {
-      throw new Error(`Refusing to set unsafe key segment '${seg}'`);
-    }
+  if (segments.length !== 2) {
+    throw new Error(`setNestedCopyKey expects a 2-segment path, got '${keyPath}'`);
   }
-  let cursor = copy;
-  for (let i = 0; i < segments.length - 1; i++) {
-    const seg = segments[i];
-    if (!Object.prototype.hasOwnProperty.call(cursor, seg) || typeof cursor[seg] !== "object") {
-      Object.defineProperty(cursor, seg, {
-        value: {},
-        writable: true,
-        enumerable: true,
-        configurable: true,
-      });
-    }
-    cursor = cursor[seg];
+  const [section, key] = segments;
+  if (UNSAFE_KEY_SEGMENTS.has(section) || UNSAFE_KEY_SEGMENTS.has(key)) {
+    throw new Error(`Refusing to set unsafe key path '${keyPath}'`);
   }
-  Object.defineProperty(cursor, segments[segments.length - 1], {
-    value,
-    writable: true,
-    enumerable: true,
-    configurable: true,
-  });
+  // Build a null-prototype target for the section if needed, then set
+  // the leaf. `Object.create(null)` has no prototype chain, so attribute
+  // writes on it can't reach Object.prototype.
+  const existing = Object.prototype.hasOwnProperty.call(copy, section) ? copy[section] : null;
+  const section_target =
+    existing && typeof existing === "object" ? { ...existing } : Object.create(null);
+  section_target[key] = value;
+  copy[section] = section_target;
 }
 
 async function handleWorkshopCopyShow(io, ui, env, positionals, flags, deps) {
