@@ -396,6 +396,10 @@ function printUsage(io, ui) {
     helpLine("workshop copy set <key.path> <value> [<id>]", "Override one key (e.g. postWorkshop.title)"),
     helpLine("workshop copy import [<id>] --file PATH", "Bulk-import participant copy overrides"),
     helpLine("workshop copy reset [<id>]", "Clear all participant copy overrides"),
+    helpLine("workshop artifact upload [<id>] --file PATH --label TEXT", "Upload a cohort-scoped artifact (html/pdf/image)"),
+    helpLine("  [--description TEXT] [--content-type MIME]", ""),
+    helpLine("workshop artifact list [<id>]", "List artifacts uploaded to this instance"),
+    helpLine("workshop artifact remove <artifactId> [<id>]", "Delete an artifact (row + blob)"),
   ]);
   ui.blank();
 
@@ -2193,6 +2197,193 @@ async function handleWorkshopCopyReset(io, ui, env, positionals, flags, deps) {
   }
 }
 
+const ARTIFACT_EXTENSION_MIME = new Map([
+  [".html", "text/html"],
+  [".htm", "text/html"],
+  [".pdf", "application/pdf"],
+  [".png", "image/png"],
+  [".jpg", "image/jpeg"],
+  [".jpeg", "image/jpeg"],
+  [".svg", "image/svg+xml"],
+  [".webp", "image/webp"],
+]);
+
+function guessArtifactContentType(filename) {
+  const lower = filename.toLowerCase();
+  const dot = lower.lastIndexOf(".");
+  if (dot < 0) return null;
+  return ARTIFACT_EXTENSION_MIME.get(lower.slice(dot)) ?? null;
+}
+
+function formatByteSize(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KiB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MiB`;
+}
+
+async function handleWorkshopArtifactUpload(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const instanceId =
+    readOptionalPositional(positionals, 3) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const filePath = readStringFlag(flags, "file");
+  if (!filePath) {
+    ui.status(
+      "error",
+      "Usage: workshop artifact upload [<instanceId>] --file PATH --label TEXT [--description TEXT] [--content-type MIME]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  const label = readStringFlag(flags, "label");
+  if (!label) {
+    ui.status("error", "--label is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const description = readStringFlag(flags, "description") ?? null;
+
+  let data;
+  try {
+    data = await fs.readFile(filePath);
+  } catch (error) {
+    ui.status("error", `Cannot read file ${filePath}: ${error.message}`, { stream: "stderr" });
+    return 1;
+  }
+
+  const filename = path.basename(filePath);
+  const contentType = readStringFlag(flags, "content-type") ?? guessArtifactContentType(filename);
+  if (!contentType) {
+    ui.status(
+      "error",
+      `Cannot determine content type for ${filename}. Pass --content-type MIME explicitly (allowed: text/html, application/pdf, image/png, image/jpeg, image/svg+xml, image/webp).`,
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.uploadWorkshopArtifact(instanceId, {
+      data,
+      filename,
+      contentType,
+      label,
+      description,
+    });
+    ui.json("Workshop Artifact Upload", result);
+    const artifact = result?.artifact;
+    if (artifact) {
+      ui.status(
+        "ok",
+        `Uploaded ${artifact.filename} (${formatByteSize(artifact.byteSize)}) as ${artifact.id}.`,
+      );
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Artifact upload failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopArtifactList(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const instanceId =
+    readOptionalPositional(positionals, 3) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listWorkshopArtifacts(instanceId);
+    ui.json("Workshop Artifacts", result);
+    const artifacts = result?.artifacts ?? [];
+    if (artifacts.length === 0) {
+      ui.status("ok", `No artifacts uploaded for ${instanceId}.`);
+    } else {
+      ui.status("ok", `${artifacts.length} artifact(s) on ${instanceId}.`);
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Artifact list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopArtifactRemove(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const artifactId = readOptionalPositional(positionals, 3);
+  if (!artifactId) {
+    ui.status(
+      "error",
+      "Usage: workshop artifact remove <artifactId> [<instanceId>]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.removeWorkshopArtifact(instanceId, artifactId);
+    ui.json("Workshop Artifact Remove", result);
+    ui.status("ok", `Removed artifact ${artifactId} from ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Artifact remove failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopReferenceReset(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
@@ -3260,6 +3451,18 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "copy" && subaction === "reset") {
     return handleWorkshopCopyReset(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "artifact" && subaction === "upload") {
+    return handleWorkshopArtifactUpload(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "artifact" && subaction === "list") {
+    return handleWorkshopArtifactList(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "artifact" && subaction === "remove") {
+    return handleWorkshopArtifactRemove(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)

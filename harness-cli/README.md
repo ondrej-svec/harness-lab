@@ -186,6 +186,9 @@ harness workshop copy show
 harness workshop copy set postWorkshop.title "Brno, thanks for the day."
 harness workshop copy import --file ./brno-copy.json
 harness workshop copy reset
+harness workshop artifact upload --file ./case-study.html --label "16-day harness case study"
+harness workshop artifact list
+harness workshop artifact remove <artifactId>
 harness instance select --clear
 harness auth logout
 ```
@@ -202,6 +205,13 @@ Hosted reference bodies (dashboard-rendered Markdown for items with `kind: hoste
 - `harness workshop reference show-body <itemId>` prints the effective body, reporting `source=override` or `source=default` so you can tell whether an instance-specific edit is active.
 - `harness workshop reference set-body <itemId> --file <path.md>` pushes a custom Markdown body for this instance. Bodies are sanitised at render (no `<script>`, no `javascript:` hrefs, no `<iframe>`), so facilitator input is safe to render.
 - `harness workshop reference reset-body <itemId>` clears the override — the compiled-default body (inlined at build from `workshop-content/reference.json`) renders again.
+
+Cohort-scoped artifacts (HTML/PDF/image uploads for this workshop instance, served behind participant auth):
+
+- `harness workshop artifact upload --file <path> --label "..." [--description "..."]` uploads a file to Vercel Blob (private mode). Content-type is guessed from the filename extension (`.html`, `.pdf`, `.png`, `.jpg`, `.jpeg`, `.svg`, `.webp`); override with `--content-type MIME`. Max 25 MiB by default (`ARTIFACT_MAX_BYTES` on the server overrides).
+- `harness workshop artifact list` shows every artifact uploaded to the instance with id, label, filename, size, and upload timestamp.
+- `harness workshop artifact remove <artifactId>` deletes the row and the underlying blob. Cross-instance removal returns 404 — the CLI refuses to touch another cohort's artifacts.
+- Artifacts do **not** appear in `workshop-content/reference.json`. They are cohort-scoped by design — listing them for participants goes through a per-instance reference-catalog override once the `artifact` kind lands (Phase 3).
 
 Participant copy overrides (narrow whitelist — currently post-workshop welcome / feedback / reference bodies):
 

@@ -184,6 +184,44 @@ export function createHarnessClient({ fetchFn, session }) {
         { method: "DELETE" },
       );
     },
+    listWorkshopArtifacts(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/artifacts`);
+    },
+    async uploadWorkshopArtifact(instanceId, { data, filename, contentType, label, description }) {
+      const url = `${baseUrl}/api/workshop/instances/${encodeURIComponent(instanceId)}/artifacts`;
+      const form = new FormData();
+      form.set("file", new Blob([data], { type: contentType }), filename);
+      form.set("label", label);
+      if (description) {
+        form.set("description", description);
+      }
+      const response = await fetchFn(url, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          origin: baseUrl,
+          ...authHeaders,
+        },
+        body: form,
+      });
+      const payload = await parseJsonResponse(response);
+      if (!response.ok) {
+        const message =
+          payload && typeof payload === "object" && "error" in payload
+            ? typeof payload.error === "string"
+              ? payload.error
+              : payload.error?.message ?? `Upload failed with status ${response.status}`
+            : `Upload failed with status ${response.status}`;
+        throw new HarnessApiError(message, { status: response.status, payload });
+      }
+      return payload;
+    },
+    removeWorkshopArtifact(instanceId, artifactId) {
+      return request(
+        `/api/workshop/instances/${encodeURIComponent(instanceId)}/artifacts/${encodeURIComponent(artifactId)}`,
+        { method: "DELETE" },
+      );
+    },
     getWorkshopParticipantCopy(instanceId) {
       return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/copy`);
     },
