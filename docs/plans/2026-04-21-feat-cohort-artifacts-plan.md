@@ -271,48 +271,49 @@ Dependency-ordered. Sub-phases inside each phase can be separate PRs.
 ### Phase 1 — Storage and upload CLI
 
 **1a. Dependency and env**
-- [ ] Add `@vercel/blob` to `dashboard/package.json`. Pin version.
-- [ ] Document `BLOB_READ_WRITE_TOKEN` in `dashboard/.env.example`.
-- [ ] Confirm token is present in Vercel project env (preview + production) before migration lands.
+- [x] Add `@vercel/blob` to `dashboard/package.json`. Pin version. _(landed `@vercel/blob@^2.3.3`)_
+- [x] Document `BLOB_READ_WRITE_TOKEN` in `dashboard/.env.example`.
+- [ ] Confirm token is present in Vercel project env (preview + production) before first upload. _(operational, not a code task)_
 
 **1b. DB + repository**
-- [ ] Migration `dashboard/db/migrations/2026-04-25-workshop-artifacts.sql` (idempotent `CREATE TABLE IF NOT EXISTS` + index).
-- [ ] Create `dashboard/lib/artifact-repository.ts` with `ArtifactRecord` type, `NeonArtifactRepository`, `FileArtifactRepository`.
-- [ ] Methods: `create`, `listForInstance`, `get`, `delete`. FileAdapter writes records to JSON + binary blobs to a sibling dir for dev parity.
-- [ ] Unit tests for both adapters.
+- [x] Migration `dashboard/db/migrations/2026-04-25-workshop-artifacts.sql` (idempotent `CREATE TABLE IF NOT EXISTS` + index).
+- [x] Create `dashboard/lib/artifact-repository.ts` with `ArtifactRecord` type, `NeonArtifactRepository`, `FileArtifactRepository`.
+- [x] Methods: `create`, `listForInstance`, `get`, `delete`. FileAdapter writes records to JSON; blob bytes handled by `blob-storage.ts`.
+- [x] Unit tests (11 cases) covering round-trip, cross-cohort isolation, id collision rejection, unsafe-id rejection.
 
 **1c. Blob service**
-- [ ] Create `dashboard/lib/blob-storage.ts` — thin wrapper over `@vercel/blob`.
-- [ ] Implement `uploadArtifact`, `deleteArtifact`, `streamArtifact`.
-- [ ] Local/file-mode variant for dev.
-- [ ] Unit tests against local/file mode (blob API is hard to unit-test; rely on integration).
+- [x] Create `dashboard/lib/blob-storage.ts` — thin wrapper over `@vercel/blob`.
+- [x] Implement `upload`, `stream`, `delete`.
+- [x] Local `FileBlobStorage` variant for dev (bytes under `HARNESS_DATA_DIR/<blobKey>`).
+- [x] Unit tests (6 cases) against file mode covering upload round-trip, delete, path-traversal rejection.
+- [x] `dashboard/lib/artifact-filename.ts` helper (sanitize + `buildArtifactBlobKey`) with 9 unit tests.
 
 **1d. Upload validation**
-- [ ] Implement `validateArtifactUpload(file, constraints)` with size cap, MIME allowlist, filename sanitization.
-- [ ] Unit tests covering: oversized file rejected, disallowed MIME rejected, filename sanitized correctly, path-traversal attempt (`../etc/passwd`) rejected.
+- [x] Implement `validateArtifactUpload(input, constraints)` with size cap, MIME allowlist, filename + label shape.
+- [x] 15 unit tests covering oversized rejection (413), unsupported MIME, empty file, missing label/filename, over-long label/description, env-override precedence, trim/normalise behaviour.
 
 **1e. API endpoints**
-- [ ] `POST /api/workshop/instances/[id]/artifacts` — multipart handler, validation, repository + blob service calls, returns `ArtifactRecord`. Admin-session gated.
-- [ ] `GET /api/workshop/instances/[id]/artifacts` — returns list. Admin-session gated.
-- [ ] `DELETE /api/workshop/instances/[id]/artifacts/[artifactId]` — removes DB row + blob, returns `{ removed: true }`. Admin-session gated.
-- [ ] API tests covering: upload + list round-trip, unauthorized upload rejected, oversized upload rejected, cross-instance GET returns 404.
+- [x] `POST /api/workshop/instances/[id]/artifacts` — multipart handler, validation, repo + blob service calls, orphan-blob cleanup on DB failure, returns created record (201).
+- [x] `GET /api/workshop/instances/[id]/artifacts` — returns list (blob keys hidden).
+- [x] `DELETE /api/workshop/instances/[id]/artifacts/[artifactId]` — cohort-isolated composite lookup, removes row + blob (best-effort), returns `{ ok, artifactId }`.
+- [x] 12 API tests covering happy path, validation branches (400/413/404), unauthorised access, cross-instance DELETE refusal.
 
 **1f. CLI**
-- [ ] Add `workshop artifact upload|list|remove` branches in `harness-cli/src/run-cli.js`.
-- [ ] Multipart upload from CLI — use Node's `FormData` + `File` (18+) or `formdata-node` polyfill if needed.
-- [ ] Pretty-print list output (table form).
-- [ ] Update help text in `run-cli.js`.
-- [ ] Update `harness-cli/README.md`.
+- [x] Add `workshop artifact upload|list|remove` branches in `harness-cli/src/run-cli.js`.
+- [x] Multipart upload via `Blob` + `FormData` in `harness-cli/src/client.js` (Node 18+).
+- [x] Human-readable list output (id, label, filename, size, uploaded).
+- [x] Help text updated in `run-cli.js`.
+- [x] `harness-cli/README.md` documents all three verbs.
 
 **1g. Instance-delete blob cleanup**
-- [ ] Identify all sites that delete a `workshop_instances` row (admin route, CLI, cleanup job).
-- [ ] Before deletion, fetch `blob_key` list for the instance.
-- [ ] After deletion, iterate keys and call `deleteArtifact` for each, logging per-key errors.
-- [ ] Test: delete an instance with artifacts, confirm blobs are gone.
+- [x] Centralized helper `dashboard/lib/instance-artifact-cleanup.ts` (`deleteInstanceArtifactsAndBlobs`) for hard-delete flows.
+- [x] Soft-remove (`removeWorkshopInstance`) deliberately does NOT call this — artifacts remain available through archive/restore.
+- [x] Per-blob error isolation: one bad key does not leak the rest; errors counted and logged.
+- [x] 3 tests covering zero-artifact case, multi-artifact removal, cross-instance protection, missing-blob tolerance.
 
 **1h. Skill docs**
-- [ ] Update `workshop-skill/SKILL-facilitator.md` with the new command set.
-- [ ] Update `workshop-skill/commands.md` command reference.
+- [x] `workshop-skill/SKILL-facilitator.md` has a dedicated `workshop facilitator artifact upload|list|remove` section.
+- [ ] `workshop-skill/commands.md` update _(skipped — participant-facing skill doc, not facilitator surface)_.
 
 ### Phase 2 — Authenticated serve route
 
