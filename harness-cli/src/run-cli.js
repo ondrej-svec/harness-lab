@@ -380,6 +380,9 @@ function printUsage(io, ui) {
     helpLine("workshop archive [--notes TEXT]", "Snapshot state (facilitator)"),
     helpLine("workshop learnings", "Query rotation signals (facilitator)"),
     helpLine("  [--tag TAG] [--instance ID]", ""),
+    helpLine("workshop reference list [<id>]", "Show the effective reference catalog override"),
+    helpLine("workshop reference import [<id>] --file PATH", "Push a catalog override from a JSON file"),
+    helpLine("workshop reference reset [<id>]", "Clear the override → participants see the default"),
   ]);
   ui.blank();
 
@@ -1420,6 +1423,148 @@ async function handleWorkshopResetInstance(io, ui, env, positionals, flags, deps
   }
 }
 
+async function readReferenceFile(io, ui, flags) {
+  const filePath = readStringFlag(flags, "file");
+  if (!filePath) {
+    ui.status("error", "--file <path.json> is required.", { stream: "stderr" });
+    return null;
+  }
+  const resolvedPath = path.resolve(process.cwd(), filePath);
+  try {
+    const raw = await fs.readFile(resolvedPath, "utf-8");
+    const parsed = JSON.parse(raw);
+    // Accept two shapes: the bare groups array, or the generated-view
+    // shape `{ schemaVersion, groups }` that authors might export directly
+    // from `dashboard/lib/generated/reference-{en,cs}.json`. We send only
+    // the `groups` payload to the API.
+    const groups = Array.isArray(parsed) ? parsed : parsed?.groups;
+    if (!Array.isArray(groups)) {
+      ui.status(
+        "error",
+        `File must contain a reference-groups array or { groups: [...] } object: ${resolvedPath}`,
+        { stream: "stderr" },
+      );
+      return null;
+    }
+    return groups;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      ui.status("error", `Reference file not found at ${resolvedPath}`, { stream: "stderr" });
+    } else {
+      ui.status("error", `Failed to read reference file: ${error.message}`, { stream: "stderr" });
+    }
+    return null;
+  }
+}
+
+async function handleWorkshopReferenceList(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 3) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getWorkshopReferenceGroups(instanceId);
+    ui.json("Workshop Reference Groups", result);
+    if (result.referenceGroups === null) {
+      ui.status("ok", `No override set — participants see the compiled default.`);
+    } else {
+      const groupCount = result.referenceGroups.length;
+      const itemCount = result.referenceGroups.reduce((sum, group) => sum + group.items.length, 0);
+      ui.status("ok", `Override active: ${groupCount} groups, ${itemCount} items.`);
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceImport(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 3) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const groups = await readReferenceFile(io, ui, flags);
+  if (groups === null) {
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateWorkshopReferenceGroups(instanceId, groups);
+    ui.json("Workshop Reference Import", result);
+    const itemCount = groups.reduce((sum, group) => sum + (group.items?.length ?? 0), 0);
+    ui.status("ok", `Imported ${groups.length} groups, ${itemCount} items for ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference import failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceReset(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 3) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateWorkshopReferenceGroups(instanceId, null);
+    ui.json("Workshop Reference Reset", result);
+    ui.status("ok", `Cleared override on ${instanceId}. Compiled default is now live.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference reset failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopSyncLocal(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
@@ -2403,6 +2548,18 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "learnings") {
     return handleWorkshopLearningsQuery(io, ui, io.env, flags);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "list") {
+    return handleWorkshopReferenceList(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "import") {
+    return handleWorkshopReferenceImport(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "reset") {
+    return handleWorkshopReferenceReset(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)

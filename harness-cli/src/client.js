@@ -155,6 +155,15 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { itemId: currentId },
       });
     },
+    getWorkshopReferenceGroups(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/reference`);
+    },
+    updateWorkshopReferenceGroups(instanceId, referenceGroups) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/reference`, {
+        method: "PATCH",
+        body: { referenceGroups },
+      });
+    },
     archiveWorkshop(instanceId, notes) {
       return request("/api/workshop/archive", {
         method: "POST",
