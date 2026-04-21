@@ -300,6 +300,16 @@ Override a narrow whitelist of participant-facing copy per instance. Currently l
 
 Unknown keys are rejected with a helpful error. Missing keys fall through to the compiled defaults at render time (partial overrides are a first-class flow — override just the title, leave the body on default).
 
+### `workshop facilitator artifact upload|list|remove`
+
+Upload cohort-scoped files (HTML explainers, PDF handouts, images) that live only on this workshop instance. Bytes go to Vercel Blob in private mode; the serve path (`/participant/artifact/[id]`) gates on the participant session and sandboxes HTML with a strict `Content-Security-Policy: sandbox` header.
+
+- `harness workshop artifact upload --file <path> --label "..." [--description "..."] [--content-type MIME]` — upload a file. Default content-type is guessed from the extension (`.html`, `.pdf`, `.png`, `.jpg`/`.jpeg`, `.svg`, `.webp`). Max 25 MiB per file.
+- `harness workshop artifact list` — see every artifact for the instance with id, label, filename, size, upload timestamp.
+- `harness workshop artifact remove <artifactId>` — delete the row and the blob. Cross-instance removal returns 404 (cohort isolation).
+
+Artifacts are inherently cohort-specific — they are **not** in `workshop-content/reference.json`, only in this instance's storage. The participant-facing catalog entry for an uploaded artifact lands with Phase 3 of `docs/plans/2026-04-21-feat-cohort-artifacts-plan.md`; until then, uploads are visible only to the facilitator via `list`.
+
 ### `workshop closing`
 
 Prepare Ondrej's closing synthesis by using:

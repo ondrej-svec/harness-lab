@@ -2009,17 +2009,38 @@ const COPY_ALLOWED_KEY_PATHS = new Set([
   "postWorkshop.referenceBody",
 ]);
 
+const UNSAFE_KEY_SEGMENTS = new Set(["__proto__", "constructor", "prototype"]);
+
 function setNestedCopyKey(copy, keyPath, value) {
   const segments = keyPath.split(".");
+  // Belt-and-suspenders prototype-pollution guard. The keyPath is already
+  // gated by COPY_ALLOWED_KEY_PATHS at the call site, but explicit
+  // segment checks here keep the helper self-contained and satisfy the
+  // semgrep prototype-pollution-loop rule.
+  for (const seg of segments) {
+    if (UNSAFE_KEY_SEGMENTS.has(seg)) {
+      throw new Error(`Refusing to set unsafe key segment '${seg}'`);
+    }
+  }
   let cursor = copy;
   for (let i = 0; i < segments.length - 1; i++) {
     const seg = segments[i];
-    if (!cursor[seg] || typeof cursor[seg] !== "object") {
-      cursor[seg] = {};
+    if (!Object.prototype.hasOwnProperty.call(cursor, seg) || typeof cursor[seg] !== "object") {
+      Object.defineProperty(cursor, seg, {
+        value: {},
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
     }
     cursor = cursor[seg];
   }
-  cursor[segments[segments.length - 1]] = value;
+  Object.defineProperty(cursor, segments[segments.length - 1], {
+    value,
+    writable: true,
+    enumerable: true,
+    configurable: true,
+  });
 }
 
 async function handleWorkshopCopyShow(io, ui, env, positionals, flags, deps) {
