@@ -556,8 +556,9 @@ test.describe("facilitator admin (file mode)", () => {
     // workshop. The form either redirects back to settings (no error
     // surface required for this smoke) or the reset does not fire.
     // Simpler assertion: the confirmation input exists and the label
-    // text explains what to type.
-    const heading = page.getByText(/Pro potvrzení napište id instance/);
+    // text explains what to type. Scope to the reset form — the prompt
+    // text is shared with the end-workshop form on the same page.
+    const heading = resetForm.getByText(/Pro potvrzení napište id instance/).first();
     await expect(heading).toBeVisible();
   });
 });
