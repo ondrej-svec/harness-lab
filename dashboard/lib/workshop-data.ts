@@ -1,5 +1,7 @@
 import blueprintAgendaCs from "./generated/agenda-cs.json";
 import blueprintAgendaEn from "./generated/agenda-en.json";
+import blueprintAgendaCsParticipant from "./generated/agenda-cs-participant.json";
+import blueprintAgendaEnParticipant from "./generated/agenda-en-participant.json";
 import { resolveRepoLinkedHref } from "./repo-links";
 
 export type BlueprintInventory = {
@@ -17,7 +19,25 @@ export type BlueprintAgenda = {
   inventory?: BlueprintInventory;
 };
 
-function getBlueprintAgenda(contentLang: WorkshopContentLanguage): BlueprintAgenda {
+/**
+ * Mode selects which generated agenda to load. "facilitator" (default)
+ * returns the full agenda including kind:"team" phases (build blocks,
+ * rotation). "participant" returns the variant with team-only phases
+ * filtered out — used when a workshop instance has team_mode_enabled
+ * set to false. Substantive editorial rewrite of per-scene copy for
+ * team/tým language is still a follow-up task.
+ */
+export type AgendaMode = "facilitator" | "participant";
+
+function getBlueprintAgenda(
+  contentLang: WorkshopContentLanguage,
+  mode: AgendaMode = "facilitator",
+): BlueprintAgenda {
+  if (mode === "participant") {
+    return contentLang === "en"
+      ? (blueprintAgendaEnParticipant as BlueprintAgenda)
+      : (blueprintAgendaCsParticipant as BlueprintAgenda);
+  }
   return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : (blueprintAgendaCs as BlueprintAgenda);
 }
 
@@ -1632,7 +1652,8 @@ export function createWorkshopInstanceRecord(input: {
 
 export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord, externalBlueprint?: BlueprintAgenda): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
-  const blueprintSource = externalBlueprint ?? getBlueprintAgenda(instance.workshopMeta.contentLang);
+  const agendaMode: AgendaMode = instance.teamModeEnabled ? "facilitator" : "participant";
+  const blueprintSource = externalBlueprint ?? getBlueprintAgenda(instance.workshopMeta.contentLang, agendaMode);
   const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintSource.phases[0]?.id, externalBlueprint);
   const inventory = createWorkshopInventory(instance.workshopMeta.contentLang, externalBlueprint);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;

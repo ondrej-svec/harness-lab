@@ -95,7 +95,9 @@ function validate(source: BilingualAgenda): ValidationError[] {
 // Generate language-specific phase view (same shape as current agenda.json)
 // ---------------------------------------------------------------------------
 
-function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs") {
+type AgendaMode = "facilitator" | "participant";
+
+function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs", _mode: AgendaMode = "facilitator") {
   const content = phase[lang];
   return {
     id: phase.id,
@@ -200,14 +202,27 @@ function generateInventoryView(source: BilingualAgenda, lang: "en" | "cs") {
   };
 }
 
-function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs") {
+function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
+  // Participant mode strips phases whose `kind` is "team" (rotation and
+  // the team-specific build blocks). These phases have no meaning when
+  // teams are invisible on the participant surface. The remaining phases
+  // carry the same copy as the facilitator variant today; substantive
+  // editorial rewrite for team/tým language is a follow-up task tracked
+  // in docs/plans/2026-04-21-feat-optional-team-mode-plan.md (Phase 5).
+  const phases = source.phases.filter((phase) => {
+    if (mode === "participant" && phase.kind === "team") {
+      return false;
+    }
+    return true;
+  });
+
   return {
     version: 2,
     blueprintId: source.blueprintId,
     title: source.meta[lang].title,
     subtitle: source.meta[lang].subtitle,
     principles: source.meta[lang].principles,
-    phases: source.phases.map((phase) => generatePhaseView(phase, lang)),
+    phases: phases.map((phase) => generatePhaseView(phase, lang, mode)),
     inventory: generateInventoryView(source, lang),
   };
 }
@@ -284,8 +299,10 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const csView = generateAgendaView(source, "cs");
-const enView = generateAgendaView(source, "en");
+const csView = generateAgendaView(source, "cs", "facilitator");
+const enView = generateAgendaView(source, "en", "facilitator");
+const csParticipantView = generateAgendaView(source, "cs", "participant");
+const enParticipantView = generateAgendaView(source, "en", "participant");
 const publicBlueprint = generatePublicBlueprint(source);
 
 if (isVerify) {
@@ -294,19 +311,27 @@ if (isVerify) {
   try {
     const tmpCsPath = join(tmpDir, "agenda-cs.json");
     const tmpEnPath = join(tmpDir, "agenda-en.json");
+    const tmpCsParticipantPath = join(tmpDir, "agenda-cs-participant.json");
+    const tmpEnParticipantPath = join(tmpDir, "agenda-en-participant.json");
     const tmpBpPath = join(tmpDir, "blueprint-agenda.json");
 
     writeJson(tmpCsPath, csView);
     writeJson(tmpEnPath, enView);
+    writeJson(tmpCsParticipantPath, csParticipantView);
+    writeJson(tmpEnParticipantPath, enParticipantView);
     writeJson(tmpBpPath, publicBlueprint);
 
     const csMatch = filesMatch(tmpCsPath, join(GENERATED_DIR, "agenda-cs.json"));
     const enMatch = filesMatch(tmpEnPath, join(GENERATED_DIR, "agenda-en.json"));
+    const csPMatch = filesMatch(tmpCsParticipantPath, join(GENERATED_DIR, "agenda-cs-participant.json"));
+    const enPMatch = filesMatch(tmpEnParticipantPath, join(GENERATED_DIR, "agenda-en-participant.json"));
     const bpMatch = filesMatch(tmpBpPath, join(BLUEPRINT_DIR, "agenda.json"));
 
     const mismatches: string[] = [];
     if (!csMatch) mismatches.push("dashboard/lib/generated/agenda-cs.json");
     if (!enMatch) mismatches.push("dashboard/lib/generated/agenda-en.json");
+    if (!csPMatch) mismatches.push("dashboard/lib/generated/agenda-cs-participant.json");
+    if (!enPMatch) mismatches.push("dashboard/lib/generated/agenda-en-participant.json");
     if (!bpMatch) mismatches.push("workshop-blueprint/agenda.json");
 
     if (mismatches.length > 0) {
@@ -326,10 +351,14 @@ if (isVerify) {
   // Generate mode: write to actual locations
   writeJson(join(GENERATED_DIR, "agenda-cs.json"), csView);
   writeJson(join(GENERATED_DIR, "agenda-en.json"), enView);
+  writeJson(join(GENERATED_DIR, "agenda-cs-participant.json"), csParticipantView);
+  writeJson(join(GENERATED_DIR, "agenda-en-participant.json"), enParticipantView);
   writeJson(join(BLUEPRINT_DIR, "agenda.json"), publicBlueprint);
 
   console.log("Generated views:");
   console.log(`  dashboard/lib/generated/agenda-cs.json`);
   console.log(`  dashboard/lib/generated/agenda-en.json`);
+  console.log(`  dashboard/lib/generated/agenda-cs-participant.json`);
+  console.log(`  dashboard/lib/generated/agenda-en-participant.json`);
   console.log(`  workshop-blueprint/agenda.json (public blueprint)`);
 }
