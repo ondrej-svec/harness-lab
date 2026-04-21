@@ -18,9 +18,12 @@ import {
 } from "@/lib/public-page-view-model";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
+import { resolveEffectiveFeedbackTemplate } from "@/lib/workshop-data";
+import { getFeedbackSubmissionRepository } from "@/lib/feedback-submission-repository";
 import { ParticipantIdentifyFlow } from "../components/participant-identify-flow";
 import { ParticipantIdentifyPrompt } from "../components/participant-identify-prompt";
 import { ParticipantRoomSurface } from "../components/participant-room-surface";
+import { PostWorkshopSurface } from "../components/post-workshop-surface";
 import { SiteHeader } from "../components/site-header";
 import { ParticipantLiveRefresh } from "../components/participant-live-refresh";
 
@@ -92,6 +95,51 @@ export default async function ParticipantPage({
     participantSession.instanceId,
   );
   const teamModeEnabled = workshopInstance?.teamModeEnabled ?? true;
+  const instanceStatus = workshopInstance?.status ?? "prepared";
+
+  // Post-workshop branch. When the facilitator flips the instance to
+  // "ended", the participant surface pivots to resources + feedback
+  // form. Retroactive access (participants returning days later) works
+  // because the event-code re-issue flow gives them a fresh session
+  // that lands here.
+  if (instanceStatus === "ended" && workshopInstance) {
+    const template = resolveEffectiveFeedbackTemplate(workshopInstance);
+    const sessionKey = participantSession.participantId ?? `session:${participantSession.instanceId}`;
+    const existingSubmission = await getFeedbackSubmissionRepository().findBySessionKey(
+      participantSession.instanceId,
+      sessionKey,
+    );
+    const { workshopMeta } = deriveHomePageState(state);
+    const workshopContextLine = buildWorkshopContextLine(workshopMeta);
+    const referenceGroups = buildParticipantReferenceGroups({
+      lang,
+      setupPaths: state.setupPaths,
+    });
+
+    return (
+      <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,var(--ambient-left),transparent_28%),linear-gradient(180deg,var(--surface),var(--surface-elevated))] text-[var(--text-primary)]">
+        <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-5 sm:px-8 sm:py-7">
+          <SiteHeader
+            isParticipant
+            lang={lang}
+            copy={copy}
+            csHref={withLang("/participant", "cs")}
+            enHref={withLang("/participant", "en")}
+          />
+          <PostWorkshopSurface
+            copy={copy}
+            lang={lang}
+            workshopContextLine={workshopContextLine}
+            template={template}
+            existingSubmission={existingSubmission}
+            referenceGroups={referenceGroups}
+            logoutAction={logoutAction}
+          />
+        </div>
+      </main>
+    );
+  }
+
   const participantTeams = await getParticipantTeamLookup(participantSession.instanceId);
   const participantTeamAssignment = participantSession.participantId
     ? await getTeamMemberRepository().findMemberByParticipant(participantSession.instanceId, participantSession.participantId)
