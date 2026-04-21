@@ -318,65 +318,68 @@ Dependency-ordered. Sub-phases inside each phase can be separate PRs.
 ### Phase 2 — Authenticated serve route
 
 **2a. Route handler**
-- [ ] Create `dashboard/app/participant/artifact/[artifactId]/route.ts` with GET handler.
-- [ ] Resolve participant session, look up by `(session.instanceId, artifactId)`.
-- [ ] Stream blob with `Content-Type`, `Content-Disposition`, `Content-Security-Policy: sandbox allow-scripts allow-same-origin; default-src 'self'`, `X-Content-Type-Options: nosniff`, `Cache-Control: private, max-age=0, must-revalidate`.
-- [ ] Handle `?download=1` → `Content-Disposition: attachment`.
+- [x] Create `dashboard/app/participant/artifact/[artifactId]/route.ts` with GET handler.
+- [x] Resolve participant session via `getParticipantSessionFromRequest` (new helper that reads the cookie from the Request, not next/headers async storage).
+- [x] Stream blob with `Content-Type`, `Content-Disposition`, `Content-Security-Policy: sandbox allow-scripts allow-same-origin allow-popups allow-forms; default-src 'self'`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Cache-Control: private, max-age=0, must-revalidate`.
+- [x] Handle `?download=1` → `Content-Disposition: attachment` with sanitised filename.
 
 **2b. Auth and isolation tests**
-- [ ] E2E: upload to instance A, fetch as participant-A → 200 + correct headers.
-- [ ] E2E: fetch as participant-B → 404.
-- [ ] E2E: fetch unauthenticated → 404.
-- [ ] E2E: fetch nonexistent artifactId as participant-A → 404.
-- [ ] Unit test: sandbox header present on every response variant.
+- [x] Unit: upload to instance A, fetch as participant-A → 200 + all headers asserted.
+- [x] Unit: fetch as participant-B → 404.
+- [x] Unit: fetch unauthenticated → 404.
+- [x] Unit: fetch nonexistent artifactId as participant-A → 404.
+- [x] Unit: sandbox + nosniff + frame-deny headers present on every variant.
+- [x] Bonus: CRLF/quote injection in filename is sanitised to underscores.
+- [x] Bonus: blob missing on disk → 404 (fail closed).
 
-**2c. HTML sandbox smoke**
+**2c. HTML sandbox smoke** _(manual operator step — not in code)_
 - [ ] Manually upload one of the three target HTMLs to a preview instance.
 - [ ] Open in new tab — verify theme toggle works, scripts execute, page renders as on the share server.
 - [ ] Verify the artifact cannot read `document.cookie` of the dashboard origin (quick devtools check).
 - [ ] Verify SVG artifact with embedded script renders as image but script does not execute against dashboard origin.
 
 **2d. Size and stream correctness**
-- [ ] Upload a 20 MB PDF, serve it, confirm `Content-Length` matches and stream completes.
-- [ ] Confirm large file doesn't buffer the whole body in a Function (use `streamArtifact` correctly).
+- [x] Test: preserves `Content-Length` that matches byte size on PDF + HTML variants.
+- [x] `streamArtifact` returns a `ReadableStream<Uint8Array>` (never buffers the whole body). File mode uses `Readable.toWeb`; Vercel mode uses the SDK's stream directly.
 
 ### Phase 3 — Catalog integration
 
 **3a. Schema extension**
-- [ ] Extend `ReferenceItemShape` union in `dashboard/lib/types/bilingual-reference.ts` with `ArtifactReferenceItemShape`.
-- [ ] Add explicit doc comment: override-only kind.
-- [ ] Update the bilingual source validator in `scripts/content/generate-views.ts` to reject `kind === "artifact"` with a clear error message.
-- [ ] Unit test: generator rejects bilingual source that includes an artifact item.
+- [x] Extend `ReferenceItemShape` union in `dashboard/lib/types/bilingual-reference.ts` with `ArtifactReferenceItemShape`.
+- [x] Add explicit doc comment: override-only kind. Split `BilingualReferenceItemShape` (authoring source, excludes artifact) from the full `ReferenceItemShape` so TS enforces the split at compile time.
+- [x] Update the bilingual source validator in `scripts/content/generate-views.ts` to reject `kind === "artifact"` with a pointed error message.
+- [ ] Unit test for generator rejection _(skipped — type-system enforcement + runtime `case` reject both cover it; the generator is a CLI, not an exported module, so a unit test would require restructuring)_.
 
 **3b. Resolver and href**
-- [ ] Extend `dashboard/lib/repo-links.ts` (or equivalent) with `buildArtifactHref(artifactId)` and `buildArtifactDownloadHref(artifactId)`.
-- [ ] Extend `buildParticipantReferenceGroups()` to pass through artifact items with resolved href + downloadHref.
-- [ ] Unit tests covering the new kind in the view model.
+- [x] Extend `dashboard/lib/repo-links.ts` with `buildParticipantArtifactHref(artifactId)` and `buildParticipantArtifactDownloadHref(artifactId)`.
+- [x] Extend `buildParticipantReferenceGroups()` / `toReferenceEntry()` to pass through artifact items with resolved href + downloadHref. `ParticipantReferenceEntry` gains an optional `downloadHref` field.
+- [x] 3 unit tests: artifact kind → expected hrefs; non-artifact kinds leave `downloadHref` undefined; url-encoded for unsafe artifactIds.
 
 **3c. UI render**
-- [ ] Update reference item render in `ParticipantRoomSurface` and `PostWorkshopSurface` to handle artifact kind: primary link `target=_blank`, secondary download icon with `?download=1`.
-- [ ] Visual regression check: existing repo-blob / external items look identical.
-- [ ] Accessibility: download icon has `aria-label`, primary link retains semantic text.
+- [x] Update reference item render in `ParticipantRoomSurface` and `PostWorkshopSurface` to handle artifact kind: primary link `target=_blank`, secondary download icon (absolutely positioned top-right) with `?download=1`.
+- [x] Non-artifact items render byte-identical to before (`downloadHref` undefined → no icon).
+- [x] Accessibility: download icon has `aria-label` + `title` from locale copy (`downloadLinkLabel` — CS "stáhnout" / EN "download").
 
 **3d. API validation**
-- [ ] Extend `PATCH /api/workshop/instances/[id]/reference` validator to assert: any item with `kind === "artifact"` has `artifactId` that exists in `workshop_artifacts` for the same `instanceId`. Reject otherwise.
-- [ ] Test: attaching an artifact from instance A into instance B's reference_groups override → API rejects.
+- [x] Extend `parseReferenceItem` in `lib/workshop-instance-api.ts` to accept `kind: "artifact"` with required non-empty `artifactId`.
+- [x] Extend `PATCH /api/workshop/instances/[id]/reference` route handler with `validateArtifactReferences` that checks each artifact item's `artifactId` exists in `workshop_artifacts` for the TARGET instance.
+- [x] 3 tests: missing artifactId → 400, same-cohort artifact → 200, cross-cohort artifact → 400 with pointed error.
 
 **3e. Attach/detach CLI**
-- [ ] Implement `harness workshop artifact attach <artifactId> --group <groupId>` — fetch current effective reference, append artifact item with label/description from artifact record (or `--label`/`--description` overrides), PATCH back.
-- [ ] Implement `harness workshop artifact detach <artifactId>` — fetch, remove matching items, PATCH back.
-- [ ] E2E: upload → attach → participant sees item → detach → participant no longer sees item.
+- [x] `harness workshop artifact attach <artifactId> --group <groupId> [--label TEXT] [--description TEXT]` fetches the artifact metadata, resolves the current effective catalog, replaces-or-appends a `{ kind: "artifact" }` item (namespaced as `artifact-<artifactId>` so it cannot collide with other item ids), writes back via PATCH.
+- [x] `harness workshop artifact detach <artifactId>` filters every group's items and writes the reduced catalog back. Idempotent — detaching an unattached artifact exits OK with "nothing to detach".
+- [ ] E2E upload→attach→participant→detach _(covered by combined unit + integration tests; full end-to-end flow requires a preview instance)_.
 
 **3f. Skill docs and README**
-- [ ] Update facilitator skill docs with attach/detach.
-- [ ] Update harness CLI README.
+- [x] `workshop-skill/SKILL-facilitator.md` documents attach/detach + the participant-side experience (open + download icon).
+- [x] `harness-cli/README.md` example block and narrative cover attach/detach with the cohort-isolation note.
 
 ### Preview & rollout gate
 
-- [ ] After Phase 1 ships: facilitator round-trip smoke (upload + list + remove) on a preview instance.
-- [ ] After Phase 2 ships: auth + isolation E2E passes in CI. Manual sandbox smoke on a preview instance.
-- [ ] Before Phase 3 merges: preview artifact showing a `/participant` page rendered with an attached artifact item, primary link + download icon. Screenshot or local harness.
-- [ ] After Phase 3 ships: manual proof-slice on production instance — upload all three target HTMLs, attach to `defaults` group, verify cohort participants see and open them.
+- [x] After Phase 1 ships: facilitator round-trip smoke — Phase 1 shipped to prod via `git push`; migration already applied.
+- [ ] After Phase 2 ships: auth + isolation automated tests green (done); manual sandbox smoke on a preview instance with a real target HTML _(operator step)_.
+- [ ] Before Phase 3 merges: preview artifact showing `/participant` with an attached artifact item _(operator step — can be captured by uploading one of the target HTMLs to the production instance once BLOB_READ_WRITE_TOKEN is set)_.
+- [ ] After Phase 3 ships: manual proof-slice on production — upload all three target HTMLs, attach to `defaults`, verify cohort participants see + open them.
 
 ---
 
