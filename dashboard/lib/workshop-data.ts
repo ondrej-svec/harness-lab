@@ -4,6 +4,7 @@ import blueprintAgendaCsParticipant from "./generated/agenda-cs-participant.json
 import blueprintAgendaEnParticipant from "./generated/agenda-en-participant.json";
 import { resolveRepoLinkedHref } from "./repo-links";
 import type { FeedbackFormTemplate } from "./runtime-contracts";
+import type { GeneratedReferenceGroup } from "./types/bilingual-reference";
 
 export type BlueprintInventory = {
   briefs?: ProjectBrief[];
@@ -889,6 +890,14 @@ export type WorkshopInstanceRecord = {
    * Authoring UI is deferred to v2; v1 edits are hand-edits of this JSONB.
    */
   feedbackForm: FeedbackFormTemplate | null;
+  /**
+   * Per-instance override of the default participant reference catalog.
+   * Null means "use the built-in default" compiled from
+   * workshop-content/reference.json (see getDefaultReferenceView + the
+   * dashboard/lib/generated/reference-{en,cs}.json artifacts). Overrides
+   * are verbatim — the whole catalog replaces the default.
+   */
+  referenceGroups: GeneratedReferenceGroup[] | null;
   workshopMeta: WorkshopMeta;
 };
 
@@ -1770,6 +1779,23 @@ export function resolveEffectiveFeedbackTemplate(
   return instance.feedbackForm ?? getDefaultFeedbackTemplate();
 }
 
+/**
+ * Resolve the effective participant reference catalog override for an
+ * instance. Returns the override when present AND non-empty; null
+ * otherwise. Consumers (public-page-view-model.ts) fall back to the
+ * locale-specific compiled default when this returns null — that keeps
+ * both "null override" and "empty-array reset" flowing through the
+ * same code path.
+ */
+export function resolveEffectiveReferenceGroups(
+  instance: Pick<WorkshopInstanceRecord, "referenceGroups">,
+): GeneratedReferenceGroup[] | null {
+  if (!instance.referenceGroups || instance.referenceGroups.length === 0) {
+    return null;
+  }
+  return instance.referenceGroups;
+}
+
 export function createWorkshopInstanceRecord(input: {
   id: string;
   templateId: string;
@@ -1783,6 +1809,7 @@ export function createWorkshopInstanceRecord(input: {
   allowWalkIns?: boolean;
   teamModeEnabled?: boolean;
   feedbackForm?: FeedbackFormTemplate | null;
+  referenceGroups?: GeneratedReferenceGroup[] | null;
 }): WorkshopInstanceRecord {
   const template = workshopTemplates.find((item) => item.id === input.templateId) ?? workshopTemplates[0];
 
@@ -1797,6 +1824,7 @@ export function createWorkshopInstanceRecord(input: {
     allowWalkIns: input.allowWalkIns ?? true,
     teamModeEnabled: input.teamModeEnabled ?? true,
     feedbackForm: input.feedbackForm ?? null,
+    referenceGroups: input.referenceGroups ?? null,
     workshopMeta: normalizeWorkshopMeta(
       input.workshopMeta ?? createWorkshopMetaFromTemplate(template, input.contentLang),
       template,
