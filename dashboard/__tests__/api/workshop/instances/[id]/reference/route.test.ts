@@ -1,10 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { GET, PATCH } from "@/app/api/workshop/instances/[id]/reference/route";
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "@/lib/audit-log-repository";
 import {
   setFacilitatorAuthServiceForTests,
   type FacilitatorAuthService,
 } from "@/lib/facilitator-auth-service";
+import {
+  FileArtifactRepository,
+  setArtifactRepositoryForTests,
+} from "@/lib/artifact-repository";
 import { sampleWorkshopInstances } from "@/lib/workshop-data";
 import { setWorkshopInstanceRepositoryForTests } from "@/lib/workshop-instance-repository";
 import type { AuditLogRecord, WorkshopInstanceRepository } from "@/lib/runtime-contracts";
@@ -85,19 +92,35 @@ const validOverride = [
 describe("workshop instance reference route", () => {
   let instanceRepository: MemoryWorkshopInstanceRepository;
   let auditLog: CapturingAuditLogRepository;
+  let artifactRepo: FileArtifactRepository;
+  let tmpDir: string;
+  let prevDataDir: string | undefined;
 
   beforeEach(() => {
+    tmpDir = mkdtempSync(join(tmpdir(), "reference-route-"));
+    prevDataDir = process.env.HARNESS_DATA_DIR;
+    process.env.HARNESS_DATA_DIR = tmpDir;
+
     instanceRepository = new MemoryWorkshopInstanceRepository();
     auditLog = new CapturingAuditLogRepository();
+    artifactRepo = new FileArtifactRepository();
     setWorkshopInstanceRepositoryForTests(instanceRepository);
     setAuditLogRepositoryForTests(auditLog);
+    setArtifactRepositoryForTests(artifactRepo);
     setFacilitatorAuthServiceForTests(new AllowFacilitatorAuthService());
   });
 
   afterEach(() => {
     setWorkshopInstanceRepositoryForTests(null);
     setAuditLogRepositoryForTests(null);
+    setArtifactRepositoryForTests(null);
     setFacilitatorAuthServiceForTests(null);
+    if (prevDataDir === undefined) {
+      delete process.env.HARNESS_DATA_DIR;
+    } else {
+      process.env.HARNESS_DATA_DIR = prevDataDir;
+    }
+    rmSync(tmpDir, { recursive: true, force: true });
   });
 
   describe("GET", () => {
@@ -251,6 +274,142 @@ describe("workshop instance reference route", () => {
         params: Promise.resolve({ id: "ghost" }),
       });
       expect(response.status).toBe(404);
+    });
+
+    describe("artifact kind guard", () => {
+      it("rejects an artifact item with missing artifactId", async () => {
+        const response = await PATCH(
+          buildPatchRequest({
+            referenceGroups: [
+              {
+                id: "defaults",
+                title: "t",
+                description: "d",
+                items: [
+                  { id: "x", kind: "artifact", label: "L", description: "D" },
+                ],
+              },
+            ],
+          }),
+          { params: Promise.resolve({ id: "sample-studio-a" }) },
+        );
+        expect(response.status).toBe(400);
+        const body = await response.json();
+        expect(body.error).toMatch(/artifactId required/);
+      });
+
+      it("accepts an artifact item when the artifactId exists for this instance", async () => {
+        await artifactRepo.create({
+          instanceId: "sample-studio-a",
+          id: "cohort-local-id",
+          blobKey: "artifacts/sample-studio-a/cohort-local-id/case.html",
+          contentType: "text/html",
+          filename: "case.html",
+          byteSize: 100,
+          label: "Case study",
+        });
+        const response = await PATCH(
+          buildPatchRequest({
+            referenceGroups: [
+              {
+                id: "defaults",
+                title: "t",
+                description: "d",
+                items: [
+                  {
+                    id: "case-study",
+                    kind: "artifact",
+                    artifactId: "cohort-local-id",
+                    label: "Case study",
+                    description: "cohort-only",
+                  },
+                ],
+              },
+            ],
+          }),
+          { params: Promise.resolve({ id: "sample-studio-a" }) },
+        );
+        expect(response.status).toBe(200);
+        const body = await response.json();
+        expect(body.referenceGroups[0].items[0]).toMatchObject({
+          kind: "artifact",
+          artifactId: "cohort-local-id",
+        });
+      });
+
+      it("rejects an artifact from another cohort — cross-instance isolation", async () => {
+        // Seed an artifact owned by a DIFFERENT instance.
+        const otherInstance = sampleWorkshopInstances.find(
+          (x) => x.id !== "sample-studio-a",
+        );
+        expect(otherInstance).toBeTruthy();
+        await artifactRepo.create({
+          instanceId: otherInstance!.id,
+          id: "foreign-artifact",
+          blobKey: `artifacts/${otherInstance!.id}/foreign-artifact/x.html`,
+          contentType: "text/html",
+          filename: "x.html",
+          byteSize: 1,
+          label: "Foreign",
+        });
+        const response = await PATCH(
+          buildPatchRequest({
+            referenceGroups: [
+              {
+                id: "defaults",
+                title: "t",
+                description: "d",
+                items: [
+                  {
+                    id: "x",
+                    kind: "artifact",
+                    artifactId: "foreign-artifact",
+                    label: "L",
+                    description: "D",
+                  },
+                ],
+              },
+            ],
+          }),
+          { params: Promise.resolve({ id: "sample-studio-a" }) },
+        );
+        expect(response.status).toBe(400);
+        const body = await response.json();
+        expect(body.error).toMatch(/foreign-artifact.*does not exist on this instance/);
+      });
+
+      it("rejects an artifact item whose artifactId does not exist on this instance", async () => {
+        // No artifact repo override → default (Neon or File depending on
+        // runtime mode). In test env, HARNESS_STORAGE_MODE defaults to
+        // "file", so the artifact lookup runs against the empty file
+        // repo for sample-studio-a and resolves to null.
+        const response = await PATCH(
+          buildPatchRequest({
+            referenceGroups: [
+              {
+                id: "defaults",
+                title: "t",
+                description: "d",
+                items: [
+                  {
+                    id: "case-study",
+                    kind: "artifact",
+                    artifactId: "not-in-this-cohort",
+                    label: "Case study",
+                    description: "cohort-only",
+                  },
+                ],
+              },
+            ],
+          }),
+          { params: Promise.resolve({ id: "sample-studio-a" }) },
+        );
+        expect(response.status).toBe(400);
+        const body = await response.json();
+        expect(body.error).toMatch(
+          /artifactId 'not-in-this-cohort' does not exist on this instance/,
+        );
+      });
     });
   });
 });

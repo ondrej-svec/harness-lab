@@ -12,6 +12,7 @@ const KNOWN_REFERENCE_ITEM_KINDS = [
   "repo-tree",
   "repo-root",
   "hosted",
+  "artifact",
 ] as const;
 
 export type WorkshopInstanceCreateInput = {
@@ -194,6 +195,19 @@ function parseReferenceItem(raw: unknown, path: string): ValidationResult<Genera
       return {
         ok: true,
         value: sourceUrl ? { ...base, sourceUrl } : base,
+      };
+    }
+    case "artifact": {
+      const artifactId =
+        typeof record.artifactId === "string" ? record.artifactId.trim() : "";
+      if (!artifactId) {
+        return { ok: false, error: `${path}.artifactId required for artifact item` };
+      }
+      // Cross-instance existence check happens at the route handler
+      // (needs DB access); the parser's job is structural.
+      return {
+        ok: true,
+        value: { id, kind: "artifact", artifactId, label, description },
       };
     }
     default:

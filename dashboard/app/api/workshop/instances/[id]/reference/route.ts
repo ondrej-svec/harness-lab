@@ -5,6 +5,34 @@ import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repositor
 import { parseWorkshopInstanceReferenceGroupsBody } from "@/lib/workshop-instance-api";
 import { resolveEffectiveReferenceGroups } from "@/lib/workshop-data";
 import { updateWorkshopInstanceReferenceGroups } from "@/lib/workshop-store";
+import { getArtifactRepository } from "@/lib/artifact-repository";
+import type { GeneratedReferenceGroup } from "@/lib/types/bilingual-reference";
+
+/**
+ * Cohort-scoped artifact kind is only valid when the referenced
+ * `artifactId` actually exists for the target instance. Every artifact
+ * item in the payload is checked against `workshop_artifacts`; the
+ * first mismatch rejects the entire PATCH.
+ */
+async function validateArtifactReferences(
+  instanceId: string,
+  groups: GeneratedReferenceGroup[],
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const repo = getArtifactRepository();
+  for (const [gi, group] of groups.entries()) {
+    for (const [ii, item] of group.items.entries()) {
+      if (item.kind !== "artifact") continue;
+      const record = await repo.get(instanceId, item.artifactId);
+      if (!record) {
+        return {
+          ok: false,
+          error: `referenceGroups[${gi}].items[${ii}].artifactId '${item.artifactId}' does not exist on this instance`,
+        };
+      }
+    }
+  }
+  return { ok: true };
+}
 
 /**
  * GET /api/workshop/instances/[id]/reference
@@ -56,6 +84,16 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const parsed = parseWorkshopInstanceReferenceGroupsBody(body);
   if (!parsed.ok) {
     return NextResponse.json({ ok: false, error: parsed.error }, { status: 400 });
+  }
+
+  // Cross-instance artifact guard. Any artifact item must reference an
+  // artifactId that exists for THIS instance — prevents a facilitator
+  // from attaching cohort B's artifact id into cohort A's catalog.
+  if (parsed.value.referenceGroups) {
+    const artifactCheck = await validateArtifactReferences(id, parsed.value.referenceGroups);
+    if (!artifactCheck.ok) {
+      return NextResponse.json({ ok: false, error: artifactCheck.error }, { status: 400 });
+    }
   }
 
   const facilitator = await getFacilitatorSession(id);
