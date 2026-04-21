@@ -5,6 +5,7 @@ import {
   createWorkshopStateFromInstance,
   createWorkshopStateFromTemplate,
   getTeamName,
+  resolveEffectiveReferenceGroups,
   seedWorkshopState,
 } from "./workshop-data";
 
@@ -195,5 +196,35 @@ describe("workshop-data", () => {
   it("returns the team name when present and the id otherwise", () => {
     expect(getTeamName("t2", seedWorkshopState.teams)).toBe("Tým 2");
     expect(getTeamName("unknown-team", seedWorkshopState.teams)).toBe("unknown-team");
+  });
+
+  describe("resolveEffectiveReferenceGroups", () => {
+    it("returns null when the instance has no override", () => {
+      expect(resolveEffectiveReferenceGroups({ referenceGroups: null })).toBeNull();
+    });
+
+    it("treats an empty override array as null (= use compiled default)", () => {
+      expect(resolveEffectiveReferenceGroups({ referenceGroups: [] })).toBeNull();
+    });
+
+    it("returns the override verbatim when non-empty", () => {
+      const override = [
+        {
+          id: "defaults" as const,
+          title: "Custom",
+          description: "Per-event override",
+          items: [
+            {
+              id: "only-item",
+              kind: "external" as const,
+              href: "https://example.com/",
+              label: "Example",
+              description: "Just one",
+            },
+          ],
+        },
+      ];
+      expect(resolveEffectiveReferenceGroups({ referenceGroups: override })).toBe(override);
+    });
   });
 });

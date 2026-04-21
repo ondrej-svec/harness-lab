@@ -18,7 +18,7 @@ import {
 } from "@/lib/public-page-view-model";
 import { getWorkshopState } from "@/lib/workshop-store";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
-import { resolveEffectiveFeedbackTemplate } from "@/lib/workshop-data";
+import { resolveEffectiveFeedbackTemplate, resolveEffectiveReferenceGroups } from "@/lib/workshop-data";
 import { getFeedbackSubmissionRepository } from "@/lib/feedback-submission-repository";
 import { ParticipantIdentifyFlow } from "../components/participant-identify-flow";
 import { ParticipantIdentifyPrompt } from "../components/participant-identify-prompt";
@@ -114,6 +114,7 @@ export default async function ParticipantPage({
     const referenceGroups = buildParticipantReferenceGroups({
       lang,
       setupPaths: state.setupPaths,
+      referenceGroups: resolveEffectiveReferenceGroups(workshopInstance),
     });
 
     return (
@@ -156,6 +157,7 @@ export default async function ParticipantPage({
   const referenceGroups = buildParticipantReferenceGroups({
     lang,
     setupPaths: state.setupPaths,
+    referenceGroups: workshopInstance ? resolveEffectiveReferenceGroups(workshopInstance) : null,
   });
 
   return (

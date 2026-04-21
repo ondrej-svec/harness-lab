@@ -4,6 +4,7 @@ import { SiteHeader } from "@/app/components/site-header";
 import { requireFacilitatorPageAccess } from "@/lib/facilitator-access";
 import { buildParticipantReferenceGroups, deriveHomePageState } from "@/lib/public-page-view-model";
 import { publicCopy, resolveUiLanguage, withLang } from "@/lib/ui-language";
+import { resolveEffectiveReferenceGroups } from "@/lib/workshop-data";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { getWorkshopState } from "@/lib/workshop-store";
 
@@ -45,6 +46,7 @@ export default async function AdminParticipantMirrorPage({
   const referenceGroups = buildParticipantReferenceGroups({
     lang,
     setupPaths: state.setupPaths,
+    referenceGroups: resolveEffectiveReferenceGroups(instance),
   });
 
   return (

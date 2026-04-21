@@ -435,9 +435,16 @@ function getDefaultReferenceView(lang: UiLanguage): GeneratedReferenceView {
 export function buildParticipantReferenceGroups(options: {
   lang: UiLanguage;
   setupPaths: SetupPath[];
+  /**
+   * Per-instance override (typically from
+   * resolveEffectiveReferenceGroups(instance)). When null/undefined the
+   * compiled locale default is used. When provided verbatim replaces the
+   * default catalog; the dynamic setupPaths injection still runs.
+   */
+  referenceGroups?: GeneratedReferenceGroup[] | null;
 }) {
-  const { lang, setupPaths } = options;
-  const view = getDefaultReferenceView(lang);
+  const { lang, setupPaths, referenceGroups } = options;
+  const groups = referenceGroups ?? getDefaultReferenceView(lang).groups;
 
   // Dynamic setupPaths items (instance-driven via workshop state) are
   // injected into the `accelerators` group ahead of the authored external
@@ -450,7 +457,7 @@ export function buildParticipantReferenceGroups(options: {
     external: true,
   }));
 
-  return view.groups.map<ParticipantReferenceGroup>((group) => {
+  return groups.map<ParticipantReferenceGroup>((group) => {
     const items = group.items.map(toReferenceEntry);
     if (group.id === "accelerators") {
       return {
