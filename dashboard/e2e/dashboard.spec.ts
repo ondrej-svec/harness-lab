@@ -541,11 +541,13 @@ test.describe("facilitator admin (file mode)", () => {
     // fired on a single unguarded click, which was a latent bug.
     await page.goto("/admin/instances/sample-studio-a?section=settings");
 
-    // The reset block lives inside a <details> summary. Open it.
-    const summary = page.locator("form").filter({ has: page.getByPlaceholder("sample-studio-a") }).locator("summary").first();
-    await summary.click();
+    // The settings page now renders two confirmation forms sharing the
+    // same placeholder (end-workshop + reset). Scope to the reset form
+    // by the unique hint text; its <details> summary opens the block.
+    const resetForm = page.locator("form").filter({ hasText: /Pro potvrzení napište id instance/ });
+    await resetForm.locator("summary").first().click();
 
-    const confirmation = page.getByPlaceholder("sample-studio-a");
+    const confirmation = resetForm.getByPlaceholder("sample-studio-a");
     await expect(confirmation).toBeVisible();
 
     // Submitting with the wrong confirmation value must not reset the
