@@ -202,6 +202,101 @@ export type PollResponseRecord = {
   submittedAt: string;
 };
 
+/**
+ * Bilingual prompt / label shape used by every feedback-form text field.
+ * The instance's workshop_meta.contentLang selects at render time.
+ */
+export type BilingualText = { cs: string; en: string };
+
+/**
+ * FeedbackQuestion — tagged union of the question types supported by
+ * the post-workshop feedback form. Each variant carries its own
+ * type-specific fields (scale, options, optional flag) plus a
+ * bilingual prompt. IDs are stable strings that answers reference.
+ */
+export type FeedbackQuestion =
+  | {
+      id: string;
+      type: "likert";
+      scale: 5 | 7;
+      prompt: BilingualText;
+      /** Optional endpoint anchor labels (e.g. "vůbec" / "výborně"). */
+      anchorMin?: BilingualText;
+      anchorMax?: BilingualText;
+      optional?: boolean;
+    }
+  | {
+      id: string;
+      type: "stars";
+      /** Maximum star rating (typically 5). */
+      max: 5;
+      prompt: BilingualText;
+      optional?: boolean;
+    }
+  | {
+      id: string;
+      type: "single-choice";
+      prompt: BilingualText;
+      options: Array<{ id: string; label: BilingualText }>;
+      optional?: boolean;
+    }
+  | {
+      id: string;
+      type: "multi-choice";
+      prompt: BilingualText;
+      options: Array<{ id: string; label: BilingualText }>;
+      optional?: boolean;
+    }
+  | {
+      id: string;
+      type: "open-text";
+      prompt: BilingualText;
+      placeholder?: BilingualText;
+      rows?: number;
+      optional?: boolean;
+    }
+  | {
+      id: string;
+      type: "checkbox";
+      prompt: BilingualText;
+      /** Default checked state. Consent checkboxes default to false. */
+      defaultChecked?: boolean;
+      optional?: boolean;
+    };
+
+/**
+ * FeedbackAnswer — the submission-side counterpart of FeedbackQuestion.
+ * One entry per answered question. Discriminated on `type`; `questionId`
+ * matches the question's `id`.
+ */
+export type FeedbackAnswer =
+  | { questionId: string; type: "likert" | "stars"; value: number }
+  | { questionId: string; type: "single-choice"; optionId: string }
+  | { questionId: string; type: "multi-choice"; optionIds: string[] }
+  | { questionId: string; type: "open-text"; text: string }
+  | { questionId: string; type: "checkbox"; checked: boolean };
+
+export type FeedbackFormTemplate = {
+  /** Template version — increment when the default shape changes. */
+  version: number;
+  questions: FeedbackQuestion[];
+};
+
+export type FeedbackSubmissionRecord = {
+  id: string;
+  instanceId: WorkshopInstanceId;
+  participantId: string | null;
+  sessionKey: string;
+  answers: FeedbackAnswer[];
+  /**
+   * Participant opt-in to be quoted by name in marketing / leadership
+   * reports. Defaults to false. Summary renderers must gate attribution
+   * on this flag for the testimonial question specifically.
+   */
+  allowQuoteByName: boolean;
+  submittedAt: string;
+};
+
 export type ParticipantFeedbackKind = "blocker" | "question";
 
 export type ParticipantFeedbackRecord = {
@@ -436,6 +531,38 @@ export interface ParticipantFeedbackRepository {
     feedbackId: string,
     promotion: { promotedToTickerAt: string; promotedTickerId: string },
   ): Promise<void>;
+}
+
+export class FeedbackSubmissionLockedError extends Error {
+  constructor(readonly sessionKey: string, readonly submittedAt: string) {
+    super(`feedback submission locked (submitted at ${submittedAt})`);
+    this.name = "FeedbackSubmissionLockedError";
+  }
+}
+
+/**
+ * Post-workshop feedback submissions — one row per (instance, session_key).
+ * Unique at the DB level; edits within the lock window are upserts; after
+ * the window, upsert attempts raise FeedbackSubmissionLockedError.
+ */
+export interface FeedbackSubmissionRepository {
+  list(instanceId: WorkshopInstanceId): Promise<FeedbackSubmissionRecord[]>;
+  findBySessionKey(
+    instanceId: WorkshopInstanceId,
+    sessionKey: string,
+  ): Promise<FeedbackSubmissionRecord | null>;
+  /**
+   * Insert-or-update a submission. If a submission already exists for
+   * (instanceId, sessionKey) and its `submittedAt` is older than
+   * `allowEditWithinHours` hours, the repository throws
+   * FeedbackSubmissionLockedError. Otherwise, the row is replaced and
+   * `submittedAt` is refreshed to NOW.
+   */
+  upsert(
+    instanceId: WorkshopInstanceId,
+    submission: FeedbackSubmissionRecord,
+    options: { allowEditWithinHours: number },
+  ): Promise<FeedbackSubmissionRecord>;
 }
 
 /**

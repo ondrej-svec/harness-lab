@@ -263,6 +263,7 @@ export function buildWorkspaceStatusLabel(copy: AdminCopy, status: WorkshopInsta
     created: copy.instanceStatusCreated,
     prepared: copy.instanceStatusPrepared,
     running: copy.instanceStatusRunning,
+    ended: copy.instanceStatusEnded,
     archived: copy.instanceStatusArchived,
     removed: copy.instanceStatusRemoved,
   };

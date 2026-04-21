@@ -3,6 +3,7 @@ import blueprintAgendaEn from "./generated/agenda-en.json";
 import blueprintAgendaCsParticipant from "./generated/agenda-cs-participant.json";
 import blueprintAgendaEnParticipant from "./generated/agenda-en-participant.json";
 import { resolveRepoLinkedHref } from "./repo-links";
+import type { FeedbackFormTemplate } from "./runtime-contracts";
 
 export type BlueprintInventory = {
   briefs?: ProjectBrief[];
@@ -864,7 +865,13 @@ export type WorkshopTemplate = {
   scenario: "17-participants" | "20-participants";
 };
 
-export type WorkshopInstanceStatus = "created" | "prepared" | "running" | "archived" | "removed";
+export type WorkshopInstanceStatus =
+  | "created"
+  | "prepared"
+  | "running"
+  | "ended"
+  | "archived"
+  | "removed";
 
 export type WorkshopInstanceRecord = {
   id: string;
@@ -876,6 +883,12 @@ export type WorkshopInstanceRecord = {
   removedAt: string | null;
   allowWalkIns: boolean;
   teamModeEnabled: boolean;
+  /**
+   * Per-instance override of the default post-workshop feedback template.
+   * Null means "use the built-in default" (see getDefaultFeedbackTemplate).
+   * Authoring UI is deferred to v2; v1 edits are hand-edits of this JSONB.
+   */
+  feedbackForm: FeedbackFormTemplate | null;
   workshopMeta: WorkshopMeta;
 };
 
@@ -1618,6 +1631,137 @@ export function getTeamName(teamId: string, teams: Team[]) {
   return teams.find((team) => team.id === teamId)?.name ?? teamId;
 }
 
+/**
+ * Default 9-question feedback template used when an instance has no
+ * feedback_form override (feedback_form column is NULL). The copy here
+ * is a v1 placeholder intended to be replaced during Phase 6 of
+ * docs/plans/2026-04-21-feat-post-workshop-feedback-plan.md after the
+ * HTML mockup + copy table preview review. CS and EN must both read
+ * clean against the participant-mode voice triad (Rule 2b) and the
+ * defocus-rescue rule (Rule 1) from feedback_participant_copy_voice.md.
+ *
+ * Per-instance overrides live in `workshop_instances.feedback_form`
+ * (hand-edit JSONB in v1; authoring UI is v2).
+ */
+export function getDefaultFeedbackTemplate(): FeedbackFormTemplate {
+  return {
+    version: 1,
+    questions: [
+      {
+        id: "overall",
+        type: "likert",
+        scale: 5,
+        prompt: {
+          cs: "Jak to celkově dopadlo?",
+          en: "Overall, how was the workshop?",
+        },
+        anchorMin: { cs: "vůbec", en: "not really" },
+        anchorMax: { cs: "výborně", en: "excellent" },
+      },
+      {
+        id: "theme",
+        type: "likert",
+        scale: 5,
+        prompt: {
+          cs: "Jak vám sedlo téma?",
+          en: "How well did the theme land?",
+        },
+        anchorMin: { cs: "vůbec", en: "not really" },
+        anchorMax: { cs: "výborně", en: "excellent" },
+      },
+      {
+        id: "facilitation",
+        type: "likert",
+        scale: 5,
+        prompt: {
+          cs: "Jak vám sedla facilitace?",
+          en: "How was the facilitation?",
+        },
+        anchorMin: { cs: "vůbec", en: "not really" },
+        anchorMax: { cs: "výborně", en: "excellent" },
+      },
+      {
+        id: "takeaway",
+        type: "open-text",
+        prompt: {
+          cs: "Jedna věc, kterou si z dneška odnášíte?",
+          en: "One thing you're taking with you from today?",
+        },
+        placeholder: {
+          cs: "Jedna věta, která vám zůstane.",
+          en: "One sentence that stays with you.",
+        },
+        rows: 2,
+      },
+      {
+        id: "valuable",
+        type: "open-text",
+        prompt: {
+          cs: "Co pro vás bylo nejcennější?",
+          en: "What was the most valuable part?",
+        },
+        rows: 3,
+      },
+      {
+        id: "better",
+        type: "open-text",
+        prompt: {
+          cs: "Co by šlo udělat líp?",
+          en: "What could be better?",
+        },
+        rows: 3,
+      },
+      {
+        id: "recommend",
+        type: "single-choice",
+        prompt: {
+          cs: "Doporučili byste to kolegovi nebo kolegyni?",
+          en: "Would you recommend this to a colleague?",
+        },
+        options: [
+          { id: "yes", label: { cs: "ano", en: "yes" } },
+          { id: "maybe", label: { cs: "možná", en: "maybe" } },
+          { id: "no", label: { cs: "ne", en: "no" } },
+        ],
+      },
+      {
+        id: "testimonial",
+        type: "open-text",
+        optional: true,
+        prompt: {
+          cs: "Můžeme z toho citovat? Pár vět, které bychom mohli použít.",
+          en: "A sentence or two we could quote as a testimonial?",
+        },
+        placeholder: {
+          cs: "Jen pokud chcete.",
+          en: "Only if you'd like.",
+        },
+        rows: 3,
+      },
+      {
+        id: "quote-ok",
+        type: "checkbox",
+        defaultChecked: false,
+        prompt: {
+          cs: "Můžete mě jmenovitě citovat v marketingových materiálech.",
+          en: "You can quote me by name in marketing materials.",
+        },
+      },
+    ],
+  };
+}
+
+/**
+ * Resolve the effective feedback template for an instance — per-instance
+ * override if set, otherwise the default. Used by the participant form
+ * renderer and the admin summary aggregator.
+ */
+export function resolveEffectiveFeedbackTemplate(
+  instance: Pick<WorkshopInstanceRecord, "feedbackForm">,
+): FeedbackFormTemplate {
+  return instance.feedbackForm ?? getDefaultFeedbackTemplate();
+}
+
 export function createWorkshopInstanceRecord(input: {
   id: string;
   templateId: string;
@@ -1630,6 +1774,7 @@ export function createWorkshopInstanceRecord(input: {
   removedAt?: string | null;
   allowWalkIns?: boolean;
   teamModeEnabled?: boolean;
+  feedbackForm?: FeedbackFormTemplate | null;
 }): WorkshopInstanceRecord {
   const template = workshopTemplates.find((item) => item.id === input.templateId) ?? workshopTemplates[0];
 
@@ -1643,6 +1788,7 @@ export function createWorkshopInstanceRecord(input: {
     removedAt: input.removedAt ?? null,
     allowWalkIns: input.allowWalkIns ?? true,
     teamModeEnabled: input.teamModeEnabled ?? true,
+    feedbackForm: input.feedbackForm ?? null,
     workshopMeta: normalizeWorkshopMeta(
       input.workshopMeta ?? createWorkshopMetaFromTemplate(template, input.contentLang),
       template,
