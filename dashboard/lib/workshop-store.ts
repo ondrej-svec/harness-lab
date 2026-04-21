@@ -1629,7 +1629,7 @@ export async function updateWorkshopInstanceParticipantCopy(
     createdAt: new Date().toISOString(),
     metadata: {
       actorNeonUserId: actorNeonUserId ?? null,
-      sections: participantCopy ? Object.keys(participantCopy) : [],
+      sections: participantCopy ? Object.keys(participantCopy).join(",") : "",
     },
   });
 

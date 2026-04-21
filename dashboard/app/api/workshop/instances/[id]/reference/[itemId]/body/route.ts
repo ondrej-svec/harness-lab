@@ -4,7 +4,6 @@ import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { getReferenceBodyRepository } from "@/lib/reference-body-repository";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
-import { resolveEffectiveReferenceGroups } from "@/lib/workshop-data";
 import referenceViewEn from "@/lib/generated/reference-en.json";
 import referenceViewCs from "@/lib/generated/reference-cs.json";
 import type { GeneratedReferenceView } from "@/lib/types/bilingual-reference";

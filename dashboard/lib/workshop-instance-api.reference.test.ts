@@ -135,7 +135,8 @@ describe("parseWorkshopInstanceReferenceGroupsBody", () => {
       ...group,
       items: group.items.map((item) => {
         if (item.kind !== "hosted") return item;
-        const { body: _body, ...rest } = item as { body?: string } & Record<string, unknown>;
+        const rest: Record<string, unknown> = { ...(item as Record<string, unknown>) };
+        delete rest.body;
         return rest;
       }),
     }));
