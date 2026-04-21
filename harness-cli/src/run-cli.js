@@ -383,6 +383,12 @@ function printUsage(io, ui) {
     helpLine("workshop reference list [<id>]", "Show the effective reference catalog override"),
     helpLine("workshop reference import [<id>] --file PATH", "Push a catalog override from a JSON file"),
     helpLine("workshop reference reset [<id>]", "Clear the override → participants see the default"),
+    helpLine("workshop reference add-item <groupId> [<id>]", "Add an item to an existing group"),
+    helpLine("  --id ID --kind external|repo-blob|repo-tree|repo-root", ""),
+    helpLine("  --label TEXT --description TEXT [--href URL | --path PATH]", ""),
+    helpLine("workshop reference set-item <groupId> <itemId> [<id>]", "Upsert (replace or add) an item"),
+    helpLine("  --kind ... --label TEXT --description TEXT [--href URL | --path PATH]", ""),
+    helpLine("workshop reference remove-item <groupId> <itemId> [<id>]", "Remove an item from a group"),
   ]);
   ui.blank();
 
@@ -1533,6 +1539,304 @@ async function handleWorkshopReferenceImport(io, ui, env, positionals, flags, de
   }
 }
 
+async function resolveCurrentReferenceGroups(client, instanceId, ui) {
+  // Fetch the effective catalog. When the API returns null the instance
+  // has no override — surgical edits need a starting point, so we fall
+  // back to the locally-compiled default for the instance's locale so
+  // the CLI can express edits against the same shape the UI renders.
+  const result = await client.getWorkshopReferenceGroups(instanceId);
+  if (Array.isArray(result?.referenceGroups)) {
+    return result.referenceGroups;
+  }
+  // No override set → load default from local filesystem.
+  const repoRoot = await findRepoRoot(process.cwd());
+  if (!repoRoot) {
+    ui.status(
+      "error",
+      "Cannot load default reference catalog: repo root not found. Set --file to provide a starting catalog, or run from inside the harness-lab repo.",
+      { stream: "stderr" },
+    );
+    return null;
+  }
+  // The CLI doesn't know the instance's contentLang without an extra
+  // roundtrip; prefer the Czech default (matches the current workshop
+  // convention) and document the flag for overrides.
+  const fallbackFile = path.join(repoRoot, "dashboard", "lib", "generated", "reference-cs.json");
+  try {
+    const raw = await fs.readFile(fallbackFile, "utf-8");
+    const parsed = JSON.parse(raw);
+    return parsed.groups ?? [];
+  } catch {
+    ui.status(
+      "error",
+      `Cannot load default reference catalog from ${fallbackFile}. Run 'bun scripts/content/generate-views.ts' first.`,
+      { stream: "stderr" },
+    );
+    return null;
+  }
+}
+
+function readReferenceItemKind(flags) {
+  const kind = readStringFlag(flags, "kind");
+  if (!kind) return null;
+  if (!["external", "repo-blob", "repo-tree", "repo-root"].includes(kind)) {
+    return { error: `--kind must be one of external|repo-blob|repo-tree|repo-root (got ${kind})` };
+  }
+  return { kind };
+}
+
+function buildReferenceItemFromFlags(flags, ui) {
+  const id = readStringFlag(flags, "id", "item-id");
+  if (!id) {
+    ui.status("error", "--id is required.", { stream: "stderr" });
+    return null;
+  }
+  const label = readStringFlag(flags, "label");
+  if (!label) {
+    ui.status("error", "--label is required.", { stream: "stderr" });
+    return null;
+  }
+  const description = readStringFlag(flags, "description");
+  if (!description) {
+    ui.status("error", "--description is required.", { stream: "stderr" });
+    return null;
+  }
+  const kindResult = readReferenceItemKind(flags);
+  if (!kindResult) {
+    ui.status("error", "--kind is required (external|repo-blob|repo-tree|repo-root).", { stream: "stderr" });
+    return null;
+  }
+  if (kindResult.error) {
+    ui.status("error", kindResult.error, { stream: "stderr" });
+    return null;
+  }
+  const base = { id, label, description };
+  switch (kindResult.kind) {
+    case "external": {
+      const href = readStringFlag(flags, "href");
+      if (!href) {
+        ui.status("error", "--href is required for external items.", { stream: "stderr" });
+        return null;
+      }
+      return { ...base, kind: "external", href };
+    }
+    case "repo-blob":
+    case "repo-tree": {
+      const itemPath = readStringFlag(flags, "path");
+      if (!itemPath) {
+        ui.status("error", `--path is required for ${kindResult.kind} items.`, { stream: "stderr" });
+        return null;
+      }
+      return { ...base, kind: kindResult.kind, path: itemPath };
+    }
+    case "repo-root":
+      return { ...base, kind: "repo-root" };
+    default:
+      return null;
+  }
+}
+
+async function handleWorkshopReferenceSetItem(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 5) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  const groupId = readOptionalPositional(positionals, 3);
+  const itemId = readOptionalPositional(positionals, 4);
+  if (!groupId || !itemId) {
+    ui.status(
+      "error",
+      "Usage: workshop reference set-item <groupId> <itemId> [<instanceId>] --kind ... [options]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  // Flags used by buildReferenceItemFromFlags read --id; inject the positional
+  // so the helper reuses the same validation path.
+  flags.id = itemId;
+
+  const newItem = buildReferenceItemFromFlags(flags, ui);
+  if (!newItem) {
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const groups = await resolveCurrentReferenceGroups(client, instanceId, ui);
+    if (!groups) return 1;
+    const nextGroups = groups.map((group) => {
+      if (group.id !== groupId) return group;
+      const existingIndex = group.items.findIndex((item) => item.id === itemId);
+      const items = [...group.items];
+      if (existingIndex >= 0) {
+        items[existingIndex] = newItem;
+      } else {
+        items.push(newItem);
+      }
+      return { ...group, items };
+    });
+    if (!nextGroups.some((group) => group.id === groupId)) {
+      ui.status("error", `Group '${groupId}' not found in current catalog.`, { stream: "stderr" });
+      return 1;
+    }
+    const result = await client.updateWorkshopReferenceGroups(instanceId, nextGroups);
+    ui.json("Workshop Reference Set Item", result);
+    ui.status("ok", `Set item '${itemId}' in group '${groupId}' on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference set-item failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceAddItem(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 4) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  const groupId = readOptionalPositional(positionals, 3);
+  if (!groupId) {
+    ui.status(
+      "error",
+      "Usage: workshop reference add-item <groupId> [<instanceId>] --id ID --kind ... [options]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  const newItem = buildReferenceItemFromFlags(flags, ui);
+  if (!newItem) {
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const groups = await resolveCurrentReferenceGroups(client, instanceId, ui);
+    if (!groups) return 1;
+    let groupFound = false;
+    const nextGroups = groups.map((group) => {
+      if (group.id !== groupId) return group;
+      groupFound = true;
+      if (group.items.some((item) => item.id === newItem.id)) {
+        return group;
+      }
+      return { ...group, items: [...group.items, newItem] };
+    });
+    if (!groupFound) {
+      ui.status("error", `Group '${groupId}' not found in current catalog.`, { stream: "stderr" });
+      return 1;
+    }
+    if (groups.find((g) => g.id === groupId)?.items.some((item) => item.id === newItem.id)) {
+      ui.status(
+        "error",
+        `Item '${newItem.id}' already exists in group '${groupId}'. Use set-item to replace it.`,
+        { stream: "stderr" },
+      );
+      return 1;
+    }
+    const result = await client.updateWorkshopReferenceGroups(instanceId, nextGroups);
+    ui.json("Workshop Reference Add Item", result);
+    ui.status("ok", `Added item '${newItem.id}' to group '${groupId}' on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference add-item failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleWorkshopReferenceRemoveItem(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) {
+    return 1;
+  }
+  const instanceId =
+    readOptionalPositional(positionals, 5) ??
+    (await readRequiredCommandValue(
+      io,
+      flags,
+      ["instance-id", "instance"],
+      "Instance id: ",
+      session.selectedInstanceId,
+    ));
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+  const groupId = readOptionalPositional(positionals, 3);
+  const itemId = readOptionalPositional(positionals, 4);
+  if (!groupId || !itemId) {
+    ui.status(
+      "error",
+      "Usage: workshop reference remove-item <groupId> <itemId> [<instanceId>]",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const groups = await resolveCurrentReferenceGroups(client, instanceId, ui);
+    if (!groups) return 1;
+    let itemRemoved = false;
+    const nextGroups = groups.map((group) => {
+      if (group.id !== groupId) return group;
+      const filtered = group.items.filter((item) => {
+        if (item.id === itemId) {
+          itemRemoved = true;
+          return false;
+        }
+        return true;
+      });
+      return { ...group, items: filtered };
+    });
+    if (!itemRemoved) {
+      ui.status("error", `Item '${itemId}' not found in group '${groupId}'.`, { stream: "stderr" });
+      return 1;
+    }
+    const result = await client.updateWorkshopReferenceGroups(instanceId, nextGroups);
+    ui.json("Workshop Reference Remove Item", result);
+    ui.status("ok", `Removed item '${itemId}' from group '${groupId}' on ${instanceId}.`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Reference remove-item failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleWorkshopReferenceReset(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) {
@@ -2560,6 +2864,18 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "workshop" && action === "reference" && subaction === "reset") {
     return handleWorkshopReferenceReset(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "set-item") {
+    return handleWorkshopReferenceSetItem(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "add-item") {
+    return handleWorkshopReferenceAddItem(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "workshop" && action === "reference" && subaction === "remove-item") {
+    return handleWorkshopReferenceRemoveItem(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   // Instance scope — infrastructure management (facilitator only)

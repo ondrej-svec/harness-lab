@@ -268,6 +268,19 @@ Supports flags: `--tag TAG`, `--instance ID`, `--cohort NAME`, `--limit N` (defa
 When the facilitator asks for rotation signals, captured observations, or what happened during past handoffs, use this command.
 If the learnings log is empty, say so and suggest capturing the first signal using the rotation capture panel in the facilitator dashboard.
 
+### `workshop facilitator reference list|import|reset`
+
+Manage the participant reference catalog override for the current instance.
+
+- `harness workshop reference list` — inspect the effective catalog (returns `null` when no override is set and participants see the compiled default).
+- `harness workshop reference import --file <path>` — replace the catalog for this instance from a JSON file. The file may be either a bare `GeneratedReferenceGroup[]` or the generated-view shape `{ schemaVersion, groups }`. Exports from `dashboard/lib/generated/reference-{en,cs}.json` are a natural starting point.
+- `harness workshop reference reset` — clear the override; the compiled default becomes live again on next participant reload.
+- `harness workshop reference add-item|set-item|remove-item` — surgical edits that fetch the current effective catalog, apply the change, and write the full catalog back. See `harness-cli/README.md` for flag reference.
+
+Groups are a fixed set: `defaults`, `accelerators`, `explore`. Items carry a `kind` discriminant (`external` / `repo-blob` / `repo-tree` / `repo-root`). The validator rejects `javascript:` or `data:` hrefs.
+
+When a facilitator asks to "add a new reference link" or "swap out the resource kit for this cohort", this is the path — no redeploy needed.
+
 ### `workshop closing`
 
 Prepare Ondrej's closing synthesis by using:
