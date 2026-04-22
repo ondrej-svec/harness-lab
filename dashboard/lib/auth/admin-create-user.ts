@@ -142,6 +142,104 @@ export async function adminCreateParticipantUser(
   return { ok: true, neonUserId: created.id };
 }
 
+export type AdminDeleteUserResult =
+  | { ok: true; method: "control_plane_delete" }
+  | { ok: true; method: "pii_stripped"; note: string }
+  | { ok: false; reason: "missing_credentials" | "control_plane_error"; message?: string };
+
+/**
+ * Delete a Neon Auth user for GDPR Art. 17 (right to erasure).
+ *
+ * Tries the control-plane DELETE endpoint first. If Neon rejects the
+ * request (method not allowed / not supported), falls back to stripping
+ * the user's PII in-place (email, name, image) and zeroing the
+ * credential row — which leaves a tombstone row but removes the
+ * identifying fields, satisfying Art. 17 when hard-delete is unavailable.
+ *
+ * The caller MUST ensure the operator is a facilitator for the relevant
+ * instance and that every `participant_id` FK row has been cascaded
+ * before calling — this function touches the Neon Auth runtime only.
+ */
+export async function adminDeleteParticipantUser(neonUserId: string): Promise<AdminDeleteUserResult> {
+  const credentials = requireCredentials();
+  if (!credentials) {
+    return {
+      ok: false,
+      reason: "missing_credentials",
+      message: "NEON_API_KEY + HARNESS_NEON_PROJECT_ID + HARNESS_NEON_BRANCH_ID are required",
+    };
+  }
+
+  const url = `${NEON_CONTROL_PLANE}/projects/${credentials.projectId}/branches/${credentials.branchId}/auth/users/${encodeURIComponent(neonUserId)}`;
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${credentials.apiKey}`,
+      },
+    });
+  } catch (e) {
+    return {
+      ok: false,
+      reason: "control_plane_error",
+      message: e instanceof Error ? e.message : String(e),
+    };
+  }
+
+  if (response.ok || response.status === 204) {
+    return { ok: true, method: "control_plane_delete" };
+  }
+
+  // 404: the user is already gone on the control plane. Treat as success
+  // for idempotency — GDPR deletion is the end state, not the call.
+  if (response.status === 404) {
+    return { ok: true, method: "control_plane_delete" };
+  }
+
+  // 405 / 501 / unsupported: fall through to PII-strip. Any other 4xx/5xx
+  // is a real error; surface it so the caller logs and retries.
+  if (response.status !== 405 && response.status !== 501) {
+    const body = (await response.json().catch(() => ({}))) as ControlPlaneError;
+    return {
+      ok: false,
+      reason: "control_plane_error",
+      message: body.message ?? `${response.status} ${response.statusText}`,
+    };
+  }
+
+  try {
+    const sql = getNeonSql();
+    await sql.query(
+      `UPDATE neon_auth."user"
+         SET email = 'gdpr-deleted+' || id::text || '@invalid',
+             name = 'deleted',
+             image = NULL
+       WHERE id::text = $1`,
+      [neonUserId],
+    );
+    await sql.query(
+      `UPDATE neon_auth.account
+         SET password = ''
+       WHERE "userId"::text = $1
+         AND "providerId" = 'credential'`,
+      [neonUserId],
+    );
+    return {
+      ok: true,
+      method: "pii_stripped",
+      note: "control plane DELETE unsupported; PII stripped in-place",
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      reason: "control_plane_error",
+      message: e instanceof Error ? e.message : String(e),
+    };
+  }
+}
+
 /**
  * Look up an existing Neon Auth user by email for orphan-recovery.
  *

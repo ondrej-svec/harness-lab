@@ -48,6 +48,7 @@ import type {
   RotationSignal,
 } from "./runtime-contracts";
 import { emitRuntimeAlert } from "./runtime-alert";
+import { getRuntimeStorageMode } from "./runtime-storage";
 import { getTeamRepository } from "./team-repository";
 import { getWorkshopStateRepository } from "./workshop-state-repository";
 import { normalizePresenterScenes } from "./presenter-scenes";
@@ -120,6 +121,12 @@ const monitoringRetentionDays = 14;
 const auditRetentionDays = 30;
 const redeemAttemptRetentionDays = 7;
 const archiveRetentionDays = 30;
+// Participant-authored feedback (private messages) and workshop-end
+// survey submissions are kept for 90 days. At workshop scale, events
+// wrap in 1-2 days and most retention cleanup happens post-archival;
+// the time bound here is the backstop so long-running test instances
+// don't accumulate forever. See docs/privacy-participant-data.md.
+const feedbackRetentionDays = 90;
 
 function normalizeStringArray(value: unknown, fallback: string[] = []) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : fallback;
@@ -2084,6 +2091,26 @@ export async function applyRuntimeRetentionPolicy(instanceId: string) {
     getAuditLogRepository().deleteOlderThan(instanceId, subtractDays(now, auditRetentionDays)),
     getRedeemAttemptRepository().deleteOlderThan(subtractDays(now, redeemAttemptRetentionDays)),
     getInstanceArchiveRepository().deleteExpiredArchives(now.toISOString()),
+    sweepFeedbackRetention(instanceId, subtractDays(now, feedbackRetentionDays)),
+  ]);
+}
+
+async function sweepFeedbackRetention(instanceId: string, olderThan: string) {
+  // Only the Neon runtime accumulates rows that need sweeping — the file
+  // mode is local dev only and gets wiped with `dashboard/data/`. Direct
+  // SQL avoids plumbing new methods through the file repos.
+  if (getRuntimeStorageMode() !== "neon") return;
+  const { getNeonSql } = await import("./neon-db");
+  const sql = getNeonSql();
+  await Promise.all([
+    sql.query(
+      `DELETE FROM participant_feedback WHERE instance_id = $1 AND created_at < $2`,
+      [instanceId, olderThan],
+    ),
+    sql.query(
+      `DELETE FROM workshop_feedback_submissions WHERE instance_id = $1 AND submitted_at < $2`,
+      [instanceId, olderThan],
+    ),
   ]);
 }
 

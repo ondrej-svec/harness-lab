@@ -1,6 +1,10 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
+import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
+import { deleteParticipantAndLinkedData } from "@/lib/participant-data-deletion";
 import { getParticipantRepository } from "@/lib/participant-repository";
+import { getRuntimeStorageMode } from "@/lib/runtime-storage";
 import { recordTeamUnassignmentHistory } from "@/lib/team-composition-history";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
 import { rebuildTeamMembersProjection } from "@/lib/team-members-projection";
@@ -88,10 +92,23 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   });
 }
 
+type DeleteBody = {
+  instanceId?: string;
+  confirm?: boolean;
+  confirmDisplayName?: string;
+};
+
+// DELETE is overloaded by payload:
+//   - `{instanceId}` (or no body) → soft-archive, reversible. Default.
+//   - `{instanceId, confirm: true, confirmDisplayName: "..."}` → GDPR Art. 17
+//     hard-delete. Every row with a participant_id FK gets hard-deleted
+//     and the Neon Auth user is removed (or PII-stripped on unsupported).
+//     The confirmDisplayName must match the participant's current display
+//     name — guards against mistyped IDs in the admin UI.
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const url = new URL(request.url);
-  const body = (await request.json().catch(() => ({}))) as { instanceId?: string };
+  const body = (await request.json().catch(() => ({}))) as DeleteBody;
   const instanceId =
     body.instanceId?.trim() || url.searchParams.get("instanceId")?.trim() || undefined;
   if (!instanceId) {
@@ -105,6 +122,66 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   const existing = await participants.findParticipant(instanceId, id);
   if (!existing) {
     return NextResponse.json({ ok: false, error: "not_found" }, { status: 404 });
+  }
+
+  if (body.confirm === true) {
+    if (getRuntimeStorageMode() !== "neon") {
+      return NextResponse.json(
+        { ok: false, error: "gdpr_delete_requires_neon_mode" },
+        { status: 400 },
+      );
+    }
+    if (typeof body.confirmDisplayName !== "string") {
+      return NextResponse.json(
+        { ok: false, error: "confirmDisplayName is required for hard delete" },
+        { status: 400 },
+      );
+    }
+    if (body.confirmDisplayName.trim() !== existing.displayName) {
+      return NextResponse.json(
+        { ok: false, error: "confirmation_mismatch" },
+        { status: 409 },
+      );
+    }
+
+    // Audit log the pre-delete snapshot before the rows disappear. The
+    // snapshot survives the delete so compliance can verify the action.
+    const preDeleteSnapshot = {
+      id: existing.id,
+      displayName: existing.displayName,
+      email: existing.email,
+      tag: existing.tag,
+      emailOptIn: String(existing.emailOptIn),
+      neonUserId: existing.neonUserId,
+      createdAt: existing.createdAt,
+      archivedAt: existing.archivedAt,
+    };
+
+    const result = await deleteParticipantAndLinkedData(id, instanceId);
+
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "participant.gdpr_delete",
+      result: "success",
+      createdAt: new Date().toISOString(),
+      metadata: {
+        participantId: id,
+        displayName: preDeleteSnapshot.displayName,
+        email: preDeleteSnapshot.email,
+        neonUserId: preDeleteSnapshot.neonUserId,
+        neonAuthUserMethod: result.neonAuthUser?.ok ? result.neonAuthUser.method : "none",
+        deletedRowsTotal: Object.values(result.deletedRowsByTable).reduce((a, b) => a + b, 0),
+      },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      mode: "gdpr_delete",
+      deletedRowsByTable: result.deletedRowsByTable,
+      neonAuthUser: result.neonAuthUser,
+    });
   }
 
   const now = new Date().toISOString();
@@ -123,5 +200,5 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     await rebuildTeamMembersProjection(instanceId);
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, mode: "archive" });
 }

@@ -50,6 +50,41 @@ During an event, a participant may:
 
 Participants do not have a self-serve account page. All rights above are exercised by asking the facilitator, because harness-lab does not maintain per-person credentials or login.
 
+### GDPR Art. 17 & 20 endpoints (facilitator-invoked)
+
+For participants in GDPR jurisdictions (or any participant who requests equivalent treatment), two facilitator-gated endpoints make the rights concrete:
+
+- `GET /api/admin/participants/{id}/export?instanceId={instanceId}` — right to portability (Art. 20). Returns a JSON dump of every row linked to the participant across the tables in the cascade list below, plus audit-log entries that reference them in metadata. `Content-Disposition: attachment; filename=participant-<id>-<instanceId>.json`. Audit-logged with `action: "participant.export"`.
+- `DELETE /api/admin/participants/{id}` with body `{instanceId, confirm: true, confirmDisplayName: "<current displayName>"}` — right to erasure (Art. 17). Hard-deletes every row across the cascade tables and removes (or PII-strips) the Neon Auth user. `confirmDisplayName` must match the current `participants.display_name` to guard against mistyped IDs. Audit-logged with `action: "participant.gdpr_delete"` including a pre-delete snapshot of the participant row.
+
+The default `DELETE /api/admin/participants/{id}` (no `confirm` in body) remains the reversible soft-archive path; hard-delete is opt-in.
+
+### Cascade contract
+
+The cascade tables list MUST be kept in sync with every column whose FK targets `participants.id`. Changes to the schema that add a new `participant_id` FK require updating `dashboard/lib/participant-data-deletion.ts` in the same slice.
+
+Current cascade (as of 2026-04-22):
+
+- `team_members`
+- `participant_sessions`
+- `team_composition_history`
+- `participant_feedback`
+- `participant_poll_responses`
+- `checkpoints`
+- `workshop_feedback_submissions`
+- `participants` (the target row itself)
+
+Plus the Neon Auth user (via control-plane `DELETE`, falling back to PII strip on unsupported). The export walks the same table list.
+
+### Retention
+
+Participant-authored content has a 90-day wall-clock retention floor on top of per-instance archival:
+
+- `participant_feedback` rows older than 90 days are deleted by `applyRuntimeRetentionPolicy`
+- `workshop_feedback_submissions` older than 90 days are deleted by the same sweep
+
+This is a backstop for long-running test instances — typical workshop rows get cleaned up when the facilitator archives the instance.
+
 ## Facilitator responsibilities
 
 The facilitator running an instance is the data controller. They agree to:
