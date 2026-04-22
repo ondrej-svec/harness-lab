@@ -304,13 +304,13 @@ Dependency ordering: tasks within a phase are ordered top-to-bottom. Phases can 
 
 ### Phase 2 — Live-event safety baseline (~4h)
 
-- [ ] **2.1** Write `dashboard/app/api/health/route.ts`. `GET` returns `{ok: true, mode, ts}` after `SELECT 1` DB ping. No instance IDs, no DB URL, no storage diagnostics. (~0.5h)
-- [ ] **2.2** Unit test the health endpoint: verify it works in both `file` and `neon` modes, and that it returns `503` (not `500`) if DB ping fails in neon mode. (~0.5h)
-- [ ] **2.3** Set up UptimeRobot monitor (external, manual). Single HTTPS monitor on `https://harness-lab-dashboard.vercel.app/api/health`, 5-minute cadence, email alert to `os@ondrejsvec.com`. (~0.25h)
-- [ ] **2.4** Write `dashboard/scripts/check-workshop-freeze.mjs`. Reads `process.env.HARNESS_WORKSHOP_ACTIVE`; if `=== "true"`, writes a message to stderr and exits 1. (~0.25h)
-- [ ] **2.5** Update `dashboard/vercel.json:3` buildCommand to run the freeze check before migrations + build: `node scripts/check-workshop-freeze.mjs && npm run db:migrate && npm run build`. (~0.25h)
-- [ ] **2.6** Verify freeze mechanism end-to-end: set `HARNESS_WORKSHOP_ACTIVE=true` in Vercel, push a commit, confirm the build aborts without promoting. Document the redeploy-on-set behavior in runbook. (~0.75h — resolves assumption #6)
-- [ ] **2.7** Expand `docs/workshop-instance-runbook.md` with four new scenarios: "Dashboard down mid-workshop", "Migration fails at deploy time", "Event-code emergency rotation", "Participant redeem stops working". Each is a 5-minute playbook with commands. (~1.5h)
+- [x] **2.1** Write `dashboard/app/api/health/route.ts`. `GET` returns `{ok: true, mode, ts}` after `SELECT 1` DB ping. No instance IDs, no DB URL, no storage diagnostics. (~0.5h)
+- [x] **2.2** Unit test the health endpoint: verify it works in both `file` and `neon` modes, and that it returns `503` (not `500`) if DB ping fails in neon mode. (~0.5h)
+- [ ] **2.3** Set up UptimeRobot monitor (external, manual). Single HTTPS monitor on `https://harness-lab-dashboard.vercel.app/api/health`, 5-minute cadence, email alert to `os@ondrejsvec.com`. (~0.25h) — **External action for Ondrej.** Documented in runbook "Health and Uptime Monitoring" section.
+- [x] **2.4** Write `dashboard/scripts/check-workshop-freeze.mjs`. Reads `process.env.HARNESS_WORKSHOP_ACTIVE`; if `=== "true"`, writes a message to stderr and exits 1. (~0.25h)
+- [x] **2.5** Update `dashboard/vercel.json:3` buildCommand to run the freeze check before migrations + build: `node scripts/check-workshop-freeze.mjs && npm run db:migrate && npm run build`. (~0.25h)
+- [ ] **2.6** Verify freeze mechanism end-to-end: set `HARNESS_WORKSHOP_ACTIVE=true` in Vercel, push a commit, confirm the build aborts without promoting. Document the redeploy-on-set behavior in runbook. (~0.75h — resolves assumption #6) — **External action for Ondrej.** Redeploy-on-set behavior documented in runbook "Live-Event Deploy Freeze" section. Script verified locally (exit 1 with flag set, exit 0 without).
+- [x] **2.7** Expand `docs/workshop-instance-runbook.md` with four new scenarios: "Dashboard down mid-workshop", "Migration fails at deploy time", "Event-code emergency rotation", "Participant redeem stops working". Each is a 5-minute playbook with commands. (~1.5h)
 
 **Phase 2 exit criteria:**
 - `/api/health` returns 200 in production with `mode: "neon"` payload

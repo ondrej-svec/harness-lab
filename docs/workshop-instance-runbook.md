@@ -135,3 +135,78 @@ Default model:
 - the admin workspace and instance-creation flow are platform-scoped surfaces; they should not require a grant on an arbitrary first workshop
 - control-room pages and workshop mutations stay instance-scoped and should fail clearly when the target instance is unknown or the default instance is missing
 - facilitator skill privileged commands should route through the `harness` CLI for local auth/session handling
+
+## Live-Event Deploy Freeze
+
+`HARNESS_WORKSHOP_ACTIVE` is a Vercel environment variable that gates the production build. When set to `true`, `dashboard/scripts/check-workshop-freeze.mjs` fails the Vercel `buildCommand` (wired in `dashboard/vercel.json`) before migrations or `next build` run — no new production deployment can promote while the workshop is live.
+
+**Before a workshop starts:**
+
+1. Open the Vercel dashboard for `harness-lab-dashboard`
+2. Settings → Environment Variables → add `HARNESS_WORKSHOP_ACTIVE=true` scoped to `Production`
+3. Setting the env var triggers one redeploy — it will abort with a clear log line (`[workshop-freeze] HARNESS_WORKSHOP_ACTIVE=true — aborting deploy.`). This is expected. The previous deployment remains live.
+
+**After the workshop ends:**
+
+1. Remove the `HARNESS_WORKSHOP_ACTIVE` env var (or set to `false`)
+2. The next `git push origin main` deploys normally
+
+**If a hotfix MUST deploy during a live workshop:**
+
+1. Clear the freeze env var temporarily
+2. Push the hotfix
+3. Re-enable the freeze immediately after the deploy completes
+
+## Health and Uptime Monitoring
+
+- `GET /api/health` returns `{ok, mode, ts}` after a DB ping in Neon mode. Unauthenticated by design, payload contains no instance IDs or storage diagnostics
+- UptimeRobot (free tier) polls the health endpoint at 5-minute cadence and emails `os@ondrejsvec.com` on failure
+- monitor URL: `https://harness-lab-dashboard.vercel.app/api/health`
+- to pause monitoring during planned maintenance, use the UptimeRobot dashboard — do not shorten the cadence
+
+## Incident Playbooks
+
+Each playbook is a 5-minute cold-start recovery. Run these commands from the dashboard project root unless noted.
+
+### Dashboard down mid-workshop
+
+Symptom: UptimeRobot email, participants report blank page or 5xx.
+
+1. `curl -sS -o /dev/null -w "%{http_code}\n" https://harness-lab-dashboard.vercel.app/api/health` — confirm status (expect 503 if Neon is the culprit, 5xx if Vercel is down)
+2. Check Vercel status page for platform incidents
+3. Check Neon console for the `harness-lab` project — look for compute suspended or branch connection errors
+4. If Neon: wake the compute (run any admin action that touches DB). If Vercel: no operator action, wait for platform recovery
+5. Communicate to participants: "Dashboard is experiencing a brief outage. Your logins will resume in a few minutes." Continue the live session verbally or from slides
+6. When healthy, verify `GET /api/health` returns 200
+
+### Migration fails at deploy time
+
+Symptom: Vercel build fails at the `npm run db:migrate` step, no new deployment promoted.
+
+1. Pull the failing build log from Vercel — identify the failing migration filename
+2. If the failure is transient (Neon compute cold or timeout): retry the deploy by triggering a new build from the Vercel dashboard
+3. If the failure is real (SQL error, bad migration): the production deployment has NOT changed — the previous deploy is still serving. You have time to fix forward
+4. Write a corrective migration on `main`. Never hand-edit the migration files table in Neon to "skip" a failure
+5. Push the fix. Vercel re-runs `db:migrate` + `build`. Confirm the new deploy promotes
+
+### Event-code emergency rotation
+
+Symptom: Event code leaked (screenshot in public channel, unintended participant in the session).
+
+1. Open the admin surface at `/admin/...` → navigate to participant access
+2. Use "Rotate event code" — the existing code is revoked immediately, a new one is displayed ONCE
+3. Write the new code somewhere durable (facilitator notebook, pinned Slack message) — it will not be revealable later
+4. Announce the new code to legitimate participants verbally, on a slide, or via QR code
+5. Verify active sessions on the old code are severed: participants see a re-auth prompt on their next poll
+6. Optional: `harness workshop participant-access` from CLI to audit active sessions
+
+### Participant redeem stops working
+
+Symptom: Multiple participants report "code invalid" after a rotation, or first-time redeem fails for everyone.
+
+1. Verify the event code in the admin UI matches what is being shared (copy/paste mistakes are the most common cause)
+2. Check `HARNESS_RUNTIME_ALERT` log lines in Vercel — look for `category: "redeem_rate_limited"` or `category: "redeem_code_mismatch"`
+3. If rate-limited: a single fingerprint is blocked for 10 minutes after 5 failed attempts. If this is a valid participant, ask them to retry from a different device or wait
+4. If mismatch: re-verify the code. If still wrong, rotate the code (see above) and redistribute
+5. If the problem is structural (e.g., participant created via the orphan-recovery path): reissue the reset code from admin → participant detail → "Issue reset code". Participant uses the 3-word code at the redeem screen
+6. If the problem is environmental (e.g., `HARNESS_EVENT_CODE_SECRET` changed): the deployment is misconfigured. Verify the production env var matches what was set at event-code issue time. If rotated accidentally, restore the previous secret value
