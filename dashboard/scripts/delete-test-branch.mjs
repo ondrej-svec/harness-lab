@@ -16,7 +16,19 @@ import { spawn } from "node:child_process";
 import { readFile, rm, stat } from "node:fs/promises";
 import path from "node:path";
 
-const DEFAULT_PROJECT_ID = process.env.HARNESS_NEON_PROJECT_ID ?? "broad-smoke-45468927";
+function requireProjectId(cliArg) {
+  const fromEnv = process.env.HARNESS_NEON_PROJECT_ID;
+  const resolved = cliArg ?? fromEnv;
+  if (!resolved) {
+    console.error(
+      "delete-test-branch: HARNESS_NEON_PROJECT_ID is not set and --project-id was not passed.",
+    );
+    console.error("Set HARNESS_NEON_PROJECT_ID in your .env.local (see Neon Console → Project Settings).");
+    process.exit(1);
+  }
+  return resolved;
+}
+
 const ENV_PATH = path.resolve(
   path.dirname(new URL(import.meta.url).pathname),
   "..",
@@ -90,7 +102,7 @@ function runNeonctl(args) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const projectId = args.projectId ?? DEFAULT_PROJECT_ID;
+  const projectId = requireProjectId(args.projectId);
   const branchName = args.name ?? (await readEnvBranch());
 
   if (!branchName) {

@@ -54,12 +54,12 @@ function loadEnvFile(filePath: string): Record<string, string> {
       if (fallback) process.env[key] = fallback;
     }
   }
-  // Defaults that the Playwright config also defaults; the helpers need them too.
-  if (!process.env.HARNESS_NEON_PROJECT_ID) {
-    process.env.HARNESS_NEON_PROJECT_ID = "broad-smoke-45468927";
-  }
-  if (!process.env.HARNESS_NEON_BRANCH_ID) {
-    process.env.HARNESS_NEON_BRANCH_ID = "br-hidden-firefly-aljj2dzm";
+  if (!process.env.HARNESS_NEON_PROJECT_ID || !process.env.HARNESS_NEON_BRANCH_ID) {
+    throw new Error(
+      "Neon-mode e2e fixtures require HARNESS_NEON_PROJECT_ID and HARNESS_NEON_BRANCH_ID. " +
+        "Set them in dashboard/.env.local or the repo-root .env.local. See Neon Console → " +
+        "Project Settings for the IDs.",
+    );
   }
   console.log("[fixtures env]", {
     HARNESS_NEON_PROJECT_ID: process.env.HARNESS_NEON_PROJECT_ID,

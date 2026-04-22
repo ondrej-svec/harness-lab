@@ -86,14 +86,28 @@ Use `dashboard/.env.example` only as the local demo bootstrap. For hosted deploy
 
 Hosted mode requires `HARNESS_STORAGE_MODE=neon` and a private runtime database.
 
-Common hosted variables:
+### Required in Neon mode (production + Playwright Neon e2e)
 
-- `HARNESS_STORAGE_MODE`
-- `HARNESS_DATABASE_URL`
-- `NEON_AUTH_BASE_URL`
-- `NEON_AUTH_COOKIE_SECRET`
-- optional bootstrap-only `HARNESS_EVENT_CODE`
-- optional bootstrap-only `HARNESS_EVENT_CODE_EXPIRES_AT`
+| Variable | Purpose | Notes |
+|---|---|---|
+| `HARNESS_STORAGE_MODE` | Routes every repository to its Neon implementation | Set to `neon` |
+| `HARNESS_DATABASE_URL` | Neon pooled connection string | Or `DATABASE_URL` if preferred — code reads either |
+| `NEON_AUTH_BASE_URL` | Base URL of your Neon Auth deployment | e.g. `https://<project>.auth.neon.tech` |
+| `NEON_AUTH_COOKIE_SECRET` | Signs the Neon Auth session cookie | ≥32 random chars — `openssl rand -base64 48` |
+| `HARNESS_EVENT_CODE_SECRET` | HMAC key used to hash participant event codes | ≥32 chars. Required whenever `HARNESS_STORAGE_MODE=neon`. `openssl rand -base64 48` |
+| `NEON_API_KEY` | Neon control-plane API key for participant user provisioning | Create at [Neon Console → API Keys](https://console.neon.tech/app/settings/api-keys). **Never commit.** |
+| `HARNESS_NEON_PROJECT_ID` | Target Neon project for participant auth writes | Find in [Neon Console → Project Settings](https://console.neon.tech/app/projects). Looks like `broad-smoke-12345678` |
+| `HARNESS_NEON_BRANCH_ID` | Target Neon branch (usually your production branch) | Looks like `br-example-pattern-abc12345` |
+| `BLOB_READ_WRITE_TOKEN` | Vercel Blob read/write token for cohort artifact uploads | Pull with `vercel env pull dashboard/.env.vercel.local`. File mode falls back to `HARNESS_DATA_DIR` |
+
+### Optional
+
+| Variable | Purpose | Notes |
+|---|---|---|
+| `HARNESS_EVENT_CODE` | Bootstrap-only initial participant event code | Rotate via admin UI once running |
+| `HARNESS_EVENT_CODE_EXPIRES_AT` | Bootstrap-only expiry | ISO-8601 timestamp |
+| `HARNESS_WORKSHOP_ACTIVE` | Freeze production deploys during live workshops | Set to `true` in Vercel before a workshop starts. Build aborts until unset. See runbook |
+| `ARTIFACT_MAX_BYTES` | Cap on uploaded artifact size | Defaults to 25 MiB |
 
 Authoritative environment guidance:
 

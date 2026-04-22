@@ -13,15 +13,22 @@ It intentionally names variables and purpose only. It must never contain live va
 
 ## Variable Matrix
 
-| Variable | Local Demo | Preview | Production | Purpose |
-|----------|------------|---------|------------|---------|
-| `HARNESS_STORAGE_MODE` | `file` by default, optional `neon` | `neon` | `neon` | Selects runtime adapter mode |
-| `HARNESS_DATABASE_URL` | optional for local Neon testing | required | required | Neon connection string for runtime repositories |
-| `HARNESS_TEST_DATABASE_URL` | optional | optional in Vercel, required in GitHub Actions secrets for preview-grade integration tests | not required in Vercel runtime | Separate preview-grade test database used by CI |
-| `NEON_AUTH_BASE_URL` | not required (file mode uses Basic Auth fallback) | required | required | Neon Auth endpoint for facilitator identity |
-| `NEON_AUTH_COOKIE_SECRET` | not required (file mode uses Basic Auth fallback) | required | required | 32+ char secret for Neon Auth session cookie signing |
-| `HARNESS_EVENT_CODE` | optional demo seed | optional bootstrap-only fallback, prefer DB-managed event access | optional bootstrap-only fallback, prefer DB-managed event access | Demo/bootstrap participant event code |
-| `HARNESS_EVENT_CODE_EXPIRES_AT` | optional | optional bootstrap-only fallback | optional bootstrap-only fallback | Demo/bootstrap event-code expiry |
+| Variable | Local Demo | Preview | Production | Purpose | Read by |
+|----------|------------|---------|------------|---------|---------|
+| `HARNESS_STORAGE_MODE` | `file` by default, optional `neon` | `neon` | `neon` | Selects runtime adapter mode | `lib/runtime-storage.ts` |
+| `HARNESS_DATABASE_URL` | optional for local Neon testing | required | required | Neon connection string for runtime repositories (or `DATABASE_URL`) | `lib/neon-db.ts` |
+| `HARNESS_TEST_DATABASE_URL` | optional | optional in Vercel, required in GitHub Actions secrets for preview-grade integration tests | not required in Vercel runtime | Separate preview-grade test database used by CI | `lib/*.integration.test.ts` |
+| `NEON_AUTH_BASE_URL` | not required (file mode uses Basic Auth fallback) | required | required | Neon Auth endpoint for facilitator identity | `lib/runtime-auth-configuration.ts` |
+| `NEON_AUTH_COOKIE_SECRET` | not required (file mode uses Basic Auth fallback) | required | required | 32+ char secret for Neon Auth session cookie signing | `lib/runtime-auth-configuration.ts` |
+| `HARNESS_EVENT_CODE_SECRET` | not required | **required** (≥32 chars) | **required** (≥32 chars) | HMAC key used to hash participant event codes at rest | `lib/participant-event-access-repository.ts` |
+| `NEON_API_KEY` | not required | **required** for participant account creation | **required** for participant account creation | Neon control-plane bearer token — `lib/auth/admin-create-user.ts` mints participant Neon Auth users | `lib/auth/admin-create-user.ts` |
+| `HARNESS_NEON_PROJECT_ID` | not required | **required** when `NEON_API_KEY` is set | **required** when `NEON_API_KEY` is set | Target Neon project for participant auth writes. Format `broad-smoke-NNNNNNNN` | `lib/auth/admin-create-user.ts`, `playwright.neon.config.ts`, `scripts/create-test-branch.mjs`, `scripts/delete-test-branch.mjs`, `e2e/neon-mode/fixtures.ts` |
+| `HARNESS_NEON_BRANCH_ID` | not required | **required** when `NEON_API_KEY` is set | **required** when `NEON_API_KEY` is set | Target Neon branch (usually the production branch). Format `br-<name>-<suffix>` | `lib/auth/admin-create-user.ts`, `playwright.neon.config.ts`, `e2e/neon-mode/fixtures.ts` |
+| `BLOB_READ_WRITE_TOKEN` | not required (file mode uses `HARNESS_DATA_DIR`) | **required** for cohort artifact uploads | **required** for cohort artifact uploads | Vercel Blob token for `harness workshop artifact upload` + authenticated serve route | `lib/blob-storage.ts` |
+| `HARNESS_WORKSHOP_ACTIVE` | not applicable | not applicable | optional — set `true` to freeze deploys during a live workshop | Aborts the Vercel build before migrations + `next build` run. Flip off to thaw | `scripts/check-workshop-freeze.mjs` (buildCommand) |
+| `HARNESS_EVENT_CODE` | optional demo seed | optional bootstrap-only fallback, prefer DB-managed event access | optional bootstrap-only fallback, prefer DB-managed event access | Demo/bootstrap participant event code | `lib/workshop-store.ts` (seed only) |
+| `HARNESS_EVENT_CODE_EXPIRES_AT` | optional | optional bootstrap-only fallback | optional bootstrap-only fallback | Demo/bootstrap event-code expiry | `lib/workshop-store.ts` (seed only) |
+| `ARTIFACT_MAX_BYTES` | optional | optional | optional | Cap on uploaded artifact size in bytes. Defaults to 25 MiB | `lib/blob-storage.ts` |
 
 ## Current Auth Note
 

@@ -337,12 +337,12 @@ Dependency ordering: tasks within a phase are ordered top-to-bottom. Phases can 
 
 ### Phase 4 — Self-hosting hardening (~2.5h)
 
-- [ ] **4.1** Replace `.env.example:45-46` commented-out author IDs with placeholder values: `HARNESS_NEON_PROJECT_ID=your-neon-project-id` and `HARNESS_NEON_BRANCH_ID=your-neon-branch-id`, with inline comment linking to `https://console.neon.tech/app/projects`. (~0.25h)
-- [ ] **4.2** Modify `dashboard/scripts/create-test-branch.mjs:20` and `dashboard/scripts/delete-test-branch.mjs:19` to throw with a clear error when `HARNESS_NEON_PROJECT_ID` is not set, instead of defaulting to `broad-smoke-45468927`. (~0.25h)
-- [ ] **4.3** Modify `dashboard/playwright.neon.config.ts:52,54` to throw instead of falling back to author IDs. (~0.25h)
-- [ ] **4.4** Modify `dashboard/e2e/neon-mode/fixtures.ts:59,62` to throw instead of writing author IDs to `process.env`. (~0.25h)
-- [ ] **4.5** Expand `docs/self-hosting.md §4 Configure Environment Variables` with: `HARNESS_EVENT_CODE_SECRET` (required, ≥32 chars in Neon mode), `NEON_API_KEY` (required for participant creation), `HARNESS_NEON_PROJECT_ID` (required), `HARNESS_NEON_BRANCH_ID` (required), `BLOB_READ_WRITE_TOKEN` (required for artifact feature). Include generation commands where applicable (e.g., `openssl rand -base64 48` for the secret). (~1h)
-- [ ] **4.6** Expand `docs/private-workshop-instance-env-matrix.md` with the same 5 vars plus authoritative source-of-truth details (which file reads the var, default behavior, failure mode). (~0.5h)
+- [x] **4.1** Replace `.env.example:45-46` commented-out author IDs with placeholder values: `HARNESS_NEON_PROJECT_ID=your-neon-project-id` and `HARNESS_NEON_BRANCH_ID=your-neon-branch-id`, with inline comment linking to `https://console.neon.tech/app/projects`. (~0.25h)
+- [x] **4.2** Modify `dashboard/scripts/create-test-branch.mjs:20` and `dashboard/scripts/delete-test-branch.mjs:19` to throw with a clear error when `HARNESS_NEON_PROJECT_ID` is not set, instead of defaulting to `broad-smoke-45468927`. (~0.25h)
+- [x] **4.3** Modify `dashboard/playwright.neon.config.ts:52,54` to throw instead of falling back to author IDs. (~0.25h)
+- [x] **4.4** Modify `dashboard/e2e/neon-mode/fixtures.ts:59,62` to throw instead of writing author IDs to `process.env`. (~0.25h)
+- [x] **4.5** Expand `docs/self-hosting.md §4 Configure Environment Variables` with: `HARNESS_EVENT_CODE_SECRET` (required, ≥32 chars in Neon mode), `NEON_API_KEY` (required for participant creation), `HARNESS_NEON_PROJECT_ID` (required), `HARNESS_NEON_BRANCH_ID` (required), `BLOB_READ_WRITE_TOKEN` (required for artifact feature). Include generation commands where applicable (e.g., `openssl rand -base64 48` for the secret). (~1h)
+- [x] **4.6** Expand `docs/private-workshop-instance-env-matrix.md` with the same 5 vars plus authoritative source-of-truth details (which file reads the var, default behavior, failure mode). (~0.5h)
 
 **Phase 4 exit criteria:**
 - Grep for hardcoded `broad-smoke-45468927` outside `.env.example` returns only commented documentation references

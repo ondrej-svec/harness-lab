@@ -6,9 +6,11 @@
  *   node dashboard/scripts/create-test-branch.mjs [--name <branch>] [--project-id <id>] [--parent <branch>] [--keep]
  *
  * Reads HARNESS_NEON_PROJECT_ID from the environment if --project-id is
- * omitted (defaults to the harness-lab project). Writes the resulting
- * pooled connection string into dashboard/.env.test.local under
- * HARNESS_TEST_DATABASE_URL so the test runner can pick it up.
+ * omitted. Throws with a clear message if neither is supplied — self-
+ * hosters must point at their own Neon project rather than rely on a
+ * hardcoded author default. Writes the resulting pooled connection
+ * string into dashboard/.env.test.local under HARNESS_TEST_DATABASE_URL
+ * so the test runner can pick it up.
  *
  * `--keep` skips writing .env.test.local — useful for ad-hoc spelunking.
  */
@@ -17,8 +19,20 @@ import { spawn } from "node:child_process";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
-const DEFAULT_PROJECT_ID = process.env.HARNESS_NEON_PROJECT_ID ?? "broad-smoke-45468927";
 const DEFAULT_PARENT = "main";
+
+function requireProjectId(cliArg) {
+  const fromEnv = process.env.HARNESS_NEON_PROJECT_ID;
+  const resolved = cliArg ?? fromEnv;
+  if (!resolved) {
+    console.error(
+      "create-test-branch: HARNESS_NEON_PROJECT_ID is not set and --project-id was not passed.",
+    );
+    console.error("Set HARNESS_NEON_PROJECT_ID in your .env.local (see Neon Console → Project Settings).");
+    process.exit(1);
+  }
+  return resolved;
+}
 
 function parseArgs(argv) {
   const args = { keep: false };
@@ -125,7 +139,7 @@ async function writeEnv({ branchName, branch, connectionString }) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  const projectId = args.projectId ?? DEFAULT_PROJECT_ID;
+  const projectId = requireProjectId(args.projectId);
   const parent = args.parent ?? DEFAULT_PARENT;
 
   const { branchName, branch } = await createBranch({ projectId, parent, name: args.name });

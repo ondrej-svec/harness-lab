@@ -49,9 +49,9 @@ const NEON_AUTH_COOKIE_SECRET =
 const NEON_API_KEY =
   process.env.NEON_API_KEY ?? envLocal.NEON_API_KEY ?? envRepoRoot.NEON_API_KEY;
 const NEON_PROJECT_ID =
-  process.env.HARNESS_NEON_PROJECT_ID ?? envLocal.HARNESS_NEON_PROJECT_ID ?? "broad-smoke-45468927";
+  process.env.HARNESS_NEON_PROJECT_ID ?? envLocal.HARNESS_NEON_PROJECT_ID;
 const NEON_BRANCH_ID =
-  process.env.HARNESS_NEON_BRANCH_ID ?? envLocal.HARNESS_NEON_BRANCH_ID ?? "br-hidden-firefly-aljj2dzm";
+  process.env.HARNESS_NEON_BRANCH_ID ?? envLocal.HARNESS_NEON_BRANCH_ID;
 
 if (!DATABASE_URL) {
   throw new Error(
@@ -71,6 +71,14 @@ if (!NEON_API_KEY) {
   throw new Error(
     "NEON_API_KEY is required for the Neon-mode e2e suite — control-plane API creates " +
       "participant users. Add to dashboard/.env.local or repo-root .env.local.",
+  );
+}
+
+if (!NEON_PROJECT_ID || !NEON_BRANCH_ID) {
+  throw new Error(
+    "HARNESS_NEON_PROJECT_ID and HARNESS_NEON_BRANCH_ID are required for the Neon-mode e2e " +
+      "suite — the control-plane API needs a specific project + branch to target for participant " +
+      "user creation. Add to dashboard/.env.local. See Neon Console → Project Settings for IDs.",
   );
 }
 
