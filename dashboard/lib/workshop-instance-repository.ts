@@ -4,6 +4,9 @@ import path from "node:path";
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { WorkshopInstanceRepository } from "./runtime-contracts";
+import { parseFeedbackForm } from "./schemas/feedback-form-schema";
+import { parseReferenceGroups } from "./schemas/reference-groups-schema";
+import { parseParticipantCopy } from "./schemas/participant-copy-schema";
 import { createWorkshopInstanceRecord, sampleWorkshopInstances, type WorkshopInstanceRecord } from "./workshop-data";
 
 type StoredInstances = {
@@ -193,6 +196,7 @@ type InstanceRow = {
 };
 
 function mapInstanceRow(row: InstanceRow) {
+  const alertContext = { instanceId: row.id };
   return createWorkshopInstanceRecord({
     id: row.id,
     templateId: row.template_id,
@@ -203,9 +207,9 @@ function mapInstanceRow(row: InstanceRow) {
     removedAt: row.removed_at,
     allowWalkIns: row.allow_walk_ins ?? undefined,
     teamModeEnabled: row.team_mode_enabled ?? undefined,
-    feedbackForm: row.feedback_form ?? null,
-    referenceGroups: row.reference_groups ?? null,
-    participantCopy: row.participant_copy ?? null,
+    feedbackForm: parseFeedbackForm(row.feedback_form, alertContext),
+    referenceGroups: parseReferenceGroups(row.reference_groups, alertContext),
+    participantCopy: parseParticipantCopy(row.participant_copy, alertContext),
     workshopMeta: row.workshop_meta,
   });
 }

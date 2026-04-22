@@ -5,6 +5,7 @@ import { createWorkshopStateFromInstance, seedWorkshopState, type WorkshopState 
 import { getNeonSql } from "./neon-db";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { RuntimeWorkshopStateRepository } from "./runtime-contracts";
+import { parseWorkshopStateShape } from "./schemas/workshop-state-schema";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
 
 export type WorkshopStateRepository = RuntimeWorkshopStateRepository;
@@ -113,16 +114,25 @@ export class NeonWorkshopStateRepository implements WorkshopStateRepository {
     const rows = (await sql.query(
       "SELECT workshop_state, state_version FROM workshop_instances WHERE id = $1 LIMIT 1",
       [instanceId],
-    )) as { workshop_state: WorkshopState; state_version: number }[];
+    )) as { workshop_state: unknown; state_version: number }[];
 
     const row = rows[0];
     if (!row) {
       return { ...seedWorkshopState, workshopId: instanceId };
     }
 
+    // Shape guard: alert on structural drift (e.g. column-level
+    // corruption, unexpected top-level shape). Field-level defaults
+    // for legacy rows continue to be filled in by
+    // normalizeStoredWorkshopState in workshop-store.ts.
+    const shapeChecked = parseWorkshopStateShape(row.workshop_state, { instanceId });
+    if (!shapeChecked) {
+      return { ...seedWorkshopState, workshopId: instanceId };
+    }
+
     return {
-      ...row.workshop_state,
-      version: row.state_version ?? row.workshop_state.version ?? 1,
+      ...(shapeChecked as WorkshopState),
+      version: row.state_version ?? (shapeChecked as WorkshopState).version ?? 1,
     };
   }
 
