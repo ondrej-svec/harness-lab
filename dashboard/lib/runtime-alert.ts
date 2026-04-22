@@ -4,7 +4,8 @@ type RuntimeAlert = {
     | "participant_redeem_rate_limited"
     | "participant_redeem_bot_signal"
     | "participant_identify_rebind_attempt"
-    | "instance_archive_created";
+    | "instance_archive_created"
+    | "jsonb_parse_failure";
   severity: "info" | "warning" | "error";
   instanceId: string;
   metadata?: Record<string, string | number | boolean | null>;
