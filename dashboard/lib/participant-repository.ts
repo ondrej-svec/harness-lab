@@ -327,10 +327,62 @@ export class NeonParticipantRepository implements ParticipantRepository {
 
   async replaceParticipants(instanceId: string, participants: ParticipantRecord[]) {
     const sql = getNeonSql();
-    await sql.query("DELETE FROM participants WHERE instance_id = $1", [instanceId]);
-    for (const participant of participants) {
-      await this.upsertParticipant(instanceId, participant);
+    const keepIds = participants.map((participant) => participant.id);
+
+    // Two Neon HTTP calls total: delete-not-in-set, then upsert-all-in-set.
+    // Pre-Phase 3, this was a serial N+1 loop (51 calls for 50 participants).
+    // PostgreSQL `id != ALL($2::text[])` is vacuously true for an empty
+    // array, so passing an empty keepIds correctly deletes everything.
+    await sql.query(
+      `DELETE FROM participants
+         WHERE instance_id = $1
+           AND id != ALL($2::text[])`,
+      [instanceId, keepIds],
+    );
+
+    if (participants.length === 0) {
+      return;
     }
+
+    // Parallel arrays keep the unnest output ordered — PostgreSQL zips
+    // them positionally, guaranteed since 9.x. Every nullable text column
+    // casts explicitly so a NULL-only array doesn't degrade to `unknown`.
+    await sql.query(
+      `
+        INSERT INTO participants
+          (id, instance_id, display_name, email, email_opt_in, tag,
+           neon_user_id, created_at, updated_at, archived_at)
+        SELECT
+          id, $1, display_name, email, email_opt_in, tag,
+          neon_user_id, created_at, updated_at, archived_at
+        FROM unnest(
+          $2::text[], $3::text[], $4::text[], $5::boolean[], $6::text[],
+          $7::text[], $8::timestamptz[], $9::timestamptz[], $10::timestamptz[]
+        )
+          AS rows(id, display_name, email, email_opt_in, tag,
+                  neon_user_id, created_at, updated_at, archived_at)
+        ON CONFLICT (id) DO UPDATE
+        SET display_name = EXCLUDED.display_name,
+            email = EXCLUDED.email,
+            email_opt_in = EXCLUDED.email_opt_in,
+            tag = EXCLUDED.tag,
+            neon_user_id = EXCLUDED.neon_user_id,
+            updated_at = EXCLUDED.updated_at,
+            archived_at = EXCLUDED.archived_at
+      `,
+      [
+        instanceId,
+        participants.map((participant) => participant.id),
+        participants.map((participant) => participant.displayName),
+        participants.map((participant) => participant.email),
+        participants.map((participant) => participant.emailOptIn),
+        participants.map((participant) => participant.tag),
+        participants.map((participant) => participant.neonUserId),
+        participants.map((participant) => participant.createdAt),
+        participants.map((participant) => participant.updatedAt),
+        participants.map((participant) => participant.archivedAt),
+      ],
+    );
   }
 }
 

@@ -177,12 +177,7 @@ export default async function ParticipantPage({
         />
 
         <ParticipantLiveRefresh
-          currentFingerprint={[
-            liveMoment.agendaItemId ?? "",
-            liveMoment.roomSceneId ?? "",
-            liveMoment.participantMomentId ?? "",
-            liveMoment.activePollId ?? "",
-          ].join(":")}
+          currentFingerprint={`${state.version}:${workshopMeta.currentPhaseLabel ?? ""}`}
         />
         <ParticipantRoomSurface
           copy={copy}

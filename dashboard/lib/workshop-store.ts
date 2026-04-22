@@ -1768,6 +1768,35 @@ export async function listRotationSignals(
   return getRotationSignalRepository().list(instanceId);
 }
 
+function buildActivePollSummaryFromResponses(
+  state: WorkshopState,
+  responses: PollResponseRecord[],
+): ActivePollSummary | null {
+  const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
+  const poll = participantMoment?.poll ?? null;
+  if (!agendaItem || !participantMoment || !poll) {
+    return null;
+  }
+  const counts = new Map<string, number>();
+  const matching = responses.filter((response) => response.pollId === poll.id);
+  for (const response of matching) {
+    counts.set(response.optionId, (counts.get(response.optionId) ?? 0) + 1);
+  }
+
+  return {
+    agendaItemId: agendaItem.id,
+    participantMomentId: participantMoment.id,
+    pollId: poll.id,
+    prompt: poll.prompt,
+    totalResponses: matching.length,
+    options: poll.options.map((option) => ({
+      id: option.id,
+      label: option.label,
+      count: counts.get(option.id) ?? 0,
+    })),
+  };
+}
+
 /**
  * Build an ActivePollSummary when the caller already has the workshop
  * state in hand. Used by PresenterPage to avoid a redundant state read
@@ -1777,29 +1806,13 @@ export async function getActivePollSummaryForState(
   instanceId: string,
   state: WorkshopState,
 ): Promise<ActivePollSummary | null> {
-  const { agendaItem, participantMoment } = getLiveParticipantMoment(state);
+  const { participantMoment } = getLiveParticipantMoment(state);
   const poll = participantMoment?.poll ?? null;
-  if (!agendaItem || !participantMoment || !poll) {
+  if (!poll) {
     return null;
   }
   const responses = await getPollResponseRepository().list(instanceId, poll.id);
-  const counts = new Map<string, number>();
-  for (const response of responses) {
-    counts.set(response.optionId, (counts.get(response.optionId) ?? 0) + 1);
-  }
-
-  return {
-    agendaItemId: agendaItem.id,
-    participantMomentId: participantMoment.id,
-    pollId: poll.id,
-    prompt: poll.prompt,
-    totalResponses: responses.length,
-    options: poll.options.map((option) => ({
-      id: option.id,
-      label: option.label,
-      count: counts.get(option.id) ?? 0,
-    })),
-  };
+  return buildActivePollSummaryFromResponses(state, responses);
 }
 
 export async function getActivePollSummary(
@@ -1809,6 +1822,24 @@ export async function getActivePollSummary(
   return getActivePollSummaryForState(instanceId, state);
 }
 
+/**
+ * Persist an active-poll response and return the updated summary.
+ *
+ * Callers SHOULD pass pre-fetched `state` and `currentResponses` when they
+ * have them (e.g., the participant poll route computes the summary before
+ * mutating). This lets the function skip a second `getWorkshopState` call
+ * (4 parallel Neon HTTP calls) and a second poll-response list. The new
+ * summary is then recomputed in-memory from the supplied responses plus
+ * the fresh upsert — avoiding a post-mutation re-list.
+ *
+ * Hot-path call count per participant poll submission (Phase 3):
+ *   - getWorkshopState: 4 Neon calls (unchanged floor)
+ *   - list responses: 1 Neon call
+ *   - findMemberByParticipant: 1 Neon call
+ *   - upsert response: 1 Neon call
+ *   - in-memory summary recompute: 0 Neon calls
+ * Total: 7 Neon calls, down from 15 pre-refactor.
+ */
 export async function submitActivePollResponse(
   input: {
     sessionKey: string;
@@ -1817,13 +1848,20 @@ export async function submitActivePollResponse(
     optionId: string;
   },
   instanceId: string,
-) {
-  const state = await getWorkshopState(instanceId);
+  options?: {
+    state?: WorkshopState;
+    currentResponses?: PollResponseRecord[];
+  },
+): Promise<ActivePollSummary | null> {
+  const state = options?.state ?? (await getWorkshopState(instanceId));
   const { poll } = requireActivePoll(state);
   const option = poll.options.find((candidate) => candidate.id === input.optionId);
   if (!option) {
     throw new WorkshopStateTargetError("poll_not_found", `poll option '${input.optionId}' not found`);
   }
+
+  const existingResponses =
+    options?.currentResponses ?? (await getPollResponseRepository().list(instanceId, poll.id));
 
   const response: PollResponseRecord = {
     id: randomUUID(),
@@ -1837,7 +1875,16 @@ export async function submitActivePollResponse(
   };
 
   await getPollResponseRepository().upsert(instanceId, response);
-  return getActivePollSummary(instanceId);
+
+  // Recompute summary in-memory: same-sessionKey rows are replaced by the
+  // upsert (ON CONFLICT (instance_id, poll_id, session_key) DO UPDATE).
+  const nextResponses: PollResponseRecord[] = [
+    ...existingResponses.filter(
+      (candidate) => candidate.pollId !== poll.id || candidate.sessionKey !== input.sessionKey,
+    ),
+    response,
+  ];
+  return buildActivePollSummaryFromResponses(state, nextResponses);
 }
 
 export async function resetActivePollResponses(

@@ -21,25 +21,33 @@ export function ParticipantLiveRefresh({
     let timer: ReturnType<typeof setInterval> | null = null;
     let visible = true;
 
+    async function checkFingerprint() {
+      // Lean endpoint (~1 SQL query in Neon mode). The full RSC refresh
+      // only runs when the reported fingerprint differs from the last
+      // known value — steady-state polling no longer re-renders the tree.
+      try {
+        const response = await fetch("/api/event-context/fingerprint");
+        if (!response.ok) return;
+        const data = (await response.json()) as {
+          stateVersion?: number;
+          phaseLabel?: string;
+        };
+        const nextFingerprint =
+          typeof data.stateVersion === "number" && typeof data.phaseLabel === "string"
+            ? `${data.stateVersion}:${data.phaseLabel}`
+            : "";
+        if (nextFingerprint && nextFingerprint !== knownFingerprint.current) {
+          knownFingerprint.current = nextFingerprint;
+          router.refresh();
+        }
+      } catch {
+        // Network error — skip this cycle
+      }
+    }
+
     function startPolling() {
       stopPolling();
-      timer = setInterval(async () => {
-        try {
-          const response = await fetch("/api/event-context/core");
-          if (!response.ok) return;
-          const data = await response.json();
-          const newFingerprint =
-            typeof data.liveMomentFingerprint === "string" && data.liveMomentFingerprint.length > 0
-              ? data.liveMomentFingerprint
-              : "";
-          if (newFingerprint && newFingerprint !== knownFingerprint.current) {
-            knownFingerprint.current = newFingerprint;
-            router.refresh();
-          }
-        } catch {
-          // Network error — skip this cycle
-        }
-      }, POLL_INTERVAL_MS);
+      timer = setInterval(checkFingerprint, POLL_INTERVAL_MS);
     }
 
     function stopPolling() {
@@ -55,8 +63,9 @@ export function ParticipantLiveRefresh({
         stopPolling();
       } else if (!visible) {
         visible = true;
-        router.refresh();
-        startPolling();
+        // Re-entering the tab: hit fingerprint first, only refresh when
+        // the state actually changed in the background.
+        checkFingerprint().then(() => startPolling());
       }
     }
 

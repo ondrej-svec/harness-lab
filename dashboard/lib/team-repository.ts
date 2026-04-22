@@ -84,10 +84,37 @@ export class NeonTeamRepository implements TeamRepository {
 
   async replaceTeams(instanceId: string, teams: TeamRecord[]) {
     const sql = getNeonSql();
-    await sql.query("DELETE FROM teams WHERE instance_id = $1", [instanceId]);
-    for (const team of teams) {
-      await this.upsertTeam(instanceId, team);
+    const keepIds = teams.map((team) => team.id);
+
+    // Two Neon HTTP calls total: delete-not-in-set, then upsert-all-in-set.
+    // Pre-Phase 3, this was a serial N+1 loop (51 calls for 50 teams).
+    await sql.query(
+      `DELETE FROM teams
+         WHERE instance_id = $1
+           AND id != ALL($2::text[])`,
+      [instanceId, keepIds],
+    );
+
+    if (teams.length === 0) {
+      return;
     }
+
+    await sql.query(
+      `
+        INSERT INTO teams (id, instance_id, payload, created_at, updated_at)
+        SELECT id, $1, payload::jsonb, NOW(), NOW()
+        FROM unnest($2::text[], $3::text[])
+          AS rows(id, payload)
+        ON CONFLICT (id) DO UPDATE
+        SET payload = EXCLUDED.payload,
+            updated_at = NOW()
+      `,
+      [
+        instanceId,
+        teams.map((team) => team.id),
+        teams.map((team) => JSON.stringify(team)),
+      ],
+    );
   }
 }
 

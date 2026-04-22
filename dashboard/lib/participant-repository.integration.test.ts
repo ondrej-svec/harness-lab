@@ -122,6 +122,71 @@ describeIntegration("NeonParticipantRepository round-trip (integration · neon t
     expect(limited.length).toBeLessThanOrEqual(1);
   });
 
+  it("replaceParticipants round-trips a 50-row fixture via single-query unnest", async () => {
+    const { neon } = await import("@neondatabase/serverless");
+    const sql = neon(TEST_URL!);
+    const isolatedInstance = `int-repl-${randomUUID()}`;
+    await sql.query(
+      `INSERT INTO workshop_instances (id, template_id, workshop_meta, workshop_state)
+       VALUES ($1, 'integration-test', '{}'::jsonb, '{}'::jsonb)
+       ON CONFLICT (id) DO NOTHING`,
+      [isolatedInstance],
+    );
+
+    try {
+      const now = new Date().toISOString();
+      const fixture: ParticipantRecord[] = Array.from({ length: 50 }, (_, index) => ({
+        id: `p-repl-${index.toString().padStart(2, "0")}-${randomUUID().slice(0, 6)}`,
+        instanceId: isolatedInstance,
+        displayName: `Participant ${index}`,
+        email: index % 3 === 0 ? `p${index}@example.com` : null,
+        emailOptIn: index % 2 === 0,
+        tag: index % 5 === 0 ? `tag-${index}` : null,
+        neonUserId: null,
+        createdAt: now,
+        updatedAt: now,
+        archivedAt: null,
+      }));
+
+      await repo.replaceParticipants(isolatedInstance, fixture);
+
+      const persisted = await repo.listParticipants(isolatedInstance, { includeArchived: true });
+      expect(persisted).toHaveLength(50);
+      expect(persisted.map((row) => row.id).sort()).toEqual(fixture.map((row) => row.id).sort());
+
+      // Replace with a smaller set: 20 existing + 10 new. Expect a clean
+      // delete of the 30 missing rows and an upsert that leaves 30 total.
+      const kept = fixture.slice(0, 20);
+      const fresh: ParticipantRecord[] = Array.from({ length: 10 }, (_, index) => ({
+        id: `p-repl-new-${index}-${randomUUID().slice(0, 6)}`,
+        instanceId: isolatedInstance,
+        displayName: `New Participant ${index}`,
+        email: null,
+        emailOptIn: false,
+        tag: null,
+        neonUserId: null,
+        createdAt: now,
+        updatedAt: now,
+        archivedAt: null,
+      }));
+      await repo.replaceParticipants(isolatedInstance, [...kept, ...fresh]);
+
+      const postReplace = await repo.listParticipants(isolatedInstance, { includeArchived: true });
+      expect(postReplace).toHaveLength(30);
+      const postIds = new Set(postReplace.map((row) => row.id));
+      for (const row of kept) expect(postIds.has(row.id)).toBe(true);
+      for (const row of fresh) expect(postIds.has(row.id)).toBe(true);
+
+      // Empty-replace deletes everything.
+      await repo.replaceParticipants(isolatedInstance, []);
+      const postEmpty = await repo.listParticipants(isolatedInstance, { includeArchived: true });
+      expect(postEmpty).toEqual([]);
+    } finally {
+      await sql.query(`DELETE FROM participants WHERE instance_id = $1`, [isolatedInstance]);
+      await sql.query(`DELETE FROM workshop_instances WHERE id = $1`, [isolatedInstance]);
+    }
+  });
+
   it("linkNeonUser is a no-op when another participant already owns the id", async () => {
     const a = makeRecord({ displayName: "Owner A" });
     const b = makeRecord({ displayName: "Other B" });
