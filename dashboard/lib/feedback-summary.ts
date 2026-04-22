@@ -33,6 +33,14 @@ export type FeedbackQuestionAggregate =
       id: string;
       type: "likert" | "stars";
       prompt: BilingualText;
+      /**
+       * Optional endpoint anchors ("špatně" / "výborně"). Only likert
+       * carries these in the template; stars is always null. Surfaced on
+       * the aggregate so the summary renderer can label both ends of the
+       * scale without re-reading the template.
+       */
+      anchorMin: BilingualText | null;
+      anchorMax: BilingualText | null;
       max: number;
       counts: number[]; // length = max; counts[i-1] = answers with value i
       totalAnswered: number;
@@ -93,10 +101,16 @@ function aggregateQuestion(
           }
         }
       }
+      const anchorMin =
+        question.type === "likert" && question.anchorMin ? question.anchorMin : null;
+      const anchorMax =
+        question.type === "likert" && question.anchorMax ? question.anchorMax : null;
       return {
         id: question.id,
         type: question.type,
         prompt: question.prompt,
+        anchorMin,
+        anchorMax,
         max,
         counts,
         totalAnswered: n,

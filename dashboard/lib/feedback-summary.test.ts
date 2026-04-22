@@ -79,6 +79,43 @@ describe("buildFeedbackSummaryAggregate", () => {
     }
   });
 
+  it("surfaces likert endpoint anchors on the aggregate so the renderer can label the scale", () => {
+    const templateWithAnchors: FeedbackFormTemplate = {
+      version: 1,
+      questions: [
+        {
+          id: "anchored",
+          type: "likert",
+          scale: 4,
+          prompt: { cs: "Jak?", en: "How?" },
+          anchorMin: { cs: "vůbec", en: "not at all" },
+          anchorMax: { cs: "úplně", en: "completely" },
+        },
+        {
+          id: "unanchored",
+          type: "likert",
+          scale: 5,
+          prompt: { cs: "Jiná?", en: "Other?" },
+        },
+        { id: "stars-q", type: "stars", max: 5, prompt: { cs: "Hvězdy", en: "Stars" } },
+      ],
+    };
+    const result = buildFeedbackSummaryAggregate(templateWithAnchors, []);
+    const [anchored, unanchored, stars] = result.perQuestion;
+    if (anchored.type !== "likert") throw new Error("expected likert");
+    if (unanchored.type !== "likert") throw new Error("expected likert");
+    if (stars.type !== "stars") throw new Error("expected stars");
+    expect(anchored.anchorMin).toEqual({ cs: "vůbec", en: "not at all" });
+    expect(anchored.anchorMax).toEqual({ cs: "úplně", en: "completely" });
+    // Likert without anchors surfaces null so the renderer can gate on it.
+    expect(unanchored.anchorMin).toBeNull();
+    expect(unanchored.anchorMax).toBeNull();
+    // Stars never carries anchors in the template, so the aggregate shape
+    // is always null for stars — this keeps the discriminated union total.
+    expect(stars.anchorMin).toBeNull();
+    expect(stars.anchorMax).toBeNull();
+  });
+
   it("counts Likert values per bucket and computes average", () => {
     const submissions = [
       makeSubmission({
