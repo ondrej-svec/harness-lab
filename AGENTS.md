@@ -107,6 +107,7 @@ If you touch these areas, read these files first:
 - `dashboard/` uses Next.js App Router with strict TypeScript and Tailwind CSS.
 - Before changing framework-sensitive code in `dashboard/`, prefer the version-matched docs shipped in `dashboard/node_modules/next/dist/docs/` and the current Next.js AI agents guide.
 - Treat framework docs as a source of truth when an implementation detail may have changed recently.
+- Database migrations follow [`docs/migration-policy.md`](docs/migration-policy.md): forward-only, expand→contract, same-slice migration + code, filename-sort ordering.
 
 ## Build And Test
 

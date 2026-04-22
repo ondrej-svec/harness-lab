@@ -50,6 +50,7 @@ Read these before changing participant or facilitator behavior.
 - [`docs/dashboard-surface-model.md`](dashboard-surface-model.md)
 - [`docs/deployment-strategy.md`](deployment-strategy.md)
 - [`docs/workshop-instance-runbook.md`](workshop-instance-runbook.md)
+- [`docs/migration-policy.md`](migration-policy.md) — forward-only, expand→contract, same-slice rules for database migrations
 
 ### 4. Packaging And Facilitator Tooling
 

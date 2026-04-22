@@ -2,7 +2,7 @@
 title: "feat: post-Brno architecture hardening (drift prevention, auth atomicity, GDPR, live-event baseline, perf)"
 type: plan
 date: 2026-04-22
-status: in_progress
+status: complete
 brainstorm: ../2026-04-22-harness-lab-architecture-review.md
 confidence: high
 ---
@@ -379,9 +379,9 @@ Dependency ordering: tasks within a phase are ordered top-to-bottom. Phases can 
 
 ### Phase 7 — Migration policy + housekeeping (~1h)
 
-- [ ] **7.1** Write `docs/migration-policy.md`. Rules: forward-only (no DOWN sections), expand→contract (add new → backfill → drop old in later migration after deploy bake-in), same-slice (code + migration in one commit), MIGRATION_ORDER pin is legacy and not required for new migrations (filename sort is sufficient). (~0.5h)
-- [ ] **7.2** Link `docs/migration-policy.md` from `AGENTS.md` Framework Guidance section and from `docs/internal-harness.md`. (~0.25h)
-- [ ] **7.3** Delete `dashboard/data/facilitator-identities.json` from the local working tree. Verify it stays gitignored. (~0.1h)
+- [x] **7.1** Write `docs/migration-policy.md`. Rules: forward-only (no DOWN sections), expand→contract (add new → backfill → drop old in later migration after deploy bake-in), same-slice (code + migration in one commit), MIGRATION_ORDER pin is legacy and not required for new migrations (filename sort is sufficient). (~0.5h)
+- [x] **7.2** Link `docs/migration-policy.md` from `AGENTS.md` Framework Guidance section and from `docs/internal-harness.md`. (~0.25h)
+- [x] **7.3** Delete `dashboard/data/facilitator-identities.json` from the local working tree. Verify it stays gitignored. (~0.1h) — Confirmed listed at `.gitignore:18`.
 
 **Phase 7 exit criteria:**
 - `docs/migration-policy.md` exists and is linked from `AGENTS.md`
