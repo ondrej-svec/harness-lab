@@ -56,7 +56,7 @@ export function PeopleWorkspace({
   const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [resetResult, setResetResult] = useState<
-    { participantId: string; displayName: string; temporaryPassword: string } | null
+    { participantId: string; displayName: string; resetCode: string } | null
   >(null);
 
   const poolTitle = lang === "cs" ? "Pool" : "Pool";
@@ -66,16 +66,16 @@ export function PeopleWorkspace({
   const deleteLabel = lang === "cs" ? "smazat" : "delete";
   const addFromPoolLabel = lang === "cs" ? "+ přidat z poolu" : "+ add from pool";
   const resetButtonLabel = lang === "cs" ? "reset hesla" : "reset password";
-  const resetSuccessLabel = lang === "cs" ? "nové dočasné heslo" : "new temporary password";
+  const resetSuccessLabel = lang === "cs" ? "jednorázový kód" : "one-time code";
   const resetSuccessHint =
     lang === "cs"
-      ? "přečtěte ho účastníkovi nahlas — staré sezení bylo zrušeno."
-      : "read it aloud to the participant — the old session was revoked.";
+      ? "přečtěte ho nahlas — platí 15 minut. účastník si pak zvolí vlastní heslo."
+      : "read it aloud — valid for 15 minutes. the participant will set their own password.";
   const resetDismissLabel = lang === "cs" ? "zavřít" : "dismiss";
   const resetConfirmLabel =
     lang === "cs"
-      ? "vygenerovat dočasné heslo a zrušit aktivní sezení?"
-      : "generate a temporary password and revoke active sessions?";
+      ? "vygenerovat jednorázový kód pro reset hesla?"
+      : "generate a one-time reset code for this participant?";
 
   const assignmentByParticipant = useMemo(() => {
     const map = new Map<string, string>();
@@ -180,17 +180,17 @@ export function PeopleWorkspace({
         );
         const payload = (await response.json().catch(() => ({}))) as {
           ok?: boolean;
-          temporaryPassword?: string;
+          resetCode?: string;
           error?: string;
         };
-        if (!response.ok || !payload.ok || !payload.temporaryPassword) {
+        if (!response.ok || !payload.ok || !payload.resetCode) {
           setError(payload.error ?? `reset failed (${response.status})`);
           return;
         }
         setResetResult({
           participantId: participant.id,
           displayName: participant.displayName,
-          temporaryPassword: payload.temporaryPassword,
+          resetCode: payload.resetCode,
         });
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
@@ -262,7 +262,7 @@ export function PeopleWorkspace({
             </button>
           </div>
           <p className="mt-3 break-all text-2xl font-semibold tracking-[-0.02em] text-[var(--text-primary)]">
-            {resetResult.temporaryPassword}
+            {resetResult.resetCode}
           </p>
           <p className="mt-2 text-[13px] leading-5 text-[var(--text-secondary)]">{resetSuccessHint}</p>
         </div>

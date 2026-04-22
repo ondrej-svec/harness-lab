@@ -1,49 +1,33 @@
-import { randomInt, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { requireFacilitatorRequest } from "@/lib/facilitator-access";
 import { getParticipantRepository } from "@/lib/participant-repository";
-import { resetParticipantPasswordAsAdmin } from "@/lib/participant-auth";
+import { issueResetCode } from "@/lib/participant-reset-codes";
 
 /**
  * POST /api/admin/participants/[id]/reset-password
  *
- * Facilitator-initiated password reset. Generates a 3-word temporary
- * password (same wordlist feel as event codes), rotates the Neon Auth
- * password inside the facilitator's live admin session, revokes the
- * participant's existing sessions, and returns the plaintext code
- * exactly once for the facilitator to read aloud.
+ * Facilitator-initiated password reset. Issues a one-time 3-word code
+ * via the in-memory reset-code store; the participant redeems the code
+ * at POST /api/participant/redeem-reset-code with a password of their
+ * choice. The code is single-use and expires 15 minutes after issue.
  *
- * Body (JSON, optional): { instanceId? }
+ * The previous flow returned a plaintext "temporaryPassword" in the
+ * response body, which meant the participant's credential was captured
+ * by browser history and function logs. This flow keeps the facilitator
+ * UX identical (read three hyphenated words aloud) while moving the
+ * actual password out of the response and letting the participant
+ * choose their own.
  *
- * The participant must already have a Neon Auth account linked to their
- * row. For participants who never set a password, this returns 404 —
- * the right flow for them is to have them visit /participant and set
- * one directly.
+ * Body (JSON, required): { instanceId }
+ *
+ * The participant must already have a Neon Auth account linked to
+ * their row. For participants who never set a password, the same
+ * recovery path applies — the code grants them a one-time window to
+ * set a password. (participant-auth.ts:createParticipantAccount
+ * handles the pure new-account path.)
  */
-const resetWord1 = [
-  "amber", "branch", "circuit", "ember", "harbor", "lantern",
-  "matrix", "orbit", "relay", "signal", "sprint", "vector",
-] as const;
-
-const resetWord2 = [
-  "agenda", "bridge", "canvas", "checkpoint", "context", "handoff",
-  "moment", "repo", "review", "rotation", "runner", "trace",
-] as const;
-
-const resetWord3 = [
-  "delta", "focus", "link", "north", "orbit", "room",
-  "shift", "signal", "stack", "studio", "switch", "window",
-] as const;
-
-function generateResetPassword(): string {
-  return [
-    `${resetWord1[randomInt(resetWord1.length)]}${randomInt(1, 10)}`,
-    `${resetWord2[randomInt(resetWord2.length)]}${randomInt(1, 10)}`,
-    `${resetWord3[randomInt(resetWord3.length)]}${randomInt(1, 10)}`,
-  ].join("-");
-}
-
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   const { id } = await context.params;
   const body = (await request.json().catch(() => ({}))) as { instanceId?: string };
@@ -64,25 +48,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     return NextResponse.json({ ok: false, error: "no_account" }, { status: 409 });
   }
 
-  const newPassword = generateResetPassword();
-  const result = await resetParticipantPasswordAsAdmin({
+  const issued = issueResetCode({
+    participantId: participant.id,
+    instanceId,
     neonUserId: participant.neonUserId,
-    newPassword,
   });
-
-  if (!result.ok) {
-    await getAuditLogRepository().append({
-      id: `audit-${randomUUID()}`,
-      instanceId,
-      actorKind: "facilitator",
-      action: "participant_password_reset",
-      result: "failure",
-      createdAt: new Date().toISOString(),
-      metadata: { reason: result.reason, participantId: participant.id },
-    });
-    const status = result.reason === "not_admin" ? 403 : result.reason === "not_found" ? 404 : 500;
-    return NextResponse.json({ ok: false, error: result.reason }, { status });
-  }
 
   await getAuditLogRepository().append({
     id: `audit-${randomUUID()}`,
@@ -91,13 +61,14 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     action: "participant_password_reset",
     result: "success",
     createdAt: new Date().toISOString(),
-    metadata: { participantId: participant.id },
+    metadata: { participantId: participant.id, flow: "reset_code_issued" },
   });
 
   return NextResponse.json({
     ok: true,
     participantId: participant.id,
     displayName: participant.displayName,
-    temporaryPassword: newPassword,
+    resetCode: issued.code,
+    resetCodeExpiresAt: issued.expiresAt,
   });
 }
