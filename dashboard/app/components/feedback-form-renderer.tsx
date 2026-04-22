@@ -144,14 +144,12 @@ export function FeedbackFormRenderer({
     successMessage: string;
     genericError: string;
     lockedMessage: string;
-    allowQuoteByNameLabel: string;
     optionalHint: string;
   };
 }) {
   const router = useRouter();
   const initialDraft = useMemo(() => buildInitialDraft(template, existing), [template, existing]);
   const [draft, setDraft] = useState<AnswerDraft>(initialDraft);
-  const [allowQuoteByName, setAllowQuoteByName] = useState<boolean>(existing?.allowQuoteByName ?? false);
   const [status, setStatus] = useState<Status>({ tone: "idle", message: "" });
   const [isPending, startTransition] = useTransition();
 
@@ -164,7 +162,7 @@ export function FeedbackFormRenderer({
         const response = await fetch("/api/participant/feedback-submission", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ answers, allowQuoteByName }),
+          body: JSON.stringify({ answers }),
         });
 
         if (response.status === 409) {
@@ -199,19 +197,6 @@ export function FeedbackFormRenderer({
           optionalHint={labels.optionalHint}
         />
       ))}
-
-      <label className="flex items-start gap-3 rounded-[16px] border border-[var(--border)] bg-[var(--surface-panel)] px-4 py-3">
-        <input
-          type="checkbox"
-          checked={allowQuoteByName}
-          onChange={(event) => setAllowQuoteByName(event.target.checked)}
-          disabled={isDisabled}
-          className="mt-1"
-        />
-        <span className="text-sm leading-6 text-[var(--text-secondary)]">
-          {labels.allowQuoteByNameLabel}
-        </span>
-      </label>
 
       <div className="flex items-center gap-3">
         <button

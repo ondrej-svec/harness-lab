@@ -88,7 +88,6 @@ describe("POST /api/participant/feedback-submission", () => {
           { questionId: "overall", type: "likert", value: 4 },
           { questionId: "recommend", type: "single-choice", optionId: "yes" },
         ],
-        allowQuoteByName: false,
       }),
     );
 
@@ -255,8 +254,10 @@ describe("GET /api/participant/feedback-submission", () => {
       instanceId: "sample-studio-a",
       participantId: "p-alice",
       sessionKey: "p-alice",
-      answers: [{ questionId: "overall", type: "likert", value: 5 }],
-      allowQuoteByName: true,
+      answers: [
+        { questionId: "overall", type: "likert", value: 5 },
+        { questionId: "quote-ok", type: "checkbox", checked: true },
+      ],
       submittedAt: "2026-04-21T10:00:00.000Z",
     });
 
@@ -265,7 +266,12 @@ describe("GET /api/participant/feedback-submission", () => {
       new Request("http://localhost/api/participant/feedback-submission"),
     );
     expect(response.status).toBe(200);
-    const body = (await response.json()) as { submission: { allowQuoteByName: boolean } };
-    expect(body.submission.allowQuoteByName).toBe(true);
+    // Consent now lives inside answers, not on the top-level submission
+    // record. Assert the existing submission's quote-ok answer round-trips.
+    const body = (await response.json()) as {
+      submission: { answers: Array<{ questionId: string; type: string; checked?: boolean }> };
+    };
+    const consentAnswer = body.submission.answers.find((a) => a.questionId === "quote-ok");
+    expect(consentAnswer?.checked).toBe(true);
   });
 });

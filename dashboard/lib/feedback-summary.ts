@@ -5,6 +5,7 @@ import type {
   FeedbackQuestion,
   FeedbackSubmissionRecord,
 } from "./runtime-contracts";
+import { TESTIMONIAL_CONSENT_QUESTION_ID } from "./runtime-contracts";
 
 /**
  * Aggregated post-workshop feedback summary. One card per template
@@ -13,20 +14,27 @@ import type {
  * grid with print-friendly styling.
  *
  * Privacy rule (v1): open-text and testimonial responses are always
- * rendered anonymously in the UI. `allowQuoteByName` travels on the
- * aggregate so the renderer can show a "consented to be quoted" badge
- * for the testimonial question — no participant names are displayed
- * anywhere. This is stricter than the brainstorm's gated-by-consent
- * rule and can be relaxed in v2 once a per-question attribution flag
- * exists. Until then, "don't show names" is a simple, correct default
- * that can't violate the Subjective Contract's consent rejection
- * criterion.
+ * rendered anonymously in the UI. `allowQuoteByName` on each response
+ * is derived from the submission's TESTIMONIAL_CONSENT_QUESTION_ID
+ * checkbox answer — a single source of truth shared with the
+ * participant form. No participant names are displayed anywhere. This
+ * is stricter than the brainstorm's gated-by-consent rule and can be
+ * relaxed in v2 once a per-question attribution flag exists. Until
+ * then, "don't show names" is a simple, correct default that can't
+ * violate the Subjective Contract's consent rejection criterion.
  */
 export type OpenTextResponseAggregate = {
   text: string;
   allowQuoteByName: boolean;
   submittedAt: string;
 };
+
+function hasTestimonialConsent(submission: FeedbackSubmissionRecord): boolean {
+  const answer = submission.answers.find(
+    (a) => a.questionId === TESTIMONIAL_CONSENT_QUESTION_ID,
+  );
+  return answer?.type === "checkbox" && answer.checked === true;
+}
 
 export type FeedbackQuestionAggregate =
   | {
@@ -172,7 +180,7 @@ function aggregateQuestion(
         if (ans && ans.type === "open-text" && ans.text.trim().length > 0) {
           responses.push({
             text: ans.text,
-            allowQuoteByName: sub.allowQuoteByName,
+            allowQuoteByName: hasTestimonialConsent(sub),
             submittedAt: sub.submittedAt,
           });
         }

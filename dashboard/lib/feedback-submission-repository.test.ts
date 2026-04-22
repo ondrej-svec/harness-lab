@@ -20,7 +20,6 @@ function makeSubmission(overrides: Partial<FeedbackSubmissionRecord> = {}): Feed
       { questionId: "takeaway", type: "open-text", text: "Agents hand off better than teammates sometimes." },
       { questionId: "recommend", type: "single-choice", optionId: "yes" },
     ],
-    allowQuoteByName: false,
     submittedAt: "2026-04-21T10:00:00.000Z",
     ...overrides,
   };
@@ -52,7 +51,6 @@ describe("feedback-submission-repository (file mode)", () => {
     expect(written).toMatchObject({
       instanceId: "instance-a",
       sessionKey: "p-alice",
-      allowQuoteByName: false,
     });
     expect(written.submittedAt).not.toBe("2026-04-21T10:00:00.000Z"); // refreshed to now
 
@@ -70,17 +68,21 @@ describe("feedback-submission-repository (file mode)", () => {
     const revised = await repo.upsert(
       "instance-a",
       makeSubmission({
-        answers: [{ questionId: "overall", type: "likert", value: 3 }],
-        allowQuoteByName: true,
+        answers: [
+          { questionId: "overall", type: "likert", value: 3 },
+          { questionId: "quote-ok", type: "checkbox", checked: true },
+        ],
       }),
       { allowEditWithinHours: 24 },
     );
 
     expect(revised.id).toBe(first.id); // same row
-    expect(revised.allowQuoteByName).toBe(true);
     const listed = await repo.list("instance-a");
     expect(listed).toHaveLength(1);
-    expect(listed[0].answers).toEqual([{ questionId: "overall", type: "likert", value: 3 }]);
+    expect(listed[0].answers).toEqual([
+      { questionId: "overall", type: "likert", value: 3 },
+      { questionId: "quote-ok", type: "checkbox", checked: true },
+    ]);
   });
 
   it("throws FeedbackSubmissionLockedError when the window has elapsed", async () => {
@@ -170,7 +172,10 @@ describe("feedback-submission-repository (Neon mode — query shape)", () => {
     expect(insertCall[0]).toContain("INSERT INTO workshop_feedback_submissions");
     expect(insertCall[0]).toContain("ON CONFLICT (instance_id, session_key)");
     expect(insertCall[0]).toContain("answers");
-    expect(insertCall[0]).toContain("allow_quote_by_name");
+    // Consent now rides inside the answers jsonb as a checkbox answer — no
+    // out-of-band column. Assert the column has been removed from the
+    // persistence path.
+    expect(insertCall[0]).not.toContain("allow_quote_by_name");
   });
 
   it("upsert rejects when existing row is outside the lock window", async () => {
@@ -183,7 +188,6 @@ describe("feedback-submission-repository (Neon mode — query shape)", () => {
         participant_id: "p-alice",
         session_key: "p-alice",
         answers: [],
-        allow_quote_by_name: false,
         submitted_at: "2020-01-01T00:00:00.000Z",
       },
     ]);

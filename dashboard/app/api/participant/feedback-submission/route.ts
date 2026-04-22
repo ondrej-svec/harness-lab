@@ -21,7 +21,6 @@ const FEEDBACK_EDIT_WINDOW_HOURS = 24;
 
 type FeedbackSubmissionBody = {
   answers?: unknown;
-  allowQuoteByName?: unknown;
 };
 
 type ValidationResult =
@@ -169,7 +168,6 @@ export async function POST(request: Request) {
 
   const participantId = access.session.participantId ?? null;
   const sessionKey = participantId ?? `session:${instanceId}`;
-  const allowQuoteByName = Boolean(body.allowQuoteByName);
 
   const submission: FeedbackSubmissionRecord = {
     id: `fs-${randomUUID()}`,
@@ -177,7 +175,6 @@ export async function POST(request: Request) {
     participantId,
     sessionKey,
     answers: validated.answers,
-    allowQuoteByName,
     submittedAt: new Date().toISOString(),
   };
 

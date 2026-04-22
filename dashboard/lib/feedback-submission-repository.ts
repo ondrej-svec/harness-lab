@@ -134,7 +134,7 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT id, instance_id, participant_id, session_key, answers, allow_quote_by_name, submitted_at
+        SELECT id, instance_id, participant_id, session_key, answers, submitted_at
         FROM workshop_feedback_submissions
         WHERE instance_id = $1
         ORDER BY submitted_at DESC
@@ -146,7 +146,6 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       participant_id: string | null;
       session_key: string;
       answers: FeedbackAnswer[];
-      allow_quote_by_name: boolean;
       submitted_at: string;
     }>;
 
@@ -156,7 +155,6 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       participantId: row.participant_id,
       sessionKey: row.session_key,
       answers: row.answers,
-      allowQuoteByName: row.allow_quote_by_name,
       submittedAt: normalizeTimestamp(row.submitted_at),
     }));
   }
@@ -168,7 +166,7 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT id, instance_id, participant_id, session_key, answers, allow_quote_by_name, submitted_at
+        SELECT id, instance_id, participant_id, session_key, answers, submitted_at
         FROM workshop_feedback_submissions
         WHERE instance_id = $1 AND session_key = $2
         LIMIT 1
@@ -180,7 +178,6 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       participant_id: string | null;
       session_key: string;
       answers: FeedbackAnswer[];
-      allow_quote_by_name: boolean;
       submitted_at: string;
     }>;
 
@@ -194,7 +191,6 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       participantId: row.participant_id,
       sessionKey: row.session_key,
       answers: row.answers,
-      allowQuoteByName: row.allow_quote_by_name,
       submittedAt: normalizeTimestamp(row.submitted_at),
     };
   }
@@ -220,12 +216,11 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
     await sql.query(
       `
         INSERT INTO workshop_feedback_submissions
-          (id, instance_id, participant_id, session_key, answers, allow_quote_by_name, submitted_at)
-        VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7::timestamptz)
+          (id, instance_id, participant_id, session_key, answers, submitted_at)
+        VALUES ($1, $2, $3, $4, $5::jsonb, $6::timestamptz)
         ON CONFLICT (instance_id, session_key) DO UPDATE SET
           participant_id = EXCLUDED.participant_id,
           answers = EXCLUDED.answers,
-          allow_quote_by_name = EXCLUDED.allow_quote_by_name,
           submitted_at = EXCLUDED.submitted_at
       `,
       [
@@ -234,7 +229,6 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
         submission.participantId,
         submission.sessionKey,
         JSON.stringify(submission.answers),
-        submission.allowQuoteByName,
         nowIso,
       ],
     );

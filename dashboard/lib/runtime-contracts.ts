@@ -293,14 +293,16 @@ export type FeedbackSubmissionRecord = {
   participantId: string | null;
   sessionKey: string;
   answers: FeedbackAnswer[];
-  /**
-   * Participant opt-in to be quoted by name in marketing / leadership
-   * reports. Defaults to false. Summary renderers must gate attribution
-   * on this flag for the testimonial question specifically.
-   */
-  allowQuoteByName: boolean;
   submittedAt: string;
 };
+
+/**
+ * Well-known template question id for the testimonial-consent checkbox.
+ * Summary renderers and the participant form rely on this to detect
+ * quote-by-name consent without a flat column. Per-instance template
+ * overrides may omit this question; absence is equivalent to "no consent".
+ */
+export const TESTIMONIAL_CONSENT_QUESTION_ID = "quote-ok";
 
 export type ParticipantFeedbackKind = "blocker" | "question";
 

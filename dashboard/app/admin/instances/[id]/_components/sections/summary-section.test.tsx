@@ -182,7 +182,7 @@ describe("SummarySection — empty state", () => {
       <SummarySection
         lang="cs"
         copy={adminCopy.cs}
-        instanceStatus="live"
+        instanceStatus="running"
         aggregate={{ totalResponses: 0, perQuestion: [] }}
         participantsWithAccessCount={5}
       />,

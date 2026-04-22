@@ -96,7 +96,6 @@ export function PostWorkshopSurface({
                 successMessage: surfaceCopy.successMessage,
                 genericError: surfaceCopy.genericError,
                 lockedMessage: surfaceCopy.lockedMessage,
-                allowQuoteByNameLabel: surfaceCopy.allowQuoteByNameLabel,
                 optionalHint: surfaceCopy.optionalHint,
               }}
             />
@@ -230,7 +229,6 @@ function getPostWorkshopCopy(lang: UiLanguage) {
       successMessage: "Thanks — we read every one of these.",
       genericError: "Could not send the feedback. Please try again.",
       lockedMessage: "Your earlier submission is locked. Thanks again for the feedback.",
-      allowQuoteByNameLabel: "You can quote me by name in marketing materials.",
       optionalHint: "optional",
       referenceTitle: "reference",
       referenceBody: "The workshop materials stay reachable here for as long as you need them.",
@@ -249,7 +247,6 @@ function getPostWorkshopCopy(lang: UiLanguage) {
     successMessage: "Díky — čteme každou.",
     genericError: "Zpětnou vazbu se nepodařilo odeslat. Zkuste to prosím znovu.",
     lockedMessage: "Vaše dřívější odpověď je uzamčena. Ještě jednou díky za zpětnou vazbu.",
-    allowQuoteByNameLabel: "Můžete mě jmenovitě citovat v marketingových materiálech.",
     optionalHint: "nepovinné",
     referenceTitle: "podklady",
     referenceBody: "Workshopové materiály tu zůstávají dostupné, dokud je potřebujete.",

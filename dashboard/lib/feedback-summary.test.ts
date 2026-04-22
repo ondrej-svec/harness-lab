@@ -61,7 +61,6 @@ function makeSubmission(overrides: Partial<FeedbackSubmissionRecord>): FeedbackS
     participantId: null,
     sessionKey: "p-1",
     answers: [],
-    allowQuoteByName: false,
     submittedAt: "2026-04-21T10:00:00.000Z",
     ...overrides,
   };
@@ -198,25 +197,31 @@ describe("buildFeedbackSummaryAggregate", () => {
     expect(themes.totalAnswered).toBe(2);
   });
 
-  it("open-text aggregate carries allowQuoteByName on each response (consent data is preserved)", () => {
+  it("open-text aggregate derives allowQuoteByName from the quote-ok checkbox answer (single source of truth)", () => {
     const submissions = [
       makeSubmission({
         id: "fs-a",
         sessionKey: "p-a",
-        allowQuoteByName: true,
-        answers: [{ questionId: "testimonial", type: "open-text", text: "It changed how I work." }],
+        answers: [
+          { questionId: "testimonial", type: "open-text", text: "It changed how I work." },
+          { questionId: "quote-ok", type: "checkbox", checked: true },
+        ],
       }),
       makeSubmission({
         id: "fs-b",
         sessionKey: "p-b",
-        allowQuoteByName: false,
-        answers: [{ questionId: "testimonial", type: "open-text", text: "Good." }],
+        answers: [
+          { questionId: "testimonial", type: "open-text", text: "Good." },
+          { questionId: "quote-ok", type: "checkbox", checked: false },
+        ],
       }),
       makeSubmission({
         id: "fs-c",
         sessionKey: "p-c",
-        allowQuoteByName: false,
-        answers: [{ questionId: "testimonial", type: "open-text", text: "   " }],
+        answers: [
+          { questionId: "testimonial", type: "open-text", text: "   " },
+          { questionId: "quote-ok", type: "checkbox", checked: false },
+        ],
       }),
     ];
     const result = buildFeedbackSummaryAggregate(template, submissions);
@@ -228,14 +233,30 @@ describe("buildFeedbackSummaryAggregate", () => {
     expect(consentFlags).toEqual([false, true]);
   });
 
+  it("open-text allowQuoteByName is false when the quote-ok answer is missing (template override omitted it)", () => {
+    const submissions = [
+      makeSubmission({
+        id: "fs-no-consent-q",
+        sessionKey: "p-x",
+        answers: [{ questionId: "testimonial", type: "open-text", text: "yes" }],
+      }),
+    ];
+    const result = buildFeedbackSummaryAggregate(template, submissions);
+    const openText = result.perQuestion[4];
+    if (openText.type !== "open-text") throw new Error("expected open-text");
+    expect(openText.responses[0].allowQuoteByName).toBe(false);
+  });
+
   it("open-text aggregate never includes participant names (privacy-v1)", () => {
     const submissions = [
       makeSubmission({
         id: "fs-named",
         sessionKey: "p-alice",
         participantId: "p-alice",
-        allowQuoteByName: true,
-        answers: [{ questionId: "testimonial", type: "open-text", text: "yes" }],
+        answers: [
+          { questionId: "testimonial", type: "open-text", text: "yes" },
+          { questionId: "quote-ok", type: "checkbox", checked: true },
+        ],
       }),
     ];
     const result = buildFeedbackSummaryAggregate(template, submissions);
