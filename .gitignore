@@ -33,3 +33,5 @@ harness-cli/*.tgz
 .claude/skills/workshop-facilitator/
 
 test-results/
+.vercel
+.serena/
