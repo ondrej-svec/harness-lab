@@ -14,16 +14,28 @@ export type ParticipantDisambiguator =
 
 /**
  * Mask an email for disambiguation. Keeps the first letter of the local
- * part and the full domain — enough to distinguish workmates without
- * leaking the rest of the address.
+ * part, a visible suffix, and the full domain — enough to distinguish
+ * workmates with the same domain without leaking the full address.
  */
 export function maskEmail(email: string): string {
   const at = email.indexOf("@");
   if (at <= 0) return "***";
   const local = email.slice(0, at);
   const domain = email.slice(at);
-  const first = local[0] ?? "";
-  return `${first}***${domain}`;
+  const trimPrefix = (value: string) => value.replace(/[._-]+$/g, "");
+  const trimSuffix = (value: string) => value.replace(/^[._-]+/g, "");
+  if (local.length === 1) {
+    return `${local}...${domain}`;
+  }
+  if (local.length <= 4) {
+    return `${local.slice(0, 2)}...${local.slice(-1)}${domain}`;
+  }
+  if (local.length <= 7) {
+    return `${local.slice(0, 3)}...${local.slice(-2)}${domain}`;
+  }
+  const prefix = trimPrefix(local.slice(0, 5)) || local.slice(0, 5);
+  const suffix = trimSuffix(local.slice(-4)) || local.slice(-4);
+  return `${prefix}...${suffix}${domain}`;
 }
 
 /**

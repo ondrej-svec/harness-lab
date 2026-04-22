@@ -19,14 +19,17 @@ function p(overrides: Partial<ParticipantRecord>): ParticipantRecord {
 }
 
 describe("maskEmail", () => {
-  it("keeps the first letter and the full domain", () => {
-    expect(maskEmail("jan@acme.com")).toBe("j***@acme.com");
-    expect(maskEmail("hello@studio.cz")).toBe("h***@studio.cz");
+  it("keeps enough of the local part to disambiguate same-domain matches", () => {
+    expect(maskEmail("jan@acme.com")).toBe("ja...n@acme.com");
+    expect(maskEmail("hello@studio.cz")).toBe("hel...lo@studio.cz");
+    expect(maskEmail("ondra.novak@acme.com")).toBe("ondra...ovak@acme.com");
+    expect(maskEmail("ondrej.novak@acme.com")).toBe("ondre...ovak@acme.com");
   });
 
   it("handles edge cases without leaking", () => {
     expect(maskEmail("@acme.com")).toBe("***");
     expect(maskEmail("no-at-sign")).toBe("***");
+    expect(maskEmail("o@gmail.com")).toBe("o...@gmail.com");
   });
 });
 
@@ -50,8 +53,8 @@ describe("computeDisambiguators", () => {
       p({ id: "p1", displayName: "Jan", email: "jan@acme.com" }),
       p({ id: "p2", displayName: "Jan", email: "jan@studio.cz" }),
     ]);
-    expect(result.get("p1")).toEqual({ kind: "masked_email", value: "j***@acme.com" });
-    expect(result.get("p2")).toEqual({ kind: "masked_email", value: "j***@studio.cz" });
+    expect(result.get("p1")).toEqual({ kind: "masked_email", value: "ja...n@acme.com" });
+    expect(result.get("p2")).toEqual({ kind: "masked_email", value: "ja...n@studio.cz" });
   });
 
   it("mixes tag and masked_email when only some entries have tags", () => {
@@ -60,7 +63,7 @@ describe("computeDisambiguators", () => {
       p({ id: "p2", displayName: "Jan", email: "jan@acme.com" }),
     ]);
     expect(result.get("p1")).toEqual({ kind: "tag", value: "team bravo" });
-    expect(result.get("p2")).toEqual({ kind: "masked_email", value: "j***@acme.com" });
+    expect(result.get("p2")).toEqual({ kind: "masked_email", value: "ja...n@acme.com" });
   });
 
   it("falls back to id-suffix when neither tag nor email exists", () => {

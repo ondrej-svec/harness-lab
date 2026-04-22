@@ -203,7 +203,7 @@ describe("GET /api/event-access/identify/suggest", () => {
         displayName: "Jana Nováková",
         hasPassword: true,
         hasEmail: true,
-        emailDisplay: "j***@acme.com",
+        emailDisplay: "jana...kova@acme.com",
         disambiguator: null,
       },
     ]);
@@ -272,7 +272,7 @@ describe("GET /api/event-access/identify/suggest", () => {
       // Local part must be masked. The domain stays so users can
       // tell two collisions apart by workplace; the email address as
       // shipped must never be the deliverable one.
-      expect(match.disambiguator?.value).toMatch(/^.\*\*\*@/);
+      expect(match.disambiguator?.value).toMatch(/^[^@]+\.\.\.[^@]+@/);
     }
     // Raw local part never leaks anywhere in the payload
     const body = JSON.stringify(payload);
