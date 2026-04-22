@@ -141,3 +141,45 @@ export async function adminCreateParticipantUser(
 
   return { ok: true, neonUserId: created.id };
 }
+
+/**
+ * Look up an existing Neon Auth user by email for orphan-recovery.
+ *
+ * Returns the user's neonUserId and whether they have a password set
+ * in neon_auth.account. If `hasPassword` is false, the user was
+ * created by a prior createParticipantAccount attempt whose step-2
+ * (password set) failed — safe to recover via
+ * setParticipantPasswordViaResetToken with the caller's chosen
+ * password.
+ *
+ * If `hasPassword` is true, the user is a legitimate existing account;
+ * the caller must NOT silently overwrite the password. Surface
+ * "email_taken" to the participant so they can sign in instead.
+ *
+ * Returns `null` when the email doesn't match any user (extremely
+ * unusual — would only happen if the `email_taken` signal from the
+ * control-plane create was itself wrong).
+ */
+export async function findParticipantUserForRecovery(
+  email: string,
+): Promise<{ neonUserId: string; hasPassword: boolean } | null> {
+  const sql = getNeonSql();
+  const rows = (await sql.query(
+    `
+      SELECT u.id::text AS user_id,
+             COALESCE(a.password, '') AS password
+      FROM neon_auth."user" u
+      LEFT JOIN neon_auth.account a
+        ON a."userId" = u.id AND a."providerId" = 'credential'
+      WHERE lower(u.email) = lower($1)
+      LIMIT 1
+    `,
+    [email],
+  )) as { user_id: string; password: string }[];
+  const row = rows[0];
+  if (!row) return null;
+  return {
+    neonUserId: row.user_id,
+    hasPassword: row.password !== null && row.password.length > 0,
+  };
+}

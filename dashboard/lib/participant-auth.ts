@@ -1,4 +1,4 @@
-import { adminCreateParticipantUser } from "./auth/admin-create-user";
+import { adminCreateParticipantUser, findParticipantUserForRecovery } from "./auth/admin-create-user";
 import {
   admin as proxyAdmin,
   requestPasswordReset as proxyRequestPasswordReset,
@@ -123,6 +123,16 @@ export async function createParticipantAccount(
   });
   if (!created.ok) {
     if (created.reason === "email_taken") {
+      // Two possibilities behind email_taken:
+      //   (a) a real existing account — do NOT reset their password;
+      //       surface email_taken so the UI tells them to sign in.
+      //   (b) an orphan from a prior attempt where step 1 succeeded
+      //       but step 2 failed — safe to recover by setting a password
+      //       for the caller's chosen value.
+      // Distinguish by checking whether the existing user has a
+      // password set in neon_auth.account.
+      const recovery = await recoverOrphanedAccount(email, input.password);
+      if (recovery) return recovery;
       return { ok: false, reason: "email_taken", message: created.message };
     }
     if (created.reason === "invalid_email") {
@@ -146,10 +156,10 @@ export async function createParticipantAccount(
     if (passwordSet.reason === "missing_neon_auth") {
       return { ok: false, reason: "unavailable", message: passwordSet.message };
     }
-    // The user row exists but has no usable password. The wrapper's
-    // contract is all-or-nothing, so surface as "unknown" — the
-    // caller will retry; the next attempt's email_taken branch
-    // catches the orphaned row.
+    // Step 1 succeeded, step 2 failed — user row exists without a
+    // usable password. The next attempt with the same email will hit
+    // the email_taken branch above, which calls recoverOrphanedAccount
+    // to complete the setup.
     return {
       ok: false,
       reason: "unknown",
@@ -158,6 +168,44 @@ export async function createParticipantAccount(
   }
 
   return { ok: true, neonUserId: created.neonUserId };
+}
+
+/**
+ * If `email` matches a Neon Auth user who has NO password set, set the
+ * password and return a success result. This is the orphan-recovery
+ * path for failed createParticipantAccount attempts whose step-1 (user
+ * create) succeeded but step-2 (password set) did not.
+ *
+ * Returns `null` in two cases: the user doesn't exist (caller should
+ * surface email_taken as a bug signal), or the user exists WITH a
+ * password (real existing account — caller must surface email_taken
+ * so the UI prompts sign-in).
+ */
+async function recoverOrphanedAccount(
+  email: string,
+  newPassword: string,
+): Promise<CreateParticipantAccountResult | null> {
+  const existing = await findParticipantUserForRecovery(email);
+  if (!existing) return null;
+  if (existing.hasPassword) return null;
+  const passwordSet = await setParticipantPasswordViaResetToken({
+    neonUserId: existing.neonUserId,
+    newPassword,
+  });
+  if (!passwordSet.ok) {
+    if (passwordSet.reason === "weak_password") {
+      return { ok: false, reason: "weak_password", message: passwordSet.message };
+    }
+    if (passwordSet.reason === "missing_neon_auth") {
+      return { ok: false, reason: "unavailable", message: passwordSet.message };
+    }
+    return {
+      ok: false,
+      reason: "unknown",
+      message: `recovery-failed: ${passwordSet.message}`,
+    };
+  }
+  return { ok: true, neonUserId: existing.neonUserId };
 }
 
 /**

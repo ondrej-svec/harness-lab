@@ -6,6 +6,7 @@ const proxyRequestPasswordReset = vi.fn();
 const sqlQuery = vi.fn();
 const getRuntimeStorageMode = vi.fn();
 const adminCreateParticipantUser = vi.fn();
+const findParticipantUserForRecovery = vi.fn();
 const setParticipantPasswordViaResetToken = vi.fn();
 
 vi.mock("./auth/neon-auth-proxy", () => ({
@@ -18,6 +19,7 @@ vi.mock("./auth/neon-auth-proxy", () => ({
 
 vi.mock("./auth/admin-create-user", () => ({
   adminCreateParticipantUser,
+  findParticipantUserForRecovery,
 }));
 
 vi.mock("./auth/server-set-password", () => ({
@@ -76,11 +78,15 @@ describe("participant-auth", () => {
       });
     });
 
-    it("propagates email_taken from the control-plane create step", async () => {
+    it("surfaces email_taken when an existing user already has a password (real account)", async () => {
       adminCreateParticipantUser.mockResolvedValue({
         ok: false,
         reason: "email_taken",
         message: "User with email already exists",
+      });
+      findParticipantUserForRecovery.mockResolvedValue({
+        neonUserId: "user-existing",
+        hasPassword: true,
       });
       const { createParticipantAccount } = await importParticipantAuth();
 
@@ -92,6 +98,72 @@ describe("participant-auth", () => {
 
       expect(result).toMatchObject({ ok: false, reason: "email_taken" });
       expect(setParticipantPasswordViaResetToken).not.toHaveBeenCalled();
+    });
+
+    it("recovers an orphan account (email_taken but no password set) by setting the caller's chosen password", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "email_taken",
+        message: "User with email already exists",
+      });
+      findParticipantUserForRecovery.mockResolvedValue({
+        neonUserId: "user-orphan",
+        hasPassword: false,
+      });
+      setParticipantPasswordViaResetToken.mockResolvedValue({ ok: true });
+      const { createParticipantAccount } = await importParticipantAuth();
+
+      const result = await createParticipantAccount({
+        email: "jan@acme.com",
+        password: "passw0rd!",
+        displayName: "Jan",
+      });
+
+      expect(result).toEqual({ ok: true, neonUserId: "user-orphan" });
+      expect(setParticipantPasswordViaResetToken).toHaveBeenCalledWith({
+        neonUserId: "user-orphan",
+        newPassword: "passw0rd!",
+      });
+    });
+
+    it("surfaces email_taken when the lookup can't find the user (signal-mismatch edge case)", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "email_taken",
+        message: "User with email already exists",
+      });
+      findParticipantUserForRecovery.mockResolvedValue(null);
+      const { createParticipantAccount } = await importParticipantAuth();
+
+      const result = await createParticipantAccount({
+        email: "jan@acme.com",
+        password: "passw0rd!",
+        displayName: "Jan",
+      });
+
+      expect(result).toMatchObject({ ok: false, reason: "email_taken" });
+      expect(setParticipantPasswordViaResetToken).not.toHaveBeenCalled();
+    });
+
+    it("propagates weak_password from the orphan recovery path", async () => {
+      adminCreateParticipantUser.mockResolvedValue({
+        ok: false,
+        reason: "email_taken",
+      });
+      findParticipantUserForRecovery.mockResolvedValue({
+        neonUserId: "user-orphan",
+        hasPassword: false,
+      });
+      setParticipantPasswordViaResetToken.mockResolvedValue({ ok: false, reason: "weak_password" });
+      const { createParticipantAccount } = await importParticipantAuth();
+
+      const result = await createParticipantAccount({
+        email: "jan@acme.com",
+        password: "short",
+        displayName: "Jan",
+      });
+
+      expect(result).toMatchObject({ ok: false, reason: "weak_password" });
     });
 
     it("propagates invalid_email from the control-plane create step", async () => {
