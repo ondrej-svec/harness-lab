@@ -1,9 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { setCheckpointRepositoryForTests, type CheckpointRepository } from "./checkpoint-repository";
 import { setMonitoringSnapshotRepositoryForTests, type MonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
-import { setPollResponseRepositoryForTests, type PollResponseRepository } from "./poll-response-repository";
+import { setPollResponseRepositoryForTests } from "./poll-response-repository";
 import { setTeamRepositoryForTests, type TeamRepository } from "./team-repository";
-import type { CheckpointRecord, PollResponseRecord, TeamRecord } from "./runtime-contracts";
+import type {
+  CheckpointRecord,
+  PollResponseRecord,
+  PollResponseRepository,
+  TeamRecord,
+} from "./runtime-contracts";
 import { seedWorkshopState, type WorkshopState } from "./workshop-data";
 import { setWorkshopStateRepositoryForTests, type WorkshopStateRepository } from "./workshop-state-repository";
 import {
@@ -70,9 +75,8 @@ class EmptyTeamRepository implements TeamRepository {
   async listTeams() {
     return [] as TeamRecord[];
   }
-  async saveTeam() {}
+  async upsertTeam() {}
   async replaceTeams() {}
-  async deleteTeam() {}
 }
 
 class EmptyMonitoringRepository implements MonitoringSnapshotRepository {

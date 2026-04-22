@@ -5,9 +5,10 @@ type RuntimeAlert = {
     | "participant_redeem_bot_signal"
     | "participant_identify_rebind_attempt"
     | "instance_archive_created"
-    | "jsonb_parse_failure";
+    | "jsonb_parse_failure"
+    | "device_auth_rate_limited";
   severity: "info" | "warning" | "error";
-  instanceId: string;
+  instanceId: string | null;
   metadata?: Record<string, string | number | boolean | null>;
 };
 

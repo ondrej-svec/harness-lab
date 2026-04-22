@@ -58,10 +58,27 @@ export function decodeBasicAuthHeader(header: string | null) {
 }
 
 export function getExpectedFileModeCredentials() {
-  return {
-    username: process.env.HARNESS_ADMIN_USERNAME ?? "facilitator",
-    password: process.env.HARNESS_ADMIN_PASSWORD ?? "secret",
-  };
+  const username = process.env.HARNESS_ADMIN_USERNAME ?? "facilitator";
+  const password = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
+
+  // File-mode Basic Auth is a local-dev affordance. Shipping a
+  // production deploy with the demo defaults (facilitator / secret)
+  // would leave /admin openly accessible to anyone who read the README.
+  // Fail closed at startup so the deployment is visibly broken rather
+  // than silently insecure.
+  if (
+    process.env.NODE_ENV === "production" &&
+    username === "facilitator" &&
+    password === "secret"
+  ) {
+    throw new Error(
+      "Refusing to serve file-mode admin auth with default credentials in production. " +
+        "Set HARNESS_ADMIN_USERNAME and HARNESS_ADMIN_PASSWORD — or run with HARNESS_STORAGE_MODE=neon " +
+        "so facilitator auth goes through Neon Auth.",
+    );
+  }
+
+  return { username, password };
 }
 
 export function hasValidFileModeCredentials(authorizationHeader: string | null) {

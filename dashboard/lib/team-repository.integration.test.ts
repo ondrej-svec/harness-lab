@@ -57,16 +57,13 @@ describeIntegration("NeonTeamRepository round-trip (integration · neon test bra
     return {
       id: `t-${index.toString().padStart(2, "0")}-${randomUUID().slice(0, 6)}`,
       name: overrides.name ?? `Tým ${index}`,
+      city: overrides.city ?? "Brno",
       members: overrides.members ?? [`Člen ${index}A`, `Člen ${index}B`],
-      repoUrl: overrides.repoUrl ?? null,
-      signals: overrides.signals ?? {
-        agentsFile: false,
-        skillsCount: 0,
-        commitsLast30Min: 0,
-        testsVisible: 0,
-      },
-      ...overrides,
-    } as TeamRecord;
+      repoUrl: overrides.repoUrl ?? "",
+      projectBriefId: overrides.projectBriefId ?? "default-brief",
+      checkIns: overrides.checkIns ?? [],
+      anchor: overrides.anchor ?? null,
+    };
   }
 
   it("replaceTeams round-trips a 50-row fixture via single-query unnest", async () => {
