@@ -15,6 +15,18 @@ function createEmptyStore(): StoredPollResponses {
   return { version: 1, responses: [] };
 }
 
+// Neon TIMESTAMPTZ columns come back as JS Date objects; our contract
+// declares `submittedAt: string` and `localeCompare` in downstream
+// sorts assumes a string. Coerce at the mapper.
+function normalizeTimestamp(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value instanceof Date) return value.toISOString();
+  if (value && typeof (value as { toISOString?: () => string }).toISOString === "function") {
+    return (value as { toISOString: () => string }).toISOString();
+  }
+  return String(value);
+}
+
 export class FilePollResponseRepository implements PollResponseRepository {
   private readonly dataDir = process.env.HARNESS_DATA_DIR ?? path.join(process.cwd(), "data");
 
@@ -107,7 +119,7 @@ export class NeonPollResponseRepository implements PollResponseRepository {
       sessionKey: row.session_key,
       teamId: row.team_id,
       optionId: row.option_id,
-      submittedAt: row.submitted_at,
+      submittedAt: normalizeTimestamp(row.submitted_at),
     }));
   }
 

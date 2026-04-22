@@ -21,6 +21,22 @@ function createEmptyStore(): StoredFeedbackSubmissions {
   return { version: 1, submissions: [] };
 }
 
+/**
+ * Neon's TIMESTAMPTZ columns come back as JS `Date` objects (not ISO
+ * strings) through @neondatabase/serverless. Our contract declares
+ * `submittedAt: string` and downstream code (localeCompare sort in
+ * feedback-summary, e.g.) assumes a string. Coerce at the mapper so
+ * the contract holds end-to-end regardless of driver behaviour.
+ */
+function normalizeTimestamp(value: unknown): string {
+  if (typeof value === "string") return value;
+  if (value instanceof Date) return value.toISOString();
+  if (value && typeof (value as { toISOString?: () => string }).toISOString === "function") {
+    return (value as { toISOString: () => string }).toISOString();
+  }
+  return String(value);
+}
+
 function isWithinLockWindow(submittedAt: string, allowEditWithinHours: number, nowIso: string): boolean {
   // allowEditWithinHours = 0 always locks (no edit window). Otherwise the
   // window is strictly less than N hours since first submit. Strict `<`
@@ -141,7 +157,7 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       sessionKey: row.session_key,
       answers: row.answers,
       allowQuoteByName: row.allow_quote_by_name,
-      submittedAt: row.submitted_at,
+      submittedAt: normalizeTimestamp(row.submitted_at),
     }));
   }
 
@@ -179,7 +195,7 @@ export class NeonFeedbackSubmissionRepository implements FeedbackSubmissionRepos
       sessionKey: row.session_key,
       answers: row.answers,
       allowQuoteByName: row.allow_quote_by_name,
-      submittedAt: row.submitted_at,
+      submittedAt: normalizeTimestamp(row.submitted_at),
     };
   }
 
