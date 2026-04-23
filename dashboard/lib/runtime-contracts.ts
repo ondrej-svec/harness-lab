@@ -85,6 +85,14 @@ export type ParticipantEventAccessRecord = {
   instanceId: WorkshopInstanceId;
   version: number;
   codeHash: string;
+  /**
+   * AES-256-GCM ciphertext of the raw event code, serialised with a `v1:`
+   * prefix. Present for codes issued after the reveal migration when the
+   * reveal key is configured. Null for legacy rows (hash-only) and for
+   * codes issued while the key was unset — facilitator reveal is disabled
+   * in both cases.
+   */
+  codeCiphertext?: string | null;
   expiresAt: string;
   revokedAt: string | null;
   sampleCode?: string | null;

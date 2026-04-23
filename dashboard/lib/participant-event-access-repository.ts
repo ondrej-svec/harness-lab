@@ -2,6 +2,10 @@ import { mkdir, readdir, readFile, rename, writeFile } from "node:fs/promises";
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import path from "node:path";
 import { getNeonSql } from "./neon-db";
+import {
+  encryptEventCodeForReveal,
+  isEventCodeRevealConfigured,
+} from "./event-code-reveal-crypto";
 import { isNeonRuntimeMode } from "./runtime-auth-configuration";
 import { getRuntimeStorageMode } from "./runtime-storage";
 import type { ParticipantEventAccessRecord, ParticipantEventAccessRepository } from "./runtime-contracts";
@@ -97,6 +101,7 @@ export class FileParticipantEventAccessRepository implements ParticipantEventAcc
       instanceId,
       version: 1,
       codeHash: hashEventCode(seed.code),
+      codeCiphertext: isEventCodeRevealConfigured() ? encryptEventCodeForReveal(seed.code) : null,
       expiresAt: seed.expiresAt,
       revokedAt: null,
       sampleCode: seed.isSample ? seed.code : null,
@@ -178,11 +183,19 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     // suffix is the suspenders.
     await sql.query(
       `
-        INSERT INTO participant_event_access (id, instance_id, version, code_hash, expires_at, revoked_at)
-        VALUES ($1, $2, $3, $4, $5::timestamptz, $6)
+        INSERT INTO participant_event_access (id, instance_id, version, code_hash, code_ciphertext, expires_at, revoked_at)
+        VALUES ($1, $2, $3, $4, $5, $6::timestamptz, $7)
         ON CONFLICT (id) DO NOTHING
       `,
-      [`pea-${instanceId}-${randomUUID()}`, instanceId, 1, hashEventCode(seed.code), seed.expiresAt, null],
+      [
+        `pea-${instanceId}-${randomUUID()}`,
+        instanceId,
+        1,
+        hashEventCode(seed.code),
+        isEventCodeRevealConfigured() ? encryptEventCodeForReveal(seed.code) : null,
+        seed.expiresAt,
+        null,
+      ],
     );
   }
 
@@ -191,7 +204,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     await this.ensureSeedAccess(instanceId);
     const rows = (await sql.query(
       `
-        SELECT id, instance_id, version, code_hash, expires_at, revoked_at
+        SELECT id, instance_id, version, code_hash, code_ciphertext, expires_at, revoked_at
         FROM participant_event_access
         WHERE instance_id = $1 AND revoked_at IS NULL
         ORDER BY version DESC
@@ -203,6 +216,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       instance_id: string;
       version: number;
       code_hash: string;
+      code_ciphertext: string | null;
       expires_at: string;
       revoked_at: string | null;
     }[];
@@ -217,6 +231,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       instanceId: row.instance_id,
       version: row.version,
       codeHash: row.code_hash,
+      codeCiphertext: row.code_ciphertext,
       expiresAt: row.expires_at,
       revokedAt: row.revoked_at,
       sampleCode: null,
@@ -227,7 +242,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     const sql = getNeonSql();
     const rows = (await sql.query(
       `
-        SELECT DISTINCT ON (instance_id) id, instance_id, version, code_hash, expires_at, revoked_at
+        SELECT DISTINCT ON (instance_id) id, instance_id, version, code_hash, code_ciphertext, expires_at, revoked_at
         FROM participant_event_access
         WHERE revoked_at IS NULL AND expires_at > NOW()
         ORDER BY instance_id, version DESC
@@ -237,6 +252,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       instance_id: string;
       version: number;
       code_hash: string;
+      code_ciphertext: string | null;
       expires_at: string;
       revoked_at: string | null;
     }[];
@@ -246,6 +262,7 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
       instanceId: row.instance_id,
       version: row.version,
       codeHash: row.code_hash,
+      codeCiphertext: row.code_ciphertext,
       expiresAt: row.expires_at,
       revokedAt: row.revoked_at,
       sampleCode: null,
@@ -256,15 +273,24 @@ export class NeonParticipantEventAccessRepository implements ParticipantEventAcc
     const sql = getNeonSql();
     await sql.query(
       `
-        INSERT INTO participant_event_access (id, instance_id, version, code_hash, expires_at, revoked_at)
-        VALUES ($1, $2, $3, $4, $5::timestamptz, $6::timestamptz)
+        INSERT INTO participant_event_access (id, instance_id, version, code_hash, code_ciphertext, expires_at, revoked_at)
+        VALUES ($1, $2, $3, $4, $5, $6::timestamptz, $7::timestamptz)
         ON CONFLICT (id) DO UPDATE
         SET version = EXCLUDED.version,
             code_hash = EXCLUDED.code_hash,
+            code_ciphertext = EXCLUDED.code_ciphertext,
             expires_at = EXCLUDED.expires_at,
             revoked_at = EXCLUDED.revoked_at
       `,
-      [access.id, access.instanceId, access.version, access.codeHash, access.expiresAt, access.revokedAt],
+      [
+        access.id,
+        access.instanceId,
+        access.version,
+        access.codeHash,
+        access.codeCiphertext ?? null,
+        access.expiresAt,
+        access.revokedAt,
+      ],
     );
   }
 }

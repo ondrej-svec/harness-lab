@@ -9,6 +9,7 @@ describe("participant-event-access-repository", () => {
   const originalDataDir = process.env.HARNESS_DATA_DIR;
   const originalEventCode = process.env.HARNESS_EVENT_CODE;
   const originalEventCodeExpiresAt = process.env.HARNESS_EVENT_CODE_EXPIRES_AT;
+  const originalRevealKey = process.env.HARNESS_EVENT_CODE_REVEAL_KEY;
 
   beforeEach(async () => {
     vi.resetModules();
@@ -16,12 +17,18 @@ describe("participant-event-access-repository", () => {
     process.env.HARNESS_DATA_DIR = tempDir;
     delete process.env.HARNESS_EVENT_CODE;
     delete process.env.HARNESS_EVENT_CODE_EXPIRES_AT;
+    delete process.env.HARNESS_EVENT_CODE_REVEAL_KEY;
   });
 
   afterEach(async () => {
     process.env.HARNESS_DATA_DIR = originalDataDir;
     process.env.HARNESS_EVENT_CODE = originalEventCode;
     process.env.HARNESS_EVENT_CODE_EXPIRES_AT = originalEventCodeExpiresAt;
+    if (originalRevealKey === undefined) {
+      delete process.env.HARNESS_EVENT_CODE_REVEAL_KEY;
+    } else {
+      process.env.HARNESS_EVENT_CODE_REVEAL_KEY = originalRevealKey;
+    }
     await rm(tempDir, { recursive: true, force: true });
     const mod = await import("./participant-event-access-repository");
     mod.setParticipantEventAccessRepositoryForTests(null);
@@ -65,12 +72,33 @@ describe("participant-event-access-repository", () => {
     await expect(repository.getActiveAccess("instance-a")).resolves.toBeNull();
   });
 
+  it("round-trips codeCiphertext through the file-mode JSON repository", async () => {
+    const mod = await import("./participant-event-access-repository");
+    const repository = new mod.FileParticipantEventAccessRepository();
+    const access: ParticipantEventAccessRecord = {
+      id: "pea-3",
+      instanceId: "instance-b",
+      version: 1,
+      codeHash: "hash-3",
+      codeCiphertext: "v1:nonce.cipher.tag",
+      expiresAt: "2026-05-01T12:00:00.000Z",
+      revokedAt: null,
+      sampleCode: null,
+    };
+
+    await repository.saveAccess("instance-b", access);
+    await expect(repository.getActiveAccess("instance-b")).resolves.toMatchObject({
+      codeCiphertext: "v1:nonce.cipher.tag",
+    });
+  });
+
   it("maps neon access rows and exposes preview data", async () => {
     const row = {
       id: "pea-1",
       instance_id: "instance-a",
       version: 1,
       code_hash: "hash-1",
+      code_ciphertext: null,
       expires_at: "2026-04-20T12:00:00.000Z",
       revoked_at: null,
     };
@@ -78,7 +106,7 @@ describe("participant-event-access-repository", () => {
       if (sqlText.includes("SELECT id FROM participant_event_access")) {
         return [];
       }
-      if (sqlText.includes("SELECT id, instance_id, version, code_hash, expires_at, revoked_at")) {
+      if (sqlText.includes("FROM participant_event_access") && sqlText.includes("code_hash")) {
         return [row];
       }
       return undefined;
@@ -123,7 +151,7 @@ describe("participant-event-access-repository", () => {
       if (sqlText.includes("SELECT id FROM participant_event_access")) {
         return [];
       }
-      if (sqlText.includes("SELECT id, instance_id, version, code_hash, expires_at, revoked_at")) {
+      if (sqlText.includes("FROM participant_event_access") && sqlText.includes("code_hash")) {
         return [];
       }
       return undefined;
@@ -149,6 +177,8 @@ describe("participant-event-access-repository", () => {
   it("seeds access with a unique row id and uses ON CONFLICT DO NOTHING so a prior revoked seed row cannot crash admin", async () => {
     process.env.HARNESS_EVENT_CODE = "lantern8-context4-handoff2";
     process.env.HARNESS_EVENT_CODE_SECRET = "test-event-code-secret-at-least-32-chars-long";
+    // 32 base64url bytes (43 chars) — valid reveal key for the seed path.
+    process.env.HARNESS_EVENT_CODE_REVEAL_KEY = "a".repeat(43);
     const insertCalls: { sqlText: string; params: unknown[] }[] = [];
     const query = vi.fn(async (sqlText: string, params?: unknown[]) => {
       if (sqlText.includes("SELECT id FROM participant_event_access")) {
@@ -158,7 +188,7 @@ describe("participant-event-access-repository", () => {
         insertCalls.push({ sqlText, params: params ?? [] });
         return undefined;
       }
-      if (sqlText.includes("SELECT id, instance_id, version, code_hash, expires_at, revoked_at")) {
+      if (sqlText.includes("FROM participant_event_access") && sqlText.includes("code_hash")) {
         return [];
       }
       return undefined;
