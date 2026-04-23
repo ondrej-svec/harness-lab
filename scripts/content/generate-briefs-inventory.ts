@@ -196,7 +196,29 @@ function rewriteAgendaBriefs(briefs: BilingualProjectBrief[]): string {
   const agenda = JSON.parse(readFileSync(AGENDA_PATH, "utf-8")) as {
     inventory: { briefs: BilingualProjectBrief[] };
   };
-  agenda.inventory.briefs = briefs;
+  // Preserve per-brief `participantVariant` overrides authored directly
+  // in agenda.json (the markdown sources don't encode them). We rebuild
+  // canonical en/cs content from markdown but copy participantVariant
+  // through verbatim, keyed by brief id.
+  const existingVariants = new Map<
+    string,
+    { en?: BilingualProjectBrief["en"]["participantVariant"]; cs?: BilingualProjectBrief["cs"]["participantVariant"] }
+  >();
+  for (const existing of agenda.inventory.briefs ?? []) {
+    existingVariants.set(existing.id, {
+      en: existing.en?.participantVariant,
+      cs: existing.cs?.participantVariant,
+    });
+  }
+  agenda.inventory.briefs = briefs.map((brief) => {
+    const prior = existingVariants.get(brief.id);
+    if (!prior) return brief;
+    return {
+      ...brief,
+      en: prior.en ? { ...brief.en, participantVariant: prior.en } : brief.en,
+      cs: prior.cs ? { ...brief.cs, participantVariant: prior.cs } : brief.cs,
+    };
+  });
   return stableStringify(agenda);
 }
 
