@@ -258,10 +258,14 @@ test.describe("facilitator admin (file mode)", () => {
     // Run-section heading was retired in the 2026-04-23 topbar-cleanup
     // plan (Part A, task A4) — the Run tab being active is signal
     // enough without a redundant "run" title above the content.
+    // Post-2026-04-23 minimal-UI: four sections — run, lidé, zpětná
+     // vazba (summary), nastavení. Access folded into run. Agenda /
+     // týmy / signály were retired.
     await expect(page.getByRole("navigation").getByRole("link", { name: "run" }).first()).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "lidé" }).first()).toBeVisible();
-    await expect(page.getByRole("navigation").getByRole("link", { name: "přístupy" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "zpětná vazba" }).first()).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "nastavení" }).first()).toBeVisible();
+    await expect(page.getByRole("navigation").getByRole("link", { name: "přístupy" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "agenda" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "signály" })).toHaveCount(0);
