@@ -1,17 +1,20 @@
 import { describe, expect, it } from "vitest";
 
-import agendaCsParticipant from "./generated/agenda-cs-participant.json";
-import agendaEnParticipant from "./generated/agenda-en-participant.json";
+import {
+  csParticipantAgenda as agendaCsParticipant,
+  enParticipantAgenda as agendaEnParticipant,
+} from "./__fixtures__/blueprint-agendas";
 
 /**
- * Voice-rule guard for the participant-mode agenda JSONs.
+ * Voice-rule guard for the participant-mode agenda views.
  * Phase 5.8 of docs/plans/2026-04-21-feat-optional-team-mode-plan.md.
  *
- * When a workshop instance has `team_mode_enabled = false` the loader
- * serves `agenda-cs-participant.json` / `agenda-en-participant.json`.
- * Teams do not exist on that surface — neither the admin rendering of
- * the agenda nor the participant room should leak team vocabulary or
- * the rescue motif.
+ * When a workshop instance has `team_mode_enabled = false` the
+ * participant view is materialized in participant mode from the
+ * bilingual source (`workshop-content/agenda.json`). Teams do not
+ * exist on that surface — neither the admin rendering of the agenda
+ * nor the participant room should leak team vocabulary or the rescue
+ * motif.
  *
  * Rules enforced (see memory/feedback_participant_copy_voice.md):
  *   - Rule 1: no rescue/survives motif (přežije / záchrana / survives
@@ -121,5 +124,5 @@ function describeAgenda(
   });
 }
 
-describeAgenda("agenda-cs-participant.json", agendaCsParticipant, CS_PATTERNS);
-describeAgenda("agenda-en-participant.json", agendaEnParticipant, EN_PATTERNS);
+describeAgenda("cs participant view", agendaCsParticipant, CS_PATTERNS);
+describeAgenda("en participant view", agendaEnParticipant, EN_PATTERNS);

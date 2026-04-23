@@ -1,6 +1,6 @@
 import { setAuditLogRepositoryForTests, type AuditLogRepository } from "./audit-log-repository";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import blueprintAgenda from "./generated/agenda-cs.json";
+import { csFacilitatorAgenda as blueprintAgenda } from "./__fixtures__/blueprint-agendas";
 import { setCheckpointRepositoryForTests, type CheckpointRepository } from "./checkpoint-repository";
 import { setEventAccessRepositoryForTests, type EventAccessRepository } from "./event-access-repository";
 import { setInstanceArchiveRepositoryForTests, type InstanceArchiveRepository } from "./instance-archive-repository";
