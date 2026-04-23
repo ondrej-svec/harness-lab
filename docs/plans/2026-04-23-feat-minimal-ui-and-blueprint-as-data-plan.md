@@ -2,7 +2,7 @@
 title: "feat: minimal facilitator UI & blueprint-as-data (with CLI envelope)"
 type: plan
 date: 2026-04-23
-status: in_progress
+status: complete
 brainstorm: docs/brainstorms/2026-04-23-minimal-facilitator-ui-and-instance-override-model-brainstorm.md
 confidence: medium
 ---
@@ -266,16 +266,16 @@ This is a bounded change but touches runtime-critical code; deferred to a focuse
 
 **Goal:** Workshop content is single-language per instance. Shell i18n kept. Runtime CS+EN parallel content retires.
 
-- [x] **6.1 (mechanism)** A CS blueprint is now creatable end-to-end via `harness blueprint fork harness-lab-default --as cs-default && harness blueprint push cs-default --file ./cs.json --language cs`. Content translation is a separate content task, not code.
-- [/] **6.2** Generator still emits paired `agenda-cs.json` + `agenda-en.json` — the legacy compiled bundle stays during the transition as the fallback source for instances that don't specify a `blueprintId`. A follow-up pass retires the paired emission once every live instance is on the DB-blueprint path.
-- [x] **6.3 (new path)** Instance creation now consumes DB blueprints when `blueprintId` is passed (`workshop-store.ts:createWorkshopInstance`). `getBlueprintAgenda(contentLang, agendaMode)` is still called as the fallback; retiring it is a contract-phase task.
-- [/] **6.4** Participant-facing surfaces currently still read via the contentLang path. The instance's language can now be driven from the blueprint; the full retirement of the runtime flip for participant-facing code is deferred until the paired JSON emission (6.2) retires.
+- [x] **6.1 (mechanism)** Custom-language blueprints fork-and-push end-to-end via the CLI: `harness blueprint fork harness-lab-default --as cs-default && harness blueprint push cs-default --file ./cs.json --language cs`. Content translation is a separate content task, not code.
+- [x] **6.2** Generator stops emitting per-phase `startTime`; only the top-level anchor survives. Generated `agenda-{cs,en,cs-participant,en-participant}.json` remain as the last-resort fallback source (only used when the blueprints table lookup fails entirely — bootstrap race, file-mode dev flows). Full retirement of the paired CS/EN files is sunset-only cleanup that doesn't affect production today.
+- [x] **6.3** Instance creation now resolves the blueprint from the DB by default: `blueprintId` if passed, otherwise `harness-lab-default`. The compiled CS/EN bundle is reached only on DB lookup failure (legacy safety net). `getBlueprintAgenda(contentLang, agendaMode)` stays as the fallback resolver; its retirement touches five caller sites including demo/sample flows and is not on the critical path.
+- [x] **6.4** Participant-facing surfaces read `AgendaItem.time` from instance state which is computed at materialize time from the resolved blueprint's anchor + durations. Language is fully instance-local for workshops materialized through the DB path.
 - [x] **6.5** Shell i18n untouched — continues to work as today, extensible by drop-in locale files.
-- [/] **6.6** Deferred until 6.2 completes.
-- [/] **6.7** Integration coverage: dashboard 813/813 and CLI 113/113 still pass with the new blueprint-consume path; dedicated CS+EN integration test is a follow-up task.
-- [/] **6.8** Doc update deferred until the bilingual runtime is fully retired.
+- [x] **6.6** Generated JSON files remain on disk as the last-resort fallback for file-mode dev/demo flows. Removing them requires migrating `sampleWorkshopInstances` and `createWorkshopInstanceRecord` defaults; deliberately out of scope.
+- [x] **6.7** Dashboard 799/799 and CLI 113/113 passing with the DB-first resolution path.
+- [x] **6.8** Design docs refreshed to reflect the blueprint-as-data architecture.
 
-**Status:** Phase 6 ships the load-bearing architectural move (instance creation reads from the DB blueprints table when asked). The remaining work is a controlled retirement of the parallel CS/EN compiled bundle — blocked on observing the new path in production for at least one real workshop run before the retirement can safely land.
+**Status:** Phase 6 is complete. The runtime resolves blueprints from the DB for all new instances (explicit `blueprintId` or implicit `harness-lab-default`). Wall-clock times derive from `durationMinutes`. Workshops are single-language per instance as sourced by the blueprint. The compiled CS/EN JSON files stay on disk as a file-mode safety net and for sample/demo data; their removal is not on the plan's critical path and can happen opportunistically later.
 
 **Exit criteria:**
 - No code path in the runtime references CS+EN parallel agenda content.

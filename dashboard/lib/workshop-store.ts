@@ -1482,21 +1482,26 @@ export async function createWorkshopInstance(input: {
     },
   };
 
-  // If the caller passed a `blueprintId` that resolves to a blueprint
-  // stored in the DB, use that as the materialization source. Otherwise
-  // fall through to the legacy in-repo compiled bundle via
-  // `createWorkshopStateFromInstance`'s own default resolver.
+  // Resolution order for the materialization source:
+  //   1. If the caller passed a `blueprintId`, use that blueprint.
+  //   2. If not, use the seeded default (`harness-lab-default`) from
+  //      the blueprints table. This keeps new instances on the DB-
+  //      authoritative path even when the caller didn't pick one.
+  //   3. If the DB lookup fails entirely (bootstrap race, file mode),
+  //      `createWorkshopStateFromInstance` falls back to the compiled
+  //      in-repo bundle — the legacy safety net. This is the only
+  //      remaining consumer of the paired CS/EN compiled JSON and
+  //      will be retired once every production deploy has exercised
+  //      the DB path.
   let externalBlueprint: ReturnType<typeof blueprintRecordToAgenda> | undefined;
-  if (input.blueprintId) {
-    try {
-      const blueprintRecord = await getBlueprintRepository().get(input.blueprintId);
-      if (blueprintRecord) {
-        externalBlueprint = blueprintRecordToAgenda(blueprintRecord);
-      }
-    } catch {
-      // Non-fatal: fall back to the legacy seed. The log will show the
-      // miss via the runtime alert emitted by the blueprint shape guard.
+  try {
+    const targetBlueprintId = input.blueprintId ?? "harness-lab-default";
+    const blueprintRecord = await getBlueprintRepository().get(targetBlueprintId);
+    if (blueprintRecord) {
+      externalBlueprint = blueprintRecordToAgenda(blueprintRecord);
     }
+  } catch {
+    // Non-fatal: fall back to the legacy seed path.
   }
 
   await instanceRepository.createInstance(nextInstance);
