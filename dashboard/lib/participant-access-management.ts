@@ -1,7 +1,6 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { getAuditLogRepository } from "./audit-log-repository";
 import {
-  decryptEventCodeForReveal,
   encryptEventCodeForReveal,
   isEventCodeRevealConfigured,
 } from "./event-code-reveal-crypto";
@@ -110,11 +109,7 @@ export function validateParticipantEventCode(value: string) {
   };
 }
 
-function resolveRecoverableCurrentCode(
-  codeHash: string,
-  sampleCode?: string | null,
-  codeCiphertext?: string | null,
-) {
+function resolveRecoverableCurrentCode(codeHash: string, sampleCode?: string | null) {
   if (sampleCode) {
     return {
       currentCode: sampleCode,
@@ -131,19 +126,6 @@ function resolveRecoverableCurrentCode(
       currentCode: configuredSeed.code,
       source: configuredSeed.isSample ? ("sample" as const) : ("bootstrap" as const),
     };
-  }
-
-  // Issued code with stored ciphertext: decrypt so the reveal chip can
-  // show it. Decrypt failures fall through to "issued / not revealable"
-  // — a tampered row should not leak a bogus plaintext.
-  if (codeCiphertext) {
-    const decrypted = decryptEventCodeForReveal(codeCiphertext);
-    if (decrypted) {
-      return {
-        currentCode: decrypted,
-        source: "issued" as const,
-      };
-    }
   }
 
   return {
@@ -167,11 +149,15 @@ export async function getFacilitatorParticipantAccessState(instanceId: string): 
     };
   }
 
-  const recoverable = resolveRecoverableCurrentCode(
-    access.codeHash,
-    access.sampleCode,
-    access.codeCiphertext,
-  );
+  const recoverable = resolveRecoverableCurrentCode(access.codeHash, access.sampleCode);
+
+  // canRevealCurrent is true when *either* the server still has the
+  // plaintext at hand (sample/bootstrap) *or* an AES-GCM ciphertext is
+  // present and the reveal key is configured. In the ciphertext case we
+  // deliberately do NOT decrypt here — the plaintext must not enter the
+  // SSR payload; the reveal chip pulls it via a dedicated server action.
+  const canRevealViaCiphertext =
+    Boolean(access.codeCiphertext) && isEventCodeRevealConfigured();
 
   return {
     instanceId,
@@ -180,7 +166,7 @@ export async function getFacilitatorParticipantAccessState(instanceId: string): 
     codeId: access.codeHash.slice(0, 12),
     expiresAt: access.expiresAt,
     currentCode: recoverable.currentCode,
-    canRevealCurrent: Boolean(recoverable.currentCode),
+    canRevealCurrent: Boolean(recoverable.currentCode) || canRevealViaCiphertext,
     source: recoverable.source,
   };
 }

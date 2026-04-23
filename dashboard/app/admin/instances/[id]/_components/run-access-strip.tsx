@@ -7,6 +7,7 @@ import {
   toggleWalkInsAction,
 } from "../_actions/access";
 import { AdminActionStateFields } from "./admin-action-state-fields";
+import { RunAccessRevealChip } from "./run-access-reveal-chip";
 
 type Copy = (typeof adminCopy)[UiLanguage];
 
@@ -41,9 +42,6 @@ export function RunAccessStrip({
   allowWalkIns: boolean;
 }) {
   const hasCode = participantAccess.active;
-  const revealedCode = participantAccess.canRevealCurrent
-    ? participantAccess.currentCode
-    : null;
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-[18px] border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
@@ -53,12 +51,13 @@ export function RunAccessStrip({
           {copy.participantAccessEyebrow}
         </span>
         {hasCode ? (
-          <span
-            className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-2.5 py-[3px] font-mono text-[12px] tracking-[0.14em] text-[var(--text-primary)]"
-            title={participantAccessExpiresValue}
-          >
-            {revealedCode ?? copy.participantAccessUnavailableValue}
-          </span>
+          <RunAccessRevealChip
+            copy={copy}
+            instanceId={instanceId}
+            canRevealCurrent={participantAccess.canRevealCurrent}
+            expiresTitle={participantAccessExpiresValue}
+            serverKnownCode={participantAccess.currentCode}
+          />
         ) : (
           <span className="text-[12px] text-[var(--text-muted)]">
             {copy.participantAccessStatusMissing}

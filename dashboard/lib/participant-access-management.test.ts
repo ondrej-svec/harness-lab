@@ -61,18 +61,19 @@ describe("participant-access-management", () => {
     expect(saved?.codeCiphertext).toMatch(/^v1:/);
   });
 
-  it("recovers the raw code via state so the reveal chip can display it", async () => {
+  it("gates canRevealCurrent on ciphertext + key without leaking plaintext into SSR state", async () => {
     process.env.HARNESS_EVENT_CODE_REVEAL_KEY = makeRevealKey();
     process.env.HARNESS_EVENT_CODE = "seed1-seed2-seed3";
 
     const mgmt = await import("./participant-access-management");
     const issued = await mgmt.issueParticipantEventAccess({}, "inst-b");
     expect(issued.ok).toBe(true);
-    if (!issued.ok) return;
 
     const state = await mgmt.getFacilitatorParticipantAccessState("inst-b");
-    expect(state.currentCode).toBe(issued.issuedCode);
     expect(state.canRevealCurrent).toBe(true);
+    // Plaintext must not ride along with SSR state — the reveal chip
+    // fetches it via its own server action.
+    expect(state.currentCode).toBeNull();
   });
 
   it("writes null ciphertext on issue when the reveal key is not configured", async () => {
