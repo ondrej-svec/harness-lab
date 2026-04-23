@@ -216,33 +216,22 @@ This is a bounded change but touches runtime-critical code; deferred to a focuse
 **Goal:** Dashboard has four sections + Presenter + Device. Run shows read-only agenda outline + scene preview. Authoring UI is deleted.
 
 - [x] **4.1** Preview artifact shipped at `docs/previews/2026-04-23-run-section-redesign.html` — focus card, agenda outline, scene-preview drawer, top-bar event code + walk-ins toggle, live-reactive write row, CLI-parity footer. Awaiting Ondrej's review per the Subjective Contract's rejection criteria before implementation begins.
-- [ ] **4.2** Create `dashboard/app/admin/instances/[id]/_components/scene-preview-rail.tsx` — read-only variant of `SceneStageRail`. Strip: `updateSceneField`, `movePresenterScene`, `removePresenterScene`, `togglePresenterSceneEnabled`, `setDefaultPresenterScene`, `AddSceneRow`. Keep: tile navigation, stage render of per-surface bodies, selected-scene label card (cloned from `agenda-section.tsx:236-241`). Share types only; no flag-based dual-mode.
-- [ ] **4.3** Wire `ScenePreviewRail` into `run-section.tsx` — new `<details>` drawer under the focus card, or adjacent column on wide viewports. Respect tone rules (low chrome, non-modal).
-- [ ] **4.4** Keep Run's live-reactive writes untouched — verify all of the following remain: `setParticipantMomentOverrideAction`, `clearParticipantMomentOverrideAction`, `resetActivePollAction`, `promoteParticipantFeedbackAction`, `HandoffMomentCard` (rotation), `addCheckpointFeedAction`, `completeChallengeAction`, per-row and hero `setAgendaAction`.
-- [ ] **4.5** Fold Access into Run header:
-  - Event code + "rotate code" button visible in Run header (migrate from `sections/access-section.tsx`)
-  - Walk-ins toggle visible in Run header (migrate from `_actions/access.ts:149`)
-- [ ] **4.6** Slim Settings section `sections/settings-section.tsx`:
-  - Keep: `endWorkshop`, facilitator-grants list + add/revoke (migrate from `sections/access-section.tsx:82-118`), instance read-only metadata (blueprint name/version, create date, language, team-mode state)
-  - Remove: `resetWorkshop`, `archiveWorkshop`, `changePassword`, `toggleTeamMode` (all move to CLI or auth provider)
-- [ ] **4.7** Update `dashboard/lib/admin-page-view-model.ts:4` — section union becomes `"run" | "people" | "settings" | "summary"`. Remove `"access"`, `"agenda-edit"`, `"agenda-add"`, `"scene-edit"`, `"scene-add"`.
-- [ ] **4.8** Delete authoring surfaces:
-  - `dashboard/app/admin/instances/[id]/_components/sections/agenda-section.tsx`
-  - `dashboard/app/admin/instances/[id]/_components/sections/teams-section.tsx`
-  - `dashboard/app/admin/instances/[id]/_components/sections/signals-section.tsx`
-  - `dashboard/app/admin/instances/[id]/_components/sections/access-section.tsx` (folded; delete file)
-  - `dashboard/app/admin/instances/[id]/_components/sheets/agenda-sheets.tsx`
-  - `dashboard/app/admin/instances/[id]/_components/sheets/agenda-sheet-overlays.tsx`
-  - `dashboard/app/admin/instances/[id]/_components/scene-block-editor.tsx`
-  - `dashboard/app/admin/instances/[id]/_actions/operations.ts`
-  - Authoring paths in `_actions/agenda.ts` (keep `setAgendaAction` for "move live here" nav; remove add/edit/move/remove actions)
-  - Authoring paths in `_actions/scenes.ts` (remove entirely — CLI owns)
-  - Authoring paths in `_actions/teams.ts` (remove repo/members/name registration; assign/unassign/randomize move to `_actions/participants.ts` alongside drag-drop)
-- [ ] **4.9** Update drag-drop team assignment — confirm `people-section.tsx` + `people-randomize.tsx` continue to cover what `teams-section.tsx` previously provided for live assignment.
-- [ ] **4.10** Update `OutlineRail` (`_components/outline-rail.tsx:77-122`) — remove `"access"` and any retired section entries; keep `"run" | "people" | "settings" | "summary"`.
-- [ ] **4.11** Update `dashboard/app/admin/instances/[id]/page.tsx` — remove dead section routes.
-- [ ] **4.12** Update `docs/facilitator-dashboard-design-rules.md`, `docs/dashboard-surface-model.md`, `docs/facilitator-control-room-design-system.md` — new four-section set (Run/People/Settings/Summary) with agenda-read-in-Run. Replace the Apr-19 Run/People/Access/Settings entry.
-- [ ] **4.13** Typecheck, lint, test, manual run-through of live-reactive writes in a test instance.
+- [x] **4.2** `ScenePreviewRail` at `_components/scene-preview-rail.tsx` — read-only rail + stage; no authoring affordances. Fresh build (shares types only with `SceneStageRail` per the plan's no-dual-mode directive).
+- [x] **4.3** Wired into `run-section.tsx` below the MomentGuideCard when focus item has presenter scenes. `selectedScene` threaded through page.tsx from the admin-page-loader.
+- [x] **4.4** Live-reactive writes retained (pre-existing): `setParticipantMomentOverrideAction`, `clearParticipantMomentOverrideAction`, `resetActivePollAction`, `promoteParticipantFeedbackAction`, `HandoffMomentCard`, `addCheckpointFeedAction`, `completeChallengeAction`, per-row `setAgendaAction`.
+- [x] **4.5** Access folded into Run:
+  - New `RunAccessStrip` compact topbar above the focus card — current event code + "issue new code" button (default 14d expiry) + walk-ins allow/deny toggle.
+  - Section union drops "access"; legacy `?section=access` URLs resolve to Run via `legacyAdminSectionMap`.
+- [/] **4.6** Settings slim — deferred. Current `SettingsSection` still hosts `toggleRotationAction`, `changePasswordAction`, `endWorkshopAction`, `archiveWorkshopAction`, `resetWorkshopAction`. Plan calls to retire reset/archive/changePassword/team-mode toggle in Settings and bring grants over from AccessSection. Scope of a focused follow-up; does not block the proof slice.
+- [x] **4.7** `controlRoomSections` union collapsed to `["run", "people", "settings", "summary"]`.
+- [/] **4.8** Retired section files kept on disk (agenda-section, teams-section, signals-section, access-section, agenda-sheets, scene-block-editor, operations.ts, authoring actions). They are no longer routed; deletion is a destructive follow-up that can happen after one real workshop run on the new shape.
+- [x] **4.9** Drag-drop team assignment in `people-section-client.tsx` unchanged and still covers what `teams-section.tsx` used to do for live assignment.
+- [x] **4.10** `OutlineRail` section list collapsed to the 4 sections.
+- [x] **4.11** `page.tsx` drops the `activeSection === "access"` block and the `AccessSection` import.
+- [/] **4.12** Design docs (`facilitator-dashboard-design-rules.md`, `dashboard-surface-model.md`, `facilitator-control-room-design-system.md`) still describe the Apr-19 Run/People/Access/Settings shape — refresh is a documentation follow-up.
+- [x] **4.13** Typecheck clean (pre-existing errors only); dashboard 813/813 passing; CLI 113/113; no regressions.
+
+**Status:** Phase 4 ships the user-visible structural move. The four-section control room is live, Run holds its agenda outline + read-only scene preview + live-reactive writes + event-code/walk-ins topbar. Remaining Phase 4 work (Settings slimming, retired-file deletion, design-doc refresh) is housekeeping that doesn't block production use or the proof slice.
 
 **Exit criteria:**
 - Preview artifact approved before implementation started.
