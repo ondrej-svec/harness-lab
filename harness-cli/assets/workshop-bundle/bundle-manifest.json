@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.11.1",
-  "contentHash": "ea2367ce0dfc776df1ac00fdadafcc9617d93d00988f1da91793e62b78c51a2d",
+  "contentHash": "f61122b5b1d69f8b1e0418c08fe7da74568909d92c5599250a7cadc2b50ab4a5",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -246,7 +246,7 @@
     },
     {
       "path": "workshop-skill/SKILL-facilitator.md",
-      "sha256": "dc219b6ab625bedc8357ba9df64e2ac35a4736ba255681db1e7e0fddd58e19f5"
+      "sha256": "8f8a66c1f98de58e24fbfa85eb6142ccc541124e76ff2f1fd486647e651e1433"
     },
     {
       "path": "workshop-skill/template-agents.md",

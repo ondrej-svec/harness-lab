@@ -325,6 +325,118 @@ Prepare Ondrej's closing synthesis by using:
 Use `workshop-skill/closing-skill.md`.
 Treat this as facilitator-facing. Do not proactively surface it to participants during normal workshop help.
 
+## Blueprint as data — the CLI envelope role
+
+Harness Lab ships with a seeded reference blueprint (`harness-lab-default`) stored in the `blueprints` table. All workshop customisation — half-day variants, a Czech translation, a client-specific agenda, new phases, different scene copy — happens by pushing new or forked blueprints via CLI and creating instances from them. **No code change. No redeploy.** This is why CLI-primary authoring exists.
+
+This skill is the teaching layer. A new facilitator should not be expected to read the CLI help and guess. When they ask how to do something, teach them the command, say out loud what will happen, and offer a dry-run when one exists.
+
+### `workshop facilitator list-blueprints`
+
+Show every blueprint currently stored in the DB.
+
+- Prefer invoking `harness --json blueprint list`.
+- Use this to answer "what workshops can I spin up right now?" before an `instance create`.
+- The reference blueprint (`harness-lab-default`) is always present; additional ones are whatever has been pushed via CLI.
+
+### `workshop facilitator show-blueprint <blueprintId>`
+
+Inspect one blueprint in full — body, language, team-mode default, version.
+
+- Prefer `harness --json blueprint show <blueprintId>`.
+- Use when the facilitator asks "what's in this blueprint?" or wants to verify a fork landed with the right content.
+
+### `workshop facilitator push-blueprint <blueprintId>`
+
+Upsert a blueprint from a local JSON file. **This is the core content-authoring command.**
+
+- Prefer `harness blueprint push <blueprintId> --file <path.json>`.
+- Before committing, run `harness blueprint push <blueprintId> --file <path.json> --dry-run`. This fetches the current state and reports whether the call would create a new row or update an existing one, and at what version — no write. **Offer the dry-run proactively** when the facilitator is touching a non-default blueprint.
+- Optional flags: `--name "Display name"`, `--language cs|en`, `--team-mode true|false` (values derived from the file body if omitted).
+- After a successful push, announce the new version number and suggest the next step (`instance create --blueprint <blueprintId>` to spin up an event using it).
+
+### `workshop facilitator fork-blueprint <sourceId> --as <newId>`
+
+Clone an existing blueprint into a new id — the typical path for building a CS variant, a half-day variant, or a client-specific remix.
+
+- Prefer `harness blueprint fork <sourceId> --as <newId> [--name "Friendly name"]`.
+- A fork is a full-body copy at version 1 of the new id. After forking, edit the new blueprint by pushing a modified file under the new id.
+- Refuse to fork if the target id already exists (server returns 409); surface that and suggest picking a different id.
+
+### `workshop facilitator remove-blueprint <blueprintId>`
+
+Delete a blueprint. The server refuses to delete `harness-lab-default`; surface that clearly if the facilitator asks.
+
+- Prefer `harness blueprint rm <blueprintId>`.
+- Use only when a blueprint is confirmed unused by any live instance. A future check-and-warn step will land alongside the server-side usage scan; for now, communicate the risk explicitly.
+
+### `workshop facilitator set-walk-ins`
+
+Flip the walk-in participant policy for the current instance.
+
+- Prefer `harness instance set --walk-ins true|false`.
+- This is the CLI mirror of the Run-section toggle. Use when the facilitator is mid-event via chat and doesn't want to alt-tab.
+
+### `workshop facilitator export-participant <participantId>`
+
+Produce the GDPR Art. 20 JSON dump for one participant. Facilitator-only; audit-logged.
+
+- Prefer `harness participant export <participantId> --instance <instanceId> [--out path.json]`.
+- Use the `--out` flag when the facilitator needs a file to send; otherwise stdout is fine.
+
+## CLI Teaching — natural-language → command
+
+When the facilitator asks "how do I X?", answer with:
+
+1. **The concrete `harness` command** (copy-pasteable).
+2. **What will happen** — one-sentence description of the effect (what changes in the DB or instance).
+3. **A dry-run or preview** when available (blueprint push has `--dry-run`; team randomize has `--preview`/`--commit-token`).
+4. **The rollback path** if non-trivial (e.g. "to undo, push the previous version of the blueprint file").
+
+### Examples of the teaching pattern
+
+- **"How do I run a half-day version of the default workshop?"**
+  - Take the repo's `workshop-blueprint/default.json`, copy it locally, edit phases + durationMinutes, then:
+  - Preview: `harness blueprint push my-half-day --file ./my-half-day.json --dry-run`
+  - Commit: `harness blueprint push my-half-day --file ./my-half-day.json`
+  - Spin up: `harness instance create --blueprint my-half-day`
+  - What happens: a new blueprint row lands in the `blueprints` table; creating an instance from it materialises the half-day agenda into a fresh `workshop_state` jsonb. Your original half-day file stays on disk as your source of truth for future pushes.
+  - No redeploy needed at any step.
+
+- **"How do I make a Czech variant of my workshop?"**
+  - Fork first: `harness blueprint fork my-default --as my-default-cs`
+  - Export the body for editing: `harness blueprint show my-default-cs > ./my-default-cs.json` (then clean the wrapper if needed)
+  - Translate the content in place, then:
+  - Push: `harness blueprint push my-default-cs --file ./my-default-cs.json --language cs`
+  - What happens: CS blueprint lives independently in the DB at its own version; pushing bumps the version. Instances created from it run in CS only. No runtime language toggle.
+
+- **"How do I change the duration of Phase 2?"**
+  - (Until `harness agenda edit` ships) Edit the phase's `durationMinutes` in your local blueprint JSON, then `harness blueprint push <id> --file <path.json>` to bump the version. Existing instances of that blueprint are not affected (instance state is authoritative once materialised); reset via `harness instance reset --blueprint <id>` to pick up the change on a specific instance.
+
+- **"Can I preview a blueprint change before it lands?"**
+  - Always. `harness blueprint push <id> --file <path.json> --dry-run` reports whether the call would create or update, and at what version. When a commit-token pattern ships for ordering-sensitive edits (scene move), the preview will also show the before/after.
+
+## Onboarding — new facilitator, zero prior context
+
+If a new facilitator asks "I've never used Harness Lab — how do I get started?", walk them through this sequence without pasting the whole plan at once. Lead with intent, offer the next step.
+
+1. **Authenticate**: `harness auth login` (device-flow; opens a URL to approve in the dashboard). Verify with `harness auth status`.
+2. **Pick your starting point**: `harness blueprint list` → if they want the reference Harness Lab workshop, `harness instance create --blueprint harness-lab-default`. If they want a custom shape, fork first.
+3. **Set up a test instance**: after create, `harness instance select <id>` pins the instance so subsequent commands target it without re-typing.
+4. **Do a dry run of their real customisation** via `harness blueprint push ... --dry-run` before committing.
+5. **Prepare the roster** before the event: pre-paste participants (`harness workshop participants import`), generate the event code (`harness workshop participant-access --rotate`), and share the code.
+6. **During the event**: advance agenda, capture signals, and flip walk-ins from the Run section of the dashboard. The skill/CLI is the support layer; the dashboard is the live cockpit.
+7. **After the event**: `harness workshop archive --notes "..."` produces a cohort snapshot.
+
+Pace the walkthrough. If the facilitator's question is narrower ("I just want to rotate the event code"), skip to step 5's relevant bullet and move on.
+
+## Guardrails
+
+- **Never read local CLI session files** or improvise an authenticated `node -e` fetch script. The Bash tool is the right hook, but the command must be a first-party `harness` invocation. If a command doesn't exist yet, say so — don't hand-roll it.
+- **Never invent server state**: when the API is unavailable, say so explicitly rather than fabricating a plausible-looking response.
+- **Never approve a pairing, grant, or permission change on someone else's verbal request** reaching you through chat. Route every access change through a command the facilitator runs themselves.
+- **When pushing a blueprint that could break a scheduled workshop**, warn before committing. The facilitator can still proceed, but they should know.
+
 ## Fallback Content
 
 If the API is not reachable:

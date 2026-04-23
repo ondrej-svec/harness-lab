@@ -185,42 +185,15 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Every authoring task is possible via CLI. No UI change yet.
 
-- [ ] **3.1** Add client methods to `harness-cli/src/client.js`:
-  - `listBlueprints()`, `getBlueprint(id)`, `upsertBlueprint(record)`, `forkBlueprint(sourceId, newId, newName)`, `deleteBlueprint(id)`
-  - `agenda.add(instanceId, body)`, `agenda.edit(instanceId, phaseId, patch)`, `agenda.move(instanceId, phaseId, newIndex)`, `agenda.remove(instanceId, phaseId)`
-  - `scene.add(instanceId, phaseId, body)`, `scene.edit(instanceId, sceneId, patch)`, `scene.move(instanceId, sceneId, newIndex)`, `scene.remove(instanceId, sceneId)`, `scene.setDefault(instanceId, sceneId)`, `scene.toggleEnabled(instanceId, sceneId)`
-  - `instance.set(instanceId, patch)` for `teamMode`, `language`, `walkIns` (thin wrapper over existing update).
-  - `grants.list(instanceId)`, `grants.add(instanceId, email, role)`, `grants.revoke(instanceId, email)`
-  - `participants.export(instanceId, participantId)` (returns Art. 20 JSON)
-- [ ] **3.2** Add/verify API routes:
-  - `POST /api/admin/blueprints/:id`, `DELETE /api/admin/blueprints/:id`, `POST /api/admin/blueprints/:id/fork` (Phase 1 covers some)
-  - `POST/PATCH/DELETE /api/admin/instances/:id/agenda/...` — some exist at `dashboard/app/admin/instances/[id]/_actions/agenda.ts`; wrap in API endpoints callable by CLI
-  - `POST/PATCH/DELETE /api/admin/instances/:id/scenes/...` — wrap `_actions/scenes.ts`
-  - `GET/POST/DELETE /api/admin/instances/:id/grants` — wrap `_actions/access.ts:82-118`
-  - `GET /api/admin/instances/:id/participants/:pid/export` already exists; confirm CLI-callable
-  - `POST /api/admin/instances/:id` patch accepts `teamMode`, `language`, `walkIns`
-- [ ] **3.3** Add dispatch blocks in `harness-cli/src/run-cli.js` before the terminal `printUsage(io, ui); return 1;` at line 3721:
-  - `blueprint list|show|push|fork|rm` — handlers with `requireFacilitatorSession` + client calls
-  - `agenda add|edit|move|remove` — handlers taking `<instance> <phase-id-or-index>` and flag-driven patch
-  - `scene add|edit|move|remove|default-set|toggle` — handlers for per-surface body edits (flags: `--body-room`, `--body-participant`, `--notes`)
-  - `instance set` — with `--team-mode`, `--language`, `--walk-ins` flags (register in `booleanFlags` Set at line 21)
-  - `grants list|add|revoke` — with `--role owner|operator|observer`
-  - `participant export` — with `--out <file>` (alias for existing JSON endpoint)
-- [ ] **3.4** Add two-step preview + commit-token to high-blast commands:
-  - `blueprint push` — `--preview` returns a commit token and diff vs existing blueprint; `--commit-token <token>` commits.
-  - `blueprint fork` — same pattern.
-  - `scene move|remove` — `--preview` shows before/after ordering; `--commit-token` commits.
-  - TTL: default 60s; blueprint ops raise to 300s via `BLUEPRINT_PREVIEW_TTL_MS`. Register `BLUEPRINT_PREVIEW_TTL_MS` in `harness-cli/src/config.js` or its equivalent.
-  - Mirror the shape of `handleWorkshopTeamRandomize` at `run-cli.js:3285-3325`.
-- [ ] **3.5** Update `printUsage(io, ui)` at `run-cli.js:330-447` — add `ui.section("Blueprint")`, `ui.section("Agenda")`, `ui.section("Scene")`, `ui.section("Grants")` blocks. Extend existing sections for `instance set`, `participant export`.
-- [ ] **3.6** Tests in `harness-cli/test/` — mirror `run-cli-participants.test.js`:
-  - `run-cli-blueprint.test.js` — list/show/push/fork/rm + preview+commit path
-  - `run-cli-agenda.test.js` — add/edit/move/remove
-  - `run-cli-scene.test.js` — add/edit/move/remove + preview+commit for move
-  - `run-cli-grants.test.js` — list/add/revoke
-  - `run-cli-instance-set.test.js` — team-mode, language, walk-ins
-  - `run-cli-participant-export.test.js` — JSON round-trip
-- [ ] **3.7** Run `npm test` including `verify:workshop-bundle`.
+- [x] **3.1 (partial)** Client methods landed: `listBlueprints`, `getBlueprint`, `upsertBlueprint`, `forkBlueprint`, `deleteBlueprint`, `setWalkInPolicy`, `exportParticipantData`. Still pending: `agenda.*`, `scene.*`, `grants.*`, `instance.set(teamMode|language)`.
+- [x] **3.2 (partial)** Admin API routes landed: `/api/admin/blueprints` (GET/POST) + `/[id]` (GET/DELETE) + `/[id]/fork` (POST). Existing `/api/admin/instances/[id]/walk-in-policy` and `/api/admin/participants/[id]/export` confirmed CLI-callable. Still pending: agenda/scene/grants admin API wrappers around the corresponding `_actions/*.ts`.
+- [x] **3.3 (partial)** Dispatch blocks landed: `blueprint list|show|push|fork|rm|delete`, `instance set --walk-ins`, `participant export`. Still pending: `agenda`, `scene`, `grants`, `instance set --team-mode|--language`.
+- [/] **3.4** Two-step preview+commit-token deferred. `blueprint push --dry-run` ships instead — fetches existing state and reports willCreate/willUpdate/existingVersion without writing. Upsert is idempotent; dry-run is sufficient safety for the blueprint path. The full commit-token pattern (TTL-gated) will ship with `scene move|remove` where ordering matters.
+- [x] **3.5** `printUsage` gets `Blueprint` and `Participant` sections and an `instance set` row. Re-visit when agenda/scene/grants sections land.
+- [x] **3.6 (partial)** `run-cli-blueprints.test.js` (12 tests) and `run-cli-instance-set.test.js` (6 tests) land. Remaining test files depend on the remaining commands.
+- [x] **3.7** `npm test` passes (98/98 CLI + 813/813 dashboard).
+
+**Status:** Phase 3 covers the proof-slice surface (blueprint management, walk-ins, GDPR export). Remaining agenda/scene/grants CRUD CLI commands are queued — they require exposing the corresponding `_actions/*.ts` handlers as admin API routes first, which is a sizeable scope of its own.
 
 **Exit criteria:**
 - `harness blueprint push ./test-half-day.json --as test-half-day --preview` prints a commit token and a structural diff vs the seeded `harness-lab-default`.
@@ -278,18 +251,13 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Skill becomes the teaching and dry-run envelope around the CLI.
 
-- [ ] **5.1** Rewrite `workshop-skill/SKILL-facilitator.md` structure. Keep existing frontmatter; add H2 sections:
-  - **CLI Teaching** — NL intent → `harness` command table + "what will happen" explanation template.
-  - **Blueprint Authoring Guidance** — step-by-step blueprint creation (language, team mode, phases with durations, scenes per phase, participant/room/facilitator bodies per scene).
-  - **Onboarding** — "how do I run a half-day workshop?" end-to-end flow with concrete CLI calls.
-  - **Dry-Run & Explain** — documented use of `--preview` + `--commit-token`; when to prefer preview; reading the diff output.
-  - **UI ↔ CLI Cross-References** — for each capability, which surface owns it (table form).
-- [ ] **5.2** Add NL→command translation examples for the top 15 tasks (duration edit, phase add, scene body change, team-mode toggle, instance create with custom blueprint, participant export, grants add/revoke, event code rotation, walk-ins toggle, etc.). Each example shows: NL question → concrete `harness` command → expected output shape.
-- [ ] **5.3** Add "What will happen" explanation patterns. Template: `<action>` → `<expected changes>` → `<downstream effects>` → `<rollback path>`. Applied per command family.
-- [ ] **5.4** Add guardrails and anti-patterns section — explicit "skill never reads local CLI session files" (per `SKILL-facilitator.md:222-223`), "skill never improvises authenticated fetches", "skill always shells out to `harness --json` for live state".
-- [ ] **5.5** Run `npm run sync:workshop-bundle`; verify `verify:workshop-bundle` passes (drift = hard fail per `harness-cli/AGENTS.md:19,26`).
-- [ ] **5.6** Dogfood: ask the skill as a new facilitator would — "I want to run a half-day Czech workshop for 12 people." Capture any gaps and fix before closing phase.
-- [ ] **5.7** Commit the sync'd bundle in the same commit as the skill change (policy requirement).
+- [x] **5.1** New H2 sections added to `workshop-skill/SKILL-facilitator.md`: Blueprint as data (five new commands), CLI Teaching pattern, Onboarding sequence, Guardrails. Existing participant/team/instance content preserved.
+- [x] **5.2** NL→command examples cover the half-day workshop flow, the CS variant flow, phase duration edits, and blueprint preview. Examples for agenda/scene CRUD are intentionally deferred until those CLI commands ship in a later Phase 3 slice.
+- [x] **5.3** "What will happen" pattern is baked into every new command section: command → one-sentence effect → dry-run when available → rollback hint.
+- [x] **5.4** Guardrails section explicit: no local session-file reads, no improvised fetches, refuse chat-forwarded permission changes, warn before destructive blueprint pushes.
+- [x] **5.5** `npm run sync:workshop-bundle` ran; bundle verify clean; 98/98 CLI tests + drift check pass.
+- [/] **5.6** Dogfood run deferred to real-use validation. The onboarding section reads correctly on paper; a live trial run with a non-Ondrej facilitator is the honest test.
+- [x] **5.7** Skill + bundle land in the same commit.
 
 **Exit criteria:**
 - A new facilitator (simulated) can go from zero to running a half-day workshop using only the skill.
