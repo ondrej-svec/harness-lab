@@ -1,6 +1,11 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { getAuditLogRepository } from "./audit-log-repository";
 import {
+  decryptEventCodeForReveal,
+  encryptEventCodeForReveal,
+  isEventCodeRevealConfigured,
+} from "./event-code-reveal-crypto";
+import {
   getConfiguredSeedEventCode,
   getParticipantEventAccessRepository,
   hashEventCode,
@@ -105,7 +110,11 @@ export function validateParticipantEventCode(value: string) {
   };
 }
 
-function resolveRecoverableCurrentCode(codeHash: string, sampleCode?: string | null) {
+function resolveRecoverableCurrentCode(
+  codeHash: string,
+  sampleCode?: string | null,
+  codeCiphertext?: string | null,
+) {
   if (sampleCode) {
     return {
       currentCode: sampleCode,
@@ -122,6 +131,19 @@ function resolveRecoverableCurrentCode(codeHash: string, sampleCode?: string | n
       currentCode: configuredSeed.code,
       source: configuredSeed.isSample ? ("sample" as const) : ("bootstrap" as const),
     };
+  }
+
+  // Issued code with stored ciphertext: decrypt so the reveal chip can
+  // show it. Decrypt failures fall through to "issued / not revealable"
+  // — a tampered row should not leak a bogus plaintext.
+  if (codeCiphertext) {
+    const decrypted = decryptEventCodeForReveal(codeCiphertext);
+    if (decrypted) {
+      return {
+        currentCode: decrypted,
+        source: "issued" as const,
+      };
+    }
   }
 
   return {
@@ -145,7 +167,11 @@ export async function getFacilitatorParticipantAccessState(instanceId: string): 
     };
   }
 
-  const recoverable = resolveRecoverableCurrentCode(access.codeHash, access.sampleCode);
+  const recoverable = resolveRecoverableCurrentCode(
+    access.codeHash,
+    access.sampleCode,
+    access.codeCiphertext,
+  );
 
   return {
     instanceId,
@@ -188,6 +214,9 @@ export async function issueParticipantEventAccess(
     instanceId,
     version: (current?.version ?? 0) + 1,
     codeHash: hashEventCode(nextCode.value),
+    codeCiphertext: isEventCodeRevealConfigured()
+      ? encryptEventCodeForReveal(nextCode.value)
+      : null,
     expiresAt: options.expiresAt ?? buildDefaultParticipantAccessExpiry(),
     revokedAt: null,
     sampleCode: null,
