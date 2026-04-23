@@ -248,11 +248,11 @@ Facilitator lifecycle commands are intentionally CLI-first:
 
 Local blueprint override:
 
-- `harness instance reset --from-local` reads the generated local blueprint from `dashboard/lib/generated/agenda-{lang}.json`
 - `harness instance reset --blueprint-file <path>` reads an explicit local agenda pack JSON file and sends it to the reset API directly
 - use `--blueprint-file` for one-off workshop variants that should stay local and git-ignored rather than mutating the tracked blueprint
 - `harness instance sync-local --blueprint-file <path>` patches matching agenda items and presenter scenes through the protected `agenda` / `scenes` APIs instead of relying on reset semantics
 - use `sync-local` when you want an existing instance to pick up local-only content edits without resetting the whole instance
+- the historical `--from-local` shortcut (which read from `dashboard/lib/generated/agenda-{lang}.json`) was retired in the 2026-04-23 topbar-cleanup plan, Part B — those runtime-view JSONs are no longer emitted. Pass `--blueprint-file` instead, or push the blueprint via `harness blueprint put` (DB path)
 
 Environment variables:
 

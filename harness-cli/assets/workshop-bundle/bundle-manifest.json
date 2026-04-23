@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.11.1",
-  "contentHash": "914815f12fdccdd8b9626c7164d56a131e51400693e6fbddd4c84cb9fb4a9ee6",
+  "contentHash": "c34dff40d224372d61d9ccf8d3197270eb4662c29d431f720862a0c44afc248e",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -198,7 +198,7 @@
     },
     {
       "path": "workshop-blueprint/README.md",
-      "sha256": "22dc35a0a1b8539b32b9c4f1ab2d6c095095a1e48078851e34d7f629e432b4fe"
+      "sha256": "894c691f01df8b4bfe342396424112c6e36e06c00fdef102d7a992d02a5c016f"
     },
     {
       "path": "workshop-blueprint/teaching-spine.md",
@@ -222,7 +222,7 @@
     },
     {
       "path": "workshop-skill/facilitator.md",
-      "sha256": "e66fc2840ffcde6f6b1b46c033acef86170813d8b5d8e782e302e829f239fa52"
+      "sha256": "3d0ffb46b6cccbfb64530fa3e531c7cecdda55f2552d822ccdab57ee7c963ace"
     },
     {
       "path": "workshop-skill/follow-up-package.md",

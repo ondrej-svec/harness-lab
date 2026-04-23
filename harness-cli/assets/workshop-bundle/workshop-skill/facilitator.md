@@ -410,13 +410,13 @@ Preferred path:
 harness instance reset sample-workshop-demo-orbit --template-id blueprint-default
 ```
 
-To reset from local blueprint files without waiting for a deployment:
+To reset from a local blueprint file without waiting for a deployment:
 
 ```bash
-harness instance reset sample-workshop-demo-orbit --from-local
+harness instance reset sample-workshop-demo-orbit --blueprint-file path/to/agenda.json
 ```
 
-The `--from-local` flag reads the generated blueprint from `dashboard/lib/generated/agenda-{lang}.json` on disk and sends it directly to the server. This is useful when workshop content has changed locally (e.g. after editing `workshop-content/agenda.json` and running `bun scripts/content/generate-views.ts`) but the dashboard has not been redeployed yet.
+`--blueprint-file` reads any local agenda JSON (same shape as the public `workshop-blueprint/agenda.json`) and sends it directly to the server. Useful when workshop content has changed locally but the dashboard has not been redeployed yet. The bare `--from-local` shortcut was retired in the 2026-04-23 topbar-cleanup plan — the paired `dashboard/lib/generated/agenda-{lang}.json` runtime views no longer ship.
 
 Raw API reference:
 

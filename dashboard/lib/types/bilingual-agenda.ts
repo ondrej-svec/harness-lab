@@ -3,8 +3,10 @@
  *
  * Single source of truth for structured workshop content.
  * English is canonical; Czech is a reviewed adaptation.
- * Generated views (agenda-cs.json, agenda-en.json) are emitted
- * by scripts/content/generate-views.ts — never hand-edited.
+ * The dashboard materialises per-language/mode views on demand via
+ * `generateAgendaView` in `dashboard/lib/content-views/agenda-view.ts`.
+ * The public mirror `workshop-blueprint/agenda.json` is still emitted
+ * by `scripts/content/generate-views.ts` — never hand-edited.
  */
 
 // ---------------------------------------------------------------------------

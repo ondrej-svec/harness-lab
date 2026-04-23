@@ -202,29 +202,19 @@ async function readLocalBlueprint(io, ui, flags) {
     }
   }
 
-  const contentLang = readStringFlag(flags, "content-lang", "content-language") ?? "cs";
-  const langFile = contentLang === "en" ? "agenda-en.json" : "agenda-cs.json";
-
-  const repoRoot = await findRepoRoot(process.cwd());
-  if (!repoRoot) {
-    ui.status("error", "Cannot find repo root (no workshop-content/agenda.json found above cwd).", { stream: "stderr" });
-    return null;
-  }
-
-  const generatedPath = path.join(repoRoot, "dashboard", "lib", "generated", langFile);
-  try {
-    const raw = await fs.readFile(generatedPath, "utf-8");
-    const blueprint = JSON.parse(raw);
-    ui.status("ok", `Loaded local blueprint from ${path.relative(process.cwd(), generatedPath)} (${blueprint.phases?.length ?? "?"} phases)`);
-    return blueprint;
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      ui.status("error", `Local blueprint not found at ${generatedPath}. Run: bun scripts/content/generate-views.ts`, { stream: "stderr" });
-    } else {
-      ui.status("error", `Failed to read local blueprint: ${error.message}`, { stream: "stderr" });
-    }
-    return null;
-  }
+  // The paired `dashboard/lib/generated/agenda-{lang}.json` runtime
+  // views were retired in the 2026-04-23 topbar-cleanup plan, Part B —
+  // the dashboard now materialises them on demand from
+  // `workshop-content/agenda.json`. For local-file blueprint pushes
+  // from the CLI, point --blueprint-file at a concrete file (the
+  // public mirror `workshop-blueprint/agenda.json` is EN-only; for CS
+  // you need to generate a view yourself or push via the DB).
+  ui.status(
+    "error",
+    "--from-local without --blueprint-file is no longer supported (the paired dashboard/lib/generated/agenda-*.json files were retired). Use --blueprint-file PATH, or push the blueprint via `harness blueprint put`.",
+    { stream: "stderr" },
+  );
+  return null;
 }
 
 function readStringArrayFlag(flags, ...keys) {
@@ -423,7 +413,7 @@ function printUsage(io, ui) {
     helpLine("instance current", "Show the locally selected instance"),
     helpLine("instance update [<id>]", "Update event metadata"),
     helpLine("instance reset [<id>] [--template-id ID]", "Reset from the blueprint"),
-    helpLine("  [--from-local] [--blueprint-file PATH]", "Use a local blueprint (no deploy needed)"),
+    helpLine("  [--blueprint-file PATH]", "Use a local blueprint file (no deploy needed)"),
     helpLine("instance sync-local [<id>] [--blueprint-file PATH]", "Patch instance agenda/scenes from a local blueprint"),
     helpLine("  [--phase-ids ID1,ID2] [--scene-ids ID1,ID2]", ""),
     helpLine("  [--agenda-only | --scenes-only]", ""),

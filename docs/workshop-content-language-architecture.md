@@ -81,13 +81,12 @@ The single bilingual source for structured workshop content is:
 
 Generated views (never hand-edited):
 
-- `dashboard/lib/generated/agenda-cs.json` — Czech-only runtime view
-- `dashboard/lib/generated/agenda-en.json` — English-only runtime view
-- `workshop-blueprint/agenda.json` — public-readable English blueprint
+- `workshop-blueprint/agenda.json` — public-readable English blueprint (committed, one of the outputs of `npm run generate:content`)
+- `dashboard/lib/generated/reference-{cs,en}.json` — reference-catalog runtime views
 
 To regenerate: `npm run generate:content`. To verify committed views match source: `npm run verify:content`.
 
-The dashboard imports the generated views directly — no overlay-merge at runtime. The `contentLang` resolution picks which generated JSON to load.
+The paired agenda runtime views (`dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json`) were retired in the 2026-04-23 topbar-cleanup plan, Part B. The dashboard now materialises each language/mode view on demand via `generateAgendaView` in `dashboard/lib/content-views/agenda-view.ts`, reading `workshop-content/agenda.json` directly. Production instances resolve their blueprint from the DB via `BlueprintRepository` (see `dashboard/lib/blueprint-repository.ts`); the live transform is only reached on internal seed/fallback paths.
 
 ## Delivery Rule
 

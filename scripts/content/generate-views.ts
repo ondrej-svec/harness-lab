@@ -325,10 +325,11 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const csView = generateAgendaView(source, "cs", "facilitator");
-const enView = generateAgendaView(source, "en", "facilitator");
-const csParticipantView = generateAgendaView(source, "cs", "participant");
-const enParticipantView = generateAgendaView(source, "en", "participant");
+// The four committed `dashboard/lib/generated/agenda-*.json` views
+// were retired in the 2026-04-23 topbar-cleanup plan (Part B); the
+// dashboard now materialises views on demand via `generateAgendaView`
+// over the bilingual source. The public-mirror `workshop-blueprint/agenda.json`
+// and the `reference-{cs,en}.json` runtime views still ship.
 const publicBlueprint = generatePublicBlueprint(source);
 const csReferenceView = generateReferenceView(referenceSource, "cs");
 const enReferenceView = generateReferenceView(referenceSource, "en");
@@ -337,35 +338,19 @@ if (isVerify) {
   // Verify mode: generate to temp dir and compare
   const tmpDir = mkdtempSync(join(tmpdir(), "content-verify-"));
   try {
-    const tmpCsPath = join(tmpDir, "agenda-cs.json");
-    const tmpEnPath = join(tmpDir, "agenda-en.json");
-    const tmpCsParticipantPath = join(tmpDir, "agenda-cs-participant.json");
-    const tmpEnParticipantPath = join(tmpDir, "agenda-en-participant.json");
     const tmpBpPath = join(tmpDir, "blueprint-agenda.json");
     const tmpCsReferencePath = join(tmpDir, "reference-cs.json");
     const tmpEnReferencePath = join(tmpDir, "reference-en.json");
 
-    writeJson(tmpCsPath, csView);
-    writeJson(tmpEnPath, enView);
-    writeJson(tmpCsParticipantPath, csParticipantView);
-    writeJson(tmpEnParticipantPath, enParticipantView);
     writeJson(tmpBpPath, publicBlueprint);
     writeJson(tmpCsReferencePath, csReferenceView);
     writeJson(tmpEnReferencePath, enReferenceView);
 
-    const csMatch = filesMatch(tmpCsPath, join(GENERATED_DIR, "agenda-cs.json"));
-    const enMatch = filesMatch(tmpEnPath, join(GENERATED_DIR, "agenda-en.json"));
-    const csPMatch = filesMatch(tmpCsParticipantPath, join(GENERATED_DIR, "agenda-cs-participant.json"));
-    const enPMatch = filesMatch(tmpEnParticipantPath, join(GENERATED_DIR, "agenda-en-participant.json"));
     const bpMatch = filesMatch(tmpBpPath, join(BLUEPRINT_DIR, "agenda.json"));
     const csRefMatch = filesMatch(tmpCsReferencePath, join(GENERATED_DIR, "reference-cs.json"));
     const enRefMatch = filesMatch(tmpEnReferencePath, join(GENERATED_DIR, "reference-en.json"));
 
     const mismatches: string[] = [];
-    if (!csMatch) mismatches.push("dashboard/lib/generated/agenda-cs.json");
-    if (!enMatch) mismatches.push("dashboard/lib/generated/agenda-en.json");
-    if (!csPMatch) mismatches.push("dashboard/lib/generated/agenda-cs-participant.json");
-    if (!enPMatch) mismatches.push("dashboard/lib/generated/agenda-en-participant.json");
     if (!bpMatch) mismatches.push("workshop-blueprint/agenda.json");
     if (!csRefMatch) mismatches.push("dashboard/lib/generated/reference-cs.json");
     if (!enRefMatch) mismatches.push("dashboard/lib/generated/reference-en.json");
@@ -385,19 +370,11 @@ if (isVerify) {
   }
 } else {
   // Generate mode: write to actual locations
-  writeJson(join(GENERATED_DIR, "agenda-cs.json"), csView);
-  writeJson(join(GENERATED_DIR, "agenda-en.json"), enView);
-  writeJson(join(GENERATED_DIR, "agenda-cs-participant.json"), csParticipantView);
-  writeJson(join(GENERATED_DIR, "agenda-en-participant.json"), enParticipantView);
   writeJson(join(BLUEPRINT_DIR, "agenda.json"), publicBlueprint);
   writeJson(join(GENERATED_DIR, "reference-cs.json"), csReferenceView);
   writeJson(join(GENERATED_DIR, "reference-en.json"), enReferenceView);
 
   console.log("Generated views:");
-  console.log(`  dashboard/lib/generated/agenda-cs.json`);
-  console.log(`  dashboard/lib/generated/agenda-en.json`);
-  console.log(`  dashboard/lib/generated/agenda-cs-participant.json`);
-  console.log(`  dashboard/lib/generated/agenda-en-participant.json`);
   console.log(`  dashboard/lib/generated/reference-cs.json`);
   console.log(`  dashboard/lib/generated/reference-en.json`);
   console.log(`  workshop-blueprint/agenda.json (public blueprint)`);

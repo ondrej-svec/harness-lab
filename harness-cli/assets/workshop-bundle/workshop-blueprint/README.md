@@ -49,4 +49,4 @@ For maintainers working in the source repository, the canonical bilingual conten
 - `workshop-content/agenda.json` — single bilingual source (en/cs per node)
 - `docs/workshop-content-language-architecture.md` — architecture doc
 
-The public `agenda.json` in this directory and the dashboard runtime views (`dashboard/lib/generated/agenda-cs.json`, `agenda-en.json`) are generated from the bilingual source. Do not edit them by hand — run `npm run generate:content` instead.
+The public `agenda.json` in this directory is generated from the bilingual source. Do not edit it by hand — run `npm run generate:content` instead. The dashboard materialises its per-language/mode agenda views on demand from `workshop-content/agenda.json`, so no paired runtime JSONs are committed under `dashboard/lib/generated/` anymore (retired in the 2026-04-23 topbar-cleanup plan, Part B).

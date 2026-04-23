@@ -5,6 +5,19 @@ All notable changes to `@harness-lab/cli` are documented here.
 The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the project follows semantic versioning.
 
+## Unreleased
+
+### Changed
+
+- **`harness instance reset --from-local`** without an explicit
+  `--blueprint-file` is no longer supported. The paired
+  `dashboard/lib/generated/agenda-{lang}.json` runtime views were
+  retired in the 2026-04-23 topbar-cleanup plan (Part B) — the
+  dashboard now materialises them on demand from
+  `workshop-content/agenda.json`. Pass `--blueprint-file PATH`
+  (e.g. `workshop-blueprint/agenda.json` for the EN public mirror) or
+  push the blueprint via `harness blueprint put` (the DB path).
+
 ## 0.11.1 — 2026-04-21
 
 ### Fixed
