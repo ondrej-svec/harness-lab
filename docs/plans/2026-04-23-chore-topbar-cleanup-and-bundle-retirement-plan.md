@@ -2,7 +2,7 @@
 title: "chore: topbar cleanup + compiled-bundle retirement"
 type: plan
 date: 2026-04-23
-status: in_progress
+status: complete
 parent: docs/plans/2026-04-23-feat-minimal-ui-and-blueprint-as-data-plan.md
 confidence: high
 ---
@@ -166,30 +166,21 @@ One ordered migration:
 - [x] **A5** `outline-rail.test.tsx` and `page.test.tsx` assertions updated to the new shape.
 - [x] **A6** Typecheck clean, dashboard 799/799 passing, committed as `8de7c5f`.
 
-### Part B — Compiled-bundle retirement **(DEFERRED — attempted, reverted)**
+### Part B — Compiled-bundle retirement **(SHIPPED)**
 
-Part B was attempted in this session and reverted after tests surfaced a load-bearing dependency on the compiled CS/EN bundle that Part B didn't account for:
+Shipped in four commits on `main` (2026-04-23). Rather than rewriting 8+ test files to supply explicit blueprint records — the approach originally scoped — the retirement landed via a smaller structural move: extract the pure view transforms out of the generator into a reusable module, then have both tests and the dashboard runtime materialise views on demand from `workshop-content/agenda.json` instead of reading the four committed JSONs.
 
-- `lib/workshop-data.test.ts` (230 lines) and `lib/workshop-data.agenda-voice.test.ts` (125 lines) exercise the `createWorkshopStateFromTemplate` / participant-voice contract against the full compiled bundle — full scene content, participant moments, full CS translations.
-- `__tests__/api/agenda/route.test.ts`, `__tests__/api/workshop/route.test.ts`, `app/admin/instances/[id]/page.test.tsx`, `lib/workshop-store.poll-perf.test.ts`, `lib/workshop-store.test.ts`, and `app/participant/page.test.tsx` all materialise state via the file-mode path that currently reaches for the compiled bundle when no `externalBlueprint` is provided.
+- [x] **B1** `blueprintAgendaCs.blueprintId` / `.version` replaced with inline `DEFAULT_BLUEPRINT_ID` / `DEFAULT_BLUEPRINT_VERSION` constants in `workshop-data.ts`. Commit `b2c9de2`.
+- [x] **B2** All five `getBlueprintAgenda` callers in `workshop-data.ts` (`getBlueprintWorkshopMetaCopy`, `createSampleWorkshopMeta`, `createAgendaFromBlueprint`, `createWorkshopMetaFromTemplate`, `createWorkshopStateFromInstance`) rewired to `resolveDefaultBlueprintAgenda`, a module-local helper that runs `generateAgendaView` over the bilingual source. Commit `51391c8`.
+- [x] **B3** `workshop-state-repository.ts` ensure paths needed no changes — the fallback at `createWorkshopStateFromInstance` still works, just now backed by the live transform instead of the compiled bundle. Production flows through `BlueprintRepository.get()` + `blueprintRecordToAgenda` as before.
+- [x] **B4** `getBlueprintAgenda` + the four compiled-JSON imports deleted from `workshop-data.ts`. `git grep "getBlueprintAgenda" dashboard/` returns zero. Commit `51391c8`.
+- [x] **B5** `dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json` deleted. Commit `b23c67a`.
+- [x] **B6** Generator no longer emits or verifies the four retired paths. Public mirror (`workshop-blueprint/agenda.json`) + reference views still ship. Commit `b23c67a`.
+- [x] **B7** `.copy-editor.lock.json` doesn't track generated artifacts so needed no edit. Docs + CHANGELOG + CLI help text synced; the bare `harness instance reset --from-local` shortcut (which read from the retired paths) now errors with a clear pointer to `--blueprint-file PATH`. Commit `b23c67a`.
+- [x] **B8** Dashboard tests migrated to a new fixture module (`dashboard/lib/__fixtures__/blueprint-agendas.ts`) that materialises CS/EN facilitator + participant views from `workshop-content/agenda.json` via `generateAgendaView`. Three direct-import call sites updated (`workshop-data.test.ts`, `workshop-data.agenda-voice.test.ts`, `workshop-store.test.ts`); all secondary tests that materialise via `createWorkshopStateFromTemplate` keep working because the runtime fallback still produces identical views. Commit `84cc4a5`.
+- [x] **B9** Dashboard tests: 799/799 passing. CLI tests: 113/113 passing. `npm run verify:workshop-bundle` passes. `npm run verify:content` continues to report a pre-existing `inventory.briefs is out of sync` failure unrelated to Part B (same failure on `main` before this plan started; tracked separately).
 
-Replacing the bundle with a single language-agnostic seed-derived fallback makes the fallback too thin (empty scenes, English-only titles) and breaks every assertion keyed off CS content like `"13:30 • Rotace týmů"` or `"Look up and orient"`.
-
-**Honest call:** the retirement is real work (substantial test rewrite to use explicit blueprint records rather than the implicit bundle) and does not unlock any new capability — production already materialises from the DB blueprints table after `97ea10c`. The compiled bundle stays as the legacy fallback for file-mode dev + tests.
-
-Remaining B1–B9 tasks:
-
-- [ ] **B1** Replace `blueprintAgendaCs.blueprintId` / `.version` with inline constants. _Small._
-- [ ] **B2** Migrate five `getBlueprintAgenda` callers. _Small per site; needs test coauthor._
-- [ ] **B3** Update `workshop-state-repository` ensure paths to look up blueprints. _Needs async or lazy-seed._
-- [ ] **B4** Delete the compiled-bundle imports. _Trivial after B1–B3._
-- [ ] **B5** Delete the four generated JSON files. _Trivial after B4._
-- [ ] **B6** Update generator. _Done in Part B attempt; revert-safe._
-- [ ] **B7** Update `.copy-editor.lock.json`. _Small._
-- [ ] **B8** Rewrite 8+ test files to supply explicit blueprint records. _Large — main cost._
-- [ ] **B9** Typecheck, test, commit.
-
-**Unblock condition:** a dedicated session with the test-rewrite budget. Not blocking any feature or deploy.
+**Key insight vs. original plan:** extracting `generateAgendaView` into a shared module (`dashboard/lib/content-views/agenda-view.ts`) made the compiled bundle truly redundant — both the generator and the dashboard runtime reach the same views through the same transform, eliminating the dual-code-path concern without forcing a 30-file test rewrite.
 
 ## Acceptance Criteria
 
