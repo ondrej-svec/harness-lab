@@ -2,7 +2,7 @@
 title: "feat: facilitator-revealable event codes via AES-256-GCM"
 type: plan
 date: 2026-04-23
-status: approved
+status: shipped
 confidence: high
 ---
 
@@ -288,11 +288,11 @@ naturally).
 
 ### Stage 1 — Crypto foundation
 
-- [ ] **1.1** Create `dashboard/lib/event-code-reveal-crypto.ts`
+- [x] **1.1** Create `dashboard/lib/event-code-reveal-crypto.ts`
   with `encryptEventCodeForReveal`, `decryptEventCodeForReveal`,
   `isEventCodeRevealConfigured`. Key parsing supports base64url and
   rejects malformed lengths. `v1:` prefix on payloads.
-- [ ] **1.2** Add test file
+- [x] **1.2** Add test file
   `dashboard/lib/event-code-reveal-crypto.test.ts` covering: encrypt
   → decrypt round-trip, wrong key → null, tampered ciphertext →
   null, missing key → `isConfigured` false and encrypt throws, `v1:`
@@ -300,39 +300,39 @@ naturally).
 
 ### Stage 2 — Data model plumbing
 
-- [ ] **2.1** Add `codeCiphertext?: string \| null` to
+- [x] **2.1** Add `codeCiphertext?: string \| null` to
   `ParticipantEventAccessRecord` in `runtime-contracts.ts`.
-- [ ] **2.2** Create migration
+- [x] **2.2** Create migration
   `dashboard/db/migrations/2026-04-23-event-code-reveal-ciphertext.sql`
   adding the `code_ciphertext TEXT` column (nullable).
-- [ ] **2.3** Update `NeonParticipantEventAccessRepository` to
+- [x] **2.3** Update `NeonParticipantEventAccessRepository` to
   SELECT and UPSERT `code_ciphertext` in `getActiveAccess`,
   `listAllActiveAccess`, `saveAccess`, and `ensureSeedAccess`.
-- [ ] **2.4** Update `FileParticipantEventAccessRepository` — no
+- [x] **2.4** Update `FileParticipantEventAccessRepository` — no
   structural change needed; JSON serialisation already passes
   through optional fields. Add a focused test that a saved record
   round-trips `codeCiphertext`.
 
 ### Stage 3 — Issue-flow encryption
 
-- [ ] **3.1** Update `issueParticipantEventAccess` in
+- [x] **3.1** Update `issueParticipantEventAccess` in
   `participant-access-management.ts` to compute `codeCiphertext`
   when `isEventCodeRevealConfigured()` returns true.
-- [ ] **3.2** Update the file-mode seed path
+- [x] **3.2** Update the file-mode seed path
   (`buildSeedAccess`) to encrypt the seed plaintext.
-- [ ] **3.3** Update the Neon seed path (`ensureSeedAccess`)
+- [x] **3.3** Update the Neon seed path (`ensureSeedAccess`)
   similarly.
-- [ ] **3.4** Extend `getFacilitatorParticipantAccessState` with a
+- [x] **3.4** Extend `getFacilitatorParticipantAccessState` with a
   new derived flag — `canRevealCurrent` becomes true when
   `codeCiphertext` is present and decrypt-able. Keep the existing
   sample/bootstrap paths intact for dev.
-- [ ] **3.5** Test: issue flow writes non-null ciphertext when key
+- [x] **3.5** Test: issue flow writes non-null ciphertext when key
   configured; writes null when not configured; decrypt of the
   stored ciphertext recovers the plaintext.
 
 ### Stage 4 — Reveal action + audit
 
-- [ ] **4.1** Create
+- [x] **4.1** Create
   `dashboard/app/admin/instances/[id]/_actions/access.ts`
   addition: `revealParticipantEventCodeAction(formData)` server
   action. Auth via `requireFacilitatorActionAccess`; audit via
@@ -340,42 +340,42 @@ naturally).
   "participant_event_access_revealed", result, metadata: { actorNeonUserId,
   version, codeId } })`; returns `{ ok: true, plaintext }` or
   `{ ok: false, reason }`.
-- [ ] **4.2** Tests: action audits on success; action audits
+- [x] **4.2** Tests: action audits on success; action audits
   `failure` when decrypt fails; action rejects without facilitator
   auth.
 
 ### Stage 5 — UI
 
-- [ ] **5.1** Add copy to `ui-language.ts` (CS + EN):
+- [x] **5.1** Add copy to `ui-language.ts` (CS + EN):
   `participantAccessHiddenValue`, `participantAccessRevealButton`,
   `participantAccessHideButton`, `participantAccessCopyButton`,
   `participantAccessRevealError`, `participantAccessKeyNotConfigured`.
-- [ ] **5.2** Replace the current "unavailable" branch in
+- [x] **5.2** Replace the current "unavailable" branch in
   `RunAccessStrip` with a new client component
   `RunAccessRevealChip` (`"use client"`). State machine: hidden →
   revealing → revealed → hidden. Auto-hide after 30 s. Copy button
   uses `navigator.clipboard.writeText`.
-- [ ] **5.3** Keep the `issue new event code` button shape; the
+- [x] **5.3** Keep the `issue new event code` button shape; the
   flash-cookie path for newly-issued plaintext continues unchanged.
 
 ### Stage 6 — Docs, env, ship
 
-- [ ] **6.1** Document `HARNESS_EVENT_CODE_REVEAL_KEY` in
+- [x] **6.1** Document `HARNESS_EVENT_CODE_REVEAL_KEY` in
   `docs/ENVIRONMENT.md` (or equivalent) — purpose, format
   (base64url, 32 bytes), generation command
   (`openssl rand -base64 32 | tr '+/' '-_' | tr -d '='`), rotation
   policy, impact of loss.
-- [ ] **6.2** Add `HARNESS_EVENT_CODE_REVEAL_KEY=` placeholder to
+- [x] **6.2** Add `HARNESS_EVENT_CODE_REVEAL_KEY=` placeholder to
   `.env.example` with a comment pointing at the docs.
-- [ ] **6.3** Typecheck clean; all tests pass; CI green.
+- [x] **6.3** Typecheck clean; all tests pass; CI green.
 - [ ] **6.4** Generate a 32-byte key locally, add to Vercel env
-  (Preview + Production).
+  (Preview + Production). *(manual — requires Vercel dashboard access)*
 - [ ] **6.5** Ship: commit to main, push, verify Vercel deploy
-  promotes.
+  promotes. *(push performed here; deploy verification is manual)*
 - [ ] **6.6** Manual smoke on the live admin: issue a fresh code
   on a throwaway instance, click reveal, verify plaintext matches
   what the flash cookie showed during issuance. Check audit table
-  has the reveal row.
+  has the reveal row. *(manual post-deploy smoke test)*
 
 ## Acceptance Criteria
 
