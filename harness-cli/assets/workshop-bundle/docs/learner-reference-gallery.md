@@ -29,6 +29,9 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 - [OpenAI Codex workflows](https://developers.openai.com/codex/workflows)
   Dobré pro převedení workshopových návyků do reálných projektových workflow.
 
+- [Model Context Protocol — Getting started](https://modelcontextprotocol.io/docs/getting-started/intro)
+  Dobré ve chvíli, kdy chcete pochopit MCP servery, nástroje a to, jak agentům zpřístupnit další kontext bez lepení dalšího promptu.
+
 - [OpenAI: Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/)
   Dobré pro pochopení, proč má být repo knowledge systémem záznamu a proč jsou plans, review a garbage collection součást engineering discipline, ne bonus navíc.
 
@@ -45,6 +48,9 @@ Jakmile tato stránka začne připomínat „awesome list“, je moc dlouhá.
 
 - [openai/codex-action](https://github.com/openai/codex-action)
   Silný příklad úzké a bezpečné automatizace kolem Codexu v CI.
+
+- [agents.md](https://agents.md/)
+  Užitečné jako referenční bod pro to, jak má vypadat krátké, čitelné a znovupoužitelné `AGENTS.md`.
 
 - [vercel-labs/skills](https://github.com/vercel-labs/skills)
   Užitečné ve chvíli, kdy chcete skill packaging přenositelný napříč více coding agenty.

@@ -12,11 +12,11 @@ The checks themselves are defined in `docs/agents-md-standard.md` under the "Sco
 - whether `AGENTS.md` points at real source-of-truth docs
 - whether build and test commands are present
 - whether the repo distinguishes finished parts from in-progress parts
-- whether a plan or runbook for the next team lives in the repo
+- whether a plan or runbook for a fresh reader lives in the repo
 - whether it is possible to find what was actually verified
 - whether there is a record of the session state — what is verified, what is in progress, what is the next safe move
 - how many rules live only in the prompt instead of in the repo
-- how easy it would be to continue after rotation without a verbal handoff
+- how easy it would be to continue after the reshuffle without a verbal walkthrough
 - whether the next safe move is obvious
 
 ## Pre-rotation handoff gate

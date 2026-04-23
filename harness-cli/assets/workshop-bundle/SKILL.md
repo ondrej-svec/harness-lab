@@ -238,12 +238,12 @@ Use this when the participant asks what to do after the workshop, what to revisi
 
 ### `workshop analyze`
 
-Review the team's repo against the handoff criteria in `workshop-skill/analyze-checklist.md`.
+Review the team's repo against the continuation criteria in `workshop-skill/analyze-checklist.md`.
 Return:
 - what helps continuation
 - what is missing
 - one concrete next improvement
-- whether the repo makes the next safe move obvious for a new team
+- whether the repo makes the next safe move obvious for a fresh reader
 
 ## Fallback Content
 

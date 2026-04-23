@@ -4,13 +4,13 @@
 
 Ve skoro každém týmu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.
 
-Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby přežil předání na jiný tým a nerozsypal se po přidání dalšího commandu.
+Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby zůstal čitelný i po čerstvém přečtení a nerozsypal se po přidání dalšího commandu.
 
 ## User stories
 
 - Jako vývojář chci jedním příkazem převést log nebo JSON do čitelné podoby.
 - Jako vývojář chci rychle dohledat podezřelé commity, větve nebo změny bez ručního skládání git příkazů.
-- Jako tým chci mít příkazy i způsob práce popsané tak, aby po rotaci mohl bez zmatku pokračovat někdo jiný.
+- Jako tým chci mít příkazy i způsob práce popsané tak, aby se v tom čerstvý spolupracovník rychle zorientoval.
 
 ## Architektonické poznámky
 
@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout CLI nástroj, který řeší několik běžných de
 
 ## První krok pro agenta
 
-Nejdřív navrhněte minimální architekturu, která přežije předání. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.
+Nejdřív navrhněte minimální architekturu, která unese čerstvé přečtení. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.

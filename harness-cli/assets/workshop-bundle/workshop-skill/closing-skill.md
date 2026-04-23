@@ -17,7 +17,7 @@ After the final block, produce a short workshop summary that is:
 
 ## Output
 
-1. What helped teams continue after handoff
+1. What helped teams continue after the reshuffle
 2. What was repeatedly missing
 3. The 2–3 principles the room should carry into next week
 4. One closing sentence that connects the workshop to real team work

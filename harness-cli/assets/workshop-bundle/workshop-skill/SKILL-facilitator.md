@@ -268,6 +268,54 @@ Supports flags: `--tag TAG`, `--instance ID`, `--cohort NAME`, `--limit N` (defa
 When the facilitator asks for rotation signals, captured observations, or what happened during past handoffs, use this command.
 If the learnings log is empty, say so and suggest capturing the first signal using the rotation capture panel in the facilitator dashboard.
 
+### `workshop facilitator reference list|import|reset`
+
+Manage the participant reference catalog override for the current instance.
+
+- `harness workshop reference list` — inspect the effective catalog (returns `null` when no override is set and participants see the compiled default).
+- `harness workshop reference import --file <path>` — replace the catalog for this instance from a JSON file. The file may be either a bare `GeneratedReferenceGroup[]` or the generated-view shape `{ schemaVersion, groups }`. Exports from `dashboard/lib/generated/reference-{en,cs}.json` are a natural starting point.
+- `harness workshop reference reset` — clear the override; the compiled default becomes live again on next participant reload.
+- `harness workshop reference add-item|set-item|remove-item` — surgical edits that fetch the current effective catalog, apply the change, and write the full catalog back. See `harness-cli/README.md` for flag reference.
+
+Groups are a fixed set: `defaults`, `accelerators`, `explore`. Items carry a `kind` discriminant: `external` (absolute URL), `repo-blob` / `repo-tree` (repo-relative file or directory), `repo-root` (repo URL), or `hosted` (Markdown body rendered inside the dashboard). The validator rejects `javascript:` or `data:` hrefs.
+
+When a facilitator asks to "add a new reference link" or "swap out the resource kit for this cohort", this is the path — no redeploy needed.
+
+### `workshop facilitator reference show-body|set-body|reset-body`
+
+Manage the Markdown body for a hosted reference item on this instance.
+
+- `harness workshop reference show-body <itemId>` — fetch the effective body; reports `source=override` or `source=default`.
+- `harness workshop reference set-body <itemId> --file <path.md>` — push a custom Markdown body for this instance only. The body is rendered inside the participant chrome at `/participant/reference/<itemId>` with a "CUSTOM FOR THIS WORKSHOP" badge. Bodies are sanitised at render time so arbitrary Markdown is safe to push (no raw HTML, no script/iframe, no javascript: hrefs).
+- `harness workshop reference reset-body <itemId>` — clear the override; the compiled default (inlined from the authoring source at build) renders again.
+
+### `workshop facilitator copy show|set|import|reset`
+
+Override a narrow whitelist of participant-facing copy per instance. Currently limited to post-workshop section bodies.
+
+- `harness workshop copy show` — print the active override or null.
+- `harness workshop copy set <key.path> <value>` — edit one key. Allowed paths: `postWorkshop.title`, `postWorkshop.body`, `postWorkshop.feedbackBody`, `postWorkshop.referenceBody`.
+- `harness workshop copy import --file <path.json>` — bulk-push.
+- `harness workshop copy reset` — clear overrides.
+
+Unknown keys are rejected with a helpful error. Missing keys fall through to the compiled defaults at render time (partial overrides are a first-class flow — override just the title, leave the body on default).
+
+### `workshop facilitator artifact upload|list|remove`
+
+Upload cohort-scoped files (HTML explainers, PDF handouts, images) that live only on this workshop instance. Bytes go to Vercel Blob in private mode; the serve path (`/participant/artifact/[id]`) gates on the participant session and sandboxes HTML with a strict `Content-Security-Policy: sandbox` header.
+
+- `harness workshop artifact upload --file <path> --label "..." [--description "..."] [--content-type MIME]` — upload a file. Default content-type is guessed from the extension (`.html`, `.pdf`, `.png`, `.jpg`/`.jpeg`, `.svg`, `.webp`). Max 25 MiB per file.
+- `harness workshop artifact list` — see every artifact for the instance with id, label, filename, size, upload timestamp.
+- `harness workshop artifact remove <artifactId>` — delete the row and the blob. Cross-instance removal returns 404 (cohort isolation).
+- `harness workshop artifact attach <artifactId> --group <groupId> [--label "..."] [--description "..."]` — show the artifact to participants inside the named reference group (`defaults`, `accelerators`, `explore`). Label + description default to the uploaded artifact's own metadata; pass flags to override per-cohort. Re-running replaces the existing attachment so edits are idempotent.
+- `harness workshop artifact detach <artifactId>` — pull every reference item that points at this artifactId out of the catalog. Idempotent — detaching something that isn't attached exits OK with "nothing to detach".
+
+Artifacts are inherently cohort-specific — they are **not** in `workshop-content/reference.json`, only in this instance's storage. Attach uses a `kind: "artifact"` reference item that only ever lives in per-instance `reference_groups` overrides; an artifactId from a different cohort is rejected at PATCH with a 400.
+
+### Participant experience
+
+On the participant room and the post-workshop surface, an attached artifact appears exactly like other reference items — label + description inside the group's card. The primary click opens the artifact in a new tab (authenticated, sandboxed HTML / PDF / image); a small download icon in the top-right offers the direct download.
+
 ### `workshop closing`
 
 Prepare Ondrej's closing synthesis by using:

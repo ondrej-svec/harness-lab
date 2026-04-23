@@ -4,13 +4,13 @@
 
 Týmy často data mají, ale chybí jim obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.
 
-Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i po předání na jiný tým.
+Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i pro čerstvého spolupracovníka.
 
 ## User stories
 
 - Jako tým chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.
 - Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.
-- Jako tým po rotaci chci během 10 minut pochopit strukturu dat, komponent i obrazovek.
+- Jako někdo, kdo k repu přichází čerstvě, chci během 10 minut pochopit strukturu dat, komponent i obrazovek.
 
 ## Architektonické poznámky
 
@@ -30,4 +30,4 @@ Vaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik v
 
 ## První krok pro agenta
 
-Navrhněte dashboard, který zvládne předání. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI.
+Navrhněte dashboard, který unese čerstvé přečtení. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI.

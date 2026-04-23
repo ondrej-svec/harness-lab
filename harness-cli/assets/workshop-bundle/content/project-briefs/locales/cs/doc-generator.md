@@ -2,7 +2,7 @@
 
 ## Problém
 
-Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po předání pak nový tým neví, čemu má věřit a co je jen odhad.
+Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, tým ji začne odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po čerstvém přečtení pak člověk, který k repu přijde čerstvě, neví, čemu má věřit a co je jen odhad.
 
 Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.
 
@@ -10,7 +10,7 @@ Vaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní 
 
 - Jako vývojář chci z projektu rychle získat základní technickou dokumentaci bez ručního sepisování všeho od nuly.
 - Jako reviewer chci během 5 minut pochopit strukturu modulů a hlavní vstupní body.
-- Jako tým po rotaci chci objevit architekturu projektu bez dlouhého pátrání po souvislostech.
+- Jako někdo, kdo k repu přichází čerstvě, chci objevit architekturu projektu bez dlouhého pátrání po souvislostech.
 
 ## Architektonické poznámky
 
