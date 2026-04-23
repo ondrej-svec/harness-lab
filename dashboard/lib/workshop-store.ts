@@ -756,7 +756,7 @@ function getLiveAgendaItem(state: WorkshopState) {
   );
 }
 
-function getLiveParticipantMoment(state: WorkshopState) {
+export function getLiveParticipantMoment(state: WorkshopState) {
   const activeAgendaItem = getLiveAgendaItem(state);
   if (!activeAgendaItem) {
     return { agendaItem: null, participantMoment: null };

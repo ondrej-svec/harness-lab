@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import { requireParticipantSession } from "@/lib/event-access";
 import { getPollResponseRepository } from "@/lib/poll-response-repository";
 import { getTeamMemberRepository } from "@/lib/team-member-repository";
-import { getLiveParticipantMoment } from "@/lib/workshop-data";
 import { workshopMutationErrorResponse } from "@/lib/workshop-mutation-response";
-import { getWorkshopState, submitActivePollResponse } from "@/lib/workshop-store";
+import {
+  getLiveParticipantMoment,
+  getWorkshopState,
+  submitActivePollResponse,
+} from "@/lib/workshop-store";
 
 type PollBody = {
   pollId?: string;
