@@ -48,7 +48,7 @@ Purpose:
 - run the workshop instance without editing seed files or using ad hoc scripts
 
 Protected responsibilities:
-- run the workshop through four sections: `Run`, `People`, `Access`, `Settings`
+- run the workshop through four sections: `Run`, `People`, `Settings`, `Summary`
 - move the live workshop moment
 - inspect and, only when needed, override the live participant moment
 - launch presenter and participant-facing outputs
@@ -69,8 +69,10 @@ Design rules:
 - `Run` is the default canvas and stays agenda-centered
 - `Run` is also the home of the live contract: what the room sees, what participants see, whether participant mode is `auto` or `manual`, and which poll or feedback stream is active
 - `People` owns team formation, team repair, and team-history review
-- `Access` and `Settings` remain reachable but must not compete with `Run`
-- agenda timeline index and agenda-moment detail may be separate page states when that reduces duplication and keeps editing off the default canvas
+- Event code and walk-ins policy fold into `Run`'s topbar (mid-scene fast, single tap); facilitator grants live in `Settings`
+- `Settings` stays slim (identity + instance metadata + grants + end-workshop); reset/archive/password/team-mode toggle move to CLI
+- `Summary` holds the post-workshop feedback readout (read-only)
+- agenda timeline and scene content remain visible in `Run` as a read-only outline + scene preview rail; editing belongs to CLI/agent flows
 - dashboard UI does not expose agenda or presenter-scene authoring; those mutations belong to CLI/agent flows
 
 ## Presenter Surface

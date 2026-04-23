@@ -95,12 +95,12 @@ Continuation belongs with the handoff / rotation moment. If that moment is not c
 
 If the facilitator still needs to correct participant reveal later, provide that as a secondary recovery control on another layer such as `settings`, not as a co-primary workshop action.
 
-The four-section control-room contract is:
+The four-section control-room contract (post 2026-04-23 minimal-UI plan) is:
 
-- `Run`: default live runner, agenda spine, presenter launch, handoff controls, quiet signal capture
-- `People`: participant intake, team shaping, team-composition history
-- `Access`: participant event code and facilitator-access operations
-- `Settings`: reset, archive, and other recovery/safety controls
+- `Run`: default live runner, agenda outline (read-only), scene preview rail, presenter launch, handoff controls, quiet signal capture. Event code + walk-ins policy live in the Run topbar (mid-scene fast).
+- `People`: participant intake, team shaping, team-composition history, GDPR operations (consent, Art. 20 export, soft-delete, password reset).
+- `Settings`: slim — identity readout, instance metadata, facilitator grants, end-workshop. Reset / archive / password / team-mode toggle retired to CLI (`harness instance reset|archive`, auth provider, blueprint-time team-mode).
+- `Summary`: post-workshop feedback aggregate (read-only).
 
 ## Layout Rules
 

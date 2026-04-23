@@ -17,7 +17,7 @@ For the concrete component, layout, and progressive-disclosure system, see [`fac
 3. The current phase is a live runtime marker, not a hidden side effect of "move agenda".
 4. Live operation and authoring must stay visibly separate.
 5. Archive and reset are safety actions. They should be visible, but they should not dominate the primary workflow.
-6. The control room exposes four sections only: `Run`, `People`, `Access`, `Settings`.
+6. The control room exposes four sections only: `Run`, `People`, `Settings`, `Summary`. Event code + walk-ins policy live in `Run`'s topbar; facilitator grants in `Settings`.
 7. `Run` is the default facilitator surface and must answer what is live, what is next, and what action matters now.
 8. Agenda and presenter-scene authoring belong to CLI/agent flows, not the dashboard canvas.
 9. `People` owns live team shaping, including durable history of assignment and rotation changes.
@@ -90,7 +90,7 @@ Which event am I controlling?
 What phase is live?
 What happens next?
 Which action matters now?
-6. The old `live`, `agenda`, `teams`, and `signals` split is retired in favor of `Run`, `People`, `Access`, and `Settings`.
+6. The old `live`, `agenda`, `teams`, `signals`, and `access` split is retired in favor of `Run`, `People`, `Settings`, and `Summary`. Access folds into `Run`'s topbar; grants land in `Settings`.
 
 ## Review Checklist
 
