@@ -6,7 +6,6 @@ import { getParticipantEventAccessRepository } from "@/lib/participant-event-acc
 import { resolveEffectiveFeedbackTemplate } from "@/lib/workshop-data";
 import { ControlRoomCockpit } from "./_components/control-room-cockpit";
 import { OutlineRail } from "./_components/outline-rail";
-import { AccessSection } from "./_components/sections/access-section";
 import { PeopleSection } from "./_components/sections/people-section";
 import { RunSection } from "./_components/sections/run-section";
 import { SettingsSection } from "./_components/sections/settings-section";
@@ -125,26 +124,6 @@ export default async function AdminPage({
                 instanceId={instanceId}
                 teams={vm.state.teams}
                 teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
-              />
-            ) : null}
-
-            {vm.activeSection === "access" ? (
-              <AccessSection
-                lang={vm.lang}
-                copy={vm.copy}
-                instanceId={instanceId}
-                isNeonMode={vm.isNeonMode}
-                isOwner={vm.isOwner}
-                currentFacilitatorGrantId={vm.currentFacilitator?.grant.id ?? null}
-                fileModeUsername={vm.fileModeUsername}
-                errorParam={vm.errorParam}
-                participantAccess={vm.participantAccess}
-                participantAccessExpiresValue={vm.participantAccessExpiresValue}
-                participantAccessFlash={vm.participantAccessFlash}
-                facilitatorGrants={vm.facilitatorGrants}
-                allowWalkIns={vm.selectedInstance?.allowWalkIns ?? true}
-                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
-                instanceStatus={vm.selectedInstance?.status ?? "prepared"}
               />
             ) : null}
 

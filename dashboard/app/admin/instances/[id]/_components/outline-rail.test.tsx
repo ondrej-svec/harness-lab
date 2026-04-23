@@ -34,10 +34,12 @@ describe("OutlineRail", () => {
       />
     );
     // All 4 control-room section labels should be present.
+    // Access folded into Run under the 2026-04-23 minimal-UI plan.
     expect(html).toContain(adminCopy.cs.navAgenda);
     expect(html).toContain(adminCopy.cs.navPeople);
-    expect(html).toContain(adminCopy.cs.navAccess);
+    expect(html).toContain(adminCopy.cs.navSummary);
     expect(html).toContain(adminCopy.cs.navSettings);
+    expect(html).not.toContain(adminCopy.cs.navAccess);
   });
 
   it("nests agenda items under Run when Run is active", () => {

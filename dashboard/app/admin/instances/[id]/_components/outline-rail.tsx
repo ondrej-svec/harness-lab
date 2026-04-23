@@ -30,7 +30,6 @@ type OutlineRailProps = {
 const SECTIONS: readonly { key: AdminSection; copyKey: keyof (typeof adminCopy)["cs"] }[] = [
   { key: "run", copyKey: "navAgenda" },
   { key: "people", copyKey: "navPeople" },
-  { key: "access", copyKey: "navAccess" },
   { key: "summary", copyKey: "navSummary" },
   { key: "settings", copyKey: "navSettings" },
 ];

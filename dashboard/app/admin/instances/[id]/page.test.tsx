@@ -319,7 +319,11 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.blueprintLinkLabel);
   });
 
-  it("shows participant access management in the access section", async () => {
+  it("redirects the legacy access section URL to run", async () => {
+    // The 2026-04-23 minimal-UI plan folds Access into Run. Event code +
+    // walk-ins move to the Run topbar (follow-up unit); facilitator grants
+    // move to Settings. `?section=access` resolves to run via
+    // `legacyAdminSectionMap` so old deep-links keep working.
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
@@ -328,10 +332,9 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.participantAccessTitle);
-    expect(html).toContain(adminCopy.en.participantAccessCurrentCodeLabel);
-    expect(html).toContain("lantern8-context4-handoff2");
-    expect(html).toContain(adminCopy.en.participantAccessIssueButton);
-    expect(html).toContain(adminCopy.en.facilitatorsTitle);
+    // Run surface content is present (RunSection's copy, not the retired
+    // access section's.) The old participantAccessTitle string belongs to
+    // AccessSection which is no longer rendered from the router.
+    expect(html).not.toContain(adminCopy.en.participantAccessTitle);
   });
 });

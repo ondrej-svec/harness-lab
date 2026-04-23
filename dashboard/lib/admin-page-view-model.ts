@@ -1,7 +1,11 @@
 import type { WorkshopInstanceRecord, WorkshopState } from "./workshop-data";
 import { resolveUiLanguage, type UiLanguage, withLang } from "./ui-language";
 
-export const controlRoomSections = ["run", "people", "access", "settings", "summary"] as const;
+// Four sections under the 2026-04-23 minimal-UI plan. Access folds into
+// Run (event code + walk-ins live in the Run topbar; facilitator grants
+// live in Settings). Legacy deep-link URLs resolve to the new section
+// via `legacyAdminSectionMap` below.
+export const controlRoomSections = ["run", "people", "settings", "summary"] as const;
 export type ControlRoomSection = (typeof controlRoomSections)[number];
 export type AdminSection = ControlRoomSection;
 export const controlRoomOverlays = ["agenda-edit", "agenda-add", "scene-edit", "scene-add"] as const;
@@ -14,7 +18,7 @@ export const legacyAdminSectionMap = {
   signals: "run",
   teams: "people",
   people: "people",
-  access: "access",
+  access: "run",
   account: "settings",
 } as const;
 
