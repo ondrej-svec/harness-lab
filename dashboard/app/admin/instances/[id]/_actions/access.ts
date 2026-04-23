@@ -5,10 +5,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { requireFacilitatorActionAccess } from "@/lib/facilitator-access";
 import { buildAdminHref, readActionState } from "@/lib/admin-page-view-model";
+import { decryptEventCodeForReveal } from "@/lib/event-code-reveal-crypto";
 import { getFacilitatorSession } from "@/lib/facilitator-session";
 import { getInstanceGrantRepository } from "@/lib/instance-grant-repository";
 import { getAuditLogRepository } from "@/lib/audit-log-repository";
 import { getNeonSql } from "@/lib/neon-db";
+import { getParticipantEventAccessRepository } from "@/lib/participant-event-access-repository";
 import { getWorkshopInstanceRepository } from "@/lib/workshop-instance-repository";
 import { issueParticipantEventAccess } from "@/lib/participant-access-management";
 import {
@@ -168,4 +170,80 @@ export async function toggleWalkInsAction(formData: FormData) {
   }
 
   redirect(buildAdminHref({ lang, section, instanceId }));
+}
+
+type RevealParticipantEventCodeResult =
+  | { ok: true; plaintext: string }
+  | { ok: false; reason: "not-revealable" | "decrypt-failed" | "no-access" };
+
+/**
+ * Decrypt the active event code for facilitator display. Every call —
+ * success or failure — emits a `participant_event_access_revealed`
+ * audit row with actor + codeId + version metadata, never the
+ * plaintext. Returns JSON instead of redirecting so the client reveal
+ * chip can render the value directly without round-tripping through
+ * SSR.
+ */
+export async function revealParticipantEventCodeAction(
+  instanceId: string,
+): Promise<RevealParticipantEventCodeResult> {
+  await requireFacilitatorActionAccess(instanceId);
+  const facilitator = await getFacilitatorSession(instanceId);
+  const access = await getParticipantEventAccessRepository().getActiveAccess(instanceId);
+  const now = new Date().toISOString();
+  const actorNeonUserId = facilitator?.neonUserId ?? null;
+
+  if (!access) {
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "participant_event_access_revealed",
+      result: "failure",
+      createdAt: now,
+      metadata: { actorNeonUserId, reason: "no-access" },
+    });
+    return { ok: false, reason: "no-access" };
+  }
+
+  const codeId = access.codeHash.slice(0, 12);
+
+  if (!access.codeCiphertext) {
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "participant_event_access_revealed",
+      result: "failure",
+      createdAt: now,
+      metadata: { actorNeonUserId, codeId, version: access.version, reason: "not-revealable" },
+    });
+    return { ok: false, reason: "not-revealable" };
+  }
+
+  const plaintext = decryptEventCodeForReveal(access.codeCiphertext);
+  if (!plaintext) {
+    await getAuditLogRepository().append({
+      id: `audit-${randomUUID()}`,
+      instanceId,
+      actorKind: "facilitator",
+      action: "participant_event_access_revealed",
+      result: "failure",
+      createdAt: now,
+      metadata: { actorNeonUserId, codeId, version: access.version, reason: "decrypt-failed" },
+    });
+    return { ok: false, reason: "decrypt-failed" };
+  }
+
+  await getAuditLogRepository().append({
+    id: `audit-${randomUUID()}`,
+    instanceId,
+    actorKind: "facilitator",
+    action: "participant_event_access_revealed",
+    result: "success",
+    createdAt: now,
+    metadata: { actorNeonUserId, codeId, version: access.version },
+  });
+
+  return { ok: true, plaintext };
 }
