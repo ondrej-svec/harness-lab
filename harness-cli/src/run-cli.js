@@ -422,6 +422,14 @@ function printUsage(io, ui) {
     helpLine("  [--phase-ids ID1,ID2] [--scene-ids ID1,ID2]", ""),
     helpLine("  [--agenda-only | --scenes-only]", ""),
     helpLine("instance remove [<id>]", "Soft-remove an instance"),
+    helpLine("instance set [<id>] --walk-ins true|false", "Flip walk-in participant policy"),
+  ]);
+  ui.blank();
+
+  ui.section("Participant");
+  ui.commandList([
+    helpLine("participant export <participantId> --instance <id>", "GDPR Art. 20 JSON dump"),
+    helpLine("  [--out PATH]", "Write output to a file instead of stdout"),
   ]);
   ui.blank();
 
@@ -3642,6 +3650,97 @@ async function handleBlueprintFork(io, ui, env, positionals, flags, deps) {
   }
 }
 
+async function handleInstanceSet(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const instanceId = await readRequiredCommandValue(
+    io,
+    flags,
+    ["id", "instance", "instance-id"],
+    "Instance id: ",
+    readOptionalPositional(positionals, 2) ?? session.selectedInstanceId,
+  );
+  if (!instanceId) {
+    ui.status("error", "Instance id is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const walkInsFlag = readStringFlag(flags, "walk-ins", "walkins");
+  if (walkInsFlag === undefined) {
+    ui.status(
+      "error",
+      "Nothing to set. Current supported flag: --walk-ins true|false.",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  let allowWalkIns;
+  if (walkInsFlag === "true") allowWalkIns = true;
+  else if (walkInsFlag === "false") allowWalkIns = false;
+  else {
+    ui.status("error", "--walk-ins expects true or false.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.setWalkInPolicy(instanceId, allowWalkIns);
+    ui.json("Instance Set Walk-Ins", result);
+    ui.status("ok", `Set walk-ins=${allowWalkIns} for ${instanceId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Instance set failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleParticipantExport(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const participantId = readOptionalPositional(positionals, 2);
+  if (!participantId) {
+    ui.status(
+      "error",
+      "Participant id is required. Usage: harness participant export <participantId> --instance <id>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  if (!instanceId) {
+    ui.status("error", "--instance <id> is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.exportParticipantData(instanceId, participantId);
+
+    const outPath = readStringFlag(flags, "out", "output");
+    if (outPath) {
+      const resolved = path.resolve(process.cwd(), outPath);
+      await fs.writeFile(resolved, JSON.stringify(result, null, 2));
+      ui.status("ok", `Wrote ${path.relative(process.cwd(), resolved)}`);
+    } else {
+      ui.json("Participant Export", result);
+    }
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Participant export failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleBlueprintDelete(io, ui, env, positionals, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) return 1;
@@ -3948,6 +4047,14 @@ export async function runCli(argv, io, deps = {}) {
   }
   if (scope === "blueprint" && (action === "rm" || action === "delete")) {
     return handleBlueprintDelete(io, ui, io.env, positionals, mergedDeps);
+  }
+
+  if (scope === "instance" && action === "set") {
+    return handleInstanceSet(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "participant" && action === "export") {
+    return handleParticipantExport(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   printUsage(io, ui);

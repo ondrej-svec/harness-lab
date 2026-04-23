@@ -380,5 +380,20 @@ export function createHarnessClient({ fetchFn, session }) {
         method: "DELETE",
       });
     },
+    setWalkInPolicy(instanceId, allowWalkIns) {
+      return request(
+        `/api/admin/instances/${encodeURIComponent(instanceId)}/walk-in-policy`,
+        {
+          method: "PUT",
+          body: { allowWalkIns },
+        },
+      );
+    },
+    exportParticipantData(instanceId, participantId) {
+      const qs = new URLSearchParams({ instanceId }).toString();
+      return request(
+        `/api/admin/participants/${encodeURIComponent(participantId)}/export?${qs}`,
+      );
+    },
   };
 }
