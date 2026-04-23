@@ -50,6 +50,9 @@ importers:
       set-cookie-parser:
         specifier: ^3.1.0
         version: 3.1.0
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@playwright/test':
         specifier: ^1.59.1
@@ -4325,7 +4328,7 @@ snapshots:
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
 
-  '@daveyplate/better-auth-ui@3.3.9(ac9b7972fca563d88f7eb67f724c44e8)':
+  '@daveyplate/better-auth-ui@3.3.9(d73825b32de3f85e2e51d25e7d109a74)':
     dependencies:
       '@better-auth/passkey': 1.6.2(@better-auth/core@1.6.2(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(@opentelemetry/api@1.9.1)(better-call@1.3.5(zod@4.3.6))(jose@6.2.2)(kysely@0.28.16)(nanostores@1.2.0))(@better-auth/utils@0.4.0)(@better-fetch/fetch@1.1.21)(better-auth@1.6.2(@opentelemetry/api@1.9.1)(next@16.2.3(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(vitest@4.1.4))(better-call@1.3.5(zod@4.3.6))(nanostores@1.2.0)
       '@better-fetch/fetch': 1.1.21
@@ -4369,7 +4372,7 @@ snapshots:
       tailwindcss: 4.2.2
       ua-parser-js: 2.0.9
       vaul: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      zod: 4.1.12
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
@@ -4642,7 +4645,7 @@ snapshots:
   '@neondatabase/auth-ui@0.1.0-alpha.11(abb2d02a5704491dbcf2e7fbcb181e38)':
     dependencies:
       '@captchafox/react': 1.11.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@daveyplate/better-auth-ui': 3.3.9(ac9b7972fca563d88f7eb67f724c44e8)
+      '@daveyplate/better-auth-ui': 3.3.9(d73825b32de3f85e2e51d25e7d109a74)
       '@hcaptcha/react-hcaptcha': 1.17.4(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@hookform/resolvers': 5.2.2(react-hook-form@7.72.1(react@19.2.5))
       '@marsidev/react-turnstile': 1.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -4677,7 +4680,7 @@ snapshots:
       tw-animate-css: 1.4.0
       ua-parser-js: 2.0.9
       vaul: 1.1.2(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      zod: 4.1.12
+      zod: 4.3.6
     transitivePeerDependencies:
       - '@better-auth/passkey'
       - '@daveyplate/better-auth-tanstack'
