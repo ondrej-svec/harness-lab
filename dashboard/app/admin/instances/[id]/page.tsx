@@ -101,6 +101,7 @@ export default async function AdminPage({
                 instanceId={instanceId}
                 state={vm.state}
                 selectedAgendaItem={vm.selectedAgendaItem ?? null}
+                selectedScene={vm.selectedScene ?? null}
                 currentAgendaItem={vm.currentAgendaItem ?? null}
                 nextAgendaItem={vm.nextAgendaItem ?? null}
                 overviewState={vm.overviewState}

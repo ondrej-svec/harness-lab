@@ -30,7 +30,8 @@ import {
 } from "../../_actions/signals";
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
-import type { RichAgendaItem } from "../agenda/types";
+import type { RichAgendaItem, RichPresenterScene } from "../agenda/types";
+import { ScenePreviewRail } from "../scene-preview-rail";
 import type { ActivePollSummary } from "@/lib/workshop-store";
 
 type Copy = (typeof adminCopy)[UiLanguage];
@@ -47,6 +48,7 @@ export function RunSection({
   instanceId,
   state,
   selectedAgendaItem,
+  selectedScene,
   currentAgendaItem,
   nextAgendaItem,
   overviewState,
@@ -69,6 +71,7 @@ export function RunSection({
     "agenda" | "teams" | "rotation" | "workshopMeta" | "challenges" | "liveMoment"
   >;
   selectedAgendaItem: RichAgendaItem | null | undefined;
+  selectedScene?: RichPresenterScene | null;
   currentAgendaItem: RichAgendaItem | null | undefined;
   nextAgendaItem: RichAgendaItem | null | undefined;
   overviewState: OverviewStateLike;
@@ -217,6 +220,25 @@ export function RunSection({
 
         {focusItem ? (
           <MomentGuideCard item={focusItem} copy={copy} />
+        ) : null}
+
+        {focusItem && focusItem.presenterScenes.length > 0 ? (
+          <ScenePreviewRail
+            item={focusItem}
+            scenes={focusItem.presenterScenes as RichPresenterScene[]}
+            selectedScene={
+              (selectedScene as RichPresenterScene | null | undefined) ??
+              (focusItem.presenterScenes.find(
+                (scene) => scene.id === focusItem.defaultPresenterSceneId,
+              ) as RichPresenterScene | undefined) ??
+              (focusItem.presenterScenes[0] as RichPresenterScene | undefined) ??
+              null
+            }
+            defaultSceneId={focusItem.defaultPresenterSceneId ?? null}
+            lang={lang}
+            copy={copy}
+            instanceId={instanceId}
+          />
         ) : null}
 
         {focusItem ? (
