@@ -114,17 +114,11 @@ type WorkshopBlueprintPhase = {
   order: number;
   label: string;
   /**
-   * Legacy wall-clock string, e.g. "09:10". Kept optional during the
-   * expand phase of the 2026-04-23 minimal-UI plan; the runtime prefers
-   * `durationMinutes` cumulative math when present and falls back to
-   * this string otherwise. Dropped in the contract phase.
-   */
-  startTime?: string;
-  /**
-   * Minutes this phase occupies. Source of truth for wall-clock times
-   * once all blueprints carry it; the runtime derives `AgendaItem.time`
-   * from the blueprint `startTime` anchor plus the cumulative duration
-   * of preceding phases.
+   * Minutes this phase occupies. The runtime derives `AgendaItem.time`
+   * from the blueprint's top-level `startTime` anchor plus the cumulative
+   * duration of preceding phases. Introduced during the expand phase of
+   * the 2026-04-23 minimal-UI plan; the legacy per-phase `startTime`
+   * string was dropped in the contract phase.
    */
   durationMinutes?: number;
   kind?: string;
@@ -999,14 +993,10 @@ function formatMinutesAsClock(totalMinutes: number): string {
 /**
  * Compute the displayable wall-clock time for a phase at `index`.
  *
- * Preference order:
- * 1. Cumulative `durationMinutes` from the agenda anchor or first phase's
- *    `startTime` — the source of truth once all blueprints carry durations.
- * 2. The phase's own legacy `startTime` string — defensive fallback for
- *    blueprints still on the expand-phase shape.
- *
- * Returns an empty string if neither is present (rather than throwing);
- * downstream UI already tolerates empty time strings for custom items.
+ * Derives from the blueprint's top-level `startTime` anchor plus the
+ * cumulative `durationMinutes` of preceding phases. Returns an empty
+ * string if the anchor or any preceding duration is missing — downstream
+ * UI already tolerates empty time strings for custom items.
  */
 export function computeAgendaItemTime(
   phases: WorkshopBlueprintPhase[],
@@ -1016,26 +1006,18 @@ export function computeAgendaItemTime(
   const phase = phases[index];
   if (!phase) return "";
 
-  const anchorMinutes =
-    parseClockToMinutes(anchor) ?? parseClockToMinutes(phases[0]?.startTime);
+  const anchorMinutes = parseClockToMinutes(anchor);
+  if (anchorMinutes === null) return "";
 
-  if (anchorMinutes !== null) {
-    let cumulative = 0;
-    let cumulativeValid = true;
-    for (let i = 0; i < index; i += 1) {
-      const duration = phases[i]?.durationMinutes;
-      if (typeof duration !== "number" || !Number.isFinite(duration)) {
-        cumulativeValid = false;
-        break;
-      }
-      cumulative += duration;
+  let cumulative = 0;
+  for (let i = 0; i < index; i += 1) {
+    const duration = phases[i]?.durationMinutes;
+    if (typeof duration !== "number" || !Number.isFinite(duration)) {
+      return "";
     }
-    if (cumulativeValid) {
-      return formatMinutesAsClock(anchorMinutes + cumulative);
-    }
+    cumulative += duration;
   }
-
-  return phase.startTime ?? "";
+  return formatMinutesAsClock(anchorMinutes + cumulative);
 }
 
 export function createAgendaFromBlueprint(

@@ -791,7 +791,7 @@ test("workshop reset-instance accepts a custom local blueprint file", async () =
       {
         id: "opening",
         label: "Opening",
-        startTime: "09:00",
+        durationMinutes: 30,
         goal: "Local custom pack",
         scenes: [],
       },
@@ -884,7 +884,7 @@ test("instance sync-local patches matching agenda items and scenes through the a
       {
         id: "opening",
         label: "Opening, reframed",
-        startTime: "09:15",
+        durationMinutes: 30,
         goal: "Reframe the day",
         roomSummary: "Room summary for the opening",
         facilitatorPrompts: ["Start with the day promise."],
@@ -974,7 +974,7 @@ test("instance sync-local patches matching agenda items and scenes through the a
       action: "update",
       itemId: "opening",
       title: "Opening, reframed",
-      time: "09:15",
+      time: "09:10",
       description: "Room summary for the opening",
       goal: "Reframe the day",
       roomSummary: "Room summary for the opening",

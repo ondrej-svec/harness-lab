@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.11.1",
-  "contentHash": "f61122b5b1d69f8b1e0418c08fe7da74568909d92c5599250a7cadc2b50ab4a5",
+  "contentHash": "914815f12fdccdd8b9626c7164d56a131e51400693e6fbddd4c84cb9fb4a9ee6",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -178,7 +178,7 @@
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "458688d765a81aadbe80fda556123cb7ad25369a2e4708b9210a871680bc59f8"
+      "sha256": "ebcf1bde7b06b8dcede33848bf64f3b39a40b0481c1bbdc391993b4d2ffbce0f"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",
@@ -190,7 +190,7 @@
     },
     {
       "path": "workshop-blueprint/default.json",
-      "sha256": "fcfd6d6fcc629516b0e1488eaa2fa913f34f44dcff6c0f11c7d67a6a6bb35b36"
+      "sha256": "b777e59786ee557a1491d6de8f999aa9766afcf7fea84865251c0ab02c78bfb4"
     },
     {
       "path": "workshop-blueprint/operator-guide.md",

@@ -16,7 +16,6 @@
       "id": "opening",
       "order": 1,
       "label": "Opening and orientation",
-      "startTime": "09:10",
       "durationMinutes": 30,
       "kind": "shared",
       "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue."
@@ -25,7 +24,6 @@
       "id": "talk",
       "order": 2,
       "label": "The Craft Underneath",
-      "startTime": "09:40",
       "durationMinutes": 25,
       "kind": "shared",
       "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt."
@@ -34,7 +32,6 @@
       "id": "demo",
       "order": 3,
       "label": "Let me show you",
-      "startTime": "10:05",
       "durationMinutes": 25,
       "kind": "shared",
       "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong."
@@ -43,7 +40,6 @@
       "id": "build-1",
       "order": 4,
       "label": "Build fáze 1",
-      "startTime": "10:30",
       "durationMinutes": 65,
       "kind": "team",
       "goal": "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work."
@@ -52,7 +48,6 @@
       "id": "intermezzo-1",
       "order": 5,
       "label": "Intermezzo 1",
-      "startTime": "11:35",
       "durationMinutes": 40,
       "kind": "shared",
       "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself."
@@ -61,7 +56,6 @@
       "id": "lunch-reset",
       "order": 6,
       "label": "Lunch",
-      "startTime": "12:15",
       "durationMinutes": 75,
       "kind": "shared",
       "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo a fresh reader can actually enter."
@@ -70,7 +64,6 @@
       "id": "rotation",
       "order": 7,
       "label": "Team rotation",
-      "startTime": "13:30",
       "durationMinutes": 15,
       "kind": "team",
       "goal": "Force a quiet start after rotation and let repo quality reveal what is genuinely legible."
@@ -79,7 +72,6 @@
       "id": "build-2",
       "order": 8,
       "label": "Build Phase 2 · first push",
-      "startTime": "13:45",
       "durationMinutes": 60,
       "kind": "team",
       "goal": "Continue in your own repo after a fresh outside read, then turn that friction into stronger maps, stronger checks, and stronger continuation guidance."
@@ -88,7 +80,6 @@
       "id": "intermezzo-2",
       "order": 9,
       "label": "Intermezzo 2",
-      "startTime": "14:45",
       "durationMinutes": 5,
       "kind": "shared",
       "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working."
@@ -97,7 +88,6 @@
       "id": "build-2-second-push",
       "order": 10,
       "label": "Build Phase 2 · second push",
-      "startTime": "14:50",
       "durationMinutes": 55,
       "kind": "shared",
       "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal."
@@ -106,7 +96,6 @@
       "id": "reveal",
       "order": 11,
       "label": "Reveal and reflection",
-      "startTime": "15:45",
       "kind": "shared",
       "goal": "Close the day by naming the signals that helped the work carry forward after the reshuffle and fresh read, and turn them into next practice rather than a pleasant ending."
     }

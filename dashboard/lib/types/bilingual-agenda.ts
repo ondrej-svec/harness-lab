@@ -184,11 +184,13 @@ export type BilingualPhase = {
   id: string;
   order: number;
   /**
-   * Legacy wall-clock string. Optional during the expand phase of the
-   * 2026-04-23 minimal-UI plan; `durationMinutes` is the new source of
-   * truth once all blueprints carry it.
+   * Wall-clock anchor for this phase in the authoring source
+   * (`workshop-content/agenda.json`). The generator uses successive
+   * deltas to compute per-phase `durationMinutes` in the emitted views;
+   * the runtime consumes `durationMinutes` exclusively. Do not add
+   * `startTime` to the runtime shape (`WorkshopBlueprintPhase`).
    */
-  startTime?: string;
+  startTime: string;
   durationMinutes?: number;
   kind: string;
   intent?: string;

@@ -17,7 +17,6 @@
       "order": 1,
       "label": "Opening and orientation",
       "durationMinutes": 30,
-      "startTime": "09:10",
       "kind": "shared",
       "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand without improvised rescue.",
       "scenes": []
@@ -27,7 +26,6 @@
       "order": 2,
       "label": "The Craft Underneath",
       "durationMinutes": 25,
-      "startTime": "09:40",
       "kind": "shared",
       "goal": "Turn the opening energy into a precise thesis: harness engineering is team infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
       "scenes": []
@@ -37,7 +35,6 @@
       "order": 3,
       "label": "Let me show you",
       "durationMinutes": 25,
-      "startTime": "10:05",
       "kind": "shared",
       "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong.",
       "scenes": []
@@ -47,7 +44,6 @@
       "order": 4,
       "label": "Build Phase 1",
       "durationMinutes": 65,
-      "startTime": "10:30",
       "kind": "team",
       "goal": "Get every table to a real before-lunch baseline: a navigable repo, AGENTS.md, a plan, one explicit check, and a first reviewed slice of work.",
       "scenes": []
@@ -57,7 +53,6 @@
       "order": 5,
       "label": "Intermezzo 1",
       "durationMinutes": 40,
-      "startTime": "11:35",
       "kind": "shared",
       "goal": "Make the first round of learning visible across the room and reconnect teams to the discipline behind the output, not only to the output itself.",
       "scenes": []
@@ -67,7 +62,6 @@
       "order": 6,
       "label": "Lunch",
       "durationMinutes": 75,
-      "startTime": "12:15",
       "kind": "shared",
       "goal": "Interrupt the momentum before the afternoon shift and force teams to leave behind a repo a fresh reader can actually enter.",
       "scenes": []
@@ -77,7 +71,6 @@
       "order": 7,
       "label": "Team rotation",
       "durationMinutes": 15,
-      "startTime": "13:30",
       "kind": "team",
       "goal": "Force a quiet start after rotation and let repo quality reveal what is genuinely legible.",
       "scenes": []
@@ -87,7 +80,6 @@
       "order": 8,
       "label": "Build Phase 2 · first push",
       "durationMinutes": 60,
-      "startTime": "13:45",
       "kind": "team",
       "goal": "Continue in your own repo after a fresh outside read, then turn that friction into stronger maps, stronger checks, and stronger continuation guidance.",
       "scenes": []
@@ -97,7 +89,6 @@
       "order": 9,
       "label": "Intermezzo 2",
       "durationMinutes": 5,
-      "startTime": "14:45",
       "kind": "shared",
       "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room's current way of working.",
       "scenes": []
@@ -107,7 +98,6 @@
       "order": 10,
       "label": "Build Phase 2 · second push",
       "durationMinutes": 55,
-      "startTime": "14:50",
       "kind": "shared",
       "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal.",
       "scenes": []
@@ -117,7 +107,6 @@
       "order": 11,
       "label": "Reveal and reflection",
       "durationMinutes": 45,
-      "startTime": "15:45",
       "kind": "shared",
       "goal": "Close the day by naming the signals that helped the work carry forward after the reshuffle and fresh read, and turn them into next practice rather than a pleasant ending.",
       "scenes": []

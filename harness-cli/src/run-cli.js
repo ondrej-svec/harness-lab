@@ -241,7 +241,12 @@ function readStringArrayFlag(flags, ...keys) {
 
 function buildAgendaItemUpdateFromBlueprintPhase(phase, currentItem) {
   const title = phase.label ?? phase.title ?? currentItem?.title ?? phase.id;
-  const time = phase.startTime ?? phase.time ?? currentItem?.time ?? "";
+  // startTime was retired in the contract phase of the 2026-04-23
+  // minimal-UI plan. Wall-clock time for agenda items is computed
+  // server-side from the blueprint's top-level anchor + cumulative
+  // durationMinutes; the CLI preserves whatever time the server
+  // returned on the current item if the incoming phase lacks one.
+  const time = phase.time ?? currentItem?.time ?? "";
   const roomSummary = phase.roomSummary ?? phase.description ?? phase.goal ?? currentItem?.roomSummary ?? currentItem?.description ?? "";
   const goal = phase.goal ?? roomSummary;
 

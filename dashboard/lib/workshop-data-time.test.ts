@@ -26,21 +26,22 @@ describe("computeAgendaItemTime", () => {
     expect(computeAgendaItemTime(phases, 2, "09:10")).toBe("10:05");
   });
 
-  it("falls back to phase.startTime when durationMinutes is missing", () => {
+  it("returns empty string when no anchor is provided", () => {
     const phases = [
-      phase("p1", { startTime: "09:00" }),
-      phase("p2", { startTime: "10:00" }),
+      phase("p1", { durationMinutes: 30 }),
+      phase("p2", { durationMinutes: 25 }),
     ];
-    expect(computeAgendaItemTime(phases, 0)).toBe("09:00");
-    expect(computeAgendaItemTime(phases, 1)).toBe("10:00");
+    expect(computeAgendaItemTime(phases, 0)).toBe("");
+    expect(computeAgendaItemTime(phases, 1)).toBe("");
   });
 
-  it("uses the first phase's startTime as the anchor when agenda anchor is absent", () => {
+  it("returns empty string when a preceding durationMinutes is missing", () => {
     const phases = [
-      phase("p1", { startTime: "08:30", durationMinutes: 15 }),
-      phase("p2", { durationMinutes: 45 }),
+      phase("p1", { durationMinutes: 30 }),
+      phase("p2"), // no duration
+      phase("p3", { durationMinutes: 25 }),
     ];
-    expect(computeAgendaItemTime(phases, 1)).toBe("08:45");
+    expect(computeAgendaItemTime(phases, 2, "09:00")).toBe("");
   });
 
   it("rolls over past midnight safely", () => {
@@ -51,18 +52,12 @@ describe("computeAgendaItemTime", () => {
     expect(computeAgendaItemTime(phases, 1, "23:45")).toBe("00:15");
   });
 
-  it("falls back per-phase when any preceding duration is missing", () => {
-    const phases = [
-      phase("p1", { durationMinutes: 30, startTime: "09:00" }),
-      phase("p2", { startTime: "09:40" }),
-      phase("p3", { durationMinutes: 25, startTime: "10:05" }),
-    ];
-    // p2 has no durationMinutes; p3's cumulative calc would miss it, so
-    // the helper falls back to p3's own startTime string.
-    expect(computeAgendaItemTime(phases, 2, "09:00")).toBe("10:05");
+  it("returns empty string when the phase index is out of range", () => {
+    expect(computeAgendaItemTime([], 0, "09:00")).toBe("");
   });
 
-  it("returns empty string when the phase index is out of range", () => {
-    expect(computeAgendaItemTime([], 0)).toBe("");
+  it("returns empty string when anchor is malformed", () => {
+    const phases = [phase("p1", { durationMinutes: 30 })];
+    expect(computeAgendaItemTime(phases, 0, "not-a-clock")).toBe("");
   });
 });
