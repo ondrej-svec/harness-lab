@@ -39,6 +39,16 @@ export type BlueprintAgenda = {
  */
 export type AgendaMode = "facilitator" | "participant";
 
+/**
+ * Inline defaults for the runtime blueprint identity. Previously sourced
+ * from `blueprintAgendaCs.blueprintId` / `.version`; retired with the
+ * compiled bundle in the 2026-04-23 cleanup. Kept as module-local
+ * constants so `createWorkshopInstanceRecord` can still default these
+ * fields without a JSON-module import.
+ */
+const DEFAULT_BLUEPRINT_ID = "harness-lab-core-day";
+const DEFAULT_BLUEPRINT_VERSION = 2;
+
 function getBlueprintAgenda(
   contentLang: WorkshopContentLanguage,
   mode: AgendaMode = "facilitator",
@@ -1927,8 +1937,8 @@ export function createWorkshopInstanceRecord(input: {
     id: input.id,
     templateId: template.id,
     status: input.status ?? "prepared",
-    blueprintId: input.blueprintId ?? blueprintAgendaCs.blueprintId,
-    blueprintVersion: input.blueprintVersion ?? blueprintAgendaCs.version,
+    blueprintId: input.blueprintId ?? DEFAULT_BLUEPRINT_ID,
+    blueprintVersion: input.blueprintVersion ?? DEFAULT_BLUEPRINT_VERSION,
     importedAt: input.importedAt ?? new Date().toISOString(),
     removedAt: input.removedAt ?? null,
     allowWalkIns: input.allowWalkIns ?? true,
