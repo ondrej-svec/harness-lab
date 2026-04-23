@@ -108,6 +108,12 @@ export default defineConfig({
     },
     reuseExistingServer: false,
     env: {
+      // Explicitly scrub Vercel identity env vars so the admin-auth
+      // fail-closed check (`VERCEL_ENV === "production"`) can't trip when
+      // the local .env.local happens to contain pulled Vercel values.
+      // Our e2e intentionally uses the demo creds to exercise file-mode.
+      VERCEL: "",
+      VERCEL_ENV: "",
       HARNESS_STORAGE_MODE: "file",
       HARNESS_ADMIN_USERNAME: "facilitator",
       HARNESS_ADMIN_PASSWORD: "secret",

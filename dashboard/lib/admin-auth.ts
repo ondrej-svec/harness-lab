@@ -62,17 +62,23 @@ export function getExpectedFileModeCredentials() {
   const password = process.env.HARNESS_ADMIN_PASSWORD ?? "secret";
 
   // File-mode Basic Auth is a local-dev affordance. Shipping a
-  // production deploy with the demo defaults (facilitator / secret)
+  // production Vercel deploy with the demo defaults (facilitator / secret)
   // would leave /admin openly accessible to anyone who read the README.
   // Fail closed at startup so the deployment is visibly broken rather
   // than silently insecure.
+  //
+  // Gate on VERCEL_ENV=production, not NODE_ENV — `next start` in CI
+  // (Playwright e2e) also sets NODE_ENV=production but intentionally
+  // uses the demo creds to exercise the file-mode admin flow. VERCEL_ENV
+  // is only set when actually running on Vercel, which is the real
+  // threat surface (a promoted deployment).
   if (
-    process.env.NODE_ENV === "production" &&
+    process.env.VERCEL_ENV === "production" &&
     username === "facilitator" &&
     password === "secret"
   ) {
     throw new Error(
-      "Refusing to serve file-mode admin auth with default credentials in production. " +
+      "Refusing to serve file-mode admin auth with default credentials on a production Vercel deployment. " +
         "Set HARNESS_ADMIN_USERNAME and HARNESS_ADMIN_PASSWORD — or run with HARNESS_STORAGE_MODE=neon " +
         "so facilitator auth goes through Neon Auth.",
     );
