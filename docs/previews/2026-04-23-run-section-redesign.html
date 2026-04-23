@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Preview — Run section redesign</title>
+  <style>
+    :root {
+      --bg: #191724;
+      --bg-soft: #26233a;
+      --panel: #1f1d2e;
+      --border: rgba(224,222,244,0.12);
+      --text: #e0def4;
+      --text-strong: #f6f3ff;
+      --muted: #b4b0d0;
+      --muted-2: #908caa;
+      --accent: #c4a7e7;
+      --accent-2: #9ccfd8;
+      --success: #9ccfd8;
+      --warn: #f6c177;
+      --danger: #eb6f92;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 24px; background: var(--bg);
+      color: var(--text); font-family: var(--font); line-height: 1.5;
+    }
+    .note {
+      max-width: 920px; margin: 0 auto 24px; padding: 14px 18px;
+      border-radius: 10px; border: 1px dashed var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, transparent);
+      font-size: 14px; color: var(--muted);
+    }
+    .note strong { color: var(--text-strong); }
+    .note code { font-family: var(--mono); font-size: 13px; background: var(--bg-soft); padding: 2px 5px; border-radius: 4px; }
+
+    /* ---- Top chrome (section switcher + event code + walk-ins) ---- */
+    .shell { max-width: 1240px; margin: 0 auto; }
+    .topbar {
+      display: flex; align-items: center; gap: 20px;
+      padding: 12px 16px; border-radius: 12px;
+      background: var(--panel); border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .nav {
+      display: flex; gap: 2px; padding: 4px;
+      background: var(--bg-soft); border-radius: 999px;
+    }
+    .nav button {
+      background: none; border: 0; color: var(--muted-2);
+      padding: 8px 16px; border-radius: 999px;
+      font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    }
+    .nav button.active {
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      color: var(--text-strong);
+    }
+    .topbar-right {
+      margin-left: auto; display: flex; align-items: center; gap: 14px;
+    }
+    .event-code {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px 6px 12px; border-radius: 10px;
+      background: var(--bg-soft); border: 1px solid var(--border);
+      font-family: var(--mono); font-size: 13px;
+    }
+    .event-code .label { color: var(--muted-2); font-family: var(--font); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+    .event-code .code { color: var(--text-strong); font-weight: 600; letter-spacing: 0.14em; }
+    .event-code button {
+      background: none; border: 0; color: var(--muted); padding: 4px 6px; cursor: pointer;
+      border-radius: 6px;
+    }
+    .event-code button:hover { color: var(--text-strong); background: rgba(255,255,255,0.06); }
+
+    .toggle {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted);
+    }
+    .toggle-pill {
+      width: 36px; height: 20px; border-radius: 999px;
+      background: color-mix(in srgb, var(--success) 30%, var(--bg-soft));
+      position: relative; cursor: pointer;
+    }
+    .toggle-pill::after {
+      content: ""; position: absolute; top: 2px; right: 2px;
+      width: 16px; height: 16px; border-radius: 999px; background: var(--success);
+    }
+
+    /* ---- Main 2-column layout ---- */
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 16px; align-items: start;
+    }
+
+    /* ---- Focus card (current agenda item) ---- */
+    .focus {
+      padding: 20px 22px; border-radius: 16px;
+      background: var(--panel); border: 1px solid var(--border);
+    }
+    .focus .status-line {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px; border-radius: 999px;
+      background: color-mix(in srgb, var(--success) 18%, transparent);
+      color: var(--success); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    }
+    .status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); }
+    .phase-label { color: var(--muted-2); font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; }
+    .focus h2 {
+      margin: 0 0 6px; color: var(--text-strong);
+      font-size: 24px; line-height: 1.2;
+    }
+    .focus .time { color: var(--muted-2); font-family: var(--mono); font-size: 13px; margin-bottom: 12px; }
+    .focus p.summary { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
+
+    .focus-actions {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 8px;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; border: 1px solid var(--border);
+      background: var(--bg-soft); color: var(--text);
+    }
+    .btn:hover { background: color-mix(in srgb, var(--accent) 10%, var(--bg-soft)); }
+    .btn-primary {
+      background: color-mix(in srgb, var(--accent) 22%, var(--panel));
+      border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+      color: var(--text-strong);
+    }
+    .btn-warn { border-color: color-mix(in srgb, var(--warn) 32%, var(--border)); }
+
+    .reactive-row {
+      margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border);
+    }
+    .reactive-row .label {
+      color: var(--muted-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+    .reactive-row .buttons { display: flex; flex-wrap: wrap; gap: 6px; }
+    .reactive-row .btn { font-size: 12px; padding: 6px 10px; }
+
+    /* ---- Agenda outline ---- */
+    .outline {
+      padding: 16px 0; border-radius: 16px;
+      background: var(--panel); border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .outline .heading {
+      padding: 0 20px 12px; margin: 0 0 4px;
+      display: flex; align-items: baseline; justify-content: space-between;
+    }
+    .outline .heading h3 {
+      margin: 0; font-size: 14px; font-weight: 600; color: var(--text-strong);
+      text-transform: uppercase; letter-spacing: 0.12em;
+    }
+    .outline .heading .hint {
+      color: var(--muted-2); font-size: 12px;
+    }
+    .outline ul {
+      list-style: none; margin: 0; padding: 0;
+    }
+    .outline li {
+      display: grid; grid-template-columns: 72px 12px minmax(0,1fr) auto;
+      gap: 10px; align-items: center;
+      padding: 9px 20px; border-top: 1px solid var(--border);
+      font-size: 14px; cursor: pointer;
+      transition: background 120ms ease;
+    }
+    .outline li:first-child { border-top: 0; }
+    .outline li:hover {
+      background: color-mix(in srgb, var(--accent) 6%, transparent);
+    }
+    .outline li.current {
+      background: color-mix(in srgb, var(--success) 10%, transparent);
+    }
+    .outline li.done { opacity: 0.68; }
+    .outline .time { font-family: var(--mono); font-size: 12px; color: var(--muted-2); }
+    .outline .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: color-mix(in srgb, var(--muted-2) 40%, transparent);
+    }
+    .outline li.current .dot { background: var(--success); box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 24%, transparent); }
+    .outline li.done .dot { background: var(--muted-2); }
+    .outline .label { color: var(--text); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .outline li.current .label { color: var(--text-strong); font-weight: 600; }
+    .outline .jump {
+      color: var(--accent-2); font-size: 11px; font-weight: 600;
+      opacity: 0; transition: opacity 120ms ease;
+    }
+    .outline li:hover .jump { opacity: 1; }
+    .outline li.current .jump { opacity: 0; }
+
+    /* ---- Scene preview drawer (collapsible) ---- */
+    details.scene-drawer {
+      margin-top: 16px; border-radius: 16px;
+      background: var(--panel); border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    details.scene-drawer summary {
+      padding: 14px 20px; cursor: pointer;
+      list-style: none; display: flex; align-items: center; justify-content: space-between;
+      font-size: 13px; font-weight: 600; color: var(--text-strong);
+      text-transform: uppercase; letter-spacing: 0.12em;
+    }
+    details.scene-drawer summary::-webkit-details-marker { display: none; }
+    details.scene-drawer summary::after {
+      content: "▾"; color: var(--muted-2); font-weight: 400;
+      transition: transform 150ms ease;
+    }
+    details.scene-drawer[open] summary::after { transform: rotate(180deg); }
+    .scene-body {
+      padding: 0 20px 20px; display: grid; grid-template-columns: 220px minmax(0,1fr); gap: 18px;
+    }
+    .scene-list {
+      display: grid; gap: 6px; border-right: 1px solid var(--border); padding-right: 14px;
+    }
+    .scene-tile {
+      padding: 10px 12px; border-radius: 8px; background: var(--bg-soft);
+      border: 1px solid transparent; cursor: pointer;
+      display: grid; gap: 4px;
+    }
+    .scene-tile:hover { border-color: var(--border); }
+    .scene-tile.active {
+      background: color-mix(in srgb, var(--accent) 12%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 36%, var(--border));
+    }
+    .scene-tile .tile-label {
+      font-size: 12px; font-weight: 600; color: var(--text);
+    }
+    .scene-tile.active .tile-label { color: var(--text-strong); }
+    .scene-tile .tile-kind {
+      font-size: 10px; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .scene-tile.default-badge::after {
+      content: "default"; font-size: 9px; color: var(--accent-2);
+      text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .scene-stage {
+      display: grid; gap: 10px; font-size: 13px;
+    }
+    .scene-stage .surface-label {
+      color: var(--muted-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em;
+    }
+    .scene-stage h4 { margin: 0; color: var(--text-strong); font-size: 17px; line-height: 1.2; }
+    .scene-stage p { margin: 0; color: var(--muted); }
+    .scene-stage .readonly-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 6px;
+      background: var(--bg-soft); color: var(--muted-2);
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+      width: fit-content;
+    }
+
+    /* ---- Footer hint showing CLI correspondence ---- */
+    .cli-footer {
+      margin-top: 20px; padding: 14px 18px;
+      border-radius: 10px; background: var(--bg-soft);
+      border: 1px solid var(--border);
+      font-family: var(--mono); font-size: 12px; color: var(--muted);
+    }
+    .cli-footer strong { color: var(--text-strong); font-family: var(--font); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; margin-right: 10px; }
+    .cli-footer code { color: var(--accent-2); }
+
+    @media (max-width: 920px) {
+      .grid { grid-template-columns: 1fr; }
+      .scene-body { grid-template-columns: 1fr; }
+      .scene-list { border-right: 0; border-bottom: 1px solid var(--border); padding-right: 0; padding-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="note">
+    <strong>Preview artifact — not live code.</strong> This mockup represents the Run section under the minimal-UI plan
+    (<code>docs/plans/2026-04-23-feat-minimal-ui-and-blueprint-as-data-plan.md</code>). Per the plan's Subjective Contract,
+    Phase 4 implementation is gated on review of this preview. Reviewer: Ondrej.
+    What to look for: (1) agenda outline reads as glanceable not busy, (2) scene preview stays low-chrome and obviously read-only,
+    (3) live-reactive writes are mid-scene fast, (4) no authoring affordances anywhere.
+  </div>
+
+  <main class="shell">
+
+    <!-- Top chrome: section switcher + event code + walk-ins -->
+    <div class="topbar">
+      <div class="nav">
+        <button class="active">Run</button>
+        <button>People</button>
+        <button>Settings</button>
+        <button>Summary</button>
+      </div>
+
+      <div class="topbar-right">
+        <div class="event-code" title="Event code — share with participants">
+          <div>
+            <div class="label">Event code</div>
+            <div class="code">HARNESS-42</div>
+          </div>
+          <button title="Rotate event code">↻</button>
+        </div>
+
+        <div class="toggle" title="Walk-ins policy">
+          <span>Walk-ins</span>
+          <span class="toggle-pill" aria-pressed="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <!-- Left column: focus card + live-reactive writes -->
+      <section class="focus">
+        <div class="status-line">
+          <span class="status-pill"><span class="dot"></span>Live</span>
+          <span class="phase-label">Phase 4 · Build 1</span>
+        </div>
+        <h2>Build Phase 1 — Get to a baseline repo</h2>
+        <div class="time">10:30 – 11:35 · 65 min · derived from durationMinutes</div>
+        <p class="summary">
+          Every table to a real before-lunch baseline: navigable repo, AGENTS.md, a plan, one explicit check,
+          and a first reviewed slice of work.
+        </p>
+
+        <div class="focus-actions">
+          <button class="btn">◀ Back</button>
+          <button class="btn btn-primary">Next phase ▶</button>
+          <button class="btn">Launch presenter ↗</button>
+        </div>
+
+        <div class="reactive-row">
+          <div class="label">Live-reactive writes</div>
+          <div class="buttons">
+            <button class="btn">Capture rotation signal</button>
+            <button class="btn">Checkpoint note</button>
+            <button class="btn">Challenge complete ✓</button>
+            <button class="btn">Promote feedback</button>
+            <button class="btn btn-warn">Reset poll</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right column: agenda outline -->
+      <section class="outline">
+        <div class="heading">
+          <h3>Agenda</h3>
+          <span class="hint">read-only · hover to jump</span>
+        </div>
+        <ul>
+          <li class="done">
+            <span class="time">09:10</span><span class="dot"></span>
+            <span class="label">Opening and orientation</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li class="done">
+            <span class="time">09:40</span><span class="dot"></span>
+            <span class="label">The Craft Underneath</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li class="done">
+            <span class="time">10:05</span><span class="dot"></span>
+            <span class="label">Let me show you</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li class="current">
+            <span class="time">10:30</span><span class="dot"></span>
+            <span class="label">Build Phase 1</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">11:35</span><span class="dot"></span>
+            <span class="label">Intermezzo 1</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">12:15</span><span class="dot"></span>
+            <span class="label">Lunch</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">13:30</span><span class="dot"></span>
+            <span class="label">Team rotation</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">13:45</span><span class="dot"></span>
+            <span class="label">Build Phase 2 · first push</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">14:45</span><span class="dot"></span>
+            <span class="label">Intermezzo 2</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">14:50</span><span class="dot"></span>
+            <span class="label">Build Phase 2 · second push</span>
+            <span class="jump">Jump →</span>
+          </li>
+          <li>
+            <span class="time">15:45</span><span class="dot"></span>
+            <span class="label">Reveal and reflection</span>
+            <span class="jump">Jump →</span>
+          </li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- Scene preview drawer (spans full width, low chrome) -->
+    <details class="scene-drawer" open>
+      <summary>Scene preview · Build Phase 1</summary>
+      <div class="scene-body">
+        <div class="scene-list">
+          <div class="scene-tile active default-badge">
+            <div class="tile-label">Build briefing</div>
+            <div class="tile-kind">Room · briefing</div>
+          </div>
+          <div class="scene-tile">
+            <div class="tile-label">What to build, in your words</div>
+            <div class="tile-kind">Participant · moment</div>
+          </div>
+          <div class="scene-tile">
+            <div class="tile-label">Team checkpoints</div>
+            <div class="tile-kind">Room · checkpoint</div>
+          </div>
+        </div>
+        <div class="scene-stage">
+          <span class="surface-label">Room surface · as seen on the projector</span>
+          <h4>Build Phase 1</h4>
+          <p>
+            You have 65 minutes. First move: your agent writes <em>AGENTS.md</em> from what you already know about your
+            brief. Then one explicit check before you give the agent more autonomy. Reviewed slice by 11:30.
+          </p>
+          <span class="readonly-tag">● Read-only preview · edit via <code>harness scene edit</code></span>
+        </div>
+      </div>
+    </details>
+
+    <div class="cli-footer">
+      <strong>CLI parity</strong>
+      Advance agenda: <code>harness agenda move &lt;id&gt; up|down</code> ·
+      Edit scene body: <code>harness scene edit &lt;sceneId&gt; --body "..."</code> ·
+      Rotate event code: <code>harness workshop participant-access --rotate</code> ·
+      Flip walk-ins: <code>harness instance set --walk-ins true|false</code>
+    </div>
+
+  </main>
+</body>
+</html>

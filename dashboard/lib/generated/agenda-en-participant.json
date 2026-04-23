@@ -1765,11 +1765,11 @@
       {
         "id": "code-review-helper",
         "title": "Code Review Helper",
-        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
+        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and consistency breaks exactly where it should be tightest. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
         "userStories": [
           "As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.",
           "As the author of a change, I want to know what I should verify before the review starts.",
-          "As the team after rotation, I want to continue from the heuristics the original team already discovered instead of reinventing them."
+          "As a fresh reader coming into this repo, I want to continue from the heuristics already discovered instead of reinventing them."
         ],
         "architectureNotes": [
           "This can be a CLI, web app, or simple script. The important part is a clear `diff -> analysis -> checklist` flow.",
@@ -1789,11 +1789,11 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
+        "problem": "Every codebase accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
         "userStories": [
           "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
           "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
-          "As a team, I want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
+          "As a working group, we want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
         ],
         "architectureNotes": [
           "Choose any language or framework, but the CLI must stay easy to run and easy to discover.",
@@ -1814,7 +1814,7 @@
       {
         "id": "doc-generator",
         "title": "Doc Generator",
-        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
+        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, it gets postponed, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
         "userStories": [
           "As a developer, I want basic technical documentation from a project without writing everything from scratch.",
           "As a reviewer, I want to understand the module structure and main entry points within minutes.",
@@ -1839,9 +1839,9 @@
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
+        "problem": "Every codebase has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
         "userStories": [
-          "As a team, I want several metrics on one screen so the current state is legible quickly.",
+          "As a user, I want several metrics on one screen so the current state is legible quickly.",
           "As a facilitator, I want to change seed data without touching UI logic.",
           "As a fresh collaborator, I want to understand the data structure, components, and screens within minutes."
         ],
@@ -1866,7 +1866,7 @@
         "title": "Standup Bot",
         "problem": "Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a fresh collaborator can continue working from — without the original author, without the original thread, and without a verbal walkthrough.",
         "userStories": [
-          "As a team lead, I want standup responses collected into one readable summary.",
+          "As a lead, I want standup responses collected into one readable summary.",
           "As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.",
           "As a fresh collaborator, I want to understand the data flow and integration points without a verbal walkthrough."
         ],
@@ -1874,7 +1874,7 @@
           "Prefer a clear data model over complicated integration.",
           "Mock data is fine if the workflow feels realistic and is documented clearly.",
           "Separate ingest, processing, and presentation of the output.",
-          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original team.",
+          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original authors.",
           "Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible."
         ],
         "acceptanceCriteria": [

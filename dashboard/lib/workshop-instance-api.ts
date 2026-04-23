@@ -18,6 +18,7 @@ const KNOWN_REFERENCE_ITEM_KINDS = [
 export type WorkshopInstanceCreateInput = {
   id: string;
   templateId?: string;
+  blueprintId?: string;
   contentLang?: WorkshopContentLanguage;
   eventTitle?: string;
   city?: string;
@@ -79,11 +80,14 @@ export function parseWorkshopInstanceCreateBody(body: unknown): ValidationResult
     return { ok: false, error: "templateId must reference a known workshop template" };
   }
 
+  const blueprintId = readOptionalStringField(record, "blueprintId");
+
   return {
     ok: true,
     value: {
       id,
       templateId,
+      blueprintId,
       contentLang: readOptionalContentLanguageField(record, "contentLang"),
       eventTitle: readOptionalStringField(record, "eventTitle"),
       city: readOptionalStringField(record, "city"),

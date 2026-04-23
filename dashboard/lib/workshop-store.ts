@@ -34,6 +34,7 @@ import { getCheckpointRepository } from "./checkpoint-repository";
 import { getEventAccessRepository } from "./event-access-repository";
 import { getInstanceArchiveRepository } from "./instance-archive-repository";
 import { getWorkshopInstanceRepository } from "./workshop-instance-repository";
+import { blueprintRecordToAgenda, getBlueprintRepository } from "./blueprint-repository";
 import { getLearningsLogRepository } from "./learnings-log-repository";
 import { getMonitoringSnapshotRepository } from "./monitoring-snapshot-repository";
 import { getParticipantFeedbackRepository } from "./participant-feedback-repository";
@@ -1435,6 +1436,7 @@ export async function getWorkshopInstances(options?: { includeRemoved?: boolean 
 export async function createWorkshopInstance(input: {
   id: string;
   templateId?: string;
+  blueprintId?: string;
   contentLang?: WorkshopContentLanguage;
   eventTitle?: string;
   city?: string;
@@ -1480,8 +1482,31 @@ export async function createWorkshopInstance(input: {
     },
   };
 
+  // If the caller passed a `blueprintId` that resolves to a blueprint
+  // stored in the DB, use that as the materialization source. Otherwise
+  // fall through to the legacy in-repo compiled bundle via
+  // `createWorkshopStateFromInstance`'s own default resolver.
+  let externalBlueprint: ReturnType<typeof blueprintRecordToAgenda> | undefined;
+  if (input.blueprintId) {
+    try {
+      const blueprintRecord = await getBlueprintRepository().get(input.blueprintId);
+      if (blueprintRecord) {
+        externalBlueprint = blueprintRecordToAgenda(blueprintRecord);
+      }
+    } catch {
+      // Non-fatal: fall back to the legacy seed. The log will show the
+      // miss via the runtime alert emitted by the blueprint shape guard.
+    }
+  }
+
   await instanceRepository.createInstance(nextInstance);
-  await getWorkshopStateRepository().saveState(nextInstance.id, createWorkshopStateFromInstance(nextInstance));
+  await getWorkshopStateRepository().saveState(
+    nextInstance.id,
+    createWorkshopStateFromInstance(
+      nextInstance,
+      externalBlueprint as Parameters<typeof createWorkshopStateFromInstance>[1],
+    ),
+  );
   await getTeamRepository().replaceTeams(nextInstance.id, []);
   await getCheckpointRepository().replaceCheckpoints(nextInstance.id, []);
   await getMonitoringSnapshotRepository().replaceSnapshots(nextInstance.id, []);

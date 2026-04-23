@@ -408,7 +408,8 @@ function printUsage(io, ui) {
 
   ui.section("Instance");
   ui.commandList([
-    helpLine("instance create [<id>]", "Create a new workshop from a template"),
+    helpLine("instance create [<id>]", "Create a new workshop"),
+    helpLine("  [--blueprint ID]", "Materialize from a DB blueprint (push one first)"),
     helpLine("  [--template-id ID] [--content-lang cs|en]", ""),
     helpLine("  [--event-title TEXT] [--city CITY]", ""),
     helpLine("instance list", "List all facilitator-visible instances"),
@@ -1334,9 +1335,11 @@ async function handleWorkshopCreateInstance(io, ui, env, positionals, flags, dep
     return 1;
   }
 
+  const blueprintId = readStringFlag(flags, "blueprint", "blueprint-id");
   const payload = {
     id: instanceId,
     ...(readStringFlag(flags, "template-id", "template") ? { templateId: readStringFlag(flags, "template-id", "template") } : {}),
+    ...(blueprintId ? { blueprintId } : {}),
     ...buildWorkshopMetadataInput(flags),
   };
 

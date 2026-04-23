@@ -157,6 +157,13 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 - `GET /api/admin/blueprints` returns the seeded row.
 - No behavior change in running workshops; old build-time blueprint path still used by runtime.
 
+**Honest gap surfaced during Phase 4 preview work:** Phase 1 stores blueprints in the DB but does not yet wire `createWorkshopStateFromInstance` (`dashboard/lib/workshop-data.ts:1964`) to consume DB blueprints. The proof slice (`harness instance create --blueprint <id>`) needs this integration to close the loop. Scope for that follow-up:
+  1. Add a converter `blueprintBodyToBlueprintAgenda(body)` that maps the stored body shape to the runtime `BlueprintAgenda` type.
+  2. In the instance-create API, if `blueprintId` is present and resolves to a DB row, pass the converted blueprint into `createWorkshopStateFromInstance` as `externalBlueprint`.
+  3. CLI `harness instance create --blueprint <id>` threads the flag through.
+  4. Integration test covers: push custom blueprint → create instance from it → agenda reflects the custom phases.
+This is a bounded change but touches runtime-critical code; deferred to a focused follow-up session with integration tests rather than rushed here.
+
 ---
 
 ### Phase 2 — Runtime switches to `durationMinutes`
@@ -208,7 +215,7 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Dashboard has four sections + Presenter + Device. Run shows read-only agenda outline + scene preview. Authoring UI is deleted.
 
-- [ ] **4.1** **Preview artifact first.** Produce a static HTML mockup or ASCII wireframe of the new Run layout (focus card + agenda outline + scene-preview drawer). Reviewed by Ondrej. No implementation starts until this lands. Failure: back to planning, not implementation.
+- [x] **4.1** Preview artifact shipped at `docs/previews/2026-04-23-run-section-redesign.html` — focus card, agenda outline, scene-preview drawer, top-bar event code + walk-ins toggle, live-reactive write row, CLI-parity footer. Awaiting Ondrej's review per the Subjective Contract's rejection criteria before implementation begins.
 - [ ] **4.2** Create `dashboard/app/admin/instances/[id]/_components/scene-preview-rail.tsx` — read-only variant of `SceneStageRail`. Strip: `updateSceneField`, `movePresenterScene`, `removePresenterScene`, `togglePresenterSceneEnabled`, `setDefaultPresenterScene`, `AddSceneRow`. Keep: tile navigation, stage render of per-surface bodies, selected-scene label card (cloned from `agenda-section.tsx:236-241`). Share types only; no flag-based dual-mode.
 - [ ] **4.3** Wire `ScenePreviewRail` into `run-section.tsx` — new `<details>` drawer under the focus card, or adjacent column on wide viewports. Respect tone rules (low chrome, non-modal).
 - [ ] **4.4** Keep Run's live-reactive writes untouched — verify all of the following remain: `setParticipantMomentOverrideAction`, `clearParticipantMomentOverrideAction`, `resetActivePollAction`, `promoteParticipantFeedbackAction`, `HandoffMomentCard` (rotation), `addCheckpointFeedAction`, `completeChallengeAction`, per-row and hero `setAgendaAction`.

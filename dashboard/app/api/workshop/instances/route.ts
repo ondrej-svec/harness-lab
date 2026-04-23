@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     {
       ...parsed.value,
       templateId: parsed.value.templateId ?? workshopTemplates[0]?.id,
+      blueprintId: parsed.value.blueprintId,
     },
     facilitator?.neonUserId ?? null,
   );

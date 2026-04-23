@@ -428,3 +428,53 @@ export function setBlueprintRepositoryForTests(
 ): void {
   overrideRepository = repository;
 }
+
+// ---------------------------------------------------------------------------
+// Converter: stored blueprint body -> runtime BlueprintAgenda shape
+// ---------------------------------------------------------------------------
+
+/**
+ * Map the stored `body` jsonb into the shape `createWorkshopStateFromInstance`
+ * expects (`BlueprintAgenda` from `workshop-data.ts`). The stored body already
+ * matches most fields; this converter just fills in the structural fields
+ * (`version`, `blueprintId`) from the record and tolerates a missing
+ * `subtitle`/`title`.
+ *
+ * Phase 6 of the minimal-UI plan uses this to let instance creation
+ * materialize from a named blueprint in the DB rather than the compiled
+ * in-repo bundle.
+ */
+export function blueprintRecordToAgenda(record: BlueprintRecord): {
+  version: number;
+  blueprintId: string;
+  title: string;
+  subtitle: string;
+  startTime?: string;
+  principles?: string[];
+  phases: unknown[];
+  inventory?: Record<string, unknown>;
+} {
+  const body = record.body as Record<string, unknown>;
+  const phases = Array.isArray(body.phases) ? body.phases : [];
+  const inventory =
+    body.inventory && typeof body.inventory === "object" && !Array.isArray(body.inventory)
+      ? (body.inventory as Record<string, unknown>)
+      : undefined;
+  return {
+    version:
+      typeof body.schemaVersion === "number"
+        ? body.schemaVersion
+        : typeof body.version === "number"
+          ? (body.version as number)
+          : record.version,
+    blueprintId: record.id,
+    title: typeof body.title === "string" ? body.title : record.name,
+    subtitle: typeof body.subtitle === "string" ? body.subtitle : "",
+    startTime: typeof body.startTime === "string" ? body.startTime : undefined,
+    principles: Array.isArray(body.principles)
+      ? (body.principles as string[]).filter((item) => typeof item === "string")
+      : undefined,
+    phases,
+    inventory,
+  };
+}
