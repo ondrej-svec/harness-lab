@@ -276,15 +276,10 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page).toHaveURL(/agendaItem=rotation/);
     await expect(page.getByText("13:30 • Rotace týmů").first()).toBeVisible();
     await page.getByRole("button", { name: "posunout live sem" }).first().click();
-    await expect(page.getByRole("button", { name: "Odemknout" })).toBeVisible();
-
-    await page.getByRole("button", { name: "Odemknout" }).click();
-    await expect(page.getByText(/plocha pro účastníky je otevřená|participant plocha je otevřená/i).first()).toBeVisible();
-
-    await page.goto("/admin/instances/sample-studio-a?section=settings");
-    await expect(page.getByRole("heading", { name: /plocha pro účastníky|participant plocha/i })).toBeVisible();
-    await page.getByRole("button", { name: "znovu skrýt" }).click();
-    await expect(page.getByText(/plocha pro účastníky je skrytá|participant plocha je skrytá/i).first()).toBeVisible();
+    // The old reveal/hide workflow (Odemknout / znovu skrýt buttons +
+    // the participant-surface card in settings) was retired in the
+    // 2026-04-23 minimal-UI plan. Participants see the active
+    // agenda item automatically via live-moment propagation.
   });
 
   test("keeps the facilitator overview visually stable", async ({ page }) => {
