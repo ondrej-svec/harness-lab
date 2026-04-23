@@ -2,7 +2,7 @@
 title: "chore: topbar cleanup + compiled-bundle retirement"
 type: plan
 date: 2026-04-23
-status: approved
+status: in_progress
 parent: docs/plans/2026-04-23-feat-minimal-ui-and-blueprint-as-data-plan.md
 confidence: high
 ---
@@ -157,31 +157,39 @@ One ordered migration:
 
 ## Implementation Tasks
 
-### Part A — Topbar cleanup
+### Part A — Topbar cleanup **(SHIPPED)**
 
-- [ ] **A1** `outline-rail.tsx`: remove the eyebrow + workshop-label paragraph at the top. Keep the sticky container + section nav + nested agenda.
-- [ ] **A2** `control-room-cockpit.tsx`: drop the "active instance" row from `summaryRows`. Update `buildControlRoomSummaryStats` accordingly (the underlying view-model no longer needs to produce that row).
-- [ ] **A3** `control-room-cockpit.tsx`: remove the session-info + archive-line block (lines ~244-249). Leave the KPI grid as the last row of the header.
-- [ ] **A4** `run-section.tsx`: drop the `AdminPanel eyebrow/title/description` wrapper around the content, or keep the panel but empty the copy props. Pick the minimal route that preserves layout spacing.
-- [ ] **A5** Update `page.test.tsx` assertions that expected the retired copy; update `outline-rail.test.tsx` where it asserted on `copy.activeInstance` in the rail header.
-- [ ] **A6** Typecheck, test, commit.
+- [x] **A1** `outline-rail.tsx`: eyebrow + workshop-label paragraph removed. Sticky container + section nav + nested agenda only.
+- [x] **A2** `control-room-cockpit.tsx`: "active instance" KPI dropped; grid shrunk from 4 to 3 columns. `buildControlRoomSummaryStats` returns three rows.
+- [x] **A3** Session-info + archive-line block removed. KPI grid is the last row of the header.
+- [x] **A4** `run-section.tsx`: `AdminPanel` swapped for a slim `<section>` that keeps panel chrome but drops eyebrow/title/description. The Run tab being active is signal enough.
+- [x] **A5** `outline-rail.test.tsx` and `page.test.tsx` assertions updated to the new shape.
+- [x] **A6** Typecheck clean, dashboard 799/799 passing, committed as `8de7c5f`.
 
-### Part B — Compiled-bundle retirement
+### Part B — Compiled-bundle retirement **(DEFERRED — attempted, reverted)**
 
-- [ ] **B1** Replace `blueprintAgendaCs.blueprintId` / `.version` references in `workshop-data.ts` (inside `createWorkshopInstanceRecord` and `sampleWorkshopInstances`) with an inline constant `DEFAULT_BLUEPRINT_REF = { blueprintId: "harness-lab-default", version: 1 }`.
-- [ ] **B2** Migrate each caller of `getBlueprintAgenda`:
-  - `workshop-data.ts:61` (`generateWorkshopMetaFromTemplate` or similar) — inline the title/subtitle constants or thread the blueprint record in.
-  - `workshop-data.ts:952` — same treatment.
-  - `workshop-data.ts:1028` (`createAgendaFromBlueprint`) — require `externalBlueprint`; callers must provide it.
-  - `workshop-data.ts:1525` (`createWorkshopInventory`) — same.
-  - `workshop-data.ts:1949` (`createWorkshopStateFromInstance`) — require `externalBlueprint`; remove the `??` fallback.
-- [ ] **B3** Update call sites that relied on the optional externalBlueprint to always fetch a blueprint record first (e.g. `workshop-store.createWorkshopInstance` already does this; `admin-page-loader` needs an equivalent path for reads that instantiate agenda for display).
-- [ ] **B4** Delete the compiled-bundle imports at `workshop-data.ts:1-4` and the `getBlueprintAgenda` function.
-- [ ] **B5** Delete `dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json`.
-- [ ] **B6** Update `scripts/content/generate-views.ts` to skip those four files. Keep `generatePublicBlueprint` → `workshop-blueprint/agenda.json`.
-- [ ] **B7** Update `verify:content` to not expect the retired files. Update `.copy-editor.lock.json` if it references them.
-- [ ] **B8** Sync workshop bundle.
-- [ ] **B9** Typecheck, run full dashboard + CLI tests, commit.
+Part B was attempted in this session and reverted after tests surfaced a load-bearing dependency on the compiled CS/EN bundle that Part B didn't account for:
+
+- `lib/workshop-data.test.ts` (230 lines) and `lib/workshop-data.agenda-voice.test.ts` (125 lines) exercise the `createWorkshopStateFromTemplate` / participant-voice contract against the full compiled bundle — full scene content, participant moments, full CS translations.
+- `__tests__/api/agenda/route.test.ts`, `__tests__/api/workshop/route.test.ts`, `app/admin/instances/[id]/page.test.tsx`, `lib/workshop-store.poll-perf.test.ts`, `lib/workshop-store.test.ts`, and `app/participant/page.test.tsx` all materialise state via the file-mode path that currently reaches for the compiled bundle when no `externalBlueprint` is provided.
+
+Replacing the bundle with a single language-agnostic seed-derived fallback makes the fallback too thin (empty scenes, English-only titles) and breaks every assertion keyed off CS content like `"13:30 • Rotace týmů"` or `"Look up and orient"`.
+
+**Honest call:** the retirement is real work (substantial test rewrite to use explicit blueprint records rather than the implicit bundle) and does not unlock any new capability — production already materialises from the DB blueprints table after `97ea10c`. The compiled bundle stays as the legacy fallback for file-mode dev + tests.
+
+Remaining B1–B9 tasks:
+
+- [ ] **B1** Replace `blueprintAgendaCs.blueprintId` / `.version` with inline constants. _Small._
+- [ ] **B2** Migrate five `getBlueprintAgenda` callers. _Small per site; needs test coauthor._
+- [ ] **B3** Update `workshop-state-repository` ensure paths to look up blueprints. _Needs async or lazy-seed._
+- [ ] **B4** Delete the compiled-bundle imports. _Trivial after B1–B3._
+- [ ] **B5** Delete the four generated JSON files. _Trivial after B4._
+- [ ] **B6** Update generator. _Done in Part B attempt; revert-safe._
+- [ ] **B7** Update `.copy-editor.lock.json`. _Small._
+- [ ] **B8** Rewrite 8+ test files to supply explicit blueprint records. _Large — main cost._
+- [ ] **B9** Typecheck, test, commit.
+
+**Unblock condition:** a dedicated session with the test-rewrite budget. Not blocking any feature or deploy.
 
 ## Acceptance Criteria
 
