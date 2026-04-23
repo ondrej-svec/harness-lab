@@ -356,12 +356,29 @@ export function createHarnessClient({ fetchFn, session }) {
       });
     },
 
-    // Blueprint management (Phase 1: read-only; writes land in Phase 3)
+    // Blueprint management
     listBlueprints() {
       return request("/api/admin/blueprints");
     },
     getBlueprint(blueprintId) {
       return request(`/api/admin/blueprints/${encodeURIComponent(blueprintId)}`);
+    },
+    upsertBlueprint(input) {
+      return request("/api/admin/blueprints", {
+        method: "POST",
+        body: input,
+      });
+    },
+    forkBlueprint(sourceId, input) {
+      return request(`/api/admin/blueprints/${encodeURIComponent(sourceId)}/fork`, {
+        method: "POST",
+        body: input,
+      });
+    },
+    deleteBlueprint(blueprintId) {
+      return request(`/api/admin/blueprints/${encodeURIComponent(blueprintId)}`, {
+        method: "DELETE",
+      });
     },
   };
 }

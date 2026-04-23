@@ -425,6 +425,18 @@ function printUsage(io, ui) {
   ]);
   ui.blank();
 
+  ui.section("Blueprint");
+  ui.commandList([
+    helpLine("blueprint list", "List every blueprint stored in the DB"),
+    helpLine("blueprint show <id>", "Show one blueprint's body + metadata"),
+    helpLine("blueprint push <id> --file PATH", "Upsert a blueprint from a local JSON file"),
+    helpLine("  [--name NAME] [--language cs|en] [--team-mode true|false]", ""),
+    helpLine("  [--dry-run]", "Validate + print the would-be result without writing"),
+    helpLine("blueprint fork <id> --as NEW-ID [--name NAME]", "Create a new blueprint by copying an existing one"),
+    helpLine("blueprint rm <id>", "Delete a blueprint (cannot remove harness-lab-default)"),
+  ]);
+  ui.blank();
+
   ui.section("Global flags");
   ui.commandList([
     helpLine("--json", "Output machine-readable JSON"),
@@ -3451,6 +3463,210 @@ async function handleWorkshopTeam(io, ui, env, mergedDeps) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Blueprint commands — CLI-primary authoring for reusable blueprints.
+// Part of the 2026-04-23 minimal-UI + blueprint-as-data plan (Phase 3).
+// ---------------------------------------------------------------------------
+
+async function handleBlueprintList(io, ui, env, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listBlueprints();
+    ui.json("Blueprint List", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Blueprint list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleBlueprintShow(io, ui, env, positionals, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const blueprintId = readOptionalPositional(positionals, 2);
+  if (!blueprintId) {
+    ui.status("error", "Blueprint id is required. Usage: harness blueprint show <id>", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.getBlueprint(blueprintId);
+    ui.json("Blueprint Show", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Blueprint show failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function readBlueprintFile(io, ui, flags) {
+  const filePath = readStringFlag(flags, "file");
+  if (!filePath) {
+    ui.status("error", "--file <path.json> is required.", { stream: "stderr" });
+    return null;
+  }
+  const resolvedPath = path.resolve(process.cwd(), filePath);
+  try {
+    const raw = await fs.readFile(resolvedPath, "utf-8");
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      ui.status("error", `Blueprint file must be a JSON object: ${resolvedPath}`, { stream: "stderr" });
+      return null;
+    }
+    if (!Array.isArray(parsed.phases)) {
+      ui.status("error", `Blueprint file is missing a "phases" array: ${resolvedPath}`, { stream: "stderr" });
+      return null;
+    }
+    return parsed;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      ui.status("error", `Blueprint file not found at ${resolvedPath}`, { stream: "stderr" });
+    } else {
+      ui.status("error", `Failed to read blueprint file: ${error.message}`, { stream: "stderr" });
+    }
+    return null;
+  }
+}
+
+async function handleBlueprintPush(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const blueprintId = readOptionalPositional(positionals, 2) ?? readStringFlag(flags, "as", "id");
+  if (!blueprintId) {
+    ui.status("error", "Blueprint id is required. Usage: harness blueprint push <id> --file PATH", { stream: "stderr" });
+    return 1;
+  }
+
+  const body = await readBlueprintFile(io, ui, flags);
+  if (!body) return 1;
+
+  const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+
+  if (flags["dry-run"] === true) {
+    try {
+      const existing = await client.getBlueprint(blueprintId).catch((error) => {
+        if (error instanceof HarnessApiError && error.status === 404) return null;
+        throw error;
+      });
+      ui.json("Blueprint Push (dry-run)", {
+        ok: true,
+        dryRun: true,
+        blueprintId,
+        willCreate: existing === null,
+        willUpdate: existing !== null,
+        existingVersion: existing?.blueprint?.version ?? null,
+        incomingPhaseCount: Array.isArray(body.phases) ? body.phases.length : 0,
+      });
+      return 0;
+    } catch (error) {
+      if (error instanceof HarnessApiError) {
+        ui.status("error", `Blueprint push dry-run failed: ${error.message}`, { stream: "stderr" });
+        return 1;
+      }
+      throw error;
+    }
+  }
+
+  const name = readStringFlag(flags, "name") ?? undefined;
+  const language = readStringFlag(flags, "language", "lang") ?? undefined;
+  const teamModeFlag = readStringFlag(flags, "team-mode");
+  let teamMode;
+  if (teamModeFlag !== undefined && teamModeFlag !== null) {
+    if (teamModeFlag === "true") teamMode = true;
+    else if (teamModeFlag === "false") teamMode = false;
+  }
+
+  try {
+    const result = await client.upsertBlueprint({
+      id: blueprintId,
+      ...(name ? { name } : {}),
+      body,
+      ...(language ? { language } : {}),
+      ...(teamMode !== undefined ? { teamMode } : {}),
+    });
+    ui.json("Blueprint Push", result);
+    ui.status("ok", `Pushed blueprint ${blueprintId} (v${result.blueprint?.version ?? "?"})`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Blueprint push failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleBlueprintFork(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const sourceId = readOptionalPositional(positionals, 2);
+  if (!sourceId) {
+    ui.status("error", "Source blueprint id is required. Usage: harness blueprint fork <id> --as NEW-ID", { stream: "stderr" });
+    return 1;
+  }
+
+  const newId = readStringFlag(flags, "as", "new-id");
+  if (!newId) {
+    ui.status("error", "--as <new-id> is required.", { stream: "stderr" });
+    return 1;
+  }
+  const newName = readStringFlag(flags, "name") ?? undefined;
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.forkBlueprint(sourceId, {
+      newId,
+      ...(newName ? { newName } : {}),
+    });
+    ui.json("Blueprint Fork", result);
+    ui.status("ok", `Forked ${sourceId} -> ${newId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Blueprint fork failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleBlueprintDelete(io, ui, env, positionals, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+
+  const blueprintId = readOptionalPositional(positionals, 2);
+  if (!blueprintId) {
+    ui.status("error", "Blueprint id is required. Usage: harness blueprint rm <id>", { stream: "stderr" });
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.deleteBlueprint(blueprintId);
+    ui.json("Blueprint Delete", result);
+    ui.status("ok", `Deleted blueprint ${blueprintId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Blueprint delete failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 export async function runCli(argv, io, deps = {}) {
   const fetchFn = deps.fetchFn ?? globalThis.fetch;
   const mergedDeps = { fetchFn, sleepFn: deps.sleepFn, openUrl: deps.openUrl, cwd: deps.cwd };
@@ -3716,6 +3932,22 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "instance" && action === "remove") {
     return handleWorkshopRemoveInstance(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "blueprint" && action === "list") {
+    return handleBlueprintList(io, ui, io.env, mergedDeps);
+  }
+  if (scope === "blueprint" && action === "show") {
+    return handleBlueprintShow(io, ui, io.env, positionals, mergedDeps);
+  }
+  if (scope === "blueprint" && action === "push") {
+    return handleBlueprintPush(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+  if (scope === "blueprint" && action === "fork") {
+    return handleBlueprintFork(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+  if (scope === "blueprint" && (action === "rm" || action === "delete")) {
+    return handleBlueprintDelete(io, ui, io.env, positionals, mergedDeps);
   }
 
   printUsage(io, ui);
