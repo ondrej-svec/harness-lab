@@ -300,7 +300,13 @@ describe("Admin control room page", () => {
     expect(html).toContain(adminCopy.en.checkpointNextStepLabel);
   });
 
-  it("keeps safety actions in settings instead of the live canvas", async () => {
+  it("keeps only high-stakes surfaces in the slim Settings section", async () => {
+    // The 2026-04-23 minimal-UI plan slims Settings to identity +
+    // instance metadata + facilitator grants + end-workshop + blueprint
+    // repo link. Reset / archive / changePassword / rotation-toggle /
+    // team-mode-toggle move to CLI. The rotation-toggle's
+    // "participantSurfaceCardTitle" card and the archive/reset panels
+    // are retired from the UI.
     process.env.NEXT_PUBLIC_HARNESS_REPO_URL = "https://github.com/example/harness-lab";
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
@@ -310,13 +316,15 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.participantSurfaceCardTitle);
-    expect(html).toContain(adminCopy.en.participantSurfaceRecoveryHint);
-    expect(html).toContain(adminCopy.en.unlockButton);
-    expect(html).toContain(adminCopy.en.hideAgainButton);
-    expect(html).toContain(adminCopy.en.archiveResetTitle);
-    expect(html).toContain(adminCopy.en.settingsSafetyEyebrow);
+    // Kept surfaces
+    expect(html).toContain(adminCopy.en.endWorkshopButton);
+    expect(html).toContain(adminCopy.en.facilitatorsTitle);
     expect(html).toContain(adminCopy.en.blueprintLinkLabel);
+    // Retired surfaces
+    expect(html).not.toContain(adminCopy.en.unlockButton);
+    expect(html).not.toContain(adminCopy.en.hideAgainButton);
+    expect(html).not.toContain(adminCopy.en.archiveResetTitle);
+    expect(html).not.toContain(adminCopy.en.currentPasswordLabel);
   });
 
   it("redirects the legacy access section URL to run", async () => {

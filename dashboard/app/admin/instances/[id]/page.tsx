@@ -146,14 +146,13 @@ export default async function AdminPage({
                 copy={vm.copy}
                 instanceId={instanceId}
                 isNeonMode={vm.isNeonMode}
-                hasAuth={Boolean(auth)}
                 signedInEmail={vm.signedInEmail}
                 currentFacilitator={vm.currentFacilitator}
                 workshopId={vm.state.workshopId}
-                participantStateLabel={vm.overviewState.participantState}
-                passwordParam={vm.passwordParam}
-                errorParam={vm.errorParam}
-                teamModeEnabled={vm.selectedInstance?.teamModeEnabled ?? true}
+                isOwner={vm.isOwner}
+                facilitatorGrants={vm.facilitatorGrants}
+                currentFacilitatorGrantId={vm.currentFacilitator?.grant.id ?? null}
+                selectedInstance={vm.selectedInstance ?? null}
                 instanceStatus={vm.selectedInstance?.status ?? "prepared"}
                 endError={query?.endError}
               />

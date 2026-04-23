@@ -18,7 +18,6 @@ import type { Team } from "@/lib/workshop-data";
 import type { adminCopy, UiLanguage } from "@/lib/ui-language";
 import { PeopleWorkspace } from "./people-section-client";
 import { PeopleRandomize } from "./people-randomize";
-import { TeamsSection } from "./teams-section";
 import {
   addTeamHistoryMarkerAction,
   addParticipantsFromPasteAction,
@@ -105,14 +104,10 @@ export async function PeopleSection({
         />
       </div>
 
-      {teamModeEnabled ? (
-        <TeamsSection
-          lang={lang}
-          copy={copy}
-          instanceId={instanceId}
-          state={{ teams: teams.map((team) => ({ ...team })) }}
-        />
-      ) : null}
+      {/* Team repo/name/member registration moves to CLI
+          (harness workshop team set-repo/set-name/set-members) under the
+          2026-04-23 minimal-UI plan. Drag-drop assignment remains above
+          via PeopleSectionClient + PeopleRandomize. */}
 
       {teamModeEnabled ? (
         <TeamHistoryPanel
