@@ -95,6 +95,7 @@ Hosted mode requires `HARNESS_STORAGE_MODE=neon` and a private runtime database.
 | `NEON_AUTH_BASE_URL` | Base URL of your Neon Auth deployment | e.g. `https://<project>.auth.neon.tech` |
 | `NEON_AUTH_COOKIE_SECRET` | Signs the Neon Auth session cookie | ≥32 random chars — `openssl rand -base64 48` |
 | `HARNESS_EVENT_CODE_SECRET` | HMAC key used to hash participant event codes | ≥32 chars. Required whenever `HARNESS_STORAGE_MODE=neon`. `openssl rand -base64 48` |
+| `HARNESS_EVENT_CODE_REVEAL_KEY` | AES-256-GCM key that lets facilitators reveal the raw event code from the admin UI | base64url, must decode to exactly 32 bytes. Required whenever `HARNESS_STORAGE_MODE=neon`. Rotate independently of `HARNESS_EVENT_CODE_SECRET` — rotating this key invalidates reveal for codes issued under the old key (hash-based redemption still works). Generate with `openssl rand -base64 32 \| tr '+/' '-_' \| tr -d '='` |
 | `NEON_API_KEY` | Neon control-plane API key for participant user provisioning | Create at [Neon Console → API Keys](https://console.neon.tech/app/settings/api-keys). **Never commit.** |
 | `HARNESS_NEON_PROJECT_ID` | Target Neon project for participant auth writes | Find in [Neon Console → Project Settings](https://console.neon.tech/app/projects). Looks like `broad-smoke-12345678` |
 | `HARNESS_NEON_BRANCH_ID` | Target Neon branch (usually your production branch) | Looks like `br-example-pattern-abc12345` |
