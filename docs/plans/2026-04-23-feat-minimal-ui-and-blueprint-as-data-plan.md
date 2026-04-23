@@ -185,12 +185,12 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Every authoring task is possible via CLI. No UI change yet.
 
-- [x] **3.1 (partial)** Client methods landed: `listBlueprints`, `getBlueprint`, `upsertBlueprint`, `forkBlueprint`, `deleteBlueprint`, `setWalkInPolicy`, `exportParticipantData`. Still pending: `agenda.*`, `scene.*`, `grants.*`, `instance.set(teamMode|language)`.
-- [x] **3.2 (partial)** Admin API routes landed: `/api/admin/blueprints` (GET/POST) + `/[id]` (GET/DELETE) + `/[id]/fork` (POST). Existing `/api/admin/instances/[id]/walk-in-policy` and `/api/admin/participants/[id]/export` confirmed CLI-callable. Still pending: agenda/scene/grants admin API wrappers around the corresponding `_actions/*.ts`.
-- [x] **3.3 (partial)** Dispatch blocks landed: `blueprint list|show|push|fork|rm|delete`, `instance set --walk-ins`, `participant export`. Still pending: `agenda`, `scene`, `grants`, `instance set --team-mode|--language`.
+- [x] **3.1** Client methods landed: `listBlueprints`, `getBlueprint`, `upsertBlueprint`, `forkBlueprint`, `deleteBlueprint`, `setWalkInPolicy`, `exportParticipantData`, `listAgenda`, `addAgendaItem`, `updateAgendaItem`, `moveAgendaItem`, `removeAgendaItem`, `listScenes`, `addScene`, `updateScene`, `moveScene`, `setDefaultScene`, `setSceneEnabled`, `removeScene`, `listGrants`, `addGrant`, `revokeGrant`. `instance.set(teamMode|language)` deferred — not blocking any plan gate.
+- [x] **3.2** Admin API routes: `/api/admin/blueprints` (new). Existing `/api/workshop/instances/[id]/{agenda,scenes,facilitators}` + `/[id]/walk-in-policy` + `/api/admin/participants/[id]/export` confirmed CLI-callable — CLI wraps them directly.
+- [x] **3.3** Dispatch blocks landed: `blueprint list|show|push|fork|rm|delete`, `agenda list|add|edit|move|remove`, `scene list|add|edit|move|default-set|toggle|remove`, `grants list|add|revoke`, `instance set --walk-ins`, `participant export`. Remaining `instance set --team-mode|--language` deferred (team-mode is a blueprint-time default; language follows Phase 6).
 - [/] **3.4** Two-step preview+commit-token deferred. `blueprint push --dry-run` ships instead — fetches existing state and reports willCreate/willUpdate/existingVersion without writing. Upsert is idempotent; dry-run is sufficient safety for the blueprint path. The full commit-token pattern (TTL-gated) will ship with `scene move|remove` where ordering matters.
 - [x] **3.5** `printUsage` gets `Blueprint` and `Participant` sections and an `instance set` row. Re-visit when agenda/scene/grants sections land.
-- [x] **3.6 (partial)** `run-cli-blueprints.test.js` (12 tests) and `run-cli-instance-set.test.js` (6 tests) land. Remaining test files depend on the remaining commands.
+- [x] **3.6** CLI tests: `run-cli-blueprints.test.js` (12), `run-cli-instance-set.test.js` (6), `run-cli-agenda-scene-grants.test.js` (15). 113/113 passing.
 - [x] **3.7** `npm test` passes (98/98 CLI + 813/813 dashboard).
 
 **Status:** Phase 3 covers the proof-slice surface (blueprint management, walk-ins, GDPR export). Remaining agenda/scene/grants CRUD CLI commands are queued — they require exposing the corresponding `_actions/*.ts` handlers as admin API routes first, which is a sizeable scope of its own.

@@ -433,6 +433,38 @@ function printUsage(io, ui) {
   ]);
   ui.blank();
 
+  ui.section("Agenda (per-instance)");
+  ui.commandList([
+    helpLine("agenda list [--instance <id>]", "Show the live agenda for an instance"),
+    helpLine("agenda add --instance <id> --title T --time HH:MM", "Append a custom agenda item"),
+    helpLine("  --room-summary TEXT [--goal TEXT] [--after <itemId>]", ""),
+    helpLine("agenda edit <itemId> --instance <id> ...", "Update title/time/room-summary/prompts"),
+    helpLine("agenda move <itemId> up|down --instance <id>", "Reorder an item"),
+    helpLine("agenda remove <itemId> --instance <id>", "Remove an item"),
+  ]);
+  ui.blank();
+
+  ui.section("Scene (per-instance)");
+  ui.commandList([
+    helpLine("scene list [--instance <id>] [--agenda-item <itemId>]", "Show presenter scenes"),
+    helpLine("scene add --instance <id> --agenda-item <itemId>", "Add a scene under an agenda item"),
+    helpLine("  --label TEXT --scene-type TYPE [--title T] [--body TEXT]", ""),
+    helpLine("scene edit <sceneId> --instance <id> --agenda-item <itemId>", "Update scene fields"),
+    helpLine("scene move <sceneId> up|down --instance <id> --agenda-item <itemId>", "Reorder"),
+    helpLine("scene default-set <sceneId> --instance <id> --agenda-item <itemId>", "Set as default"),
+    helpLine("scene toggle <sceneId> --enabled true|false --instance <id> --agenda-item <itemId>", ""),
+    helpLine("scene remove <sceneId> --instance <id> --agenda-item <itemId>", "Remove a scene"),
+  ]);
+  ui.blank();
+
+  ui.section("Grants (facilitator access)");
+  ui.commandList([
+    helpLine("grants list [--instance <id>]", "List active facilitator grants"),
+    helpLine("grants add <email> --role owner|operator|observer --instance <id>", "Grant access"),
+    helpLine("grants revoke <grantId> --instance <id>", "Revoke a grant"),
+  ]);
+  ui.blank();
+
   ui.section("Blueprint");
   ui.commandList([
     helpLine("blueprint list", "List every blueprint stored in the DB"),
@@ -3650,6 +3682,501 @@ async function handleBlueprintFork(io, ui, env, positionals, flags, deps) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Agenda / scene / grants — per-instance CRUD via existing admin API routes
+// ---------------------------------------------------------------------------
+
+function resolveInstanceIdArg(io, ui, session, positionals, flags, slot = 2) {
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ??
+    readOptionalPositional(positionals, slot) ??
+    session.selectedInstanceId;
+  if (!instanceId) {
+    ui.status("error", "Instance id is required (--instance or select one first).", { stream: "stderr" });
+    return null;
+  }
+  return instanceId;
+}
+
+function readOptionalStringArrayFlag(flags, names) {
+  const raw = readStringFlag(flags, ...names);
+  if (raw === undefined || raw === null || raw === "") return undefined;
+  return raw.split("|").map((item) => item.trim()).filter(Boolean);
+}
+
+async function handleAgendaList(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId = resolveInstanceIdArg(io, ui, session, positionals, flags);
+  if (!instanceId) return 1;
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listAgenda(instanceId);
+    ui.json("Agenda List", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Agenda list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleAgendaAdd(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId = resolveInstanceIdArg(io, ui, session, positionals, flags);
+  if (!instanceId) return 1;
+
+  const title = readStringFlag(flags, "title");
+  const time = readStringFlag(flags, "time");
+  const goal = readStringFlag(flags, "goal");
+  const roomSummary = readStringFlag(flags, "room-summary", "description");
+  if (!title || !time || (!roomSummary && !goal)) {
+    ui.status(
+      "error",
+      "--title, --time, and --room-summary (or --goal) are required.",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.addAgendaItem(instanceId, {
+      title,
+      time,
+      goal: goal ?? undefined,
+      roomSummary: roomSummary ?? undefined,
+      description: roomSummary ?? goal,
+      facilitatorPrompts: readOptionalStringArrayFlag(flags, ["facilitator-prompts", "prompts"]),
+      watchFors: readOptionalStringArrayFlag(flags, ["watch-fors", "watch"]),
+      checkpointQuestions: readOptionalStringArrayFlag(flags, ["checkpoint-questions", "checkpoints"]),
+      afterItemId: readStringFlag(flags, "after") ?? null,
+    });
+    ui.json("Agenda Add", result);
+    ui.status("ok", `Added "${title}" to ${instanceId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Agenda add failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleAgendaEdit(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const itemId = readOptionalPositional(positionals, 2) ?? readStringFlag(flags, "item", "item-id");
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  if (!itemId) {
+    ui.status("error", "Agenda item id is required. Usage: harness agenda edit <itemId> --instance <id>", { stream: "stderr" });
+    return 1;
+  }
+  if (!instanceId) {
+    ui.status("error", "--instance <id> is required.", { stream: "stderr" });
+    return 1;
+  }
+
+  const title = readStringFlag(flags, "title");
+  const time = readStringFlag(flags, "time");
+  const goal = readStringFlag(flags, "goal");
+  const roomSummary = readStringFlag(flags, "room-summary", "description");
+  if (!title || !time || (!roomSummary && !goal)) {
+    ui.status(
+      "error",
+      "--title, --time, and --room-summary (or --goal) are required for edit.",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateAgendaItem(instanceId, itemId, {
+      title,
+      time,
+      goal: goal ?? roomSummary,
+      roomSummary: roomSummary ?? goal,
+      description: roomSummary ?? goal,
+      facilitatorPrompts: readOptionalStringArrayFlag(flags, ["facilitator-prompts", "prompts"]) ?? [],
+      watchFors: readOptionalStringArrayFlag(flags, ["watch-fors", "watch"]) ?? [],
+      checkpointQuestions: readOptionalStringArrayFlag(flags, ["checkpoint-questions", "checkpoints"]) ?? [],
+    });
+    ui.json("Agenda Edit", result);
+    ui.status("ok", `Updated ${itemId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Agenda edit failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleAgendaMove(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const itemId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const direction = readStringFlag(flags, "direction") ?? readOptionalPositional(positionals, 3);
+  if (!itemId || !instanceId || (direction !== "up" && direction !== "down")) {
+    ui.status(
+      "error",
+      "Usage: harness agenda move <itemId> up|down --instance <id>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.moveAgendaItem(instanceId, itemId, direction);
+    ui.json("Agenda Move", result);
+    ui.status("ok", `Moved ${itemId} ${direction}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Agenda move failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleAgendaRemove(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const itemId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  if (!itemId || !instanceId) {
+    ui.status(
+      "error",
+      "Usage: harness agenda remove <itemId> --instance <id>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.removeAgendaItem(instanceId, itemId);
+    ui.json("Agenda Remove", result);
+    ui.status("ok", `Removed ${itemId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Agenda remove failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneList(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId = resolveInstanceIdArg(io, ui, session, positionals, flags);
+  if (!instanceId) return 1;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listScenes(instanceId, agendaItemId);
+    ui.json("Scene List", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneAdd(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  const label = readStringFlag(flags, "label");
+  const sceneType = readStringFlag(flags, "scene-type", "type");
+  if (!instanceId || !agendaItemId || !label || !sceneType) {
+    ui.status(
+      "error",
+      "Usage: harness scene add --instance <id> --agenda-item <itemId> --label TEXT --scene-type briefing|demo|...",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.addScene(instanceId, {
+      agendaItemId,
+      label,
+      sceneType,
+      title: readStringFlag(flags, "title"),
+      body: readStringFlag(flags, "body"),
+      intent: readStringFlag(flags, "intent"),
+      chromePreset: readStringFlag(flags, "chrome-preset"),
+    });
+    ui.json("Scene Add", result);
+    ui.status("ok", `Added scene "${label}" under ${agendaItemId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene add failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneEdit(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const sceneId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  const label = readStringFlag(flags, "label");
+  const sceneType = readStringFlag(flags, "scene-type", "type");
+  if (!sceneId || !instanceId || !agendaItemId || !label || !sceneType) {
+    ui.status(
+      "error",
+      "Usage: harness scene edit <sceneId> --instance <id> --agenda-item <itemId> --label TEXT --scene-type TYPE",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.updateScene(instanceId, agendaItemId, sceneId, {
+      label,
+      sceneType,
+      title: readStringFlag(flags, "title"),
+      body: readStringFlag(flags, "body"),
+      intent: readStringFlag(flags, "intent"),
+      chromePreset: readStringFlag(flags, "chrome-preset"),
+    });
+    ui.json("Scene Edit", result);
+    ui.status("ok", `Updated scene ${sceneId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene edit failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneMove(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const sceneId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  const direction = readStringFlag(flags, "direction") ?? readOptionalPositional(positionals, 3);
+  if (!sceneId || !instanceId || !agendaItemId || (direction !== "up" && direction !== "down")) {
+    ui.status(
+      "error",
+      "Usage: harness scene move <sceneId> up|down --instance <id> --agenda-item <itemId>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.moveScene(instanceId, agendaItemId, sceneId, direction);
+    ui.json("Scene Move", result);
+    ui.status("ok", `Moved scene ${sceneId} ${direction}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene move failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneSetDefault(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const sceneId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  if (!sceneId || !instanceId || !agendaItemId) {
+    ui.status(
+      "error",
+      "Usage: harness scene default-set <sceneId> --instance <id> --agenda-item <itemId>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.setDefaultScene(instanceId, agendaItemId, sceneId);
+    ui.json("Scene Default", result);
+    ui.status("ok", `Set ${sceneId} as default for ${agendaItemId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene default-set failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneToggle(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const sceneId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  const enabledFlag = readStringFlag(flags, "enabled");
+  if (!sceneId || !instanceId || !agendaItemId || (enabledFlag !== "true" && enabledFlag !== "false")) {
+    ui.status(
+      "error",
+      "Usage: harness scene toggle <sceneId> --enabled true|false --instance <id> --agenda-item <itemId>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  const enabled = enabledFlag === "true";
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.setSceneEnabled(instanceId, agendaItemId, sceneId, enabled);
+    ui.json("Scene Toggle", result);
+    ui.status("ok", `Scene ${sceneId} enabled=${enabled}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene toggle failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleSceneRemove(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const sceneId = readOptionalPositional(positionals, 2);
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const agendaItemId = readStringFlag(flags, "agenda-item", "item");
+  if (!sceneId || !instanceId || !agendaItemId) {
+    ui.status(
+      "error",
+      "Usage: harness scene remove <sceneId> --instance <id> --agenda-item <itemId>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.removeScene(instanceId, agendaItemId, sceneId);
+    ui.json("Scene Remove", result);
+    ui.status("ok", `Removed scene ${sceneId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Scene remove failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleGrantsList(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId = resolveInstanceIdArg(io, ui, session, positionals, flags);
+  if (!instanceId) return 1;
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.listGrants(instanceId);
+    ui.json("Grants List", result);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Grants list failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleGrantsAdd(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const email = readStringFlag(flags, "email") ?? readOptionalPositional(positionals, 2);
+  const role = readStringFlag(flags, "role");
+  if (!instanceId || !email || !role) {
+    ui.status(
+      "error",
+      "Usage: harness grants add <email> --role owner|operator|observer --instance <id>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.addGrant(instanceId, email, role);
+    ui.json("Grants Add", result);
+    ui.status("ok", `Granted ${role} to ${email}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Grants add failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
+async function handleGrantsRevoke(io, ui, env, positionals, flags, deps) {
+  const session = await requireFacilitatorSession(io, ui, env);
+  if (!session) return 1;
+  const instanceId =
+    readStringFlag(flags, "instance", "instance-id") ?? session.selectedInstanceId;
+  const grantId = readOptionalPositional(positionals, 2) ?? readStringFlag(flags, "grant-id");
+  if (!instanceId || !grantId) {
+    ui.status(
+      "error",
+      "Usage: harness grants revoke <grantId> --instance <id>",
+      { stream: "stderr" },
+    );
+    return 1;
+  }
+  try {
+    const client = createHarnessClient({ fetchFn: deps.fetchFn, session });
+    const result = await client.revokeGrant(instanceId, grantId);
+    ui.json("Grants Revoke", result);
+    ui.status("ok", `Revoked grant ${grantId}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof HarnessApiError) {
+      ui.status("error", `Grants revoke failed: ${error.message}`, { stream: "stderr" });
+      return 1;
+    }
+    throw error;
+  }
+}
+
 async function handleInstanceSet(io, ui, env, positionals, flags, deps) {
   const session = await requireFacilitatorSession(io, ui, env);
   if (!session) return 1;
@@ -4055,6 +4582,30 @@ export async function runCli(argv, io, deps = {}) {
 
   if (scope === "participant" && action === "export") {
     return handleParticipantExport(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "agenda") {
+    if (action === "list") return handleAgendaList(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "add") return handleAgendaAdd(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "edit") return handleAgendaEdit(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "move") return handleAgendaMove(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "remove" || action === "rm") return handleAgendaRemove(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "scene") {
+    if (action === "list") return handleSceneList(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "add") return handleSceneAdd(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "edit") return handleSceneEdit(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "move") return handleSceneMove(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "default-set" || action === "set-default") return handleSceneSetDefault(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "toggle") return handleSceneToggle(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "remove" || action === "rm") return handleSceneRemove(io, ui, io.env, positionals, flags, mergedDeps);
+  }
+
+  if (scope === "grants") {
+    if (action === "list") return handleGrantsList(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "add") return handleGrantsAdd(io, ui, io.env, positionals, flags, mergedDeps);
+    if (action === "revoke") return handleGrantsRevoke(io, ui, io.env, positionals, flags, mergedDeps);
   }
 
   printUsage(io, ui);

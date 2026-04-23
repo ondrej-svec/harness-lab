@@ -395,5 +395,95 @@ export function createHarnessClient({ fetchFn, session }) {
         `/api/admin/participants/${encodeURIComponent(participantId)}/export?${qs}`,
       );
     },
+
+    // Agenda CRUD (wraps the existing /api/workshop/instances/[id]/agenda route)
+    listAgenda(instanceId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`);
+    },
+    addAgendaItem(instanceId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "POST",
+        body: input,
+      });
+    },
+    updateAgendaItem(instanceId, itemId, patch) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "PATCH",
+        body: { action: "update", itemId, ...patch },
+      });
+    },
+    moveAgendaItem(instanceId, itemId, direction) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "PATCH",
+        body: { action: "move", itemId, direction },
+      });
+    },
+    removeAgendaItem(instanceId, itemId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/agenda`, {
+        method: "DELETE",
+        body: { itemId },
+      });
+    },
+
+    // Scene CRUD (wraps /api/workshop/instances/[id]/scenes)
+    listScenes(instanceId, agendaItemId) {
+      const qs = agendaItemId ? `?${new URLSearchParams({ agendaItemId }).toString()}` : "";
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes${qs}`);
+    },
+    addScene(instanceId, input) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "POST",
+        body: input,
+      });
+    },
+    updateScene(instanceId, agendaItemId, sceneId, patch) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: { action: "update", agendaItemId, sceneId, ...patch },
+      });
+    },
+    moveScene(instanceId, agendaItemId, sceneId, direction) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: { action: "move", agendaItemId, sceneId, direction },
+      });
+    },
+    setDefaultScene(instanceId, agendaItemId, sceneId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: { action: "set_default", agendaItemId, sceneId },
+      });
+    },
+    setSceneEnabled(instanceId, agendaItemId, sceneId, enabled) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "PATCH",
+        body: { action: "set_enabled", agendaItemId, sceneId, enabled },
+      });
+    },
+    removeScene(instanceId, agendaItemId, sceneId) {
+      return request(`/api/workshop/instances/${encodeURIComponent(instanceId)}/scenes`, {
+        method: "DELETE",
+        body: { agendaItemId, sceneId },
+      });
+    },
+
+    // Facilitator grants (wraps /api/workshop/instances/[id]/facilitators)
+    listGrants(instanceId) {
+      return request(
+        `/api/workshop/instances/${encodeURIComponent(instanceId)}/facilitators`,
+      );
+    },
+    addGrant(instanceId, email, role) {
+      return request(
+        `/api/workshop/instances/${encodeURIComponent(instanceId)}/facilitators`,
+        { method: "POST", body: { email, role } },
+      );
+    },
+    revokeGrant(instanceId, grantId) {
+      return request(
+        `/api/workshop/instances/${encodeURIComponent(instanceId)}/facilitators/${encodeURIComponent(grantId)}`,
+        { method: "DELETE" },
+      );
+    },
   };
 }
