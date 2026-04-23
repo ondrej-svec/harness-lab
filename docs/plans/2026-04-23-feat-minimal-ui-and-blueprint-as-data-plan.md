@@ -2,7 +2,7 @@
 title: "feat: minimal facilitator UI & blueprint-as-data (with CLI envelope)"
 type: plan
 date: 2026-04-23
-status: approved
+status: in_progress
 brainstorm: docs/brainstorms/2026-04-23-minimal-facilitator-ui-and-instance-override-model-brainstorm.md
 confidence: medium
 ---
@@ -143,11 +143,11 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Schema exists, seeded. No behavior changes yet.
 
-- [ ] **1.1** Write migration `dashboard/db/migrations/2026-04-23-blueprints-table.sql` — create `blueprints` table: `id text primary key, name text unique not null, version integer not null default 1, body jsonb not null, metadata jsonb not null default '{}'::jsonb, language text not null, team_mode boolean not null default true, created_at timestamptz not null default now(), updated_at timestamptz not null default now()`. Use `IF NOT EXISTS`.
-- [ ] **1.2** In the same migration, inline seed the `harness-lab-default` row: `INSERT INTO blueprints (id, name, body, language, team_mode) VALUES ('harness-lab-default', 'harness-lab-default', $bundled_json, 'en', true) ON CONFLICT (id) DO NOTHING;` — where `$bundled_json` is the contents of the new `workshop-blueprint/default.json` (see 1.4).
-- [ ] **1.3** Add `BlueprintRecord` zod schema at `dashboard/lib/schemas/blueprint-schema.ts`. Top-level `.loose()` guard; field-level normalizer with defaults; `HARNESS_RUNTIME_ALERT` on parse failure. Mirror `workshop-state-schema.ts:28-80`.
-- [ ] **1.4** Produce `workshop-blueprint/default.json` as the canonical seed — the current full-day EN agenda distilled into the new schema. Schema: `{ name, language, teamMode, phases: [{ id, label, durationMinutes, startTime (legacy), scenes: [...], goal, roomSummary, prompts, watchFors, checkpointQuestions }] }`. Both `durationMinutes` and `startTime` present during expand.
-- [ ] **1.5** Add `BlueprintRepository` at `dashboard/lib/blueprint-repository.ts`, two implementations behind `HARNESS_STORAGE_MODE` matching `workshop-state-repository.ts:193`. Methods: `list()`, `get(id)`, `put(record)` (upsert), `delete(id)`, `fork(sourceId, newId, newName)`.
+- [x] **1.1** Write migration `dashboard/db/migrations/2026-04-23-blueprints-table.sql` — create `blueprints` table: `id text primary key, name text unique not null, version integer not null default 1, body jsonb not null, metadata jsonb not null default '{}'::jsonb, language text not null, team_mode boolean not null default true, created_at timestamptz not null default now(), updated_at timestamptz not null default now()`. Use `IF NOT EXISTS`.
+- [x] **1.2** In the same migration, inline seed the `harness-lab-default` row: `INSERT INTO blueprints (id, name, body, language, team_mode) VALUES ('harness-lab-default', 'harness-lab-default', $bundled_json, 'en', true) ON CONFLICT (id) DO NOTHING;` — where `$bundled_json` is the contents of the new `workshop-blueprint/default.json` (see 1.4).
+- [x] **1.3** Add `BlueprintRecord` zod schema at `dashboard/lib/schemas/blueprint-schema.ts`. Top-level `.loose()` guard; field-level normalizer with defaults; `HARNESS_RUNTIME_ALERT` on parse failure. Mirror `workshop-state-schema.ts:28-80`.
+- [x] **1.4** Produce `workshop-blueprint/default.json` as the canonical seed — the current full-day EN agenda distilled into the new schema. Schema: `{ name, language, teamMode, phases: [{ id, label, durationMinutes, startTime (legacy), scenes: [...], goal, roomSummary, prompts, watchFors, checkpointQuestions }] }`. Both `durationMinutes` and `startTime` present during expand.
+- [x] **1.5** Add `BlueprintRepository` at `dashboard/lib/blueprint-repository.ts`, two implementations behind `HARNESS_STORAGE_MODE` matching `workshop-state-repository.ts:193`. Methods: `list()`, `get(id)`, `put(record)` (upsert), `delete(id)`, `fork(sourceId, newId, newName)`.
 - [ ] **1.6** API routes under `dashboard/app/api/admin/blueprints/` — GET list, GET by id, POST upsert, POST fork, DELETE. `requireFacilitatorRequest` gate.
 - [ ] **1.7** Unit tests for repository + routes (zod edge cases, conflict, missing, large body).
 - [ ] **1.8** Add `BlueprintListResponse`/`BlueprintShowResponse` types; wire into `harness-cli/src/client.js` (list/get only; write comes in Phase 3).
