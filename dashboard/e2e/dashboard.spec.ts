@@ -255,7 +255,9 @@ test.describe("facilitator admin (file mode)", () => {
 
     await expect(page).toHaveURL(/\/admin\/instances\/sample-studio-a/);
     await expect(page.getByRole("link", { name: "zpět na workspace" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "run", exact: true })).toBeVisible();
+    // Run-section heading was retired in the 2026-04-23 topbar-cleanup
+    // plan (Part A, task A4) — the Run tab being active is signal
+    // enough without a redundant "run" title above the content.
     await expect(page.getByRole("navigation").getByRole("link", { name: "run" }).first()).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "lidé" }).first()).toBeVisible();
     await expect(page.getByRole("navigation").getByRole("link", { name: "přístupy" }).first()).toBeVisible();
@@ -370,10 +372,15 @@ test.describe("facilitator admin (file mode)", () => {
   });
 
   test("shows facilitators section with file-mode fallback message", async ({ page }) => {
-    await page.goto("/admin/instances/sample-studio-a?section=access");
+    // Facilitator management moved into Settings in the 2026-04-23
+    // minimal-UI plan (Access section was folded). The panel still
+    // renders the same title and a file-mode fallback body.
+    await page.goto("/admin/instances/sample-studio-a?section=settings");
 
     await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
-    await expect(page.getByText("Správa facilitátorů je dostupná jen v neon módu.")).toBeVisible();
+    await expect(
+      page.getByText("Tahle instance běží bez samostatných účtů."),
+    ).toBeVisible();
   });
 
   test("keeps dashboard authoring furniture off the run detail", async ({ page }) => {
@@ -517,14 +524,19 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(historyList.getByText(uniqueMarker).first()).toBeVisible();
   });
 
-  test("access and settings stay reachable as quieter secondary sections", async ({ page }) => {
+  test("legacy access URL folds into run; settings still reachable", async ({ page }) => {
+    // The 2026-04-23 minimal-UI plan collapsed Access into Run (event
+    // code + walk-ins moved to the Run topbar; facilitator grants
+    // moved to Settings). `?section=access` maps to the Run section
+    // via `legacyAdminSectionMap` so old deep-links keep working.
+    // The Archive/Reset surface was retired along the same pass.
     await page.goto("/admin/instances/sample-studio-a?section=access");
-    await expect(page.getByRole("heading", { name: "sdílený event code" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "vydat nový event code" })).toBeVisible();
+    await expect(
+      page.getByRole("navigation").getByRole("link", { name: "run" }).first(),
+    ).toBeVisible();
 
     await page.goto("/admin/instances/sample-studio-a?section=settings");
-    await expect(page.getByRole("heading", { name: "bezpečnostní zásahy" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "vytvořit archiv" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "správa facilitátorů" })).toBeVisible();
   });
 
   test("facilitators API returns list with auth", async ({ request }) => {
@@ -535,31 +547,19 @@ test.describe("facilitator admin (file mode)", () => {
     expect(Array.isArray(body.grants)).toBe(true);
   });
 
-  test("reset workshop requires typing the instance id to confirm", async ({ page }) => {
-    // One Canvas Phase 4: resetWorkshopAction now rejects unless the
-    // confirmation field matches the instance id. Previously the reset
-    // fired on a single unguarded click, which was a latent bug.
+  test("end-workshop confirmation requires typing the instance id", async ({ page }) => {
+    // The settings page carries the "type id to confirm" guard on the
+    // end-workshop form. The reset-data form that used to sit next to
+    // it was retired in the 2026-04-23 minimal-UI plan — resets now
+    // go through `harness instance reset` in the CLI. The typing-id
+    // confirmation pattern itself survives on the end-workshop form.
     await page.goto("/admin/instances/sample-studio-a?section=settings");
 
-    // The settings page now renders two confirmation forms sharing the
-    // same placeholder and the same hint phrase (end-workshop + reset).
-    // Scope to the reset form by its summary copy — "resetovat data"
-    // appears only in the reset <summary>, "uzavřít workshop" only in
-    // the end-workshop <summary>.
-    const resetForm = page.locator("form").filter({ hasText: /resetovat data/ });
-    await resetForm.locator("summary").first().click();
+    const endForm = page.locator("form").filter({ hasText: /uzavřít workshop/ });
+    await endForm.locator("summary").first().click();
 
-    const confirmation = resetForm.getByPlaceholder("sample-studio-a");
+    const confirmation = endForm.getByPlaceholder("sample-studio-a");
     await expect(confirmation).toBeVisible();
-
-    // Submitting with the wrong confirmation value must not reset the
-    // workshop. The form either redirects back to settings (no error
-    // surface required for this smoke) or the reset does not fire.
-    // Simpler assertion: the confirmation input exists and the label
-    // text explains what to type. Scope to the reset form — the prompt
-    // text is shared with the end-workshop form on the same page.
-    const heading = resetForm.getByText(/Pro potvrzení napište id instance/).first();
-    await expect(heading).toBeVisible();
   });
 });
 
