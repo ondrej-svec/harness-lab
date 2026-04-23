@@ -125,13 +125,52 @@ function pickField<C extends { participantVariant?: Partial<C> }, K extends keyo
   return content[key];
 }
 
-function generatePhaseView(phase: BilingualPhase, lang: "en" | "cs", mode: AgendaMode = "facilitator") {
+/**
+ * Parse "HH:MM" to minutes since midnight; null on bad input.
+ */
+function parseClockToMinutes(clock: string | undefined): number | null {
+  if (typeof clock !== "string") return null;
+  const match = /^(\d{1,2}):(\d{2})$/.exec(clock.trim());
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+  return hours * 60 + minutes;
+}
+
+/**
+ * Derive durationMinutes per phase from successive startTime deltas.
+ * The last phase's duration is left undefined (no way to infer without a
+ * trailing anchor). Phases missing startTime also stay undefined.
+ *
+ * Part of the 2026-04-23 minimal-UI plan, Phase 2: emit durationMinutes
+ * alongside startTime so the runtime can prefer the new source.
+ */
+function computeDurationsFromStartTimes(
+  phases: BilingualPhase[],
+): Array<number | undefined> {
+  return phases.map((phase, index) => {
+    const next = phases[index + 1];
+    const start = parseClockToMinutes(phase.startTime);
+    const nextStart = parseClockToMinutes(next?.startTime);
+    if (start === null || nextStart === null) return undefined;
+    return nextStart > start ? nextStart - start : undefined;
+  });
+}
+
+function generatePhaseView(
+  phase: BilingualPhase,
+  lang: "en" | "cs",
+  mode: AgendaMode = "facilitator",
+  durationMinutes?: number,
+) {
   const content = phase[lang];
   return {
     id: phase.id,
     order: phase.order,
     label: pickField(content, "label", mode),
     startTime: phase.startTime,
+    ...(typeof durationMinutes === "number" ? { durationMinutes } : {}),
     kind: phase.kind,
     intent: phase.intent,
     goal: pickField(content, "goal", mode),
@@ -254,13 +293,18 @@ function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs", mode: Ag
     return true;
   });
 
+  const durations = computeDurationsFromStartTimes(phases);
+
   return {
     version: 2,
     blueprintId: source.blueprintId,
+    startTime: phases[0]?.startTime,
     title: source.meta[lang].title,
     subtitle: source.meta[lang].subtitle,
     principles: source.meta[lang].principles,
-    phases: phases.map((phase) => generatePhaseView(phase, lang, mode)),
+    phases: phases.map((phase, index) =>
+      generatePhaseView(phase, lang, mode, durations[index]),
+    ),
     inventory: generateInventoryView(source, lang, mode),
   };
 }
@@ -270,19 +314,22 @@ function generateAgendaView(source: BilingualAgenda, lang: "en" | "cs", mode: Ag
 // ---------------------------------------------------------------------------
 
 function generatePublicBlueprint(source: BilingualAgenda) {
+  const durations = computeDurationsFromStartTimes(source.phases);
   return {
     version: 2,
     blueprintId: source.blueprintId,
+    startTime: source.phases[0]?.startTime,
     title: source.meta.en.title,
     subtitle: "Public-readable 10-phase mirror of the Harness Lab workshop day",
     presentationMode: "public-readable-mirror",
     sourceNote: "Generated from workshop-content/agenda.json. Do not edit by hand.",
     principles: source.meta.en.principles,
-    phases: source.phases.map((phase) => ({
+    phases: source.phases.map((phase, index) => ({
       id: phase.id,
       order: phase.order,
       label: phase.en.label,
       startTime: phase.startTime,
+      ...(typeof durations[index] === "number" ? { durationMinutes: durations[index] } : {}),
       kind: phase.kind,
       goal: phase.en.goal,
     })),

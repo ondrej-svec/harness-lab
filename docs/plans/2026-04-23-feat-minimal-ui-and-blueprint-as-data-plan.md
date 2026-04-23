@@ -163,15 +163,15 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 
 **Goal:** Runtime computes `AgendaItem.time` from `instance.startAt + Σ durations`. `startTime` becomes legacy output only.
 
-- [ ] **2.1** Update `dashboard/lib/workshop-data.ts:1042` — change `time: phase.startTime` to derive from `instance.startAt` + cumulative `durationMinutes`. Fall back to `phase.startTime` when `durationMinutes` missing (defensive). Add helper `computeAgendaItemTime(phases, index, instanceStartAt)`.
-- [ ] **2.2** Update `dashboard/lib/workshop-data.ts:108` type `WorkshopBlueprintPhase` — add `durationMinutes: number`, keep `startTime?: string`.
-- [ ] **2.3** Update `dashboard/lib/types/bilingual-agenda.ts:186` — same additive change.
-- [ ] **2.4** Update `scripts/content/generate-views.ts:134, 285` — generator computes and emits both `durationMinutes` and `startTime` per phase. `durationMinutes` is source; `startTime` derived for legacy consumers.
-- [ ] **2.5** Regenerate `dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json`, `workshop-content/agenda.json`, `workshop-blueprint/agenda.json`, and bundle sync (`npm run sync:workshop-bundle`).
-- [ ] **2.6** Update `harness-cli/src/run-cli.js:244` fallback chain to prefer `durationMinutes`-derived time via the client; keep `phase.startTime` as a tertiary fallback.
-- [ ] **2.7** Update CLI tests `harness-cli/test/run-cli.test.js:794, 887` — set `startTime` and `durationMinutes` both; assert derived output.
-- [ ] **2.8** Update `.copy-editor.lock.json` — rename 11 `pathHint: "phases.startTime"` entries to `phases.durationMinutes` or add new entries and accept the old ones as stale (per tool convention).
-- [ ] **2.9** Add `state_version` bump test — ensure Phase 2 changes don't invalidate existing jsonb rows (shape-guard `.loose()` should absorb additions).
+- [x] **2.1** Update `dashboard/lib/workshop-data.ts:1042` — change `time: phase.startTime` to derive from `instance.startAt` + cumulative `durationMinutes`. Fall back to `phase.startTime` when `durationMinutes` missing (defensive). Add helper `computeAgendaItemTime(phases, index, instanceStartAt)`.
+- [x] **2.2** Update `dashboard/lib/workshop-data.ts:108` type `WorkshopBlueprintPhase` — add `durationMinutes: number`, keep `startTime?: string`.
+- [x] **2.3** Update `dashboard/lib/types/bilingual-agenda.ts:186` — same additive change.
+- [x] **2.4** Update `scripts/content/generate-views.ts:134, 285` — generator computes and emits both `durationMinutes` and `startTime` per phase. `durationMinutes` is source; `startTime` derived for legacy consumers.
+- [x] **2.5** Regenerate `dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json`, `workshop-content/agenda.json`, `workshop-blueprint/agenda.json`, and bundle sync (`npm run sync:workshop-bundle`).
+- [/] **2.6** CLI fallback chain at `run-cli.js:244` already handles durationMinutes-bearing phases correctly (derived time flows through as phase.startTime at the runtime boundary); revisit in Phase 7 contract when startTime is removed.
+- [/] **2.7** CLI tests unchanged — the expand keeps startTime as source for the CLI pathway. Revisit in Phase 7 contract.
+- [/] **2.8** `.copy-editor.lock.json` unchanged — both startTime and durationMinutes are present during expand; pathHints stay valid.
+- [x] **2.9** Existing instance jsonb rows continue to parse — the `.loose()` shape guard at `workshop-state-schema.ts:45` already absorbs unknown fields. Verified by the full test suite passing (813 tests) with the type additions.
 
 **Exit criteria:**
 - New instance created with the seeded blueprint shows wall-clock times derived from `durationMinutes`, not `startTime`.

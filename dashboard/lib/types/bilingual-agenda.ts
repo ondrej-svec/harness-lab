@@ -183,7 +183,13 @@ export type BilingualPhaseContent = {
 export type BilingualPhase = {
   id: string;
   order: number;
-  startTime: string;
+  /**
+   * Legacy wall-clock string. Optional during the expand phase of the
+   * 2026-04-23 minimal-UI plan; `durationMinutes` is the new source of
+   * truth once all blueprints carry it.
+   */
+  startTime?: string;
+  durationMinutes?: number;
   kind: string;
   intent?: string;
   defaultSceneId?: string | null;

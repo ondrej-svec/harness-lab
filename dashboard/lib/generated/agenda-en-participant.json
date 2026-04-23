@@ -1,6 +1,7 @@
 {
   "version": 2,
   "blueprintId": "harness-lab-core-day",
+  "startTime": "09:10",
   "title": "Harness Lab",
   "subtitle": "Workshop operating system for working with AI agents",
   "principles": [
@@ -14,6 +15,7 @@
       "order": 1,
       "label": "Opening and orientation",
       "startTime": "09:10",
+      "durationMinutes": 30,
       "kind": "shared",
       "intent": "framing",
       "goal": "Open the day as a shared start: why harness engineering matters right now, what the room will do from the first beat to the reveal, and how we will know the work can stand on its own when a fresh reader picks it up.",
@@ -276,6 +278,7 @@
       "order": 2,
       "label": "The Craft Underneath",
       "startTime": "09:40",
+      "durationMinutes": 25,
       "kind": "shared",
       "intent": "teaching",
       "goal": "Turn the opening energy into a precise thesis: harness engineering is the infrastructure for working with agents, and the first build move must begin with map, boundaries, and proof rather than another prompt.",
@@ -578,6 +581,7 @@
       "order": 3,
       "label": "Let me show you",
       "startTime": "10:05",
+      "durationMinutes": 90,
       "kind": "shared",
       "intent": "demo",
       "goal": "Use one compact story to show a real working line: context, bounded next steps, implementation, change control, and explicit fallback moves when something goes wrong.",
@@ -883,6 +887,7 @@
       "order": 5,
       "label": "Intermezzo 1",
       "startTime": "11:35",
+      "durationMinutes": 40,
       "kind": "shared",
       "intent": "checkpoint",
       "goal": "Make learning visible across the room and remind participants that workflow matters as much as the artifact itself.",
@@ -1056,6 +1061,7 @@
       "order": 6,
       "label": "Lunch",
       "startTime": "12:15",
+      "durationMinutes": 150,
       "kind": "shared",
       "intent": "transition",
       "goal": "Interrupt the momentum before the afternoon shift and force participants to leave behind a repo a fresh reader can actually enter.",
@@ -1143,6 +1149,7 @@
       "order": 9,
       "label": "Intermezzo 2",
       "startTime": "14:45",
+      "durationMinutes": 5,
       "kind": "shared",
       "intent": "checkpoint",
       "goal": "Capture what truly helped after rotation and what is emerging as a weak point in the room’s current way of working.",
@@ -1318,6 +1325,7 @@
       "order": 10,
       "label": "Build Phase 2 · second push",
       "startTime": "14:50",
+      "durationMinutes": 55,
       "kind": "shared",
       "intent": "build",
       "goal": "Apply the intermezzo's signal. Iterate, extend, push further. Commit and make the repo readable for Reveal.",
@@ -1757,11 +1765,11 @@
       {
         "id": "code-review-helper",
         "title": "Code Review Helper",
-        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and consistency breaks exactly where it should be tightest. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
+        "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and the team loses consistency. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
         "userStories": [
           "As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.",
           "As the author of a change, I want to know what I should verify before the review starts.",
-          "As a fresh reader coming into this repo, I want to continue from the heuristics already discovered instead of reinventing them."
+          "As the team after rotation, I want to continue from the heuristics the original team already discovered instead of reinventing them."
         ],
         "architectureNotes": [
           "This can be a CLI, web app, or simple script. The important part is a clear `diff -> analysis -> checklist` flow.",
@@ -1781,11 +1789,11 @@
       {
         "id": "devtoolbox-cli",
         "title": "DevToolbox CLI",
-        "problem": "Every codebase accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
+        "problem": "Every team accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
         "userStories": [
           "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
           "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
-          "As a working group, we want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
+          "As a team, I want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
         ],
         "architectureNotes": [
           "Choose any language or framework, but the CLI must stay easy to run and easy to discover.",
@@ -1806,7 +1814,7 @@
       {
         "id": "doc-generator",
         "title": "Doc Generator",
-        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, it gets postponed, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
+        "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, the team postpones it, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different.",
         "userStories": [
           "As a developer, I want basic technical documentation from a project without writing everything from scratch.",
           "As a reviewer, I want to understand the module structure and main entry points within minutes.",
@@ -1831,9 +1839,9 @@
       {
         "id": "metrics-dashboard",
         "title": "Metrics Dashboard",
-        "problem": "Every codebase has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
+        "problem": "Every team has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
         "userStories": [
-          "As a user, I want several metrics on one screen so the current state is legible quickly.",
+          "As a team, I want several metrics on one screen so the current state is legible quickly.",
           "As a facilitator, I want to change seed data without touching UI logic.",
           "As a fresh collaborator, I want to understand the data structure, components, and screens within minutes."
         ],
@@ -1858,7 +1866,7 @@
         "title": "Standup Bot",
         "problem": "Daily standups in chat become long threads where blockers get lost, dependencies between people are invisible, and nothing is reconstructable an hour later. Your job: design a tool that turns standup inputs into an overview a fresh collaborator can continue working from — without the original author, without the original thread, and without a verbal walkthrough.",
         "userStories": [
-          "As a lead, I want standup responses collected into one readable summary.",
+          "As a team lead, I want standup responses collected into one readable summary.",
           "As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.",
           "As a fresh collaborator, I want to understand the data flow and integration points without a verbal walkthrough."
         ],
@@ -1866,7 +1874,7 @@
           "Prefer a clear data model over complicated integration.",
           "Mock data is fine if the workflow feels realistic and is documented clearly.",
           "Separate ingest, processing, and presentation of the output.",
-          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original authors.",
+          "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original team.",
           "Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible."
         ],
         "acceptanceCriteria": [

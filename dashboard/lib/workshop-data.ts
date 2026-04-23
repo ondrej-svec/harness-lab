@@ -16,6 +16,14 @@ export type BlueprintAgenda = {
   blueprintId: string;
   title: string;
   subtitle: string;
+  /**
+   * Top-level wall-clock anchor for the agenda, e.g. "09:10". When present,
+   * per-phase `startTime` is derived from this anchor plus the cumulative
+   * `durationMinutes` of preceding phases. When absent, falls back to each
+   * phase's own `startTime` string (legacy path; retired in the contract
+   * phase of the 2026-04-23 minimal-UI plan).
+   */
+  startTime?: string;
   principles?: string[];
   phases: WorkshopBlueprintPhase[];
   inventory?: BlueprintInventory;
@@ -105,7 +113,20 @@ type WorkshopBlueprintPhase = {
   id: string;
   order: number;
   label: string;
-  startTime: string;
+  /**
+   * Legacy wall-clock string, e.g. "09:10". Kept optional during the
+   * expand phase of the 2026-04-23 minimal-UI plan; the runtime prefers
+   * `durationMinutes` cumulative math when present and falls back to
+   * this string otherwise. Dropped in the contract phase.
+   */
+  startTime?: string;
+  /**
+   * Minutes this phase occupies. Source of truth for wall-clock times
+   * once all blueprints carry it; the runtime derives `AgendaItem.time`
+   * from the blueprint `startTime` anchor plus the cumulative duration
+   * of preceding phases.
+   */
+  durationMinutes?: number;
   kind?: string;
   intent?: string;
   goal: string;
@@ -953,6 +974,70 @@ function createSampleWorkshopMeta(input: {
   } satisfies WorkshopMeta;
 }
 
+/**
+ * Parse a wall-clock "HH:MM" into minutes-since-midnight. Returns null on
+ * malformed input so callers can fall back to the legacy `startTime`.
+ */
+function parseClockToMinutes(clock: string | undefined): number | null {
+  if (typeof clock !== "string") return null;
+  const match = /^(\d{1,2}):(\d{2})$/.exec(clock.trim());
+  if (!match) return null;
+  const hours = Number(match[1]);
+  const minutes = Number(match[2]);
+  if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+  return hours * 60 + minutes;
+}
+
+function formatMinutesAsClock(totalMinutes: number): string {
+  const normalized = ((totalMinutes % (24 * 60)) + 24 * 60) % (24 * 60);
+  const hours = Math.floor(normalized / 60);
+  const mins = normalized % 60;
+  return `${hours.toString().padStart(2, "0")}:${mins.toString().padStart(2, "0")}`;
+}
+
+/**
+ * Compute the displayable wall-clock time for a phase at `index`.
+ *
+ * Preference order:
+ * 1. Cumulative `durationMinutes` from the agenda anchor or first phase's
+ *    `startTime` — the source of truth once all blueprints carry durations.
+ * 2. The phase's own legacy `startTime` string — defensive fallback for
+ *    blueprints still on the expand-phase shape.
+ *
+ * Returns an empty string if neither is present (rather than throwing);
+ * downstream UI already tolerates empty time strings for custom items.
+ */
+export function computeAgendaItemTime(
+  phases: WorkshopBlueprintPhase[],
+  index: number,
+  anchor?: string,
+): string {
+  const phase = phases[index];
+  if (!phase) return "";
+
+  const anchorMinutes =
+    parseClockToMinutes(anchor) ?? parseClockToMinutes(phases[0]?.startTime);
+
+  if (anchorMinutes !== null) {
+    let cumulative = 0;
+    let cumulativeValid = true;
+    for (let i = 0; i < index; i += 1) {
+      const duration = phases[i]?.durationMinutes;
+      if (typeof duration !== "number" || !Number.isFinite(duration)) {
+        cumulativeValid = false;
+        break;
+      }
+      cumulative += duration;
+    }
+    if (cumulativeValid) {
+      return formatMinutesAsClock(anchorMinutes + cumulative);
+    }
+  }
+
+  return phase.startTime ?? "";
+}
+
 export function createAgendaFromBlueprint(
   contentLang: WorkshopContentLanguage,
   currentPhaseId?: string,
@@ -960,6 +1045,7 @@ export function createAgendaFromBlueprint(
 ): AgendaItem[] {
   const agenda = externalBlueprint ?? getBlueprintAgenda(contentLang);
   const phases = agenda.phases as WorkshopBlueprintPhase[];
+  const agendaAnchor = agenda.startTime;
   const phaseId =
     currentPhaseId ??
     phases.find((phase) => phase.id === "build-1")?.id ??
@@ -1039,7 +1125,7 @@ export function createAgendaFromBlueprint(
     return {
       id: phase.id,
       title: phase.label,
-      time: phase.startTime,
+      time: computeAgendaItemTime(phases, index, agendaAnchor),
       description: roomSummary,
       intent: normalizeAgendaItemIntent(phase.intent ?? phase.kind ?? "custom"),
       goal,

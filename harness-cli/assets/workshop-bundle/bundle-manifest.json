@@ -2,7 +2,7 @@
   "manifestVersion": 1,
   "bundleName": "workshop",
   "bundleVersion": "0.11.1",
-  "contentHash": "9a5b79b6554fa65fe90357c59b9625862c7e605c523d39b7479e4e7158a0a2fa",
+  "contentHash": "ea2367ce0dfc776df1ac00fdadafcc9617d93d00988f1da91793e62b78c51a2d",
   "files": [
     {
       "path": "content/challenge-cards/.gitkeep",
@@ -178,7 +178,7 @@
     },
     {
       "path": "workshop-blueprint/agenda.json",
-      "sha256": "a41beb6b12541089f1e74249f6bc57ebe9f3028c0b45398eaced84ee85d6ef95"
+      "sha256": "458688d765a81aadbe80fda556123cb7ad25369a2e4708b9210a871680bc59f8"
     },
     {
       "path": "workshop-blueprint/control-surfaces.md",

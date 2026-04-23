@@ -52,15 +52,7 @@
             "The review rules themselves are readable and editable by someone who didn't write them.",
             "There is at least one concrete example in `examples/` that demonstrates the full flow."
           ],
-          "firstAgentPrompt": "Don't start with code. First write the review rules, define what a good checklist looks like for a specific seed diff, and clarify what the tool *cannot* evaluate reliably. Only then propose the first implementation slice.",
-          "participantVariant": {
-            "problem": "Code review quality varies depending on who is looking. Some changes arrive with a sharp checklist and clear risk framing; others come through unevenly and consistency breaks exactly where it should be tightest. Your job: design a tool that turns a diff into a usable review checklist — one that says what it is certain about, what is heuristic suggestion, and what still needs human judgment.",
-            "userStories": [
-              "As a reviewer, I want a fast checklist of risks, questions, and focus areas from a diff.",
-              "As the author of a change, I want to know what I should verify before the review starts.",
-              "As a fresh reader coming into this repo, I want to continue from the heuristics already discovered instead of reinventing them."
-            ]
-          }
+          "firstAgentPrompt": "Don't start with code. First write the review rules, define what a good checklist looks like for a specific seed diff, and clarify what the tool *cannot* evaluate reliably. Only then propose the first implementation slice."
         },
         "cs": {
           "title": "Code Review Helper",
@@ -82,27 +74,7 @@
             "Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.",
             "Další tým může během 10 minut pokračovat v rozvoji bez chaosu."
           ],
-          "firstAgentPrompt": "Nezačínejte kódem. Nejdřív napište pravidla pro review, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice.",
-          "participantVariant": {
-            "problem": "Code review bývá nevyrovnané. Některé změny projdou s dobrým checklistem a jasným popisem rizik, jiné bez společného rámce. Reviewer pak improvizuje, autor neví, co má ověřit předem, a konzistence se ztrácí právě tam, kde by měla být nejpřesnější.\n\nVaším úkolem je navrhnout nástroj, který z diffu nebo změny vytvoří použitelný review checklist a zároveň jasně oddělí jistotu, heuristiku a místa, kde je pořád potřeba lidský úsudek.",
-            "userStories": [
-              "Jako reviewer chci z diffu rychle získat checklist změněných hranic, rizik, otázek a míst, na která se zaměřit.",
-              "Jako autor změny chci vědět, co mám ověřit ještě před samotným review.",
-              "Jako někdo, kdo k repu přichází čerstvě, chci navázat na heuristiky, které už v repu vznikly, místo abych je znovu vynalézal."
-            ],
-            "architectureNotes": [
-              "Může jít o CLI, web nebo jednoduchý skript. Důležitý je jasný tok `diff → rozbor → checklist`.",
-              "Musí být zřejmé, jaké vstupy nástroj očekává, co umí označit jistě a co naopak zůstává heuristické.",
-              "Přidejte seed diff nebo `examples/`, aby šlo workflow lokálně ověřit a další čtenář rychle přidal nové pravidlo.",
-              "Nástroj má pomáhat reviewerovi, ne předstírat neomylnost."
-            ],
-            "acceptanceCriteria": [
-              "Nástroj vytvoří review checklist ze seed diffu.",
-              "Výstup odlišuje jistá zjištění od doporučení, hypotéz a bodů pro lidský úsudek.",
-              "Je jasné, jak přidat nové pravidlo nebo heuristiku bez dlouhého onboardingu.",
-              "Další čtenář může během 10 minut pokračovat v rozvoji bez chaosu."
-            ]
-          }
+          "firstAgentPrompt": "Nezačínejte kódem. Nejdřív napište pravidla pro review, tok vstupů a definici toho, co znamená dobrý checklist. Ukažte, kde je jistota, kde heuristika a co musí posoudit člověk. Teprve potom navrhněte první implementační slice."
         }
       },
       {
@@ -129,15 +101,7 @@
             "The extension pattern is visible — a new command fits without breaking the structure.",
             "Every command has at least one readable input/output example."
           ],
-          "firstAgentPrompt": "Don't start with code. Start with `AGENTS.md`, a short plan for the extension pattern, and one clear verification step. Only then implement the first command.",
-          "participantVariant": {
-            "problem": "Every codebase accumulates small one-off scripts — log cleaners, JSON parsers, commit lookups — that work for one person until nobody remembers how to run them. Your job: design a CLI that solves a few real developer pain points and stays legible after a fresh read. Not a bag of scripts. A small system where the next command, test, and doc have an obvious home.",
-            "userStories": [
-              "As a developer, I want to turn a log or JSON blob into a readable format with one command.",
-              "As a developer, I want to quickly find suspicious commits, branches, or changes without manually assembling git commands.",
-              "As a working group, we want both the commands and the way of working documented so a fresh collaborator can continue without confusion."
-            ]
-          }
+          "firstAgentPrompt": "Don't start with code. Start with `AGENTS.md`, a short plan for the extension pattern, and one clear verification step. Only then implement the first command."
         },
         "cs": {
           "title": "DevToolbox CLI",
@@ -161,29 +125,7 @@
             "Nový tým zvládne během 10 minut přidat nebo opravit další command.",
             "Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu."
           ],
-          "firstAgentPrompt": "Nejdřív navrhněte minimální architekturu, která unese čerstvé přečtení. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command.",
-          "participantVariant": {
-            "problem": "Skoro v každém repu vznikají malé jednorázové skripty: na čištění logů, převody JSONu, dohledání podezřelých commitů nebo rychlé kontroly nad repem. Fungují chvíli, často jen u jednoho člověka, a po pár dnech už nikdo neví, jak je spustit nebo rozšířit.\n\nVaším úkolem je navrhnout CLI nástroj, který řeší několik běžných developerských úloh tak, aby zůstal čitelný i po čerstvém přečtení a nerozsypal se po přidání dalšího commandu.",
-            "userStories": [
-              "Jako vývojář chci jedním příkazem převést log nebo JSON do čitelné podoby.",
-              "Jako vývojář chci rychle dohledat podezřelé commity, větve nebo změny bez ručního skládání git příkazů.",
-              "Společně chceme mít příkazy i způsob práce popsané tak, aby se v tom čerstvý spolupracovník rychle zorientoval."
-            ],
-            "architectureNotes": [
-              "Jazyk i framework si zvolte sami, ale CLI musí být snadno spustitelné a snadno objevitelné.",
-              "Od začátku oddělte samotné příkazy od pomocných utilit a konfigurace.",
-              "`AGENTS.md` má popsat build/test postup, konvence pro výstupy a pravidla pro další rozšiřování.",
-              "Stejně důležitý jako funkční příkaz je i runbook pro dalšího čtenáře, který projekt převezme po obědě.",
-              "Nejde o pytel skriptů. Jde o malý systém, ve kterém je jasné, kde přibude další command, test a dokumentace."
-            ],
-            "acceptanceCriteria": [
-              "Existují alespoň 3 užitečné příkazy nebo subcommands.",
-              "`README` i `AGENTS.md` popisují, jak projekt spustit a ověřit lokálně.",
-              "Je jasné, kde přidat další příkaz bez rozbití struktury projektu.",
-              "Další čtenář zvládne během 10 minut přidat nebo opravit další command.",
-              "Každý command má aspoň jednu čitelnou ukázku vstupu a výstupu."
-            ]
-          }
+          "firstAgentPrompt": "Nejdřív navrhněte minimální architekturu, která unese čerstvé přečtení. Začněte `AGENTS.md`, postupem pro přidání dalšího commandu a prvním ověřením. Teprve pak implementujte první command."
         }
       },
       {
@@ -210,10 +152,7 @@
             "The tool produces at least one complete, readable output for a real or seed codebase.",
             "`README` and `AGENTS.md` explain how to run locally and what input the tool expects."
           ],
-          "firstAgentPrompt": "Start by listing every signal the tool will read from a codebase (file names, imports, commit messages, directory structure, comments — whatever you're choosing) and for each one, decide whether it produces *certain* output or *heuristic* output. Write that spec in `AGENTS.md`. Only then propose the first implementation slice.",
-          "participantVariant": {
-            "problem": "Documentation goes stale almost immediately. Once maintenance is fully manual, it gets postponed, and after a few iterations nobody knows whether the docs still describe reality. After a fresh read, a fresh reader no longer knows what to trust and what is only inference. Your job: design a tool that generates baseline technical documentation — or a structured project overview — from an existing codebase in a way that makes *what we know* and *what we're inferring* visibly different."
-          }
+          "firstAgentPrompt": "Start by listing every signal the tool will read from a codebase (file names, imports, commit messages, directory structure, comments — whatever you're choosing) and for each one, decide whether it produces *certain* output or *heuristic* output. Write that spec in `AGENTS.md`. Only then propose the first implementation slice."
         },
         "cs": {
           "title": "Doc Generator",
@@ -237,24 +176,7 @@
             "Další tým umí přidat nový typ výstupu bez chaosu v repu.",
             "Reviewer během 10 minut pozná, odkud které tvrzení pochází."
           ],
-          "firstAgentPrompt": "Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Tu specifikaci vložte do `AGENTS.md`. Teprve potom navrhněte první implementační slice.",
-          "participantVariant": {
-            "problem": "Dokumentace stárne skoro okamžitě. Jakmile je její údržba čistě ruční, začne se odkládat a po pár iteracích už nikdo neví, jestli popisuje realitu. Po čerstvém přečtení pak člověk, který k repu přijde čerstvě, neví, čemu má věřit a co je jen odhad.\n\nVaším úkolem je navrhnout nástroj, který z projektu vygeneruje základní technickou dokumentaci nebo strukturovaný přehled tak, aby bylo zřejmé, co nástroj opravdu ví a co si jen domýšlí.",
-            "architectureNotes": [
-              "Vstup může být lokální repo, seed adresář nebo zjednodušený dataset.",
-              "Výstup může být Markdown, HTML nebo jednoduchý textový report.",
-              "Důležité je vysvětlit, co nástroj umí spolehlivě odvodit a co je jen heuristika.",
-              "Od začátku navrhněte strukturu tak, aby šlo časem přidat další typ výstupu.",
-              "Neřešte AI show. Řešte důvěryhodnost, dohledatelnost a to, aby další čtenář věděl, jak bezpečně pokračovat."
-            ],
-            "acceptanceCriteria": [
-              "Nástroj vytvoří aspoň jednu čitelnou dokumentační stránku nebo report.",
-              "Je jasné, jak se nástroj spouští lokálně a nad jakým vstupem.",
-              "Výstup odděluje fakta od odhadů nebo heuristik.",
-              "Další čtenář umí přidat nový typ výstupu bez chaosu v repu.",
-              "Reviewer během 10 minut pozná, odkud které tvrzení pochází."
-            ]
-          }
+          "firstAgentPrompt": "Nejdřív napište, jaké signály budete z projektu číst, které výstupy budou jistota a které jen heuristika. Tu specifikaci vložte do `AGENTS.md`. Teprve potom navrhněte první implementační slice."
         }
       },
       {
@@ -281,15 +203,7 @@
             "The layout stays legible on mobile and on a large projected screen; the `README` says how to test both.",
             "The `README` documents which parts are real, which are mocked, and which are still missing."
           ],
-          "firstAgentPrompt": "Don't start with the UI. Start with the data model, the component boundaries, the layout rules, and a `Done When` in `AGENTS.md`. Only then touch any visual code.",
-          "participantVariant": {
-            "problem": "Every codebase has the data — user signups, deploy frequency, error rates, feature usage — scattered across different tools. The shared screen that turns it into a decision-making view usually doesn't exist. Your job: design a dashboard that puts a few metrics and one trend on one screen, stays cleanly separated between data and UI, and is still legible to a fresh reader who didn't build it.",
-            "userStories": [
-              "As a user, I want several metrics on one screen so the current state is legible quickly.",
-              "As a facilitator, I want to change seed data without touching UI logic.",
-              "As a fresh collaborator, I want to understand the data structure, components, and screens within minutes."
-            ]
-          }
+          "firstAgentPrompt": "Don't start with the UI. Start with the data model, the component boundaries, the layout rules, and a `Done When` in `AGENTS.md`. Only then touch any visual code."
         },
         "cs": {
           "title": "Metrics Dashboard",
@@ -313,29 +227,7 @@
             "Nový tým zvládne rozšířit dashboard bez rozbití struktury.",
             "Layout je čitelný na mobilu i na velkém projekčním plátně a v `README` je popsáno, jak obojí ověřit."
           ],
-          "firstAgentPrompt": "Navrhněte dashboard, který unese čerstvé přečtení. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI.",
-          "participantVariant": {
-            "problem": "Data jsou často k dispozici, ale chybí obrazovka, která z nich udělá rychle čitelný přehled. Bez toho se hůř rozhoduje, hůř diskutuje a každý si z čísel odnese něco jiného.\n\nVaším úkolem je navrhnout jednoduchý dashboard, který z několika metrik vytvoří srozumitelný společný pohled a zůstane čitelný i pro čerstvého spolupracovníka.",
-            "userStories": [
-              "Jako uživatel chci zobrazit několik metrik na jedné obrazovce tak, aby z nich šlo rychle vyčíst stav.",
-              "Jako facilitátor chci snadno měnit vzorová data bez zásahu do UI logiky.",
-              "Jako někdo, kdo k repu přichází čerstvě, chci během 10 minut pochopit strukturu dat, komponent i obrazovek."
-            ],
-            "architectureNotes": [
-              "Vzorová data a UI oddělte hned od prvního commitu.",
-              "Mobile-first je výhoda, ale dashboard musí být dobře čitelný i na projekci.",
-              "README a monitoring mají vysvětlit, co už funguje, co je mock a co zatím chybí.",
-              "Myslete na to, aby přidání další metriky nevedlo k přepisování celé obrazovky.",
-              "Neoptimalizujte jen vzhled. Hlídejte, aby další čtenář rychle pochopil datový model, pravidla layoutu a způsob ověření."
-            ],
-            "acceptanceCriteria": [
-              "Dashboard ukáže alespoň 3 metriky a jeden trend nebo srovnání.",
-              "`README` popisuje, co už funguje reálně, co je mock a co zatím chybí.",
-              "Je jasné, kde se přidává nová metrika a jak se ověřuje layout.",
-              "Další čtenář zvládne rozšířit dashboard bez rozbití struktury.",
-              "Layout je čitelný na mobilu i na velkém projekčním plátně a v `README` je popsáno, jak obojí ověřit."
-            ]
-          }
+          "firstAgentPrompt": "Navrhněte dashboard, který unese čerstvé přečtení. Nejdřív popište datový model, hranice komponent, pravidla layoutu a kritéria `Hotovo když`, teprve potom stavte UI."
         }
       },
       {
@@ -362,21 +254,7 @@
             "The repo explains how to connect the ingest to a real input channel — without requiring it.",
             "Ingest, processing, and presentation are cleanly separated in the code."
           ],
-          "firstAgentPrompt": "Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a fresh reader will open first. Only then propose the first implementation slice.",
-          "participantVariant": {
-            "userStories": [
-              "As a lead, I want standup responses collected into one readable summary.",
-              "As a developer, I want to quickly see blockers, dependencies, and topics that need coordination.",
-              "As a fresh collaborator, I want to understand the data flow and integration points without a verbal walkthrough."
-            ],
-            "architectureNotes": [
-              "Prefer a clear data model over complicated integration.",
-              "Mock data is fine if the workflow feels realistic and is documented clearly.",
-              "Separate ingest, processing, and presentation of the output.",
-              "Prompts, runbooks, and decisions must live in the repo, not only in the heads of the original authors.",
-              "Do not optimize for pretty summary prose before blockers, dependencies, and the next safe move are visible."
-            ]
-          }
+          "firstAgentPrompt": "Don't start with code. Start with: the seed data format, the output data model, the rules that distinguish certainty from heuristic, and an `AGENTS.md` a fresh reader will open first. Only then propose the first implementation slice."
         },
         "cs": {
           "title": "Standup Bot",
@@ -400,22 +278,7 @@
             "Člověk, který repo otevře čerstvě, může pokračovat v práci z README a `AGENTS.md` bez ústního dovysvětlení.",
             "Výstup jasně odliší, co nástroj ví jistě a co je jen heuristický návrh."
           ],
-          "firstAgentPrompt": "Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který nový tým otevře jako první. Až potom navrhněte implementační kroky.",
-          "participantVariant": {
-            "userStories": [
-              "Jako vedoucí chci sesbírat standup odpovědi do jednoho přehledného souhrnu.",
-              "Jako vývojář chci rychle vidět blokery, návaznosti a témata, která potřebují domluvu.",
-              "Jako někdo, kdo k repu přichází čerstvě, chci pochopit datový tok i integrační body bez ústního dovysvětlení."
-            ],
-            "architectureNotes": [
-              "Upřednostněte jasný datový model před složitou integrací.",
-              "Mock data jsou v pořádku, pokud workflow působí realisticky a je dobře popsané.",
-              "Oddělte ingest, zpracování a prezentaci výstupu.",
-              "Prompty, runbooky a rozhodnutí musí být uložené v repu, ne jen v hlavách původních autorů.",
-              "Neřešte uhlazený souhrn dřív, než budou vidět blokery, návaznosti a další bezpečný krok."
-            ],
-            "firstAgentPrompt": "Rozdělte práci na ingest, sumarizaci a kontext pro dalšího čtenáře. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který další čtenář otevře jako první. Až potom navrhněte implementační kroky."
-          }
+          "firstAgentPrompt": "Rozdělte práci na ingest, sumarizaci a kontext pro další tým. Nejdřív napište datový model, jistoty vs. heuristiky a `AGENTS.md`, který nový tým otevře jako první. Až potom navrhněte implementační kroky."
         }
       }
     ],
