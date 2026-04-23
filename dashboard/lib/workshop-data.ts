@@ -1,4 +1,4 @@
-import bilingualAgendaSource from "../../workshop-content/agenda.json";
+import bilingualAgendaSource from "./__generated__/agenda-source.json";
 import { generateAgendaView } from "./content-views/agenda-view";
 import { resolveRepoLinkedHref } from "./repo-links";
 import type { FeedbackFormTemplate } from "./runtime-contracts";

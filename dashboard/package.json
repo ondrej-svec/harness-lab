@@ -6,6 +6,9 @@
     "node": "22.x"
   },
   "scripts": {
+    "prebuild": "node scripts/copy-agenda-source.mjs",
+    "predev": "node scripts/copy-agenda-source.mjs",
+    "pretest": "node scripts/copy-agenda-source.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

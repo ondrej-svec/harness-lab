@@ -9,7 +9,7 @@
  * file exists purely to replace the retired compiled bundle for tests.
  */
 
-import source from "../../../workshop-content/agenda.json";
+import source from "../__generated__/agenda-source.json";
 import type { BilingualAgenda } from "../types/bilingual-agenda";
 import { generateAgendaView } from "../content-views/agenda-view";
 
