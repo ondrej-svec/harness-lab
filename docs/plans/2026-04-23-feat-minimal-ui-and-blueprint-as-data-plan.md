@@ -148,9 +148,9 @@ Phase 4 is design-heavy (Run redesign) and touches facilitator ritual. These rul
 - [x] **1.3** Add `BlueprintRecord` zod schema at `dashboard/lib/schemas/blueprint-schema.ts`. Top-level `.loose()` guard; field-level normalizer with defaults; `HARNESS_RUNTIME_ALERT` on parse failure. Mirror `workshop-state-schema.ts:28-80`.
 - [x] **1.4** Produce `workshop-blueprint/default.json` as the canonical seed — the current full-day EN agenda distilled into the new schema. Schema: `{ name, language, teamMode, phases: [{ id, label, durationMinutes, startTime (legacy), scenes: [...], goal, roomSummary, prompts, watchFors, checkpointQuestions }] }`. Both `durationMinutes` and `startTime` present during expand.
 - [x] **1.5** Add `BlueprintRepository` at `dashboard/lib/blueprint-repository.ts`, two implementations behind `HARNESS_STORAGE_MODE` matching `workshop-state-repository.ts:193`. Methods: `list()`, `get(id)`, `put(record)` (upsert), `delete(id)`, `fork(sourceId, newId, newName)`.
-- [ ] **1.6** API routes under `dashboard/app/api/admin/blueprints/` — GET list, GET by id, POST upsert, POST fork, DELETE. `requireFacilitatorRequest` gate.
-- [ ] **1.7** Unit tests for repository + routes (zod edge cases, conflict, missing, large body).
-- [ ] **1.8** Add `BlueprintListResponse`/`BlueprintShowResponse` types; wire into `harness-cli/src/client.js` (list/get only; write comes in Phase 3).
+- [x] **1.6** API routes under `dashboard/app/api/admin/blueprints/` — GET list, GET by id, POST upsert, POST fork, DELETE. `requireFacilitatorRequest` gate.
+- [x] **1.7** Unit tests for repository + routes (zod edge cases, conflict, missing, large body).
+- [x] **1.8** Add `BlueprintListResponse`/`BlueprintShowResponse` types; wire into `harness-cli/src/client.js` (list/get only; write comes in Phase 3).
 
 **Exit criteria:**
 - Migration applied on preview; `harness-lab-default` row present and parses clean.

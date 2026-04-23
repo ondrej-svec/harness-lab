@@ -355,5 +355,13 @@ export function createHarnessClient({ fetchFn, session }) {
         body: { displayName },
       });
     },
+
+    // Blueprint management (Phase 1: read-only; writes land in Phase 3)
+    listBlueprints() {
+      return request("/api/admin/blueprints");
+    },
+    getBlueprint(blueprintId) {
+      return request(`/api/admin/blueprints/${encodeURIComponent(blueprintId)}`);
+    },
   };
 }
