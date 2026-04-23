@@ -100,7 +100,7 @@ describe("team-composition-history-repository — file mode", () => {
     await actualFs.mkdir(path.dirname(historyPath), { recursive: true });
     await actualFs.writeFile(historyPath, '{\n  "version": 1,\n  "events": []\n}\n');
 
-    let releaseFirstRename: (() => void) | null = null;
+    let releaseFirstRename: () => void = () => {};
     const firstRenameStarted = new Promise<void>((resolve) => {
       releaseFirstRename = resolve;
     });
@@ -168,7 +168,7 @@ describe("team-composition-history-repository — file mode", () => {
       ]),
     ).resolves.toBe("serialized");
 
-    releaseFirstRename?.();
+    releaseFirstRename();
     await Promise.all([firstAppend, secondAppend]);
 
     await expect(repo.list("instance-a")).resolves.toEqual([

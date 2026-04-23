@@ -29,17 +29,15 @@ import {
   setAuditLogRepositoryForTests,
   type AuditLogRepository,
 } from "@/lib/audit-log-repository";
-import {
-  setWorkshopInstanceRepositoryForTests,
-  type WorkshopInstanceRepository,
-} from "@/lib/workshop-instance-repository";
+import { setWorkshopInstanceRepositoryForTests } from "@/lib/workshop-instance-repository";
+import type { WorkshopInstanceRepository } from "@/lib/runtime-contracts";
 import { hashSecret } from "@/lib/participant-event-access-repository";
 import type {
   AuditLogRecord,
   ParticipantRecord,
   ParticipantSessionRecord,
-  WorkshopInstanceRecord,
 } from "@/lib/runtime-contracts";
+import type { WorkshopInstanceRecord } from "@/lib/workshop-data";
 
 vi.mock("@/lib/participant-auth", () => ({
   createParticipantAccount: vi.fn(async () => ({ ok: true, neonUserId: "neon-stub" })),
@@ -68,19 +66,26 @@ function makeInstance(overrides: Partial<WorkshopInstanceRecord> = {}): Workshop
   return {
     id: INSTANCE_ID,
     templateId: "test-template",
+    status: "prepared",
+    blueprintId: "harness-lab-core-day",
+    blueprintVersion: 2,
+    importedAt: "2026-04-20T00:00:00.000Z",
+    removedAt: null,
+    allowWalkIns: true,
+    teamModeEnabled: true,
+    feedbackForm: null,
+    referenceGroups: null,
+    participantCopy: null,
     workshopMeta: {
       title: "Test",
+      subtitle: "Test subtitle",
+      contentLang: "cs",
       facilitatorLabel: "test",
       city: "Prague",
       dateRange: "2026-04-20",
-      runId: "run-1",
+      currentPhaseLabel: "Opening",
+      adminHint: "Test admin hint",
     },
-    workshopState: {} as WorkshopInstanceRecord["workshopState"],
-    status: "prepared",
-    createdAt: "2026-04-20T00:00:00.000Z",
-    updatedAt: "2026-04-20T00:00:00.000Z",
-    allowWalkIns: true,
-    teamModeEnabled: true,
     ...overrides,
   };
 }
@@ -172,16 +177,14 @@ class MemoryWorkshopInstanceRepository implements WorkshopInstanceRepository {
   async getDefaultInstanceId() {
     return this.instance?.id ?? "default";
   }
-  async createInstance() {
-    return null as unknown as WorkshopInstanceRecord;
+  async createInstance(instance: WorkshopInstanceRecord) {
+    this.instance = instance;
+    return instance;
   }
   async updateInstance(_: string, instance: WorkshopInstanceRecord) {
     this.instance = instance;
+    return instance;
   }
-  async upsertInstance(_: string, instance: WorkshopInstanceRecord) {
-    this.instance = instance;
-  }
-  async setStatus() {}
   async removeInstance() {
     this.instance = null;
   }

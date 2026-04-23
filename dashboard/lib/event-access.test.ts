@@ -67,7 +67,7 @@ class MemoryEventAccessRepository implements EventAccessRepository {
 class MemoryParticipantEventAccessRepository implements ParticipantEventAccessRepository {
   constructor(private access: ParticipantEventAccessRecord | null) {}
 
-  async getActiveAccess() {
+  async getActiveAccess(_instanceId: string) {
     return this.access ? structuredClone(this.access) : null;
   }
 
@@ -232,8 +232,9 @@ describe("event-access", () => {
   });
 
   it("marks participant session cookies as secure in production", () => {
-    const originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
+    // `process.env.NODE_ENV` is typed read-only by @types/node; vi.stubEnv
+    // handles the re-assignment and unstubs on test exit.
+    vi.stubEnv("NODE_ENV", "production");
 
     expect(getParticipantSessionCookieOptions(new Date("2026-04-07T00:00:00.000Z"))).toMatchObject({
       secure: true,
@@ -242,18 +243,17 @@ describe("event-access", () => {
       path: "/",
     });
 
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.unstubAllEnvs();
   });
 
   it("keeps participant session cookies non-secure in local development", () => {
-    const originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "development";
+    vi.stubEnv("NODE_ENV", "development");
 
     expect(getParticipantSessionCookieOptions(new Date("2026-04-07T00:00:00.000Z"))).toMatchObject({
       secure: false,
     });
 
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.unstubAllEnvs();
   });
 
   it("rejects and removes expired sessions during validation", async () => {

@@ -12,8 +12,9 @@ import {
   setParticipantEventAccessRepositoryForTests,
   type ParticipantEventAccessRepository,
 } from "./participant-event-access-repository";
-import { setParticipantFeedbackRepositoryForTests, type ParticipantFeedbackRepository } from "./participant-feedback-repository";
-import { setPollResponseRepositoryForTests, type PollResponseRepository } from "./poll-response-repository";
+import { setParticipantFeedbackRepositoryForTests } from "./participant-feedback-repository";
+import { setPollResponseRepositoryForTests } from "./poll-response-repository";
+import type { ParticipantFeedbackRepository, PollResponseRepository } from "./runtime-contracts";
 import { setRedeemAttemptRepositoryForTests, type RedeemAttemptRepository } from "./redeem-attempt-repository";
 import { setRotationSignalRepositoryForTests } from "./rotation-signal-repository";
 import { setLearningsLogRepositoryForTests } from "./learnings-log-repository";
@@ -637,6 +638,10 @@ describe("workshop-store", () => {
         title: "Sparse workshop",
         subtitle: "runtime test",
         contentLang: "en",
+        city: "Prague",
+        dateRange: "2026-04-23",
+        currentPhaseLabel: "Opening",
+        adminHint: "sparse test",
       },
       agenda: [],
       liveMoment: {
@@ -653,6 +658,7 @@ describe("workshop-store", () => {
       ticker: undefined as unknown as WorkshopState["ticker"],
       monitoring: undefined as unknown as WorkshopState["monitoring"],
       sprintUpdates: undefined as unknown as WorkshopState["sprintUpdates"],
+      participantCheckIns: undefined as unknown as WorkshopState["participantCheckIns"],
       setupPaths: undefined as unknown as WorkshopState["setupPaths"],
     });
     setWorkshopStateRepositoryForTests(repository);

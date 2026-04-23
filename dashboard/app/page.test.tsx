@@ -140,6 +140,7 @@ describe("public page helpers", () => {
           absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
         },
         rotationRevealed: false,
+        liveMoment: undefined,
       }).body,
     ).toBe(publicCopy.en.participantBodyHidden);
     const repoLinkedState = createWorkshopStateFromTemplate("blueprint-default", "sample-studio-a", "cs");
@@ -155,6 +156,7 @@ describe("public page helpers", () => {
         absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
       },
       rotationRevealed: false,
+      liveMoment: undefined,
     });
     // Build 1 no longer carries a dedicated participant-view scene (retired
     // during the 2026-04-12 content review). The participant panel falls back
@@ -184,6 +186,7 @@ describe("public page helpers", () => {
         absoluteExpiresAt: "2026-04-06T22:30:00.000Z",
       },
       rotationRevealed: false,
+      liveMoment: undefined,
     });
     expect(fallbackPanel.guidanceLabel).toBe(publicCopy.en.participantGuidanceFallbackLabel);
     expect(fallbackPanel.guidanceBlocks.some((block) => block.type === "participant-preview")).toBe(true);
