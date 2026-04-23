@@ -309,12 +309,10 @@ export function buildControlRoomSummaryStats(options: {
 }) {
   const { copy, state, selectedInstance, currentAgendaItem } = options;
 
+  // "active instance" used to live here but duplicated the header title;
+  // the topbar now ships three KPI cards instead of four per the
+  // 2026-04-23 cleanup plan.
   return [
-    {
-      label: copy.activeInstance,
-      value: selectedInstance ? getWorkshopDisplayTitle(selectedInstance) : state.workshopMeta.eventTitle?.trim() || state.workshopId,
-      hint: state.workshopId,
-    },
     {
       label: copy.currentPhase,
       value: currentAgendaItem?.title ?? state.workshopMeta.currentPhaseLabel,

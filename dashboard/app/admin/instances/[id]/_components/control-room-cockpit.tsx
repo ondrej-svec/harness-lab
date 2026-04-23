@@ -234,19 +234,13 @@ export function ControlRoomCockpit({
         </nav>
       </div>
 
-      {/* Row 3 — context strip */}
+      {/* Row 3 — context strip (3 KPI cards after the 2026-04-23 cleanup) */}
       <div className="relative border-t border-[var(--border)] bg-[var(--surface-soft)]">
-        <div className="grid grid-cols-1 gap-x-6 gap-y-3 px-4 py-3 sm:grid-cols-2 sm:px-5 sm:py-3.5 lg:grid-cols-4 lg:px-6">
+        <div className="grid grid-cols-1 gap-x-6 gap-y-3 px-4 py-3 sm:grid-cols-3 sm:px-5 sm:py-3.5 lg:px-6">
           {summaryRows.map((row) => (
             <ContextCell key={row.label} label={row.label} value={row.value} hint={row.hint} />
           ))}
         </div>
-        {sessionState.signedInLine || sessionState.archiveLine ? (
-          <div className="flex flex-wrap gap-x-4 gap-y-0.5 border-t border-[var(--border)] px-4 py-2 text-[11px] leading-4 text-[var(--text-muted)] sm:px-5 lg:px-6">
-            {sessionState.signedInLine ? <p>{sessionState.signedInLine}</p> : null}
-            {sessionState.archiveLine ? <p>{sessionState.archiveLine}</p> : null}
-          </div>
-        ) : null}
       </div>
     </header>
   );

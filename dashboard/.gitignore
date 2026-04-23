@@ -1,1 +1,5 @@
 .env*.local
+
+# File-mode runtime data — created by the File*Repository classes and
+# test runs. Not a committable artifact.
+data/

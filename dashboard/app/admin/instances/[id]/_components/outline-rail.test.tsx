@@ -94,7 +94,11 @@ describe("OutlineRail", () => {
     expect(html).toMatch(/view-transition-name:\s*outline-rail/);
   });
 
-  it("renders a workshop label in the header", () => {
+  it("no longer restates the workshop label — header owns the title", () => {
+    // Under the 2026-04-23 cleanup, OutlineRail drops its eyebrow +
+    // slug paragraph because the control-room header already shows
+    // the workshop title and slug in Row 1. Left-rail is section nav
+    // + nested agenda only.
     const html = renderToStaticMarkup(
       <OutlineRail
         lang="cs"
@@ -106,6 +110,6 @@ describe("OutlineRail", () => {
         copy={adminCopy.cs}
       />
     );
-    expect(html).toContain("distinctive-workshop-id");
+    expect(html).not.toContain("distinctive-workshop-id");
   });
 });

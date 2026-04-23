@@ -267,6 +267,10 @@ describe("Admin control room page", () => {
   });
 
   it("keeps persistent runtime context visible outside the live section", async () => {
+    // Post 2026-04-23 cleanup, the topbar ships 3 KPI cards (current
+    // phase, participant surface, teams) — the "active instance" KPI
+    // retired because it duplicated the header title. The instance slug
+    // still appears in the header itself.
     const { default: AdminControlRoomPage } = await controlRoomPageModulePromise;
 
     const view = await AdminControlRoomPage({
@@ -275,7 +279,6 @@ describe("Admin control room page", () => {
     });
     const html = renderToStaticMarkup(view);
 
-    expect(html).toContain(adminCopy.en.activeInstance);
     expect(html).toContain("sample-studio-a");
     expect(html).toContain(adminCopy.en.currentPhase);
     expect(html).toContain("Build fáze 1");

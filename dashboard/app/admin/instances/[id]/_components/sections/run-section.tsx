@@ -159,12 +159,11 @@ export function RunSection({
         };
 
   return (
-    <AdminPanel
-      eyebrow={copy.workshopStateEyebrow}
-      title={copy.agendaSectionTitle}
-      description={copy.agendaSectionDescription}
-    >
-      <div className="space-y-5">
+    // The Run tab being active is signal enough; the eyebrow + "run"
+    // title + description here duplicated what the nav already says.
+    // Retired in the 2026-04-23 cleanup; surface chrome preserved.
+    <section className="relative overflow-hidden rounded-[28px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] shadow-[var(--shadow-soft)] backdrop-blur p-5 sm:p-6">
+      <div className="relative space-y-5">
         {participantAccess ? (
           <RunAccessStrip
             lang={lang}
@@ -547,7 +546,7 @@ export function RunSection({
           </ControlCard>
         </div>
       </div>
-    </AdminPanel>
+    </section>
   );
 }
 

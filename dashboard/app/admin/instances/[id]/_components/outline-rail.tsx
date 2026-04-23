@@ -50,12 +50,9 @@ export function OutlineRail({
       aria-label="workshop outline"
     >
       <div className="sticky top-6 rounded-[22px] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card-top),var(--card-bottom))] p-4 shadow-[0_14px_30px_rgba(28,25,23,0.05)]">
-        <p className="px-2 text-[11px] uppercase tracking-[0.28em] text-[var(--text-muted)]">
-          {copy.activeInstance}
-        </p>
-        <p className="mt-2 px-2 text-sm leading-6 text-[var(--text-secondary)]">{workshopLabel}</p>
-
-        <nav className="mt-4 flex flex-col gap-1.5">
+        {/* The workshop title lives in the control-room header; the rail
+            no longer restates it. Section nav + nested agenda only. */}
+        <nav className="flex flex-col gap-1.5">
           {SECTIONS.map(({ key, copyKey }) => {
             const label = copy[copyKey] as string;
             const href = buildAdminHref({ lang, section: key, instanceId });
