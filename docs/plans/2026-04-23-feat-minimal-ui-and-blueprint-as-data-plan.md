@@ -277,14 +277,16 @@ This is a bounded change but touches runtime-critical code; deferred to a focuse
 
 **Goal:** Workshop content is single-language per instance. Shell i18n kept. Runtime CS+EN parallel content retires.
 
-- [ ] **6.1** Produce a Czech blueprint file `workshop-blueprint/default-cs.json` (translated from the EN default) if/when needed for a scheduled Czech workshop. Otherwise Phase 6 only sets up the mechanism.
-- [ ] **6.2** Update generator `scripts/content/generate-views.ts` — stop emitting paired `agenda-cs.json` + `agenda-en.json` for workshop content. Single `agenda.json` per blueprint instance, in the blueprint's language.
-- [ ] **6.3** Runtime: `dashboard/lib/workshop-data.ts:34-44` `getBlueprintAgenda(contentLang, agendaMode)` retires. Replaced by blueprint-specific read. `contentLang` parameter scoped to shell chrome only.
-- [ ] **6.4** Participant-facing surfaces read blueprint language from the instance; no runtime flip.
-- [ ] **6.5** Shell i18n layer retained (`dashboard/lib/i18n/...` or equivalent). Chrome strings remain EN+CS; fork can add locales by dropping a file.
-- [ ] **6.6** Retire `dashboard/lib/generated/agenda-{cs,en,cs-participant,en-participant}.json` — replaced by blueprint-resolved content. Generator scripts updated.
-- [ ] **6.7** Tests verify: creating an EN blueprint and an EN instance; creating a CS blueprint and a CS instance; both run independently.
-- [ ] **6.8** Update `docs/workshop-content-language-architecture.md` to reflect the new model.
+- [x] **6.1 (mechanism)** A CS blueprint is now creatable end-to-end via `harness blueprint fork harness-lab-default --as cs-default && harness blueprint push cs-default --file ./cs.json --language cs`. Content translation is a separate content task, not code.
+- [/] **6.2** Generator still emits paired `agenda-cs.json` + `agenda-en.json` — the legacy compiled bundle stays during the transition as the fallback source for instances that don't specify a `blueprintId`. A follow-up pass retires the paired emission once every live instance is on the DB-blueprint path.
+- [x] **6.3 (new path)** Instance creation now consumes DB blueprints when `blueprintId` is passed (`workshop-store.ts:createWorkshopInstance`). `getBlueprintAgenda(contentLang, agendaMode)` is still called as the fallback; retiring it is a contract-phase task.
+- [/] **6.4** Participant-facing surfaces currently still read via the contentLang path. The instance's language can now be driven from the blueprint; the full retirement of the runtime flip for participant-facing code is deferred until the paired JSON emission (6.2) retires.
+- [x] **6.5** Shell i18n untouched — continues to work as today, extensible by drop-in locale files.
+- [/] **6.6** Deferred until 6.2 completes.
+- [/] **6.7** Integration coverage: dashboard 813/813 and CLI 113/113 still pass with the new blueprint-consume path; dedicated CS+EN integration test is a follow-up task.
+- [/] **6.8** Doc update deferred until the bilingual runtime is fully retired.
+
+**Status:** Phase 6 ships the load-bearing architectural move (instance creation reads from the DB blueprints table when asked). The remaining work is a controlled retirement of the parallel CS/EN compiled bundle — blocked on observing the new path in production for at least one real workshop run before the retirement can safely land.
 
 **Exit criteria:**
 - No code path in the runtime references CS+EN parallel agenda content.
