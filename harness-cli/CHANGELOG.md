@@ -9,14 +9,13 @@ and the project follows semantic versioning.
 
 ### Changed
 
-- **`harness instance reset --from-local`** without an explicit
-  `--blueprint-file` is no longer supported. The paired
-  `dashboard/lib/generated/agenda-{lang}.json` runtime views were
-  retired in the 2026-04-23 topbar-cleanup plan (Part B) — the
-  dashboard now materialises them on demand from
-  `workshop-content/agenda.json`. Pass `--blueprint-file PATH`
-  (e.g. `workshop-blueprint/agenda.json` for the EN public mirror) or
-  push the blueprint via `harness blueprint put` (the DB path).
+- **`harness instance reset --from-local`** now builds the blueprint
+  locally from `workshop-content/agenda.json` instead of reading the
+  paired `dashboard/lib/generated/agenda-{lang}.json` runtime views
+  (those were retired in the 2026-04-23 topbar-cleanup plan, Part B).
+  The flag keeps its original contract — no deploy needed — and
+  defaults to `cs` / `facilitator`; override with `--content-lang en`
+  or `--agenda-mode participant`.
 
 ## 0.11.1 — 2026-04-21
 

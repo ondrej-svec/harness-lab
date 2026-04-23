@@ -410,13 +410,19 @@ Preferred path:
 harness instance reset sample-workshop-demo-orbit --template-id blueprint-default
 ```
 
-To reset from a local blueprint file without waiting for a deployment:
+To reset from local blueprint content without waiting for a deployment:
+
+```bash
+harness instance reset sample-workshop-demo-orbit --from-local
+```
+
+`--from-local` reads the bilingual source at `workshop-content/agenda.json`, runs the same view transform the dashboard uses internally, and sends the resulting blueprint to the reset API. Defaults to `cs` / `facilitator`; pass `--content-lang en` or `--agenda-mode participant` to pick a different view. The 2026-04-23 topbar-cleanup plan retired the paired `dashboard/lib/generated/agenda-{lang}.json` artifacts — the flag now materialises the same view on the fly.
+
+To reset from an explicit local JSON file (for one-off variants that shouldn't touch `workshop-content/agenda.json`):
 
 ```bash
 harness instance reset sample-workshop-demo-orbit --blueprint-file path/to/agenda.json
 ```
-
-`--blueprint-file` reads any local agenda JSON (same shape as the public `workshop-blueprint/agenda.json`) and sends it directly to the server. Useful when workshop content has changed locally but the dashboard has not been redeployed yet. The bare `--from-local` shortcut was retired in the 2026-04-23 topbar-cleanup plan — the paired `dashboard/lib/generated/agenda-{lang}.json` runtime views no longer ship.
 
 Raw API reference:
 

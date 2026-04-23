@@ -5,6 +5,7 @@ import { createHarnessClient, HarnessApiError } from "./client.js";
 import { createCliUi, prompt, writeLine } from "./io.js";
 import { deleteSession, readSession, sanitizeSession, writeSession, getSessionStorageMode, SessionStoreError } from "./session-store.js";
 import { installWorkshopSkill, SkillInstallError } from "./skill-install.js";
+import { generateAgendaView } from "./agenda-view.js";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
@@ -205,16 +206,44 @@ async function readLocalBlueprint(io, ui, flags) {
   // The paired `dashboard/lib/generated/agenda-{lang}.json` runtime
   // views were retired in the 2026-04-23 topbar-cleanup plan, Part B —
   // the dashboard now materialises them on demand from
-  // `workshop-content/agenda.json`. For local-file blueprint pushes
-  // from the CLI, point --blueprint-file at a concrete file (the
-  // public mirror `workshop-blueprint/agenda.json` is EN-only; for CS
-  // you need to generate a view yourself or push via the DB).
-  ui.status(
-    "error",
-    "--from-local without --blueprint-file is no longer supported (the paired dashboard/lib/generated/agenda-*.json files were retired). Use --blueprint-file PATH, or push the blueprint via `harness blueprint put`.",
-    { stream: "stderr" },
-  );
-  return null;
+  // `workshop-content/agenda.json`. The CLI does the same here:
+  // read the bilingual source and run the same transform locally so
+  // `--from-local` keeps its original contract (no deploy needed).
+  const contentLang = readStringFlag(flags, "content-lang", "content-language") === "en" ? "en" : "cs";
+  const agendaMode = readStringFlag(flags, "agenda-mode", "mode") === "participant" ? "participant" : "facilitator";
+
+  const repoRoot = await findRepoRoot(process.cwd());
+  if (!repoRoot) {
+    ui.status("error", "Cannot find repo root (no workshop-content/agenda.json found above cwd).", { stream: "stderr" });
+    return null;
+  }
+
+  const sourcePath = path.join(repoRoot, "workshop-content", "agenda.json");
+  let source;
+  try {
+    const raw = await fs.readFile(sourcePath, "utf-8");
+    source = JSON.parse(raw);
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      ui.status("error", `Bilingual agenda source not found at ${sourcePath}.`, { stream: "stderr" });
+    } else {
+      ui.status("error", `Failed to read bilingual agenda source: ${error.message}`, { stream: "stderr" });
+    }
+    return null;
+  }
+
+  try {
+    const blueprint = generateAgendaView(source, contentLang, agendaMode);
+    const relativeSource = path.relative(process.cwd(), sourcePath);
+    ui.status(
+      "ok",
+      `Built local blueprint from ${relativeSource} (${contentLang}/${agendaMode}, ${blueprint.phases.length} phases)`,
+    );
+    return blueprint;
+  } catch (error) {
+    ui.status("error", `Failed to materialise local blueprint: ${error.message}`, { stream: "stderr" });
+    return null;
+  }
 }
 
 function readStringArrayFlag(flags, ...keys) {
@@ -413,7 +442,7 @@ function printUsage(io, ui) {
     helpLine("instance current", "Show the locally selected instance"),
     helpLine("instance update [<id>]", "Update event metadata"),
     helpLine("instance reset [<id>] [--template-id ID]", "Reset from the blueprint"),
-    helpLine("  [--blueprint-file PATH]", "Use a local blueprint file (no deploy needed)"),
+    helpLine("  [--from-local] [--blueprint-file PATH]", "Use a local blueprint (no deploy needed)"),
     helpLine("instance sync-local [<id>] [--blueprint-file PATH]", "Patch instance agenda/scenes from a local blueprint"),
     helpLine("  [--phase-ids ID1,ID2] [--scene-ids ID1,ID2]", ""),
     helpLine("  [--agenda-only | --scenes-only]", ""),
