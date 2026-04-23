@@ -102,6 +102,9 @@ export default async function AdminPage({
                 selectedAgendaItem={vm.selectedAgendaItem ?? null}
                 selectedScene={vm.selectedScene ?? null}
                 currentAgendaItem={vm.currentAgendaItem ?? null}
+                participantAccess={vm.participantAccess ?? null}
+                participantAccessExpiresValue={vm.participantAccessExpiresValue}
+                allowWalkIns={vm.selectedInstance?.allowWalkIns ?? true}
                 nextAgendaItem={vm.nextAgendaItem ?? null}
                 overviewState={vm.overviewState}
                 rotationSignals={vm.rotationSignals}

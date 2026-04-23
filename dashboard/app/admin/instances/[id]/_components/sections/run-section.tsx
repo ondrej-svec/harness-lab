@@ -31,6 +31,7 @@ import {
 import { toggleRotationAction } from "../../_actions/settings";
 import { AdminActionStateFields } from "../admin-action-state-fields";
 import type { RichAgendaItem, RichPresenterScene } from "../agenda/types";
+import { RunAccessStrip } from "../run-access-strip";
 import { ScenePreviewRail } from "../scene-preview-rail";
 import type { ActivePollSummary } from "@/lib/workshop-store";
 
@@ -51,6 +52,9 @@ export function RunSection({
   selectedScene,
   currentAgendaItem,
   nextAgendaItem,
+  participantAccess,
+  participantAccessExpiresValue,
+  allowWalkIns,
   overviewState,
   rotationSignals,
   pollSummary,
@@ -74,6 +78,14 @@ export function RunSection({
   selectedScene?: RichPresenterScene | null;
   currentAgendaItem: RichAgendaItem | null | undefined;
   nextAgendaItem: RichAgendaItem | null | undefined;
+  participantAccess?: {
+    active: boolean;
+    codeId: string | null;
+    currentCode: string | null;
+    canRevealCurrent: boolean;
+  } | null;
+  participantAccessExpiresValue?: string;
+  allowWalkIns?: boolean;
   overviewState: OverviewStateLike;
   rotationSignals: RotationSignal[];
   pollSummary: ActivePollSummary | null;
@@ -153,6 +165,17 @@ export function RunSection({
       description={copy.agendaSectionDescription}
     >
       <div className="space-y-5">
+        {participantAccess ? (
+          <RunAccessStrip
+            lang={lang}
+            copy={copy}
+            instanceId={instanceId}
+            participantAccess={participantAccess}
+            participantAccessExpiresValue={participantAccessExpiresValue ?? ""}
+            allowWalkIns={allowWalkIns ?? true}
+          />
+        ) : null}
+
         <div className={`${adminHeroPanelClassName} p-5 sm:p-6`}>
           <div className="flex flex-wrap items-center gap-2">
             <StatusPill label={focusStatusLabel} tone={focusItem?.status === "current" ? "live" : "neutral"} />
