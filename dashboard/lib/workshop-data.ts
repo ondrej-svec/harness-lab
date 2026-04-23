@@ -1,9 +1,8 @@
-import blueprintAgendaCs from "./generated/agenda-cs.json";
-import blueprintAgendaEn from "./generated/agenda-en.json";
-import blueprintAgendaCsParticipant from "./generated/agenda-cs-participant.json";
-import blueprintAgendaEnParticipant from "./generated/agenda-en-participant.json";
+import bilingualAgendaSource from "../../workshop-content/agenda.json";
+import { generateAgendaView } from "./content-views/agenda-view";
 import { resolveRepoLinkedHref } from "./repo-links";
 import type { FeedbackFormTemplate } from "./runtime-contracts";
+import type { BilingualAgenda } from "./types/bilingual-agenda";
 import type { GeneratedReferenceGroup } from "./types/bilingual-reference";
 
 export type BlueprintInventory = {
@@ -49,17 +48,18 @@ export type AgendaMode = "facilitator" | "participant";
 const DEFAULT_BLUEPRINT_ID = "harness-lab-core-day";
 const DEFAULT_BLUEPRINT_VERSION = 2;
 
-function getBlueprintAgenda(
-  contentLang: WorkshopContentLanguage,
-  mode: AgendaMode = "facilitator",
-): BlueprintAgenda {
-  if (mode === "participant") {
-    return contentLang === "en"
-      ? (blueprintAgendaEnParticipant as BlueprintAgenda)
-      : (blueprintAgendaCsParticipant as BlueprintAgenda);
-  }
-  return contentLang === "en" ? (blueprintAgendaEn as BlueprintAgenda) : (blueprintAgendaCs as BlueprintAgenda);
-}
+/**
+ * Default blueprint used by internal paths that don't receive an
+ * `externalBlueprint` (seed state materialisation, sample instances,
+ * in-flight language-flip overlays). Production instances resolve their
+ * blueprint from the `BlueprintRepository` at creation time; this
+ * module-local default covers dev/test paths and the seed surface.
+ *
+ * Retires the committed `dashboard/lib/generated/agenda-*.json` bundle
+ * by deriving views on demand from the bilingual authoring source.
+ * Part B of the 2026-04-23 topbar-cleanup plan.
+ */
+const bilingualSource = bilingualAgendaSource as unknown as BilingualAgenda;
 
 export type WorkshopContentLanguage = "cs" | "en";
 
@@ -67,8 +67,16 @@ function resolveWorkshopContentLanguage(value: string | undefined): WorkshopCont
   return value === "en" ? "en" : "cs";
 }
 
+function resolveDefaultBlueprintAgenda(
+  contentLang: WorkshopContentLanguage | undefined,
+  mode: AgendaMode = "facilitator",
+): BlueprintAgenda {
+  const resolvedLang = resolveWorkshopContentLanguage(contentLang);
+  return generateAgendaView(bilingualSource, resolvedLang, mode) as BlueprintAgenda;
+}
+
 export function getBlueprintWorkshopMetaCopy(contentLang: WorkshopContentLanguage) {
-  const agenda = getBlueprintAgenda(contentLang);
+  const agenda = resolveDefaultBlueprintAgenda(contentLang);
   return {
     title: agenda.title,
     subtitle: agenda.subtitle,
@@ -959,7 +967,7 @@ function createSampleWorkshopMeta(input: {
   contentLang?: WorkshopContentLanguage;
 }) {
   const contentLang = resolveWorkshopContentLanguage(input.contentLang);
-  const agenda = getBlueprintAgenda(contentLang);
+  const agenda = resolveDefaultBlueprintAgenda(contentLang);
   const blueprintMetaCopy = getBlueprintWorkshopMetaCopy(contentLang);
   return {
     title: blueprintMetaCopy.title,
@@ -1035,7 +1043,7 @@ export function createAgendaFromBlueprint(
   currentPhaseId?: string,
   externalBlueprint?: BlueprintAgenda,
 ): AgendaItem[] {
-  const agenda = externalBlueprint ?? getBlueprintAgenda(contentLang);
+  const agenda = externalBlueprint ?? resolveDefaultBlueprintAgenda(contentLang);
   const phases = agenda.phases as WorkshopBlueprintPhase[];
   const agendaAnchor = agenda.startTime;
   const phaseId =
@@ -1532,7 +1540,7 @@ function createWorkshopMetaFromTemplate(
   contentLang: WorkshopContentLanguage = "cs",
 ): WorkshopMeta {
   const resolvedContentLang = resolveWorkshopContentLanguage(contentLang);
-  const agenda = getBlueprintAgenda(resolvedContentLang);
+  const agenda = resolveDefaultBlueprintAgenda(resolvedContentLang);
   const blueprintMetaCopy = getBlueprintWorkshopMetaCopy(resolvedContentLang);
   return {
     title: blueprintMetaCopy.title,
@@ -1956,7 +1964,7 @@ export function createWorkshopInstanceRecord(input: {
 export function createWorkshopStateFromInstance(instance: WorkshopInstanceRecord, externalBlueprint?: BlueprintAgenda): WorkshopState {
   const template = workshopTemplates.find((item) => item.id === instance.templateId) ?? workshopTemplates[0];
   const agendaMode: AgendaMode = instance.teamModeEnabled ? "facilitator" : "participant";
-  const blueprintSource = externalBlueprint ?? getBlueprintAgenda(instance.workshopMeta.contentLang, agendaMode);
+  const blueprintSource = externalBlueprint ?? resolveDefaultBlueprintAgenda(instance.workshopMeta.contentLang, agendaMode);
   const agenda = createAgendaFromBlueprint(instance.workshopMeta.contentLang, blueprintSource.phases[0]?.id, externalBlueprint);
   const inventory = createWorkshopInventory(instance.workshopMeta.contentLang, externalBlueprint);
   const currentPhaseLabel = agenda.find((item) => item.status === "current")?.title ?? instance.workshopMeta.currentPhaseLabel;
