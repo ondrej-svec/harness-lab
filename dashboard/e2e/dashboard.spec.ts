@@ -270,6 +270,10 @@ test.describe("facilitator admin (file mode)", () => {
     await expect(page.getByRole("navigation").getByRole("link", { name: "týmy" })).toHaveCount(0);
     await expect(page.getByRole("navigation").getByRole("link", { name: "signály" })).toHaveCount(0);
     await expect(page.getByText("tahák pro facilitátora", { exact: true })).toBeVisible();
+    const runtimeNotes = page.locator("details").filter({ hasText: "tiché runtime poznámky" });
+    await expect(runtimeNotes).toBeVisible();
+    await expect(page.getByText("sběr signálů", { exact: true })).toBeHidden();
+    await runtimeNotes.locator("summary").click();
     await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
 
     await page.locator('[data-agenda-item="rotation"]').getByRole("link", { name: "detail momentu" }).click();
@@ -386,6 +390,10 @@ test.describe("facilitator admin (file mode)", () => {
     await page.goto("/admin/instances/sample-studio-a?section=run&agendaItem=talk");
 
     await expect(page.getByText("tahák pro facilitátora", { exact: true })).toBeVisible();
+    const runtimeNotes = page.locator("details").filter({ hasText: "tiché runtime poznámky" });
+    await expect(runtimeNotes).toBeVisible();
+    await expect(page.getByText("sběr signálů", { exact: true })).toBeHidden();
+    await runtimeNotes.locator("summary").click();
     await expect(page.getByText("sběr signálů", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "otevřít projekci" })).toBeVisible();
     await expect(page.getByRole("link", { name: /plocha pro účastníky 1:1|participant plocha 1:1/i })).toBeVisible();
