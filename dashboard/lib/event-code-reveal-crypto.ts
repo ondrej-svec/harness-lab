@@ -8,6 +8,7 @@ import { isNeonRuntimeMode } from "./runtime-auth-configuration";
 const payloadVersion = "v1";
 const nonceBytes = 12;
 const keyBytes = 32;
+const authTagBytes = 16;
 
 let warnedAboutMissingKey = false;
 let warnedAboutInvalidKey = false;
@@ -83,7 +84,7 @@ export function encryptEventCodeForReveal(plaintext: string): string {
     throw new Error("HARNESS_EVENT_CODE_REVEAL_KEY is not configured");
   }
   const nonce = randomBytes(nonceBytes);
-  const cipher = createCipheriv("aes-256-gcm", key, nonce);
+  const cipher = createCipheriv("aes-256-gcm", key, nonce, { authTagLength: authTagBytes });
   const ciphertext = Buffer.concat([cipher.update(plaintext, "utf8"), cipher.final()]);
   const authTag = cipher.getAuthTag();
   return [
@@ -110,10 +111,12 @@ export function decryptEventCodeForReveal(payload: string): string | null {
     const nonce = decodeBase64Url(nonceRaw);
     const ciphertext = decodeBase64Url(ciphertextRaw);
     const authTag = decodeBase64Url(authTagRaw);
-    if (nonce.length !== nonceBytes || authTag.length !== 16) {
+    if (nonce.length !== nonceBytes || authTag.length !== authTagBytes) {
       return null;
     }
-    const decipher = createDecipheriv("aes-256-gcm", key, nonce);
+    const decipher = createDecipheriv("aes-256-gcm", key, nonce, {
+      authTagLength: authTagBytes,
+    });
     decipher.setAuthTag(authTag);
     const plaintext = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
     return plaintext.toString("utf8");
