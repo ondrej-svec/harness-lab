@@ -78,7 +78,7 @@ It may show:
 - the agenda spine as the primary navigation model
 - one selected agenda item as the current operating object
 - contextual handoff controls only when the selected moment genuinely owns them
-- quiet signal capture that belongs to running the current moment
+- quiet signal capture that belongs to running the current moment, hidden behind a disclosure until the facilitator needs to record runtime residue
 
 It must not show by default:
 
@@ -259,7 +259,7 @@ Use this structure:
 
 1. Agenda index
    - top summary for live now, next up, and participant signal
-   - timeline as the primary navigation model
+   - timeline as the primary navigation model, visible before long facilitation notes on iPad/mobile so the facilitator can jump without scrolling through the run sheet
    - each timeline row should expose explicit actions for `moment detail` and, when applicable, `move live here`
    - no duplicated selected-item detail below the timeline
 2. Agenda moment detail

@@ -133,6 +133,10 @@ export function RunSection({
           blockerLabel: "blocker",
           questionLabel: "question",
           unknownTeam: "room",
+          runtimeNotesTitle: "quiet runtime notes",
+          runtimeNotesDescription: "Capture signals only when something changes. The live runner stays uncluttered until you need this.",
+          openDisclosure: "open",
+          hideDisclosure: "hide",
         }
       : {
           liveMomentTitle: "živý kontrakt pro účastníky",
@@ -156,6 +160,10 @@ export function RunSection({
           blockerLabel: "blocker",
           questionLabel: "otázka",
           unknownTeam: "místnost",
+          runtimeNotesTitle: "tiché runtime poznámky",
+          runtimeNotesDescription: "Zapisuj signály jen ve chvíli, kdy se něco mění. Live runner zůstane čistý, dokud tuhle vrstvu nepotřebuješ.",
+          openDisclosure: "otevřít",
+          hideDisclosure: "skrýt",
         };
 
   return (
@@ -239,6 +247,36 @@ export function RunSection({
             ) : null}
           </div>
         </div>
+
+        <section className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
+              {copy.agendaIndexDescription}
+            </p>
+          </div>
+          <div className="space-y-3">
+            {state.agenda.map((item) => {
+              const detailHref = buildAdminHref({
+                lang,
+                section: "run",
+                instanceId,
+                agendaItemId: item.id,
+              });
+
+              return (
+                <TimelineRow
+                  key={item.id}
+                  item={item}
+                  copy={copy}
+                  lang={lang}
+                  instanceId={instanceId}
+                  detailHref={detailHref}
+                />
+              );
+            })}
+          </div>
+        </section>
 
         {focusItem ? (
           <MomentGuideCard item={focusItem} copy={copy} />
@@ -364,37 +402,16 @@ export function RunSection({
           />
         ) : null}
 
-        <section className="space-y-4">
-          <div>
-            <h3 className="text-lg font-medium text-[var(--text-primary)]">{copy.agendaTimelineTitle}</h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
-              {copy.agendaIndexDescription}
-            </p>
-          </div>
-          <div className="space-y-3">
-            {state.agenda.map((item) => {
-              const detailHref = buildAdminHref({
-                lang,
-                section: "run",
-                instanceId,
-                agendaItemId: item.id,
-              });
-
-              return (
-                <TimelineRow
-                  key={item.id}
-                  item={item}
-                  copy={copy}
-                  lang={lang}
-                  instanceId={instanceId}
-                  detailHref={detailHref}
-                />
-              );
-            })}
-          </div>
-        </section>
-
-        <div className="grid gap-6 xl:grid-cols-2">
+        <details className="group rounded-[24px] border border-[var(--border)] bg-[var(--surface-soft)] p-4 sm:p-5">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left [&::-webkit-details-marker]:hidden">
+            <span>
+              <span className="block text-lg font-medium text-[var(--text-primary)]">{liveCopy.runtimeNotesTitle}</span>
+              <span className="mt-1 block text-sm leading-6 text-[var(--text-secondary)]">{liveCopy.runtimeNotesDescription}</span>
+            </span>
+            <span className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text-secondary)] group-open:hidden">{liveCopy.openDisclosure}</span>
+            <span className="hidden shrink-0 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs text-[var(--text-secondary)] group-open:inline-flex">{liveCopy.hideDisclosure}</span>
+          </summary>
+          <div className="mt-5 grid gap-6 xl:grid-cols-2">
           <ControlCard title={copy.signalTitle} description={copy.signalDescription}>
             <form action={addCheckpointFeedAction} className="grid gap-3 lg:grid-cols-2">
               <input name="lang" type="hidden" value={lang} />
@@ -456,7 +473,8 @@ export function RunSection({
               </AdminSubmitButton>
             </form>
           </ControlCard>
-        </div>
+          </div>
+        </details>
 
         <div className="grid gap-6 xl:grid-cols-2">
           <ControlCard title={liveCopy.activePollTitle} description={pollSummary?.prompt ?? liveCopy.activePollEmpty}>

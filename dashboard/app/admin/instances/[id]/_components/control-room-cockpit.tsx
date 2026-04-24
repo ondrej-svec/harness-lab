@@ -161,9 +161,6 @@ export function ControlRoomCockpit({
             aria-hidden
             className="hidden h-5 w-px shrink-0 bg-[var(--border)] lg:inline-block"
           />
-          <p className="hidden shrink-0 text-[10px] uppercase tracking-[0.28em] text-[var(--text-muted)] lg:inline">
-            {copy.deskEyebrow}
-          </p>
 
           {instanceBadge ? (
             <StatusPill label={instanceBadge.statusLabel} tone={instanceBadge.statusTone} />
@@ -173,7 +170,7 @@ export function ControlRoomCockpit({
             {instanceBadge?.displayTitle ?? copy.pageTitle}
           </h1>
 
-          <span className="shrink truncate text-xs leading-5 text-[var(--text-muted)]">
+          <span className="hidden shrink truncate text-xs leading-5 text-[var(--text-muted)] xl:inline">
             {workshopId}
           </span>
         </div>
@@ -193,8 +190,8 @@ export function ControlRoomCockpit({
       </div>
 
       {/* Row 2 — meta + section tabs (tabs hidden on xl where OutlineRail owns nav) */}
-      <div className="relative flex flex-col gap-3 border-t border-[var(--border)] px-4 py-3 sm:px-5 md:flex-row md:items-center md:justify-between md:gap-6 lg:px-6">
-        <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5">
+      <div className="relative flex flex-col gap-3 border-t border-[var(--border)] px-4 py-3 sm:px-5 md:flex-row md:items-center md:justify-end md:gap-6 xl:justify-between lg:px-6">
+        <div className="hidden min-w-0 flex-wrap items-center gap-x-4 gap-y-1.5 xl:flex">
           <MetaItem label={copy.workspaceWhenLabel} value={instanceWhenLabel} />
           <span aria-hidden className="h-1 w-1 shrink-0 rounded-full bg-[var(--border-strong)]" />
           <MetaItem label={copy.workspaceWhereLabel} value={instanceWhereLabel} />
